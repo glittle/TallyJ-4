@@ -255,91 +255,46 @@
               </el-tag>
             </el-descriptions-item>
           </el-descriptions>
-          <div class="online-ballot-list" data-testid="pending-online-ballots">
-            <h3>{{ $t("monitoring.onlineBallots.pendingTitle") }}</h3>
-            <el-table
-              v-if="pendingBallots.length > 0"
-              :data="pendingBallots"
-              stripe
-              data-testid="pending-online-ballots-table"
-              style="width: 100%"
-            >
-              <el-table-column
-                :label="$t('monitoring.onlineBallots.person')"
-                min-width="220"
-              >
-                <template #default="scope">
-                  {{ scope.row.personName }}
-                </template>
-              </el-table-column>
-              <el-table-column :label="$t('monitoring.status')" width="140">
-                <template #default="scope">
-                  <el-tag
-                    :type="onlineBallotStatusView(scope.row.status).tagType"
-                  >
-                    {{ $t(onlineBallotStatusView(scope.row.status).labelKey) }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column
-                :label="$t('monitoring.onlineBallots.when')"
-                min-width="180"
-              >
-                <template #default="scope">
-                  {{ formatDateTime(scope.row.whenStatus) }}
-                </template>
-              </el-table-column>
-            </el-table>
-            <p
-              v-else
-              class="online-ballot-list-empty"
-              data-testid="pending-online-ballots-empty"
-            >
-              {{ $t("monitoring.onlineBallots.pendingEmpty") }}
+          <div
+            class="online-ballot-breakdown"
+            data-testid="online-ballot-status-breakdown"
+          >
+            <h3>{{ $t("monitoring.onlineBallots.breakdownTitle") }}</h3>
+            <p class="online-ballot-breakdown-note">
+              {{ $t("monitoring.onlineBallots.countsOnly") }}
             </p>
-          </div>
-          <div class="online-ballot-list" data-testid="accepted-online-ballots">
-            <h3>{{ $t("monitoring.onlineBallots.acceptedTitle") }}</h3>
-            <el-table
-              v-if="acceptedBallots.length > 0"
-              :data="acceptedBallots"
-              stripe
-              data-testid="accepted-online-ballots-table"
-              style="width: 100%"
-            >
-              <el-table-column
-                :label="$t('monitoring.onlineBallots.person')"
-                min-width="220"
+            <el-descriptions :column="3" border>
+              <el-descriptions-item
+                :label="$t('monitoring.onlineBallots.status.Submitted')"
               >
-                <template #default="scope">
-                  {{ scope.row.personName }}
-                </template>
-              </el-table-column>
-              <el-table-column :label="$t('monitoring.status')" width="140">
-                <template #default="scope">
-                  <el-tag
-                    :type="onlineBallotStatusView(scope.row.status).tagType"
-                  >
-                    {{ $t(onlineBallotStatusView(scope.row.status).labelKey) }}
-                  </el-tag>
-                </template>
-              </el-table-column>
-              <el-table-column
-                :label="$t('monitoring.onlineBallots.when')"
-                min-width="180"
+                <el-tag
+                  :type="onlineBallotStatusView('Submitted').tagType"
+                  data-testid="submitted-online-ballots-count"
+                >
+                  {{ submittedOnlineCount }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item
+                :label="$t('monitoring.onlineBallots.status.Processing')"
               >
-                <template #default="scope">
-                  {{ formatDateTime(scope.row.whenStatus) }}
-                </template>
-              </el-table-column>
-            </el-table>
-            <p
-              v-else
-              class="online-ballot-list-empty"
-              data-testid="accepted-online-ballots-empty"
-            >
-              {{ $t("monitoring.onlineBallots.acceptedEmpty") }}
-            </p>
+                <el-tag
+                  :type="onlineBallotStatusView('Processing').tagType"
+                  data-testid="processing-online-ballots-count"
+                >
+                  {{ processingOnlineCount }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item
+                :label="$t('monitoring.onlineBallots.status.Processed')"
+              >
+                <el-tag
+                  :type="onlineBallotStatusView('Processed').tagType"
+                  data-testid="accepted-online-ballots-count"
+                >
+                  {{ acceptedOnlineCount }}
+                </el-tag>
+              </el-descriptions-item>
+            </el-descriptions>
           </div>
           <div class="accept-all-history">
             <h3>{{ $t("monitoring.acceptAll.history") }}</h3>
@@ -459,11 +414,14 @@ const pendingOnlineCount = computed(
 const acceptAllRuns = computed(
   () => monitorInfo.value?.onlineVotingInfo.acceptAllRuns ?? [],
 );
-const pendingBallots = computed(
-  () => monitorInfo.value?.onlineVotingInfo.pendingBallots ?? [],
+const submittedOnlineCount = computed(
+  () => monitorInfo.value?.onlineVotingInfo.submittedOnlineBallots ?? 0,
 );
-const acceptedBallots = computed(
-  () => monitorInfo.value?.onlineVotingInfo.acceptedBallots ?? [],
+const processingOnlineCount = computed(
+  () => monitorInfo.value?.onlineVotingInfo.processingOnlineBallots ?? 0,
+);
+const acceptedOnlineCount = computed(
+  () => monitorInfo.value?.onlineVotingInfo.processedOnlineBallots ?? 0,
 );
 const onlineBallotStatusView = onlineBallotMonitorStatus;
 const refreshInterval = ref<number | null>(null);
@@ -658,7 +616,7 @@ function calculateTurnout(registered: number, ballots: number) {
   gap: 12px;
 }
 
-.online-ballot-list,
+.online-ballot-breakdown,
 .accept-all-history {
   margin-top: 20px;
 
@@ -669,9 +627,9 @@ function calculateTurnout(registered: number, ballots: number) {
   }
 }
 
-.online-ballot-list-empty,
+.online-ballot-breakdown-note,
 .accept-all-history-empty {
-  margin: 0;
+  margin: 0 0 12px;
   color: #909399;
 }
 

@@ -200,23 +200,16 @@ export interface AcceptAllOnlineBallotsRunDto {
   acceptedAfter: number;
 }
 
-export interface OnlineBallotMonitorItemDto {
-  rowId: number;
-  personName: string;
-  status: string;
-  whenStatus?: string | null;
-}
-
 export interface OnlineVotingInfoDto {
   totalOnlineBallots: number;
   processedOnlineBallots: number;
   pendingOnlineBallots: number;
+  submittedOnlineBallots?: number;
+  processingOnlineBallots?: number;
   onlineVotingEnabled: boolean;
   onlineVotingStart?: string | null;
   onlineVotingEnd?: string | null;
   acceptAllRuns?: AcceptAllOnlineBallotsRunDto[];
-  pendingBallots?: OnlineBallotMonitorItemDto[];
-  acceptedBallots?: OnlineBallotMonitorItemDto[];
 }
 
 // Detailed Statistics DTOs

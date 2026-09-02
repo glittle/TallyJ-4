@@ -124,9 +124,21 @@ public class OnlineVotingInfoDto
     public int ProcessedOnlineBallots { get; set; }
 
     /// <summary>
-    /// Number of online ballots that are still pending processing.
+    /// Number of online ballots that are still pending processing
+    /// (<c>Submitted</c> + <c>Processing</c>). Same set Accept-all will take.
     /// </summary>
     public int PendingOnlineBallots { get; set; }
+
+    /// <summary>
+    /// <c>Submitted</c> rows — voter can still change. Count only; no person identity.
+    /// </summary>
+    public int SubmittedOnlineBallots { get; set; }
+
+    /// <summary>
+    /// <c>Processing</c> rows — claimed by Accept-all; submit is already blocked.
+    /// Count only; no person identity.
+    /// </summary>
+    public int ProcessingOnlineBallots { get; set; }
 
     /// <summary>
     /// Indicates whether online voting is currently enabled.
@@ -148,20 +160,6 @@ public class OnlineVotingInfoDto
     /// who / when / pending and accepted counts before and after that run.
     /// </summary>
     public List<AcceptAllOnlineBallotsRunDto> AcceptAllRuns { get; set; } = new();
-
-    /// <summary>
-    /// Online rows still waiting to become regular ballots: Status is
-    /// <c>Submitted</c> (voter can still change) or <c>Processing</c> (claimed
-    /// by Accept-all; submit is already blocked). Same filter as
-    /// <see cref="PendingOnlineBallots"/>.
-    /// </summary>
-    public List<OnlineBallotMonitorItemDto> PendingBallots { get; set; } = new();
-
-    /// <summary>
-    /// Online rows with Status <c>Processed</c>. Same filter as
-    /// <see cref="ProcessedOnlineBallots"/>. Person and WhenStatus only.
-    /// </summary>
-    public List<OnlineBallotMonitorItemDto> AcceptedBallots { get; set; } = new();
 }
 
 

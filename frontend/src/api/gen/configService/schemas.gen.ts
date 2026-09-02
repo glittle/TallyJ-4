@@ -5631,30 +5631,6 @@ export const Results_MonitorInfoDtoSchema = {
     additionalProperties: false
 } as const;
 
-export const Results_OnlineBallotMonitorItemDtoSchema = {
-    type: 'object',
-    properties: {
-        rowId: {
-            type: 'integer',
-            format: 'int32'
-        },
-        personName: {
-            type: 'string',
-            nullable: true
-        },
-        status: {
-            type: 'string',
-            nullable: true
-        },
-        whenStatus: {
-            type: 'string',
-            format: 'date-time',
-            nullable: true
-        }
-    },
-    additionalProperties: false
-} as const;
-
 export const Results_OnlineVotingInfoDtoSchema = {
     type: 'object',
     properties: {
@@ -5667,6 +5643,14 @@ export const Results_OnlineVotingInfoDtoSchema = {
             format: 'int32'
         },
         pendingOnlineBallots: {
+            type: 'integer',
+            format: 'int32'
+        },
+        submittedOnlineBallots: {
+            type: 'integer',
+            format: 'int32'
+        },
+        processingOnlineBallots: {
             type: 'integer',
             format: 'int32'
         },
@@ -5687,20 +5671,6 @@ export const Results_OnlineVotingInfoDtoSchema = {
             type: 'array',
             items: {
                 $ref: '#/components/schemas/Results_AcceptAllOnlineBallotsRunDto'
-            },
-            nullable: true
-        },
-        pendingBallots: {
-            type: 'array',
-            items: {
-                $ref: '#/components/schemas/Results_OnlineBallotMonitorItemDto'
-            },
-            nullable: true
-        },
-        acceptedBallots: {
-            type: 'array',
-            items: {
-                $ref: '#/components/schemas/Results_OnlineBallotMonitorItemDto'
             },
             nullable: true
         }

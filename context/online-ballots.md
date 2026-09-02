@@ -44,27 +44,31 @@ Rows that already have a `BallotGuid` from the older submit-creates-ballot path 
 
 **Reason:** pending votes stay changeable until a teller accepts them; accepted votes become ordinary ballots with no remaining online payload.
 
-## Pending vs accepted list on the monitor
+## Pending vs accepted on the monitor (counts only)
 
 **Status:** active  
-**Evidence:** confirmed (issue #188 remaining slice; Glen; same Status values as Accept-all)
+**Evidence:** confirmed (issue #188 remaining slice; Glen, PR #296)
 
-The monitor already counted pending vs accepted from `OnlineVotingInfo.Status`. The teller list uses that same field — not a second table, not the regular `Ballot` created on accept, and not the wiped `ListPool`.
+> Superseded 2026-09: a named pending/accepted row list (person + WhenStatus) was rejected — see below.
 
-- **Pending list** = `Submitted` or `Processing` (same filter as the pending count and as Accept-all’s expected set).
-- **Accepted list** = `Processed` (same filter as the accepted count).
-- Each row is person display name + `WhenStatus` + the stored Status. After accept the vote payload is gone, so the accepted side cannot show what was on the online ballot and does not re-link to the regular ballot.
-- `Processing` stays on the pending list because Accept-all will retry a claimed row, but it is not labeled as still-editable pending: submit is already blocked (same as the voter UI). Only `Submitted` is still changeable.
+The monitor tells pending from accepted using `OnlineVotingInfo.Status` counts only:
 
-v3’s online-voters report mixed status with email/phone. That report still exists for other uses. The monitor list does not include email, phone, kiosk, or person/voter id (CodeQL).
+- **Pending** = `Submitted` + `Processing` (same set Accept-all will take).
+- **Submitted** = still changeable.
+- **Processing** = claimed by Accept-all; submit is already blocked.
+- **Accepted** = `Processed`.
 
-**Rejected alternative:** treat the accepted list as a join to the regular `Ballot` (or keep `BallotGuid` after wipe). Acceptance is not reversible and must not reconnect the online row to the counted ballot.
+No person name, email, phone, kiosk, voter id, row id, or WhenStatus is returned or rendered for these rows. Front Desk / people roll may still show who voted; that is a different surface and is not paired with the OL ballots Accept-all creates.
 
-**Rejected alternative:** invent a second “accepted online ballots” store. Status on `OnlineVotingInfo` is already the source of truth for pending / processing / processed.
+**Rejected alternative:** list person names (or hide names in the UI while the API still sends them). Pairing a named pending/accepted list with the regular OL ballots created by Accept-all identifies how that person voted. Worst when n=1.
 
-**Rejected alternative:** show `Processing` as still-pending/editable. A crashed or in-flight Accept-all has already claimed the row; the voter cannot change it.
+**Rejected alternative:** suppress names only when the pending or accepted count is under 10. Watching names (or named rows) move during Accept-all still matches a voter to the new OL ballot.
 
-**Reason:** tellers need to see who is still waiting and who has already been accepted across multiple Accept-all runs while the window stays open, without reconstructing wiped votes.
+**Rejected alternative:** keep anonymous per-row Status/WhenStatus lists. A timestamped or shrinking row list can be watched the same way during Accept-all.
+
+**Rejected alternative:** treat the accepted side as a join to the regular `Ballot`. Acceptance is not reversible and must not reconnect the online row to the counted ballot.
+
+**Reason:** tellers need pending vs accepted (and Submitted vs Processing) across multiple Accept-all runs while the window stays open, without a secret-ballot leak.
 
 ## Accept-all audit record
 

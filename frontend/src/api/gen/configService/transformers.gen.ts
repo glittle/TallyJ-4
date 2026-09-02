@@ -765,13 +765,6 @@ const resultsAcceptAllOnlineBallotsRunDtoSchemaResponseTransformer = (data: any)
     return data;
 };
 
-const resultsOnlineBallotMonitorItemDtoSchemaResponseTransformer = (data: any) => {
-    if (data.whenStatus) {
-        data.whenStatus = new Date(data.whenStatus);
-    }
-    return data;
-};
-
 const resultsOnlineVotingInfoDtoSchemaResponseTransformer = (data: any) => {
     if (data.onlineVotingStart) {
         data.onlineVotingStart = new Date(data.onlineVotingStart);
@@ -781,12 +774,6 @@ const resultsOnlineVotingInfoDtoSchemaResponseTransformer = (data: any) => {
     }
     if (data.acceptAllRuns) {
         data.acceptAllRuns = data.acceptAllRuns.map((item: any) => resultsAcceptAllOnlineBallotsRunDtoSchemaResponseTransformer(item));
-    }
-    if (data.pendingBallots) {
-        data.pendingBallots = data.pendingBallots.map((item: any) => resultsOnlineBallotMonitorItemDtoSchemaResponseTransformer(item));
-    }
-    if (data.acceptedBallots) {
-        data.acceptedBallots = data.acceptedBallots.map((item: any) => resultsOnlineBallotMonitorItemDtoSchemaResponseTransformer(item));
     }
     return data;
 };

@@ -1643,23 +1643,16 @@ export type ResultsMonitorInfoDto = {
     lastUpdated?: Date;
 };
 
-export type ResultsOnlineBallotMonitorItemDto = {
-    rowId?: number;
-    personName?: string | null;
-    status?: string | null;
-    whenStatus?: Date | null;
-};
-
 export type ResultsOnlineVotingInfoDto = {
     totalOnlineBallots?: number;
     processedOnlineBallots?: number;
     pendingOnlineBallots?: number;
+    submittedOnlineBallots?: number;
+    processingOnlineBallots?: number;
     onlineVotingEnabled?: boolean;
     onlineVotingStart?: Date | null;
     onlineVotingEnd?: Date | null;
     acceptAllRuns?: Array<ResultsAcceptAllOnlineBallotsRunDto> | null;
-    pendingBallots?: Array<ResultsOnlineBallotMonitorItemDto> | null;
-    acceptedBallots?: Array<ResultsOnlineBallotMonitorItemDto> | null;
 };
 
 export type ResultsParticipationRateDto = {

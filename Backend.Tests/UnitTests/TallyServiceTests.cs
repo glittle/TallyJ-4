@@ -1618,23 +1618,10 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task GetMonitorInfoAsync_SplitsPendingAndAcceptedOnlineBallotsByStoredStatus()
+    public async Task GetMonitorInfoAsync_CountsPendingAndAcceptedOnlineBallotsByStoredStatus()
     {
         var election = await CreateTestElectionAsync();
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 4);
-        people[0].FirstName = "Ada";
-        people[0].LastName = "Submitted";
-        people[1].FirstName = "Bea";
-        people[1].LastName = "Processing";
-        people[2].FirstName = "Cara";
-        people[2].LastName = "Accepted";
-        people[3].FirstName = "Dee";
-        people[3].LastName = "LaterSubmit";
-
-        var submittedAt = DateTimeOffset.UtcNow.AddHours(-3);
-        var processingAt = DateTimeOffset.UtcNow.AddHours(-2);
-        var acceptedAt = DateTimeOffset.UtcNow.AddHours(-1);
-        var laterSubmitAt = DateTimeOffset.UtcNow.AddMinutes(-10);
 
         Context.OnlineVotingInfos.AddRange(
             new OnlineVotingInfo
@@ -1642,7 +1629,7 @@ public class TallyServiceTests : ServiceTestBase
                 ElectionGuid = election.ElectionGuid,
                 PersonGuid = people[0].PersonGuid,
                 Status = OnlineBallotStatus.Submitted,
-                WhenStatus = submittedAt,
+                WhenStatus = DateTimeOffset.UtcNow.AddHours(-3),
                 ListPool = "[1,2]",
                 PoolLocked = true
             },
@@ -1651,7 +1638,7 @@ public class TallyServiceTests : ServiceTestBase
                 ElectionGuid = election.ElectionGuid,
                 PersonGuid = people[1].PersonGuid,
                 Status = OnlineBallotStatus.Processing,
-                WhenStatus = processingAt,
+                WhenStatus = DateTimeOffset.UtcNow.AddHours(-2),
                 ListPool = "[3]",
                 PoolLocked = true
             },
@@ -1660,7 +1647,7 @@ public class TallyServiceTests : ServiceTestBase
                 ElectionGuid = election.ElectionGuid,
                 PersonGuid = people[2].PersonGuid,
                 Status = OnlineBallotStatus.Processed,
-                WhenStatus = acceptedAt,
+                WhenStatus = DateTimeOffset.UtcNow.AddHours(-1),
                 ListPool = null,
                 PoolLocked = null,
                 BallotGuid = null
@@ -1670,7 +1657,7 @@ public class TallyServiceTests : ServiceTestBase
                 ElectionGuid = election.ElectionGuid,
                 PersonGuid = people[3].PersonGuid,
                 Status = OnlineBallotStatus.Submitted,
-                WhenStatus = laterSubmitAt,
+                WhenStatus = DateTimeOffset.UtcNow.AddMinutes(-10),
                 ListPool = "[9]",
                 PoolLocked = true
             });
@@ -1680,33 +1667,37 @@ public class TallyServiceTests : ServiceTestBase
         var online = result.OnlineVotingInfo;
 
         Assert.Equal(4, online.TotalOnlineBallots);
+        Assert.Equal(2, online.SubmittedOnlineBallots);
+        Assert.Equal(1, online.ProcessingOnlineBallots);
         Assert.Equal(3, online.PendingOnlineBallots);
         Assert.Equal(1, online.ProcessedOnlineBallots);
-
-        Assert.Equal(3, online.PendingBallots.Count);
-        Assert.Equal(2, online.PendingBallots.Count(b => b.Status == OnlineBallotStatus.Submitted));
-        Assert.Equal(1, online.PendingBallots.Count(b => b.Status == OnlineBallotStatus.Processing));
-        Assert.Contains(online.PendingBallots, b =>
-            b.PersonName.Contains("Submitted") && b.Status == OnlineBallotStatus.Submitted);
-        Assert.Contains(online.PendingBallots, b =>
-            b.PersonName.Contains("Processing") && b.Status == OnlineBallotStatus.Processing);
-        Assert.Contains(online.PendingBallots, b =>
-            b.PersonName.Contains("LaterSubmit") && b.Status == OnlineBallotStatus.Submitted);
-        Assert.Equal("LaterSubmit, Dee", online.PendingBallots[0].PersonName);
-        Assert.DoesNotContain(online.PendingBallots, b => b.PersonName.Contains("Accepted"));
-
-        Assert.Single(online.AcceptedBallots);
-        Assert.Equal(OnlineBallotStatus.Processed, online.AcceptedBallots[0].Status);
-        Assert.Equal("Accepted, Cara", online.AcceptedBallots[0].PersonName);
-        Assert.Equal(acceptedAt, online.AcceptedBallots[0].WhenStatus);
-        Assert.Null(Context.OnlineVotingInfos.Single(o => o.PersonGuid == people[2].PersonGuid).ListPool);
     }
 
     [Fact]
-    public async Task GetMonitorInfoAsync_OnlineBallotLists_DoNotExposeContactOrVotePayload()
+    public void OnlineVotingInfoDto_HasNoPersonNameOrContactFields()
+    {
+        var names = typeof(OnlineVotingInfoDto).GetProperties().Select(p => p.Name).ToList();
+        var forbidden = new[]
+        {
+            "PersonName", "PersonGuid", "PersonId", "VoterId", "Email", "Phone", "Kiosk",
+            "PendingBallots", "AcceptedBallots", "WhenStatus", "RowId"
+        };
+
+        foreach (var name in forbidden)
+        {
+            Assert.DoesNotContain(name, names);
+        }
+
+        Assert.Null(typeof(OnlineVotingInfoDto).Assembly.GetType("Backend.DTOs.Results.OnlineBallotMonitorItemDto"));
+    }
+
+    [Fact]
+    public async Task GetMonitorInfoAsync_OnlineBallotCounts_DoNotIncludePersonIdentity()
     {
         var election = await CreateTestElectionAsync();
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 1);
+        people[0].FirstName = "Ada";
+        people[0].LastName = "Voter";
         people[0].Email = "voter@example.test";
         people[0].Phone = "+15555550100";
         people[0].KioskCode = "Kiosk99";
@@ -1721,14 +1712,15 @@ public class TallyServiceTests : ServiceTestBase
         await Context.SaveChangesAsync();
 
         var result = await _service.GetMonitorInfoAsync(election.ElectionGuid);
-        var row = Assert.Single(result.OnlineVotingInfo.AcceptedBallots);
+        var json = System.Text.Json.JsonSerializer.Serialize(result.OnlineVotingInfo);
 
-        Assert.Equal($"{people[0].LastName}, {people[0].FirstName}", row.PersonName);
-        Assert.DoesNotContain("voter@", row.PersonName);
-        Assert.DoesNotContain("555", row.PersonName);
-        Assert.DoesNotContain("Kiosk", row.PersonName);
-        Assert.Equal(OnlineBallotStatus.Processed, row.Status);
-        Assert.True(row.RowId > 0);
+        Assert.Equal(1, result.OnlineVotingInfo.ProcessedOnlineBallots);
+        Assert.DoesNotContain("Ada", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Voter", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("voter@", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("555", json);
+        Assert.DoesNotContain("Kiosk", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(people[0].PersonGuid.ToString(), json, StringComparison.OrdinalIgnoreCase);
     }
 }
 
