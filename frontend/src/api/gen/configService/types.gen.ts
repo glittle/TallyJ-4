@@ -1643,6 +1643,13 @@ export type ResultsMonitorInfoDto = {
     lastUpdated?: Date;
 };
 
+export type ResultsOnlineBallotMonitorItemDto = {
+    rowId?: number;
+    personName?: string | null;
+    status?: string | null;
+    whenStatus?: Date | null;
+};
+
 export type ResultsOnlineVotingInfoDto = {
     totalOnlineBallots?: number;
     processedOnlineBallots?: number;
@@ -1651,6 +1658,8 @@ export type ResultsOnlineVotingInfoDto = {
     onlineVotingStart?: Date | null;
     onlineVotingEnd?: Date | null;
     acceptAllRuns?: Array<ResultsAcceptAllOnlineBallotsRunDto> | null;
+    pendingBallots?: Array<ResultsOnlineBallotMonitorItemDto> | null;
+    acceptedBallots?: Array<ResultsOnlineBallotMonitorItemDto> | null;
 };
 
 export type ResultsParticipationRateDto = {

@@ -44,6 +44,28 @@ Rows that already have a `BallotGuid` from the older submit-creates-ballot path 
 
 **Reason:** pending votes stay changeable until a teller accepts them; accepted votes become ordinary ballots with no remaining online payload.
 
+## Pending vs accepted list on the monitor
+
+**Status:** active  
+**Evidence:** confirmed (issue #188 remaining slice; Glen; same Status values as Accept-all)
+
+The monitor already counted pending vs accepted from `OnlineVotingInfo.Status`. The teller list uses that same field — not a second table, not the regular `Ballot` created on accept, and not the wiped `ListPool`.
+
+- **Pending list** = `Submitted` or `Processing` (same filter as the pending count and as Accept-all’s expected set).
+- **Accepted list** = `Processed` (same filter as the accepted count).
+- Each row is person display name + `WhenStatus` + the stored Status. After accept the vote payload is gone, so the accepted side cannot show what was on the online ballot and does not re-link to the regular ballot.
+- `Processing` stays on the pending list because Accept-all will retry a claimed row, but it is not labeled as still-editable pending: submit is already blocked (same as the voter UI). Only `Submitted` is still changeable.
+
+v3’s online-voters report mixed status with email/phone. That report still exists for other uses. The monitor list does not include email, phone, kiosk, or person/voter id (CodeQL).
+
+**Rejected alternative:** treat the accepted list as a join to the regular `Ballot` (or keep `BallotGuid` after wipe). Acceptance is not reversible and must not reconnect the online row to the counted ballot.
+
+**Rejected alternative:** invent a second “accepted online ballots” store. Status on `OnlineVotingInfo` is already the source of truth for pending / processing / processed.
+
+**Rejected alternative:** show `Processing` as still-pending/editable. A crashed or in-flight Accept-all has already claimed the row; the voter cannot change it.
+
+**Reason:** tellers need to see who is still waiting and who has already been accepted across multiple Accept-all runs while the window stays open, without reconstructing wiped votes.
+
 ## Accept-all audit record
 
 **Status:** active  

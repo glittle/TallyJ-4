@@ -255,6 +255,108 @@
               </el-tag>
             </el-descriptions-item>
           </el-descriptions>
+          <div
+            class="online-ballot-list"
+            data-testid="pending-online-ballots"
+          >
+            <h3>{{ $t("monitoring.onlineBallots.pendingTitle") }}</h3>
+            <el-table
+              v-if="pendingBallots.length > 0"
+              :data="pendingBallots"
+              stripe
+              data-testid="pending-online-ballots-table"
+              style="width: 100%"
+            >
+              <el-table-column
+                :label="$t('monitoring.onlineBallots.person')"
+                min-width="220"
+              >
+                <template #default="scope">
+                  {{ scope.row.personName }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('monitoring.status')"
+                width="140"
+              >
+                <template #default="scope">
+                  <el-tag
+                    :type="onlineBallotStatusView(scope.row.status).tagType"
+                  >
+                    {{
+                      $t(onlineBallotStatusView(scope.row.status).labelKey)
+                    }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('monitoring.onlineBallots.when')"
+                min-width="180"
+              >
+                <template #default="scope">
+                  {{ formatDateTime(scope.row.whenStatus) }}
+                </template>
+              </el-table-column>
+            </el-table>
+            <p
+              v-else
+              class="online-ballot-list-empty"
+              data-testid="pending-online-ballots-empty"
+            >
+              {{ $t("monitoring.onlineBallots.pendingEmpty") }}
+            </p>
+          </div>
+          <div
+            class="online-ballot-list"
+            data-testid="accepted-online-ballots"
+          >
+            <h3>{{ $t("monitoring.onlineBallots.acceptedTitle") }}</h3>
+            <el-table
+              v-if="acceptedBallots.length > 0"
+              :data="acceptedBallots"
+              stripe
+              data-testid="accepted-online-ballots-table"
+              style="width: 100%"
+            >
+              <el-table-column
+                :label="$t('monitoring.onlineBallots.person')"
+                min-width="220"
+              >
+                <template #default="scope">
+                  {{ scope.row.personName }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('monitoring.status')"
+                width="140"
+              >
+                <template #default="scope">
+                  <el-tag
+                    :type="onlineBallotStatusView(scope.row.status).tagType"
+                  >
+                    {{
+                      $t(onlineBallotStatusView(scope.row.status).labelKey)
+                    }}
+                  </el-tag>
+                </template>
+              </el-table-column>
+              <el-table-column
+                :label="$t('monitoring.onlineBallots.when')"
+                min-width="180"
+              >
+                <template #default="scope">
+                  {{ formatDateTime(scope.row.whenStatus) }}
+                </template>
+              </el-table-column>
+            </el-table>
+            <p
+              v-else
+              class="online-ballot-list-empty"
+              data-testid="accepted-online-ballots-empty"
+            >
+              {{ $t("monitoring.onlineBallots.acceptedEmpty") }}
+            </p>
+          </div>
           <div class="accept-all-history">
             <h3>{{ $t("monitoring.acceptAll.history") }}</h3>
             <el-table
@@ -352,6 +454,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { signalrService } from "../../services/signalrService";
 import { useResultStore } from "../../stores/resultStore";
+import { onlineBallotMonitorStatus } from "../../utils/onlineBallotMonitorStatus";
 import type { AcceptAllOnlineBallotsRunDto, MonitorInfoDto } from "../../types";
 
 const route = useRoute();
@@ -372,6 +475,13 @@ const pendingOnlineCount = computed(
 const acceptAllRuns = computed(
   () => monitorInfo.value?.onlineVotingInfo.acceptAllRuns ?? [],
 );
+const pendingBallots = computed(
+  () => monitorInfo.value?.onlineVotingInfo.pendingBallots ?? [],
+);
+const acceptedBallots = computed(
+  () => monitorInfo.value?.onlineVotingInfo.acceptedBallots ?? [],
+);
+const onlineBallotStatusView = onlineBallotMonitorStatus;
 const refreshInterval = ref<number | null>(null);
 let frontDeskConnection: Awaited<
   ReturnType<typeof signalrService.connectToFrontDeskHub>
@@ -510,7 +620,7 @@ function stopAutoRefresh() {
   }
 }
 
-function formatDateTime(date: string) {
+function formatDateTime(date?: string | Date | null) {
   if (!date) {
     return "-";
   }
@@ -564,6 +674,7 @@ function calculateTurnout(registered: number, ballots: number) {
   gap: 12px;
 }
 
+.online-ballot-list,
 .accept-all-history {
   margin-top: 20px;
 
@@ -574,6 +685,7 @@ function calculateTurnout(registered: number, ballots: number) {
   }
 }
 
+.online-ballot-list-empty,
 .accept-all-history-empty {
   margin: 0;
   color: #909399;

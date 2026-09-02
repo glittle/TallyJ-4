@@ -66,6 +66,34 @@ const mockMonitor: MonitorInfoDto = {
     pendingOnlineBallots: 3,
     onlineVotingEnabled: true,
     acceptAllRuns: [],
+    pendingBallots: [
+      {
+        rowId: 1,
+        personName: "Later, Dee",
+        status: "Submitted",
+        whenStatus: "2026-09-02T12:00:00.000Z",
+      },
+      {
+        rowId: 2,
+        personName: "Processing, Bea",
+        status: "Processing",
+        whenStatus: "2026-09-02T11:00:00.000Z",
+      },
+      {
+        rowId: 3,
+        personName: "Submitted, Ada",
+        status: "Submitted",
+        whenStatus: "2026-09-02T10:00:00.000Z",
+      },
+    ],
+    acceptedBallots: [
+      {
+        rowId: 4,
+        personName: "Accepted, Cara",
+        status: "Processed",
+        whenStatus: "2026-09-02T09:00:00.000Z",
+      },
+    ],
   },
   totalBallots: 10,
   totalVotes: 20,
@@ -100,7 +128,20 @@ const stubs = {
   ElCol: { template: "<div><slot /></div>" },
   ElSkeleton: { template: "<div />" },
   ElAlert: { template: "<div><slot /></div>" },
-  ElTable: { template: "<table><slot /></table>" },
+  ElTable: {
+    props: ["data"],
+    template: `
+      <table>
+        <tbody>
+          <tr v-for="row in data || []" :key="row.rowId || row.when">
+            <td class="person-name">{{ row.personName }}</td>
+            <td class="row-status">{{ row.status }}</td>
+          </tr>
+        </tbody>
+        <slot />
+      </table>
+    `,
+  },
   ElTableColumn: { template: "<td />" },
   ElTag: { template: "<span><slot /></span>" },
   ElDescriptions: { template: "<div><slot /></div>" },
@@ -117,6 +158,34 @@ describe("MonitoringDashboardPage Accept all", () => {
     mockShowError.mockReset();
     mockMonitor.onlineVotingInfo.pendingOnlineBallots = 3;
     mockMonitor.onlineVotingInfo.acceptAllRuns = [];
+    mockMonitor.onlineVotingInfo.pendingBallots = [
+      {
+        rowId: 1,
+        personName: "Later, Dee",
+        status: "Submitted",
+        whenStatus: "2026-09-02T12:00:00.000Z",
+      },
+      {
+        rowId: 2,
+        personName: "Processing, Bea",
+        status: "Processing",
+        whenStatus: "2026-09-02T11:00:00.000Z",
+      },
+      {
+        rowId: 3,
+        personName: "Submitted, Ada",
+        status: "Submitted",
+        whenStatus: "2026-09-02T10:00:00.000Z",
+      },
+    ];
+    mockMonitor.onlineVotingInfo.acceptedBallots = [
+      {
+        rowId: 4,
+        personName: "Accepted, Cara",
+        status: "Processed",
+        whenStatus: "2026-09-02T09:00:00.000Z",
+      },
+    ];
   });
 
   async function mountPage() {
@@ -162,6 +231,54 @@ describe("MonitoringDashboardPage Accept all", () => {
     );
     expect(
       wrapper.find("[data-testid='accept-all-history-empty']").exists(),
+    ).toBe(false);
+  });
+
+  it("lists pending Submitted and Processing rows separately from accepted", async () => {
+    const wrapper = await mountPage();
+    const pending = wrapper.find("[data-testid='pending-online-ballots']");
+    const accepted = wrapper.find("[data-testid='accepted-online-ballots']");
+
+    expect(pending.find("[data-testid='pending-online-ballots-table']").exists()).toBe(
+      true,
+    );
+    expect(pending.text()).toContain("Submitted, Ada");
+    expect(pending.text()).toContain("Processing, Bea");
+    expect(pending.text()).toContain("Processing");
+    expect(pending.text()).not.toContain("Accepted, Cara");
+
+    expect(
+      accepted.find("[data-testid='accepted-online-ballots-table']").exists(),
+    ).toBe(true);
+    expect(accepted.text()).toContain("Accepted, Cara");
+    expect(accepted.text()).toContain("Processed");
+    expect(accepted.text()).not.toContain("Submitted, Ada");
+    expect(
+      wrapper.find("[data-testid='pending-online-ballots-empty']").exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find("[data-testid='accepted-online-ballots-empty']").exists(),
+    ).toBe(false);
+  });
+
+  it("shows empty pending and accepted lists when there are no online rows", async () => {
+    mockMonitor.onlineVotingInfo.pendingOnlineBallots = 0;
+    mockMonitor.onlineVotingInfo.processedOnlineBallots = 0;
+    mockMonitor.onlineVotingInfo.totalOnlineBallots = 0;
+    mockMonitor.onlineVotingInfo.pendingBallots = [];
+    mockMonitor.onlineVotingInfo.acceptedBallots = [];
+    const wrapper = await mountPage();
+    expect(
+      wrapper.find("[data-testid='pending-online-ballots-empty']").exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find("[data-testid='accepted-online-ballots-empty']").exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find("[data-testid='pending-online-ballots-table']").exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find("[data-testid='accepted-online-ballots-table']").exists(),
     ).toBe(false);
   });
 

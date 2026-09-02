@@ -1,5 +1,6 @@
 using Backend;
 using Backend.DTOs.Results;
+using Backend.Entities;
 using Backend.Enumerations;
 using Microsoft.EntityFrameworkCore;
 
@@ -86,24 +87,20 @@ public partial class TallyService
             })
             .ToListAsync();
 
+        var onlineLists = await LoadOnlineBallotListsAsync(electionGuid);
+
         // Get online voting information
         var onlineVotingInfo = new OnlineVotingInfoDto
         {
             OnlineVotingEnabled = election.OnlineWhenOpen.HasValue,
             OnlineVotingStart = election.OnlineWhenOpen,
             OnlineVotingEnd = election.OnlineWhenClose,
-            TotalOnlineBallots = await _context.OnlineVotingInfos
-                .Where(o => o.ElectionGuid == electionGuid)
-                .CountAsync(),
-            ProcessedOnlineBallots = await _context.OnlineVotingInfos
-                .Where(o => o.ElectionGuid == electionGuid && o.Status == Backend.Helpers.OnlineBallotStatus.Processed)
-                .CountAsync(),
-            PendingOnlineBallots = await _context.OnlineVotingInfos
-                .Where(o => o.ElectionGuid == electionGuid
-                            && (o.Status == Backend.Helpers.OnlineBallotStatus.Submitted
-                                || o.Status == Backend.Helpers.OnlineBallotStatus.Processing))
-                .CountAsync(),
-            AcceptAllRuns = await LoadAcceptAllRunsAsync(electionGuid)
+            TotalOnlineBallots = onlineLists.Total,
+            ProcessedOnlineBallots = onlineLists.Accepted.Count,
+            PendingOnlineBallots = onlineLists.Pending.Count,
+            AcceptAllRuns = await LoadAcceptAllRunsAsync(electionGuid),
+            PendingBallots = onlineLists.Pending,
+            AcceptedBallots = onlineLists.Accepted
         };
 
         var totalBallots = await _context.Ballots
@@ -140,6 +137,73 @@ public partial class TallyService
 
         // Could potentially update a cache or in-memory store here if needed
         // For now, just log the contact
+    }
+
+    /// <summary>
+    /// Pending and accepted lists share the stored <c>OnlineVotingInfo.Status</c>
+    /// with the monitor counts. Name columns only — no email, phone, kiosk, or
+    /// vote payload, and no link to the regular ballot created on accept.
+    /// </summary>
+    private async Task<(
+        int Total,
+        List<OnlineBallotMonitorItemDto> Pending,
+        List<OnlineBallotMonitorItemDto> Accepted)> LoadOnlineBallotListsAsync(Guid electionGuid)
+    {
+        var votingRows = await _context.OnlineVotingInfos
+            .AsNoTracking()
+            .Where(o => o.ElectionGuid == electionGuid)
+            .Select(o => new { o.RowId, o.PersonGuid, o.Status, o.WhenStatus })
+            .ToListAsync();
+
+        var personGuids = votingRows.Select(v => v.PersonGuid).Distinct().ToList();
+        var people = await _context.People
+            .AsNoTracking()
+            .Where(p => p.ElectionGuid == electionGuid && personGuids.Contains(p.PersonGuid))
+            .Select(p => new
+            {
+                p.PersonGuid,
+                p.LastName,
+                p.FirstName,
+                p.OtherLastNames,
+                p.OtherNames,
+                p.OtherInfo
+            })
+            .ToListAsync();
+        var peopleByGuid = people.ToDictionary(p => p.PersonGuid);
+
+        var items = votingRows
+            .Select(r =>
+            {
+                peopleByGuid.TryGetValue(r.PersonGuid, out var person);
+                var personName = person == null
+                    ? string.Empty
+                    : Backend.Helpers.PersonNameHelper.ComputeFullName(new Person
+                    {
+                        LastName = person.LastName,
+                        FirstName = person.FirstName,
+                        OtherLastNames = person.OtherLastNames,
+                        OtherNames = person.OtherNames,
+                        OtherInfo = person.OtherInfo
+                    }) ?? string.Empty;
+                return new OnlineBallotMonitorItemDto
+                {
+                    RowId = r.RowId,
+                    PersonName = personName,
+                    Status = r.Status,
+                    WhenStatus = r.WhenStatus
+                };
+            })
+            .OrderByDescending(i => i.WhenStatus)
+            .ThenBy(i => i.PersonName, StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        return (
+            items.Count,
+            items.Where(i =>
+                    Backend.Helpers.OnlineBallotStatus.IsSubmitted(i.Status)
+                    || Backend.Helpers.OnlineBallotStatus.IsProcessing(i.Status))
+                .ToList(),
+            items.Where(i => Backend.Helpers.OnlineBallotStatus.IsProcessed(i.Status)).ToList());
     }
 
     private async Task<List<AcceptAllOnlineBallotsRunDto>> LoadAcceptAllRunsAsync(Guid electionGuid)
