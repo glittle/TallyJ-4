@@ -85,10 +85,11 @@ export function namePartsFromRaw(raw: OnlineRawVote): {
 }
 
 /**
- * True when this vote is an online typed name ("random name") that a teller
- * still has to match. Paper teller-entered votes have no `onlineVoteRaw` and
- * never qualify. Matching keeps the original text, so a person or spoil reason
- * is what clears the mark — not the absence of raw text.
+ * True when the vote still has unresolved `OnlineVoteRaw`: truthy raw text,
+ * no person, no spoil reason, and status Raw or Ok. Online typed names and
+ * CDN/import mismatches both store that payload. Paper votes without
+ * `onlineVoteRaw` never qualify. Matching keeps the original text, so a
+ * person or spoil reason is what clears the mark — not the absence of raw text.
  */
 export function isUnresolvedRawVote(vote: VoteDto | null | undefined): boolean {
   if (!vote?.onlineVoteRaw) {

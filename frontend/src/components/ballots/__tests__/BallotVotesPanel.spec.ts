@@ -12,7 +12,7 @@ const t = (key: string) => {
     "ballots.findRawNameHint": "Widen the search",
     "ballots.needsNameResolution": "Needs matching",
     "ballots.needsNameResolutionHint":
-      "The voter typed this name on their online ballot.",
+      "This name is not matched yet. Find or add the person.",
     "ballots.changeRawName": "Change",
     "ballots.dragToReorder": "Drag to reorder",
     "ballots.duplicateWarning": "Duplicate",
@@ -59,8 +59,8 @@ function mountPanel(votes: (VoteDto | null)[]) {
   });
 }
 
-describe("BallotVotesPanel online typed-name resolution", () => {
-  it("marks an unmatched online typed name and not a matched one", () => {
+describe("BallotVotesPanel unresolved OnlineVoteRaw", () => {
+  it("marks an unmatched raw line and not a matched or paper line", () => {
     const unmatched = vote({ rowId: 11 });
     const matched = vote({
       rowId: 12,

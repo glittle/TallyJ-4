@@ -108,11 +108,22 @@ describe("namePartsFromRaw", () => {
 });
 
 describe("isUnresolvedRawVote", () => {
-  it("is true for an online typed name with no person", () => {
+  it("is true for unresolved OnlineVoteRaw with no person", () => {
     expect(isUnresolvedRawVote(vote())).toBe(true);
   });
 
-  it("is false after a teller matches the typed name to a person", () => {
+  it("is true for an import-style OnlineVoteRaw with no person", () => {
+    expect(
+      isUnresolvedRawVote(
+        vote({
+          onlineVoteRaw:
+            '{"First":"Cyrus","Last":"Rus","OtherInfo":"cyrus rus"}',
+        }),
+      ),
+    ).toBe(true);
+  });
+
+  it("is false after a person is assigned to the raw vote", () => {
     expect(
       isUnresolvedRawVote(
         vote({ personGuid: "p1", statusCode: "ok", personFullName: "Ada" }),
@@ -120,7 +131,7 @@ describe("isUnresolvedRawVote", () => {
     ).toBe(false);
   });
 
-  it("is false for a paper teller vote with no online typed name", () => {
+  it("is false when onlineVoteRaw is missing", () => {
     expect(
       isUnresolvedRawVote(
         vote({
@@ -133,7 +144,7 @@ describe("isUnresolvedRawVote", () => {
     ).toBe(false);
   });
 
-  it("is false after the typed name is spoiled without a person", () => {
+  it("is false after the raw line is spoiled without a person", () => {
     expect(
       isUnresolvedRawVote(
         vote({

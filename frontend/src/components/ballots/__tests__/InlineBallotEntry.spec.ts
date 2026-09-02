@@ -17,7 +17,7 @@ const mockT = (key: string, values?: Record<string, string | number>) => {
     "ballots.findRawNameHint": "Click again to widen the search",
     "ballots.needsNameResolution": "Needs matching",
     "ballots.needsNameResolutionHint":
-      "The voter typed this name on their online ballot.",
+      "This name is not matched yet. Find or add the person.",
     "ballots.changeRawName": "Change",
     "ballots.searchPerson": "Add a name",
     "ballots.namesOnBallot": "Names on the ballot",
