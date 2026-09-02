@@ -2,14 +2,14 @@ import { describe, expect, it } from "vitest";
 import { onlineBallotMonitorStatus } from "../onlineBallotMonitorStatus";
 
 describe("onlineBallotMonitorStatus", () => {
-  it("treats Submitted as still-editable pending", () => {
+  it("treats Submitted as still changeable", () => {
     const view = onlineBallotMonitorStatus("Submitted");
     expect(view.stillEditable).toBe(true);
     expect(view.labelKey).toBe("monitoring.onlineBallots.status.Submitted");
     expect(view.tagType).toBe("info");
   });
 
-  it("does not treat Processing as still-editable pending", () => {
+  it("does not treat Processing as still changeable", () => {
     const view = onlineBallotMonitorStatus("Processing");
     expect(view.stillEditable).toBe(false);
     expect(view.labelKey).toBe("monitoring.onlineBallots.status.Processing");
@@ -23,7 +23,7 @@ describe("onlineBallotMonitorStatus", () => {
     expect(view.tagType).toBe("success");
   });
 
-  it("does not treat an unknown status as still-editable pending", () => {
+  it("does not treat an unknown status as still changeable", () => {
     const view = onlineBallotMonitorStatus("Draft");
     expect(view.stillEditable).toBe(false);
     expect(view.labelKey).toBe("monitoring.onlineBallots.status.unknown");

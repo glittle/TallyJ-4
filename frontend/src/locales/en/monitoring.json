@@ -29,7 +29,7 @@
   "monitoring.onlineBallots.countsOnly": "Counts only. Voter names are not shown.",
   "monitoring.onlineBallots.status.Processed": "Accepted",
   "monitoring.onlineBallots.status.Processing": "Processing",
-  "monitoring.onlineBallots.status.Submitted": "Pending",
+  "monitoring.onlineBallots.status.Submitted": "Still changeable",
   "monitoring.onlineBallots.status.unknown": "Unknown",
   "monitoring.pendingOnlineBallots": "Pending",
   "monitoring.processedOnlineBallots": "Accepted",

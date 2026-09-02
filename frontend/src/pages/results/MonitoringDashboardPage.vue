@@ -264,6 +264,7 @@
               {{ $t("monitoring.onlineBallots.countsOnly") }}
             </p>
             <el-descriptions :column="3" border>
+              <!-- Submitted only. Summary "Pending" is Submitted + Processing. -->
               <el-descriptions-item
                 :label="$t('monitoring.onlineBallots.status.Submitted')"
               >

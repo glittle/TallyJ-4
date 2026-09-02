@@ -9,8 +9,9 @@ export interface OnlineBallotMonitorStatusView {
 
 /**
  * Teller-facing view of OnlineVotingInfo.Status.
- * Processing is a persisted Accept-all claim (submit already blocked), not
- * still-editable pending. Processed is accepted. Submitted is pending.
+ * Processing is a persisted Accept-all claim (submit already blocked).
+ * Processed is accepted. Submitted is still changeable — not the same as
+ * summary Pending (Submitted + Processing).
  */
 export function onlineBallotMonitorStatus(
   status: string | undefined,

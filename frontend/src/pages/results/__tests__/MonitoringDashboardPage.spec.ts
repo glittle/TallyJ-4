@@ -183,6 +183,21 @@ describe("MonitoringDashboardPage Accept all", () => {
     ).toBe(false);
   });
 
+  it("does not label Submitted-only as Pending", async () => {
+    const wrapper = await mountPage();
+    const submittedLabel = i18n.global.t(
+      "monitoring.onlineBallots.status.Submitted",
+    );
+    const pendingLabel = i18n.global.t("monitoring.pendingOnlineBallots");
+
+    expect(pendingLabel).toBe("Pending");
+    expect(submittedLabel).toBe("Still changeable");
+    expect(submittedLabel).not.toBe(pendingLabel);
+    expect(
+      wrapper.find("[data-testid='online-ballot-status-breakdown']").exists(),
+    ).toBe(true);
+  });
+
   it("shows Submitted, Processing, and Accepted counts without voter names", async () => {
     const wrapper = await mountPage();
     const breakdown = wrapper.find(
