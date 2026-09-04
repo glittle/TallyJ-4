@@ -102,7 +102,7 @@ describe("PublicLayout", () => {
         stubs: layoutStubs,
       },
     });
-    expect(wrapper.classes()).toContain("public-layout");
+    expect(wrapper.find(".public-layout").exists()).toBe(true);
     expect(wrapper.find(".public-header").exists()).toBe(true);
     expect(wrapper.find(".public-content").exists()).toBe(true);
   });
