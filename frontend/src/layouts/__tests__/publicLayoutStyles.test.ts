@@ -15,9 +15,9 @@ describe("PublicLayout styles", () => {
     expect(source).toContain("justify-self: start");
   });
 
-  it("styles the Beta mark with the Latin primary stack", () => {
-    expect(source).toContain(".version-beta");
-    expect(source).toContain("font-family: var(--font-family-primary)");
-    expect(source).toContain("font-weight: var(--font-weight-semibold)");
+  it("does not special-case Beta with a separate mark span", () => {
+    expect(source).not.toContain("version-beta");
+    expect(source).not.toContain("splitVersionDisplay");
+    expect(source).toContain("$t(\"common.versionDisplay\")");
   });
 });

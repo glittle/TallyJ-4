@@ -79,7 +79,7 @@ describe("PublicLayout", () => {
     });
     expect(wrapper.text()).toContain("Version 4 Beta");
     expect(wrapper.text()).toContain(VERSION);
-    expect(wrapper.find(".version-beta").text()).toBe("Beta");
+    expect(wrapper.find(".version-beta").exists()).toBe(false);
   });
 
   it("keeps the theme control at the inline end of the header", () => {

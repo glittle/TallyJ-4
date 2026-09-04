@@ -8,18 +8,14 @@ import LanguageSelector from "../components/common/LanguageSelector.vue";
 import ThemeSelector from "../components/common/ThemeSelector.vue";
 import { getBuildDate, getBuildDateBadi, VERSION } from "../components/version";
 import { localeTextDirection } from "../locales/localeDirection";
-import { splitVersionDisplay } from "../locales/versionDisplay";
 
 const router = useRouter();
-const { locale, t } = useI18n();
+const { locale } = useI18n();
 
 // Version tooltip - dynamically localized
 const versionName = computed(() => VERSION);
 const versionDate = computed(() => getBuildDate());
 const versionDateBadi = computed(() => getBuildDateBadi());
-const versionDisplayParts = computed(() =>
-  splitVersionDisplay(t("common.versionDisplay")),
-);
 const textDirection = computed(() => localeTextDirection(locale.value));
 
 // Check if we're on the landing page
@@ -40,13 +36,7 @@ const handleLogoClick = () => {
           <h2>
             <img :src="logoSrc" :alt="$t('common.logoAlt')" />
             <span>
-              <div class="version-display">
-                <span>{{ versionDisplayParts.before }}</span>
-                <span v-if="versionDisplayParts.mark" class="version-beta">{{
-                  versionDisplayParts.mark
-                }}</span>
-                <span>{{ versionDisplayParts.after }}</span>
-              </div>
+              <div>{{ $t("common.versionDisplay") }}</div>
               <div
                 class="versionName"
                 :title="versionDate + ' - ' + versionDateBadi"
@@ -79,11 +69,6 @@ const handleLogoClick = () => {
   .versionName {
     font-size: 0.5em;
     color: var(--color-text-secondary);
-  }
-
-  .version-beta {
-    font-weight: var(--font-weight-semibold);
-    font-family: var(--font-family-primary);
   }
 
   .public-header {
