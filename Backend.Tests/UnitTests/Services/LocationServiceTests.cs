@@ -100,6 +100,68 @@ public class LocationServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task UpdateLocationAsync_Paper_WithoutName_DoesNotClearStoredName()
+    {
+        var locationGuid = Guid.NewGuid();
+        Context.Locations.Add(new Location
+        {
+            LocationGuid = locationGuid,
+            ElectionGuid = ElectionGuid,
+            Name = "Hall A",
+            ContactInfo = "keep me",
+            SortOrder = 1,
+            LocationTypeCode = nameof(LocationType.Manual),
+            LocationTallyStatus = LocationTallyStatus.NotStarted,
+            BallotsCollected = 0
+        });
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _service.UpdateLocationAsync(locationGuid, new UpdateLocationDto
+            {
+                Name = null,
+                SortOrder = 5
+            }));
+
+        Assert.Contains("name is required", ex.Message, StringComparison.OrdinalIgnoreCase);
+
+        var stored = Context.Locations.Single(l => l.LocationGuid == locationGuid);
+        Assert.Equal("Hall A", stored.Name);
+        Assert.Equal("keep me", stored.ContactInfo);
+        Assert.Equal(1, stored.SortOrder);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("   ")]
+    public async Task UpdateLocationAsync_Paper_WhitespaceName_DoesNotClearStoredName(string emptyName)
+    {
+        var locationGuid = Guid.NewGuid();
+        Context.Locations.Add(new Location
+        {
+            LocationGuid = locationGuid,
+            ElectionGuid = ElectionGuid,
+            Name = "Hall A",
+            SortOrder = 1,
+            LocationTypeCode = nameof(LocationType.Manual),
+            LocationTallyStatus = LocationTallyStatus.NotStarted,
+            BallotsCollected = 0
+        });
+        await Context.SaveChangesAsync();
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _service.UpdateLocationAsync(locationGuid, new UpdateLocationDto
+            {
+                Name = emptyName,
+                SortOrder = 5
+            }));
+
+        var stored = Context.Locations.Single(l => l.LocationGuid == locationGuid);
+        Assert.Equal("Hall A", stored.Name);
+        Assert.Equal(1, stored.SortOrder);
+    }
+
+    [Fact]
     public async Task CreateLocationAsync_DoesNotCreateOnlineType_EvenWhenNamedOnline()
     {
         var created = await _service.CreateLocationAsync(new CreateLocationDto

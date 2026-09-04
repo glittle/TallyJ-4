@@ -14,8 +14,9 @@ public class UpdateLocationDtoValidator : AbstractValidator<UpdateLocationDto>
     /// </summary>
     public UpdateLocationDtoValidator()
     {
-        // Name is omitted when updating the reserved Online location (sort
-        // order only). Paper locations still send a name from the form.
+        // Online sort-only updates omit Name. Non-Online updates must still
+        // send a name; LocationService rejects empty Name on that path
+        // because this validator has no location type.
         RuleFor(x => x.Name)
             .MaximumLength(50)
             .When(x => !string.IsNullOrEmpty(x.Name))

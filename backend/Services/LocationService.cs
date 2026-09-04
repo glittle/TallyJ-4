@@ -142,6 +142,13 @@ public class LocationService : ILocationService
         }
         else
         {
+            // Validator cannot see LocationType. Paper/imported rows still
+            // require a name; omitting it would clear Location.Name on copy.
+            if (string.IsNullOrWhiteSpace(updateDto.Name))
+            {
+                throw new InvalidOperationException("Location name is required");
+            }
+
             updateDto.CopyMatchingPropertiesTo(location, ignoreNulls: false);
         }
 
