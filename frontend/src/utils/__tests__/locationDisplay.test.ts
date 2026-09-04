@@ -5,8 +5,7 @@ import {
 } from "../locationDisplay";
 
 describe("formatLocationLabel", () => {
-  const t = (key: string) =>
-    key === "locations.typeOnline" ? "آنلاین" : key;
+  const t = (key: string) => (key === "locations.typeOnline" ? "آنلاین" : key);
 
   it("uses i18n for an Online-typed location regardless of name", () => {
     expect(
@@ -28,8 +27,7 @@ describe("formatLocationLabel", () => {
 });
 
 describe("formatLocationLabelForGuid", () => {
-  const t = (key: string) =>
-    key === "locations.typeOnline" ? "آنلاین" : key;
+  const t = (key: string) => (key === "locations.typeOnline" ? "آنلاین" : key);
 
   const locations = [
     {

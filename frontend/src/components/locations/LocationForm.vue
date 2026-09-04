@@ -41,7 +41,9 @@ const canDelete = computed(
   () => Boolean(props.showDelete) && !isOnlineLocation.value,
 );
 const onlineDisplayName = computed(() =>
-  props.location ? formatLocationLabel(t, props.location) : t("locations.typeOnline"),
+  props.location
+    ? formatLocationLabel(t, props.location)
+    : t("locations.typeOnline"),
 );
 
 const form = reactive({
@@ -233,6 +235,7 @@ function handleCancel() {
         <el-form-item
           :label="$t('locations.form.contactInfo')"
           prop="contactInfo"
+          data-testid="location-contact"
         >
           <el-input
             v-model="form.contactInfo"
@@ -242,7 +245,11 @@ function handleCancel() {
           />
         </el-form-item>
 
-        <el-form-item :label="$t('locations.form.longitude')" prop="longitude">
+        <el-form-item
+          :label="$t('locations.form.longitude')"
+          prop="longitude"
+          data-testid="location-longitude"
+        >
           <el-input
             v-model="form.longitude"
             :placeholder="$t('locations.form.longitudePlaceholder')"
@@ -254,7 +261,11 @@ function handleCancel() {
           </div>
         </el-form-item>
 
-        <el-form-item :label="$t('locations.form.latitude')" prop="latitude">
+        <el-form-item
+          :label="$t('locations.form.latitude')"
+          prop="latitude"
+          data-testid="location-latitude"
+        >
           <el-input
             v-model="form.latitude"
             :placeholder="$t('locations.form.latitudePlaceholder')"
@@ -267,7 +278,11 @@ function handleCancel() {
         </el-form-item>
       </template>
 
-      <el-form-item :label="$t('locations.form.sortOrder')" prop="sortOrder">
+      <el-form-item
+        :label="$t('locations.form.sortOrder')"
+        prop="sortOrder"
+        data-testid="location-sort-order"
+      >
         <el-input-number
           v-model="form.sortOrder"
           :min="0"

@@ -134,11 +134,18 @@ describe("LocationForm", () => {
     expect(wrapper.find('[data-testid="online-location-name"]').text()).toBe(
       "Online",
     );
-    expect(wrapper.find("input").exists()).toBe(false);
-    expect(wrapper.text()).not.toContain("Contact Info");
-    expect(wrapper.text()).not.toContain("Longitude");
-    expect(wrapper.text()).not.toContain("Latitude");
-    expect(wrapper.text()).toContain("Sort Order");
+    expect(wrapper.find('[data-testid="location-contact"]').exists()).toBe(
+      false,
+    );
+    expect(wrapper.find('[data-testid="location-longitude"]').exists()).toBe(
+      false,
+    );
+    expect(wrapper.find('[data-testid="location-latitude"]').exists()).toBe(
+      false,
+    );
+    expect(wrapper.find('[data-testid="location-sort-order"]').exists()).toBe(
+      true,
+    );
     expect(wrapper.text()).toContain("Only the sort order can be changed");
     expect(wrapper.text()).not.toContain("Delete");
   });
@@ -149,8 +156,12 @@ describe("LocationForm", () => {
     expect(wrapper.find('[data-testid="online-location-name"]').exists()).toBe(
       false,
     );
-    expect(wrapper.text()).toContain("Contact Info");
-    expect(wrapper.text()).toContain("Longitude");
+    expect(wrapper.find('[data-testid="location-contact"]').exists()).toBe(
+      true,
+    );
+    expect(wrapper.find('[data-testid="location-longitude"]').exists()).toBe(
+      true,
+    );
     expect(wrapper.text()).toContain("Delete");
   });
 

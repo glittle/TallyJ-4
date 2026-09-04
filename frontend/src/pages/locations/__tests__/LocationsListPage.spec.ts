@@ -104,9 +104,8 @@ describe("LocationsListPage", () => {
                   class="location-row"
                   :class="typeof rowClassName === 'function' ? rowClassName({ row }) : ''"
                   :data-location-guid="row.locationGuid"
-                >
-                  <slot />
-                </div>
+                />
+                <slot />
               </div>
             `,
           },
