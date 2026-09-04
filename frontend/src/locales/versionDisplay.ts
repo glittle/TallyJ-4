@@ -1,7 +1,7 @@
 /**
- * Latin "Beta" in `common.versionDisplay` is left untranslated on purpose
- * (copy polish is parked). Isolate it so its font weight stays the same
- * when the surrounding string uses an Arabic/Persian font stack.
+ * Isolate Latin "Beta" when it still appears in `common.versionDisplay`
+ * so its weight uses the Latin primary stack. Persian now uses بتا
+ * (no Latin mark). Other locales, including Arabic, still use Latin Beta.
  */
 export const VERSION_BETA_MARK = "Beta";
 
