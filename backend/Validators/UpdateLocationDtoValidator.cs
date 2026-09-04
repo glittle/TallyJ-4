@@ -14,10 +14,11 @@ public class UpdateLocationDtoValidator : AbstractValidator<UpdateLocationDto>
     /// </summary>
     public UpdateLocationDtoValidator()
     {
+        // Name is omitted when updating the reserved Online location (sort
+        // order only). Paper locations still send a name from the form.
         RuleFor(x => x.Name)
-            .NotEmpty()
-            .WithMessage("Location name is required")
             .MaximumLength(50)
+            .When(x => !string.IsNullOrEmpty(x.Name))
             .WithMessage("Location name cannot exceed 50 characters");
 
         RuleFor(x => x.ContactInfo)

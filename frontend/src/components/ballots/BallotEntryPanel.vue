@@ -16,6 +16,8 @@ import { useElectionStore } from "../../stores/electionStore";
 import { usePeopleStore } from "../../stores/peopleStore";
 import type { CreateVoteDto, VoteDto } from "../../types";
 import { formatComputerCodeLabel } from "@/utils/ballotDisplayCode";
+import { formatLocationLabelForGuid } from "@/utils/locationDisplay";
+import { useLocationStore } from "../../stores/locationStore";
 
 const emit = defineEmits<{
   "ballot-created": [ballotGuid: string];
@@ -47,6 +49,7 @@ const { t } = useI18n();
 const ballotStore = useBallotStore();
 const electionStore = useElectionStore();
 const peopleStore = usePeopleStore();
+const locationStore = useLocationStore();
 const { showSuccessMessage, showErrorMessage, showInfoMessage } =
   useNotifications();
 
@@ -54,6 +57,14 @@ const panelLoading = ref(false);
 const voteResyncKey = ref(0);
 const ballot = computed(() => ballotStore.currentBallot);
 const election = computed(() => electionStore.currentElection);
+const ballotLocationLabel = computed(() =>
+  formatLocationLabelForGuid(
+    t,
+    locationStore.locations,
+    ballot.value?.locationGuid,
+    ballot.value?.locationName,
+  ),
+);
 
 function hasCachedPanelData(): boolean {
   return (
@@ -218,7 +229,7 @@ async function handleVotesReordered(voteRowIds: number[]) {
       <div v-if="showMetadata" class="ballot-info">
         <el-descriptions :column="2" border>
           <el-descriptions-item :label="$t('ballots.location')">
-            {{ ballot.locationName }}
+            {{ ballotLocationLabel }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('ballots.computer')">
             {{ formatComputerCodeLabel($t, ballot.computerCode) }}

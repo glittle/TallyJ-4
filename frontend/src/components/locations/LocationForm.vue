@@ -4,6 +4,7 @@ import { useNotifications } from "@/composables/useNotifications";
 import { type FormInstance, type FormRules, ElMessageBox } from "element-plus";
 import { computed, reactive, ref, watch } from "vue";
 import { isOnlineLocationType } from "@/utils/ballotStartRequirements";
+import { formatLocationLabel } from "@/utils/locationDisplay";
 import { useI18n } from "vue-i18n";
 import { useLocationStore } from "../../stores/locationStore";
 import type {
@@ -33,10 +34,14 @@ const { handleApiError } = useApiErrorHandler();
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
 const deleting = ref(false);
+const isOnlineLocation = computed(() =>
+  isOnlineLocationType(props.location?.locationType),
+);
 const canDelete = computed(
-  () =>
-    Boolean(props.showDelete) &&
-    !isOnlineLocationType(props.location?.locationType),
+  () => Boolean(props.showDelete) && !isOnlineLocation.value,
+);
+const onlineDisplayName = computed(() =>
+  props.location ? formatLocationLabel(t, props.location) : t("locations.typeOnline"),
 );
 
 const form = reactive({
@@ -125,13 +130,15 @@ async function handleSubmit() {
     submitting.value = true;
     try {
       if (props.isEdit && props.location) {
-        const dto: UpdateLocationDto = {
-          name: form.name,
-          contactInfo: form.contactInfo || undefined,
-          longitude: form.longitude || undefined,
-          latitude: form.latitude || undefined,
-          sortOrder: form.sortOrder,
-        };
+        const dto: UpdateLocationDto = isOnlineLocation.value
+          ? { sortOrder: form.sortOrder }
+          : {
+              name: form.name,
+              contactInfo: form.contactInfo || undefined,
+              longitude: form.longitude || undefined,
+              latitude: form.latitude || undefined,
+              sortOrder: form.sortOrder,
+            };
         await locationStore.updateLocation(
           props.electionGuid,
           props.location.locationGuid,
@@ -208,48 +215,57 @@ function handleCancel() {
       label-width="150px"
       label-position="left"
     >
-      <el-form-item :label="$t('locations.form.name')" prop="name">
+      <el-form-item
+        v-if="isOnlineLocation"
+        :label="$t('locations.form.name')"
+        data-testid="online-location-name"
+      >
+        <div class="location-form__readonly-name">{{ onlineDisplayName }}</div>
+      </el-form-item>
+      <el-form-item v-else :label="$t('locations.form.name')" prop="name">
         <el-input
           v-model="form.name"
           :placeholder="$t('locations.form.namePlaceholder')"
         />
       </el-form-item>
 
-      <el-form-item
-        :label="$t('locations.form.contactInfo')"
-        prop="contactInfo"
-      >
-        <el-input
-          v-model="form.contactInfo"
-          type="textarea"
-          :rows="3"
-          :placeholder="$t('locations.form.contactInfoPlaceholder')"
-        />
-      </el-form-item>
-
-      <el-form-item :label="$t('locations.form.longitude')" prop="longitude">
-        <el-input
-          v-model="form.longitude"
-          :placeholder="$t('locations.form.longitudePlaceholder')"
+      <template v-if="!isOnlineLocation">
+        <el-form-item
+          :label="$t('locations.form.contactInfo')"
+          prop="contactInfo"
         >
-          <template #append>°</template>
-        </el-input>
-        <div class="form-help-text">
-          {{ $t("locations.form.longitudeHelp") }}
-        </div>
-      </el-form-item>
+          <el-input
+            v-model="form.contactInfo"
+            type="textarea"
+            :rows="3"
+            :placeholder="$t('locations.form.contactInfoPlaceholder')"
+          />
+        </el-form-item>
 
-      <el-form-item :label="$t('locations.form.latitude')" prop="latitude">
-        <el-input
-          v-model="form.latitude"
-          :placeholder="$t('locations.form.latitudePlaceholder')"
-        >
-          <template #append>°</template>
-        </el-input>
-        <div class="form-help-text">
-          {{ $t("locations.form.latitudeHelp") }}
-        </div>
-      </el-form-item>
+        <el-form-item :label="$t('locations.form.longitude')" prop="longitude">
+          <el-input
+            v-model="form.longitude"
+            :placeholder="$t('locations.form.longitudePlaceholder')"
+          >
+            <template #append>°</template>
+          </el-input>
+          <div class="form-help-text">
+            {{ $t("locations.form.longitudeHelp") }}
+          </div>
+        </el-form-item>
+
+        <el-form-item :label="$t('locations.form.latitude')" prop="latitude">
+          <el-input
+            v-model="form.latitude"
+            :placeholder="$t('locations.form.latitudePlaceholder')"
+          >
+            <template #append>°</template>
+          </el-input>
+          <div class="form-help-text">
+            {{ $t("locations.form.latitudeHelp") }}
+          </div>
+        </el-form-item>
+      </template>
 
       <el-form-item :label="$t('locations.form.sortOrder')" prop="sortOrder">
         <el-input-number
@@ -259,7 +275,11 @@ function handleCancel() {
           style="width: 100%"
         />
         <div class="form-help-text">
-          {{ $t("locations.form.sortOrderHelp") }}
+          {{
+            isOnlineLocation
+              ? $t("locations.form.onlineSortOnlyHelp")
+              : $t("locations.form.sortOrderHelp")
+          }}
         </div>
       </el-form-item>
     </el-form>
@@ -285,6 +305,13 @@ function handleCancel() {
 
 <style lang="less">
 .location-form {
+  .location-form__readonly-name {
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+  }
+
   .form-help-text {
     font-size: 12px;
     color: var(--el-text-color-secondary);

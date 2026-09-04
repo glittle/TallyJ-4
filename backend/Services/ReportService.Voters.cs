@@ -174,7 +174,7 @@ public partial class ReportService
 
         var locationRows = locations
             .GroupJoin(people, l => l.LocationGuid, p => p.VotingLocationGuid ?? Guid.Empty,
-                (l, pList) => BuildLocationRow(l.Name, pList.ToList()))
+                (l, pList) => BuildLocationRow(FormatLocationName(l), pList.ToList()))
             .OrderBy(r => r.LocationName)
             .ToList();
 
@@ -222,7 +222,7 @@ public partial class ReportService
         var locationGroups = people
             .Where(p => p.VotingLocationGuid.HasValue)
             .Join(locations, p => p.VotingLocationGuid, l => l.LocationGuid, (p, l) => new { l, p })
-            .GroupBy(x => x.l.Name)
+            .GroupBy(x => FormatLocationName(x.l))
             .OrderBy(g => g.Key)
             .Select(g => new LocationAreaGroupDto
             {

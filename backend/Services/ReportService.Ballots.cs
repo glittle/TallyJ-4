@@ -46,7 +46,7 @@ public partial class ReportService
 
         var ballotItems = ballots.Select(b =>
         {
-            var locName = hasMultipleLocations ? b.Location.Name : "";
+            var locName = hasMultipleLocations ? FormatLocationName(b.Location) : "";
             var votes = b.Votes
                 .OrderBy(v => isSingleName ? (v.Person?.FullNameFl ?? "") : v.PositionOnBallot.ToString("0000"))
                 .Select(v => new BallotVoteDto
@@ -213,7 +213,7 @@ public partial class ReportService
             Ballots = g.Select(x =>
             {
                 var b = x.Ballot;
-                var locName = hasMultipleLocations ? b.Location.Name : "";
+                var locName = hasMultipleLocations ? FormatLocationName(b.Location) : "";
                 return new BallotReportItemDto
                 {
                     BallotCode = b.BallotCode ?? "",
@@ -265,7 +265,7 @@ public partial class ReportService
             Ballots = ballots.Select(b => new BallotSummaryItemDto
             {
                 BallotCode = b.BallotCode ?? "",
-                Location = hasMultipleLocations ? b.Location.Name : "",
+                Location = hasMultipleLocations ? FormatLocationName(b.Location) : "",
                 LocationId = b.Location.RowId,
                 BallotId = b.RowId,
                 StatusCode = b.StatusCode.ToString(),

@@ -100,6 +100,9 @@ public class LocationService : ILocationService
         location.LocationGuid = Guid.NewGuid();
         location.LocationTallyStatus = LocationTallyStatus.NotStarted;
         location.BallotsCollected = 0;
+        // Teller-created rows are never the reserved Online type. That row is
+        // added only by OnlineLocationHelper when online voting is enabled.
+        location.LocationTypeCode = null;
 
         _context.Locations.Add(location);
         await _context.SaveChangesAsync();
@@ -131,7 +134,17 @@ public class LocationService : ILocationService
             return null;
         }
 
-        updateDto.CopyMatchingPropertiesTo(location, ignoreNulls: false);
+        if (LocationDisplayHelper.IsOnlineLocation(location))
+        {
+            // Name, contact, and coordinates are not identity and are not
+            // editable. Only sort order may change.
+            location.SortOrder = updateDto.SortOrder;
+        }
+        else
+        {
+            updateDto.CopyMatchingPropertiesTo(location, ignoreNulls: false);
+        }
+
         await _context.SaveChangesAsync();
 
         var locationDto = MapToLocationDto(location);
