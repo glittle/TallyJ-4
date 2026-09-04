@@ -44,6 +44,10 @@ const layoutStubs = {
     name: "RouterView",
     template: "<div class='router-view-stub' />",
   },
+  ElConfigProvider: {
+    name: "ElConfigProvider",
+    template: "<div class='el-config-provider-stub'><slot /></div>",
+  },
 };
 
 describe("PublicLayout", () => {
@@ -75,6 +79,20 @@ describe("PublicLayout", () => {
     });
     expect(wrapper.text()).toContain("Version 4 Beta");
     expect(wrapper.text()).toContain(VERSION);
+    expect(wrapper.find(".version-beta").text()).toBe("Beta");
+  });
+
+  it("keeps the theme control at the inline end of the header", () => {
+    const wrapper = mount(PublicLayout, {
+      global: {
+        plugins: [router, i18n],
+        stubs: layoutStubs,
+      },
+    });
+    expect(wrapper.find(".header-middle").exists()).toBe(true);
+    expect(wrapper.find(".header-right .theme-selector-stub").exists()).toBe(
+      true,
+    );
   });
 
   it("has the correct layout structure", () => {

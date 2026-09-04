@@ -15,3 +15,4 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [sms-eligibility.md](sms-eligibility.md) — reject reserved/fictional/malformed phones before paid SMS/voice/WhatsApp; OnlineVoter.SmsStatus; ensure phone row on Person write; person detail phone status; Twilio callback auto-learn
 - [test-elections.md](test-elections.md) — duplicate as test copy (`ShowAsTest`); teller test banner; test-only runtime reset
 - [theme.md](theme.md) — dark hairlines, stage chips, current-page chip pair, and name-link tokens (dashboard/setup slice)
+- [i18n.md](i18n.md) — html `dir` with locale; Latin “Beta” weight; public/voter RTL vs Element Plus RTL CSS
