@@ -538,11 +538,11 @@ onUnmounted(() => {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     font-weight: 500;
     i {
-      margin-right: 0.25em;
+      margin-inline-end: 0.25em;
       top: 2px;
     }
     strong {
-      margin-right: 0.25em;
+      margin-inline-end: 0.25em;
     }
   }
 

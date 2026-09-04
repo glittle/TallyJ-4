@@ -46,6 +46,7 @@ import { ElCollapse, ElCollapseItem, ElIcon } from "element-plus";
     align-items: center;
     gap: 8px;
     margin-bottom: 12px;
+    text-align: start;
 
     h2 {
       margin: 0;
@@ -56,6 +57,23 @@ import { ElCollapse, ElCollapseItem, ElIcon } from "element-plus";
 
   .faq-collapse {
     background: transparent;
+    text-align: start;
+
+    .el-collapse-item__header {
+      text-align: start;
+      justify-content: flex-start;
+    }
+
+    /* Element Plus uses physical `margin-left: auto` on the arrow */
+    .el-collapse-item__arrow {
+      margin-block: 0;
+      margin-inline-start: auto;
+      margin-inline-end: 8px;
+    }
+
+    .el-collapse-item__content {
+      text-align: start;
+    }
   }
 }
 </style>

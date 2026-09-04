@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { setLocale, supportedLocales, type SupportedLocale } from "@/locales";
+import { applyDocumentLocale } from "@/locales/localeDirection";
 import { ElOption, ElSelect } from "element-plus";
 import type { ComponentSize } from "element-plus";
 import { computed, onMounted } from "vue";
@@ -34,7 +35,7 @@ const changeLanguage = async (lang: string) => {
 };
 
 onMounted(() => {
-  document.documentElement.lang = locale.value;
+  applyDocumentLocale(locale.value);
 });
 </script>
 
@@ -84,7 +85,7 @@ onMounted(() => {
     width: 120px;
 
     span.flag {
-      margin-right: -0.75em;
+      margin-inline-end: -0.75em;
     }
 
     .el-input__inner {
@@ -101,7 +102,7 @@ onMounted(() => {
 
 .language-select-dropdown {
   span.flag {
-    margin-right: -0.75em;
+    margin-inline-end: -0.75em;
   }
 }
 </style>

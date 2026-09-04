@@ -475,6 +475,10 @@ onBeforeUnmount(() => {
         min-width: 260px;
         font-weight: 600;
 
+        .facebook-login-icon {
+          margin-inline-end: 8px;
+        }
+
         &:hover {
           background-color: #166fe5;
           border-color: #166fe5;

@@ -1,6 +1,7 @@
 import { nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 import commonRaw from "./common.json";
+import { applyDocumentLocale } from "./localeDirection";
 const common = flatToNested(commonRaw);
 
 // Utility function to deep merge objects
@@ -300,8 +301,10 @@ export async function setLocale(locale: SupportedLocale) {
   (i18n.global.locale as any).value = locale;
 
   localStorage.setItem("preferred-language", locale);
-  document.querySelector("html")?.setAttribute("lang", locale);
+  applyDocumentLocale(locale);
 }
+
+applyDocumentLocale(savedLocale);
 
 // Load the saved locale
 if (savedLocale !== "en") {
