@@ -14,6 +14,8 @@ const i18n = createI18n({
         "{count} ballot(s) still need review",
       "elections.stageChangeError.unresolvedTies":
         "Unresolved ties must be broken before finalizing",
+      "elections.stageChangeError.countsDoNotReconcile":
+        "{count} count-reconciliation mismatch(es) must be resolved before analyzing or finalizing",
     },
   },
 });
@@ -47,6 +49,17 @@ describe("translateElectionStageChangeError", () => {
       ),
     ).toBe(
       "3 ballot(s) still need review; Unresolved ties must be broken before finalizing",
+    );
+  });
+
+  it("translates count-reconciliation phrase keys", () => {
+    expect(
+      translateElectionStageChangeError(
+        "elections.stageChangeError.countsDoNotReconcile|count=4",
+        t,
+      ),
+    ).toBe(
+      "4 count-reconciliation mismatch(es) must be resolved before analyzing or finalizing",
     );
   });
 

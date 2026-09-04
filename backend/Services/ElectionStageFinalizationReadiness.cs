@@ -71,6 +71,12 @@ public static class ElectionStageFinalizationReadiness
             blockers.Add(UnresolvedTies);
         }
 
+        var reconciliation = await ElectionCountReconciliation.EvaluateAsync(context, electionGuid);
+        if (!reconciliation.IsReconciled)
+        {
+            blockers.Add(WithParam(CountsDoNotReconcile, "count", reconciliation.Mismatches.Count));
+        }
+
         return blockers.Count == 0
             ? FinalizationReadinessResult.Ready()
             : FinalizationReadinessResult.NotReady(blockers);

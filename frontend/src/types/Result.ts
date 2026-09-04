@@ -28,6 +28,28 @@ export interface TieInfoDto {
   personNames: string[];
 }
 
+export interface CountReconciliationMismatchDto {
+  kind: string;
+  personGuid?: string;
+  personName?: string;
+  votingMethod?: string;
+  envNum?: number;
+  onlineStatus?: string;
+  ballotGuid?: string;
+  ballotCode?: string;
+  frontDeskCount?: number;
+  ballotCount?: number;
+}
+
+export interface CountReconciliationReportDto {
+  isReconciled: boolean;
+  frontDeskCount: number;
+  ballotCount: number;
+  pendingOnlineCount: number;
+  spoiledBallotCount: number;
+  mismatches: CountReconciliationMismatchDto[];
+}
+
 export interface TallyStatisticsDto {
   totalBallots: number;
   ballotsReceived: number;

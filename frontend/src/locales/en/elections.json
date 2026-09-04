@@ -187,6 +187,7 @@
   "elections.stageChangeError.invalidStage": "Invalid election stage",
   "elections.stageChangeError.notFound": "Election not found",
   "elections.stageChangeError.unresolvedTies": "Unresolved ties must be broken before finalizing",
+  "elections.stageChangeError.countsDoNotReconcile": "{count} count-reconciliation mismatch(es) must be resolved before analyzing or finalizing",
   "elections.stageProgression": "Election Stage",
   "elections.statistics": "Statistics",
   "elections.status": "Status",

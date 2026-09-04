@@ -37,6 +37,11 @@ public interface ITallyService
     Task<TallyStatisticsDto> GetTallyStatisticsAsync(Guid electionGuid);
 
     /// <summary>
+    /// Live Front Desk / ballot / pending-online count reconciliation for an election.
+    /// </summary>
+    Task<CountReconciliationReportDto> GetCountReconciliationAsync(Guid electionGuid);
+
+    /// <summary>
     /// Retrieves monitoring information for the tally process.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>

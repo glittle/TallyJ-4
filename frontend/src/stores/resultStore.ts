@@ -8,6 +8,7 @@ import type {
   MonitorInfoDto,
   PresentationDto,
   ReportDataResponseDto,
+  CountReconciliationReportDto,
   TallyResultDto,
   TallyStatisticsDto,
   TieDetailsDto,
@@ -29,6 +30,7 @@ export const useResultStore = defineStore("result", () => {
   const signalrInitialized = ref(false);
   const tallyProgress = ref<TallyProgressEvent | null>(null);
   const currentElectionGuid = ref<string>("");
+  const reconciliation = ref<CountReconciliationReportDto | null>(null);
 
   async function calculateTally(
     electionGuid: string,
@@ -95,6 +97,22 @@ export const useResultStore = defineStore("result", () => {
     presentationData.value = null;
     monitorInfo.value = null;
     detailedStatistics.value = null;
+    reconciliation.value = null;
+  }
+
+  async function fetchReconciliation(electionGuid: string) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const report = await resultService.getCountReconciliation(electionGuid);
+      reconciliation.value = report;
+      return report;
+    } catch (e: any) {
+      error.value = e.message || "Failed to fetch reconciliation";
+      throw e;
+    } finally {
+      loading.value = false;
+    }
   }
 
   function clearError() {
@@ -316,6 +334,7 @@ export const useResultStore = defineStore("result", () => {
     presentationData,
     monitorInfo,
     detailedStatistics,
+    reconciliation,
     loading,
     calculating,
     error,
@@ -323,6 +342,7 @@ export const useResultStore = defineStore("result", () => {
 
     // Methods
     calculateTally,
+    fetchReconciliation,
     fetchResults,
     fetchStatistics,
     fetchMonitorInfo,

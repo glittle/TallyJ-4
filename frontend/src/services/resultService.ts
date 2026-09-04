@@ -9,6 +9,7 @@ import {
   postApiResultsElectionByElectionGuidTiesSave,
   getApiResultsElectionByElectionGuidPresentation,
   getApiResultsElectionByElectionGuidDetailedStatistics,
+  getApiResultsElectionByElectionGuidReconciliation,
 } from "@/api/gen/configService";
 import type {
   TallyResultDto,
@@ -21,6 +22,7 @@ import type {
   PresentationDto,
   MonitorInfoDto,
   DetailedStatisticsDto,
+  CountReconciliationReportDto,
 } from "../types";
 
 export const resultService = {
@@ -135,5 +137,14 @@ export const resultService = {
         path: { electionGuid },
       });
     return response.data as DetailedStatisticsDto;
+  },
+
+  async getCountReconciliation(
+    electionGuid: string,
+  ): Promise<CountReconciliationReportDto> {
+    const response = await getApiResultsElectionByElectionGuidReconciliation({
+      path: { electionGuid },
+    });
+    return response.data as CountReconciliationReportDto;
   },
 };

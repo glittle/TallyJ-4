@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -72,6 +73,43 @@ public class TallyServiceTests : ServiceTestBase
             _service.CalculateNormalElectionAsync(election.ElectionGuid));
 
         Assert.Contains("elections.stageChangeError.ballotsOutstanding", exception.Message);
+    }
+
+    [Fact]
+    public async Task CalculateNormalElectionAsync_WithUnreconciledCounts_ThrowsInvalidOperationException()
+    {
+        var election = await CreateTestElectionAsync();
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        await CreateTestBallotsAsync(location.LocationGuid, 1);
+        var extra = Context.People.First(p => p.ElectionGuid == election.ElectionGuid);
+        extra.VotingMethod = null;
+        await Context.SaveChangesAsync();
+        Context.People.Add(new Person
+        {
+            ElectionGuid = election.ElectionGuid,
+            PersonGuid = Guid.NewGuid(),
+            FirstName = "Extra",
+            LastName = "CheckIn",
+            CanVote = true,
+            VotingMethod = "P",
+            RowVersion = new byte[8]
+        });
+        Context.People.Add(new Person
+        {
+            ElectionGuid = election.ElectionGuid,
+            PersonGuid = Guid.NewGuid(),
+            FirstName = "Another",
+            LastName = "CheckIn",
+            CanVote = true,
+            VotingMethod = "P",
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CalculateNormalElectionAsync(election.ElectionGuid));
+
+        Assert.Contains(ElectionStageMessageKeys.CountsDoNotReconcile, exception.Message);
     }
 
     [Fact]
@@ -425,6 +463,7 @@ public class TallyServiceTests : ServiceTestBase
             Context.Votes.Add(vote);
         }
         await Context.SaveChangesAsync();
+        await AlignFrontDeskToBallotCountAsync(election.ElectionGuid);
 
         var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 
@@ -1040,8 +1079,65 @@ public class TallyServiceTests : ServiceTestBase
         }
 
         await Context.SaveChangesAsync();
+        var location = await Context.Locations.FirstAsync(l => l.LocationGuid == locationGuid);
+        await AlignFrontDeskToBallotCountAsync(location.ElectionGuid);
         return ballots;
     }
+
+    private async Task AlignFrontDeskToBallotCountAsync(Guid electionGuid)
+    {
+        var locationGuids = Context.Locations
+            .Where(l => l.ElectionGuid == electionGuid)
+            .Select(l => l.LocationGuid)
+            .ToList();
+        var ballotCount = Context.Ballots.Count(b => locationGuids.Contains(b.LocationGuid));
+        var people = Context.People
+            .Where(p => p.ElectionGuid == electionGuid)
+            .OrderBy(p => p.LastName)
+            .ThenBy(p => p.FirstName)
+            .ToList();
+
+        foreach (var person in people)
+        {
+            if (IsPaperOrImportedMethod(person.VotingMethod) || person.VotingMethod is "O" or "K")
+            {
+                continue;
+            }
+
+            person.VotingMethod = null;
+        }
+
+        var registered = people.Count(p => !string.IsNullOrEmpty(p.VotingMethod));
+        foreach (var person in people.Where(p => string.IsNullOrEmpty(p.VotingMethod)))
+        {
+            if (registered >= ballotCount)
+            {
+                break;
+            }
+
+            person.VotingMethod = "P";
+            registered++;
+        }
+
+        for (var i = registered; i < ballotCount; i++)
+        {
+            Context.People.Add(new Person
+            {
+                ElectionGuid = electionGuid,
+                PersonGuid = Guid.NewGuid(),
+                FirstName = $"Registered{i}",
+                LastName = "Voter",
+                CanVote = true,
+                VotingMethod = "P",
+                RowVersion = new byte[8]
+            });
+        }
+
+        await Context.SaveChangesAsync();
+    }
+
+    private static bool IsPaperOrImportedMethod(string? votingMethod) =>
+        votingMethod is "P" or "M" or "D" or "C" or "I" or "1" or "2" or "3";
 
     private async Task CreateTestVotesAsync(List<Ballot> ballots, List<Person> people)
     {
