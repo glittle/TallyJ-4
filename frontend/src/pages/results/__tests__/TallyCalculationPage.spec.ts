@@ -154,4 +154,24 @@ describe("TallyCalculationPage reconciliation gate", () => {
 
     expect(wrapper.find("button").attributes("disabled")).toBeUndefined();
   });
+
+  it("translates hey-api stage-change errors when Calculate fails", async () => {
+    storeState.reconciliation = readyReport;
+    mockFetchReconciliation.mockResolvedValue(readyReport);
+    mockCalculateTally.mockRejectedValue({
+      message: "elections.stageChangeError.ballotsOutstanding|count=3",
+    });
+
+    const wrapper = mount(TallyCalculationPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    await wrapper.find("button").trigger("click");
+    await flushPromises();
+
+    expect(mockShowError).toHaveBeenCalledWith(
+      "3 ballot(s) have outstanding issues",
+    );
+  });
 });

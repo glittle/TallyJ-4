@@ -5,6 +5,7 @@ import { Operation } from "@element-plus/icons-vue";
 import { computed, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
+import { extractApiErrorMessage } from "@/utils/errorHandler";
 import { translateElectionStageChangeError } from "@/utils/electionStageErrorMessages";
 import { translateTallyProgressMessage } from "@/utils/tallyProgressMessages";
 import ReconciliationReportPanel from "../../components/results/ReconciliationReportPanel.vue";
@@ -84,12 +85,8 @@ async function handleCalculate() {
     await resultStore.fetchReconciliation(electionGuid);
     showSuccessMessage(t("tally.calculateSuccess"));
   } catch (error: any) {
-    const serverMessage =
-      error?.response?.data?.message || error?.response?.data?.error;
-    if (
-      typeof serverMessage === "string" &&
-      serverMessage.startsWith("elections.stageChangeError")
-    ) {
+    const serverMessage = extractApiErrorMessage(error);
+    if (serverMessage.startsWith("elections.stageChangeError")) {
       showErrorMessage(translateElectionStageChangeError(serverMessage, t));
       return;
     }

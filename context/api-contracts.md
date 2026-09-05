@@ -28,3 +28,16 @@ Backend DTO/controller/route changes require regenerating the frontend client (`
 **Reason:** the generated SDK is the contract surface for stores/services. Hand edits are overwritten and drift from Swagger.
 
 **Rejected alternative:** hand-written fetch wrappers for each new endpoint. Rejected for this project’s scale — regeneration keeps types aligned with the running API.
+
+## Generated client error shape (hey-api)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** `frontend/src/api/gen/configService/client/client.gen.ts` (`throw jsonError`); incident on Calculate Tally showing raw `elections.stageChangeError.*|count=N`  
+**Revisit when:** client library or global error interceptor normalizes thrown errors to another shape
+
+With `throwOnError: true`, failed API calls throw the **parsed JSON body** (e.g. `{ message, error, title, ... }`), not an axios-style `{ response: { data } }` wrapper.
+
+UI that must translate server phrase keys (including `elections.stageChangeError.*` with `|count=N` params) should read the message via `extractApiErrorMessage` from `frontend/src/utils/errorHandler.ts`, then pass it through `translateElectionStageChangeError`. Reading only `error.response.data.message` skips the real payload and often falls through to showing the raw key.
+
+**Rejected alternative:** assume axios error nesting in new pages. Rejected — the generated client is fetch-based; StageControl already uses `extractApiErrorMessage` for the same stage-change keys.
