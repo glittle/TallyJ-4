@@ -6,9 +6,9 @@
 public class UpdateLocationDto
 {
     /// <summary>
-    /// The name of the location.
+    /// The name of the location. Omitted for the reserved Online location.
     /// </summary>
-    public string Name { get; set; } = null!;
+    public string? Name { get; set; }
 
     /// <summary>
     /// Contact information for the location.

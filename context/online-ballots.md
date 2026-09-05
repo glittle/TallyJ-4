@@ -138,6 +138,21 @@ The typed Online location is added when setup enables online voting, and removed
 
 **Rejected alternative:** create the location only on the first voter ballot. Tellers would not see it in the location list until a vote arrived, and disabling unused online voting would leave an empty reserved location behind.
 
+## Online location display name and edit surface
+
+**Status:** active  
+**Evidence:** confirmed (issue #287; Glen, 4 Sep 2026)
+
+The reserved Online row is shown with the current-language label (`locations.typeOnline` / `formatLocationLabel`). The stored `Name` is a fallback for reports and logs, not the identity and not what tellers edit.
+
+On the Locations page the true Online row is marked by type (badge + row treatment). A paper location whose name happens to be “Online” is not that row.
+
+Editing that row may change sort order only. Name is read-only (the i18n label). Contact, latitude, and longitude are not offered. The API ignores those fields on an Online-typed update and still refuses delete. Teller create never assigns `LocationType.Online`; `OnlineLocationHelper` is the only creator.
+
+**Rejected alternative:** treat a location named “Online” as reserved, or POST the translated label as the stored name. Names are user-facing and translated; writing the current language back would change the stored fallback and still would not identify the row.
+
+**Reason:** tellers need to see which row is the voter-only location, in their language, without being able to rename or dress it up as a paper station.
+
 ## Online and imported ballot codes
 
 **Status:** active  

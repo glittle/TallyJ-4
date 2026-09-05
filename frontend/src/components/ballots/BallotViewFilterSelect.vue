@@ -57,9 +57,12 @@ function locationNameForGuid(locationGuid: string): string {
   return (
     filterGroups.value.find((group) => group.locationGuid === locationGuid)
       ?.locationName ??
-    props.locations.find((location) => location.locationGuid === locationGuid)
-      ?.name ??
-    locationGuid
+    formatLocationLabel(
+      t,
+      props.locations.find(
+        (location) => location.locationGuid === locationGuid,
+      ) ?? { name: locationGuid },
+    )
   );
 }
 

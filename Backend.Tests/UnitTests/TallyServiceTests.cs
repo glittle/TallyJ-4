@@ -33,6 +33,9 @@ public class TallyServiceTests : ServiceTestBase
         _localizerMock.Setup(l => l["tally.section.elected"]).Returns(new LocalizedString("tally.section.elected", "E"));
         _localizerMock.Setup(l => l["tally.section.extra"]).Returns(new LocalizedString("tally.section.extra", "X"));
         _localizerMock.Setup(l => l["tally.section.other"]).Returns(new LocalizedString("tally.section.other", "O"));
+        _localizerMock
+            .Setup(l => l[LocationDisplayHelper.TypeOnlineKey])
+            .Returns(new LocalizedString(LocationDisplayHelper.TypeOnlineKey, "Online"));
         
         _service = new TallyService(
             Context,

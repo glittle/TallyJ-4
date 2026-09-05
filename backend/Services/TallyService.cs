@@ -19,6 +19,19 @@ public partial class TallyService : ITallyService
     private const string UnknownElectionName = "Unknown Election";
     private const string UnknownLocationName = "Unknown Location";
 
+    private string FormatLocationName(string? storedName, string? locationTypeCode)
+    {
+        if (Backend.Helpers.LocationDisplayHelper.IsOnlineLocationType(locationTypeCode))
+        {
+            return _localizer[Backend.Helpers.LocationDisplayHelper.TypeOnlineKey];
+        }
+
+        return string.IsNullOrWhiteSpace(storedName) ? UnknownLocationName : storedName.Trim();
+    }
+
+    private string FormatLocationName(Backend.Entities.Location location) =>
+        FormatLocationName(location.Name, location.LocationTypeCode);
+
     // Section constants - localized
     private string SectionElected => _localizer["tally.section.elected"];
     private string SectionExtra => _localizer["tally.section.extra"];

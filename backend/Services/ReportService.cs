@@ -2,13 +2,16 @@ using Backend.Context;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.DTOs.Reports;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Localization;
 
 namespace Backend.Services;
 
 public partial class ReportService : IReportService
 {
     private readonly MainDbContext _context;
+    private readonly IStringLocalizer<ReportService> _localizer;
 
     private static readonly Dictionary<string, string> VotingMethodNames = new()
     {
@@ -24,10 +27,24 @@ public partial class ReportService : IReportService
         ["3"] = "Custom 3"
     };
 
-    public ReportService(MainDbContext context)
+    public ReportService(MainDbContext context, IStringLocalizer<ReportService> localizer)
     {
         _context = context;
+        _localizer = localizer;
     }
+
+    private string FormatLocationName(string? storedName, string? locationTypeCode)
+    {
+        if (LocationDisplayHelper.IsOnlineLocationType(locationTypeCode))
+        {
+            return _localizer[LocationDisplayHelper.TypeOnlineKey];
+        }
+
+        return storedName?.Trim() ?? string.Empty;
+    }
+
+    private string FormatLocationName(Location location) =>
+        FormatLocationName(location.Name, location.LocationTypeCode);
 
     private async Task<Election> GetElectionAsync(Guid electionGuid)
     {

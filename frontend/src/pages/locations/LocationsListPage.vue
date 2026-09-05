@@ -7,6 +7,7 @@ import { useRoute } from "vue-router";
 import LocationForm from "../../components/locations/LocationForm.vue";
 import { useLocationStore } from "../../stores/locationStore";
 import type { LocationDto } from "../../types";
+import { isOnlineLocationType } from "@/utils/ballotStartRequirements";
 import { formatLocationLabel } from "@/utils/locationDisplay";
 
 const route = useRoute();
@@ -107,6 +108,14 @@ function formatCoordinate(coord: string | undefined): string {
   return Number.isNaN(num) ? coord : num.toFixed(4);
 }
 
+function isOnlineLocation(location: LocationDto): boolean {
+  return isOnlineLocationType(location.locationType);
+}
+
+function locationRowClassName({ row }: { row: LocationDto }): string {
+  return isOnlineLocation(row) ? "is-online-location" : "";
+}
+
 function getStatusType(status: string) {
   const typeMap: Record<string, any> = {
     NotStarted: "",
@@ -137,6 +146,7 @@ function getStatusType(status: string) {
           v-loading="loading"
           :data="sortedLocations"
           style="width: 100%"
+          :row-class-name="locationRowClassName"
           @sort-change="handleSortChange"
         >
           <el-table-column
@@ -146,9 +156,20 @@ function getStatusType(status: string) {
             sortable="custom"
           >
             <template #default="scope">
-              <el-button type="primary" link @click="handleEdit(scope.row)">
-                {{ formatLocationLabel($t, scope.row) }}
-              </el-button>
+              <div class="location-name-cell">
+                <el-button type="primary" link @click="handleEdit(scope.row)">
+                  {{ formatLocationLabel($t, scope.row) }}
+                </el-button>
+                <el-tag
+                  v-if="isOnlineLocation(scope.row)"
+                  type="info"
+                  size="small"
+                  effect="plain"
+                  class="online-location-badge"
+                >
+                  {{ $t("locations.onlineVotingBadge") }}
+                </el-tag>
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -255,6 +276,21 @@ function getStatusType(status: string) {
 <style lang="less">
 .locations-list-page {
   padding: 20px;
+
+  .location-name-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .online-location-badge {
+    pointer-events: none;
+  }
+
+  .el-table .is-online-location {
+    --el-table-tr-bg-color: var(--el-color-info-light-9);
+  }
 }
 
 .card-header {
