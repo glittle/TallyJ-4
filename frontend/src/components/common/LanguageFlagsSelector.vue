@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { setLocale, supportedLocales, type SupportedLocale } from "@/locales";
+import { applyDocumentLocale } from "@/locales/localeDirection";
 import { computed, onMounted } from "vue";
 import CountryFlag from "vue-country-flag-next";
 import { useI18n } from "vue-i18n";
@@ -22,7 +23,7 @@ const isActive = (lang: string) => {
 };
 
 onMounted(() => {
-  document.documentElement.lang = locale.value;
+  applyDocumentLocale(locale.value);
 });
 </script>
 
@@ -47,7 +48,10 @@ onMounted(() => {
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
+  gap: 0.15rem;
   padding: 0.5rem;
+  /* :lang(ar|fa) sets text-align:right on every element; keep the group centered */
+  text-align: center;
   background-color: #fff4e5;
   color: #8c4a00;
   border: 2px solid #f5a23d;
@@ -63,6 +67,14 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: center;
+    /* Sprite crop is authored LTR; isolate so RTL dir does not shift flags */
+    direction: ltr;
+    unicode-bidi: isolate;
+    text-align: center;
+    width: 2.25rem;
+    height: 1.75rem;
+    overflow: hidden;
+    padding: 0;
 
     &:hover {
       background: var(--el-fill-color-light);
@@ -81,7 +93,8 @@ onMounted(() => {
 
     span.flag {
       display: block;
-      margin: -14px -26px;
+      margin-block: -14px;
+      margin-inline: -26px;
       font-size: 24px;
     }
   }

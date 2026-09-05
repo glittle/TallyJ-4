@@ -71,6 +71,18 @@ describe("dark theme tokens (dashboard/setup polish)", () => {
     expect(contrastRatio(activeText, activeFill)).toBeGreaterThanOrEqual(4.5);
   });
 
+  it("keeps public header text light on the navy public background", () => {
+    expect(tokenValue(dark, "--color-public-header-text")).toBe(
+      "var(--color-primary-200)",
+    );
+    expect(tokenValue(dark, "--color-public-text")).toBe(
+      "var(--color-primary-200)",
+    );
+    expect(tokenValue(light, "--color-public-header-text")).toBe(
+      "var(--color-primary-700)",
+    );
+  });
+
   it("brightens link/name text in dark while light stays primary-500", () => {
     expect(tokenValue(light, "--color-text-link")).toBe(
       "var(--color-primary-500)",

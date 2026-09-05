@@ -12,6 +12,8 @@ const i18n = createI18n({
         "Election analysis is not complete or ready for finalization",
       "elections.stageChangeError.ballotsNeedReview":
         "{count} ballot(s) still need review",
+      "elections.stageChangeError.ballotsOutstanding":
+        "{count} ballot(s) have outstanding issues",
       "elections.stageChangeError.unresolvedTies":
         "Unresolved ties must be broken before finalizing",
       "elections.stageChangeError.countsDoNotReconcile":
@@ -39,6 +41,15 @@ describe("translateElectionStageChangeError", () => {
         t,
       ),
     ).toBe("3 ballot(s) still need review");
+  });
+
+  it("translates ballotsOutstanding with a count parameter", () => {
+    expect(
+      translateElectionStageChangeError(
+        "elections.stageChangeError.ballotsOutstanding|count=3",
+        t,
+      ),
+    ).toBe("3 ballot(s) have outstanding issues");
   });
 
   it("translates multiple phrase keys separated by semicolons", () => {

@@ -241,14 +241,14 @@ defineExpose({
         <template #label>
           <span class="tab-label">
             <svg
-              class="facebook-icon"
+              class="facebook-icon tab-method-icon"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               width="16"
               height="16"
             >
               <path
-                fill="#1877F2"
+                fill="currentColor"
                 d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.49 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"
               />
             </svg>
@@ -279,11 +279,11 @@ defineExpose({
               @click="emit('facebook')"
             >
               <svg
+                class="facebook-login-icon"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 width="20"
                 height="20"
-                style="margin-right: 8px"
               >
                 <path
                   fill="#ffffff"
@@ -300,14 +300,14 @@ defineExpose({
         <template #label>
           <span class="tab-label">
             <svg
-              class="kakao-icon"
+              class="kakao-icon tab-method-icon"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               width="16"
               height="16"
             >
               <path
-                fill="#3C1E1E"
+                fill="currentColor"
                 d="M12 3C6.477 3 2 6.582 2 11c0 2.785 1.682 5.226 4.236 6.73l-.931 3.47a.352.352 0 0 0 .538.378L9.927 18.9A12.3 12.3 0 0 0 12 19c5.523 0 10-3.582 10-8S17.523 3 12 3z"
               />
             </svg>
@@ -386,6 +386,12 @@ defineExpose({
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    color: inherit;
+
+    .tab-method-icon {
+      color: inherit;
+      fill: currentColor;
+    }
   }
   .method-section {
     padding: 8px 0 16px;
