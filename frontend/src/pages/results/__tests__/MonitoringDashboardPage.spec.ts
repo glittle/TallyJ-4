@@ -10,12 +10,21 @@ const {
   mockConfirm,
   mockShowSuccess,
   mockShowError,
+  mockUpdateWindow,
+  mockFetchElection,
+  mockElection,
 } = vi.hoisted(() => ({
   mockGetSummary: vi.fn(),
   mockAcceptAll: vi.fn(),
   mockConfirm: vi.fn(),
   mockShowSuccess: vi.fn(),
   mockShowError: vi.fn(),
+  mockUpdateWindow: vi.fn(),
+  mockFetchElection: vi.fn(),
+  mockElection: {
+    electionGuid: "election-1",
+    onlineCloseIsEstimate: true,
+  },
 }));
 
 vi.mock("vue-router", () => ({
@@ -33,6 +42,14 @@ vi.mock("@/services/electionService", () => ({
       mockGetSummary(...args),
     acceptAllOnlineBallots: (...args: unknown[]) => mockAcceptAll(...args),
   },
+}));
+
+vi.mock("@/stores/electionStore", () => ({
+  useElectionStore: () => ({
+    currentElection: mockElection,
+    fetchElectionById: (...args: unknown[]) => mockFetchElection(...args),
+    updateOnlineVotingWindow: (...args: unknown[]) => mockUpdateWindow(...args),
+  }),
 }));
 
 vi.mock("@/composables/useNotifications", () => ({
@@ -67,6 +84,8 @@ const mockMonitor: MonitorInfoDto = {
     submittedOnlineBallots: 2,
     processingOnlineBallots: 1,
     onlineVotingEnabled: true,
+    onlineVotingStart: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+    onlineVotingEnd: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
     acceptAllRuns: [],
   },
   totalBallots: 10,
@@ -130,11 +149,24 @@ describe("MonitoringDashboardPage Accept all", () => {
     mockConfirm.mockReset();
     mockShowSuccess.mockReset();
     mockShowError.mockReset();
+    mockUpdateWindow.mockReset();
+    mockFetchElection.mockReset();
+    mockElection.onlineCloseIsEstimate = true;
     mockMonitor.onlineVotingInfo.pendingOnlineBallots = 3;
     mockMonitor.onlineVotingInfo.submittedOnlineBallots = 2;
     mockMonitor.onlineVotingInfo.processingOnlineBallots = 1;
     mockMonitor.onlineVotingInfo.processedOnlineBallots = 1;
     mockMonitor.onlineVotingInfo.acceptAllRuns = [];
+    mockMonitor.onlineVotingInfo.onlineVotingStart = new Date(
+      Date.now() - 60 * 60 * 1000,
+    ).toISOString();
+    mockMonitor.onlineVotingInfo.onlineVotingEnd = new Date(
+      Date.now() + 60 * 60 * 1000,
+    ).toISOString();
+    mockUpdateWindow.mockResolvedValue({
+      electionGuid: "election-1",
+      onlineCloseIsEstimate: false,
+    });
   });
 
   async function mountPage() {
@@ -348,5 +380,139 @@ describe("MonitoringDashboardPage Accept all", () => {
     expect(mockShowError).toHaveBeenCalledWith(
       "Another Accept all is already running for this election.",
     );
+  });
+});
+
+describe("MonitoringDashboardPage close countdown", () => {
+  beforeEach(() => {
+    mockUpdateWindow.mockReset();
+    mockShowSuccess.mockReset();
+    mockElection.onlineCloseIsEstimate = true;
+    mockMonitor.onlineVotingInfo.onlineVotingStart = new Date(
+      Date.now() - 60 * 60 * 1000,
+    ).toISOString();
+    mockMonitor.onlineVotingInfo.onlineVotingEnd = new Date(
+      Date.now() + 60 * 60 * 1000,
+    ).toISOString();
+    mockUpdateWindow.mockResolvedValue({
+      electionGuid: "election-1",
+      onlineCloseIsEstimate: false,
+    });
+  });
+
+  async function mountPage() {
+    const wrapper = mount(MonitoringDashboardPage, {
+      global: {
+        plugins: [i18n],
+        stubs,
+      },
+    });
+    await flushPromises();
+    return wrapper;
+  }
+
+  it("shows expected close wording and schedule/close buttons while open", async () => {
+    const wrapper = await mountPage();
+    expect(
+      wrapper.find("[data-testid='online-close-countdown']").exists(),
+    ).toBe(true);
+    expect(wrapper.find("[data-testid='online-close-status']").text()).toBe(
+      "Online voting is Open",
+    );
+    expect(wrapper.find("[data-testid='online-close-line']").text()).toMatch(
+      /Expected to close/i,
+    );
+    expect(wrapper.find("[data-testid='online-close-clock']").exists()).toBe(
+      false,
+    );
+    expect(
+      wrapper.find("[data-testid='schedule-close-online-5-minutes']").exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find("[data-testid='close-online-voting-now']").exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find("[data-testid='open-online-voting-5-minutes']").exists(),
+    ).toBe(false);
+  });
+
+  it("shows firm Will close wording when the close is not an estimate", async () => {
+    mockElection.onlineCloseIsEstimate = false;
+    const wrapper = await mountPage();
+    expect(wrapper.find("[data-testid='online-close-line']").text()).toMatch(
+      /Will close/i,
+    );
+  });
+
+  it("shows a ticking remaining clock in the last 5 minutes", async () => {
+    mockMonitor.onlineVotingInfo.onlineVotingEnd = new Date(
+      Date.now() + 4 * 60 * 1000 + 20 * 1000,
+    ).toISOString();
+    const wrapper = await mountPage();
+    const clock = wrapper.find("[data-testid='online-close-clock']");
+    expect(clock.exists()).toBe(true);
+    expect(clock.text()).toMatch(/4:\d{2} remaining/);
+    expect(
+      wrapper.find("[data-testid='online-close-countdown']").classes(),
+    ).toContain("is-closing-soon");
+  });
+
+  it("shows Open for 5 minutes when the window is already closed", async () => {
+    mockMonitor.onlineVotingInfo.onlineVotingEnd = new Date(
+      Date.now() - 60 * 1000,
+    ).toISOString();
+    const wrapper = await mountPage();
+    expect(wrapper.find("[data-testid='online-close-status']").text()).toBe(
+      "Online voting is Closed",
+    );
+    expect(
+      wrapper.find("[data-testid='open-online-voting-5-minutes']").exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find("[data-testid='schedule-close-online-5-minutes']").exists(),
+    ).toBe(false);
+  });
+
+  it("schedules a firm close 5 minutes from now", async () => {
+    const before = Date.now();
+    const wrapper = await mountPage();
+    await wrapper
+      .find("[data-testid='schedule-close-online-5-minutes']")
+      .trigger("click");
+    await flushPromises();
+    const after = Date.now();
+
+    expect(mockUpdateWindow).toHaveBeenCalledTimes(1);
+    const [, options] = mockUpdateWindow.mock.calls[0] as [
+      string,
+      {
+        onlineWhenClose: string;
+        onlineCloseIsEstimate: boolean;
+      },
+    ];
+    expect(options.onlineCloseIsEstimate).toBe(false);
+    const closeMs = new Date(options.onlineWhenClose).getTime();
+    expect(closeMs).toBeGreaterThanOrEqual(before + 5 * 60 * 1000 - 50);
+    expect(closeMs).toBeLessThanOrEqual(after + 5 * 60 * 1000 + 50);
+    expect(mockShowSuccess).toHaveBeenCalled();
+  });
+
+  it("closes now by setting the close time in the past", async () => {
+    const before = Date.now();
+    const wrapper = await mountPage();
+    await wrapper
+      .find("[data-testid='close-online-voting-now']")
+      .trigger("click");
+    await flushPromises();
+
+    const [, options] = mockUpdateWindow.mock.calls[0] as [
+      string,
+      {
+        onlineWhenClose: string;
+        onlineCloseIsEstimate: boolean;
+      },
+    ];
+    expect(options.onlineCloseIsEstimate).toBe(true);
+    expect(new Date(options.onlineWhenClose).getTime()).toBeLessThan(before);
   });
 });

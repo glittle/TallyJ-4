@@ -97,6 +97,7 @@ const windowSummary = computed(() =>
     nowTick.value,
     (key, params) => t(key, params ?? {}),
     String(locale.value),
+    form.onlineCloseIsEstimate,
   ),
 );
 

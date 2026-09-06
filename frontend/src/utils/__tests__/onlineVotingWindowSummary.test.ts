@@ -34,6 +34,21 @@ describe("onlineVotingWindowSummary", () => {
     expect(lines.closeLine).toMatch(/Closed 5 minutes ago/i);
   });
 
+  it("uses expected wording when the close time is an estimate", () => {
+    const open = now.minus({ days: 1 }).toJSDate();
+    const close = now.plus({ minutes: 30 }).toJSDate();
+    const lines = buildOnlineWindowSummary(
+      open,
+      close,
+      now,
+      undefined,
+      "en",
+      true,
+    );
+    expect(lines.closeLine).toMatch(/Expected to close/i);
+    expect(lines.closeLine).not.toMatch(/Will close/i);
+  });
+
   it("handles missing dates", () => {
     expect(buildOnlineWindowSummary(null, null, now)).toEqual({
       openLine: null,

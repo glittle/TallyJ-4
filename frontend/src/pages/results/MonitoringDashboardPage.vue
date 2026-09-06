@@ -256,6 +256,67 @@
             </el-descriptions-item>
           </el-descriptions>
           <div
+            class="online-close-countdown"
+            data-testid="online-close-countdown"
+            :class="closeCountdownClass"
+          >
+            <h3>{{ $t("monitoring.onlineWindow.title") }}</h3>
+            <p class="online-close-status" data-testid="online-close-status">
+              {{
+                closeCountdown.isWindowOpen
+                  ? $t("elections.onlineWindow.statusOpen")
+                  : $t("elections.onlineWindow.statusClosed")
+              }}
+            </p>
+            <p
+              v-if="closeSummary.closeLine"
+              class="online-close-line"
+              data-testid="online-close-line"
+            >
+              {{ closeSummary.closeLine }}
+            </p>
+            <p v-else class="online-close-line" data-testid="online-close-line">
+              {{ $t("monitoring.onlineWindow.noCloseTime") }}
+            </p>
+            <p
+              v-if="closeCountdown.isClosingSoon"
+              class="online-close-clock"
+              data-testid="online-close-clock"
+            >
+              {{
+                $t("monitoring.onlineWindow.remainingClock", {
+                  clock: closeRemainingClock,
+                })
+              }}
+            </p>
+            <div v-if="canAcceptOnlineBallots" class="online-close-actions">
+              <el-button
+                v-if="!closeCountdown.isWindowOpen"
+                data-testid="open-online-voting-5-minutes"
+                :loading="updatingWindow"
+                @click="openOnlineForMinutes(5)"
+              >
+                {{ $t("monitoring.onlineWindow.openFor5Minutes") }}
+              </el-button>
+              <el-button
+                v-if="closeCountdown.isWindowOpen"
+                data-testid="schedule-close-online-5-minutes"
+                :loading="updatingWindow"
+                @click="scheduleCloseInMinutes(5)"
+              >
+                {{ $t("monitoring.onlineWindow.scheduleCloseIn5Minutes") }}
+              </el-button>
+              <el-button
+                v-if="closeCountdown.isWindowOpen"
+                data-testid="close-online-voting-now"
+                :loading="updatingWindow"
+                @click="closeOnlineNow"
+              >
+                {{ $t("monitoring.onlineWindow.closeNow") }}
+              </el-button>
+            </div>
+          </div>
+          <div
             class="online-ballot-breakdown"
             data-testid="online-ballot-status-breakdown"
           >
@@ -380,7 +441,15 @@ import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useNotifications } from "@/composables/useNotifications";
 import { isFullTeller } from "@/domain/guestTellerAccess";
 import { electionService } from "@/services/electionService";
+import { useElectionStore } from "@/stores/electionStore";
 import { extractApiErrorMessage } from "@/utils/errorHandler";
+import {
+  closeOnlineVotingNowAt,
+  formatCloseRemainingClock,
+  getOnlineVotingCloseCountdown,
+  scheduleOnlineCloseAt,
+} from "@/utils/onlineVotingCloseCountdown";
+import { buildOnlineWindowSummary } from "@/utils/onlineVotingWindowSummary";
 import {
   Check,
   DocumentChecked,
@@ -389,6 +458,7 @@ import {
   Upload,
 } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
+import { DateTime } from "luxon";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
@@ -400,9 +470,10 @@ import type { AcceptAllOnlineBallotsRunDto, MonitorInfoDto } from "../../types";
 const route = useRoute();
 const router = useRouter();
 const resultStore = useResultStore();
+const electionStore = useElectionStore();
 const { handleApiError } = useApiErrorHandler();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const electionGuid = route.params.id as string;
 const monitorInfo = ref<MonitorInfoDto | null>(null);
@@ -426,21 +497,76 @@ const acceptedOnlineCount = computed(
 );
 const onlineBallotStatusView = onlineBallotMonitorStatus;
 const refreshInterval = ref<number | null>(null);
+const updatingWindow = ref(false);
+const nowTick = ref(DateTime.now());
+let closeCountdownTimer: ReturnType<typeof setInterval> | null = null;
 let frontDeskConnection: Awaited<
   ReturnType<typeof signalrService.connectToFrontDeskHub>
 > | null = null;
 let onlineElectionHandler: ((data: unknown) => void) | null = null;
 
+const closeIsEstimate = computed(() => {
+  const current = electionStore.currentElection;
+  if (!current || current.electionGuid !== electionGuid) {
+    return true;
+  }
+  return current.onlineCloseIsEstimate ?? true;
+});
+
+const closeCountdown = computed(() =>
+  getOnlineVotingCloseCountdown(
+    monitorInfo.value?.onlineVotingInfo.onlineVotingStart,
+    monitorInfo.value?.onlineVotingInfo.onlineVotingEnd,
+    nowTick.value.toJSDate(),
+  ),
+);
+
+const closeSummary = computed(() =>
+  buildOnlineWindowSummary(
+    monitorInfo.value?.onlineVotingInfo.onlineVotingStart,
+    monitorInfo.value?.onlineVotingInfo.onlineVotingEnd,
+    nowTick.value,
+    (key, params) => t(key, params ?? {}),
+    String(locale.value),
+    closeIsEstimate.value,
+  ),
+);
+
+const closeRemainingClock = computed(() =>
+  formatCloseRemainingClock(closeCountdown.value.remainingMs),
+);
+
+const closeCountdownClass = computed(() => {
+  if (closeCountdown.value.isClosingSoon) {
+    return "is-closing-soon";
+  }
+  return closeCountdown.value.isWindowOpen ? "is-open" : "is-closed";
+});
+
 onMounted(async () => {
+  await ensureElectionLoaded();
   await loadData();
   startAutoRefresh();
+  startCloseCountdownTick();
   await initializeOnlineElectionListener();
 });
 
 onUnmounted(async () => {
   stopAutoRefresh();
+  stopCloseCountdownTick();
   await teardownOnlineElectionListener();
 });
+
+async function ensureElectionLoaded() {
+  if (electionStore.currentElection?.electionGuid === electionGuid) {
+    return;
+  }
+  try {
+    await electionStore.fetchElectionById(electionGuid);
+  } catch {
+    // Countdown still works from monitor times; estimate wording falls back.
+  }
+}
 
 async function loadData() {
   try {
@@ -563,6 +689,63 @@ function stopAutoRefresh() {
   }
 }
 
+function startCloseCountdownTick() {
+  stopCloseCountdownTick();
+  nowTick.value = DateTime.now();
+  closeCountdownTimer = setInterval(() => {
+    nowTick.value = DateTime.now();
+  }, 1000);
+}
+
+function stopCloseCountdownTick() {
+  if (closeCountdownTimer) {
+    clearInterval(closeCountdownTimer);
+    closeCountdownTimer = null;
+  }
+}
+
+function currentOpenIso(): string | null {
+  const open = monitorInfo.value?.onlineVotingInfo.onlineVotingStart;
+  if (!open) {
+    return null;
+  }
+  const date = new Date(open);
+  return Number.isNaN(date.getTime()) ? null : date.toISOString();
+}
+
+async function applyCloseTime(close: Date, nextEstimate: boolean) {
+  if (updatingWindow.value) {
+    return;
+  }
+  updatingWindow.value = true;
+  try {
+    await electionStore.updateOnlineVotingWindow(electionGuid, {
+      onlineWhenOpen: currentOpenIso(),
+      onlineWhenClose: close.toISOString(),
+      onlineCloseIsEstimate: nextEstimate,
+    });
+    showSuccessMessage(t("monitoring.onlineWindow.saved"));
+    await loadData();
+  } catch (error) {
+    handleApiError(error);
+  } finally {
+    updatingWindow.value = false;
+  }
+}
+
+/** v3 Schedule close in 5 minutes — firm deadline, not an estimate. */
+function scheduleCloseInMinutes(minutes: number) {
+  void applyCloseTime(scheduleOnlineCloseAt(minutes), false);
+}
+
+function closeOnlineNow() {
+  void applyCloseTime(closeOnlineVotingNowAt(), closeIsEstimate.value);
+}
+
+function openOnlineForMinutes(minutes: number) {
+  void applyCloseTime(scheduleOnlineCloseAt(minutes), closeIsEstimate.value);
+}
+
 function formatDateTime(date?: string | Date | null) {
   if (!date) {
     return "-";
@@ -618,7 +801,8 @@ function calculateTurnout(registered: number, ballots: number) {
 }
 
 .online-ballot-breakdown,
-.accept-all-history {
+.accept-all-history,
+.online-close-countdown {
   margin-top: 20px;
 
   h3 {
@@ -626,6 +810,52 @@ function calculateTurnout(registered: number, ballots: number) {
     font-size: 16px;
     font-weight: 600;
   }
+}
+
+.online-close-countdown {
+  padding: 12px 14px;
+  border-radius: var(--el-border-radius-base);
+  border: 1px solid var(--el-border-color);
+  background: var(--el-fill-color-light);
+
+  &.is-open {
+    border-color: var(--el-color-success);
+    background: var(--el-color-success-light-9);
+  }
+
+  &.is-closing-soon {
+    border-color: var(--el-color-warning);
+    background: var(--el-color-warning-light-9);
+  }
+
+  &.is-closed {
+    border-color: var(--el-color-danger);
+    background: var(--el-color-danger-light-9);
+  }
+
+  .online-close-status {
+    margin: 0 0 4px;
+    font-weight: 600;
+  }
+
+  .online-close-line,
+  .online-close-clock {
+    margin: 0;
+  }
+
+  .online-close-clock {
+    margin-top: 4px;
+    font-size: 20px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.online-close-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 .online-ballot-breakdown-note,
