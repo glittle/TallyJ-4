@@ -138,10 +138,7 @@ export class SignalRConnectionCore {
 
         if (this.allVotersElectionGuid) {
           try {
-            await connection.invoke(
-              "JoinElection",
-              this.allVotersElectionGuid,
-            );
+            await connection.invoke("JoinElection", this.allVotersElectionGuid);
             console.log(
               `Rejoined AllVoters election presence ${this.allVotersElectionGuid} after reconnect`,
             );

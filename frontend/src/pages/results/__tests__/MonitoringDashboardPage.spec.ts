@@ -139,7 +139,10 @@ const stubs = {
   ElTableColumn: { template: "<td />" },
   ElTag: { template: "<span><slot /></span>" },
   ElDescriptions: { template: "<div><slot /></div>" },
-  ElDescriptionsItem: { template: "<div><slot /></div>" },
+  ElDescriptionsItem: {
+    props: ["label"],
+    template: "<div>{{ label }}<slot /></div>",
+  },
   ElEmpty: { template: "<div />" },
 };
 
@@ -256,7 +259,9 @@ describe("MonitoringDashboardPage Accept all", () => {
       wrapper.find("[data-testid='connected-online-voter-sessions']").exists(),
     ).toBe(true);
     expect(
-      wrapper.find("[data-testid='connected-online-voter-sessions-count']").text(),
+      wrapper
+        .find("[data-testid='connected-online-voter-sessions-count']")
+        .text(),
     ).toBe("2");
     expect(
       wrapper.find("[data-testid='pending-online-ballots-table']").exists(),
@@ -289,7 +294,9 @@ describe("MonitoringDashboardPage Accept all", () => {
     const wrapper = await mountPage();
 
     expect(
-      wrapper.find("[data-testid='connected-online-voter-sessions-count']").text(),
+      wrapper
+        .find("[data-testid='connected-online-voter-sessions-count']")
+        .text(),
     ).toBe("4");
     expect(wrapper.text()).toContain("Connected online voters");
     expect(wrapper.text()).toContain("Ballot-page sessions");

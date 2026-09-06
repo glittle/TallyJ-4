@@ -330,7 +330,9 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
    * Count this session on the election's ballot page for the monitor.
    * Safe if hubs are not yet connected. Does not send voter identity.
    */
-  async function joinElectionBallotPresence(electionGuid: string): Promise<void> {
+  async function joinElectionBallotPresence(
+    electionGuid: string,
+  ): Promise<void> {
     try {
       await ensureVoterHubsConnected();
       await signalrService.joinOnlineVoterElection(electionGuid);
