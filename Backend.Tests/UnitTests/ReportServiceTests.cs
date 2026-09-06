@@ -1,5 +1,8 @@
+using Microsoft.Extensions.Localization;
+using Moq;
 using Backend.Entities;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Backend.Services;
 
 using LocationTypeEnum = Backend.Enumerations.LocationType;
@@ -13,7 +16,11 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
 
     public ReportServiceTests()
     {
-        _service = new ReportService(Context);
+        var localizer = new Mock<IStringLocalizer<ReportService>>();
+        localizer
+            .Setup(l => l[LocationDisplayHelper.TypeOnlineKey])
+            .Returns(new LocalizedString(LocationDisplayHelper.TypeOnlineKey, "Online"));
+        _service = new ReportService(Context, localizer.Object);
     }
 
     public async Task InitializeAsync()

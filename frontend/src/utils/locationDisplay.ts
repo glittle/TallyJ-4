@@ -13,3 +13,26 @@ export function formatLocationLabel(
   }
   return location.name?.trim() || "";
 }
+
+/** Resolve a location by guid, then apply formatLocationLabel. */
+export function formatLocationLabelForGuid(
+  t: (key: string) => string,
+  locations: ReadonlyArray<{
+    locationGuid: string;
+    name?: string | null;
+    locationType?: string | null;
+  }>,
+  locationGuid: string | null | undefined,
+  fallbackName?: string | null,
+): string {
+  if (!locationGuid) {
+    return fallbackName?.trim() || "";
+  }
+
+  const location = locations.find((item) => item.locationGuid === locationGuid);
+  if (location) {
+    return formatLocationLabel(t, location);
+  }
+
+  return fallbackName?.trim() || "";
+}

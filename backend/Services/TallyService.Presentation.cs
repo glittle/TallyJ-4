@@ -206,7 +206,7 @@ public partial class TallyService
                 ? (decimal)locationBallotCount / locationVoterCount * 100
                 : 0;
 
-            turnoutByLocation[location.Name ?? UnknownFallbackValue] = turnout;
+            turnoutByLocation[FormatLocationName(location)] = turnout;
         }
         return turnoutByLocation;
     }
@@ -326,7 +326,7 @@ public partial class TallyService
 
             locationStatistics.Add(new LocationStatisticsDto
             {
-                LocationName = location.Name ?? UnknownFallbackValue,
+                LocationName = FormatLocationName(location),
                 RegisteredVoters = locationVoters,
                 BallotsCast = locationBallots,
                 ValidBallots = locationBallots,

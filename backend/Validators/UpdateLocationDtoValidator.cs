@@ -14,10 +14,12 @@ public class UpdateLocationDtoValidator : AbstractValidator<UpdateLocationDto>
     /// </summary>
     public UpdateLocationDtoValidator()
     {
+        // Online sort-only updates omit Name. Non-Online updates must still
+        // send a name; LocationService rejects empty Name on that path
+        // because this validator has no location type.
         RuleFor(x => x.Name)
-            .NotEmpty()
-            .WithMessage("Location name is required")
             .MaximumLength(50)
+            .When(x => !string.IsNullOrEmpty(x.Name))
             .WithMessage("Location name cannot exceed 50 characters");
 
         RuleFor(x => x.ContactInfo)

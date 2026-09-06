@@ -32,6 +32,8 @@
   "locations.locationSelected": "Location selected successfully",
   "locations.selectLocation": "Select Location",
   "locations.typeOnline": "Online",
+  "locations.onlineVotingBadge": "Online voting",
+  "locations.form.onlineSortOnlyHelp": "Only the sort order can be changed for the Online location.",
   "locations.tallyStatus": "Tally Status",
   "locations.form.edit": "Edit",
   "locations.form.delete": "Delete",

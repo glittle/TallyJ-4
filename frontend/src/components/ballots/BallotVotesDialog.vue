@@ -9,6 +9,8 @@ import type { BallotDto, VoteDto } from "../../types";
 import VoteFormDialog from "./VoteFormDialog.vue";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { formatBallotDisplayCode } from "@/utils/ballotDisplayCode";
+import { formatLocationLabelForGuid } from "@/utils/locationDisplay";
+import { useLocationStore } from "../../stores/locationStore";
 const { handleApiError } = useApiErrorHandler();
 
 const props = defineProps<{
@@ -23,6 +25,15 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 const ballotStore = useBallotStore();
+const locationStore = useLocationStore();
+const ballotLocationLabel = computed(() =>
+  formatLocationLabelForGuid(
+    t,
+    locationStore.locations,
+    props.ballot?.locationGuid,
+    props.ballot?.locationName,
+  ),
+);
 const { showSuccessMessage } = useNotifications();
 
 const showAddVote = ref(false);
@@ -96,7 +107,7 @@ function getVoteStatusType(status: string) {
       <div class="ballot-info">
         <el-descriptions :column="2" border size="small">
           <el-descriptions-item :label="$t('ballots.location')">
-            {{ ballot.locationName }}
+            {{ ballotLocationLabel }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('ballots.status')">
             <el-tag :type="getStatusType(ballot.statusCode)">

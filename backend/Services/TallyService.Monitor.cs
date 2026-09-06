@@ -32,6 +32,7 @@ public partial class TallyService
                 b.DateUpdated,
                 b.DateCreated,
                 LocationName = b.Location.Name,
+                LocationTypeCode = b.Location.LocationTypeCode,
             })
             .ToListAsync();
 
@@ -44,14 +45,25 @@ public partial class TallyService
                     var latest = g
                         .OrderByDescending(b => b.DateUpdated ?? b.DateCreated ?? DateTimeOffset.MinValue)
                         .First();
-                    return (Count: g.Count(), LastKnownLocationName: latest.LocationName ?? UnknownLocationName);
+                    return (
+                        Count: g.Count(),
+                        LastKnownLocationName: FormatLocationName(latest.LocationName, latest.LocationTypeCode));
                 });
 
-        var assignedLocationsByCode = await _context.Computers
+        var assignedLocationRows = await _context.Computers
             .AsNoTracking()
             .Where(c => c.ElectionGuid == electionGuid)
-            .Select(c => new { c.ComputerCode, LocationName = c.Location.Name })
-            .ToDictionaryAsync(c => c.ComputerCode, c => c.LocationName ?? UnknownLocationName);
+            .Select(c => new
+            {
+                c.ComputerCode,
+                LocationName = c.Location.Name,
+                LocationTypeCode = c.Location.LocationTypeCode,
+            })
+            .ToListAsync();
+
+        var assignedLocationsByCode = assignedLocationRows.ToDictionary(
+            c => c.ComputerCode,
+            c => FormatLocationName(c.LocationName, c.LocationTypeCode));
 
         var computers = _computerAssignmentService.GetActiveComputers(electionGuid)
             .Select(active =>
@@ -73,18 +85,29 @@ public partial class TallyService
             .ToList();
 
         // Get location information
-        var locations = await _context.Locations
+        var locationRows = await _context.Locations
             .Where(l => l.ElectionGuid == electionGuid)
-            .Select(l => new LocationInfoDto
+            .Select(l => new
             {
-                LocationGuid = l.LocationGuid,
-                LocationName = l.Name ?? UnknownLocationName,
+                l.LocationGuid,
+                l.Name,
+                l.LocationTypeCode,
                 BallotCount = l.Ballots.Count(b => b.StatusCode == BallotStatus.Ok),
                 VoteCount = l.Ballots.Sum(b => b.Votes.Count),
                 VoterCount = _context.People.Count(p => p.ElectionGuid == electionGuid && p.VotingLocationGuid == l.LocationGuid && p.CanVote == true),
                 Status = l.Ballots.Any() ? "Active" : "No Ballots"
             })
             .ToListAsync();
+
+        var locations = locationRows.Select(l => new LocationInfoDto
+        {
+            LocationGuid = l.LocationGuid,
+            LocationName = FormatLocationName(l.Name, l.LocationTypeCode),
+            BallotCount = l.BallotCount,
+            VoteCount = l.VoteCount,
+            VoterCount = l.VoterCount,
+            Status = l.Status
+        }).ToList();
 
         var onlineCounts = await CountOnlineBallotStatusesAsync(electionGuid);
 

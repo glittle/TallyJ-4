@@ -16,7 +16,10 @@ import {
   locationTypeForGuid,
   type BallotStartBlockReason,
 } from "@/utils/ballotStartRequirements";
-import { formatLocationLabel } from "@/utils/locationDisplay";
+import {
+  formatLocationLabel,
+  formatLocationLabelForGuid,
+} from "@/utils/locationDisplay";
 import {
   ballotGuidFromRouteParams,
   electionBallotsPath,
@@ -81,6 +84,18 @@ const isOnlineLocationSelected = computed(() =>
 );
 
 const showLocationColumn = computed(() => locationStore.locations.length > 1);
+
+function ballotLocationLabel(ballot: {
+  locationGuid: string;
+  locationName: string;
+}): string {
+  return formatLocationLabelForGuid(
+    t,
+    locationStore.locations,
+    ballot.locationGuid,
+    ballot.locationName,
+  );
+}
 
 const filteredBallots = computed(() =>
   filterBallotsByView(ballotStore.ballots, selectedViewFilter.value),
@@ -456,7 +471,11 @@ function handleLocationChange(locationGuid: string | null) {
             prop="locationName"
             :label="$t('ballots.location')"
             min-width="140"
-          />
+          >
+            <template #default="scope">
+              {{ ballotLocationLabel(scope.row) }}
+            </template>
+          </el-table-column>
           <el-table-column prop="statusCode" :label="$t('ballots.status')">
             <template #default="scope">
               <el-tag :type="getStatusType(scope.row?.statusCode)">

@@ -139,33 +139,34 @@ public partial class TallyService
 
     private async Task<List<BallotReportDto>> GetBallotReportDataAsync(Guid electionGuid)
     {
-        return await _context.Ballots
+        var ballots = await _context.Ballots
             .Include(b => b.Location)
             .Include(b => b.Votes)
             .ThenInclude(v => v.Person)
             .Where(b => b.Location.ElectionGuid == electionGuid)
             .OrderBy(b => b.Location.Name)
             .ThenBy(b => b.BallotNumAtComputer)
-            .Select(b => new BallotReportDto
-            {
-                BallotGuid = b.BallotGuid,
-                LocationName = b.Location.Name ?? UnknownFallbackValue,
-                Status = b.StatusCode,
-                Votes = b.Votes
-                    .OrderBy(v => v.PositionOnBallot)
-                    .Select(v => new VoteReportDto
-                    {
-                        FullName = v.Person != null ? v.Person.FullNameFl ?? UnknownFallbackValue : UnknownFallbackValue,
-                        Position = v.PositionOnBallot
-                    })
-                    .ToList()
-            })
             .ToListAsync();
+
+        return ballots.Select(b => new BallotReportDto
+        {
+            BallotGuid = b.BallotGuid,
+            LocationName = FormatLocationName(b.Location),
+            Status = b.StatusCode,
+            Votes = b.Votes
+                .OrderBy(v => v.PositionOnBallot)
+                .Select(v => new VoteReportDto
+                {
+                    FullName = v.Person != null ? v.Person.FullNameFl ?? UnknownFallbackValue : UnknownFallbackValue,
+                    Position = v.PositionOnBallot
+                })
+                .ToList()
+        }).ToList();
     }
 
     private async Task<List<VoterReportDto>> GetVoterReportDataAsync(Guid electionGuid)
     {
-        return await _context.People
+        var rows = await _context.People
             .Where(p => p.ElectionGuid == electionGuid)
             .GroupJoin(
                 _context.Locations,
@@ -175,33 +176,56 @@ public partial class TallyService
             )
             .SelectMany(
                 x => x.Locations.DefaultIfEmpty(),
-                (x, location) => new VoterReportDto
+                (x, location) => new
                 {
-                    PersonGuid = x.Person.PersonGuid,
-                    FullName = x.Person.FullNameFl ?? UnknownFallbackValue,
-                    LocationName = location != null ? location.Name ?? UnknownFallbackValue : UnknownFallbackValue,
-                    Voted = x.Person.HasOnlineBallot == true, // Simplified - in real implementation, check if ballot exists
-                    VoteTime = null // Would need to track vote timestamps
+                    x.Person.PersonGuid,
+                    FullName = x.Person.FullNameFl,
+                    LocationName = location != null ? location.Name : null,
+                    LocationTypeCode = location != null ? location.LocationTypeCode : null,
+                    Voted = x.Person.HasOnlineBallot == true,
                 }
             )
+            .ToListAsync();
+
+        return rows
+            .Select(row => new VoterReportDto
+            {
+                PersonGuid = row.PersonGuid,
+                FullName = row.FullName ?? UnknownFallbackValue,
+                LocationName = row.LocationName == null && row.LocationTypeCode == null
+                    ? UnknownFallbackValue
+                    : FormatLocationName(row.LocationName, row.LocationTypeCode),
+                Voted = row.Voted,
+                VoteTime = null
+            })
             .OrderBy(v => v.LocationName)
             .ThenBy(v => v.FullName)
-            .ToListAsync();
+            .ToList();
     }
 
     private async Task<List<LocationReportDto>> GetLocationReportDataAsync(Guid electionGuid)
     {
-        return await _context.Locations
+        var rows = await _context.Locations
             .Where(l => l.ElectionGuid == electionGuid)
-            .Select(l => new LocationReportDto
+            .Select(l => new
             {
-                LocationName = l.Name ?? UnknownFallbackValue,
+                l.Name,
+                l.LocationTypeCode,
                 TotalVoters = _context.People.Count(p => p.ElectionGuid == electionGuid && p.VotingLocationGuid == l.LocationGuid && p.CanVote == true),
                 Voted = _context.People.Count(p => p.ElectionGuid == electionGuid && p.VotingLocationGuid == l.LocationGuid && p.HasOnlineBallot == true),
                 BallotsEntered = l.Ballots.Count(b => b.StatusCode == BallotStatus.Ok),
                 TotalVotes = l.Ballots.Sum(b => b.Votes.Count)
             })
             .ToListAsync();
+
+        return rows.Select(l => new LocationReportDto
+        {
+            LocationName = FormatLocationName(l.Name, l.LocationTypeCode),
+            TotalVoters = l.TotalVoters,
+            Voted = l.Voted,
+            BallotsEntered = l.BallotsEntered,
+            TotalVotes = l.TotalVotes
+        }).ToList();
     }
 
     private async Task<ElectionReportDto> GetSummaryReportDataAsync(Guid electionGuid)
