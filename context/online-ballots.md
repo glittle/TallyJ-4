@@ -70,6 +70,21 @@ No person name, email, phone, kiosk, voter id, row id, or WhenStatus is returned
 
 **Reason:** tellers need pending vs accepted (and Submitted vs Processing) across multiple Accept-all runs while the window stays open, without a secret-ballot leak.
 
+## Monitor: 5-minute close countdown
+
+**Status:** active  
+**Evidence:** confirmed (issue #184 remaining slice; v3 `Monitor.cshtml` / `closeOnline`)
+
+The Monitor Progress online card shows whether the voting window is open or closed, a relative close line, and a `m:ss` clock in the last five minutes. Full tellers can **Schedule close in 5 minutes** (firm — `OnlineCloseIsEstimate = false`), **Close now** (one second ago, estimate unchanged), or **Open for 5 minutes** when already closed (estimate unchanged). Those buttons call the existing online-window API; they do not invent a second close path.
+
+v3 used “Expected to close” when the close was an estimate and “Will close” when firm. The last-five-minute highlight is `minutes <= 5` (same as v3 `onlineSoon`).
+
+**Rejected alternative:** put the 5-minute / close-now buttons only on the header Online Voting drawer. Rejected — v3 tellers used them on Monitor Progress; the header already has the date pickers.
+
+**Rejected alternative:** implement named “active voters building a ballot” in the same slice. Rejected — v4 has no Draft/`OnlineVotingInfo` status for an in-progress ballot, and a named list next to pending/accepted OL counts would reopen the secret-ballot pairing #188 closed. Activity counts / anonymous sessions stay a later #184 item.
+
+**Reason:** tellers need a visible, testable 5-minute close on the monitor without pairing voters to ballots.
+
 ## Accept-all audit record
 
 **Status:** active  

@@ -72,6 +72,7 @@ export function buildOnlineWindowSummary(
     // Fallback English for unit tests without i18n
     defaultMessage(key, params),
   locale: string = "en",
+  closeIsEstimate: boolean = false,
 ): OnlineWindowSummaryLines {
   const open = toDateTime(openValue);
   const close = toDateTime(closeValue);
@@ -92,7 +93,9 @@ export function buildOnlineWindowSummary(
   if (close) {
     const relative = close.toRelative(relativeOpts) ?? "";
     if (close > now) {
-      closeLine = t("elections.onlineWindow.willClose", { relative });
+      closeLine = closeIsEstimate
+        ? t("elections.onlineWindow.expectedToClose", { relative })
+        : t("elections.onlineWindow.willClose", { relative });
     } else {
       closeLine = t("elections.onlineWindow.closed", { relative });
     }
@@ -119,6 +122,8 @@ function defaultMessage(key: string, params?: Record<string, string>): string {
       return `Opened ${relative}.`;
     case "elections.onlineWindow.willClose":
       return `Will close ${relative}.`;
+    case "elections.onlineWindow.expectedToClose":
+      return `Expected to close ${relative}.`;
     case "elections.onlineWindow.closed":
       return `Closed ${relative}.`;
     case "elections.onlineWindow.duration":

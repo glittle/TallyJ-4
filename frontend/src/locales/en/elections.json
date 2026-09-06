@@ -145,6 +145,7 @@
   "elections.onlineWindow.willOpen": "Will open {relative}.",
   "elections.onlineWindow.opened": "Opened {relative}.",
   "elections.onlineWindow.willClose": "Will close {relative}.",
+  "elections.onlineWindow.expectedToClose": "Expected to close {relative}.",
   "elections.onlineWindow.closed": "Closed {relative}.",
   "elections.onlineWindow.duration": "Open for {duration}.",
   "elections.onlineWindow.openBeforeClose": "Online voting open time must be before close time",
