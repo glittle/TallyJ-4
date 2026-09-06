@@ -5752,6 +5752,10 @@ export const Results_OnlineVotingInfoDtoSchema = {
             format: 'date-time',
             nullable: true
         },
+        connectedOnlineVoterSessions: {
+            type: 'integer',
+            format: 'int32'
+        },
         acceptAllRuns: {
             type: 'array',
             items: {

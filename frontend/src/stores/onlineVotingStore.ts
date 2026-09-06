@@ -326,6 +326,27 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     }
   }
 
+  /**
+   * Count this session on the election's ballot page for the monitor.
+   * Safe if hubs are not yet connected. Does not send voter identity.
+   */
+  async function joinElectionBallotPresence(electionGuid: string): Promise<void> {
+    try {
+      await ensureVoterHubsConnected();
+      await signalrService.joinOnlineVoterElection(electionGuid);
+    } catch (error) {
+      console.warn("Failed to join election ballot presence:", error);
+    }
+  }
+
+  async function leaveElectionBallotPresence(): Promise<void> {
+    try {
+      await signalrService.leaveOnlineVoterElection();
+    } catch (error) {
+      console.warn("Failed to leave election ballot presence:", error);
+    }
+  }
+
   async function logout() {
     await disconnectVoterHubs();
     try {
@@ -365,6 +386,8 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     submitBallot,
     checkVoteStatus,
     ensureVoterHubsConnected,
+    joinElectionBallotPresence,
+    leaveElectionBallotPresence,
     disconnectVoterHubs,
     dismissLoginElsewhereNotice,
     logout,

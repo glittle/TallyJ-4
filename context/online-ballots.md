@@ -81,9 +81,34 @@ v3 used “Expected to close” when the close was an estimate and “Will close
 
 **Rejected alternative:** put the 5-minute / close-now buttons only on the header Online Voting drawer. Rejected — v3 tellers used them on Monitor Progress; the header already has the date pickers.
 
-**Rejected alternative:** implement named “active voters building a ballot” in the same slice. Rejected — v4 has no Draft/`OnlineVotingInfo` status for an in-progress ballot, and a named list next to pending/accepted OL counts would reopen the secret-ballot pairing #188 closed. Activity counts / anonymous sessions stay a later #184 item.
+**Rejected alternative:** implement named “active voters building a ballot” in the same slice. Rejected — v4 has no Draft/`OnlineVotingInfo` status for an in-progress ballot, and a named list next to pending/accepted OL counts would reopen the secret-ballot pairing #188 closed. Anonymous ballot-page sessions are the later #184 item (see below).
 
 **Reason:** tellers need a visible, testable 5-minute close on the monitor without pairing voters to ballots.
+
+## Monitor: connected online voters (sessions, not names)
+
+**Status:** active  
+**Evidence:** confirmed (issue #184 remaining slice; `OnlineVotingService.Ballot.cs` creates `OnlineVotingInfo` on submit as `Submitted`; v3 `AllVotersHub` docs in `docs/Hubs-in-v3.md` have no connection-count API and no Draft while composing)
+
+v3 Monitor (this repo’s hub docs) pushed online window changes via FrontDeskHub. It did not document a named “who is building a ballot” list, and v3 `AllVotersHub` was a global notify group with no membership-count API.
+
+v4 still has no Draft status: `OnlineVotingInfo` is created on **submit** as `Submitted`. Composing lives only in the voter’s browser. “Building a ballot” is therefore not stored and is not shown.
+
+The monitor shows **Connected online voters → Ballot-page sessions**: an anonymous count of AllVotersHub connections that called `JoinElection` for this election (the voter ballot page). One person with two tabs counts as two. The API and UI return that integer only — no person name, email, phone, kiosk, voter id, row id, or WhenStatus. `IOnlineVoterPresenceService` stores connection id → election GUID only.
+
+The count is same-host in-memory. Two app servers do not share it. Auto-refresh (30s) is how tellers see a new number.
+
+`VoterPersonalHub` cannot do this safely: its group is `Voter{voterId}` (identifying) and the voter JWT has no election claim.
+
+**Rejected alternative:** a named list of voters on the ballot page. Pairing that list with pending/accepted OL / Accept-all identifies how that person voted.
+
+**Rejected alternative:** put the site-wide `AllVoters` connection count on a per-election monitor. A voter on another election’s list would inflate this election. Misleading.
+
+**Rejected alternative:** new Draft status or a composing heartbeat. Larger infra; not needed for “is anyone currently on this election’s ballot page?”
+
+**Rejected alternative:** count unique voter ids (hashed) instead of sessions. Rejected for this slice — the product ask is sessions, and storing voter ids next to an election (even hashed) is extra identity surface for no teller gain.
+
+**Reason:** tellers need a live anonymous signal that this election’s voting UI is in use, without a secret-ballot leak and without calling it “building a ballot.”
 
 ## Accept-all audit record
 

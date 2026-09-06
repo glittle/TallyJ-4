@@ -17,6 +17,7 @@ public class TallyServiceTests : ServiceTestBase
     private readonly Mock<ILogger<TallyService>> _loggerMock;
     private readonly Mock<ISignalRNotificationService> _signalRMock;
     private readonly Mock<IComputerAssignmentService> _computerAssignmentMock;
+    private readonly Mock<IOnlineVoterPresenceService> _onlineVoterPresenceMock;
     private readonly Mock<IStringLocalizer<TallyService>> _localizerMock;
 
     public TallyServiceTests()
@@ -27,6 +28,10 @@ public class TallyServiceTests : ServiceTestBase
         _computerAssignmentMock
             .Setup(s => s.GetActiveComputers(It.IsAny<Guid>()))
             .Returns(Array.Empty<Backend.DTOs.Computers.ActiveComputerDto>());
+        _onlineVoterPresenceMock = new Mock<IOnlineVoterPresenceService>();
+        _onlineVoterPresenceMock
+            .Setup(s => s.CountSessions(It.IsAny<Guid>()))
+            .Returns(0);
         _localizerMock = new Mock<IStringLocalizer<TallyService>>();
         
         // Setup localizer to return section codes
@@ -42,6 +47,7 @@ public class TallyServiceTests : ServiceTestBase
             _loggerMock.Object,
             _signalRMock.Object,
             _computerAssignmentMock.Object,
+            _onlineVoterPresenceMock.Object,
             _localizerMock.Object);
     }
 
@@ -1820,6 +1826,21 @@ public class TallyServiceTests : ServiceTestBase
         Assert.DoesNotContain("555", json);
         Assert.DoesNotContain("Kiosk", json, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain(people[0].PersonGuid.ToString(), json, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(0, result.OnlineVotingInfo.ConnectedOnlineVoterSessions);
+    }
+
+    [Fact]
+    public async Task GetMonitorInfoAsync_IncludesConnectedOnlineVoterSessionCount()
+    {
+        var election = await CreateTestElectionAsync();
+        _onlineVoterPresenceMock
+            .Setup(s => s.CountSessions(election.ElectionGuid))
+            .Returns(3);
+
+        var result = await _service.GetMonitorInfoAsync(election.ElectionGuid);
+
+        Assert.Equal(3, result.OnlineVotingInfo.ConnectedOnlineVoterSessions);
+        _onlineVoterPresenceMock.Verify(s => s.CountSessions(election.ElectionGuid), Times.Once);
     }
 }
 

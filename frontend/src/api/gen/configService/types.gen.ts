@@ -1674,6 +1674,7 @@ export type ResultsOnlineVotingInfoDto = {
     onlineVotingEnabled?: boolean;
     onlineVotingStart?: Date | null;
     onlineVotingEnd?: Date | null;
+    connectedOnlineVoterSessions?: number;
     acceptAllRuns?: Array<ResultsAcceptAllOnlineBallotsRunDto> | null;
 };
 

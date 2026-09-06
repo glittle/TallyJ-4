@@ -109,7 +109,7 @@ Online voters use two authenticated hubs (policy `OnlineVoter` — JWT claims `v
 
 | Hub | Path | Group | Join | Events |
 | --- | ---- | ----- | ---- | ------ |
-| AllVotersHub | `/hubs/all-voters` | `AllVoters` (global) | `Join` / `Leave` | `updateVoters` — thin `OnlineElectionUpdateDto` (same fields as FrontDesk `updateOnlineElection`) |
+| AllVotersHub | `/hubs/all-voters` | `AllVoters` (global) | `Join` / `Leave`; `JoinElection` / `LeaveElection` (ballot-page presence, in-memory count only) | `updateVoters` — thin `OnlineElectionUpdateDto` (same fields as FrontDesk `updateOnlineElection`) |
 | VoterPersonalHub | `/hubs/voter-personal` | `Voter{voterId}` | `Join` / `Leave` (group from JWT only) | `updateVoter` — thin `VoterPersonalUpdateDto` (`updateRegistration` / `login`) |
 
 **Producers** (via `ISignalRNotificationService` only — hubs are join/leave):
@@ -122,7 +122,11 @@ Online voters use two authenticated hubs (policy `OnlineVoter` — JWT claims `v
 
 **Why global AllVoters (not per-election):** one join after auth covers list refresh for any election whose online window changes; eligibility filtering stays on `GET availableElections`. Per-election groups would miss elections the voter has not joined yet.
 
+`JoinElection(electionGuid)` is **not** a per-election broadcast group. It only records the connection on `IOnlineVoterPresenceService` so Monitor Progress can show an anonymous ballot-page session count. See `context/online-ballots.md`.
+
 **Rejected alternative:** per-election voter groups only. Rejected for MVP — discovery of newly opened elections for an already-connected voter would require a second discovery channel.
+
+**Rejected alternative:** use `VoterPersonalHub` for election presence. Rejected — group is `Voter{voterId}` (identifying) and the voter JWT has no election claim.
 
 **Security:** personal join never accepts a client-supplied voter id (server uses JWT `voterId`). Personal updates target only groups for that person's contact identifiers; voter A does not receive voter B events.
 

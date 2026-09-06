@@ -96,6 +96,33 @@ describe("signalrService voter hubs", () => {
     expect(joinCalls).toHaveLength(2);
   });
 
+  it("joinOnlineVoterElection invokes JoinElection and leave invokes LeaveElection", async () => {
+    const { signalrService } = await import("../signalrService");
+    await signalrService.connectVoterHubs();
+    invoke.mockClear();
+
+    await signalrService.joinOnlineVoterElection("election-9");
+    expect(invoke).toHaveBeenCalledWith("JoinElection", "election-9");
+
+    invoke.mockClear();
+    await signalrService.leaveOnlineVoterElection();
+    expect(invoke).toHaveBeenCalledWith("LeaveElection");
+  });
+
+  it("re-invokes JoinElection after reconnect when election presence was joined", async () => {
+    const { signalrService } = await import("../signalrService");
+    await signalrService.connectVoterHubs();
+    await signalrService.joinOnlineVoterElection("election-9");
+    invoke.mockClear();
+
+    const reconnectHandlers = onreconnected.mock.calls.map((c) => c[0]);
+    for (const handler of reconnectHandlers) {
+      await handler("new-connection-id");
+    }
+
+    expect(invoke).toHaveBeenCalledWith("JoinElection", "election-9");
+  });
+
   it("disconnectVoterHubs leaves then disconnects both hubs", async () => {
     const { signalrService } = await import("../signalrService");
     await signalrService.connectVoterHubs();
@@ -104,6 +131,7 @@ describe("signalrService voter hubs", () => {
 
     await signalrService.disconnectVoterHubs();
 
+    expect(invoke).toHaveBeenCalledWith("LeaveElection");
     expect(invoke).toHaveBeenCalledWith("Leave");
     expect(invoke.mock.calls.filter((c) => c[0] === "Leave")).toHaveLength(2);
     expect(stop).toHaveBeenCalledTimes(2);

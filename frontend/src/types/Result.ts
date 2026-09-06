@@ -231,6 +231,7 @@ export interface OnlineVotingInfoDto {
   onlineVotingEnabled: boolean;
   onlineVotingStart?: string | null;
   onlineVotingEnd?: string | null;
+  connectedOnlineVoterSessions?: number;
   acceptAllRuns?: AcceptAllOnlineBallotsRunDto[];
 }
 
