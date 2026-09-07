@@ -386,9 +386,9 @@ describe("MonitoringDashboardPage Accept all", () => {
       wrapper.find("[data-testid='accepted-online-ballots-count']").text(),
     ).toBe("4");
     expect(
-      wrapper.find("[data-testid='accept-all-online-ballots']").attributes(
-        "disabled",
-      ),
+      wrapper
+        .find("[data-testid='accept-all-online-ballots']")
+        .attributes("disabled"),
     ).toBeDefined();
   });
 
