@@ -6,6 +6,8 @@ import StageControl from "../StageControl.vue";
 const stagePhraseMessages: Record<string, string> = {
   "elections.stageChangeError.analysisNotReady":
     "Election analysis is not complete or ready for finalization",
+  "elections.stageChangeError.confirmLeaveFinalized":
+    "Reverting from Finalized requires confirmation",
   "elections.stageChangeError.generic": "Failed to change election stage",
 };
 
@@ -147,6 +149,40 @@ describe("StageControl", () => {
       expect(mockGetCountReconciliation).toHaveBeenCalledWith("abc-123");
       expect(mockSetStage).not.toHaveBeenCalled();
       expect(mockShowErrorMessage).toHaveBeenCalled();
+    });
+
+    it("calls setStage with Finalized when counts reconcile", async () => {
+      mockSetStage.mockResolvedValue(undefined);
+      const wrapper = mount(StageControl, {
+        props: { electionGuid: "abc-123", stage: "ProcessingBallots" },
+        global: { stubs: globalStubs },
+      });
+      const radios = wrapper.findAll('[role="radio"]');
+      await radios[3]!.trigger("click");
+      await flushPromises();
+
+      expect(mockGetCountReconciliation).toHaveBeenCalledWith("abc-123");
+      expect(mockSetStage).toHaveBeenCalledWith("abc-123", "Finalized");
+    });
+
+    it("shows lock confirmation error when leaving Finalized is rejected", async () => {
+      mockSetStage.mockRejectedValue({
+        message: "elections.stageChangeError.confirmLeaveFinalized",
+      });
+
+      const wrapper = mount(StageControl, {
+        props: { electionGuid: "abc-123", stage: "Finalized" },
+        global: { stubs: globalStubs },
+      });
+
+      const radios = wrapper.findAll('[role="radio"]');
+      await radios[2]!.trigger("click");
+      await flushPromises();
+
+      expect(mockSetStage).toHaveBeenCalledWith("abc-123", "ProcessingBallots");
+      expect(mockShowErrorMessage).toHaveBeenCalledWith(
+        "Reverting from Finalized requires confirmation",
+      );
     });
 
     it("shows translated server error when stage change fails", async () => {

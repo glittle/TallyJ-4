@@ -333,6 +333,60 @@ public class ElectionsControllerTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task ChangeElectionStage_ToFinalizedAfterAnalysis_LocksUntilConfirmed()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Lock After Analysis Election",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 3
+        };
+
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = createResult!.Data!.ElectionGuid;
+
+        foreach (var stage in new[] { ElectionStage.GatheringBallots, ElectionStage.ProcessingBallots })
+        {
+            var advance = await PutJsonAsync(
+                $"/api/elections/{electionGuid}/stage",
+                new ChangeElectionStageDto { ElectionStage = stage });
+            Assert.Equal(HttpStatusCode.OK, advance.StatusCode);
+        }
+
+        await SeedAnalysisReadyForFinalizationAsync(electionGuid);
+
+        var finalizeResponse = await PutJsonAsync(
+            $"/api/elections/{electionGuid}/stage",
+            new ChangeElectionStageDto { ElectionStage = ElectionStage.Finalized });
+        Assert.Equal(HttpStatusCode.OK, finalizeResponse.StatusCode);
+
+        var finalized = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(finalizeResponse);
+        Assert.Equal(ElectionStage.Finalized, finalized!.Data!.ElectionStage);
+
+        var leaveWithoutConfirm = await PutJsonAsync(
+            $"/api/elections/{electionGuid}/stage",
+            new ChangeElectionStageDto { ElectionStage = ElectionStage.ProcessingBallots });
+        Assert.Equal(HttpStatusCode.Conflict, leaveWithoutConfirm.StatusCode);
+
+        var leaveWithConfirm = await PutJsonAsync(
+            $"/api/elections/{electionGuid}/stage",
+            new ChangeElectionStageDto
+            {
+                ElectionStage = ElectionStage.ProcessingBallots,
+                ConfirmLeavingFinalized = true
+            });
+        Assert.Equal(HttpStatusCode.OK, leaveWithConfirm.StatusCode);
+
+        var unlocked = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(leaveWithConfirm);
+        Assert.Equal(ElectionStage.ProcessingBallots, unlocked!.Data!.ElectionStage);
+    }
+
+    [Fact]
     public async Task ChangeElectionStage_WithInvalidEnum_ReturnsBadRequest()
     {
         var token = await GetAuthTokenAsync();
@@ -680,6 +734,42 @@ public class ElectionsControllerTests : IntegrationTestBase
 
         var getResponse = await GetAsync($"/api/elections/{electionGuid}/election");
         Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+    }
+
+    /// <summary>
+    /// Analysis-complete + reconciled counts so Finalized is allowed (no Front Desk
+    /// registrations or ballots, so reconciliation has nothing to mismatch).
+    /// </summary>
+    private async Task SeedAnalysisReadyForFinalizationAsync(Guid electionGuid)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+
+        var personGuid = Guid.NewGuid();
+        db.People.Add(new Person
+        {
+            PersonGuid = personGuid,
+            ElectionGuid = electionGuid,
+            FirstName = "Analyzed",
+            LastName = "Candidate",
+            RowVersion = new byte[8]
+        });
+        db.Results.Add(new Result
+        {
+            ElectionGuid = electionGuid,
+            PersonGuid = personGuid,
+            Rank = 1,
+            Section = "E",
+            VoteCount = 10
+        });
+        db.ResultSummaries.Add(new ResultSummary
+        {
+            ElectionGuid = electionGuid,
+            ResultType = "F",
+            UseOnReports = true,
+            BallotsNeedingReview = 0
+        });
+        await db.SaveChangesAsync();
     }
 }
 
