@@ -44,6 +44,19 @@ Rows that already have a `BallotGuid` from the older submit-creates-ballot path 
 
 **Reason:** pending votes stay changeable until a teller accepts them; accepted votes become ordinary ballots with no remaining online payload.
 
+### Automated coverage for submit → Accept-all → counts
+
+**Status:** active  
+**Evidence:** confirmed (issue #169 remaining; HTTP integration in `OnlineVotingBallotFlowTests`)
+
+Issue #169 is the test script for this process, not a second product build. Coverage is the HTTP integration path (voter submit → teller Accept-all → monitor/summary counts, ListPool wipe, OL regular ballot, tally) plus the existing Accept-all service tests and monitor Vitest counts. That HTTP test uses the shared SQLite `CustomWebApplicationFactory`, which is relational, so it exercises the `ExecuteUpdate` claim that in-memory unit tests skip.
+
+**Rejected alternative:** Playwright browser E2E. Frontend tests stay Vitest + jsdom; the monitor already locks counts-only (no named pending/accepted list) and a reload after Accept-all.
+
+**Rejected alternative:** run these automated tests against Azure SQL. Backend.Tests stay on the local SQLite factory. Live cloud-agent app runs use local Docker SQL + migrations + SeedOnStartup, not production Azure SQL.
+
+**Reason:** lock the already-shipped Accept-all contract (including anonymity: counts only) without a browser driver and without a production database.
+
 ## Pending vs accepted on the monitor (counts only)
 
 **Status:** active  

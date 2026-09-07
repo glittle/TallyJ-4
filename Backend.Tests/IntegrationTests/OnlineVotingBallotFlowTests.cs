@@ -1,9 +1,16 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Backend.Context;
+using Backend.DTOs.Ballots;
+using Backend.DTOs.Elections;
 using Backend.DTOs.OnlineVoting;
+using Backend.DTOs.Reports;
+using Backend.DTOs.Results;
 using Backend.Entities;
 using Backend.Enumerations;
+using Backend.Helpers;
+using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -286,6 +293,297 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         Assert.Equal(2, updatedStatus.PriorVotes.Count);
         Assert.False(updatedStatus.NotifyWhenProcessed);
         Assert.NotEqual(status.WhenSubmitted, updatedStatus.WhenSubmitted);
+    }
+
+    [Fact]
+    public async Task AcceptAll_WithoutTellerAuth_ReturnsUnauthorized()
+    {
+        var response = await Client.PostAsync(
+            $"/api/elections/{Guid.NewGuid()}/online-ballots/accept-all",
+            null);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SubmitOnline_ThenTellerAcceptAll_UpdatesCounts_WipesPendingPayload_AndCreatesOlBallotForTally()
+    {
+        // HTTP path: voter submit stays pending; teller Accept-all creates the
+        // regular OL ballot (relational ExecuteUpdate claim) and wipes ListPool.
+        var voterEmail = $"zelda_{Guid.NewGuid():N}@example.com";
+        const string voterFirst = "ZeldaQuorum";
+        const string voterLast = "Nightingale";
+        const string poolMarker = "SecretPoolAlpha";
+
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createResponse = await PostJsonAsync("/api/elections/createElection", new CreateElectionDto
+        {
+            Name = "Accept-all flow election",
+            DateOfElection = DateTime.UtcNow.AddDays(7),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 2,
+            UseOnlineVoting = true,
+            OnlineSelectionProcess = "A"
+        });
+        Assert.Equal(HttpStatusCode.Created, createResponse.StatusCode);
+        var created = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = created!.Data!.ElectionGuid;
+
+        var windowResponse = await PutJsonAsync(
+            $"/api/elections/{electionGuid}/online-voting-window",
+            new UpdateOnlineVotingWindowDto
+            {
+                OnlineWhenOpen = DateTimeOffset.UtcNow.AddHours(-1),
+                OnlineWhenClose = DateTimeOffset.UtcNow.AddHours(2),
+                OnlineCloseIsEstimate = true
+            });
+        Assert.Equal(HttpStatusCode.OK, windowResponse.StatusCode);
+
+        var candidates = await SeedVoterAndCandidatesAsync(
+            electionGuid, voterEmail, voterFirst, voterLast);
+
+        var submitResponse = await Client.PostAsJsonAsync(
+            $"/api/online-voting/{electionGuid}/submitBallot",
+            new SubmitOnlineBallotDto
+            {
+                ElectionGuid = electionGuid,
+                VoterId = voterEmail,
+                ListPool = [new OnlinePoolEntryDto { FullName = poolMarker }],
+                Votes = candidates.Select((personGuid, i) => new OnlineVoteDto
+                {
+                    PersonGuid = personGuid,
+                    PositionOnBallot = i + 1
+                }).ToList()
+            });
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+            var pending = await context.OnlineVotingInfos
+                .SingleAsync(o => o.ElectionGuid == electionGuid);
+            Assert.Equal(OnlineBallotStatus.Submitted, pending.Status);
+            Assert.Null(pending.BallotGuid);
+            Assert.Contains(poolMarker, pending.ListPool);
+            Assert.Equal(0, await context.Ballots.CountAsync(b => b.Location.ElectionGuid == electionGuid));
+        }
+
+        var summaryBeforeResponse = await GetAsync(
+            $"/api/elections/{electionGuid}/online-ballots/accept-all-summary");
+        Assert.Equal(HttpStatusCode.OK, summaryBeforeResponse.StatusCode);
+        var summaryBefore = await DeserializeResponseAsync<AcceptAllOnlineBallotsSummaryDto>(
+            summaryBeforeResponse);
+        Assert.NotNull(summaryBefore);
+        Assert.Equal(1, summaryBefore.PendingCount);
+        Assert.Equal(0, summaryBefore.ProcessedCount);
+        await AssertAnonymousCountPayloadAsync(
+            await GetAsync($"/api/elections/{electionGuid}/online-ballots/accept-all-summary"),
+            voterEmail, voterFirst, voterLast, poolMarker);
+
+        var monitorBeforeResponse = await GetAsync(
+            $"/api/results/election/{electionGuid}/monitor");
+        Assert.Equal(HttpStatusCode.OK, monitorBeforeResponse.StatusCode);
+        var monitorBefore = await DeserializeResponseAsync<MonitorInfoDto>(monitorBeforeResponse);
+        Assert.NotNull(monitorBefore);
+        Assert.Equal(1, monitorBefore.OnlineVotingInfo.PendingOnlineBallots);
+        Assert.Equal(1, monitorBefore.OnlineVotingInfo.SubmittedOnlineBallots);
+        Assert.Equal(0, monitorBefore.OnlineVotingInfo.ProcessingOnlineBallots);
+        Assert.Equal(0, monitorBefore.OnlineVotingInfo.ProcessedOnlineBallots);
+        Assert.Equal(0, monitorBefore.TotalBallots);
+        await AssertAnonymousCountPayloadAsync(
+            await GetAsync($"/api/results/election/{electionGuid}/monitor"),
+            voterEmail, voterFirst, voterLast, poolMarker);
+
+        var acceptResponse = await Client.PostAsync(
+            $"/api/elections/{electionGuid}/online-ballots/accept-all",
+            null);
+        Assert.Equal(HttpStatusCode.OK, acceptResponse.StatusCode);
+        var accept = await DeserializeResponseAsync<AcceptAllOnlineBallotsResultDto>(acceptResponse);
+        Assert.NotNull(accept);
+        Assert.True(accept.Success);
+        Assert.Equal(1, accept.AcceptedCount);
+        Assert.Equal(0, accept.PendingRemaining);
+        Assert.Equal("monitoring.acceptAll.complete", accept.MessageKey);
+
+        var summaryAfter = await DeserializeResponseAsync<AcceptAllOnlineBallotsSummaryDto>(
+            await GetAsync($"/api/elections/{electionGuid}/online-ballots/accept-all-summary"));
+        Assert.NotNull(summaryAfter);
+        Assert.Equal(0, summaryAfter.PendingCount);
+        Assert.Equal(1, summaryAfter.ProcessedCount);
+
+        var monitorAfter = await DeserializeResponseAsync<MonitorInfoDto>(
+            await GetAsync($"/api/results/election/{electionGuid}/monitor"));
+        Assert.NotNull(monitorAfter);
+        Assert.Equal(0, monitorAfter.OnlineVotingInfo.PendingOnlineBallots);
+        Assert.Equal(0, monitorAfter.OnlineVotingInfo.SubmittedOnlineBallots);
+        Assert.Equal(0, monitorAfter.OnlineVotingInfo.ProcessingOnlineBallots);
+        Assert.Equal(1, monitorAfter.OnlineVotingInfo.ProcessedOnlineBallots);
+        Assert.Equal(1, monitorAfter.TotalBallots);
+        Assert.Equal(2, monitorAfter.TotalVotes);
+        Assert.Contains(monitorAfter.Locations, l => l.BallotCount == 1);
+        Assert.DoesNotContain(
+            monitorAfter.OnlineVotingInfo.AcceptAllRuns,
+            run => (run.AcceptedBy ?? "").Contains(voterEmail, StringComparison.OrdinalIgnoreCase));
+        await AssertAnonymousCountPayloadAsync(
+            await Client.GetAsync($"/api/results/election/{electionGuid}/monitor"),
+            voterEmail, voterFirst, voterLast, poolMarker);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+            var processed = await context.OnlineVotingInfos
+                .SingleAsync(o => o.ElectionGuid == electionGuid);
+            Assert.Equal(OnlineBallotStatus.Processed, processed.Status);
+            Assert.Null(processed.ListPool);
+            Assert.Null(processed.PoolLocked);
+            Assert.Null(processed.BallotGuid);
+            Assert.Contains(OnlineBallotStatus.Processed, processed.HistoryStatus);
+
+            var location = await context.Locations.SingleAsync(l =>
+                l.ElectionGuid == electionGuid
+                && l.LocationTypeCode == nameof(LocationType.Online));
+            var ballot = await context.Ballots.SingleAsync(b => b.LocationGuid == location.LocationGuid);
+            Assert.Equal(ComputerCodeHelper.Online, ballot.ComputerCode);
+            Assert.Equal($"{ComputerCodeHelper.Online}1", ballot.BallotCode);
+            Assert.Equal(2, await context.Votes.CountAsync(v => v.BallotGuid == ballot.BallotGuid));
+        }
+
+        var ballotsResponse = await GetAsync($"/api/ballots/{electionGuid}/ballots");
+        Assert.Equal(HttpStatusCode.OK, ballotsResponse.StatusCode);
+        var ballots = await DeserializeResponseAsync<PaginatedResponse<BallotDto>>(ballotsResponse);
+        var olBallot = Assert.Single(ballots!.Items);
+        Assert.Equal(ComputerCodeHelper.Online, olBallot.ComputerCode);
+        Assert.Equal($"{ComputerCodeHelper.Online}1", olBallot.BallotCode);
+        Assert.Equal(2, olBallot.VoteCount);
+
+        var onlineReportResponse = await GetAsync($"/api/reports/{electionGuid}/BallotsOnline");
+        Assert.Equal(HttpStatusCode.OK, onlineReportResponse.StatusCode);
+        var onlineReport = await DeserializeResponseAsync<BallotsReportDto>(onlineReportResponse);
+        var reported = Assert.Single(onlineReport!.Ballots);
+        Assert.True(reported.IsOnline);
+
+        var tallyResponse = await Client.PostAsync(
+            $"/api/results/election/{electionGuid}/calculate",
+            null);
+        Assert.Equal(HttpStatusCode.OK, tallyResponse.StatusCode);
+        var tally = await DeserializeResponseAsync<TallyResultDto>(tallyResponse);
+        Assert.NotNull(tally);
+        Assert.Equal(1, tally.Statistics.BallotsReceived);
+        Assert.Equal(2, tally.Statistics.TotalVotes);
+        Assert.Contains(tally.Results, r => r.PersonGuid == candidates[0] && r.VoteCount >= 1);
+        Assert.Contains(tally.Results, r => r.PersonGuid == candidates[1] && r.VoteCount >= 1);
+
+        var voteStatus = await Client.GetFromJsonAsync<OnlineVoteStatusDto>(
+            $"/api/online-voting/{electionGuid}/{voterEmail}/voteStatus");
+        Assert.NotNull(voteStatus);
+        Assert.True(voteStatus.HasVoted);
+        Assert.False(voteStatus.CanChangeVote);
+        Assert.Empty(voteStatus.PriorVotes);
+        Assert.Empty(voteStatus.ListPool);
+    }
+
+    private static async Task AssertAnonymousCountPayloadAsync(
+        HttpResponseMessage response,
+        string voterEmail,
+        string voterFirst,
+        string voterLast,
+        string poolMarker)
+    {
+        var json = await response.Content.ReadAsStringAsync();
+        Assert.DoesNotContain(voterEmail, json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(voterFirst, json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(voterLast, json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(poolMarker, json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("personName", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("whenStatus", json, StringComparison.OrdinalIgnoreCase);
+        using var doc = JsonDocument.Parse(json);
+        AssertNoIdentityArrays(doc.RootElement);
+    }
+
+    private static void AssertNoIdentityArrays(JsonElement element)
+    {
+        if (element.ValueKind == JsonValueKind.Object)
+        {
+            foreach (var property in element.EnumerateObject())
+            {
+                if (property.NameEquals("acceptAllRuns") || property.NameEquals("locations")
+                    || property.NameEquals("computers"))
+                {
+                    continue;
+                }
+
+                Assert.False(
+                    property.Name.Contains("pending", StringComparison.OrdinalIgnoreCase)
+                    && property.Value.ValueKind == JsonValueKind.Array,
+                    "Monitor/summary must not return a pending row list.");
+                Assert.False(
+                    property.Name.Contains("accepted", StringComparison.OrdinalIgnoreCase)
+                    && property.Value.ValueKind == JsonValueKind.Array
+                    && property.Name != "acceptAllRuns",
+                    "Monitor/summary must not return an accepted row list.");
+                AssertNoIdentityArrays(property.Value);
+            }
+        }
+        else if (element.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in element.EnumerateArray())
+            {
+                AssertNoIdentityArrays(item);
+            }
+        }
+    }
+
+    private async Task<List<Guid>> SeedVoterAndCandidatesAsync(
+        Guid electionGuid,
+        string voterEmail,
+        string voterFirst,
+        string voterLast)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+
+        context.People.Add(new Person
+        {
+            ElectionGuid = electionGuid,
+            PersonGuid = Guid.NewGuid(),
+            FirstName = voterFirst,
+            LastName = voterLast,
+            Email = voterEmail,
+            CanVote = true,
+            RowVersion = new byte[8]
+        });
+
+        var candidates = new List<Guid>();
+        for (var i = 0; i < 2; i++)
+        {
+            var guid = Guid.NewGuid();
+            candidates.Add(guid);
+            context.People.Add(new Person
+            {
+                ElectionGuid = electionGuid,
+                PersonGuid = guid,
+                FirstName = $"Candidate{i}",
+                LastName = "Eligible",
+                CanReceiveVotes = true,
+                CanVote = true,
+                RowVersion = new byte[8]
+            });
+        }
+
+        if (!await context.OnlineVoters.AnyAsync(ov => ov.VoterId == voterEmail))
+        {
+            context.OnlineVoters.Add(new OnlineVoter
+            {
+                VoterId = voterEmail,
+                VoterIdType = "E",
+                WhenRegistered = DateTimeOffset.UtcNow
+            });
+        }
+
+        await context.SaveChangesAsync();
+        return candidates;
     }
 
     private async Task EnsureOnlineVoterAsync(string voterId, string voterIdType)
