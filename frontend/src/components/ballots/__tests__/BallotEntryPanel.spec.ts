@@ -56,8 +56,21 @@ const mockPeopleStore = {
   onPersonUpdated: vi.fn(() => () => undefined),
 };
 
+const mockLocationStore = vi.hoisted(() => ({
+  locations: [] as Array<{
+    locationGuid: string;
+    name?: string | null;
+    locationType?: string | null;
+  }>,
+  fetchLocations: vi.fn(),
+}));
+
 vi.mock("@/stores/ballotStore", () => ({
   useBallotStore: () => mockBallotStore,
+}));
+
+vi.mock("@/stores/locationStore", () => ({
+  useLocationStore: () => mockLocationStore,
 }));
 
 vi.mock("@/stores/electionStore", () => ({
@@ -145,6 +158,9 @@ const i18n = createI18n({
         teller2: "Teller 2",
         loadError: "Failed to load",
       },
+      locations: {
+        typeOnline: "Online",
+      },
     },
   },
 });
@@ -189,7 +205,34 @@ describe("BallotEntryPanel session tellers", () => {
     mockPeopleStore.initializeSignalR.mockResolvedValue(undefined);
     mockPeopleStore.joinElection.mockResolvedValue(undefined);
     mockPeopleStore.leaveElection.mockResolvedValue(undefined);
+    mockLocationStore.locations = [];
+    mockLocationStore.fetchLocations.mockReset();
+    mockLocationStore.fetchLocations.mockResolvedValue(undefined);
     useActiveTellers().refreshActiveTellers();
+  });
+
+  it("loads locations when the ballot location is not already in the store", async () => {
+    mountPanel();
+    await flushPromises();
+
+    expect(mockLocationStore.fetchLocations).toHaveBeenCalledWith("elec-1");
+  });
+
+  it("shows the localized Online label when the location type is in the store", async () => {
+    mockLocationStore.locations = [
+      {
+        locationGuid: "loc-1",
+        name: "Main Hall",
+        locationType: "Online",
+      },
+    ];
+
+    const wrapper = mountPanel();
+    await flushPromises();
+
+    expect(mockLocationStore.fetchLocations).not.toHaveBeenCalled();
+    expect(wrapper.text()).toContain("Online");
+    expect(wrapper.text()).not.toContain("Main Hall");
   });
 
   it("shows Teller 1 and Teller 2 as session inputs, not the stored ballot names", async () => {

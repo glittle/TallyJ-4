@@ -1,5 +1,7 @@
 using Backend.DTOs.Results;
+using Backend.Entities;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -139,25 +141,50 @@ public partial class TallyService
 
     private async Task<List<BallotReportDto>> GetBallotReportDataAsync(Guid electionGuid)
     {
-        var ballots = await _context.Ballots
-            .Include(b => b.Location)
-            .Include(b => b.Votes)
-            .ThenInclude(v => v.Person)
+        var rows = await _context.Ballots
+            .AsNoTracking()
             .Where(b => b.Location.ElectionGuid == electionGuid)
             .OrderBy(b => b.Location.Name)
             .ThenBy(b => b.BallotNumAtComputer)
+            .Select(b => new
+            {
+                b.BallotGuid,
+                LocationName = b.Location.Name,
+                LocationTypeCode = b.Location.LocationTypeCode,
+                Status = b.StatusCode,
+                Votes = b.Votes
+                    .OrderBy(v => v.PositionOnBallot)
+                    .Select(v => new
+                    {
+                        v.PositionOnBallot,
+                        HasPerson = v.Person != null,
+                        FirstName = v.Person != null ? v.Person.FirstName : null,
+                        LastName = v.Person != null ? v.Person.LastName : null,
+                        OtherNames = v.Person != null ? v.Person.OtherNames : null,
+                        OtherLastNames = v.Person != null ? v.Person.OtherLastNames : null,
+                        OtherInfo = v.Person != null ? v.Person.OtherInfo : null,
+                    })
+            })
             .ToListAsync();
 
-        return ballots.Select(b => new BallotReportDto
+        return rows.Select(b => new BallotReportDto
         {
             BallotGuid = b.BallotGuid,
-            LocationName = FormatLocationName(b.Location),
-            Status = b.StatusCode,
+            LocationName = FormatLocationName(b.LocationName, b.LocationTypeCode),
+            Status = b.Status,
             Votes = b.Votes
-                .OrderBy(v => v.PositionOnBallot)
                 .Select(v => new VoteReportDto
                 {
-                    FullName = v.Person != null ? v.Person.FullNameFl ?? UnknownFallbackValue : UnknownFallbackValue,
+                    FullName = v.HasPerson
+                        ? PersonNameHelper.ComputeFullNameFl(new Person
+                        {
+                            FirstName = v.FirstName,
+                            LastName = v.LastName ?? "",
+                            OtherNames = v.OtherNames,
+                            OtherLastNames = v.OtherLastNames,
+                            OtherInfo = v.OtherInfo
+                        }) ?? UnknownFallbackValue
+                        : UnknownFallbackValue,
                     Position = v.PositionOnBallot
                 })
                 .ToList()

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { ElMessageBox } from "element-plus";
 import { useNotifications } from "@/composables/useNotifications";
@@ -34,6 +34,33 @@ const ballotLocationLabel = computed(() =>
     props.ballot?.locationName,
   ),
 );
+
+watch(
+  () =>
+    [
+      props.modelValue,
+      props.electionGuid,
+      props.ballot?.locationGuid,
+    ] as const,
+  async ([open, electionGuid, locationGuid]) => {
+    if (
+      !open ||
+      !electionGuid ||
+      !locationGuid ||
+      locationStore.locations.some((item) => item.locationGuid === locationGuid)
+    ) {
+      return;
+    }
+
+    try {
+      await locationStore.fetchLocations(electionGuid);
+    } catch {
+      // Keep ballot.locationName as the display fallback.
+    }
+  },
+  { immediate: true },
+);
+
 const { showSuccessMessage } = useNotifications();
 
 const showAddVote = ref(false);
