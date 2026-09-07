@@ -86,6 +86,7 @@ const mockMonitor: MonitorInfoDto = {
     onlineVotingEnabled: true,
     onlineVotingStart: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
     onlineVotingEnd: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+    connectedOnlineVoterSessions: 2,
     acceptAllRuns: [],
   },
   totalBallots: 10,
@@ -138,7 +139,10 @@ const stubs = {
   ElTableColumn: { template: "<td />" },
   ElTag: { template: "<span><slot /></span>" },
   ElDescriptions: { template: "<div><slot /></div>" },
-  ElDescriptionsItem: { template: "<div><slot /></div>" },
+  ElDescriptionsItem: {
+    props: ["label"],
+    template: "<div>{{ label }}<slot /></div>",
+  },
   ElEmpty: { template: "<div />" },
 };
 
@@ -157,6 +161,7 @@ describe("MonitoringDashboardPage Accept all", () => {
     mockMonitor.onlineVotingInfo.processingOnlineBallots = 1;
     mockMonitor.onlineVotingInfo.processedOnlineBallots = 1;
     mockMonitor.onlineVotingInfo.acceptAllRuns = [];
+    mockMonitor.onlineVotingInfo.connectedOnlineVoterSessions = 2;
     mockMonitor.onlineVotingInfo.onlineVotingStart = new Date(
       Date.now() - 60 * 60 * 1000,
     ).toISOString();
@@ -251,6 +256,14 @@ describe("MonitoringDashboardPage Accept all", () => {
     expect(wrapper.text()).not.toContain("Cara");
     expect(wrapper.text()).not.toContain("personName");
     expect(
+      wrapper.find("[data-testid='connected-online-voter-sessions']").exists(),
+    ).toBe(true);
+    expect(
+      wrapper
+        .find("[data-testid='connected-online-voter-sessions-count']")
+        .text(),
+    ).toBe("2");
+    expect(
       wrapper.find("[data-testid='pending-online-ballots-table']").exists(),
     ).toBe(false);
     expect(
@@ -274,6 +287,23 @@ describe("MonitoringDashboardPage Accept all", () => {
     expect(
       wrapper.find("[data-testid='accepted-online-ballots-count']").text(),
     ).toBe("0");
+  });
+
+  it("shows anonymous ballot-page session count, not names or building-a-ballot", async () => {
+    mockMonitor.onlineVotingInfo.connectedOnlineVoterSessions = 4;
+    const wrapper = await mountPage();
+
+    expect(
+      wrapper
+        .find("[data-testid='connected-online-voter-sessions-count']")
+        .text(),
+    ).toBe("4");
+    expect(wrapper.text()).toContain("Connected online voters");
+    expect(wrapper.text()).toContain("Ballot-page sessions");
+    expect(wrapper.text()).toContain("composing is not stored until submit");
+    expect(wrapper.text()).not.toContain("Ada");
+    expect(wrapper.text()).not.toContain("alice@");
+    expect(wrapper.text()).not.toContain("building a ballot");
   });
 
   it("shows an empty Accept-all record when there are no runs", async () => {

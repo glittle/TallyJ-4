@@ -13,6 +13,7 @@ public partial class TallyService : ITallyService
     private readonly ILogger<TallyService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
     private readonly IComputerAssignmentService _computerAssignmentService;
+    private readonly IOnlineVoterPresenceService _onlineVoterPresenceService;
     private readonly IStringLocalizer<TallyService> _localizer;
 
     private const string UnknownFallbackValue = "Unknown";
@@ -43,18 +44,22 @@ public partial class TallyService : ITallyService
     /// <param name="context">The main database context for accessing election and tally data.</param>
     /// <param name="logger">Logger for recording tally service operations.</param>
     /// <param name="signalRNotificationService">Service for sending real-time notifications about tally progress.</param>
+    /// <param name="computerAssignmentService">Active teller workstation tracking for the monitor.</param>
+    /// <param name="onlineVoterPresenceService">Anonymous ballot-page session counts for the monitor.</param>
     /// <param name="localizer">Localizer for retrieving localized strings.</param>
     public TallyService(
         MainDbContext context,
         ILogger<TallyService> logger,
         ISignalRNotificationService signalRNotificationService,
         IComputerAssignmentService computerAssignmentService,
+        IOnlineVoterPresenceService onlineVoterPresenceService,
         IStringLocalizer<TallyService> localizer)
     {
         _context = context;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
         _computerAssignmentService = computerAssignmentService;
+        _onlineVoterPresenceService = onlineVoterPresenceService;
         _localizer = localizer;
     }
 }

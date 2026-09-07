@@ -22,7 +22,7 @@ Companion to [Hubs-in-v3.md](./Hubs-in-v3.md). Summarizes how TallyJ 4’s realt
 | ImportHub (election package load) | `ElectionPackageImportHub` (`/hubs/election-package-import`) | User-scoped `loaderStatus` (#231) |
 | BallotImportHub | `BallotImportHub` (`/hubs/ballot-import`) | Present; election-scoped groups |
 | RollCallHub | — | Deferred |
-| AllVotersHub | `AllVotersHub` (`/hubs/all-voters`) | Global `AllVoters`; thin `updateVoters` (#233) |
+| AllVotersHub | `AllVotersHub` (`/hubs/all-voters`) | Global `AllVoters`; thin `updateVoters` (#233); `JoinElection` ballot-page session count (#184) |
 | VoterPersonalHub | `VoterPersonalHub` (`/hubs/voter-personal`) | `Voter{voterId}` from JWT; thin `updateVoter` (#233) |
 | VoterCodeHub | — | Not implemented |
 | *(scaffold)* OnlineVotingHub | — | Removed on purpose; see `context/realtime.md` |

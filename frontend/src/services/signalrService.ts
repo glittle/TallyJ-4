@@ -18,10 +18,38 @@ export class SignalRService extends SignalRTellerHubs {
   }
 
   async disconnectVoterHubs(): Promise<void> {
+    await this.leaveOnlineVoterElection();
     await this.leaveAllVoters();
     await this.leaveVoterPersonal();
     await this.disconnect("/hubs/all-voters");
     await this.disconnect("/hubs/voter-personal");
+  }
+
+  /**
+   * Count this AllVoters connection as a ballot-page session for the election.
+   * Anonymous: the monitor receives a session count only.
+   */
+  async joinOnlineVoterElection(electionGuid: string): Promise<void> {
+    this.allVotersElectionGuid = electionGuid;
+    const connection = await this.connectToAllVotersHub();
+    if (connection.state !== signalR.HubConnectionState.Connected) {
+      throw new Error(
+        `AllVoters hub is not ready (state: ${connection.state})`,
+      );
+    }
+    await connection.invoke("JoinElection", electionGuid);
+  }
+
+  async leaveOnlineVoterElection(): Promise<void> {
+    this.allVotersElectionGuid = null;
+    const connection = this.getConnection("/hubs/all-voters");
+    if (connection?.state === signalR.HubConnectionState.Connected) {
+      try {
+        await connection.invoke("LeaveElection");
+      } catch (error) {
+        console.warn("Failed to leave online voter election presence:", error);
+      }
+    }
   }
 
   async connectToAllVotersHub(): Promise<signalR.HubConnection> {

@@ -15,6 +15,7 @@ public static class ProgramServiceRegistration
         services.AddScoped<ILocationService, LocationService>();
         services.AddScoped<IComputerService, ComputerService>();
         services.AddSingleton<IComputerAssignmentService, ComputerAssignmentService>();
+        services.AddSingleton<IOnlineVoterPresenceService, OnlineVoterPresenceService>();
         services.AddScoped<ITellerService, TellerService>();
         services.AddScoped<IPeopleService, PeopleService>();
         services.AddScoped<IBallotService, BallotService>();

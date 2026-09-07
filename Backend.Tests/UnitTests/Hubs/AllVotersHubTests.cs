@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Backend.Hubs;
+using Backend.Services;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
@@ -9,9 +10,11 @@ namespace Backend.Tests.UnitTests.Hubs;
 
 public class AllVotersHubTests
 {
-    private (AllVotersHub Hub, Mock<IGroupManager> Groups) CreateHub()
+    private (AllVotersHub Hub, Mock<IGroupManager> Groups, Mock<IOnlineVoterPresenceService> Presence)
+        CreateHub()
     {
-        var hub = new AllVotersHub(NullLogger<AllVotersHub>.Instance);
+        var presence = new Mock<IOnlineVoterPresenceService>();
+        var hub = new AllVotersHub(NullLogger<AllVotersHub>.Instance, presence.Object);
         var context = new Mock<HubCallerContext>();
         context.Setup(c => c.ConnectionId).Returns("conn-all");
         context.Setup(c => c.User).Returns(new ClaimsPrincipal(new ClaimsIdentity(
@@ -36,13 +39,13 @@ public class AllVotersHubTests
 
         hub.Context = context.Object;
         hub.Groups = groups.Object;
-        return (hub, groups);
+        return (hub, groups, presence);
     }
 
     [Fact]
     public async Task Join_adds_to_global_AllVoters_group()
     {
-        var (hub, groups) = CreateHub();
+        var (hub, groups, presence) = CreateHub();
 
         await hub.Join();
 
@@ -52,6 +55,51 @@ public class AllVotersHubTests
                 AllVotersHub.GetGroupName(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
+        presence.Verify(
+            p => p.AddSession(It.IsAny<Guid>(), It.IsAny<string>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task JoinElection_records_anonymous_session_for_election()
+    {
+        var (hub, _, presence) = CreateHub();
+        var electionGuid = Guid.Parse("aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee");
+
+        await hub.JoinElection(electionGuid);
+
+        presence.Verify(p => p.AddSession(electionGuid, "conn-all"), Times.Once);
+    }
+
+    [Fact]
+    public async Task JoinElection_rejects_empty_election()
+    {
+        var (hub, _, presence) = CreateHub();
+
+        await Assert.ThrowsAsync<HubException>(() => hub.JoinElection(Guid.Empty));
+        presence.Verify(
+            p => p.AddSession(It.IsAny<Guid>(), It.IsAny<string>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task LeaveElection_removes_session()
+    {
+        var (hub, _, presence) = CreateHub();
+
+        await hub.LeaveElection();
+
+        presence.Verify(p => p.RemoveSession("conn-all"), Times.Once);
+    }
+
+    [Fact]
+    public async Task OnDisconnectedAsync_removes_session()
+    {
+        var (hub, _, presence) = CreateHub();
+
+        await hub.OnDisconnectedAsync(null);
+
+        presence.Verify(p => p.RemoveSession("conn-all"), Times.Once);
     }
 
     [Fact]

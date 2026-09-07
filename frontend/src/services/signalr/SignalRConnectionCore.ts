@@ -15,6 +15,8 @@ export class SignalRConnectionCore {
   protected publicGroupJoined = false;
   /** Online voter hubs (httpOnly voter_token cookie + withCredentials). */
   protected allVotersJoined = false;
+  /** Election whose ballot page this AllVoters connection is counted on. */
+  protected allVotersElectionGuid: string | null = null;
   protected voterPersonalJoined = false;
 
   protected get baseUrl(): string {
@@ -132,6 +134,20 @@ export class SignalRConnectionCore {
             "Failed to rejoin AllVoters group after reconnect:",
             error,
           );
+        }
+
+        if (this.allVotersElectionGuid) {
+          try {
+            await connection.invoke("JoinElection", this.allVotersElectionGuid);
+            console.log(
+              `Rejoined AllVoters election presence ${this.allVotersElectionGuid} after reconnect`,
+            );
+          } catch (error) {
+            console.error(
+              "Failed to rejoin AllVoters election presence after reconnect:",
+              error,
+            );
+          }
         }
       }
 

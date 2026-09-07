@@ -156,6 +156,14 @@ public class OnlineVotingInfoDto
     public DateTimeOffset? OnlineVotingEnd { get; set; }
 
     /// <summary>
+    /// Anonymous count of AllVotersHub sessions currently on this election's
+    /// online ballot page. Connection ids only — no person name, email, phone,
+    /// kiosk, voter id, or row id. One person with two tabs counts as two.
+    /// Not a "building a ballot" count: composing is not stored until submit.
+    /// </summary>
+    public int ConnectedOnlineVoterSessions { get; set; }
+
+    /// <summary>
     /// Successful Accept-all runs for this election, newest first. Each row is
     /// who / when / pending and accepted counts before and after that run.
     /// </summary>

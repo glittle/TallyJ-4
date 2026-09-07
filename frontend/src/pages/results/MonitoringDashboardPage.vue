@@ -317,6 +317,24 @@
             </div>
           </div>
           <div
+            class="connected-online-voters"
+            data-testid="connected-online-voter-sessions"
+          >
+            <h3>{{ $t("monitoring.connectedOnlineVoters.title") }}</h3>
+            <p class="online-ballot-breakdown-note">
+              {{ $t("monitoring.connectedOnlineVoters.note") }}
+            </p>
+            <el-descriptions :column="1" border>
+              <el-descriptions-item
+                :label="$t('monitoring.connectedOnlineVoters.sessions')"
+              >
+                <el-tag data-testid="connected-online-voter-sessions-count">
+                  {{ connectedOnlineVoterSessions }}
+                </el-tag>
+              </el-descriptions-item>
+            </el-descriptions>
+          </div>
+          <div
             class="online-ballot-breakdown"
             data-testid="online-ballot-status-breakdown"
           >
@@ -494,6 +512,9 @@ const processingOnlineCount = computed(
 );
 const acceptedOnlineCount = computed(
   () => monitorInfo.value?.onlineVotingInfo.processedOnlineBallots ?? 0,
+);
+const connectedOnlineVoterSessions = computed(
+  () => monitorInfo.value?.onlineVotingInfo.connectedOnlineVoterSessions ?? 0,
 );
 const onlineBallotStatusView = onlineBallotMonitorStatus;
 const refreshInterval = ref<number | null>(null);
@@ -801,6 +822,7 @@ function calculateTurnout(registered: number, ballots: number) {
 }
 
 .online-ballot-breakdown,
+.connected-online-voters,
 .accept-all-history,
 .online-close-countdown {
   margin-top: 20px;

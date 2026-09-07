@@ -17,6 +17,7 @@ public class TallyServiceTests : ServiceTestBase
     private readonly Mock<ILogger<TallyService>> _loggerMock;
     private readonly Mock<ISignalRNotificationService> _signalRMock;
     private readonly Mock<IComputerAssignmentService> _computerAssignmentMock;
+    private readonly Mock<IOnlineVoterPresenceService> _onlineVoterPresenceMock;
     private readonly Mock<IStringLocalizer<TallyService>> _localizerMock;
 
     public TallyServiceTests()
@@ -27,6 +28,10 @@ public class TallyServiceTests : ServiceTestBase
         _computerAssignmentMock
             .Setup(s => s.GetActiveComputers(It.IsAny<Guid>()))
             .Returns(Array.Empty<Backend.DTOs.Computers.ActiveComputerDto>());
+        _onlineVoterPresenceMock = new Mock<IOnlineVoterPresenceService>();
+        _onlineVoterPresenceMock
+            .Setup(s => s.CountSessions(It.IsAny<Guid>()))
+            .Returns(0);
         _localizerMock = new Mock<IStringLocalizer<TallyService>>();
         
         // Setup localizer to return section codes
@@ -42,6 +47,7 @@ public class TallyServiceTests : ServiceTestBase
             _loggerMock.Object,
             _signalRMock.Object,
             _computerAssignmentMock.Object,
+            _onlineVoterPresenceMock.Object,
             _localizerMock.Object);
     }
 
@@ -1796,8 +1802,8 @@ public class TallyServiceTests : ServiceTestBase
         var election = await CreateTestElectionAsync();
         var people = await CreateTestPeopleAsync(election.ElectionGuid, 1);
         people[0].FirstName = "Ada";
-        people[0].LastName = "Voter";
-        people[0].Email = "voter@example.test";
+        people[0].LastName = "Lovelace";
+        people[0].Email = "ada.lovelace@example.test";
         people[0].Phone = "+15555550100";
         people[0].KioskCode = "Kiosk99";
         Context.OnlineVotingInfos.Add(new OnlineVotingInfo
@@ -1815,11 +1821,26 @@ public class TallyServiceTests : ServiceTestBase
 
         Assert.Equal(1, result.OnlineVotingInfo.ProcessedOnlineBallots);
         Assert.DoesNotContain("Ada", json, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("Voter", json, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("voter@", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Lovelace", json, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("ada.lovelace@", json, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("555", json);
         Assert.DoesNotContain("Kiosk", json, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain(people[0].PersonGuid.ToString(), json, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(0, result.OnlineVotingInfo.ConnectedOnlineVoterSessions);
+    }
+
+    [Fact]
+    public async Task GetMonitorInfoAsync_IncludesConnectedOnlineVoterSessionCount()
+    {
+        var election = await CreateTestElectionAsync();
+        _onlineVoterPresenceMock
+            .Setup(s => s.CountSessions(election.ElectionGuid))
+            .Returns(3);
+
+        var result = await _service.GetMonitorInfoAsync(election.ElectionGuid);
+
+        Assert.Equal(3, result.OnlineVotingInfo.ConnectedOnlineVoterSessions);
+        _onlineVoterPresenceMock.Verify(s => s.CountSessions(election.ElectionGuid), Times.Once);
     }
 }
 

@@ -122,6 +122,7 @@ public partial class TallyService
             ProcessingOnlineBallots = onlineCounts.Processing,
             PendingOnlineBallots = onlineCounts.Submitted + onlineCounts.Processing,
             ProcessedOnlineBallots = onlineCounts.Processed,
+            ConnectedOnlineVoterSessions = _onlineVoterPresenceService.CountSessions(electionGuid),
             AcceptAllRuns = await LoadAcceptAllRunsAsync(electionGuid)
         };
 
