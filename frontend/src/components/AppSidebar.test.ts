@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createRouter, createWebHistory } from "vue-router";
 import { createTestingPinia } from "@pinia/testing";
@@ -14,24 +14,6 @@ const authState = {
 
 vi.mock("../stores/authStore", () => ({
   useAuthStore: () => authState,
-}));
-
-vi.mock("./nav/SidebarStageHeader.vue", () => ({
-  default: {
-    name: "SidebarStageHeader",
-    props: ["electionGuid", "stage"],
-    template:
-      '<div class="mock-stage-header" :data-stage="stage" :data-guid="electionGuid" />',
-  },
-}));
-
-vi.mock("./nav/StageGroupedSidebarMenu.vue", () => ({
-  default: {
-    name: "StageGroupedSidebarMenu",
-    props: ["electionGuid", "currentStage", "isGuestTeller"],
-    template:
-      '<div class="mock-stage-menu" :data-guest="isGuestTeller ? \'true\' : \'false\'" :data-stage="currentStage" />',
-  },
 }));
 
 const ELECTION_GUID = "elec-sidebar";
@@ -87,6 +69,18 @@ async function mountSidebar(options: {
     global: {
       plugins: [pinia, router, i18n],
       stubs: {
+        SidebarStageHeader: {
+          name: "SidebarStageHeader",
+          props: ["electionGuid", "stage"],
+          template:
+            '<div class="mock-stage-header" :data-stage="stage" :data-guid="electionGuid" />',
+        },
+        StageGroupedSidebarMenu: {
+          name: "StageGroupedSidebarMenu",
+          props: ["electionGuid", "currentStage", "isGuestTeller"],
+          template:
+            '<div class="mock-stage-menu" :data-guest="isGuestTeller ? \'true\' : \'false\'" :data-stage="currentStage" />',
+        },
         ElIcon: { template: "<span />" },
         ElMenu: { template: "<div><slot /></div>" },
         ElMenuItem: { template: "<div><slot /></div>" },
@@ -134,6 +128,7 @@ describe("AppSidebar election nav", () => {
     expect(wrapper.find(".mock-stage-header").exists()).toBe(true);
     expect(wrapper.find(".back-to-elections").exists()).toBe(true);
     const menu = wrapper.find(".mock-stage-menu");
+    expect(menu.exists()).toBe(true);
     expect(menu.attributes("data-guest")).toBe("false");
     expect(menu.attributes("data-stage")).toBe("ProcessingBallots");
   });
@@ -145,6 +140,7 @@ describe("AppSidebar election nav", () => {
     });
 
     expect(wrapper.find(".mock-stage-header").exists()).toBe(false);
+    expect(wrapper.find(".mock-stage-menu").exists()).toBe(true);
     expect(wrapper.find(".mock-stage-menu").attributes("data-stage")).toBe(
       "Finalized",
     );
