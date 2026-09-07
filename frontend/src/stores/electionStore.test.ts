@@ -570,6 +570,40 @@ describe("Election Store", () => {
       expect(elMessageMock).toHaveBeenCalledTimes(1);
     });
 
+    it("statusChanged to Finalized updates currentStage for other tellers", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      const handlers = new Map<string, (data: unknown) => void>();
+      const mockConnection = {
+        on: vi.fn((event: string, handler: (data: unknown) => void) => {
+          handlers.set(event, handler);
+        }),
+      };
+      signalrService.connectToMainHub.mockResolvedValue(mockConnection);
+      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
+
+      electionStore.currentElection = {
+        electionGuid: "election-1",
+        name: "Springfield LSA",
+        electionStage: "ProcessingBallots",
+      } as ElectionDto;
+
+      await electionStore.initializeSignalR();
+      handlers.get("statusChanged")!({
+        electionGuid: "election-1",
+        name: "Springfield LSA",
+        electionStage: "Finalized",
+        updatedAt: new Date().toISOString(),
+      });
+
+      expect(electionStore.currentStage).toBe("Finalized");
+      expect(elMessageMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "Election changed to Finalized",
+          type: "info",
+        }),
+      );
+    });
+
     it("statusChanged does not toast when local setStage already suppressed echo", async () => {
       const { signalrService } = await import("../services/signalrService");
       const { electionService } = await import("../services/electionService");
@@ -701,6 +735,14 @@ describe("Election Store", () => {
       expect(electionStore.currentStage).toBe("ProcessingBallots");
     });
 
+    it("returns Finalized when electionStage is Finalized (lock after analysis)", () => {
+      electionStore.currentElection = {
+        electionGuid: "1",
+        electionStage: "Finalized",
+      } as ElectionDto;
+      expect(electionStore.currentStage).toBe("Finalized");
+    });
+
     it("reacts to currentElection changes", () => {
       electionStore.currentElection = {
         electionGuid: "1",
@@ -766,6 +808,22 @@ describe("Election Store", () => {
         "1",
         "ProcessingBallots",
       );
+    });
+
+    it("calls electionService.changeStage with Finalized", async () => {
+      const { electionService } = await import("../services/electionService");
+      const updatedElection = {
+        electionGuid: "1",
+        electionStage: "Finalized",
+      } as ElectionDto;
+      electionStore.elections = [{ electionGuid: "1" } as ElectionDto];
+      electionStore.currentElection = electionStore.elections[0]!;
+      electionService.changeStage.mockResolvedValue(updatedElection);
+
+      await electionStore.setStage("1", "Finalized");
+
+      expect(electionService.changeStage).toHaveBeenCalledWith("1", "Finalized");
+      expect(electionStore.currentElection?.electionStage).toBe("Finalized");
     });
   });
 

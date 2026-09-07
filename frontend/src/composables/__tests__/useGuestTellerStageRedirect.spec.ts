@@ -26,13 +26,17 @@ vi.mock("vue-router", () => ({
   }),
 }));
 
+const { isGuestTellerMock } = vi.hoisted(() => ({
+  isGuestTellerMock: vi.fn(() => true),
+}));
+
 vi.mock("@/domain/guestTellerAccess", async () => {
   const actual = await vi.importActual<
     typeof import("@/domain/guestTellerAccess")
   >("@/domain/guestTellerAccess");
   return {
     ...actual,
-    isGuestTeller: vi.fn(() => true),
+    isGuestTeller: (...args: unknown[]) => isGuestTellerMock(...args),
   };
 });
 
@@ -55,6 +59,8 @@ describe("useGuestTellerStageRedirect", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     mockRouterPush.mockReset();
+    isGuestTellerMock.mockReset();
+    isGuestTellerMock.mockReturnValue(true);
     routePath.value = "/elections/elec-1/frontdesk";
     routeId.value = "elec-1";
   });
@@ -112,6 +118,51 @@ describe("useGuestTellerStageRedirect", () => {
     await nextTick();
 
     expect(mockRouterPush).toHaveBeenCalledWith("/elections/elec-1/frontdesk");
+  });
+
+  it("redirects GuestTeller to election landing when stage becomes Finalized", async () => {
+    const store = useElectionStore();
+    store.currentElection = {
+      electionGuid: "elec-1",
+      name: "Test",
+      electionStage: "ProcessingBallots",
+    } as ElectionDto;
+    routePath.value = "/elections/elec-1/ballots";
+
+    mountHarness();
+    await nextTick();
+    mockRouterPush.mockReset();
+
+    store.currentElection = {
+      ...store.currentElection!,
+      electionStage: "Finalized",
+    };
+    await nextTick();
+
+    expect(mockRouterPush).toHaveBeenCalledWith("/elections/elec-1");
+  });
+
+  it("does not move a FullTeller when the stage changes", async () => {
+    isGuestTellerMock.mockReturnValue(false);
+    routePath.value = "/elections/elec-1/people";
+    const store = useElectionStore();
+    store.currentElection = {
+      electionGuid: "elec-1",
+      name: "Test",
+      electionStage: "SettingUp",
+    } as ElectionDto;
+
+    mountHarness();
+    await nextTick();
+    mockRouterPush.mockReset();
+
+    store.currentElection = {
+      ...store.currentElection!,
+      electionStage: "GatheringBallots",
+    };
+    await nextTick();
+
+    expect(mockRouterPush).not.toHaveBeenCalled();
   });
 
   it("does not redirect when already on the correct ProcessingBallots page", async () => {

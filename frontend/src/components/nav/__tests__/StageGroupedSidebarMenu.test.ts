@@ -216,6 +216,35 @@ describe("StageGroupedSidebarMenu", () => {
       });
       const pages = wrapper.findAll(".stage-group__page");
       expect(pages).toHaveLength(2);
+      expect(pages.map((p) => p.text())).toEqual([
+        "elections.details",
+        "results.showFinalResults",
+      ]);
+    });
+
+    it("does not show FullTeller-only items during ProcessingBallots", () => {
+      const wrapper = mountMenu({
+        isGuestTeller: true,
+        currentStage: "ProcessingBallots",
+      });
+      const text = wrapper.text();
+      expect(text).toContain("ballots.management");
+      expect(text).not.toContain("results.monitor");
+      expect(text).not.toContain("results.calculateTally");
+      expect(text).not.toContain("results.title");
+      expect(text).not.toContain("results.reporting");
+    });
+
+    it("does not show FullTeller-only items during GatheringBallots", () => {
+      const wrapper = mountMenu({
+        isGuestTeller: true,
+        currentStage: "GatheringBallots",
+      });
+      const text = wrapper.text();
+      expect(text).toContain("nav.frontDesk");
+      expect(text).not.toContain("people.management");
+      expect(text).not.toContain("elections.edit");
+      expect(text).not.toContain("nav.tellers");
     });
 
     it("renders no pages when SettingUp (all admin-only)", () => {

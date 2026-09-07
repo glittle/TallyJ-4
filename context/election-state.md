@@ -11,6 +11,30 @@ State transitions affect what every teller can see and do. Silent or partial fai
 ### Design posture
 Treat state changes as high-consequence operations. Prefer clear, atomic transitions and strong feedback over optimistic updates.
 
+## Lock after analysis is the Finalized stage
+
+**Status:** active  
+**Evidence:** inferred (issue #172 names; implementation in `ElectionService.ChangeElectionStageAsync`)
+
+There is no separate `Locked` flag. After analysis is complete and counts reconcile, advancing to **Finalized** is the lock:
+
+- Finalization is rejected until `ElectionStageFinalizationReadiness` is ready (analysis present and reportable, no blocking ballots, no unresolved ties, counts reconcile).
+- Leaving Finalized requires `ConfirmLeavingFinalized`. The StageControl UI does not send that flag, so a FullTeller click away from Finalized stays locked and shows the confirmation error.
+- Accept-all online ballots is refused while Finalized.
+
+**Rejected alternative (not implemented):** a dedicated lock bit plus a “Move all tellers” command. Stage change + SignalR `statusChanged` is the coordination path.
+
+**Gap (intentional for this test slice):** people/ballot write APIs are not separately gated on Finalized. The lock is the stage + confirmation + guest menu/route rules.
+
+## “Move all tellers to this state” is the stage broadcast
+
+**Status:** active  
+**Evidence:** inferred (issue #172 names; no separate move-tellers API)
+
+Changing stage is the move. `ChangeElectionStageAsync` persists the stage and broadcasts `statusChanged` on MainHub. Remote `electionStore` clients update `currentStage`. GuestTellers are redirected to that stage’s work page; FullTellers are notified and stay on their current page (they can still open other stage groups).
+
+There is no separate “Move all tellers to this state” button or endpoint.
+
 ## GuestTeller page on stage change
 
 **Status:** active  

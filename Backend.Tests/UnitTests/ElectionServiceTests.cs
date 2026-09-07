@@ -582,6 +582,12 @@ public class ElectionServiceTests : ServiceTestBase
 
         var inDb = Context.Elections.Single(e => e.ElectionGuid == electionGuid);
         Assert.Equal(ElectionStage.Finalized, inDb.ElectionStage);
+
+        // Lock-after-analysis: other tellers hear the Finalized stage via statusChanged.
+        _signalRMock.Verify(
+            s => s.SendElectionUpdateAsync(It.Is<Backend.DTOs.SignalR.ElectionUpdateDto>(
+                u => u.ElectionGuid == electionGuid && u.ElectionStage == ElectionStage.Finalized)),
+            Times.Once);
     }
 
     [Fact]
@@ -639,9 +645,15 @@ public class ElectionServiceTests : ServiceTestBase
 
         Assert.True(result.RequiresConfirmation);
         Assert.NotNull(result.ConfirmationReason);
+        Assert.Equal(ElectionStageMessageKeys.ConfirmLeaveFinalized, result.ConfirmationReason);
 
         var inDb = Context.Elections.Single(e => e.ElectionGuid == electionGuid);
         Assert.Equal(ElectionStage.Finalized, inDb.ElectionStage);
+
+        // Lock holds: no statusChanged until the operator confirms leaving Finalized.
+        _signalRMock.Verify(
+            s => s.SendElectionUpdateAsync(It.IsAny<Backend.DTOs.SignalR.ElectionUpdateDto>()),
+            Times.Never);
     }
 
     [Fact]
@@ -670,6 +682,42 @@ public class ElectionServiceTests : ServiceTestBase
 
         Assert.True(result.IsSuccess);
         Assert.Equal(ElectionStage.ProcessingBallots, result.Election!.ElectionStage);
+
+        _signalRMock.Verify(
+            s => s.SendElectionUpdateAsync(It.Is<Backend.DTOs.SignalR.ElectionUpdateDto>(
+                u => u.ElectionGuid == electionGuid && u.ElectionStage == ElectionStage.ProcessingBallots)),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task ChangeElectionStageAsync_BroadcastsStatusChanged_SoOtherTellersMove()
+    {
+        var electionGuid = Guid.NewGuid();
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Move Tellers Election",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.SettingUp,
+            DateOfElection = DateTime.UtcNow.AddDays(10),
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ChangeElectionStageAsync(electionGuid, new ChangeElectionStageDto
+        {
+            ElectionStage = ElectionStage.GatheringBallots
+        });
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(ElectionStage.GatheringBallots, result.Election!.ElectionStage);
+
+        // "Move all tellers to this state" is this broadcast, not a separate API.
+        _signalRMock.Verify(
+            s => s.SendElectionUpdateAsync(It.Is<Backend.DTOs.SignalR.ElectionUpdateDto>(
+                u => u.ElectionGuid == electionGuid && u.ElectionStage == ElectionStage.GatheringBallots)),
+            Times.Once);
     }
 
     [Fact]

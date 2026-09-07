@@ -66,6 +66,31 @@ describe("guestTellerAccess", () => {
       const pages = getGuestTellerMenuPages("Finalized", GUID);
       expect(pages.map((p) => p.key)).toEqual(["landing", "final-results"]);
     });
+
+    it("never includes FullTeller-only pages (tally, monitor, people, edit)", () => {
+      const stages: ElectionStage[] = [
+        "SettingUp",
+        "GatheringBallots",
+        "ProcessingBallots",
+        "Finalized",
+      ];
+      const hiddenKeys = [
+        "monitor",
+        "tally",
+        "people",
+        "edit",
+        "locations",
+        "tellers",
+        "reporting",
+      ];
+
+      for (const stage of stages) {
+        const keys = getGuestTellerMenuPages(stage, GUID).map((p) => p.key);
+        for (const hidden of hiddenKeys) {
+          expect(keys, `${stage} must not show ${hidden}`).not.toContain(hidden);
+        }
+      }
+    });
   });
 
   describe("isGuestTellerRouteAllowed", () => {
