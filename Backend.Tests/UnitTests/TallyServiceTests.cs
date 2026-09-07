@@ -1779,6 +1779,41 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task GetReportDataAsync_Ballots_FormatsOnlineLocationNameWithoutLoadingFullGraph()
+    {
+        var election = await CreateTestElectionAsync();
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        location.Name = "Hall A";
+        location.LocationTypeCode = nameof(LocationType.Online);
+        await Context.SaveChangesAsync();
+
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 1);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 1);
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballots[0].BallotGuid,
+            PersonGuid = people[0].PersonGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Ok,
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+        Context.ChangeTracker.Clear();
+
+        var report = await _service.GetReportDataAsync(election.ElectionGuid, "ballots");
+        var data = Assert.IsType<List<BallotReportDto>>(report.Data);
+        var row = Assert.Single(data);
+
+        Assert.Equal("Online", row.LocationName);
+        var vote = Assert.Single(row.Votes);
+        Assert.Equal(people[0].FullNameFl, vote.FullName);
+        Assert.False(Context.ChangeTracker.Entries<Ballot>().Any());
+        Assert.False(Context.ChangeTracker.Entries<Location>().Any());
+        Assert.False(Context.ChangeTracker.Entries<Vote>().Any());
+        Assert.False(Context.ChangeTracker.Entries<Person>().Any());
+    }
+
+    [Fact]
     public void OnlineVotingInfoDto_HasNoPersonNameOrContactFields()
     {
         var names = typeof(OnlineVotingInfoDto).GetProperties().Select(p => p.Name).ToList();

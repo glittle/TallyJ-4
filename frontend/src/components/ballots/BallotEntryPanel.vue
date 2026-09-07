@@ -73,6 +73,21 @@ function hasCachedPanelData(): boolean {
   );
 }
 
+async function ensureBallotLocationLoaded(locationGuid: string | undefined) {
+  if (
+    !locationGuid ||
+    locationStore.locations.some((item) => item.locationGuid === locationGuid)
+  ) {
+    return;
+  }
+
+  try {
+    await locationStore.fetchLocations(props.electionGuid);
+  } catch {
+    // Keep ballot.locationName as the display fallback.
+  }
+}
+
 async function loadBallotData() {
   const showLoading = !hasCachedPanelData();
   if (showLoading) {
@@ -85,6 +100,7 @@ async function loadBallotData() {
     ]);
 
     const loadedBallot = ballotStore.currentBallot;
+    await ensureBallotLocationLoaded(loadedBallot?.locationGuid);
     if (loadedBallot) {
       await ballotStore.updateBallot(props.ballotGuid, {
         ...getActiveTellerPayload(),

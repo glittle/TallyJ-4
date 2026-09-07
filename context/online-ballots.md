@@ -204,6 +204,12 @@ Editing that row may change sort order only. Name is read-only (the i18n label).
 
 **Rejected alternative:** treat a location named “Online” as reserved, or POST the translated label as the stored name. Names are user-facing and translated; writing the current language back would change the stored fallback and still would not identify the row.
 
+Ballot entry panels and the votes dialog load locations when the ballot’s `locationGuid` is not already in the location store, so `formatLocationLabel` can use type. If that fetch fails, the stored `locationName` remains the display fallback.
+
+The ballots report projects location name + type with `AsNoTracking` instead of materializing the full ballot/location/vote/person graph, then formats Online the same way. That keeps the report label correct without tracking entities for a read-only export.
+
+**Rejected alternative:** rely only on `ballot.locationName` in the UI, or keep `Include` graphs for the report. The stored name is the English (or setup-time) fallback and can disagree with the teller’s language; the Include path also tracked entities the report never updates.
+
 **Reason:** tellers need to see which row is the voter-only location, in their language, without being able to rename or dress it up as a paper station.
 
 ## Online and imported ballot codes
