@@ -336,11 +336,12 @@ public class ElectionsController : ControllerBase
     }
 
     /// <summary>
-    /// Accepts current pending (Submitted) online ballots into regular ballots.
-    /// The online voting window may stay open. Each run only accepts what is pending
-    /// at that moment. Concurrent Accept-all for the same election is rejected.
-    /// Acceptance is not reversible: online vote content is wiped and is not linked
-    /// to the regular ballot.
+    /// Accepts current pending (<c>Submitted</c> and already-<c>Processing</c>)
+    /// online ballots into regular ballots. The online voting window may stay
+    /// open. Each run only accepts what is pending at that moment. Concurrent
+    /// Accept-all for the same election is rejected. Acceptance is not
+    /// reversible: online vote content is wiped and is not linked to the
+    /// regular ballot.
     /// </summary>
     [HttpPost("{guid}/online-ballots/accept-all")]
     [Authorize(Policy = "FullTellerAccess")]

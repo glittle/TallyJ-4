@@ -12,6 +12,7 @@ const {
   mockShowError,
   mockUpdateWindow,
   mockFetchElection,
+  mockFetchMonitor,
   mockElection,
 } = vi.hoisted(() => ({
   mockGetSummary: vi.fn(),
@@ -21,6 +22,7 @@ const {
   mockShowError: vi.fn(),
   mockUpdateWindow: vi.fn(),
   mockFetchElection: vi.fn(),
+  mockFetchMonitor: vi.fn(),
   mockElection: {
     electionGuid: "election-1",
     onlineCloseIsEstimate: true,
@@ -96,9 +98,23 @@ const mockMonitor: MonitorInfoDto = {
 
 vi.mock("@/stores/resultStore", () => ({
   useResultStore: () => ({
-    fetchMonitorInfo: vi.fn().mockResolvedValue(mockMonitor),
+    fetchMonitorInfo: (...args: unknown[]) => mockFetchMonitor(...args),
   }),
 }));
+
+function copyMonitor(
+  online: Partial<MonitorInfoDto["onlineVotingInfo"]> = {},
+  extras: Partial<MonitorInfoDto> = {},
+): MonitorInfoDto {
+  return {
+    ...mockMonitor,
+    ...extras,
+    onlineVotingInfo: {
+      ...mockMonitor.onlineVotingInfo,
+      ...online,
+    },
+  };
+}
 
 vi.mock("@/services/signalrService", () => ({
   signalrService: {
@@ -155,6 +171,8 @@ describe("MonitoringDashboardPage Accept all", () => {
     mockShowError.mockReset();
     mockUpdateWindow.mockReset();
     mockFetchElection.mockReset();
+    mockFetchMonitor.mockReset();
+    mockFetchMonitor.mockResolvedValue(mockMonitor);
     mockElection.onlineCloseIsEstimate = true;
     mockMonitor.onlineVotingInfo.pendingOnlineBallots = 3;
     mockMonitor.onlineVotingInfo.submittedOnlineBallots = 2;
@@ -325,8 +343,27 @@ describe("MonitoringDashboardPage Accept all", () => {
       acceptedCount: 3,
       messageKey: "monitoring.acceptAll.complete",
     });
+    mockFetchMonitor
+      .mockReset()
+      .mockResolvedValueOnce(copyMonitor())
+      .mockResolvedValueOnce(
+        copyMonitor({
+          pendingOnlineBallots: 0,
+          submittedOnlineBallots: 0,
+          processingOnlineBallots: 0,
+          processedOnlineBallots: 4,
+          totalOnlineBallots: 4,
+        }),
+      );
 
     const wrapper = await mountPage();
+    expect(
+      wrapper.find("[data-testid='submitted-online-ballots-count']").text(),
+    ).toBe("2");
+    expect(
+      wrapper.find("[data-testid='accepted-online-ballots-count']").text(),
+    ).toBe("1");
+
     await wrapper
       .find("[data-testid='accept-all-online-ballots']")
       .trigger("click");
@@ -338,6 +375,21 @@ describe("MonitoringDashboardPage Accept all", () => {
     expect(confirmMessage).toContain("3");
     expect(mockAcceptAll).toHaveBeenCalledWith("election-1");
     expect(mockShowSuccess).toHaveBeenCalled();
+    expect(mockFetchMonitor).toHaveBeenCalledTimes(2);
+    expect(
+      wrapper.find("[data-testid='submitted-online-ballots-count']").text(),
+    ).toBe("0");
+    expect(
+      wrapper.find("[data-testid='processing-online-ballots-count']").text(),
+    ).toBe("0");
+    expect(
+      wrapper.find("[data-testid='accepted-online-ballots-count']").text(),
+    ).toBe("4");
+    expect(
+      wrapper.find("[data-testid='accept-all-online-ballots']").attributes(
+        "disabled",
+      ),
+    ).toBeDefined();
   });
 
   it("does not accept when the teller cancels the confirmation", async () => {
@@ -417,6 +469,8 @@ describe("MonitoringDashboardPage close countdown", () => {
   beforeEach(() => {
     mockUpdateWindow.mockReset();
     mockShowSuccess.mockReset();
+    mockFetchMonitor.mockReset();
+    mockFetchMonitor.mockResolvedValue(mockMonitor);
     mockElection.onlineCloseIsEstimate = true;
     mockMonitor.onlineVotingInfo.onlineVotingStart = new Date(
       Date.now() - 60 * 60 * 1000,

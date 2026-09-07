@@ -2,9 +2,10 @@ namespace Backend.Helpers;
 
 /// <summary>
 /// Status values stored on <c>OnlineVotingInfo.Status</c> (varchar(10)).
-/// Submitted = pending. Processing = claimed by an Accept-all run (persisted so
-/// another server can see the claim). Processed = regular ballot created (or a
-/// legacy row unlinked) and the online payload wiped. There is no Draft value.
+/// Submitted = still changeable. Processing = claimed by Accept-all (persisted
+/// so another server can see the claim). Monitor and Accept-all pending is
+/// Submitted + Processing. Processed = regular ballot created (or a legacy row
+/// unlinked) and the online payload wiped. There is no Draft value.
 /// "Processing" is 10 characters and fits the column.
 /// </summary>
 public static class OnlineBallotStatus

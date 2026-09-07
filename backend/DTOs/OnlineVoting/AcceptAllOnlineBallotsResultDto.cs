@@ -1,8 +1,9 @@
 namespace Backend.DTOs.OnlineVoting;
 
 /// <summary>
-/// Outcome of one Accept-all run. Only pending (Submitted) online ballots at the
-/// start of the run are accepted. The online voting window may stay open.
+/// Outcome of one Accept-all run. Only rows that are <c>Submitted</c> or already
+/// <c>Processing</c> at the start of the run are accepted. The online voting
+/// window may stay open.
 /// </summary>
 public class AcceptAllOnlineBallotsResultDto
 {
@@ -25,7 +26,8 @@ public class AcceptAllOnlineBallotsResultDto
     public int SkippedCount { get; set; }
 
     /// <summary>
-    /// Submitted rows still pending after this run (usually 0 unless new votes arrived).
+    /// <c>Submitted</c> + <c>Processing</c> rows still pending after this run
+    /// (usually 0 unless new votes arrived).
     /// </summary>
     public int PendingRemaining { get; set; }
 
