@@ -13,20 +13,24 @@ const stagePhraseMessages: Record<string, string> = {
     "Close the online voting window before finalizing this election.",
 };
 
-vi.mock("vue-i18n", () => ({
-  useI18n: () => ({
-    t: (key: string, opts?: Record<string, string>) => {
-      let message = stagePhraseMessages[key] ?? key;
-      if (opts) {
-        message = Object.entries(opts).reduce(
-          (s, [k, v]) => s.replace(`{${k}}`, String(v)),
-          message,
-        );
-      }
-      return message;
-    },
-  }),
-}));
+vi.mock("vue-i18n", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("vue-i18n")>();
+  return {
+    ...actual,
+    useI18n: () => ({
+      t: (key: string, opts?: Record<string, string>) => {
+        let message = stagePhraseMessages[key] ?? key;
+        if (opts) {
+          message = Object.entries(opts).reduce(
+            (s, [k, v]) => s.replace(`{${k}}`, String(v)),
+            message,
+          );
+        }
+        return message;
+      },
+    }),
+  };
+});
 
 const mockShowErrorMessage = vi.fn();
 
