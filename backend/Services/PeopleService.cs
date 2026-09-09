@@ -118,6 +118,8 @@ public class PeopleService : IPeopleService
     /// <exception cref="InvalidOperationException">Thrown when a person with the same email or phone already exists.</exception>
     public async Task<PersonDto> CreatePersonAsync(CreatePersonDto createDto)
     {
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, createDto.ElectionGuid);
+
         var existingPerson = await _context.People
             .FirstOrDefaultAsync(p => p.ElectionGuid == createDto.ElectionGuid &&
                                      ((p.Email != null && createDto.Email != null && p.Email == createDto.Email) ||
@@ -176,6 +178,8 @@ public class PeopleService : IPeopleService
         {
             return null;
         }
+
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, person.ElectionGuid);
 
         var previousIneligibleReasonCode = person.IneligibleReasonCode;
 
@@ -415,6 +419,8 @@ public class PeopleService : IPeopleService
             return null;
         }
 
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, person.ElectionGuid);
+
         if (!string.IsNullOrWhiteSpace(person.VotingMethod))
         {
             throw new InvalidOperationException("Cannot generate a kiosk code for a person who has already registered.");
@@ -511,6 +517,8 @@ public class PeopleService : IPeopleService
 
     private async Task ValidateCanDeletePersonAsync(Person person)
     {
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, person.ElectionGuid);
+
         if (!string.IsNullOrWhiteSpace(person.VotingMethod))
         {
             throw new InvalidOperationException("Cannot delete a person who has already voted.");
@@ -536,6 +544,11 @@ public class PeopleService : IPeopleService
         }
 
         if (!string.IsNullOrWhiteSpace(person.VotingMethod))
+        {
+            return false;
+        }
+
+        if (await ElectionFinalizedWriteGuard.IsLockedAsync(_context, person.ElectionGuid))
         {
             return false;
         }

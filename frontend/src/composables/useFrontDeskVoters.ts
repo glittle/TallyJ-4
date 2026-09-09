@@ -8,6 +8,7 @@ import type {
   UnregisterVoterDto,
   UpdatePersonFlagsDto,
 } from "@/types/FrontDesk";
+import { resolveUserFacingApiError } from "@/utils/errorHandler";
 import { matchesFrontDeskVoterSearch } from "@/utils/searchStrategies";
 import { computed, ref, type Ref } from "vue";
 
@@ -212,9 +213,10 @@ export function useFrontDeskVoters(options: UseFrontDeskVotersOptions) {
       updateVoterInList(updatedVoter);
       return updatedVoter;
     } catch (e: unknown) {
-      const message =
-        e instanceof Error ? e.message : options.t("frontDesk.errors.checkIn");
-      error.value = message || options.t("frontDesk.errors.checkIn");
+      error.value = resolveUserFacingApiError(
+        e,
+        options.t("frontDesk.errors.checkIn"),
+      );
       throw e;
     }
   }
@@ -233,11 +235,10 @@ export function useFrontDeskVoters(options: UseFrontDeskVotersOptions) {
       updateVoterInList(updatedVoter);
       return updatedVoter;
     } catch (e: unknown) {
-      const message =
-        e instanceof Error
-          ? e.message
-          : options.t("frontDesk.errors.unregister");
-      error.value = message || options.t("frontDesk.errors.unregister");
+      error.value = resolveUserFacingApiError(
+        e,
+        options.t("frontDesk.errors.unregister"),
+      );
       throw e;
     } finally {
       loading.value = false;
@@ -263,11 +264,10 @@ export function useFrontDeskVoters(options: UseFrontDeskVotersOptions) {
       }
       return updatedVoter;
     } catch (e: unknown) {
-      const message =
-        e instanceof Error
-          ? e.message
-          : options.t("frontDesk.errors.updatePersonFlags");
-      error.value = message || options.t("frontDesk.errors.updatePersonFlags");
+      error.value = resolveUserFacingApiError(
+        e,
+        options.t("frontDesk.errors.updatePersonFlags"),
+      );
       throw e;
     } finally {
       loading.value = false;

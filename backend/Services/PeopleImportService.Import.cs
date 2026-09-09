@@ -25,6 +25,17 @@ public partial class PeopleImportService
         var result = new ImportPeopleResult();
         var startTime = DateTimeOffset.UtcNow;
 
+        if (await ElectionFinalizedWriteGuard.IsLockedAsync(_context, electionGuid))
+        {
+            result.Success = false;
+            result.Errors.Add(new ImportErrorDto
+            {
+                Key = ElectionStageMessageKeys.FinalizedWriteBlocked,
+                Parameters = new Dictionary<string, string>()
+            });
+            return result;
+        }
+
         var importFile = await _context.ImportFiles
             .FirstOrDefaultAsync(f => f.ElectionGuid == electionGuid && f.RowId == rowId);
 

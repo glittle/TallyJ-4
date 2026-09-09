@@ -3,6 +3,7 @@ import type {
   RegistrationHistoryEntryDto,
 } from "@/types/FrontDesk";
 import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
+import { resolveUserFacingApiError } from "@/utils/errorHandler";
 import { formatRegistrationHistoryDetails } from "@/utils/formatRegistrationHistory";
 import { ElMessageBox } from "element-plus";
 import { computed, nextTick, ref, type ComputedRef, type Ref } from "vue";
@@ -334,12 +335,8 @@ export function useFrontDeskRegistration(
       pendingVotingMethod.value = null;
       checkInInProgress.value = false;
       pendingCheckInPersonGuid.value = null;
-      const message =
-        err instanceof Error
-          ? err.message
-          : options.t("frontDesk.errors.checkIn");
       options.showErrorMessage(
-        message || options.t("frontDesk.errors.checkIn"),
+        resolveUserFacingApiError(err, options.t("frontDesk.errors.checkIn")),
       );
     }
   }
@@ -432,12 +429,11 @@ export function useFrontDeskRegistration(
       options.selectedVoter.value = updated;
       options.showSuccessMessage(options.t("frontDesk.messages.flagsUpdated"));
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : options.t("frontDesk.errors.updateFlags");
       options.showErrorMessage(
-        message || options.t("frontDesk.errors.updateFlags"),
+        resolveUserFacingApiError(
+          err,
+          options.t("frontDesk.errors.updateFlags"),
+        ),
       );
     }
   }
@@ -469,12 +465,11 @@ export function useFrontDeskRegistration(
       return true;
     } catch (err: unknown) {
       if (err !== "cancel") {
-        const message =
-          err instanceof Error
-            ? err.message
-            : options.t("frontDesk.errors.unregister");
         options.showErrorMessage(
-          message || options.t("frontDesk.errors.unregister"),
+          resolveUserFacingApiError(
+            err,
+            options.t("frontDesk.errors.unregister"),
+          ),
         );
       }
       return false;

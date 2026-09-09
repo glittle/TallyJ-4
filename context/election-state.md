@@ -14,17 +14,20 @@ Treat state changes as high-consequence operations. Prefer clear, atomic transit
 ## Lock after analysis is the Finalized stage
 
 **Status:** active  
-**Evidence:** inferred (issue #172 names; implementation in `ElectionService.ChangeElectionStageAsync`)
+**Evidence:** inferred (issue #172 names; implementation in `ElectionService.ChangeElectionStageAsync`); people/ballot write gate confirmed by issue #308
 
 There is no separate `Locked` flag. After analysis is complete and counts reconcile, advancing to **Finalized** is the lock:
 
 - Finalization is rejected until `ElectionStageFinalizationReadiness` is ready (analysis present and reportable, no blocking ballots, no unresolved ties, counts reconcile).
 - Leaving Finalized requires `ConfirmLeavingFinalized`. The StageControl UI does not send that flag, so a FullTeller click away from Finalized stays locked and shows the confirmation error.
-- Accept-all online ballots is refused while Finalized.
+- Accept-all online ballots is refused while Finalized (`monitoring.acceptAll.finalized`).
+- People, ballot, vote, Front Desk roll, people-import execute / delete-all, and ballot/CDN import mutations are refused while Finalized (`elections.finalizedWriteBlocked`). Reads stay open. Leaving Finalized still requires `ConfirmLeavingFinalized` (#309 is the in-UI unlock confirm; not this gate).
 
 **Rejected alternative (not implemented):** a dedicated lock bit plus a “Move all tellers” command. Stage change + SignalR `statusChanged` is the coordination path.
 
-**Gap (intentional for this test slice):** people/ballot write APIs are not separately gated on Finalized. The lock is the stage + confirmation + guest menu/route rules.
+**Rejected alternative:** invent a second lock type or middleware. The existing `ElectionStage.Finalized` check (same as Accept-all) is the lock; `ElectionFinalizedWriteGuard` is only a shared helper.
+
+**What stays writable on purpose:** election settings, locations, teller names, computers, analysis/results, online voter submit (window-based, not stage-based), test-election reset, and people-import file upload/mapping (those do not change the roll until execute). GetPersonDetails does not mint a new kiosk code after Finalized.
 
 ## “Move all tellers to this state” is the stage broadcast
 

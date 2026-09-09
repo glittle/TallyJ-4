@@ -1,3 +1,4 @@
+import { translateIfPhraseKey } from "../utils/errorHandler";
 import { useNotifications } from "./useNotifications";
 import { i18n } from "../locales";
 
@@ -76,6 +77,7 @@ export function useApiErrorHandler() {
       message = t(error.error) || error.error || message;
     }
 
+    message = translateIfPhraseKey(message);
     showErrorMessage(message);
     return message;
   };

@@ -5,12 +5,13 @@ import { useI18n } from "vue-i18n";
 import { UploadFilled } from "@element-plus/icons-vue";
 import type { UploadFile, UploadRawFile } from "element-plus";
 import { useNotifications } from "@/composables/useNotifications";
+import { resolveUserFacingApiError } from "@/utils/errorHandler";
 import { electionService } from "../../services/electionService";
 import type { ImportResultDto } from "../../types";
 
 const router = useRouter();
 const route = useRoute();
-const { t } = useI18n();
+const { t, te } = useI18n();
 const { showErrorMessage } = useNotifications();
 
 const electionGuid = route.params.id as string;
@@ -34,7 +35,9 @@ async function handleFileChange(uploadFile: UploadFile) {
     const result = await electionService.importCdnBallots(electionGuid, file);
     importResult.value = result;
   } catch (error: any) {
-    showErrorMessage(error.message || t("ballots.cdnImport.failed"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("ballots.cdnImport.failed")),
+    );
   } finally {
     importing.value = false;
   }
@@ -166,7 +169,7 @@ function beforeUpload(file: UploadRawFile) {
                   v-for="(error, index) in importResult.errors"
                   :key="index"
                   type="error"
-                  :title="error"
+                  :title="te(error) ? t(error) : error"
                   :closable="false"
                   show-icon
                   style="margin-bottom: 8px"

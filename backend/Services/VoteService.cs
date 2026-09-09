@@ -101,6 +101,7 @@ public class VoteService : IVoteService
         }
 
         var electionGuid = ballot.Location.ElectionGuid;
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, electionGuid);
         var statusCode = VoteStatus.Ok;
         string? ineligibleReasonCode = null;
 
@@ -188,6 +189,8 @@ public class VoteService : IVoteService
             throw new InvalidOperationException($"Ballot with GUID '{updateDto.BallotGuid}' not found");
         }
 
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, ballot.Location.ElectionGuid);
+
         var statusCode = VoteStatus.Ok;
         string? ineligibleReasonCode = null;
         string? personCombinedInfo = vote.PersonCombinedInfo;
@@ -272,6 +275,8 @@ public class VoteService : IVoteService
             return null;
         }
 
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, vote.Ballot.Location.ElectionGuid);
+
         if (ComputerCodeHelper.IsOnlineCode(vote.Ballot.ComputerCode)
             || ComputerCodeHelper.IsImportedCode(vote.Ballot.ComputerCode))
         {
@@ -322,6 +327,8 @@ public class VoteService : IVoteService
         {
             return null;
         }
+
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, ballot.Location.ElectionGuid);
 
         if (ComputerCodeHelper.IsOnlineCode(ballot.ComputerCode)
             || ComputerCodeHelper.IsImportedCode(ballot.ComputerCode))

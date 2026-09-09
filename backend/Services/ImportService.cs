@@ -72,6 +72,13 @@ public class ImportService
         var result = new ImportResultDto();
         var electionGuid = request.ElectionGuid;
 
+        if (await ElectionFinalizedWriteGuard.IsLockedAsync(_context, electionGuid))
+        {
+            result.Success = false;
+            result.Errors.Add(ElectionStageMessageKeys.FinalizedWriteBlocked);
+            return result;
+        }
+
         try
         {
             var location = request.LocationGuid.HasValue

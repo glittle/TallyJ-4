@@ -10,6 +10,7 @@ public static class ElectionStageMessageKeys
     public const string InvalidStage = "elections.stageChangeError.invalidStage";
     public const string NotFound = "elections.stageChangeError.notFound";
     public const string ConfirmLeaveFinalized = "elections.stageChangeError.confirmLeaveFinalized";
+    public const string FinalizedWriteBlocked = "elections.finalizedWriteBlocked";
     public const string AnalysisNotCompleted = "elections.stageChangeError.analysisNotCompleted";
     public const string AnalysisNotReady = "elections.stageChangeError.analysisNotReady";
     public const string UnresolvedTies = "elections.stageChangeError.unresolvedTies";
