@@ -224,6 +224,53 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task Submit_WhenGatheringBallots_AndOnlineWindowOpen_Succeeds()
+    {
+        var election = await SeedOpenElectionAsync();
+        var (person, email) = await SeedVoterAsync(election.ElectionGuid);
+
+        var submit = await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid);
+
+        Assert.True(submit.Success);
+        Assert.Null(submit.Error);
+        Assert.Equal(OnlineBallotStatus.Submitted, Context.OnlineVotingInfos.Single().Status);
+    }
+
+    [Fact]
+    public async Task Submit_WhenFinalized_EvenIfOnlineWindowOpen_IsRefused()
+    {
+        var election = await SeedOpenElectionAsync();
+        var (person, email) = await SeedVoterAsync(election.ElectionGuid);
+        election.ElectionStage = ElectionStage.Finalized;
+        await Context.SaveChangesAsync();
+
+        var submit = await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid);
+
+        Assert.False(submit.Success);
+        Assert.Equal(ElectionStageMessageKeys.FinalizedOnlineSubmit, submit.Error);
+        Assert.Empty(Context.OnlineVotingInfos);
+    }
+
+    [Fact]
+    public async Task Submit_WhenFinalizedAfterPendingSubmit_RefusesUpdate_AndLeavesPayload()
+    {
+        var election = await SeedOpenElectionAsync();
+        var (person, email) = await SeedVoterAsync(election.ElectionGuid);
+        var first = await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid, voteName: "First Name");
+        Assert.True(first.Success);
+        var originalPool = Context.OnlineVotingInfos.Single().ListPool;
+
+        election.ElectionStage = ElectionStage.Finalized;
+        await Context.SaveChangesAsync();
+
+        var again = await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid, voteName: "Changed After Finalized");
+
+        Assert.False(again.Success);
+        Assert.Equal(ElectionStageMessageKeys.FinalizedOnlineSubmit, again.Error);
+        Assert.Equal(originalPool, Context.OnlineVotingInfos.Single().ListPool);
+    }
+
+    [Fact]
     public async Task AcceptAll_FinalizedElection_DoesNotCreateBallots()
     {
         var election = await SeedOpenElectionAsync();

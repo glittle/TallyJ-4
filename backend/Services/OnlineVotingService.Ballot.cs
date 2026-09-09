@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Backend.Entities;
 using Backend.DTOs.OnlineVoting;
+using Backend.Enumerations;
 using Backend.Helpers;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,11 @@ public partial class OnlineVotingService
             if (election == null)
             {
                 return (false, "voting.submit.electionNotFound");
+            }
+
+            if (ElectionFinalizedWriteGuard.IsLocked(election.ElectionStage))
+            {
+                return (false, ElectionStageMessageKeys.FinalizedOnlineSubmit);
             }
 
             if (!election.UseOnlineVoting ||

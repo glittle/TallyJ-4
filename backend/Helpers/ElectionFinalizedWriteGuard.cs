@@ -8,6 +8,8 @@ namespace Backend.Helpers;
 /// Finalized is the election lock. There is no separate Locked flag.
 /// People, ballot, vote, roll, and import mutations throw
 /// <see cref="ElectionStageMessageKeys.FinalizedWriteBlocked"/>.
+/// Online voter submit uses the same stage check but returns
+/// <see cref="ElectionStageMessageKeys.FinalizedOnlineSubmit"/>.
 /// Accept-all uses the same stage check but keeps its own message key.
 /// </summary>
 public static class ElectionFinalizedWriteGuard

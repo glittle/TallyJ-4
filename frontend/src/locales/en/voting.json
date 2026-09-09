@@ -86,6 +86,7 @@
   "voting.submit.alreadyProcessed": "Tellers have accepted your ballot. You cannot change it.",
   "voting.submit.alreadyVoted": "You have already submitted a ballot for this election.",
   "voting.submit.electionNotFound": "Election not found.",
+  "voting.submit.finalized": "This election is finalized. You cannot submit or change an online ballot.",
   "voting.submit.error": "An error occurred while submitting your ballot. Please try again.",
   "voting.submit.notOpen": "Online voting is not currently open for this election.",
   "voting.submit.voterNotFound": "Voter not found. Please authenticate first."

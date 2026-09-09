@@ -196,14 +196,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   ) {
     try {
       loading.value = true;
-      const response = await onlineVotingService.submitBallot(
-        electionGuid,
-        data,
-      );
-      return response;
-    } catch (error) {
-      handleApiError(error as any);
-      throw error;
+      return await onlineVotingService.submitBallot(electionGuid, data);
     } finally {
       loading.value = false;
     }
