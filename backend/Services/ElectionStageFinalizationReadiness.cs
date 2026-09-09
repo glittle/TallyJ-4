@@ -1,5 +1,6 @@
 using Backend.Context;
 using Backend.Enumerations;
+using Backend.Helpers;
 using static Backend.Enumerations.ElectionStageMessageKeys;
 using Microsoft.EntityFrameworkCore;
 
@@ -27,6 +28,21 @@ public static class ElectionStageFinalizationReadiness
         Guid electionGuid)
     {
         var blockers = new List<string>();
+
+        var onlineWindow = await context.Elections
+            .AsNoTracking()
+            .Where(e => e.ElectionGuid == electionGuid)
+            .Select(e => new { e.UseOnlineVoting, e.OnlineWhenOpen, e.OnlineWhenClose })
+            .FirstOrDefaultAsync();
+
+        if (onlineWindow != null &&
+            OnlineVotingWindow.IsCurrentlyOpen(
+                onlineWindow.UseOnlineVoting,
+                onlineWindow.OnlineWhenOpen,
+                onlineWindow.OnlineWhenClose))
+        {
+            blockers.Add(OnlineVotingStillOpen);
+        }
 
         var hasResults = await context.Results.AnyAsync(r => r.ElectionGuid == electionGuid);
         var finalSummary = await context.ResultSummaries

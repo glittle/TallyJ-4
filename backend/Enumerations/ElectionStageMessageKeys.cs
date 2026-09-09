@@ -19,6 +19,7 @@ public static class ElectionStageMessageKeys
     public const string BallotsNeedReview = "elections.stageChangeError.ballotsNeedReview";
     public const string BallotsOutstanding = "elections.stageChangeError.ballotsOutstanding";
     public const string CountsDoNotReconcile = "elections.stageChangeError.countsDoNotReconcile";
+    public const string OnlineVotingStillOpen = "elections.stageChangeError.onlineVotingStillOpen";
 
     /// <summary>
     /// Builds a phrase key with interpolation parameters (e.g. key|count=3).

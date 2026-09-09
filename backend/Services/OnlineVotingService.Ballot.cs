@@ -37,9 +37,11 @@ public partial class OnlineVotingService
                 return (false, ElectionStageMessageKeys.FinalizedOnlineSubmit);
             }
 
-            if (!election.UseOnlineVoting ||
-                (election.OnlineWhenOpen != null && election.OnlineWhenOpen > now) ||
-                (election.OnlineWhenClose != null && election.OnlineWhenClose <= now))
+            if (!OnlineVotingWindow.IsCurrentlyOpen(
+                    election.UseOnlineVoting,
+                    election.OnlineWhenOpen,
+                    election.OnlineWhenClose,
+                    now))
             {
                 return (false, "voting.submit.notOpen");
             }

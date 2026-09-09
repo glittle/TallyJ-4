@@ -18,6 +18,8 @@ const i18n = createI18n({
         "Unresolved ties must be broken before finalizing",
       "elections.stageChangeError.countsDoNotReconcile":
         "{count} count-reconciliation mismatch(es) must be resolved before analyzing or finalizing",
+      "elections.stageChangeError.onlineVotingStillOpen":
+        "Close the online voting window before finalizing this election.",
     },
   },
 });
@@ -72,6 +74,15 @@ describe("translateElectionStageChangeError", () => {
     ).toBe(
       "4 count-reconciliation mismatch(es) must be resolved before analyzing or finalizing",
     );
+  });
+
+  it("translates the online-window-still-open finalize key", () => {
+    expect(
+      translateElectionStageChangeError(
+        "elections.stageChangeError.onlineVotingStillOpen",
+        t,
+      ),
+    ).toBe("Close the online voting window before finalizing this election.");
   });
 
   it("falls back to generic message for unknown keys", () => {

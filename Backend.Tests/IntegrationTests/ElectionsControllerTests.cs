@@ -387,6 +387,53 @@ public class ElectionsControllerTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task ChangeElectionStage_ToFinalized_RefusedWhileOnlineWindowOpen_ThenSucceedsAfterClose()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var createDto = new CreateElectionDto
+        {
+            Name = "Finalize After Online Close Election",
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 3,
+            UseOnlineVoting = true
+        };
+
+        var createResponse = await PostJsonAsync("/api/elections/createElection", createDto);
+        var createResult = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(createResponse);
+        var electionGuid = createResult!.Data!.ElectionGuid;
+
+        foreach (var stage in new[] { ElectionStage.GatheringBallots, ElectionStage.ProcessingBallots })
+        {
+            var advance = await PutJsonAsync(
+                $"/api/elections/{electionGuid}/stage",
+                new ChangeElectionStageDto { ElectionStage = stage });
+            Assert.Equal(HttpStatusCode.OK, advance.StatusCode);
+        }
+
+        await SeedAnalysisReadyForFinalizationAsync(electionGuid);
+        await OpenOnlineWindowAsync(electionGuid);
+
+        var refused = await PutJsonAsync(
+            $"/api/elections/{electionGuid}/stage",
+            new ChangeElectionStageDto { ElectionStage = ElectionStage.Finalized });
+        Assert.Equal(HttpStatusCode.BadRequest, refused.StatusCode);
+        var refusedBody = await refused.Content.ReadAsStringAsync();
+        Assert.Contains(ElectionStageMessageKeys.OnlineVotingStillOpen, refusedBody);
+
+        await CloseOnlineWindowAsync(electionGuid);
+
+        var finalizeResponse = await PutJsonAsync(
+            $"/api/elections/{electionGuid}/stage",
+            new ChangeElectionStageDto { ElectionStage = ElectionStage.Finalized });
+        Assert.Equal(HttpStatusCode.OK, finalizeResponse.StatusCode);
+        var finalized = await DeserializeResponseAsync<ApiResponse<ElectionDto>>(finalizeResponse);
+        Assert.Equal(ElectionStage.Finalized, finalized!.Data!.ElectionStage);
+    }
+
+    [Fact]
     public async Task ChangeElectionStage_WithInvalidEnum_ReturnsBadRequest()
     {
         var token = await GetAuthTokenAsync();
@@ -769,6 +816,26 @@ public class ElectionsControllerTests : IntegrationTestBase
             UseOnReports = true,
             BallotsNeedingReview = 0
         });
+        await db.SaveChangesAsync();
+    }
+
+    private async Task OpenOnlineWindowAsync(Guid electionGuid)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var election = await db.Elections.SingleAsync(e => e.ElectionGuid == electionGuid);
+        election.UseOnlineVoting = true;
+        election.OnlineWhenOpen = DateTimeOffset.UtcNow.AddHours(-1);
+        election.OnlineWhenClose = DateTimeOffset.UtcNow.AddHours(2);
+        await db.SaveChangesAsync();
+    }
+
+    private async Task CloseOnlineWindowAsync(Guid electionGuid)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var election = await db.Elections.SingleAsync(e => e.ElectionGuid == electionGuid);
+        election.OnlineWhenClose = DateTimeOffset.UtcNow.AddSeconds(-1);
         await db.SaveChangesAsync();
     }
 }

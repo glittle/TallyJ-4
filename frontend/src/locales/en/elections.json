@@ -190,6 +190,7 @@
   "elections.stageChangeError.notFound": "Election not found",
   "elections.stageChangeError.unresolvedTies": "Unresolved ties must be broken before finalizing",
   "elections.stageChangeError.countsDoNotReconcile": "{count} count-reconciliation mismatch(es) must be resolved before analyzing or finalizing",
+  "elections.stageChangeError.onlineVotingStillOpen": "Close the online voting window before finalizing this election.",
   "elections.stageProgression": "Election Stage",
   "elections.statistics": "Statistics",
   "elections.status": "Status",
