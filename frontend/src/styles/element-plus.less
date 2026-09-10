@@ -166,3 +166,26 @@
 .el-select-group .el-select-dropdown__item {
   padding-left: 30px;
 }
+
+.election-stage-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75em;
+  flex-wrap: wrap;
+
+  &__go-there {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--el-color-primary);
+    font: inherit;
+    font-weight: var(--font-weight-medium);
+    cursor: pointer;
+    text-decoration: underline;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--el-color-primary-dark-2);
+    }
+  }
+}

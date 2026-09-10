@@ -180,6 +180,7 @@
   "elections.stageNav.group.ProcessingBallots": "Processing Ballots",
   "elections.stageNav.group.Finalized": "Finalized",
   "elections.stageNav.group.SettingUp": "Setting Up",
+  "elections.goToStagePage": "Go there",
   "elections.stageAdvanced": "Election changed to {stage}",
   "elections.stageChangeError.generic": "Failed to change election stage",
   "elections.stageChangeError.alreadyInStage": "Election is already in the requested stage",

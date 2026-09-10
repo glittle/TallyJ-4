@@ -9,9 +9,10 @@ import { watch, type WatchStopHandle } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 /**
- * Keeps GuestTellers on the stage-appropriate page when election stage changes
- * over SignalR (or any store update). Lives in the layout so redirects do not
- * depend on the lazy-loaded sidebar menu being mounted.
+ * Auto-moves GuestTellers to the stage work page when election stage changes
+ * over SignalR (or any store update). FullTellers are not redirected here —
+ * they stay put and can opt in via Go there on the stage-change toast.
+ * Lives in the layout so redirects do not depend on the lazy sidebar menu.
  */
 export function useGuestTellerStageRedirect(): WatchStopHandle {
   const route = useRoute();
