@@ -66,6 +66,24 @@ public class FrontDeskServiceTests : ServiceTestBase
         Assert.Single(voters);
     }
 
+    [Fact]
+    public async Task GetRollCallAsync_ReturnsEligibleVotersAndStats()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var checkedIn = SeedEligiblePerson();
+        checkedIn.RegistrationTime = DateTimeOffset.UtcNow;
+        checkedIn.VotingMethod = "P";
+        SeedEligiblePerson();
+        await Context.SaveChangesAsync();
+
+        var rollCall = await _service.GetRollCallAsync(_electionGuid);
+
+        Assert.Equal(2, rollCall.Voters.Count);
+        Assert.Equal(2, rollCall.Stats.TotalEligible);
+        Assert.Equal(1, rollCall.Stats.CheckedIn);
+        Assert.Equal(1, rollCall.Stats.NotYetCheckedIn);
+    }
+
     private void SeedElection(ElectionStage stage)
     {
         Context.Elections.Add(new Election

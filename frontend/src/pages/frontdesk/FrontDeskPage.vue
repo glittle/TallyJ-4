@@ -191,6 +191,8 @@ const {
   searchQuery,
   selectedMethodFilters,
   selectedFlagFilters,
+  ballotNotReceivedOnly,
+  ballotNotReceivedCount,
   registrationFilter,
   checkedInVoters,
   notCheckedInVoters,
@@ -208,6 +210,7 @@ const {
   leaveElection,
   toggleMethodFilter,
   toggleFlagFilter,
+  toggleBallotNotReceived,
   clearFilters,
 } = useFrontDeskVoters({
   electionGuid,
@@ -551,11 +554,14 @@ onUnmounted(async () => {
           :election-flags="electionFlags"
           :selected-method-filters="selectedMethodFilters"
           :selected-flag-filters="selectedFlagFilters"
+          :ballot-not-received-only="ballotNotReceivedOnly"
+          :ballot-not-received-count="ballotNotReceivedCount"
           :method-counts="methodCounts"
           :flag-counts="flagCounts"
           :has-active-filters="hasActiveFilters"
           @toggle-method="toggleMethodFilter"
           @toggle-flag="toggleFlagFilter"
+          @toggle-ballot-not-received="toggleBallotNotReceived"
           @clear="clearFilters"
         />
 

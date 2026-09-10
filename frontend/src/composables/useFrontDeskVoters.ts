@@ -8,6 +8,7 @@ import type {
   UnregisterVoterDto,
   UpdatePersonFlagsDto,
 } from "@/types/FrontDesk";
+import { applyBallotNotReceivedFilter } from "@/utils/acceptedBallot";
 import { resolveUserFacingApiError } from "@/utils/errorHandler";
 import { matchesFrontDeskVoterSearch } from "@/utils/searchStrategies";
 import { computed, ref, type Ref } from "vue";
@@ -47,6 +48,8 @@ export function useFrontDeskVoters(options: UseFrontDeskVotersOptions) {
 
   const selectedMethodFilters = ref<string[]>([]);
   const selectedFlagFilters = ref<string[]>([]);
+  /** v3 #ifNoBallot: hide people whose ballot has already been received. */
+  const ballotNotReceivedOnly = ref(false);
   const registrationFilter = computed({
     get(): RegistrationFilter {
       const stored =
@@ -131,15 +134,22 @@ export function useFrontDeskVoters(options: UseFrontDeskVotersOptions) {
       });
     }
 
-    return result;
+    return applyBallotNotReceivedFilter(result, ballotNotReceivedOnly.value);
   });
 
   const allVoters = computed(() => filteredByConditions.value);
 
+  const ballotNotReceivedCount = computed(
+    () =>
+      filteredVoters.value.filter((voter) => !voter.votingMethod?.trim())
+        .length,
+  );
+
   const hasActiveFilters = computed(
     () =>
       selectedMethodFilters.value.length > 0 ||
-      selectedFlagFilters.value.length > 0,
+      selectedFlagFilters.value.length > 0 ||
+      ballotNotReceivedOnly.value,
   );
 
   function methodCountsFor(
@@ -366,9 +376,14 @@ export function useFrontDeskVoters(options: UseFrontDeskVotersOptions) {
     }
   }
 
+  function toggleBallotNotReceived() {
+    ballotNotReceivedOnly.value = !ballotNotReceivedOnly.value;
+  }
+
   function clearFilters() {
     selectedMethodFilters.value = [];
     selectedFlagFilters.value = [];
+    ballotNotReceivedOnly.value = false;
   }
 
   return {
@@ -379,6 +394,8 @@ export function useFrontDeskVoters(options: UseFrontDeskVotersOptions) {
     searchQuery,
     selectedMethodFilters,
     selectedFlagFilters,
+    ballotNotReceivedOnly,
+    ballotNotReceivedCount,
     registrationFilter,
     filteredVoters,
     checkedInVoters,
@@ -398,6 +415,7 @@ export function useFrontDeskVoters(options: UseFrontDeskVotersOptions) {
     leaveElection,
     toggleMethodFilter,
     toggleFlagFilter,
+    toggleBallotNotReceived,
     clearFilters,
   };
 }

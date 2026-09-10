@@ -32,6 +32,12 @@ describe("finalized write refusal messages", () => {
     );
   });
 
+  it("translates the cannot-vote-after-accepted-ballot people key", () => {
+    expect(translateIfPhraseKey("people.cannotMarkCannotVoteAfterVoted")).toBe(
+      "This person has already voted. Their status cannot be changed to cannot vote.",
+    );
+  });
+
   it("surfaces a hey-api 400 body message key for Front Desk and people/ballot forms", () => {
     expect(
       resolveUserFacingApiError(

@@ -1081,6 +1081,116 @@ public class PeopleServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task UpdatePersonAsync_VotingMethodSet_CannotMarkCannotVote()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.VotingMethod = "P";
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+            {
+                LastName = person.LastName,
+                FirstName = person.FirstName,
+                IneligibleReasonCode = IneligibleReasonEnum.X01_Deceased.Code
+            }));
+
+        Assert.Equal(PeopleMessageKeys.CannotMarkCannotVoteAfterVoted, ex.Message);
+        Assert.Null(Context.People.Single().IneligibleReasonCode);
+        Assert.True(Context.People.Single().CanVote);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_AcceptedOnlineBallot_CannotMarkCannotVote()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.HasOnlineBallot = true;
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+            {
+                LastName = person.LastName,
+                FirstName = person.FirstName,
+                IneligibleReasonCode = IneligibleReasonEnum.R02_RightsRemovedCannotVote.Code
+            }));
+
+        Assert.Equal(PeopleMessageKeys.CannotMarkCannotVoteAfterVoted, ex.Message);
+        Assert.True(Context.People.Single().CanVote);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_VotingMethodSet_CanStillMarkCanVoteButNotReceive()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.VotingMethod = "O";
+        await Context.SaveChangesAsync();
+
+        var result = await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = person.LastName,
+            FirstName = person.FirstName,
+            IneligibleReasonCode = IneligibleReasonEnum.V01_YouthAged181920.Code
+        });
+
+        Assert.NotNull(result);
+        Assert.True(result.CanVote);
+        Assert.False(result.CanReceiveVotes);
+        Assert.Equal("V01", result.IneligibleReasonCode);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_VotingMethodSet_CanClearEligibility()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.VotingMethod = "P";
+        person.IneligibleReasonCode = IneligibleReasonEnum.V01_YouthAged181920.Code;
+        person.CanVote = true;
+        person.CanReceiveVotes = false;
+        await Context.SaveChangesAsync();
+
+        var result = await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = person.LastName,
+            FirstName = person.FirstName,
+            IneligibleReasonCode = null
+        });
+
+        Assert.NotNull(result);
+        Assert.True(result.CanVote);
+        Assert.True(result.CanReceiveVotes);
+        Assert.Null(result.IneligibleReasonCode);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_AlreadyCannotVote_KeepsReasonWhenNotChangingEligibility()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.VotingMethod = "P";
+        person.IneligibleReasonCode = IneligibleReasonEnum.X01_Deceased.Code;
+        person.CanVote = false;
+        person.CanReceiveVotes = false;
+        await Context.SaveChangesAsync();
+
+        var result = await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = "Renamed",
+            FirstName = person.FirstName,
+            IneligibleReasonCode = IneligibleReasonEnum.X01_Deceased.Code
+        });
+
+        Assert.NotNull(result);
+        Assert.Equal("Renamed", result.LastName);
+        Assert.Equal("X01", result.IneligibleReasonCode);
+        Assert.False(result.CanVote);
+    }
+
+    [Fact]
     public async Task UpdatePersonAsync_FinalizedElection_Throws()
     {
         var electionGuid = SeedElection(ElectionStage.Finalized);

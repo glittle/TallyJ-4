@@ -10,7 +10,8 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [ballot-validation.md](ballot-validation.md) — pre-finalization integrity; count-reconciliation report before Analyze/Finalize
 - [election-state.md](election-state.md) — teller coordination and high-consequence state transitions
 - [online-ballots.md](online-ballots.md) — online acceptance (pending until Accept-all), monitor close countdown, anonymous ballot-page sessions, and random name resolution
-- [people.md](people.md) — person fields; AgeGroup removed (eligibility is V01/X05)
+- [people.md](people.md) — person fields; AgeGroup removed (eligibility is V01/X05); cannot-vote lock after accepted ballot
+- [front-desk.md](front-desk.md) — Ballot Not Received filter; Roll Call / envelope pages not in v4
 - [people-import.md](people-import.md) — three-action import pipeline (not a Next/Previous wizard)
 - [sms-eligibility.md](sms-eligibility.md) — reject reserved/fictional/malformed phones before paid SMS/voice/WhatsApp; OnlineVoter.SmsStatus; ensure phone row on Person write; person detail phone status; Twilio callback auto-learn
 - [test-elections.md](test-elections.md) — duplicate as test copy (`ShowAsTest`); teller test banner; test-only runtime reset

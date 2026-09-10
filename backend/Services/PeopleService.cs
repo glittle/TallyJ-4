@@ -183,6 +183,13 @@ public class PeopleService : IPeopleService
 
         var previousIneligibleReasonCode = person.IneligibleReasonCode;
 
+        if (PersonEligibilityHelper.HasAcceptedBallot(person)
+            && !string.Equals(previousIneligibleReasonCode, updateDto.IneligibleReasonCode, StringComparison.Ordinal)
+            && PersonEligibilityHelper.ReasonRemovesVoteEligibility(updateDto.IneligibleReasonCode))
+        {
+            throw new InvalidOperationException(PeopleMessageKeys.CannotMarkCannotVoteAfterVoted);
+        }
+
         if (!string.IsNullOrWhiteSpace(updateDto.Email) && updateDto.Email != person.Email)
         {
             var emailExists = await _context.People
