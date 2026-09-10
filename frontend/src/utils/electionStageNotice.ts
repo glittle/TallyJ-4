@@ -7,7 +7,6 @@ import {
   type ElectionStage,
 } from "@/domain/electionStages";
 import { i18n } from "@/locales";
-import { router } from "@/router/router";
 
 /** Longer than the text-only toast so a FullTeller can click Go there. */
 export const STAGE_NOTICE_GO_THERE_MS = 8000;
@@ -69,8 +68,11 @@ export function notifyElectionStageChanged(
   const destination = parsedStage
     ? getStageWorkPagePath(electionGuid, parsedStage)
     : undefined;
+  // Do not import router at module load — electionStore is pulled into suites
+  // that mock vue-router without createRouter. History path matches the SPA URL.
   const currentPath =
-    options?.currentPath ?? router.currentRoute.value.path;
+    options?.currentPath ??
+    (typeof window !== "undefined" ? window.location.pathname : "");
   const fullTeller = options?.isFullTeller ?? isFullTeller();
   const showGoThere =
     fullTeller &&
@@ -78,7 +80,12 @@ export function notifyElectionStageChanged(
     !pathsEqualIgnoreCase(currentPath, destination);
 
   const navigate =
-    options?.navigate ?? ((path: string) => void router.push(path));
+    options?.navigate ??
+    ((path: string) => {
+      void import("@/router/router").then(({ router }) => {
+        void router.push(path);
+      });
+    });
 
   ElMessage({
     message: showGoThere

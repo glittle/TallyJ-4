@@ -46,16 +46,10 @@ vi.mock("@/domain/guestTellerAccess", async (importOriginal) => {
 });
 
 const routerPushMock = vi.fn();
-const currentPathRef = { value: "/elections/election-1/people" };
 
 vi.mock("@/router/router", () => ({
   router: {
     push: (...args: unknown[]) => routerPushMock(...args),
-    currentRoute: {
-      get value() {
-        return { path: currentPathRef.value };
-      },
-    },
   },
 }));
 
@@ -136,10 +130,8 @@ describe("Election Store", () => {
     electionStore = useElectionStore();
     elMessageMock.mockClear();
     routerPushMock.mockReset();
-    currentPathRef.value = "/elections/election-1/people";
-    const { isFullTeller, isGuestTeller } = await import(
-      "@/domain/guestTellerAccess"
-    );
+    const { isFullTeller, isGuestTeller } =
+      await import("@/domain/guestTellerAccess");
     vi.mocked(isFullTeller).mockReturnValue(true);
     vi.mocked(isGuestTeller).mockReturnValue(false);
   });
@@ -594,9 +586,11 @@ describe("Election Store", () => {
       const goThere = stageNoticeGoThere(notice.message);
       expect(goThere).toBeDefined();
       goThere!();
-      expect(routerPushMock).toHaveBeenCalledWith(
-        "/elections/election-1/frontdesk",
-      );
+      await vi.waitFor(() => {
+        expect(routerPushMock).toHaveBeenCalledWith(
+          "/elections/election-1/frontdesk",
+        );
+      });
     });
 
     it("statusChanged accepts PascalCase payload and case-insensitive electionGuid", async () => {
@@ -664,7 +658,9 @@ describe("Election Store", () => {
       const goThere = stageNoticeGoThere(notice.message);
       expect(goThere).toBeDefined();
       goThere!();
-      expect(routerPushMock).toHaveBeenCalledWith("/elections/election-1");
+      await vi.waitFor(() => {
+        expect(routerPushMock).toHaveBeenCalledWith("/elections/election-1");
+      });
     });
 
     it("statusChanged does not toast when local setStage already suppressed echo", async () => {
@@ -713,9 +709,8 @@ describe("Election Store", () => {
     });
 
     it("statusChanged for GuestTeller toasts without Go there (redirect is separate)", async () => {
-      const { isFullTeller, isGuestTeller } = await import(
-        "@/domain/guestTellerAccess"
-      );
+      const { isFullTeller, isGuestTeller } =
+        await import("@/domain/guestTellerAccess");
       vi.mocked(isFullTeller).mockReturnValue(false);
       vi.mocked(isGuestTeller).mockReturnValue(true);
 
@@ -734,7 +729,6 @@ describe("Election Store", () => {
         name: "Springfield LSA",
         electionStage: "GatheringBallots",
       } as ElectionDto;
-      currentPathRef.value = "/elections/election-1/frontdesk";
 
       await electionStore.initializeSignalR();
       handlers.get("statusChanged")!({

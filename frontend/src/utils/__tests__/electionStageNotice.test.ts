@@ -86,9 +86,7 @@ function goThereClick(message: string | VNode): (() => void) | undefined {
     return undefined;
   }
   return () =>
-    onClick(
-      new MouseEvent("click", { bubbles: true, cancelable: true }),
-    );
+    onClick(new MouseEvent("click", { bubbles: true, cancelable: true }));
 }
 
 describe("notifyElectionStageChanged", () => {
