@@ -24,11 +24,7 @@ describe("electionService.changeStage", () => {
       },
     } as never);
 
-    await electionService.changeStage(
-      "election-1",
-      "ProcessingBallots",
-      true,
-    );
+    await electionService.changeStage("election-1", "ProcessingBallots", true);
 
     expect(putApiElectionsByGuidStage).toHaveBeenCalledWith({
       path: { guid: "election-1" },
