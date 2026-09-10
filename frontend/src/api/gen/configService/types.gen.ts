@@ -1137,6 +1137,7 @@ export type PeoplePersonDetailDto = {
     teller1?: string | null;
     teller2?: string | null;
     hasOnlineBallot?: boolean | null;
+    hasAcceptedBallot?: boolean;
     registrationHistory?: string | null;
     kioskCode?: string | null;
     unitName?: string | null;

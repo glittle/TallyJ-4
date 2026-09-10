@@ -10,6 +10,8 @@ defineProps<{
   electionFlags: string[];
   selectedMethodFilters: string[];
   selectedFlagFilters: string[];
+  ballotNotReceivedOnly: boolean;
+  ballotNotReceivedCount: number;
   methodCounts: Record<string, number>;
   flagCounts: Record<string, number>;
   hasActiveFilters: boolean;
@@ -18,6 +20,7 @@ defineProps<{
 const emit = defineEmits<{
   "toggle-method": [method: string];
   "toggle-flag": [flag: string];
+  "toggle-ballot-not-received": [];
   clear: [];
 }>();
 </script>
@@ -50,6 +53,20 @@ const emit = defineEmits<{
         >
           {{ method.label }} ({{ methodCounts[method.value] || 0 }})
         </el-button>
+      </div>
+
+      <div class="filter-group ballot-not-received">
+        <el-checkbox
+          :model-value="ballotNotReceivedOnly"
+          :title="$t('frontDesk.filters.ballotNotReceivedHelp')"
+          @change="emit('toggle-ballot-not-received')"
+        >
+          {{
+            $t("frontDesk.filters.ballotNotReceivedWithCount", {
+              count: ballotNotReceivedCount,
+            })
+          }}
+        </el-checkbox>
       </div>
 
       <div v-if="electionFlags.length > 0" class="filter-group">
@@ -110,6 +127,13 @@ const emit = defineEmits<{
   .filter-label {
     color: var(--el-text-color-secondary);
     margin-right: 4px;
+  }
+
+  .ballot-not-received {
+    .el-checkbox {
+      height: auto;
+      color: var(--el-text-color-regular);
+    }
   }
 
   .clear-btn {

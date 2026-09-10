@@ -2,8 +2,10 @@
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useNotifications } from "@/composables/useNotifications";
 import type { RegistrationHistoryEntryDto } from "@/types/FrontDesk";
+import { hasAcceptedBallot } from "@/utils/acceptedBallot";
 import {
   ELIGIBLE_REASON_VALUE,
+  isCannotVoteReasonDisabled,
   toApiEligibility,
   toFormEligibility,
 } from "@/utils/eligibilityForm";
@@ -99,6 +101,10 @@ const showKioskCode = computed(
 );
 
 const canDeletePerson = computed(() => personDetails.value?.canDelete === true);
+
+const personHasAcceptedBallot = computed(() =>
+  hasAcceptedBallot(personDetails.value ?? {}),
+);
 
 const hasEligibilitySelection = computed(() =>
   Boolean(form.ineligibleReasonCode),
@@ -447,9 +453,16 @@ defineExpose({
                 :key="reason.code"
                 :label="$t(`eligibility.${reason.code}`)"
                 :value="reason.code"
+                :disabled="
+                  isCannotVoteReasonDisabled(reason, personHasAcceptedBallot)
+                "
               />
             </el-option-group>
           </el-select>
+
+          <p v-if="personHasAcceptedBallot" class="eligibility-locked-note">
+            {{ $t("people.eligibilityLockedAfterVoted") }}
+          </p>
 
           <div
             v-if="hasEligibilitySelection"
@@ -632,6 +645,12 @@ defineExpose({
 
   .eligibility-field {
     width: 100%;
+  }
+
+  .eligibility-locked-note {
+    margin: var(--spacing-1) 0 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-neutral-500);
   }
 
   .eligibility-interpretation {

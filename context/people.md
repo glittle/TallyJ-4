@@ -29,3 +29,20 @@ GUIDs stay on `IneligibleReasonEnum` only so old JSON packages and v2/v3 XML can
 **Rejected alternative:** keep `IneligibleReasonGuid` on Person and derive the code at the API. Create/update, name import, and the person form all used the code already; the GUID column was leftover v3 storage.
 
 **Rejected alternative:** store both columns. Two sources of truth would drift, and the index would still need the GUID.
+
+## Cannot mark cannot-vote after a ballot is accepted
+
+**Status:** active  
+**Evidence:** confirmed (v3 `EditPerson.updateReasons`; issue #171)  
+**Source:** TallyJ-3.0 `Site/Views/Setup/EditPerson.cshtml.js` (`updateReasons(!!VotingMethod)`); v4 write gate in `PeopleService.UpdatePersonAsync`  
+**Revisit when:** pending online ballots (not yet accepted) should also lock eligibility, or paper “accepted” should mean a `Ballot` row instead of Front Desk `VotingMethod`
+
+v3 disabled eligibility options with `CanVote === false` once the person had a voting method. The person-form tip said they cannot change to a non-voting option after voting. v4 only had the Finalized write lock (#308) — tellers could still set X/R reasons after check-in or Accept-all.
+
+`HasAcceptedBallot` is Front Desk `VotingMethod` (the paper/mail/call-in record that a ballot was received) or an `OnlineVotingInfo` row with status `Processed` (Accept-all). `Person.HasOnlineBallot` is set on voter submit while the row is still `Submitted` and is not the accepted signal. Pending `Submitted` / `Processing` rows do not lock. V-group reasons (can vote, cannot receive) stay allowed so votes they already received can still be spoiled.
+
+The API throws `people.cannotMarkCannotVoteAfterVoted` before copying fields. Person detail exposes the combined `HasAcceptedBallot` flag; the person form disables X/R from that signal, not from `hasOnlineBallot`. Finalized still wins first.
+
+**Rejected alternative:** UI-only disable, matching v3. Rejected — #171 asked to verify the status cannot be changed; a write gate matches other Front Desk locks.
+
+**Rejected alternative:** treat `Person.HasOnlineBallot` as the online half of “accepted”. Rejected — that flag is set on voter submit, not Accept-all. Accepted vs pending is `OnlineVotingInfo.Status` (`Processed` vs `Submitted` / `Processing`). Paper check-in still uses `VotingMethod`.

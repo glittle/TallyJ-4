@@ -1,5 +1,9 @@
+import { isCannotVoteReasonDisabled } from "./acceptedBallot";
+
 /** Sentinel for fully eligible — Element Plus treats null/empty as unselected. */
 export const ELIGIBLE_REASON_VALUE = "__eligible__";
+
+export { isCannotVoteReasonDisabled };
 
 export function toApiEligibility(value?: string | null): string | undefined {
   if (!value || value === ELIGIBLE_REASON_VALUE) {

@@ -112,9 +112,17 @@ public class PersonDetailDto
     public string? Teller2 { get; set; }
 
     /// <summary>
-    /// Whether the person has submitted an online ballot.
+    /// Whether the person has submitted an online ballot (pending or accepted).
+    /// Set on voter submit; not the Accept-all signal.
     /// </summary>
     public bool? HasOnlineBallot { get; set; }
+
+    /// <summary>
+    /// Whether the person has an accepted ballot: Front Desk <c>VotingMethod</c>
+    /// or a <c>Processed</c> online row. Pending <c>Submitted</c>/<c>Processing</c>
+    /// rows do not set this.
+    /// </summary>
+    public bool HasAcceptedBallot { get; set; }
 
     /// <summary>
     /// JSON array of registration history entries.

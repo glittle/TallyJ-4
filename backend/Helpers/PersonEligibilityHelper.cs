@@ -56,4 +56,35 @@ public static class PersonEligibilityHelper
 
         return true;
     }
+
+    /// <summary>
+    /// Front Desk check-in (<see cref="Person.VotingMethod"/>) or a <c>Processed</c>
+    /// <see cref="OnlineVotingInfo"/> row (Accept-all) is the record that this person
+    /// has already voted. <see cref="Person.HasOnlineBallot"/> is set on voter submit
+    /// (pending <c>Submitted</c>) and does not mean accepted.
+    /// </summary>
+    public static bool HasAcceptedBallot(Person? person, bool hasProcessedOnlineBallot = false)
+    {
+        if (person is null)
+        {
+            return false;
+        }
+
+        return !string.IsNullOrWhiteSpace(person.VotingMethod) || hasProcessedOnlineBallot;
+    }
+
+    /// <summary>
+    /// True when the reason would set <see cref="Person.CanVote"/> to false
+    /// (X/R groups, or an unknown non-empty code). Empty/null is fully eligible.
+    /// </summary>
+    public static bool ReasonRemovesVoteEligibility(string? ineligibleReasonCode)
+    {
+        if (string.IsNullOrWhiteSpace(ineligibleReasonCode))
+        {
+            return false;
+        }
+
+        var reason = IneligibleReasonEnum.GetByCode(ineligibleReasonCode);
+        return reason is null || !reason.CanVote;
+    }
 }

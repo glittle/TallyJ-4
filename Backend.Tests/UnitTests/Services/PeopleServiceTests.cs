@@ -5,6 +5,7 @@ using Backend.Entities;
 using Backend.DTOs.People;
 using Backend.Services;
 using Backend.Enumerations;
+using Backend.Helpers;
 
 namespace Backend.Tests.UnitTests.Services;
 
@@ -1081,6 +1082,136 @@ public class PeopleServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task UpdatePersonAsync_VotingMethodSet_CannotMarkCannotVote()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.VotingMethod = "P";
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+            {
+                LastName = person.LastName,
+                FirstName = person.FirstName,
+                IneligibleReasonCode = IneligibleReasonEnum.X01_Deceased.Code
+            }));
+
+        Assert.Equal(PeopleMessageKeys.CannotMarkCannotVoteAfterVoted, ex.Message);
+        Assert.Null(Context.People.Single().IneligibleReasonCode);
+        Assert.True(Context.People.Single().CanVote);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_SubmittedOnlineBallot_CanStillMarkCannotVote()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.HasOnlineBallot = true;
+        await SeedOnlineVotingInfoAsync(electionGuid, person.PersonGuid, OnlineBallotStatus.Submitted);
+
+        var result = await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = person.LastName,
+            FirstName = person.FirstName,
+            IneligibleReasonCode = IneligibleReasonEnum.X01_Deceased.Code
+        });
+
+        Assert.NotNull(result);
+        Assert.False(result.CanVote);
+        Assert.Equal("X01", result.IneligibleReasonCode);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_ProcessedOnlineBallot_CannotMarkCannotVote()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.HasOnlineBallot = true;
+        await SeedOnlineVotingInfoAsync(electionGuid, person.PersonGuid, OnlineBallotStatus.Processed);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+            {
+                LastName = person.LastName,
+                FirstName = person.FirstName,
+                IneligibleReasonCode = IneligibleReasonEnum.R02_RightsRemovedCannotVote.Code
+            }));
+
+        Assert.Equal(PeopleMessageKeys.CannotMarkCannotVoteAfterVoted, ex.Message);
+        Assert.True(Context.People.Single().CanVote);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_VotingMethodSet_CanStillMarkCanVoteButNotReceive()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.VotingMethod = "O";
+        await Context.SaveChangesAsync();
+
+        var result = await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = person.LastName,
+            FirstName = person.FirstName,
+            IneligibleReasonCode = IneligibleReasonEnum.V01_YouthAged181920.Code
+        });
+
+        Assert.NotNull(result);
+        Assert.True(result.CanVote);
+        Assert.False(result.CanReceiveVotes);
+        Assert.Equal("V01", result.IneligibleReasonCode);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_VotingMethodSet_CanClearEligibility()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.VotingMethod = "P";
+        person.IneligibleReasonCode = IneligibleReasonEnum.V01_YouthAged181920.Code;
+        person.CanVote = true;
+        person.CanReceiveVotes = false;
+        await Context.SaveChangesAsync();
+
+        var result = await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = person.LastName,
+            FirstName = person.FirstName,
+            IneligibleReasonCode = null
+        });
+
+        Assert.NotNull(result);
+        Assert.True(result.CanVote);
+        Assert.True(result.CanReceiveVotes);
+        Assert.Null(result.IneligibleReasonCode);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_AlreadyCannotVote_KeepsReasonWhenNotChangingEligibility()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.VotingMethod = "P";
+        person.IneligibleReasonCode = IneligibleReasonEnum.X01_Deceased.Code;
+        person.CanVote = false;
+        person.CanReceiveVotes = false;
+        await Context.SaveChangesAsync();
+
+        var result = await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = "Renamed",
+            FirstName = person.FirstName,
+            IneligibleReasonCode = IneligibleReasonEnum.X01_Deceased.Code
+        });
+
+        Assert.NotNull(result);
+        Assert.Equal("Renamed", result.LastName);
+        Assert.Equal("X01", result.IneligibleReasonCode);
+        Assert.False(result.CanVote);
+    }
+
+    [Fact]
     public async Task UpdatePersonAsync_FinalizedElection_Throws()
     {
         var electionGuid = SeedElection(ElectionStage.Finalized);
@@ -1134,6 +1265,49 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.True(string.IsNullOrWhiteSpace(Context.People.Single().KioskCode));
     }
 
+    [Fact]
+    public async Task GetPersonDetailsAsync_SubmittedOnlineBallot_HasAcceptedBallotFalse()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.HasOnlineBallot = true;
+        await SeedOnlineVotingInfoAsync(electionGuid, person.PersonGuid, OnlineBallotStatus.Submitted);
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.True(details.HasOnlineBallot);
+        Assert.False(details.HasAcceptedBallot);
+    }
+
+    [Fact]
+    public async Task GetPersonDetailsAsync_ProcessedOnlineBallot_HasAcceptedBallotTrue()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.HasOnlineBallot = true;
+        await SeedOnlineVotingInfoAsync(electionGuid, person.PersonGuid, OnlineBallotStatus.Processed);
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.True(details.HasAcceptedBallot);
+    }
+
+    [Fact]
+    public async Task GetPersonDetailsAsync_VotingMethod_HasAcceptedBallotTrue()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedPerson(electionGuid);
+        person.VotingMethod = "P";
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.True(details.HasAcceptedBallot);
+    }
+
     private Guid SeedElection(ElectionStage stage, string? votingMethods = null)
     {
         var electionGuid = Guid.NewGuid();
@@ -1149,6 +1323,18 @@ public class PeopleServiceTests : ServiceTestBase
         });
         Context.SaveChanges();
         return electionGuid;
+    }
+
+    private async Task SeedOnlineVotingInfoAsync(Guid electionGuid, Guid personGuid, string status)
+    {
+        Context.OnlineVotingInfos.Add(new OnlineVotingInfo
+        {
+            ElectionGuid = electionGuid,
+            PersonGuid = personGuid,
+            Status = status,
+            WhenStatus = DateTimeOffset.UtcNow
+        });
+        await Context.SaveChangesAsync();
     }
 
     private Person SeedPerson(Guid electionGuid)

@@ -40,4 +40,43 @@ public class PersonEligibilityHelperTests
         var person = new Person { LastName = "A", CanVote = null, IneligibleReasonCode = null };
         Assert.True(PersonEligibilityHelper.CanVote(person));
     }
+
+    [Fact]
+    public void HasAcceptedBallot_VotingMethod_IsTrue()
+    {
+        var person = new Person { LastName = "A", VotingMethod = "P" };
+        Assert.True(PersonEligibilityHelper.HasAcceptedBallot(person));
+    }
+
+    [Fact]
+    public void HasAcceptedBallot_ProcessedOnlineBallot_IsTrue()
+    {
+        var person = new Person { LastName = "A" };
+        Assert.True(PersonEligibilityHelper.HasAcceptedBallot(person, hasProcessedOnlineBallot: true));
+    }
+
+    [Fact]
+    public void HasAcceptedBallot_HasOnlineBallotAlone_IsFalse()
+    {
+        var person = new Person { LastName = "A", HasOnlineBallot = true };
+        Assert.False(PersonEligibilityHelper.HasAcceptedBallot(person));
+    }
+
+    [Fact]
+    public void HasAcceptedBallot_Neither_IsFalse()
+    {
+        var person = new Person { LastName = "A" };
+        Assert.False(PersonEligibilityHelper.HasAcceptedBallot(person));
+    }
+
+    [Fact]
+    public void ReasonRemovesVoteEligibility_XAndR_AreTrue_VAndEmpty_AreFalse()
+    {
+        Assert.True(PersonEligibilityHelper.ReasonRemovesVoteEligibility("X01"));
+        Assert.True(PersonEligibilityHelper.ReasonRemovesVoteEligibility("R02"));
+        Assert.True(PersonEligibilityHelper.ReasonRemovesVoteEligibility("ZZ9"));
+        Assert.False(PersonEligibilityHelper.ReasonRemovesVoteEligibility("V01"));
+        Assert.False(PersonEligibilityHelper.ReasonRemovesVoteEligibility(null));
+        Assert.False(PersonEligibilityHelper.ReasonRemovesVoteEligibility(""));
+    }
 }

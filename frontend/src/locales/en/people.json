@@ -162,6 +162,8 @@
   "people.unitName": "Unit Name",
   "people.canVoteInElection": "Can vote in this election?",
   "people.canReceiveVotesInElection": "Can be voted for in this election?",
+  "people.cannotMarkCannotVoteAfterVoted": "This person has already voted. Their status cannot be changed to cannot vote.",
+  "people.eligibilityLockedAfterVoted": "This person has already voted. Statuses that remove the right to vote are not available.",
   "people.eligibilityYes": "Yes",
   "people.eligibilityNo": "No",
   "people.registrationHistoryWithMethod": "Registration History — {method}",
