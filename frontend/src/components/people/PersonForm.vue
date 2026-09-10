@@ -460,10 +460,7 @@ defineExpose({
             </el-option-group>
           </el-select>
 
-          <p
-            v-if="personHasAcceptedBallot"
-            class="eligibility-locked-note"
-          >
+          <p v-if="personHasAcceptedBallot" class="eligibility-locked-note">
             {{ $t("people.eligibilityLockedAfterVoted") }}
           </p>
 

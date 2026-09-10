@@ -3,7 +3,9 @@ export function hasAcceptedBallot(person: {
   votingMethod?: string | null;
   hasOnlineBallot?: boolean | null;
 }): boolean {
-  return Boolean(person.votingMethod?.trim()) || person.hasOnlineBallot === true;
+  return (
+    Boolean(person.votingMethod?.trim()) || person.hasOnlineBallot === true
+  );
 }
 
 /**
