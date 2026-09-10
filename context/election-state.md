@@ -41,9 +41,20 @@ There is no separate `Locked` flag. After analysis is complete and counts reconc
 ## “Move all tellers to this state” is the stage broadcast
 
 **Status:** active  
-**Evidence:** inferred (issue #172 names; no separate move-tellers API)
+**Evidence:** inferred (issue #172 names; no separate move-tellers API); FullTeller opt-in confirmed by issue #310
 
-Changing stage is the move. `ChangeElectionStageAsync` persists the stage and broadcasts `statusChanged` on MainHub. Remote `electionStore` clients update `currentStage`. GuestTellers are redirected to that stage’s work page; FullTellers are notified and stay on their current page (they can still open other stage groups).
+Changing stage is the move. `ChangeElectionStageAsync` persists the stage and broadcasts `statusChanged` on MainHub. Remote `electionStore` clients update `currentStage`.
+
+- **GuestTellers** auto-redirect to that stage’s primary work page (`useGuestTellerStageRedirect`).
+- **FullTellers** stay on their current page and get a toast. The toast includes a **Go there** action that opens the same work page guests land on. They are not auto-navigated: a FullTeller may be mid-ballot or mid-edit.
+
+Work pages (`getStageWorkPagePath`): GatheringBallots → Front Desk; ProcessingBallots → Enter Ballots; SettingUp / Finalized → election landing.
+
+v3 `statusChanged` updated status in place (`site.broadcast`); there is no documented v3 auto-move for known tellers. Issue #310 left the product choice open; v4 keeps stay-put + opt-in.
+
+**Rejected alternative:** auto-navigate FullTellers the same as guests. Rejected — FullTellers often have unsaved ballot/person edits; yanking the route would lose work. Guests have a narrower page set and are meant to follow the stage.
+
+**Rejected alternative:** toast-only with no action (pre-#310). Rejected — FullTellers had no way to follow the stage from the notice itself.
 
 There is no separate “Move all tellers to this state” button or endpoint.
 

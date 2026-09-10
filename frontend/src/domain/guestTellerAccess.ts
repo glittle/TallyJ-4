@@ -3,8 +3,12 @@ import {
   secureTokenService,
   type AuthCookieData,
 } from "@/services/secureTokenService";
-import type { ElectionStage, NavPageDef } from "./electionStages";
-import { STAGE_PAGES } from "./electionStages";
+import {
+  getStageWorkPagePath,
+  STAGE_PAGES,
+  type ElectionStage,
+  type NavPageDef,
+} from "./electionStages";
 
 /**
  * GuestTellers authenticate via election passcode (AccessCode), not as FullTellers
@@ -111,9 +115,5 @@ export function getGuestTellerRedirectPath(
   electionGuid: string,
   stage: ElectionStage,
 ): string {
-  const menuPages = getGuestTellerMenuPages(stage, electionGuid);
-  if (menuPages.length > 0) {
-    return menuPages[0]!.routePath(electionGuid);
-  }
-  return `/elections/${electionGuid}`;
+  return getStageWorkPagePath(electionGuid, stage);
 }

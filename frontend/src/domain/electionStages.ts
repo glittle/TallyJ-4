@@ -85,6 +85,26 @@ export const STAGE_META: Record<NavElectionStage, StageMeta> = {
   },
 };
 
+/**
+ * Primary work page for a stage. GuestTellers are auto-sent here on stage
+ * change; FullTellers stay put and can open the same path from the notice.
+ * Not the first sidebar item (Processing lists Monitor first).
+ */
+export function getStageWorkPagePath(
+  electionGuid: string,
+  stage: ElectionStage,
+): string {
+  switch (stage) {
+    case "GatheringBallots":
+      return `/elections/${electionGuid}/frontdesk`;
+    case "ProcessingBallots":
+      return `/elections/${electionGuid}/ballots`;
+    case "SettingUp":
+    case "Finalized":
+      return `/elections/${electionGuid}`;
+  }
+}
+
 export const STAGE_PAGES: Record<NavElectionStage, NavPageDef[]> = {
   SettingUp: [
     {

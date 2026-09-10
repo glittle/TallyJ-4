@@ -45,6 +45,20 @@ vi.mock("@/domain/guestTellerAccess", async (importOriginal) => {
   };
 });
 
+const routerPushMock = vi.fn();
+const currentPathRef = { value: "/elections/election-1/people" };
+
+vi.mock("@/router/router", () => ({
+  router: {
+    push: (...args: unknown[]) => routerPushMock(...args),
+    currentRoute: {
+      get value() {
+        return { path: currentPathRef.value };
+      },
+    },
+  },
+}));
+
 const elMessageMock = vi.fn();
 
 // Mock Element Plus (store calls ElMessage as a function)
@@ -74,19 +88,60 @@ vi.mock("../locales", () => ({
         if (key === "elections.stage.Finalized") {
           return "Finalized";
         }
+        if (key === "elections.goToStagePage") {
+          return "Go there";
+        }
         return key;
       },
     },
   },
 }));
 
+function stageNoticeText(message: unknown): string {
+  if (typeof message === "string") {
+    return message;
+  }
+  const vnode = message as { children?: unknown };
+  if (!Array.isArray(vnode.children) || vnode.children.length === 0) {
+    return "";
+  }
+  const textNode = vnode.children[0] as { children?: unknown };
+  return typeof textNode.children === "string" ? textNode.children : "";
+}
+
+function stageNoticeGoThere(message: unknown): (() => void) | undefined {
+  if (typeof message === "string") {
+    return undefined;
+  }
+  const vnode = message as { children?: unknown };
+  if (!Array.isArray(vnode.children) || vnode.children.length < 2) {
+    return undefined;
+  }
+  const button = vnode.children[1] as {
+    props?: { onClick?: (event: MouseEvent) => void };
+  };
+  const onClick = button.props?.onClick;
+  if (!onClick) {
+    return undefined;
+  }
+  return () =>
+    onClick(new MouseEvent("click", { bubbles: true, cancelable: true }));
+}
+
 describe("Election Store", () => {
   let electionStore: ReturnType<typeof useElectionStore>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     setActivePinia(createPinia());
     electionStore = useElectionStore();
     elMessageMock.mockClear();
+    routerPushMock.mockReset();
+    currentPathRef.value = "/elections/election-1/people";
+    const { isFullTeller, isGuestTeller } = await import(
+      "@/domain/guestTellerAccess"
+    );
+    vi.mocked(isFullTeller).mockReturnValue(true);
+    vi.mocked(isGuestTeller).mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -531,11 +586,16 @@ describe("Election Store", () => {
         "GatheringBallots",
       );
       expect(elMessageMock).toHaveBeenCalledTimes(1);
-      expect(elMessageMock).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: "Election changed to Gathering Ballots",
-          type: "info",
-        }),
+      const notice = elMessageMock.mock.calls[0]![0] as { message: unknown };
+      expect(stageNoticeText(notice.message)).toBe(
+        "Election changed to Gathering Ballots",
+      );
+      expect(routerPushMock).not.toHaveBeenCalled();
+      const goThere = stageNoticeGoThere(notice.message);
+      expect(goThere).toBeDefined();
+      goThere!();
+      expect(routerPushMock).toHaveBeenCalledWith(
+        "/elections/election-1/frontdesk",
       );
     });
 
@@ -596,12 +656,15 @@ describe("Election Store", () => {
       });
 
       expect(electionStore.currentStage).toBe("Finalized");
-      expect(elMessageMock).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: "Election changed to Finalized",
-          type: "info",
-        }),
+      const notice = elMessageMock.mock.calls[0]![0] as { message: unknown };
+      expect(stageNoticeText(notice.message)).toBe(
+        "Election changed to Finalized",
       );
+      expect(routerPushMock).not.toHaveBeenCalled();
+      const goThere = stageNoticeGoThere(notice.message);
+      expect(goThere).toBeDefined();
+      goThere!();
+      expect(routerPushMock).toHaveBeenCalledWith("/elections/election-1");
     });
 
     it("statusChanged does not toast when local setStage already suppressed echo", async () => {
@@ -647,6 +710,50 @@ describe("Election Store", () => {
       expect(electionStore.currentElection?.electionStage).toBe(
         "ProcessingBallots",
       );
+    });
+
+    it("statusChanged for GuestTeller toasts without Go there (redirect is separate)", async () => {
+      const { isFullTeller, isGuestTeller } = await import(
+        "@/domain/guestTellerAccess"
+      );
+      vi.mocked(isFullTeller).mockReturnValue(false);
+      vi.mocked(isGuestTeller).mockReturnValue(true);
+
+      const { signalrService } = await import("../services/signalrService");
+      const handlers = new Map<string, (data: unknown) => void>();
+      const mockConnection = {
+        on: vi.fn((event: string, handler: (data: unknown) => void) => {
+          handlers.set(event, handler);
+        }),
+      };
+      signalrService.connectToMainHub.mockResolvedValue(mockConnection);
+      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
+
+      electionStore.currentElection = {
+        electionGuid: "election-1",
+        name: "Springfield LSA",
+        electionStage: "GatheringBallots",
+      } as ElectionDto;
+      currentPathRef.value = "/elections/election-1/frontdesk";
+
+      await electionStore.initializeSignalR();
+      handlers.get("statusChanged")!({
+        electionGuid: "election-1",
+        name: "Springfield LSA",
+        electionStage: "ProcessingBallots",
+        updatedAt: new Date().toISOString(),
+      });
+
+      expect(electionStore.currentElection?.electionStage).toBe(
+        "ProcessingBallots",
+      );
+      expect(elMessageMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "Election changed to Processing Ballots",
+          type: "info",
+        }),
+      );
+      expect(routerPushMock).not.toHaveBeenCalled();
     });
   });
 

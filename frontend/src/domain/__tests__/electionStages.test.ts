@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { STAGES, STAGE_META, STAGE_PAGES } from "../electionStages";
+import {
+  getStageWorkPagePath,
+  STAGES,
+  STAGE_META,
+  STAGE_PAGES,
+} from "../electionStages";
 
 describe("electionStages", () => {
   describe("STAGES + STAGE_META", () => {
@@ -22,6 +27,28 @@ describe("electionStages", () => {
         expect(meta.bgVar).toMatch(/^--color-stage-.+-bg$/);
         expect(meta.icon).toBeDefined();
       }
+    });
+  });
+
+  describe("getStageWorkPagePath", () => {
+    const guid = "elec-1";
+
+    it("sends GatheringBallots to Front Desk", () => {
+      expect(getStageWorkPagePath(guid, "GatheringBallots")).toBe(
+        "/elections/elec-1/frontdesk",
+      );
+    });
+
+    it("sends ProcessingBallots to Enter Ballots (not Monitor)", () => {
+      expect(getStageWorkPagePath(guid, "ProcessingBallots")).toBe(
+        "/elections/elec-1/ballots",
+      );
+      expect(STAGE_PAGES.ProcessingBallots[0]?.key).toBe("monitor");
+    });
+
+    it("sends SettingUp and Finalized to election landing", () => {
+      expect(getStageWorkPagePath(guid, "SettingUp")).toBe("/elections/elec-1");
+      expect(getStageWorkPagePath(guid, "Finalized")).toBe("/elections/elec-1");
     });
   });
 

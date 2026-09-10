@@ -5,7 +5,6 @@ import { electionService } from "../services/electionService";
 import { signalrService } from "../services/signalrService";
 import { useAuthStore } from "./authStore";
 
-import { ElMessage } from "element-plus";
 import type {
   CreateElectionDto,
   DuplicateElectionDto,
@@ -23,7 +22,7 @@ import {
   setActiveElectionHubGuid,
 } from "../utils/activeElectionHubStorage";
 import { STAGE_META, type ElectionStage } from "../domain/electionStages";
-import { i18n } from "../locales";
+import { notifyElectionStageChanged } from "../utils/electionStageNotice";
 
 /** How long to suppress remote stage toasts after a local setStage (covers SignalR racing HTTP). */
 const LOCAL_STAGE_NOTIFY_SUPPRESS_MS = 5000;
@@ -425,25 +424,8 @@ export const useElectionStore = defineStore("election", () => {
       data.electionStage &&
       !isRemoteStageNotifySuppressed(data.electionGuid)
     ) {
-      showElectionStageNotification(data.electionStage);
+      notifyElectionStageChanged(data.electionGuid, data.electionStage);
     }
-  }
-
-  function showElectionStageNotification(newStage: string) {
-    // Own-property check (not `in`) so prototype keys like "toString" never match.
-    const meta = Object.hasOwn(STAGE_META, newStage)
-      ? STAGE_META[newStage as ElectionStage]
-      : undefined;
-    const stageKey = meta ? meta.i18nKey : `elections.stage.${newStage}`;
-    const stageLabel = i18n.global.t(stageKey);
-    const message = i18n.global.t("elections.stageAdvanced", {
-      stage: stageLabel,
-    });
-    ElMessage({
-      message,
-      type: "info",
-      duration: 5000,
-    });
   }
 
   async function joinElection(electionGuid: string) {
