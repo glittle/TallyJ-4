@@ -9,9 +9,9 @@ import {
 describe("acceptedBallot", () => {
   it("treats a voting method or accepted online ballot as already voted", () => {
     expect(hasAcceptedBallot({ votingMethod: "P" })).toBe(true);
-    expect(hasAcceptedBallot({ hasOnlineBallot: true })).toBe(true);
+    expect(hasAcceptedBallot({ hasAcceptedBallot: true })).toBe(true);
     expect(
-      hasAcceptedBallot({ votingMethod: " ", hasOnlineBallot: false }),
+      hasAcceptedBallot({ votingMethod: " ", hasAcceptedBallot: false }),
     ).toBe(false);
     expect(hasAcceptedBallot({})).toBe(false);
   });

@@ -1,10 +1,14 @@
-/** Front Desk / person-edit: a recorded voting method or an accepted online ballot. */
+/**
+ * Front Desk / person-edit: a recorded voting method or PersonDetail.hasAcceptedBallot
+ * (VotingMethod or a Processed online row). Do not use hasOnlineBallot — that is
+ * set on voter submit while the online row is still pending.
+ */
 export function hasAcceptedBallot(person: {
   votingMethod?: string | null;
-  hasOnlineBallot?: boolean | null;
+  hasAcceptedBallot?: boolean | null;
 }): boolean {
   return (
-    Boolean(person.votingMethod?.trim()) || person.hasOnlineBallot === true
+    person.hasAcceptedBallot === true || Boolean(person.votingMethod?.trim())
   );
 }
 

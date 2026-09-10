@@ -183,7 +183,8 @@ public class PeopleService : IPeopleService
 
         var previousIneligibleReasonCode = person.IneligibleReasonCode;
 
-        if (PersonEligibilityHelper.HasAcceptedBallot(person)
+        var hasProcessedOnlineBallot = await HasProcessedOnlineBallotAsync(person.ElectionGuid, person.PersonGuid);
+        if (PersonEligibilityHelper.HasAcceptedBallot(person, hasProcessedOnlineBallot)
             && !string.Equals(previousIneligibleReasonCode, updateDto.IneligibleReasonCode, StringComparison.Ordinal)
             && PersonEligibilityHelper.ReasonRemovesVoteEligibility(updateDto.IneligibleReasonCode))
         {
@@ -408,6 +409,9 @@ public class PeopleService : IPeopleService
         dto.VoteCount = person.Results.FirstOrDefault()?.VoteCount ?? 0;
         dto.CanDelete = await CanDeletePersonAsync(person);
         dto.PhoneOnlineVoter = await MapPhoneOnlineVoterAsync(person.Phone);
+        dto.HasAcceptedBallot = PersonEligibilityHelper.HasAcceptedBallot(
+            person,
+            await HasProcessedOnlineBallotAsync(person.ElectionGuid, person.PersonGuid));
 
         if (await ShouldEnsureKioskCodeAsync(person))
         {
@@ -507,6 +511,18 @@ public class PeopleService : IPeopleService
             WhenLastLogin = row.WhenLastLogin,
             SmsStatus = row.SmsStatus
         };
+    }
+
+    /// <summary>
+    /// True when this person has an online ballot that Accept-all has already processed
+    /// (<see cref="OnlineBallotStatus.Processed"/>). Pending Submitted / Processing rows do not count.
+    /// </summary>
+    private async Task<bool> HasProcessedOnlineBallotAsync(Guid electionGuid, Guid personGuid)
+    {
+        return await _context.OnlineVotingInfos.AnyAsync(o =>
+            o.ElectionGuid == electionGuid
+            && o.PersonGuid == personGuid
+            && o.Status == OnlineBallotStatus.Processed);
     }
 
     private async Task<bool> CanDeletePersonAsync(Person person)

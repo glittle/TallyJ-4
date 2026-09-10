@@ -58,18 +58,19 @@ public static class PersonEligibilityHelper
     }
 
     /// <summary>
-    /// Front Desk check-in (<see cref="Person.VotingMethod"/>) or an accepted online
-    /// ballot (<see cref="Person.HasOnlineBallot"/>) is the v4 record that this person
-    /// has already voted. Pending online rows do not set <see cref="Person.HasOnlineBallot"/>.
+    /// Front Desk check-in (<see cref="Person.VotingMethod"/>) or a <c>Processed</c>
+    /// <see cref="OnlineVotingInfo"/> row (Accept-all) is the record that this person
+    /// has already voted. <see cref="Person.HasOnlineBallot"/> is set on voter submit
+    /// (pending <c>Submitted</c>) and does not mean accepted.
     /// </summary>
-    public static bool HasAcceptedBallot(Person? person)
+    public static bool HasAcceptedBallot(Person? person, bool hasProcessedOnlineBallot = false)
     {
         if (person is null)
         {
             return false;
         }
 
-        return !string.IsNullOrWhiteSpace(person.VotingMethod) || person.HasOnlineBallot == true;
+        return !string.IsNullOrWhiteSpace(person.VotingMethod) || hasProcessedOnlineBallot;
     }
 
     /// <summary>

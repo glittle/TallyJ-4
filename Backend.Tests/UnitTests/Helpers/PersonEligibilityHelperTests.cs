@@ -49,10 +49,17 @@ public class PersonEligibilityHelperTests
     }
 
     [Fact]
-    public void HasAcceptedBallot_AcceptedOnlineBallot_IsTrue()
+    public void HasAcceptedBallot_ProcessedOnlineBallot_IsTrue()
+    {
+        var person = new Person { LastName = "A" };
+        Assert.True(PersonEligibilityHelper.HasAcceptedBallot(person, hasProcessedOnlineBallot: true));
+    }
+
+    [Fact]
+    public void HasAcceptedBallot_HasOnlineBallotAlone_IsFalse()
     {
         var person = new Person { LastName = "A", HasOnlineBallot = true };
-        Assert.True(PersonEligibilityHelper.HasAcceptedBallot(person));
+        Assert.False(PersonEligibilityHelper.HasAcceptedBallot(person));
     }
 
     [Fact]

@@ -3797,6 +3797,9 @@ export const People_PersonDetailDtoSchema = {
             type: 'boolean',
             nullable: true
         },
+        hasAcceptedBallot: {
+            type: 'boolean'
+        },
         registrationHistory: {
             type: 'string',
             nullable: true

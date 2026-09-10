@@ -121,8 +121,15 @@ describe("PersonForm eligibility lock after accepted ballot", () => {
   });
 
   it("explains the lock when the person has an accepted online ballot", async () => {
-    const wrapper = await mountEditForm({ hasOnlineBallot: true });
+    const wrapper = await mountEditForm({ hasAcceptedBallot: true });
     expect(wrapper.text()).toContain(
+      "This person has already voted. Statuses that remove the right to vote are not available.",
+    );
+  });
+
+  it("does not lock eligibility for a pending submitted online ballot", async () => {
+    const wrapper = await mountEditForm({ hasOnlineBallot: true });
+    expect(wrapper.text()).not.toContain(
       "This person has already voted. Statuses that remove the right to vote are not available.",
     );
   });
