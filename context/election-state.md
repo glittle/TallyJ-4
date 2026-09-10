@@ -20,9 +20,13 @@ There is no separate `Locked` flag. After analysis is complete and counts reconc
 
 - Finalization is rejected until `ElectionStageFinalizationReadiness` is ready (analysis present and reportable, no blocking ballots, no unresolved ties, counts reconcile, and the online voting window is not currently open).
 - When online voting is enabled and the window is currently open (same rule as voter submit / available-elections: `UseOnlineVoting` plus open/close vs now; a null open or close does not close the window), stage change **to** Finalized is refused (`elections.stageChangeError.onlineVotingStillOpen`). Tellers must close the window first. Finalize does not auto-close it. Elections with online voting off, a future-only window, or an already-closed window can still Finalize.
-- Leaving Finalized requires `ConfirmLeavingFinalized`. The StageControl UI does not send that flag, so a FullTeller click away from Finalized stays locked and shows the confirmation error.
+- Leaving Finalized requires `ConfirmLeavingFinalized`. StageControl asks a FullTeller to confirm (`useConfirmDialog`) and only then calls `setStage` with the flag. Cancel leaves the election Finalized (no API call). Guests never see the stage switcher (`AppSidebar` `v-if="!isGuest"`); the stage API still requires `FullTellerAccess`.
+
+**Rejected alternative:** treat the API 409 (`elections.stageChangeError.confirmLeaveFinalized`) as the unlock UX. Rejected — that is an error toast, not a confirm, and StageControl never sent the flag so a click away stayed locked (#309).
+
+**Rejected alternative:** reuse the unused `elections.confirmRevert` string, or auto-send `ConfirmLeavingFinalized` without a dialog. Rejected — leaving Finalized reopens people/ballot writes (#308); the dialog copy must say that, and the API flag must stay a deliberate confirm.
 - Accept-all online ballots is refused while Finalized (`monitoring.acceptAll.finalized`).
-- People, ballot, vote, Front Desk roll, people-import execute / delete-all, ballot/CDN import mutations, and online voter submit (create or update a pending online ballot) are refused while Finalized. Tellers see `elections.finalizedWriteBlocked`; voters see `voting.submit.finalized`. Reads stay open. Leaving Finalized still requires `ConfirmLeavingFinalized` (#309 is the in-UI unlock confirm; not this gate).
+- People, ballot, vote, Front Desk roll, people-import execute / delete-all, ballot/CDN import mutations, and online voter submit (create or update a pending online ballot) are refused while Finalized. Tellers see `elections.finalizedWriteBlocked`; voters see `voting.submit.finalized`. Reads stay open. Unlocking those writes is the confirmed leave-Finalized stage change (#309).
 
 **Rejected alternative (not implemented):** a dedicated lock bit plus a “Move all tellers” command. Stage change + SignalR `statusChanged` is the coordination path.
 

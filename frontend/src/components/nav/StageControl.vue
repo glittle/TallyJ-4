@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import ReconciliationReportPanel from "@/components/results/ReconciliationReportPanel.vue";
+import { useConfirmDialog } from "@/composables/useConfirmDialog";
 import { useNotifications } from "@/composables/useNotifications";
 import {
   STAGES,
@@ -23,6 +24,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 const electionStore = useElectionStore();
+const { confirm } = useConfirmDialog();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const finalizeReportVisible = ref(false);
@@ -39,6 +41,22 @@ const onlineWindowBlocksFinalize = computed(() => {
 async function selectStage(newStage: ElectionStage) {
   if (newStage === props.stage) {
     return;
+  }
+
+  let confirmLeavingFinalized = false;
+  if (props.stage === "Finalized") {
+    const confirmed = await confirm({
+      title: t("elections.leaveFinalized.title"),
+      message: t("elections.leaveFinalized.message", {
+        stage: t(STAGE_META[newStage].i18nKey),
+      }),
+      confirmButtonText: t("elections.leaveFinalized.confirm"),
+      type: "warning",
+    });
+    if (!confirmed) {
+      return;
+    }
+    confirmLeavingFinalized = true;
   }
 
   if (newStage === "Finalized") {
@@ -64,7 +82,11 @@ async function selectStage(newStage: ElectionStage) {
   }
 
   try {
-    await electionStore.setStage(props.electionGuid, newStage);
+    await electionStore.setStage(
+      props.electionGuid,
+      newStage,
+      confirmLeavingFinalized,
+    );
     showSuccessMessage(
       t("elections.stageAdvanced", {
         stage: t(STAGE_META[newStage].i18nKey),

@@ -11,6 +11,10 @@ const stagePhraseMessages: Record<string, string> = {
   "elections.stageChangeError.generic": "Failed to change election stage",
   "elections.stageChangeError.onlineVotingStillOpen":
     "Close the online voting window before finalizing this election.",
+  "elections.leaveFinalized.title": "Leave Finalized?",
+  "elections.leaveFinalized.message":
+    "Leaving Finalized unlocks this election. People and ballot data can be changed again. Continue to {stage}?",
+  "elections.leaveFinalized.confirm": "Leave Finalized",
 };
 
 vi.mock("vue-i18n", async (importOriginal) => {
@@ -33,11 +37,18 @@ vi.mock("vue-i18n", async (importOriginal) => {
 });
 
 const mockShowErrorMessage = vi.fn();
+const mockConfirm = vi.fn();
 
 vi.mock("@/composables/useNotifications", () => ({
   useNotifications: () => ({
     showSuccessMessage: vi.fn(),
     showErrorMessage: mockShowErrorMessage,
+  }),
+}));
+
+vi.mock("@/composables/useConfirmDialog", () => ({
+  useConfirmDialog: () => ({
+    confirm: mockConfirm,
   }),
 }));
 
@@ -78,6 +89,7 @@ describe("StageControl", () => {
     setActivePinia(createPinia());
     mockSetStage.mockReset();
     mockShowErrorMessage.mockReset();
+    mockConfirm.mockReset();
     mockGetCountReconciliation.mockReset();
     mockElectionStore.currentElection = null;
     mockGetCountReconciliation.mockResolvedValue({
@@ -122,7 +134,12 @@ describe("StageControl", () => {
       });
       const radios = wrapper.findAll('[role="radio"]');
       await radios[1]!.trigger("click");
-      expect(mockSetStage).toHaveBeenCalledWith("abc-123", "GatheringBallots");
+      expect(mockConfirm).not.toHaveBeenCalled();
+      expect(mockSetStage).toHaveBeenCalledWith(
+        "abc-123",
+        "GatheringBallots",
+        false,
+      );
     });
 
     it("does not call setStage when the current stage is clicked", async () => {
@@ -132,6 +149,18 @@ describe("StageControl", () => {
       });
       const radios = wrapper.findAll('[role="radio"]');
       await radios[0]!.trigger("click");
+      expect(mockConfirm).not.toHaveBeenCalled();
+      expect(mockSetStage).not.toHaveBeenCalled();
+    });
+
+    it("does not prompt when the current Finalized chip is clicked", async () => {
+      const wrapper = mount(StageControl, {
+        props: { electionGuid: "abc-123", stage: "Finalized" },
+        global: { stubs: globalStubs },
+      });
+      const radios = wrapper.findAll('[role="radio"]');
+      await radios[3]!.trigger("click");
+      expect(mockConfirm).not.toHaveBeenCalled();
       expect(mockSetStage).not.toHaveBeenCalled();
     });
 
@@ -198,13 +227,13 @@ describe("StageControl", () => {
       await flushPromises();
 
       expect(mockGetCountReconciliation).toHaveBeenCalledWith("abc-123");
-      expect(mockSetStage).toHaveBeenCalledWith("abc-123", "Finalized");
+      expect(mockConfirm).not.toHaveBeenCalled();
+      expect(mockSetStage).toHaveBeenCalledWith("abc-123", "Finalized", false);
     });
 
-    it("shows lock confirmation error when leaving Finalized is rejected", async () => {
-      mockSetStage.mockRejectedValue({
-        message: "elections.stageChangeError.confirmLeaveFinalized",
-      });
+    it("asks to confirm before leaving Finalized and sends the confirm flag", async () => {
+      mockConfirm.mockResolvedValue(true);
+      mockSetStage.mockResolvedValue(undefined);
 
       const wrapper = mount(StageControl, {
         props: { electionGuid: "abc-123", stage: "Finalized" },
@@ -215,10 +244,35 @@ describe("StageControl", () => {
       await radios[2]!.trigger("click");
       await flushPromises();
 
-      expect(mockSetStage).toHaveBeenCalledWith("abc-123", "ProcessingBallots");
-      expect(mockShowErrorMessage).toHaveBeenCalledWith(
-        "Reverting from Finalized requires confirmation",
+      expect(mockConfirm).toHaveBeenCalledWith({
+        title: "Leave Finalized?",
+        message:
+          "Leaving Finalized unlocks this election. People and ballot data can be changed again. Continue to elections.stage.ProcessingBallots?",
+        confirmButtonText: "Leave Finalized",
+        type: "warning",
+      });
+      expect(mockSetStage).toHaveBeenCalledWith(
+        "abc-123",
+        "ProcessingBallots",
+        true,
       );
+    });
+
+    it("stays Finalized when leaving Finalized is cancelled", async () => {
+      mockConfirm.mockResolvedValue(false);
+
+      const wrapper = mount(StageControl, {
+        props: { electionGuid: "abc-123", stage: "Finalized" },
+        global: { stubs: globalStubs },
+      });
+
+      const radios = wrapper.findAll('[role="radio"]');
+      await radios[2]!.trigger("click");
+      await flushPromises();
+
+      expect(mockConfirm).toHaveBeenCalled();
+      expect(mockSetStage).not.toHaveBeenCalled();
+      expect(mockShowErrorMessage).not.toHaveBeenCalled();
     });
 
     it("shows translated server error when stage change fails", async () => {
