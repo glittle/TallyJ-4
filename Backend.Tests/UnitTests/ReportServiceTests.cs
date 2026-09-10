@@ -566,6 +566,15 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
     }
 
     [Fact]
+    public async Task GetVoters_NoPeople_ReturnsEmptyList()
+    {
+        var report = await _service.GetVotersAsync(_electionGuid);
+
+        Assert.Equal(0, report.TotalCount);
+        Assert.Empty(report.People);
+    }
+
+    [Fact]
     public async Task GetVoters_ReturnsVoterParticipation()
     {
         var loc = await AddLocation("Hall");

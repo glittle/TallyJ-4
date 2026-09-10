@@ -22,6 +22,11 @@ public partial class PeopleImportService
     /// <returns>The created import file information.</returns>
     public async Task<ImportFileDto> UploadFileAsync(Guid electionGuid, IFormFile file)
     {
+        if (file == null || file.Length == 0)
+        {
+            throw new ArgumentException("No file provided");
+        }
+
         // Validate file extension
         var allowedExtensions = new[] { ".csv", ".tsv", ".tab", ".txt", ".xlsx" };
         var fileExtension = Path.GetExtension(file.FileName).ToLowerInvariant();

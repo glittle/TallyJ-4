@@ -1,3 +1,6 @@
+using System.IO;
+using System.Text;
+using ClosedXML.Excel;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Backend.DTOs.Results;
@@ -488,6 +491,91 @@ public class ReportExportServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task GenerateCsvReportAsync_WithValidData_ContainsOverviewElectedAndLocations()
+    {
+        var electionId = Guid.NewGuid();
+        SetupTypicalReport(electionId, includeCommaInName: false);
+
+        var result = await _service.GenerateCsvReportAsync(electionId);
+        var csv = Encoding.UTF8.GetString(result);
+
+        Assert.Contains("Election Report", csv);
+        Assert.Contains("Test Election", csv);
+        Assert.Contains("Total Registered Voters", csv);
+        Assert.Contains("150", csv);
+        Assert.Contains("Elected People", csv);
+        Assert.Contains("John Doe", csv);
+        Assert.Contains("Jane Smith", csv);
+        Assert.Contains("Location Statistics", csv);
+        Assert.Contains("Location A", csv);
+        Assert.Contains("66.67%", csv);
+    }
+
+    [Fact]
+    public async Task GenerateCsvReportAsync_NameWithCommaAndQuote_Rfc4180Escapes()
+    {
+        var electionId = Guid.NewGuid();
+        SetupTypicalReport(electionId, includeCommaInName: true);
+
+        var result = await _service.GenerateCsvReportAsync(electionId);
+        var csv = Encoding.UTF8.GetString(result);
+
+        Assert.Contains("\"Doe, John \"\"JJ\"\"\"", csv);
+    }
+
+    [Fact]
+    public async Task GenerateCsvReportAsync_WithNoElectedPeople_OmitsElectedSection()
+    {
+        var electionId = Guid.NewGuid();
+        var electionReport = new ElectionReportDto
+        {
+            ElectionName = "Empty Elected",
+            Elected = new List<PersonReportDto>()
+        };
+        var detailedStats = new DetailedStatisticsDto
+        {
+            Overview = new ElectionOverviewDto
+            {
+                ElectionName = "Empty Elected",
+                TotalRegisteredVoters = 0,
+                TotalBallotsCast = 0,
+                ValidBallots = 0,
+                SpoiledBallots = 0,
+                TotalVotes = 0,
+                PositionsToElect = 3,
+                OverallTurnoutPercentage = 0
+            },
+            LocationStatistics = new List<LocationStatisticsDto>()
+        };
+        _tallyServiceMock.Setup(x => x.GetElectionReportAsync(electionId)).ReturnsAsync(electionReport);
+        _tallyServiceMock.Setup(x => x.GetDetailedStatisticsAsync(electionId)).ReturnsAsync(detailedStats);
+
+        var result = await _service.GenerateCsvReportAsync(electionId);
+        var csv = Encoding.UTF8.GetString(result);
+
+        Assert.Contains("Election Overview", csv);
+        Assert.DoesNotContain("Elected People", csv);
+        Assert.DoesNotContain("Location Statistics", csv);
+    }
+
+    [Fact]
+    public async Task GenerateExcelReportAsync_WithValidData_ContainsElectedPeopleSheet()
+    {
+        var electionId = Guid.NewGuid();
+        SetupTypicalReport(electionId, includeCommaInName: false);
+
+        var result = await _service.GenerateExcelReportAsync(electionId);
+
+        using var stream = new MemoryStream(result);
+        using var workbook = new XLWorkbook(stream);
+        Assert.True(workbook.Worksheets.Contains("Elected People"));
+        var elected = workbook.Worksheet("Elected People");
+        Assert.Equal("John Doe", elected.Cell(4, 2).GetString());
+        Assert.Equal("Jane Smith", elected.Cell(5, 2).GetString());
+        Assert.Equal(95, elected.Cell(4, 3).GetDouble());
+    }
+
+    [Fact]
     public async Task GenerateExcelReportAsync_WhenTallyServiceThrows_LogsErrorAndRethrows()
     {
         // Arrange
@@ -499,6 +587,52 @@ public class ReportExportServiceTests : ServiceTestBase
         // Act & Assert
         var thrownException = await Assert.ThrowsAsync<InvalidOperationException>(() => _service.GenerateExcelReportAsync(electionId));
         Assert.Equal("Election not found", thrownException.Message);
+    }
+
+    private void SetupTypicalReport(Guid electionId, bool includeCommaInName)
+    {
+        var firstName = includeCommaInName ? "Doe, John \"JJ\"" : "John Doe";
+        var electionReport = new ElectionReportDto
+        {
+            ElectionName = "Test Election",
+            ElectionDate = DateTime.UtcNow.AddDays(30),
+            NumToElect = 3,
+            TotalBallots = 100,
+            SpoiledBallots = 5,
+            TotalVotes = 285,
+            Elected = new List<PersonReportDto>
+            {
+                new() { Rank = 1, FullName = firstName, VoteCount = 95, Section = "A" },
+                new() { Rank = 2, FullName = "Jane Smith", VoteCount = 88, Section = "B" }
+            }
+        };
+
+        var detailedStats = new DetailedStatisticsDto
+        {
+            Overview = new ElectionOverviewDto
+            {
+                ElectionName = "Test Election",
+                ElectionDate = DateTime.UtcNow.AddDays(30),
+                TotalRegisteredVoters = 150,
+                TotalBallotsCast = 100,
+                ValidBallots = 95,
+                SpoiledBallots = 5,
+                TotalVotes = 285,
+                PositionsToElect = 3,
+                OverallTurnoutPercentage = 66.67m
+            },
+            LocationStatistics = new List<LocationStatisticsDto>
+            {
+                new() { LocationName = "Location A", RegisteredVoters = 75, BallotsCast = 50, ValidBallots = 48, SpoiledBallots = 2, TurnoutPercentage = 66.67m, TotalVotes = 144 }
+            },
+            PersonPerformance = new[]
+            {
+                new PersonPerformanceDto { FullName = firstName, TotalVotes = 95, VotePercentage = 33.33m, Rank = 1, IsElected = true, IsEliminated = false }
+            }
+        };
+
+        _tallyServiceMock.Setup(x => x.GetElectionReportAsync(electionId)).ReturnsAsync(electionReport);
+        _tallyServiceMock.Setup(x => x.GetDetailedStatisticsAsync(electionId)).ReturnsAsync(detailedStats);
     }
 }
 

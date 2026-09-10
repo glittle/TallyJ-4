@@ -317,7 +317,7 @@ public partial class PeopleImportService
             var columnIndex = headers.IndexOf(mapping.FileColumn);
             if (columnIndex >= 0 && columnIndex < cellsInRow.Count)
             {
-                var value = cellsInRow[columnIndex]?.Trim();
+                var value = NormalizeImportedCell(cellsInRow[columnIndex]);
                 ApplyFieldMapping(person, mapping.TargetField!, value);
             }
         }
@@ -400,7 +400,7 @@ public partial class PeopleImportService
             var columnIndex = headers.IndexOf(ineligibleReasonMapping.FileColumn);
             if (columnIndex >= 0 && columnIndex < cellsInRow.Count)
             {
-                var eligibilityValue = cellsInRow[columnIndex]?.Trim();
+                var eligibilityValue = NormalizeImportedCell(cellsInRow[columnIndex]);
                 if (!TrySetEligibility(person, eligibilityValue, eligibilityLookup, result, rowNumber))
                 {
                     foundErrors = true;

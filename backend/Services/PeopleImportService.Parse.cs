@@ -60,7 +60,7 @@ public partial class PeopleImportService
         var columnCount = headerRow.CellsUsed().Count();
         foreach (var cell in headerRow.CellsUsed())
         {
-            headers.Add(cell.GetValue<string>() ?? "");
+            headers.Add(NormalizeImportedCell(cell.GetValue<string>()));
         }
 
         var allRows = worksheet.RowsUsed().ToList();
@@ -84,7 +84,7 @@ public partial class PeopleImportService
             for (int colNum = 1; colNum <= columnCount; colNum++)
             {
                 var cell = row.Cell(colNum);
-                rowData.Add(cell.GetValue<string>() ?? "");
+                rowData.Add(NormalizeImportedCell(cell.GetValue<string>()));
             }
 
             totalDataRows++;
@@ -150,7 +150,7 @@ public partial class PeopleImportService
 
         foreach (var cell in cells)
         {
-            var value = cell.GetValue<string>()?.Trim() ?? "";
+            var value = NormalizeImportedCell(cell.GetValue<string>());
 
             if (string.IsNullOrWhiteSpace(value))
                 continue;
@@ -287,7 +287,7 @@ public partial class PeopleImportService
                 continue;
             }
 
-            var value = col < row.Count ? row[col]?.Trim() ?? "" : "";
+            var value = col < row.Count ? NormalizeImportedCell(row[col]) : "";
             if (value.Length > 0)
             {
                 samplesByColumn[col].Add(value);
@@ -339,7 +339,7 @@ public partial class PeopleImportService
             }
             else if (c == delimiter && !inQuotes)
             {
-                result.Add(current);
+                result.Add(NormalizeImportedCell(current));
                 current = "";
             }
             else
@@ -348,8 +348,26 @@ public partial class PeopleImportService
             }
         }
 
-        result.Add(current);
+        result.Add(NormalizeImportedCell(current));
         return result;
+    }
+
+    /// <summary>
+    /// Excel and Word often emit NBSP / narrow-NBSP ("hard spaces") that look like
+    /// regular spaces. Leave them in and names fail search/uniqueness; treat a
+    /// hard-space-only cell as empty.
+    /// </summary>
+    private static string NormalizeImportedCell(string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+        {
+            return "";
+        }
+
+        return value
+            .Replace('\u00A0', ' ')
+            .Replace('\u202F', ' ')
+            .Trim();
     }
 
     private List<ColumnMappingDto> GenerateAutoMappings(List<string> headers)

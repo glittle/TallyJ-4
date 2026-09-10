@@ -1082,6 +1082,62 @@ public class PeopleServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task CreatePersonAsync_GatheringBallots_Succeeds()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots);
+
+        var result = await _service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "Hopper",
+            FirstName = "Grace"
+        });
+
+        Assert.Equal("Grace", result.FirstName);
+        Assert.Equal("Hopper", result.LastName);
+        Assert.Single(Context.People);
+    }
+
+    [Fact]
+    public async Task CreatePersonAsync_SettingUp_Succeeds()
+    {
+        var electionGuid = SeedElection(ElectionStage.SettingUp);
+
+        var result = await _service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "Lovelace",
+            FirstName = "Ada"
+        });
+
+        Assert.Equal("Ada", result.FirstName);
+        Assert.Single(Context.People);
+    }
+
+    [Theory]
+    [InlineData(ElectionStage.SettingUp)]
+    [InlineData(ElectionStage.GatheringBallots)]
+    [InlineData(ElectionStage.ProcessingBallots)]
+    public async Task UpdatePersonAsync_NonFinalizedStages_Succeeds(ElectionStage stage)
+    {
+        var electionGuid = SeedElection(stage);
+        var person = SeedPerson(electionGuid);
+
+        var result = await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = "Changed",
+            FirstName = "Ada",
+            OtherInfo = "Added during election"
+        });
+
+        Assert.NotNull(result);
+        Assert.Equal("Changed", result.LastName);
+        Assert.Equal("Ada", result.FirstName);
+        Assert.Equal("Added during election", result.OtherInfo);
+        Assert.Equal("Changed", Context.People.Single().LastName);
+    }
+
+    [Fact]
     public async Task UpdatePersonAsync_VotingMethodSet_CannotMarkCannotVote()
     {
         var electionGuid = SeedElection(ElectionStage.GatheringBallots);

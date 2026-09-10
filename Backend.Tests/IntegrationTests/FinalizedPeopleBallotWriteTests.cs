@@ -126,6 +126,14 @@ public class FinalizedPeopleBallotWriteTests : IntegrationTestBase
             FirstName = "New"
         });
         Assert.Equal(HttpStatusCode.Created, createPerson.StatusCode);
+        var created = await DeserializeResponseAsync<ApiResponse<PersonDto>>(createPerson);
+
+        var updatePerson = await PutJsonAsync($"/api/People/{created!.Data!.PersonGuid}/updatePerson", new UpdatePersonDto
+        {
+            LastName = "Allowed",
+            FirstName = "Edited"
+        });
+        Assert.Equal(HttpStatusCode.OK, updatePerson.StatusCode);
 
         var createBallot = await PostJsonAsync("/api/Ballots/createBallot", new CreateBallotDto
         {

@@ -1000,6 +1000,33 @@ public class PeopleImportServiceTests : ServiceTestBase
         Assert.Equal("import.errors.unrecognizedEligibility", Assert.Single(result.Errors).Key);
     }
 
+    private async Task<ImportFile> AddMappedNameFile(Guid electionGuid, string fileContent, bool includeOtherInfo = false)
+    {
+        var mappings = new List<ColumnMappingDto>
+        {
+            new() { FileColumn = "FirstName", TargetField = "FirstName" },
+            new() { FileColumn = "LastName", TargetField = "LastName" }
+        };
+        if (includeOtherInfo)
+        {
+            mappings.Add(new ColumnMappingDto { FileColumn = "Other Info", TargetField = "OtherInfo" });
+        }
+
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(fileContent),
+            HasContent = true,
+            ColumnsToRead = System.Text.Json.JsonSerializer.Serialize(mappings)
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+        return importFile;
+    }
+
     private async Task<ImportFile> AddMappedEligibilityFile(Guid electionGuid, string fileContent)
     {
         var mappings = new List<ColumnMappingDto>
@@ -1142,6 +1169,164 @@ public class PeopleImportServiceTests : ServiceTestBase
 
         Assert.False(result.Success);
         Assert.Contains(result.Errors, e => e.Key == ElectionStageMessageKeys.FinalizedWriteBlocked);
+    }
+
+    [Fact]
+    public async Task UploadFileAsync_EmptyFile_ThrowsArgumentException()
+    {
+        var electionGuid = Guid.NewGuid();
+        var file = CreateFormFile("empty.csv", "text/csv", "");
+
+        var exception = await Assert.ThrowsAsync<ArgumentException>(
+            () => _service.UploadFileAsync(electionGuid, file));
+        Assert.Contains("No file provided", exception.Message);
+    }
+
+    [Fact]
+    public async Task ParseFileAsync_EmptyContents_ReturnsNoHeadersOrRows()
+    {
+        var electionGuid = Guid.NewGuid();
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Array.Empty<byte>(),
+            HasContent = true
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        Assert.Empty(result.Headers);
+        Assert.Empty(result.PreviewRows);
+        Assert.Equal(0, result.TotalDataRows);
+    }
+
+    [Fact]
+    public async Task ParseFileAsync_WhitespaceOnlyFile_ReturnsNoHeadersOrRows()
+    {
+        var electionGuid = Guid.NewGuid();
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes("\n\n  \r\n"),
+            HasContent = true
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        Assert.Empty(result.Headers);
+        Assert.Equal(0, result.TotalDataRows);
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_HeadersOnlyFile_SucceedsWithZeroPeople()
+    {
+        var electionGuid = Guid.NewGuid();
+        var importFile = await AddMappedNameFile(electionGuid, "FirstName,LastName\n");
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        Assert.Equal(0, result.TotalRows);
+        Assert.Equal(0, result.PeopleAdded);
+        Assert.Empty(await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>());
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_HardSpacesInNames_NormalizedToRegularSpaces()
+    {
+        var electionGuid = Guid.NewGuid();
+        // Excel/Word NBSP around and inside names
+        var fileContent = "FirstName,LastName,Other Info\n" +
+                          $"Mary{'\u00A0'}Jane,{'\u00A0'}Doe{'\u00A0'},North{'\u00A0'}Unit\n";
+        var importFile = await AddMappedNameFile(electionGuid, fileContent, includeOtherInfo: true);
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        Assert.Equal(1, result.PeopleAdded);
+        var person = Assert.Single(await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>());
+        Assert.Equal("Mary Jane", person.FirstName);
+        Assert.Equal("Doe", person.LastName);
+        Assert.Equal("North Unit", person.OtherInfo);
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_HardSpaceOnlyName_SkipsAsMissingName()
+    {
+        var electionGuid = Guid.NewGuid();
+        var fileContent = $"FirstName,LastName\n{'\u00A0'}{'\u00A0'},Smith\nJane,Doe\n";
+        var importFile = await AddMappedNameFile(electionGuid, fileContent);
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        Assert.Equal(1, result.PeopleAdded);
+        Assert.Equal(1, result.PeopleSkipped);
+        Assert.Contains(result.Errors, e => e.Key == "import.errors.missingFirstName");
+        var person = Assert.Single(await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>());
+        Assert.Equal("Jane", person.FirstName);
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_InvalidAndBlankLines_SkipInvalidAndImportValid()
+    {
+        var electionGuid = Guid.NewGuid();
+        var fileContent =
+            "FirstName,LastName\n" +
+            "John,Doe\n" +
+            "\n" +
+            ",MissingFirst\n" +
+            "MissingLast,\n" +
+            ",,\n" +
+            "Jane,Smith\n" +
+            "\"Unclosed quote,Still\n" +
+            "OnlyOneColumn\n";
+        var importFile = await AddMappedNameFile(electionGuid, fileContent);
+
+        var result = await _service.ImportPeopleAsync(electionGuid, importFile.RowId);
+
+        Assert.True(result.Success);
+        Assert.True(result.PeopleAdded >= 2);
+        Assert.True(result.PeopleSkipped >= 2);
+        var people = await Context.People.Where(p => p.ElectionGuid == electionGuid).ToListAsync<Person>();
+        Assert.Contains(people, p => p.FirstName == "John" && p.LastName == "Doe");
+        Assert.Contains(people, p => p.FirstName == "Jane" && p.LastName == "Smith");
+        Assert.Contains(result.Errors, e => e.Key == "import.errors.missingFirstName");
+        Assert.Contains(result.Errors, e => e.Key == "import.errors.missingLastName");
+    }
+
+    [Fact]
+    public async Task ParseFileAsync_HardSpaceHeader_AutoMapsFirstName()
+    {
+        var electionGuid = Guid.NewGuid();
+        var header = $"First{'\u00A0'}Name";
+        var fileContent = $"{header},Last Name\nMary,Doe";
+        var importFile = new ImportFile
+        {
+            ElectionGuid = electionGuid,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(fileContent),
+            HasContent = true
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ParseFileAsync(electionGuid, importFile.RowId);
+
+        Assert.Equal("First Name", result.Headers[0]);
+        Assert.Equal("FirstName", result.AutoMappings.Single(m => m.FileColumn == "First Name").TargetField);
     }
 
     [Fact]

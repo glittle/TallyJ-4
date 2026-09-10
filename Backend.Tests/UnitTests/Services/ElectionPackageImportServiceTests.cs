@@ -109,4 +109,48 @@ public class ElectionPackageImportServiceTests : ServiceTestBase
         Assert.True(person.CanVote);
         Assert.True(person.CanReceiveVotes);
     }
+
+    [Fact]
+    public async Task ExportElectionToJsonAsync_IncludesPeopleList()
+    {
+        var electionGuid = Guid.NewGuid();
+        var personGuid = Guid.NewGuid();
+        Context.Elections.Add(new Backend.Entities.Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "People export test",
+            NumberToElect = 3,
+            ElectionType = "LSA",
+            ElectionStage = Backend.Enumerations.ElectionStage.SettingUp,
+            RowVersion = new byte[8]
+        });
+        Context.People.Add(new Backend.Entities.Person
+        {
+            PersonGuid = personGuid,
+            ElectionGuid = electionGuid,
+            FirstName = "Ada",
+            LastName = "Lovelace",
+            Email = "ada@example.com",
+            Phone = "+15550001111",
+            Area = "North",
+            CanVote = true,
+            CanReceiveVotes = true,
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        var service = new JsonElectionImportExportService(Context, _electionServiceMock.Object, _signalRMock.Object);
+        var json = await service.ExportElectionToJsonAsync(electionGuid);
+
+        using var doc = System.Text.Json.JsonDocument.Parse(json);
+        var people = doc.RootElement.GetProperty("people");
+        Assert.Equal(1, people.GetArrayLength());
+        var exported = people[0];
+        Assert.Equal(personGuid, exported.GetProperty("PersonGuid").GetGuid());
+        Assert.Equal("Ada", exported.GetProperty("FirstName").GetString());
+        Assert.Equal("Lovelace", exported.GetProperty("LastName").GetString());
+        Assert.Equal("ada@example.com", exported.GetProperty("Email").GetString());
+        Assert.Equal("+15550001111", exported.GetProperty("Phone").GetString());
+        Assert.Equal("North", exported.GetProperty("Area").GetString());
+    }
 }
