@@ -52,6 +52,8 @@ public class FrontDeskService : IFrontDeskService
     /// <inheritdoc />
     public async Task<FrontDeskVoterDto> CheckInVoterAsync(Guid electionGuid, CheckInVoterDto checkInDto)
     {
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, electionGuid);
+
         var person = await _context.People
             .FirstOrDefaultAsync(p => p.PersonGuid == checkInDto.PersonGuid && p.ElectionGuid == electionGuid);
 
@@ -129,6 +131,8 @@ public class FrontDeskService : IFrontDeskService
     /// <inheritdoc />
     public async Task<FrontDeskVoterDto> UnregisterVoterAsync(Guid electionGuid, UnregisterVoterDto unregisterDto)
     {
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, electionGuid);
+
         var person = await _context.People
             .FirstOrDefaultAsync(p => p.PersonGuid == unregisterDto.PersonGuid && p.ElectionGuid == electionGuid);
 
@@ -218,6 +222,8 @@ public class FrontDeskService : IFrontDeskService
     /// <inheritdoc />
     public async Task<FrontDeskVoterDto> UpdatePersonFlagsAsync(Guid electionGuid, UpdatePersonFlagsDto updateFlagsDto)
     {
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, electionGuid);
+
         var person = await _context.People
             .FirstOrDefaultAsync(p => p.PersonGuid == updateFlagsDto.PersonGuid && p.ElectionGuid == electionGuid);
 
@@ -245,6 +251,8 @@ public class FrontDeskService : IFrontDeskService
         Guid electionGuid,
         UpdateEnvelopeNumberDto updateDto)
     {
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, electionGuid);
+
         var person = await _context.People
             .FirstOrDefaultAsync(p =>
                 p.PersonGuid == updateDto.PersonGuid && p.ElectionGuid == electionGuid);

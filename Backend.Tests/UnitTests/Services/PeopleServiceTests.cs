@@ -1046,6 +1046,127 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Null(details.PhoneOnlineVoter.WhenLastLogin);
         Assert.Null(details.PhoneOnlineVoter.SmsStatus);
     }
+
+    [Fact]
+    public async Task CreatePersonAsync_FinalizedElection_Throws()
+    {
+        var electionGuid = SeedElection(ElectionStage.Finalized);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CreatePersonAsync(new CreatePersonDto
+            {
+                ElectionGuid = electionGuid,
+                LastName = "Smith",
+                FirstName = "Ada"
+            }));
+
+        Assert.Equal(ElectionStageMessageKeys.FinalizedWriteBlocked, ex.Message);
+        Assert.Empty(Context.People);
+    }
+
+    [Fact]
+    public async Task CreatePersonAsync_ProcessingBallots_Succeeds()
+    {
+        var electionGuid = SeedElection(ElectionStage.ProcessingBallots);
+
+        var result = await _service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "Smith",
+            FirstName = "Ada"
+        });
+
+        Assert.Equal("Ada", result.FirstName);
+        Assert.Single(Context.People);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_FinalizedElection_Throws()
+    {
+        var electionGuid = SeedElection(ElectionStage.Finalized);
+        var person = SeedPerson(electionGuid);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+            {
+                LastName = "Changed",
+                FirstName = "Ada"
+            }));
+
+        Assert.Equal(ElectionStageMessageKeys.FinalizedWriteBlocked, ex.Message);
+        Assert.Equal("Smith", Context.People.Single().LastName);
+    }
+
+    [Fact]
+    public async Task DeletePersonAsync_FinalizedElection_Throws()
+    {
+        var electionGuid = SeedElection(ElectionStage.Finalized);
+        var person = SeedPerson(electionGuid);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.DeletePersonAsync(person.PersonGuid));
+
+        Assert.Equal(ElectionStageMessageKeys.FinalizedWriteBlocked, ex.Message);
+        Assert.Single(Context.People);
+    }
+
+    [Fact]
+    public async Task GetPeopleByElectionAsync_FinalizedElection_StillReads()
+    {
+        var electionGuid = SeedElection(ElectionStage.Finalized);
+        SeedPerson(electionGuid);
+
+        var result = await _service.GetPeopleByElectionAsync(electionGuid, pageSize: 50);
+
+        Assert.Single(result.Items);
+    }
+
+    [Fact]
+    public async Task GetPersonDetailsAsync_FinalizedElection_DoesNotGenerateKioskCode()
+    {
+        var electionGuid = SeedElection(ElectionStage.Finalized, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.True(string.IsNullOrWhiteSpace(details.KioskCode));
+        Assert.True(string.IsNullOrWhiteSpace(Context.People.Single().KioskCode));
+    }
+
+    private Guid SeedElection(ElectionStage stage, string? votingMethods = null)
+    {
+        var electionGuid = Guid.NewGuid();
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "People lock test",
+            NumberToElect = 3,
+            ElectionType = "LSA",
+            ElectionStage = stage,
+            VotingMethods = votingMethods,
+            RowVersion = new byte[8]
+        });
+        Context.SaveChanges();
+        return electionGuid;
+    }
+
+    private Person SeedPerson(Guid electionGuid)
+    {
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            FirstName = "Ada",
+            LastName = "Smith",
+            CanVote = true,
+            CanReceiveVotes = true,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.SaveChanges();
+        return person;
+    }
 }
 
 

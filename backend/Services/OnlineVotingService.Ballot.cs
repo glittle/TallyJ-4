@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using Backend.Entities;
 using Backend.DTOs.OnlineVoting;
+using Backend.Enumerations;
 using Backend.Helpers;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
@@ -31,9 +32,16 @@ public partial class OnlineVotingService
                 return (false, "voting.submit.electionNotFound");
             }
 
-            if (!election.UseOnlineVoting ||
-                (election.OnlineWhenOpen != null && election.OnlineWhenOpen > now) ||
-                (election.OnlineWhenClose != null && election.OnlineWhenClose <= now))
+            if (ElectionFinalizedWriteGuard.IsLocked(election.ElectionStage))
+            {
+                return (false, ElectionStageMessageKeys.FinalizedOnlineSubmit);
+            }
+
+            if (!OnlineVotingWindow.IsCurrentlyOpen(
+                    election.UseOnlineVoting,
+                    election.OnlineWhenOpen,
+                    election.OnlineWhenClose,
+                    now))
             {
                 return (false, "voting.submit.notOpen");
             }

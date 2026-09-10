@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Backend.Entities;
 using Backend.DTOs.Import;
+using Backend.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -310,6 +311,8 @@ public partial class PeopleImportService
     public async Task<DeleteAllPeopleResult> DeleteAllPeopleAsync(Guid electionGuid)
     {
         var result = new DeleteAllPeopleResult();
+
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, electionGuid);
 
         // Check for existing ballots
         var ballotCount = await _context.Ballots

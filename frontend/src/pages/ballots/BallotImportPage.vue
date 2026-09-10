@@ -166,6 +166,10 @@
 
 <script setup lang="ts">
 import { useNotifications } from "@/composables/useNotifications";
+import {
+  resolveUserFacingApiError,
+  translateIfPhraseKey,
+} from "@/utils/errorHandler";
 import { UploadFilled } from "@element-plus/icons-vue";
 import type { UploadFile } from "element-plus";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
@@ -336,10 +340,17 @@ async function handleImport() {
         router.push(`/elections/${electionGuid}/ballots`);
       }, 2000);
     } else {
-      showErrorMessage(t("ballots.import.failed"));
+      const firstError = result.errors?.[0];
+      showErrorMessage(
+        firstError
+          ? translateIfPhraseKey(firstError)
+          : t("ballots.import.failed"),
+      );
     }
-  } catch (error: any) {
-    showErrorMessage(error.message || t("ballots.import.failed"));
+  } catch (error: unknown) {
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("ballots.import.failed")),
+    );
   } finally {
     importing.value = false;
   }

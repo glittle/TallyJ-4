@@ -15,7 +15,11 @@ Treat online ballot paths with the same rigor as core analysis. Prefer explicit 
 **Status:** active  
 **Evidence:** confirmed (issue #188, Glen; v3 `ElectionHelper.ProcessOnlineBallots`)
 
-A voter submit stores a pending payload on `OnlineVotingInfo` (status `Submitted`). It does not create a regular `Ballot`. A logged-in teller may Accept-all current pending online ballots while the online voting window is still open, and may do so more than once. Each run only accepts rows that are `Submitted` or already `Processing` at that moment.
+A voter submit stores a pending payload on `OnlineVotingInfo` (status `Submitted`). It does not create a regular `Ballot`. Submit (create or update a pending online ballot) is refused while the election is Finalized (`voting.submit.finalized`), even if the online window is still open. Window-based open/close still applies when the election is not Finalized.
+
+Advancing **to** Finalized is refused while that same window is currently open (`elections.stageChangeError.onlineVotingStillOpen`). Close the window first; Finalize does not close it. `UseOnlineVoting` plus a null open/close is treated as open (same as submit / available-elections).
+
+A logged-in teller may Accept-all current pending online ballots while the online voting window is still open, and may do so more than once. Each run only accepts rows that are `Submitted` or already `Processing` at that moment.
 
 Accept-all creates a regular ballot at the Online location (computer code `OL`) as if a teller had typed from paper, then wipes the online payload (`ListPool`, `PoolLocked`, `BallotGuid`) and sets status `Processed`. After that, the voter cannot change the vote. Acceptance is not reversible: we do not keep a link from the online row to the regular ballot.
 

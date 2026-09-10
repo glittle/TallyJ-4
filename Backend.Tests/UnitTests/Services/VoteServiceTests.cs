@@ -770,6 +770,65 @@ public class VoteServiceTests : ServiceTestBase
         Assert.NotNull(stored.OnlineVoteRaw);
     }
 
+    [Fact]
+    public async Task CreateVoteAsync_FinalizedElection_Throws()
+    {
+        SetElectionStage(ElectionStage.Finalized);
+        var person = CreatePerson();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CreateVoteAsync(new CreateVoteDto
+            {
+                BallotGuid = BallotGuid,
+                PersonGuid = person.PersonGuid,
+                PositionOnBallot = 1
+            }));
+
+        Assert.Equal(ElectionStageMessageKeys.FinalizedWriteBlocked, ex.Message);
+        Assert.Empty(Context.Votes);
+    }
+
+    [Fact]
+    public async Task CreateVoteAsync_ProcessingBallots_Succeeds()
+    {
+        SetElectionStage(ElectionStage.ProcessingBallots);
+        var person = CreatePerson();
+
+        var result = await _service.CreateVoteAsync(new CreateVoteDto
+        {
+            BallotGuid = BallotGuid,
+            PersonGuid = person.PersonGuid,
+            PositionOnBallot = 1
+        });
+
+        Assert.NotNull(result.Vote);
+        Assert.Single(Context.Votes);
+    }
+
+    [Fact]
+    public async Task GetVotesByBallotAsync_FinalizedElection_StillReads()
+    {
+        SetElectionStage(ElectionStage.ProcessingBallots);
+        var person = CreatePerson();
+        await _service.CreateVoteAsync(new CreateVoteDto
+        {
+            BallotGuid = BallotGuid,
+            PersonGuid = person.PersonGuid,
+            PositionOnBallot = 1
+        });
+        SetElectionStage(ElectionStage.Finalized);
+
+        var votes = await _service.GetVotesByBallotAsync(BallotGuid);
+
+        Assert.Single(votes);
+    }
+
+    private void SetElectionStage(ElectionStage stage)
+    {
+        Context.Elections.Single().ElectionStage = stage;
+        Context.SaveChanges();
+    }
+
     private static void AssertUniqueContiguousPositions(IReadOnlyList<VoteDto> votes)
     {
         var positions = votes.Select(v => v.PositionOnBallot).ToList();

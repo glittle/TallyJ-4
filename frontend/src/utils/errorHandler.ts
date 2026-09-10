@@ -1,3 +1,5 @@
+import { i18n } from "@/locales";
+
 export interface ApiError {
   title?: string;
   error?: string;
@@ -75,4 +77,28 @@ export function extractApiErrorMessage(error: any): string {
   }
 
   return "An unknown error occurred";
+}
+
+/// When the API returns an i18n phrase key (e.g. elections.finalizedWriteBlocked),
+/// translate it. Leave ordinary English exception text unchanged.
+export function translateIfPhraseKey(message: string): string {
+  const key = message?.trim();
+  if (!key) {
+    return message;
+  }
+
+  const { t, te } = i18n.global;
+  return te(key) ? String(t(key)) : message;
+}
+
+export function resolveUserFacingApiError(
+  error: unknown,
+  fallback: string,
+): string {
+  const raw = extractApiErrorMessage(error);
+  if (!raw || raw === "An unknown error occurred") {
+    return fallback;
+  }
+
+  return translateIfPhraseKey(raw);
 }

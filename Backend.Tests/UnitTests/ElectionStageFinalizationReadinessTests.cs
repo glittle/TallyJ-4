@@ -160,4 +160,88 @@ public class ElectionStageFinalizationReadinessTests : ServiceTestBase
         Assert.False(readiness.IsReady);
         Assert.Contains(readiness.Blockers, b => b.StartsWith(CountsDoNotReconcile));
     }
+
+    [Fact]
+    public async Task EvaluateAsync_ReturnsOnlineVotingStillOpenWhenWindowIsOpen()
+    {
+        var electionGuid = await SeedReadyElectionAsync(useOnlineVoting: true);
+        var election = Context.Elections.Single(e => e.ElectionGuid == electionGuid);
+        election.OnlineWhenOpen = DateTimeOffset.UtcNow.AddHours(-1);
+        election.OnlineWhenClose = DateTimeOffset.UtcNow.AddHours(1);
+        await Context.SaveChangesAsync();
+
+        var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, electionGuid);
+
+        Assert.False(readiness.IsReady);
+        Assert.Contains(OnlineVotingStillOpen, readiness.Blockers);
+    }
+
+    [Fact]
+    public async Task EvaluateAsync_ReadyWhenOnlineVotingEnabledButWindowClosed()
+    {
+        var electionGuid = await SeedReadyElectionAsync(useOnlineVoting: true);
+        var election = Context.Elections.Single(e => e.ElectionGuid == electionGuid);
+        election.OnlineWhenOpen = DateTimeOffset.UtcNow.AddHours(-2);
+        election.OnlineWhenClose = DateTimeOffset.UtcNow.AddHours(-1);
+        await Context.SaveChangesAsync();
+
+        var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, electionGuid);
+
+        Assert.True(readiness.IsReady);
+        Assert.Empty(readiness.Blockers);
+    }
+
+    [Fact]
+    public async Task EvaluateAsync_ReadyWhenUseOnlineVotingIsFalse()
+    {
+        var electionGuid = await SeedReadyElectionAsync(useOnlineVoting: false);
+
+        var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, electionGuid);
+
+        Assert.True(readiness.IsReady);
+        Assert.Empty(readiness.Blockers);
+    }
+
+    private async Task<Guid> SeedReadyElectionAsync(bool useOnlineVoting)
+    {
+        var electionGuid = Guid.NewGuid();
+        var personGuid = Guid.NewGuid();
+
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Ready Election",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.ProcessingBallots,
+            DateOfElection = DateTime.UtcNow,
+            UseOnlineVoting = useOnlineVoting,
+            RowVersion = new byte[8]
+        });
+        Context.People.Add(new Person
+        {
+            PersonGuid = personGuid,
+            ElectionGuid = electionGuid,
+            FirstName = "A",
+            LastName = "B",
+            RowVersion = new byte[8]
+        });
+        Context.Results.Add(new Result
+        {
+            ElectionGuid = electionGuid,
+            PersonGuid = personGuid,
+            Rank = 1,
+            Section = "E",
+            VoteCount = 5
+        });
+        Context.ResultSummaries.Add(new ResultSummary
+        {
+            ElectionGuid = electionGuid,
+            ResultType = "F",
+            UseOnReports = true,
+            BallotsNeedingReview = 0
+        });
+        await Context.SaveChangesAsync();
+        return electionGuid;
+    }
 }

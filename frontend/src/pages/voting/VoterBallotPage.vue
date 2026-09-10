@@ -17,6 +17,7 @@ import {
 import { Delete } from "@element-plus/icons-vue";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 import { useNotifications } from "../../composables/useNotifications";
+import { resolveUserFacingApiError } from "../../utils/errorHandler";
 import { useI18n } from "vue-i18n";
 import type { OnlinePerson } from "../../types";
 import {
@@ -208,7 +209,9 @@ async function handleSubmit() {
     router.push({ name: "voter-confirmation" });
   } catch (error) {
     console.error("Error submitting ballot:", error);
-    showErrorMessage(t("voting.ballot.submitError"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("voting.ballot.submitError")),
+    );
   } finally {
     submitting.value = false;
   }

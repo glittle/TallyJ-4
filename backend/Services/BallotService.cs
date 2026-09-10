@@ -102,6 +102,8 @@ public class BallotService : IBallotService
     /// </exception>
     public async Task<BallotDto> CreateBallotAsync(CreateBallotDto createDto)
     {
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, createDto.ElectionGuid);
+
         var location = await _context.Locations.FirstOrDefaultAsync(l =>
             l.LocationGuid == createDto.LocationGuid
             && l.ElectionGuid == createDto.ElectionGuid);
@@ -163,6 +165,8 @@ public class BallotService : IBallotService
             return null;
         }
 
+        await ThrowIfBallotElectionLockedAsync(ballot.LocationGuid);
+
         ballot.Teller1 = NormalizeTellerName(updateDto.Teller1);
         ballot.Teller2 = NormalizeTellerName(updateDto.Teller2);
 
@@ -199,6 +203,20 @@ public class BallotService : IBallotService
         return await GetBallotByGuidAsync(ballotGuid);
     }
 
+    private async Task ThrowIfBallotElectionLockedAsync(Guid locationGuid)
+    {
+        var electionGuid = await _context.Locations
+            .AsNoTracking()
+            .Where(l => l.LocationGuid == locationGuid)
+            .Select(l => (Guid?)l.ElectionGuid)
+            .FirstOrDefaultAsync();
+
+        if (electionGuid.HasValue)
+        {
+            await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, electionGuid.Value);
+        }
+    }
+
     private static string? NormalizeTellerName(string? tellerName)
     {
         return string.IsNullOrWhiteSpace(tellerName) ? null : tellerName.Trim();
@@ -217,6 +235,8 @@ public class BallotService : IBallotService
         {
             return false;
         }
+
+        await ThrowIfBallotElectionLockedAsync(ballot.LocationGuid);
 
         if (ComputerCodeHelper.IsOnlineCode(ballot.ComputerCode)
             || ComputerCodeHelper.IsImportedCode(ballot.ComputerCode))

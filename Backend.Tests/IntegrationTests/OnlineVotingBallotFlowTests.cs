@@ -63,6 +63,39 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task SubmitBallot_WhenElectionFinalized_AndOnlineWindowOpen_Returns400WithVoterPhraseKey()
+    {
+        var email = $"finalized_{Guid.NewGuid():N}@example.com";
+        var electionGuid = await SetupOpenElectionWithVoter(email);
+        await EnsureOnlineVoterAsync(email, "E");
+        await SetElectionStageAsync(electionGuid, ElectionStage.Finalized);
+
+        var response = await Client.PostAsJsonAsync(
+            $"/api/online-voting/{electionGuid}/submitBallot",
+            new SubmitOnlineBallotDto
+            {
+                ElectionGuid = electionGuid,
+                VoterId = email,
+                Votes =
+                [
+                    new OnlineVoteDto
+                    {
+                        VoteName = "Someone",
+                        PositionOnBallot = 1
+                    }
+                ]
+            });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains(ElectionStageMessageKeys.FinalizedOnlineSubmit, body);
+
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        Assert.Equal(0, await context.OnlineVotingInfos.CountAsync(ovi => ovi.ElectionGuid == electionGuid));
+    }
+
+    [Fact]
     public async Task SubmitBallot_RandomModeB_WithNineFreeTextVotes_Succeeds()
     {
         var email = $"random_{Guid.NewGuid():N}@example.com";
@@ -584,6 +617,15 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
 
         await context.SaveChangesAsync();
         return candidates;
+    }
+
+    private async Task SetElectionStageAsync(Guid electionGuid, ElectionStage stage)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var election = await context.Elections.SingleAsync(e => e.ElectionGuid == electionGuid);
+        election.ElectionStage = stage;
+        await context.SaveChangesAsync();
     }
 
     private async Task EnsureOnlineVoterAsync(string voterId, string voterIdType)

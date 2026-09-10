@@ -249,6 +249,14 @@ public class CdnBallotImportService : ElectionImportExportBase
     public async Task<ImportResultDto> ImportCdnBallotsAsync(Guid electionGuid, Stream xmlStream)
     {
         var result = new ImportResultDto();
+
+        if (await ElectionFinalizedWriteGuard.IsLockedAsync(_context, electionGuid))
+        {
+            result.Success = false;
+            result.Errors.Add(ElectionStageMessageKeys.FinalizedWriteBlocked);
+            return result;
+        }
+
         using var transaction = await _context.Database.BeginTransactionAsync();
 
         try

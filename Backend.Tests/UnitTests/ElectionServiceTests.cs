@@ -591,6 +591,66 @@ public class ElectionServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task ChangeElectionStageAsync_ToFinalized_IsRejectedWhileOnlineWindowOpen()
+    {
+        var electionGuid = await SeedReadyElectionForFinalizeAsync(
+            useOnlineVoting: true,
+            onlineWhenOpen: DateTimeOffset.UtcNow.AddHours(-1),
+            onlineWhenClose: DateTimeOffset.UtcNow.AddHours(1));
+
+        var result = await _service.ChangeElectionStageAsync(electionGuid, new ChangeElectionStageDto
+        {
+            ElectionStage = ElectionStage.Finalized
+        });
+
+        Assert.False(result.IsSuccess);
+        Assert.Equal(ElectionStageMessageKeys.OnlineVotingStillOpen, result.ErrorMessage);
+        Assert.Equal(ElectionStage.ProcessingBallots,
+            Context.Elections.Single(e => e.ElectionGuid == electionGuid).ElectionStage);
+    }
+
+    [Fact]
+    public async Task ChangeElectionStageAsync_ToFinalized_SucceedsAfterOnlineWindowCloses()
+    {
+        var electionGuid = await SeedReadyElectionForFinalizeAsync(
+            useOnlineVoting: true,
+            onlineWhenOpen: DateTimeOffset.UtcNow.AddHours(-2),
+            onlineWhenClose: DateTimeOffset.UtcNow.AddHours(1));
+
+        var refused = await _service.ChangeElectionStageAsync(electionGuid, new ChangeElectionStageDto
+        {
+            ElectionStage = ElectionStage.Finalized
+        });
+        Assert.False(refused.IsSuccess);
+
+        var election = Context.Elections.Single(e => e.ElectionGuid == electionGuid);
+        election.OnlineWhenClose = DateTimeOffset.UtcNow.AddSeconds(-1);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ChangeElectionStageAsync(electionGuid, new ChangeElectionStageDto
+        {
+            ElectionStage = ElectionStage.Finalized
+        });
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(ElectionStage.Finalized, result.Election!.ElectionStage);
+    }
+
+    [Fact]
+    public async Task ChangeElectionStageAsync_ToFinalized_WhenUseOnlineVotingFalse_Succeeds()
+    {
+        var electionGuid = await SeedReadyElectionForFinalizeAsync(useOnlineVoting: false);
+
+        var result = await _service.ChangeElectionStageAsync(electionGuid, new ChangeElectionStageDto
+        {
+            ElectionStage = ElectionStage.Finalized
+        });
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(ElectionStage.Finalized, result.Election!.ElectionStage);
+    }
+
+    [Fact]
     public async Task ChangeElectionStageAsync_ToFinalized_IsRejectedWhenNotReady()
     {
         var electionGuid = Guid.NewGuid();
@@ -1418,9 +1478,58 @@ public class ElectionServiceTests : ServiceTestBase
     /// (UseOnlineVoting plus a null window counts as open; ShowAsTest is not checked).
     /// </summary>
     private static bool IsAvailableToOnlineVoters(Election election, DateTimeOffset now) =>
-        election.UseOnlineVoting
-        && (election.OnlineWhenOpen == null || election.OnlineWhenOpen <= now)
-        && (election.OnlineWhenClose == null || election.OnlineWhenClose > now);
+        OnlineVotingWindow.IsCurrentlyOpen(
+            election.UseOnlineVoting,
+            election.OnlineWhenOpen,
+            election.OnlineWhenClose,
+            now);
+
+    private async Task<Guid> SeedReadyElectionForFinalizeAsync(
+        bool useOnlineVoting,
+        DateTimeOffset? onlineWhenOpen = null,
+        DateTimeOffset? onlineWhenClose = null)
+    {
+        var electionGuid = Guid.NewGuid();
+        var personGuid = Guid.NewGuid();
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Stage Test Election",
+            ElectionType = "LSA",
+            NumberToElect = 3,
+            ElectionStage = ElectionStage.ProcessingBallots,
+            DateOfElection = DateTime.UtcNow.AddDays(10),
+            UseOnlineVoting = useOnlineVoting,
+            OnlineWhenOpen = onlineWhenOpen,
+            OnlineWhenClose = onlineWhenClose,
+            RowVersion = new byte[8]
+        });
+        Context.People.Add(new Person
+        {
+            PersonGuid = personGuid,
+            ElectionGuid = electionGuid,
+            FirstName = "Test",
+            LastName = "Person",
+            RowVersion = new byte[8]
+        });
+        Context.Results.Add(new Result
+        {
+            ElectionGuid = electionGuid,
+            PersonGuid = personGuid,
+            Rank = 1,
+            Section = "E",
+            VoteCount = 10
+        });
+        Context.ResultSummaries.Add(new ResultSummary
+        {
+            ElectionGuid = electionGuid,
+            ResultType = "F",
+            UseOnReports = true,
+            BallotsNeedingReview = 0
+        });
+        await Context.SaveChangesAsync();
+        return electionGuid;
+    }
 }
 
 

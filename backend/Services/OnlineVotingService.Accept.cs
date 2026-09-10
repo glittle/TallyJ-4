@@ -50,7 +50,7 @@ public partial class OnlineVotingService
             };
         }
 
-        if (election.ElectionStage == ElectionStage.Finalized)
+        if (ElectionFinalizedWriteGuard.IsLocked(election.ElectionStage))
         {
             return new AcceptAllOnlineBallotsResultDto
             {

@@ -9,22 +9,28 @@ const stagePhraseMessages: Record<string, string> = {
   "elections.stageChangeError.confirmLeaveFinalized":
     "Reverting from Finalized requires confirmation",
   "elections.stageChangeError.generic": "Failed to change election stage",
+  "elections.stageChangeError.onlineVotingStillOpen":
+    "Close the online voting window before finalizing this election.",
 };
 
-vi.mock("vue-i18n", () => ({
-  useI18n: () => ({
-    t: (key: string, opts?: Record<string, string>) => {
-      let message = stagePhraseMessages[key] ?? key;
-      if (opts) {
-        message = Object.entries(opts).reduce(
-          (s, [k, v]) => s.replace(`{${k}}`, String(v)),
-          message,
-        );
-      }
-      return message;
-    },
-  }),
-}));
+vi.mock("vue-i18n", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("vue-i18n")>();
+  return {
+    ...actual,
+    useI18n: () => ({
+      t: (key: string, opts?: Record<string, string>) => {
+        let message = stagePhraseMessages[key] ?? key;
+        if (opts) {
+          message = Object.entries(opts).reduce(
+            (s, [k, v]) => s.replace(`{${k}}`, String(v)),
+            message,
+          );
+        }
+        return message;
+      },
+    }),
+  };
+});
 
 const mockShowErrorMessage = vi.fn();
 
@@ -37,11 +43,18 @@ vi.mock("@/composables/useNotifications", () => ({
 
 const mockSetStage = vi.fn();
 const mockGetCountReconciliation = vi.fn();
+const mockElectionStore = {
+  setStage: mockSetStage,
+  currentElection: null as {
+    electionGuid: string;
+    useOnlineVoting?: boolean;
+    onlineWhenOpen?: string | null;
+    onlineWhenClose?: string | null;
+  } | null,
+};
 
 vi.mock("@/stores/electionStore", () => ({
-  useElectionStore: () => ({
-    setStage: mockSetStage,
-  }),
+  useElectionStore: () => mockElectionStore,
 }));
 
 vi.mock("@/services/resultService", () => ({
@@ -66,6 +79,7 @@ describe("StageControl", () => {
     mockSetStage.mockReset();
     mockShowErrorMessage.mockReset();
     mockGetCountReconciliation.mockReset();
+    mockElectionStore.currentElection = null;
     mockGetCountReconciliation.mockResolvedValue({
       isReconciled: true,
       frontDeskCount: 0,
@@ -149,6 +163,28 @@ describe("StageControl", () => {
       expect(mockGetCountReconciliation).toHaveBeenCalledWith("abc-123");
       expect(mockSetStage).not.toHaveBeenCalled();
       expect(mockShowErrorMessage).toHaveBeenCalled();
+    });
+
+    it("disables Finalize and does not call setStage when the online window is open", async () => {
+      mockElectionStore.currentElection = {
+        electionGuid: "abc-123",
+        useOnlineVoting: true,
+        onlineWhenOpen: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+        onlineWhenClose: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+      };
+
+      const wrapper = mount(StageControl, {
+        props: { electionGuid: "abc-123", stage: "ProcessingBallots" },
+        global: { stubs: globalStubs },
+      });
+
+      const radios = wrapper.findAll('[role="radio"]');
+      expect(radios[3]!.attributes("disabled")).toBeDefined();
+      await radios[3]!.trigger("click");
+      await flushPromises();
+
+      expect(mockGetCountReconciliation).not.toHaveBeenCalled();
+      expect(mockSetStage).not.toHaveBeenCalled();
     });
 
     it("calls setStage with Finalized when counts reconcile", async () => {

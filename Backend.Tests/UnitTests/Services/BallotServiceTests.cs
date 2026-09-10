@@ -230,4 +230,81 @@ public class BallotServiceTests : ServiceTestBase
         Assert.NotNull(result);
         Assert.Equal(BallotStatus.Review, result.StatusCode);
     }
+
+    [Fact]
+    public async Task CreateBallotAsync_FinalizedElection_Throws()
+    {
+        SetElectionStage(ElectionStage.Finalized);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CreateBallotAsync(new CreateBallotDto
+            {
+                ElectionGuid = ElectionGuid,
+                LocationGuid = LocationGuid,
+                ComputerCode = "B",
+                Teller1 = "Ada"
+            }));
+
+        Assert.Equal(ElectionStageMessageKeys.FinalizedWriteBlocked, ex.Message);
+        Assert.Equal(1, Context.Ballots.Count());
+    }
+
+    [Fact]
+    public async Task CreateBallotAsync_ProcessingBallots_Succeeds()
+    {
+        SetElectionStage(ElectionStage.ProcessingBallots);
+
+        var result = await _service.CreateBallotAsync(new CreateBallotDto
+        {
+            ElectionGuid = ElectionGuid,
+            LocationGuid = LocationGuid,
+            ComputerCode = "B",
+            Teller1 = "Ada"
+        });
+
+        Assert.Equal("B", result.ComputerCode);
+        Assert.Equal(2, Context.Ballots.Count());
+    }
+
+    [Fact]
+    public async Task UpdateBallotAsync_FinalizedElection_Throws()
+    {
+        SetElectionStage(ElectionStage.Finalized);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.UpdateBallotAsync(BallotGuid, new UpdateBallotDto
+            {
+                Teller1 = "Changed"
+            }));
+
+        Assert.Equal(ElectionStageMessageKeys.FinalizedWriteBlocked, ex.Message);
+    }
+
+    [Fact]
+    public async Task DeleteBallotAsync_FinalizedElection_Throws()
+    {
+        SetElectionStage(ElectionStage.Finalized);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.DeleteBallotAsync(BallotGuid));
+
+        Assert.Equal(ElectionStageMessageKeys.FinalizedWriteBlocked, ex.Message);
+        Assert.Single(Context.Ballots);
+    }
+
+    [Fact]
+    public async Task GetBallotsByElectionAsync_FinalizedElection_StillReads()
+    {
+        SetElectionStage(ElectionStage.Finalized);
+
+        var result = await _service.GetBallotsByElectionAsync(ElectionGuid, pageSize: 50);
+
+        Assert.Single(result.Items);
+    }
+
+    private void SetElectionStage(ElectionStage stage)
+    {
+        Context.Elections.Single().ElectionStage = stage;
+        Context.SaveChanges();
+    }
 }

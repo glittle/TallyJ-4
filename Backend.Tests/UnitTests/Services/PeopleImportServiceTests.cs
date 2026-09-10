@@ -1094,6 +1094,57 @@ public class PeopleImportServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task DeleteAllPeopleAsync_FinalizedElection_Throws()
+    {
+        var electionGuid = Guid.NewGuid();
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Import lock test",
+            NumberToElect = 3,
+            ElectionType = "LSA",
+            ElectionStage = ElectionStage.Finalized,
+            RowVersion = new byte[8]
+        });
+        Context.People.Add(new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            FirstName = "Ada",
+            LastName = "Smith",
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _service.DeleteAllPeopleAsync(electionGuid));
+
+        Assert.Equal(ElectionStageMessageKeys.FinalizedWriteBlocked, ex.Message);
+        Assert.Single(Context.People);
+    }
+
+    [Fact]
+    public async Task ImportPeopleAsync_FinalizedElection_ReturnsPhraseKey()
+    {
+        var electionGuid = Guid.NewGuid();
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Import lock test",
+            NumberToElect = 3,
+            ElectionType = "LSA",
+            ElectionStage = ElectionStage.Finalized,
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ImportPeopleAsync(electionGuid, 1);
+
+        Assert.False(result.Success);
+        Assert.Contains(result.Errors, e => e.Key == ElectionStageMessageKeys.FinalizedWriteBlocked);
+    }
+
+    [Fact]
     public async Task GetPeopleCountAsync_ReturnsCorrectCount()
     {
         // Arrange

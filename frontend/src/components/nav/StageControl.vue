@@ -11,8 +11,9 @@ import { useElectionStore } from "@/stores/electionStore";
 import type { CountReconciliationReportDto } from "@/types";
 import { extractApiErrorMessage } from "@/utils/errorHandler";
 import { translateElectionStageChangeError } from "@/utils/electionStageErrorMessages";
+import { isOnlineVotingCurrentlyOpen } from "@/utils/onlineVotingWindowOpen";
 import { ElIcon } from "element-plus";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
@@ -27,12 +28,25 @@ const { showSuccessMessage, showErrorMessage } = useNotifications();
 const finalizeReportVisible = ref(false);
 const finalizeReport = ref<CountReconciliationReportDto | null>(null);
 
+const onlineWindowBlocksFinalize = computed(() => {
+  const election = electionStore.currentElection;
+  if (!election || election.electionGuid !== props.electionGuid) {
+    return false;
+  }
+  return isOnlineVotingCurrentlyOpen(election);
+});
+
 async function selectStage(newStage: ElectionStage) {
   if (newStage === props.stage) {
     return;
   }
 
   if (newStage === "Finalized") {
+    if (onlineWindowBlocksFinalize.value) {
+      showErrorMessage(t("elections.stageChangeError.onlineVotingStillOpen"));
+      return;
+    }
+
     try {
       const report = await resultService.getCountReconciliation(
         props.electionGuid,
@@ -74,6 +88,12 @@ async function selectStage(newStage: ElectionStage) {
       :key="s"
       role="radio"
       :aria-checked="s === stage"
+      :disabled="s === 'Finalized' && onlineWindowBlocksFinalize"
+      :title="
+        s === 'Finalized' && onlineWindowBlocksFinalize
+          ? t('elections.stageChangeError.onlineVotingStillOpen')
+          : undefined
+      "
       class="stage-control__seg"
       :class="{ 'is-selected': s === stage }"
       :style="
@@ -134,8 +154,13 @@ async function selectStage(newStage: ElectionStage) {
       border-bottom: none;
     }
 
-    &:hover:not(.is-selected) {
+    &:hover:not(.is-selected):not(:disabled) {
       background: var(--el-fill-color-light);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
     }
 
     &.is-selected {
