@@ -294,10 +294,11 @@ export const electionService = {
   async changeStage(
     electionGuid: string,
     stage: ElectionStage,
+    confirmLeavingFinalized = false,
   ): Promise<ElectionDto> {
     const response = await putApiElectionsByGuidStage({
       path: { guid: electionGuid },
-      body: { electionStage: stage },
+      body: { electionStage: stage, confirmLeavingFinalized },
     });
     const envelope = response.data;
     const data = envelope?.data;

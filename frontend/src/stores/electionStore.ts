@@ -521,7 +521,11 @@ export const useElectionStore = defineStore("election", () => {
     await leaveElection(electionGuid);
   }
 
-  async function setStage(electionGuid: string, stage: ElectionStage) {
+  async function setStage(
+    electionGuid: string,
+    stage: ElectionStage,
+    confirmLeavingFinalized = false,
+  ) {
     loading.value = true;
     error.value = null;
     // StageControl shows the success toast; suppress the echo from statusChanged
@@ -531,7 +535,11 @@ export const useElectionStore = defineStore("election", () => {
       Date.now() + LOCAL_STAGE_NOTIFY_SUPPRESS_MS,
     );
     try {
-      const election = await electionService.changeStage(electionGuid, stage);
+      const election = await electionService.changeStage(
+        electionGuid,
+        stage,
+        confirmLeavingFinalized,
+      );
 
       const index = elections.value.findIndex(
         (e) => e.electionGuid === electionGuid,

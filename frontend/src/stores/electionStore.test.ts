@@ -773,6 +773,7 @@ describe("Election Store", () => {
       expect(electionService.changeStage).toHaveBeenCalledWith(
         "1",
         "SettingUp",
+        false,
       );
     });
 
@@ -790,6 +791,7 @@ describe("Election Store", () => {
       expect(electionService.changeStage).toHaveBeenCalledWith(
         "1",
         "GatheringBallots",
+        false,
       );
     });
 
@@ -807,6 +809,7 @@ describe("Election Store", () => {
       expect(electionService.changeStage).toHaveBeenCalledWith(
         "1",
         "ProcessingBallots",
+        false,
       );
     });
 
@@ -822,8 +825,36 @@ describe("Election Store", () => {
 
       await electionStore.setStage("1", "Finalized");
 
-      expect(electionService.changeStage).toHaveBeenCalledWith("1", "Finalized");
+      expect(electionService.changeStage).toHaveBeenCalledWith(
+        "1",
+        "Finalized",
+        false,
+      );
       expect(electionStore.currentElection?.electionStage).toBe("Finalized");
+    });
+
+    it("passes confirmLeavingFinalized through to changeStage", async () => {
+      const { electionService } = await import("../services/electionService");
+      const updatedElection = {
+        electionGuid: "1",
+        electionStage: "ProcessingBallots",
+      } as ElectionDto;
+      electionStore.elections = [
+        { electionGuid: "1", electionStage: "Finalized" } as ElectionDto,
+      ];
+      electionStore.currentElection = electionStore.elections[0]!;
+      electionService.changeStage.mockResolvedValue(updatedElection);
+
+      await electionStore.setStage("1", "ProcessingBallots", true);
+
+      expect(electionService.changeStage).toHaveBeenCalledWith(
+        "1",
+        "ProcessingBallots",
+        true,
+      );
+      expect(electionStore.currentElection?.electionStage).toBe(
+        "ProcessingBallots",
+      );
     });
   });
 
