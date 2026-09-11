@@ -50,6 +50,49 @@ The execute endpoint reads mappings from the file row, not from the browser. Con
 
 Skip messages use the spreadsheet's own row number (Excel row 12 after headers on row 6), not a count of data rows. `FirstDataRow` is the header row only; parse already excludes it, so import must not skip that many rows again.
 
+## Hard spaces from Excel/Word are regular spaces
+
+**Status:** active  
+**Evidence:** inferred (v3 import bug class named on #170; Excel/Word emit U+00A0)  
+**Source:** issue #170  
+**Revisit when:** another Unicode space (e.g. ideographic) shows up in real files
+
+Import cells replace NBSP (`U+00A0`) and narrow NBSP (`U+202F`) with a normal space, then trim. A cell that is only hard spaces is empty — missing First/Last Name skips the row; empty eligibility stays fully eligible. Mid-name hard spaces become a real space (`Mary Jane`) so search and uniqueness match what the teller sees.
+
+**Rejected alternative:** leave hard spaces in the stored name. They look identical in the UI and then fail Front Desk search and unique-field matching.
+
+**Rejected alternative:** strip every Unicode space category. That would also delete intended separators in some names; only the Excel/Word hard-space pair is rewritten.
+
+## Empty files and invalid lines do not abort the load
+
+**Status:** active  
+**Evidence:** confirmed (controller already refused 0-byte upload; import skips validation failures without `errorsFound`)  
+**Source:** issue #170; `PeopleImportController.UploadFile`; `PeopleImportService.ImportPeopleAsync`  
+**Revisit when:** import gains a fail-fast / all-or-nothing option
+
+A 0-byte upload is refused (`No file provided`) in both the controller and `UploadFileAsync`. A file that parses to no rows (empty bytes, whitespace, or headers only) can still be mapped; execute succeeds with zero people added.
+
+Invalid data rows (blank names, hard-space-only names, jagged/unquoted junk) increment `PeopleSkipped`, log a line error, and leave valid rows in the same file imported. Unexpected exceptions still roll back the batch (`errorsFound`).
+
+**Rejected alternative:** treat any skipped row as a failed import and roll back. Duplicate unique fields and unrecognized eligibility already commit the good rows; missing-name and empty-line cases follow that.
+
+## People list export is the package + voter reports
+
+**Status:** active  
+**Evidence:** inferred (no People-page CSV download in v4; #170 asked to test export, not add one)  
+**Source:** issue #170  
+**Revisit when:** tellers need a CSV that round-trips through Import People
+
+v4 does not download a people CSV from People Management. The people list leaves the system as:
+
+- Election JSON package (`ExportElectionToJsonAsync` `people` array) — full records for backup / move
+- Voter reports (`Voters`, `AllCanReceive`, `VoterEmails`, `ChangedPeople`, …) — on-screen + browser print
+- Tally report export API (`/api/report-exports`) — PDF / Excel / CSV of results (elected names, overview), not the roll
+
+The Reporting page only offers Print; the unused `reporting.exportCSV` strings are leftovers.
+
+**Rejected alternative:** add a People-page CSV export in this #170 slice. Import already accepts many column layouts; a new download would be a product feature, not the remaining test gap.
+
 ## Eligibility import uses person-form codes, not four invented statuses
 
 **Status:** active  
