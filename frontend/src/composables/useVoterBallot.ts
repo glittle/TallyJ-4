@@ -117,6 +117,18 @@ export function isSubmittedOnlineVoteStatus(
   return status?.whenSubmitted !== undefined && status?.whenSubmitted !== null;
 }
 
+/**
+ * Silent autosave writes when the ballot has names, or when a saved payload
+ * already exists (including after the voter clears the last name). A first
+ * visit with no names does not create a Draft.
+ */
+export function shouldWriteAutosave(
+  hasVotes: boolean,
+  hasPersistedPayload: boolean,
+): boolean {
+  return hasVotes || hasPersistedPayload;
+}
+
 export function buildOnlineVotes(
   votes: VoteSlot[],
   selectionMode: string,
@@ -261,6 +273,25 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
     return true;
   }
 
+  /**
+   * Read the pool form and place it on the first empty line. Clears the form
+   * only after a successful placement. A full ballot leaves the form intact.
+   */
+  function placePoolFormOnBallot(
+    votes: VoteSlot[],
+  ): number | "empty-name" | "full" {
+    const entry = takePoolFormEntry();
+    if (!entry) {
+      return "empty-name";
+    }
+    const position = addEntryToNextEmptyVote(votes, entry);
+    if (position === null) {
+      return "full";
+    }
+    clearPoolForm();
+    return position;
+  }
+
   return {
     poolEntries,
     poolForm,
@@ -274,6 +305,7 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
     takePoolFormEntry,
     clearPoolForm,
     addEntryToNextEmptyVote,
+    placePoolFormOnBallot,
     submitPoolForm,
     poolAsVotablePeople,
     applyPriorVotes,

@@ -7,6 +7,7 @@ import {
   getEffectiveVoteName,
   hasDuplicateVotes,
   isSubmittedOnlineVoteStatus,
+  shouldWriteAutosave,
   useVoterBallotHelpers,
 } from "../useVoterBallot";
 
@@ -106,9 +107,10 @@ describe("useVoterBallot", () => {
     ).toBeNull();
   });
 
-  it("keeps pool form when take then place fails on a full ballot", () => {
-    const { poolForm, takePoolFormEntry, addEntryToNextEmptyVote } =
-      useVoterBallotHelpers(() => "C");
+  it("placePoolFormOnBallot keeps the form when the ballot is full", () => {
+    const { poolForm, placePoolFormOnBallot } = useVoterBallotHelpers(
+      () => "C",
+    );
     const slots = createEmptyVoteSlots(1);
     slots[0].searchText = "Taken";
     poolForm.value = {
@@ -117,9 +119,7 @@ describe("useVoterBallot", () => {
       otherInfo: "Area 1",
     };
 
-    const entry = takePoolFormEntry();
-    expect(entry?.fullName).toBe("New Person");
-    expect(addEntryToNextEmptyVote(slots, entry!)).toBeNull();
+    expect(placePoolFormOnBallot(slots)).toBe("full");
     expect(poolForm.value).toEqual({
       firstName: "New",
       lastName: "Person",
@@ -127,13 +127,10 @@ describe("useVoterBallot", () => {
     });
   });
 
-  it("clears pool form only after a successful placement", () => {
-    const {
-      poolForm,
-      takePoolFormEntry,
-      clearPoolForm,
-      addEntryToNextEmptyVote,
-    } = useVoterBallotHelpers(() => "C");
+  it("placePoolFormOnBallot clears the form only after a successful placement", () => {
+    const { poolForm, placePoolFormOnBallot } = useVoterBallotHelpers(
+      () => "C",
+    );
     const slots = createEmptyVoteSlots(1);
     poolForm.value = {
       firstName: "New",
@@ -141,15 +138,19 @@ describe("useVoterBallot", () => {
       otherInfo: "note",
     };
 
-    const entry = takePoolFormEntry();
-    expect(poolForm.value.firstName).toBe("New");
-    expect(addEntryToNextEmptyVote(slots, entry!)).toBe(1);
-    clearPoolForm();
+    expect(placePoolFormOnBallot(slots)).toBe(1);
+    expect(slots[0].searchText).toBe("New Person");
     expect(poolForm.value).toEqual({
       firstName: "",
       lastName: "",
       otherInfo: "",
     });
+  });
+
+  it("shouldWriteAutosave overwrites a saved empty ballot", () => {
+    expect(shouldWriteAutosave(false, false)).toBe(false);
+    expect(shouldWriteAutosave(true, false)).toBe(true);
+    expect(shouldWriteAutosave(false, true)).toBe(true);
   });
 
   it("autosaveAsDraft is false once the ballot is Submitted", () => {

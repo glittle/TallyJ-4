@@ -23,6 +23,7 @@ import {
   buildOnlineVotes,
   createEmptyVoteSlots,
   isSubmittedOnlineVoteStatus,
+  shouldWriteAutosave,
   useVoterBallotHelpers,
   type VoteSlot,
 } from "../../composables/useVoterBallot";
@@ -69,9 +70,7 @@ const {
   duplicatePositions,
   canSubmit,
   hasAnyVote,
-  takePoolFormEntry,
-  clearPoolForm,
-  addEntryToNextEmptyVote,
+  placePoolFormOnBallot,
   poolAsVotablePeople,
   applyPriorVotes,
   poolEntries,
@@ -180,7 +179,9 @@ const runAutosave = debounce(async () => {
   if (!autosaveReady.value || !canChangeVote.value || submitting.value) {
     return;
   }
-  if (!hasAnyVote(votes.value) && !hasPersistedPayload.value) {
+  if (
+    !shouldWriteAutosave(hasAnyVote(votes.value), hasPersistedPayload.value)
+  ) {
     return;
   }
   if (!onlineVotingStore.voterId) {
@@ -237,17 +238,15 @@ function clearVote(position: number) {
 }
 
 function handleAddToPool() {
-  const entry = takePoolFormEntry();
-  if (!entry) {
+  const placed = placePoolFormOnBallot(votes.value);
+  if (placed === "empty-name") {
     showErrorMessage(t("voting.ballot.poolNameRequired"));
     return;
   }
-  const position = addEntryToNextEmptyVote(votes.value, entry);
-  if (position === null) {
+  if (placed === "full") {
     showErrorMessage(t("voting.ballot.ballotFull"));
     return;
   }
-  clearPoolForm();
   runAutosave();
 }
 
