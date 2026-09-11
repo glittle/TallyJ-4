@@ -132,6 +132,83 @@ describe("VoterBallotPage silent autosave isDraft", () => {
     expect(submitBallot.mock.calls[0][1].isDraft).toBe(true);
   });
 
+  it("does not autosave an empty first visit", async () => {
+    storeState.checkVoteStatus.mockResolvedValue({
+      hasVoted: false,
+      canChangeVote: true,
+      priorVotes: [],
+    });
+    storeState.voteStatus = {
+      hasVoted: false,
+      canChangeVote: true,
+      priorVotes: [],
+    };
+
+    await mountAndFlushAutosave();
+
+    expect(submitBallot).not.toHaveBeenCalled();
+  });
+
+  it("overwrites a saved Draft when the last vote is cleared", async () => {
+    storeState.checkVoteStatus.mockResolvedValue(draftStatus());
+    storeState.voteStatus = draftStatus();
+
+    const wrapper = await mountAndFlushAutosave();
+    expect(submitBallot).toHaveBeenCalled();
+    expect(submitBallot.mock.calls[0][1].votes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ voteName: "Draft Name" }),
+      ]),
+    );
+    submitBallot.mockClear();
+
+    await wrapper.get(".clear-btn").trigger("click");
+    await vi.advanceTimersByTimeAsync(800);
+    await flushPromises();
+
+    expect(submitBallot).toHaveBeenCalled();
+    const cleared = submitBallot.mock.calls.at(-1)?.[1];
+    expect(cleared.votes).toEqual([]);
+    expect(cleared.isDraft).toBe(true);
+
+    wrapper.unmount();
+    submitBallot.mockClear();
+    storeState.checkVoteStatus.mockResolvedValue({
+      hasVoted: true,
+      canChangeVote: true,
+      whenSubmitted: null,
+      priorVotes: cleared.votes,
+    });
+    storeState.voteStatus = {
+      hasVoted: true,
+      canChangeVote: true,
+      whenSubmitted: null,
+      priorVotes: cleared.votes,
+    };
+
+    await mountAndFlushAutosave();
+
+    expect(submitBallot).toHaveBeenCalled();
+    expect(submitBallot.mock.calls[0][1].votes).toEqual([]);
+    expect(submitBallot.mock.calls[0][1].isDraft).toBe(true);
+  });
+
+  it("overwrites a Submitted payload with isDraft false when cleared", async () => {
+    storeState.checkVoteStatus.mockResolvedValue(submittedStatus());
+    storeState.voteStatus = submittedStatus();
+
+    const wrapper = await mountAndFlushAutosave();
+    submitBallot.mockClear();
+
+    await wrapper.get(".clear-btn").trigger("click");
+    await vi.advanceTimersByTimeAsync(800);
+    await flushPromises();
+
+    const cleared = submitBallot.mock.calls.at(-1)?.[1];
+    expect(cleared.votes).toEqual([]);
+    expect(cleared.isDraft).toBe(false);
+  });
+
   it("keeps isDraft false on later autosave after explicit Submit", async () => {
     storeState.checkVoteStatus.mockResolvedValue(draftStatus());
     storeState.voteStatus = draftStatus();

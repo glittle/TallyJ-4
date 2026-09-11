@@ -106,6 +106,52 @@ describe("useVoterBallot", () => {
     ).toBeNull();
   });
 
+  it("keeps pool form when take then place fails on a full ballot", () => {
+    const { poolForm, takePoolFormEntry, addEntryToNextEmptyVote } =
+      useVoterBallotHelpers(() => "C");
+    const slots = createEmptyVoteSlots(1);
+    slots[0].searchText = "Taken";
+    poolForm.value = {
+      firstName: "New",
+      lastName: "Person",
+      otherInfo: "Area 1",
+    };
+
+    const entry = takePoolFormEntry();
+    expect(entry?.fullName).toBe("New Person");
+    expect(addEntryToNextEmptyVote(slots, entry!)).toBeNull();
+    expect(poolForm.value).toEqual({
+      firstName: "New",
+      lastName: "Person",
+      otherInfo: "Area 1",
+    });
+  });
+
+  it("clears pool form only after a successful placement", () => {
+    const {
+      poolForm,
+      takePoolFormEntry,
+      clearPoolForm,
+      addEntryToNextEmptyVote,
+    } = useVoterBallotHelpers(() => "C");
+    const slots = createEmptyVoteSlots(1);
+    poolForm.value = {
+      firstName: "New",
+      lastName: "Person",
+      otherInfo: "note",
+    };
+
+    const entry = takePoolFormEntry();
+    expect(poolForm.value.firstName).toBe("New");
+    expect(addEntryToNextEmptyVote(slots, entry!)).toBe(1);
+    clearPoolForm();
+    expect(poolForm.value).toEqual({
+      firstName: "",
+      lastName: "",
+      otherInfo: "",
+    });
+  });
+
   it("autosaveAsDraft is false once the ballot is Submitted", () => {
     expect(autosaveAsDraft(false)).toBe(true);
     expect(autosaveAsDraft(true)).toBe(false);

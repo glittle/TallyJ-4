@@ -198,7 +198,15 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
     otherInfo: "",
   });
 
-  /** Build a pool entry from the form; returns null if name is empty. */
+  function clearPoolForm() {
+    poolForm.value = { firstName: "", lastName: "", otherInfo: "" };
+  }
+
+  /**
+   * Read a pool entry from the form; returns null if name is empty.
+   * Does not clear the form — call {@link clearPoolForm} after a successful
+   * placement so a full-ballot refusal keeps the entered name.
+   */
   function takePoolFormEntry(): OnlinePoolEntry | null {
     const first = poolForm.value.firstName.trim();
     const last = poolForm.value.lastName.trim();
@@ -206,14 +214,12 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
       return null;
     }
     const fullName = [first, last].filter(Boolean).join(" ");
-    const entry: OnlinePoolEntry = {
+    return {
       fullName,
       firstName: first || undefined,
       lastName: last || undefined,
       otherInfo: poolForm.value.otherInfo.trim() || undefined,
     };
-    poolForm.value = { firstName: "", lastName: "", otherInfo: "" };
-    return entry;
   }
 
   /**
@@ -251,6 +257,7 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
       return false;
     }
     addPoolEntry(entry);
+    clearPoolForm();
     return true;
   }
 
@@ -265,6 +272,7 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
     canSubmit,
     addPoolEntry,
     takePoolFormEntry,
+    clearPoolForm,
     addEntryToNextEmptyVote,
     submitPoolForm,
     poolAsVotablePeople,

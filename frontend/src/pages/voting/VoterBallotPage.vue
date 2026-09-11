@@ -42,6 +42,8 @@ const submitting = ref(false);
 const autosaveReady = ref(false);
 /** Once Submitted, later autosaves keep isDraft false (never demote). */
 const alreadySubmitted = ref(false);
+/** True after a restore or a successful write, so an empty ballot can overwrite. */
+const hasPersistedPayload = ref(false);
 
 const votes = ref<VoteSlot[]>([]);
 
@@ -68,6 +70,7 @@ const {
   canSubmit,
   hasAnyVote,
   takePoolFormEntry,
+  clearPoolForm,
   addEntryToNextEmptyVote,
   poolAsVotablePeople,
   applyPriorVotes,
@@ -107,6 +110,7 @@ onMounted(async () => {
 });
 
 onUnmounted(async () => {
+  runAutosave.flush();
   await onlineVotingStore.leaveElectionBallotPresence();
 });
 
@@ -132,11 +136,15 @@ async function loadElectionData() {
     }
 
     alreadySubmitted.value = isSubmittedOnlineVoteStatus(voteStatus);
+    hasPersistedPayload.value =
+      alreadySubmitted.value ||
+      voteStatus.hasVoted === true ||
+      (voteStatus.priorVotes?.length ?? 0) > 0;
 
     const numToElect = electionInfo.numberToElect || 9;
     votes.value = createEmptyVoteSlots(numToElect);
 
-    if (voteStatus.hasVoted || (voteStatus.priorVotes?.length ?? 0) > 0) {
+    if (hasPersistedPayload.value) {
       applyPriorVotes(votes.value, voteStatus, onlineVotingStore.votablePeople);
     }
   } catch (error) {
@@ -172,7 +180,7 @@ const runAutosave = debounce(async () => {
   if (!autosaveReady.value || !canChangeVote.value || submitting.value) {
     return;
   }
-  if (!hasAnyVote(votes.value)) {
+  if (!hasAnyVote(votes.value) && !hasPersistedPayload.value) {
     return;
   }
   if (!onlineVotingStore.voterId) {
@@ -185,6 +193,7 @@ const runAutosave = debounce(async () => {
       buildSubmitPayload(autosaveAsDraft(alreadySubmitted.value)),
       { silent: true },
     );
+    hasPersistedPayload.value = true;
     isEditing.value = true;
   } catch (error) {
     console.error("Silent ballot autosave failed:", error);
@@ -238,6 +247,7 @@ function handleAddToPool() {
     showErrorMessage(t("voting.ballot.ballotFull"));
     return;
   }
+  clearPoolForm();
   runAutosave();
 }
 
@@ -252,6 +262,7 @@ async function handleSubmit() {
   }
 
   try {
+    runAutosave.cancel();
     submitting.value = true;
 
     await onlineVotingStore.submitBallot(
@@ -259,6 +270,7 @@ async function handleSubmit() {
       buildSubmitPayload(false),
     );
     alreadySubmitted.value = true;
+    hasPersistedPayload.value = true;
 
     showSuccessMessage(
       isEditing.value
