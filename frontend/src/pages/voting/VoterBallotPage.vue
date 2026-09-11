@@ -234,7 +234,7 @@ function handleAddToPool() {
     return;
   }
   const position = addEntryToNextEmptyVote(votes.value, entry);
-  if (position == null) {
+  if (position === null) {
     showErrorMessage(t("voting.ballot.ballotFull"));
     return;
   }

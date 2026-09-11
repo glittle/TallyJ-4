@@ -114,7 +114,7 @@ export function autosaveAsDraft(alreadySubmitted: boolean): boolean {
 export function isSubmittedOnlineVoteStatus(
   status: Pick<OnlineVoteStatus, "whenSubmitted"> | null | undefined,
 ): boolean {
-  return status?.whenSubmitted != null;
+  return status?.whenSubmitted !== undefined && status?.whenSubmitted !== null;
 }
 
 export function buildOnlineVotes(
