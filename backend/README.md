@@ -114,6 +114,8 @@ cd ..
 dotnet test Backend.Tests/Backend.Tests.csproj
 ```
 
+v3 vs v4 analysis comparison (issue #168): `dotnet test Backend.Tests/Backend.Tests.csproj --filter FullyQualifiedName~V3AnalysisComparison`. Fixture format and what to drop in: `docs/V3_ANALYSIS_COMPARISON.md`. Local InMemory/SQLite only — do not use Azure SQL.
+
 ### EF Core commands
 
 ```bash

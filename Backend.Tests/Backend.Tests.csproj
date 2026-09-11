@@ -40,4 +40,13 @@
     <ProjectReference Include="..\backend\Backend.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Fixtures\V3AnalysisComparison\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\backend\Schemas\TallyJv2-Export.xsd" Link="Schemas\TallyJv2-Export.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
