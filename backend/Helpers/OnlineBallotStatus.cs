@@ -2,17 +2,22 @@ namespace Backend.Helpers;
 
 /// <summary>
 /// Status values stored on <c>OnlineVotingInfo.Status</c> (varchar(10)).
-/// Submitted = still changeable. Processing = claimed by Accept-all (persisted
-/// so another server can see the claim). Monitor and Accept-all pending is
-/// Submitted + Processing. Processed = regular ballot created (or a legacy row
-/// unlinked) and the online payload wiped. There is no Draft value.
+/// Draft = autosaved in-progress ballot (not Accept-all pending).
+/// Submitted = still changeable and pending Accept-all.
+/// Processing = claimed by Accept-all (persisted so another server can see the claim).
+/// Monitor and Accept-all pending is Submitted + Processing.
+/// Processed = regular ballot created (or a legacy row unlinked) and the online payload wiped.
 /// "Processing" is 10 characters and fits the column.
 /// </summary>
 public static class OnlineBallotStatus
 {
+    public const string Draft = "Draft";
     public const string Submitted = "Submitted";
     public const string Processing = "Processing";
     public const string Processed = "Processed";
+
+    public static bool IsDraft(string? status) =>
+        string.Equals(status, Draft, StringComparison.OrdinalIgnoreCase);
 
     public static bool IsSubmitted(string? status) =>
         string.Equals(status, Submitted, StringComparison.OrdinalIgnoreCase);
@@ -22,4 +27,24 @@ public static class OnlineBallotStatus
 
     public static bool IsProcessed(string? status) =>
         string.Equals(status, Processed, StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>
+    /// Draft or Submitted — voter may still change the payload.
+    /// </summary>
+    public static bool IsEditable(string? status) =>
+        IsDraft(status) || IsSubmitted(status);
+
+    /// <summary>
+    /// Next status after a voter write. Never demote Submitted to Draft.
+    /// Allowed: Draft→Draft, Draft→Submitted, Submitted→Submitted.
+    /// </summary>
+    public static string StatusAfterWrite(string? currentStatus, bool isDraft)
+    {
+        if (IsSubmitted(currentStatus))
+        {
+            return Submitted;
+        }
+
+        return isDraft ? Draft : Submitted;
+    }
 }

@@ -1003,6 +1003,7 @@ export type OnlineVotingSubmitOnlineBallotDto = {
     votes?: Array<OnlineVotingOnlineVoteDto> | null;
     listPool?: Array<OnlineVotingOnlinePoolEntryDto> | null;
     notifyWhenProcessed?: boolean;
+    isDraft?: boolean;
 };
 
 export type OnlineVotingTelegramAuthForVoterDto = {

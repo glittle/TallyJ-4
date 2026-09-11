@@ -1,6 +1,9 @@
-import { isOnlineLocationType } from "@/utils/ballotStartRequirements";
+import {
+  isImportedLocationType,
+  isOnlineLocationType,
+} from "@/utils/ballotStartRequirements";
 
-/** Label for a location. Online-typed rows use i18n; names are not identifiers. */
+/** Label for a location. Online / Imported rows use i18n; names are not identifiers. */
 export function formatLocationLabel(
   t: (key: string) => string,
   location: {
@@ -10,6 +13,9 @@ export function formatLocationLabel(
 ): string {
   if (isOnlineLocationType(location.locationType)) {
     return t("locations.typeOnline");
+  }
+  if (isImportedLocationType(location.locationType)) {
+    return t("locations.typeImported");
   }
   return location.name?.trim() || "";
 }

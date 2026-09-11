@@ -3279,6 +3279,9 @@ export const OnlineVoting_SubmitOnlineBallotDtoSchema = {
         },
         notifyWhenProcessed: {
             type: 'boolean'
+        },
+        isDraft: {
+            type: 'boolean'
         }
     },
     additionalProperties: false

@@ -43,6 +43,126 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task Submit_SubmittedThenIsDraftTrue_StaysSubmittedAndAcceptAllPending()
+    {
+        var election = await SeedOpenElectionAsync();
+        var (person, email) = await SeedVoterAsync(election.ElectionGuid);
+        var submit = await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid);
+        Assert.True(submit.Success);
+        Assert.Equal(OnlineBallotStatus.Submitted, Context.OnlineVotingInfos.Single().Status);
+
+        var autosave = await SubmitPendingAsync(
+            election.ElectionGuid, email, person.PersonGuid, voteName: "Changed After Submit", isDraft: true);
+        Assert.True(autosave.Success);
+        Assert.Equal(OnlineBallotStatus.Submitted, Context.OnlineVotingInfos.Single().Status);
+
+        var summary = await _service.GetAcceptAllSummaryAsync(election.ElectionGuid);
+        Assert.Equal(1, summary!.PendingCount);
+        Assert.Equal(0, summary.ProcessedCount);
+
+        var accept = await _service.AcceptAllPendingAsync(election.ElectionGuid);
+        Assert.True(accept.Success);
+        Assert.Equal(1, accept.AcceptedCount);
+        Assert.Equal(OnlineBallotStatus.Processed, Context.OnlineVotingInfos.Single().Status);
+        Assert.Equal(1, Context.Ballots.Count());
+    }
+
+    [Fact]
+    public async Task Submit_EmptyVotes_OverwritesDraftAndSubmittedPayload()
+    {
+        var election = await SeedOpenElectionAsync();
+        var draftVoter = await SeedVoterAsync(election.ElectionGuid, "draft-clear@example.com");
+        var submittedVoter = await SeedVoterAsync(election.ElectionGuid, "submitted-clear@example.com");
+
+        Assert.True((await SubmitPendingAsync(
+            election.ElectionGuid, draftVoter.Email, draftVoter.Person.PersonGuid, isDraft: true)).Success);
+        Assert.True((await SubmitEmptyAsync(
+            election.ElectionGuid, draftVoter.Email, isDraft: true)).Success);
+
+        var draftStatus = await _service.GetVoteStatusAsync(election.ElectionGuid, draftVoter.Email);
+        Assert.True(draftStatus.HasVoted);
+        Assert.Empty(draftStatus.PriorVotes);
+        Assert.Equal(OnlineBallotStatus.Draft, Context.OnlineVotingInfos
+            .Single(o => o.PersonGuid == draftVoter.Person.PersonGuid).Status);
+
+        Assert.True((await SubmitPendingAsync(
+            election.ElectionGuid, submittedVoter.Email, submittedVoter.Person.PersonGuid)).Success);
+        Assert.True((await SubmitEmptyAsync(
+            election.ElectionGuid, submittedVoter.Email, isDraft: false)).Success);
+
+        var submittedStatus = await _service.GetVoteStatusAsync(
+            election.ElectionGuid, submittedVoter.Email);
+        Assert.True(submittedStatus.HasVoted);
+        Assert.True(submittedStatus.CanChangeVote);
+        Assert.Empty(submittedStatus.PriorVotes);
+        Assert.Equal(OnlineBallotStatus.Submitted, Context.OnlineVotingInfos
+            .Single(o => o.PersonGuid == submittedVoter.Person.PersonGuid).Status);
+
+        // Empty Submitted stays in pending counts (pending-but-skipped) so a
+        // later fill can be Accept-all'd. Accept-all must not Process it.
+        var summary = await _service.GetAcceptAllSummaryAsync(election.ElectionGuid);
+        Assert.Equal(1, summary!.PendingCount);
+        Assert.Equal(0, summary.ProcessedCount);
+
+        var accept = await _service.AcceptAllPendingAsync(election.ElectionGuid);
+        Assert.True(accept.Success);
+        Assert.Equal(0, accept.AcceptedCount);
+        Assert.Equal(0, Context.Ballots.Count());
+        Assert.Equal(OnlineBallotStatus.Draft, Context.OnlineVotingInfos
+            .Single(o => o.PersonGuid == draftVoter.Person.PersonGuid).Status);
+        Assert.Equal(OnlineBallotStatus.Submitted, Context.OnlineVotingInfos
+            .Single(o => o.PersonGuid == submittedVoter.Person.PersonGuid).Status);
+
+        var afterAccept = await _service.GetVoteStatusAsync(
+            election.ElectionGuid, submittedVoter.Email);
+        Assert.True(afterAccept.CanChangeVote);
+        Assert.Equal(1, (await _service.GetAcceptAllSummaryAsync(election.ElectionGuid))!.PendingCount);
+    }
+
+    [Fact]
+    public async Task AcceptAll_EmptyProcessingClaim_RestoresSubmittedAndLeavesVoterEditable()
+    {
+        var election = await SeedOpenElectionAsync();
+        var (person, email) = await SeedVoterAsync(election.ElectionGuid);
+        Assert.True((await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid)).Success);
+        Assert.True((await SubmitEmptyAsync(election.ElectionGuid, email, isDraft: false)).Success);
+
+        Context.OnlineVotingInfos.Single().Status = OnlineBallotStatus.Processing;
+        await Context.SaveChangesAsync();
+
+        var accept = await _service.AcceptAllPendingAsync(election.ElectionGuid);
+        Assert.True(accept.Success);
+        Assert.Equal(0, accept.AcceptedCount);
+        Assert.Equal(0, Context.Ballots.Count());
+        Assert.Equal(OnlineBallotStatus.Submitted, Context.OnlineVotingInfos.Single().Status);
+
+        var status = await _service.GetVoteStatusAsync(election.ElectionGuid, email);
+        Assert.True(status.CanChangeVote);
+    }
+
+    [Fact]
+    public async Task Submit_Draft_IsExcludedFromAcceptAllPending()
+    {
+        var election = await SeedOpenElectionAsync();
+        var (person, email) = await SeedVoterAsync(election.ElectionGuid);
+
+        var draft = await SubmitPendingAsync(
+            election.ElectionGuid, email, person.PersonGuid, isDraft: true);
+        Assert.True(draft.Success);
+        Assert.Equal(OnlineBallotStatus.Draft, Context.OnlineVotingInfos.Single().Status);
+
+        var summary = await _service.GetAcceptAllSummaryAsync(election.ElectionGuid);
+        Assert.Equal(0, summary!.PendingCount);
+        Assert.Equal(0, summary.ProcessedCount);
+
+        var accept = await _service.AcceptAllPendingAsync(election.ElectionGuid);
+        Assert.True(accept.Success);
+        Assert.Equal(0, accept.AcceptedCount);
+        Assert.Equal(0, Context.Ballots.Count());
+        Assert.Equal(OnlineBallotStatus.Draft, Context.OnlineVotingInfos.Single().Status);
+    }
+
+    [Fact]
     public async Task Submit_DoesNotCreateRegularBallot_UntilAcceptAll()
     {
         var election = await SeedOpenElectionAsync();
@@ -663,7 +783,8 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
         Guid electionGuid,
         string email,
         Guid personGuid,
-        string voteName = "Free Voter")
+        string voteName = "Free Voter",
+        bool isDraft = false)
     {
         return _service.SubmitBallotAsync(new SubmitOnlineBallotDto
         {
@@ -677,7 +798,22 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
                     VoteName = voteName,
                     PositionOnBallot = 1
                 }
-            ]
+            ],
+            IsDraft = isDraft
+        });
+    }
+
+    private Task<(bool Success, string? Error)> SubmitEmptyAsync(
+        Guid electionGuid,
+        string email,
+        bool isDraft)
+    {
+        return _service.SubmitBallotAsync(new SubmitOnlineBallotDto
+        {
+            ElectionGuid = electionGuid,
+            VoterId = email,
+            Votes = [],
+            IsDraft = isDraft
         });
     }
 }

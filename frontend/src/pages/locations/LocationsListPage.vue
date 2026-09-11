@@ -7,7 +7,7 @@ import { useRoute } from "vue-router";
 import LocationForm from "../../components/locations/LocationForm.vue";
 import { useLocationStore } from "../../stores/locationStore";
 import type { LocationDto } from "../../types";
-import { isOnlineLocationType } from "@/utils/ballotStartRequirements";
+import { isReservedLocationType } from "@/utils/ballotStartRequirements";
 import { formatLocationLabel } from "@/utils/locationDisplay";
 
 const route = useRoute();
@@ -108,12 +108,12 @@ function formatCoordinate(coord: string | undefined): string {
   return Number.isNaN(num) ? coord : num.toFixed(4);
 }
 
-function isOnlineLocation(location: LocationDto): boolean {
-  return isOnlineLocationType(location.locationType);
+function isReservedLocation(location: LocationDto): boolean {
+  return isReservedLocationType(location.locationType);
 }
 
 function locationRowClassName({ row }: { row: LocationDto }): string {
-  return isOnlineLocation(row) ? "is-online-location" : "";
+  return isReservedLocation(row) ? "is-reserved-location" : "";
 }
 
 function getStatusType(status: string) {
@@ -157,18 +157,30 @@ function getStatusType(status: string) {
           >
             <template #default="scope">
               <div class="location-name-cell">
-                <el-button type="primary" link @click="handleEdit(scope.row)">
+                <el-button
+                  v-if="isReservedLocation(scope.row)"
+                  type="primary"
+                  link
+                  class="reserved-location-name-button"
+                  @click="handleEdit(scope.row)"
+                >
+                  <el-tag
+                    type="info"
+                    size="small"
+                    effect="plain"
+                    class="reserved-location-badge"
+                  >
+                    {{ formatLocationLabel($t, scope.row) }}
+                  </el-tag>
+                </el-button>
+                <el-button
+                  v-else
+                  type="primary"
+                  link
+                  @click="handleEdit(scope.row)"
+                >
                   {{ formatLocationLabel($t, scope.row) }}
                 </el-button>
-                <el-tag
-                  v-if="isOnlineLocation(scope.row)"
-                  type="info"
-                  size="small"
-                  effect="plain"
-                  class="online-location-badge"
-                >
-                  {{ $t("locations.onlineVotingBadge") }}
-                </el-tag>
               </div>
             </template>
           </el-table-column>
@@ -176,7 +188,12 @@ function getStatusType(status: string) {
             prop="contactInfo"
             :label="$t('locations.form.contactInfo')"
             min-width="200"
-          />
+          >
+            <template #default="scope">
+              <span v-if="isReservedLocation(scope.row)">-</span>
+              <span v-else>{{ scope.row.contactInfo || "-" }}</span>
+            </template>
+          </el-table-column>
           <el-table-column
             prop="locationTallyStatus"
             :label="$t('locations.tallyStatus')"
@@ -284,11 +301,15 @@ function getStatusType(status: string) {
     flex-wrap: wrap;
   }
 
-  .online-location-badge {
-    pointer-events: none;
+  .reserved-location-name-button {
+    .reserved-location-badge {
+      pointer-events: none;
+      vertical-align: middle;
+      font-size: calc(1em - 2px);
+    }
   }
 
-  .el-table .is-online-location {
+  .el-table .is-reserved-location {
     --el-table-tr-bg-color: var(--el-color-info-light-9);
   }
 }

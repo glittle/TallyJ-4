@@ -1,9 +1,13 @@
 import { describe, expect, it } from "vitest";
 import {
+  autosaveAsDraft,
   buildOnlineVotes,
   createEmptyVoteSlots,
+  getDuplicateVotePositions,
   getEffectiveVoteName,
   hasDuplicateVotes,
+  isSubmittedOnlineVoteStatus,
+  shouldWriteAutosave,
   useVoterBallotHelpers,
 } from "../useVoterBallot";
 
@@ -40,6 +44,17 @@ describe("useVoterBallot", () => {
     expect(hasDuplicateVotes(slots, "B")).toBe(true);
   });
 
+  it("getDuplicateVotePositions returns every duplicated line", () => {
+    const slots = createEmptyVoteSlots(3);
+    slots[0].person = { personGuid: "p1", fullName: "Alice" };
+    slots[0].searchText = "Alice";
+    slots[1].person = { personGuid: "p1", fullName: "Alice" };
+    slots[1].searchText = "Alice";
+    slots[2].searchText = "Bob";
+
+    expect([...getDuplicateVotePositions(slots, "A")].sort()).toEqual([1, 2]);
+  });
+
   it("hasDuplicateVotes detects repeated pool names in both mode", () => {
     const slots = createEmptyVoteSlots(2);
     slots[0].searchText = "Pool Person";
@@ -60,6 +75,98 @@ describe("useVoterBallot", () => {
     expect(poolEntries.value).toHaveLength(1);
     expect(poolEntries.value[0].fullName).toBe("New Person");
     expect(poolForm.value.firstName).toBe("");
+  });
+
+  it("addEntryToNextEmptyVote fills the first empty ballot line", () => {
+    const { takePoolFormEntry, addEntryToNextEmptyVote, poolForm } =
+      useVoterBallotHelpers(() => "C");
+    const slots = createEmptyVoteSlots(2);
+    slots[0].searchText = "Already filled";
+    poolForm.value = {
+      firstName: "New",
+      lastName: "Person",
+      otherInfo: "note",
+    };
+
+    const entry = takePoolFormEntry();
+    expect(entry).not.toBeNull();
+    expect(addEntryToNextEmptyVote(slots, entry!)).toBe(2);
+    expect(slots[1].searchText).toBe("New Person");
+    expect(slots[1].person?.fullName).toBe("New Person");
+  });
+
+  it("addEntryToNextEmptyVote returns null when the ballot is full", () => {
+    const { addEntryToNextEmptyVote } = useVoterBallotHelpers(() => "B");
+    const slots = createEmptyVoteSlots(1);
+    slots[0].freeText = "Taken";
+
+    expect(
+      addEntryToNextEmptyVote(slots, {
+        fullName: "Someone Else",
+      }),
+    ).toBeNull();
+  });
+
+  it("placePoolFormOnBallot keeps the form when the ballot is full", () => {
+    const { poolForm, placePoolFormOnBallot } = useVoterBallotHelpers(
+      () => "C",
+    );
+    const slots = createEmptyVoteSlots(1);
+    slots[0].searchText = "Taken";
+    poolForm.value = {
+      firstName: "New",
+      lastName: "Person",
+      otherInfo: "Area 1",
+    };
+
+    expect(placePoolFormOnBallot(slots)).toBe("full");
+    expect(poolForm.value).toEqual({
+      firstName: "New",
+      lastName: "Person",
+      otherInfo: "Area 1",
+    });
+  });
+
+  it("placePoolFormOnBallot clears the form only after a successful placement", () => {
+    const { poolForm, placePoolFormOnBallot } = useVoterBallotHelpers(
+      () => "C",
+    );
+    const slots = createEmptyVoteSlots(1);
+    poolForm.value = {
+      firstName: "New",
+      lastName: "Person",
+      otherInfo: "note",
+    };
+
+    expect(placePoolFormOnBallot(slots)).toBe(1);
+    expect(slots[0].searchText).toBe("New Person");
+    expect(poolForm.value).toEqual({
+      firstName: "",
+      lastName: "",
+      otherInfo: "",
+    });
+  });
+
+  it("shouldWriteAutosave overwrites a saved empty ballot", () => {
+    expect(shouldWriteAutosave(false, false)).toBe(false);
+    expect(shouldWriteAutosave(true, false)).toBe(true);
+    expect(shouldWriteAutosave(false, true)).toBe(true);
+  });
+
+  it("autosaveAsDraft is false once the ballot is Submitted", () => {
+    expect(autosaveAsDraft(false)).toBe(true);
+    expect(autosaveAsDraft(true)).toBe(false);
+  });
+
+  it("isSubmittedOnlineVoteStatus uses whenSubmitted, not hasVoted", () => {
+    expect(isSubmittedOnlineVoteStatus({ hasVoted: true })).toBe(false);
+    expect(
+      isSubmittedOnlineVoteStatus({
+        hasVoted: true,
+        whenSubmitted: new Date("2026-09-11T00:00:00Z"),
+      }),
+    ).toBe(true);
+    expect(isSubmittedOnlineVoteStatus(null)).toBe(false);
   });
 
   it("applyPriorVotes prefills slots from status", () => {
@@ -84,5 +191,31 @@ describe("useVoterBallot", () => {
 
     expect(slots[0].person?.fullName).toBe("Alice Smith");
     expect(slots[1].searchText).toBe("Free Name");
+  });
+
+  it("applyPriorVotes sets isEditing only when already Submitted", () => {
+    const helpers = useVoterBallotHelpers(() => "B");
+    const slots = createEmptyVoteSlots(1);
+    helpers.applyPriorVotes(
+      slots,
+      {
+        hasVoted: true,
+        whenSubmitted: null,
+        priorVotes: [{ voteName: "Draft Name", positionOnBallot: 1 }],
+      },
+      [],
+    );
+    expect(helpers.isEditing.value).toBe(false);
+
+    helpers.applyPriorVotes(
+      slots,
+      {
+        hasVoted: true,
+        whenSubmitted: new Date("2026-09-11T00:00:00Z"),
+        priorVotes: [{ voteName: "Submitted Name", positionOnBallot: 1 }],
+      },
+      [],
+    );
+    expect(helpers.isEditing.value).toBe(true);
   });
 });

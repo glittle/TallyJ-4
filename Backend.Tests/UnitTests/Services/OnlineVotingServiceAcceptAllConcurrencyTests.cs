@@ -63,10 +63,11 @@ public class OnlineVotingServiceAcceptAllConcurrencyTests
         Assert.Equal(1, accept.AcceptedCount);
 
         var wrote = await CreateService(staleContext, new AlwaysAllowAcceptLock())
-            .TryWritePendingPayloadIfStillSubmittedAsync(
+            .TryWritePendingPayloadIfEditableAsync(
                 staleRow,
                 """{"votes":[],"pool":[]}""",
-                DateTimeOffset.UtcNow);
+                DateTimeOffset.UtcNow,
+                isDraft: false);
         Assert.False(wrote);
 
         await using var check = db.CreateContext();
@@ -75,6 +76,64 @@ public class OnlineVotingServiceAcceptAllConcurrencyTests
         Assert.Equal(OnlineBallotStatus.Processed, ovi.Status);
         Assert.Null(ovi.ListPool);
         Assert.Null(ovi.BallotGuid);
+    }
+
+    [Fact]
+    public async Task SubmitWrite_IsDraftOnSubmitted_StaysSubmittedAndAcceptAllPending()
+    {
+        await using var db = await SqliteOnlineVotingDb.CreateAsync();
+        var election = await SeedPendingVoterAsync(db);
+
+        await using var writeContext = db.CreateContext();
+        var row = await writeContext.OnlineVotingInfos.SingleAsync();
+        Assert.Equal(OnlineBallotStatus.Submitted, row.Status);
+
+        var wrote = await CreateService(writeContext, new AlwaysAllowAcceptLock())
+            .TryWritePendingPayloadIfEditableAsync(
+                row,
+                """{"votes":[{"voteName":"Changed"}],"pool":[]}""",
+                DateTimeOffset.UtcNow,
+                isDraft: true);
+        Assert.True(wrote);
+
+        await using var check = db.CreateContext();
+        var ovi = await check.OnlineVotingInfos.SingleAsync();
+        Assert.Equal(OnlineBallotStatus.Submitted, ovi.Status);
+        Assert.Contains("Changed", ovi.ListPool);
+
+        var summary = await CreateService(check, new AlwaysAllowAcceptLock())
+            .GetAcceptAllSummaryAsync(election.ElectionGuid);
+        Assert.Equal(1, summary!.PendingCount);
+    }
+
+    [Fact]
+    public async Task AcceptAll_EmptySubmitted_RestoresSubmittedAndLeavesVoterEditable()
+    {
+        await using var db = await SqliteOnlineVotingDb.CreateAsync();
+        var election = await SeedPendingVoterAsync(db);
+
+        await using var writeContext = db.CreateContext();
+        var row = await writeContext.OnlineVotingInfos.SingleAsync();
+        var wrote = await CreateService(writeContext, new AlwaysAllowAcceptLock())
+            .TryWritePendingPayloadIfEditableAsync(
+                row,
+                """{"votes":[],"pool":[]}""",
+                DateTimeOffset.UtcNow,
+                isDraft: false);
+        Assert.True(wrote);
+
+        await using var acceptContext = db.CreateContext();
+        var result = await CreateService(acceptContext, new AlwaysAllowAcceptLock())
+            .AcceptAllPendingAsync(election.ElectionGuid);
+        Assert.True(result.Success);
+        Assert.Equal(0, result.AcceptedCount);
+
+        await using var check = db.CreateContext();
+        Assert.Equal(0, await check.Ballots.CountAsync());
+        var ovi = await check.OnlineVotingInfos.SingleAsync();
+        Assert.Equal(OnlineBallotStatus.Submitted, ovi.Status);
+        Assert.False(string.IsNullOrWhiteSpace(ovi.ListPool));
+        Assert.False(OnlineVotingService.CannotChangeOnlineVote(ovi));
     }
 
     [Fact]

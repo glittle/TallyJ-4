@@ -12,7 +12,9 @@ import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
 import {
   BALLOT_START_BLOCK_MESSAGE_KEY,
   getBallotStartBlockReason,
+  isImportedLocationType,
   isOnlineLocationType,
+  isReservedLocationType,
   locationTypeForGuid,
   type BallotStartBlockReason,
 } from "@/utils/ballotStartRequirements";
@@ -79,9 +81,19 @@ const selectedLocationType = computed(() =>
   ),
 );
 
-const isOnlineLocationSelected = computed(() =>
-  isOnlineLocationType(selectedLocationType.value),
+const isReservedLocationSelected = computed(() =>
+  isReservedLocationType(selectedLocationType.value),
 );
+
+const reservedLocationBlockMessage = computed(() => {
+  if (isOnlineLocationType(selectedLocationType.value)) {
+    return t(BALLOT_START_BLOCK_MESSAGE_KEY.onlineLocation);
+  }
+  if (isImportedLocationType(selectedLocationType.value)) {
+    return t(BALLOT_START_BLOCK_MESSAGE_KEY.importedLocation);
+  }
+  return undefined;
+});
 
 const showLocationColumn = computed(() => locationStore.locations.length > 1);
 
@@ -291,7 +303,11 @@ function handleBallotCreatedFromEntry(ballotGuid: string) {
 }
 
 function flashStartBlockField(reason: BallotStartBlockReason) {
-  if (reason === "location" || reason === "onlineLocation") {
+  if (
+    reason === "location" ||
+    reason === "onlineLocation" ||
+    reason === "importedLocation"
+  ) {
     void flashLocation();
   } else if (reason === "teller") {
     void flashTeller();
@@ -373,12 +389,8 @@ function handleLocationChange(locationGuid: string | null) {
             <el-button
               type="primary"
               :loading="creatingBallot"
-              :disabled="isOnlineLocationSelected"
-              :title="
-                isOnlineLocationSelected
-                  ? $t('ballots.onlineLocationNotAllowed')
-                  : undefined
-              "
+              :disabled="isReservedLocationSelected"
+              :title="reservedLocationBlockMessage"
               @click="handleAddBallot"
             >
               <el-icon>

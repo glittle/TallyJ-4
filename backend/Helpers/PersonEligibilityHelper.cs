@@ -60,8 +60,8 @@ public static class PersonEligibilityHelper
     /// <summary>
     /// Front Desk check-in (<see cref="Person.VotingMethod"/>) or a <c>Processed</c>
     /// <see cref="OnlineVotingInfo"/> row (Accept-all) is the record that this person
-    /// has already voted. <see cref="Person.HasOnlineBallot"/> is set on voter submit
-    /// (pending <c>Submitted</c>) and does not mean accepted.
+    /// has already voted. <see cref="Person.HasOnlineBallot"/> is set on the first
+    /// online write (Draft autosave or Submitted) and does not mean accepted.
     /// </summary>
     public static bool HasAcceptedBallot(Person? person, bool hasProcessedOnlineBallot = false)
     {

@@ -100,8 +100,8 @@ public class LocationService : ILocationService
         location.LocationGuid = Guid.NewGuid();
         location.LocationTallyStatus = LocationTallyStatus.NotStarted;
         location.BallotsCollected = 0;
-        // Teller-created rows are never the reserved Online type. That row is
-        // added only by OnlineLocationHelper when online voting is enabled.
+        // Teller-created rows are never reserved Online / Imported types.
+        // Those rows are created by OnlineLocationHelper / CDN import only.
         location.LocationTypeCode = null;
 
         _context.Locations.Add(location);
@@ -134,16 +134,16 @@ public class LocationService : ILocationService
             return null;
         }
 
-        if (LocationDisplayHelper.IsOnlineLocation(location))
+        if (LocationDisplayHelper.IsReservedLocation(location))
         {
             // Name, contact, and coordinates are not identity and are not
-            // editable. Only sort order may change.
+            // editable on reserved Online / Imported rows. Only sort order.
             location.SortOrder = updateDto.SortOrder;
         }
         else
         {
-            // Validator cannot see LocationType. Paper/imported rows still
-            // require a name; omitting it would clear Location.Name on copy.
+            // Validator cannot see LocationType. Paper rows still require a
+            // name; omitting it would clear Location.Name on copy.
             if (string.IsNullOrWhiteSpace(updateDto.Name))
             {
                 throw new InvalidOperationException("Location name is required");
@@ -180,10 +180,12 @@ public class LocationService : ILocationService
             return false;
         }
 
-        if (location.LocationTypeEnum == LocationType.Online)
+        if (LocationDisplayHelper.IsReservedLocation(location))
         {
             throw new InvalidOperationException(
-                "The Online location is managed by online voting setup and cannot be deleted.");
+                location.LocationTypeEnum == LocationType.Imported
+                    ? "The Imported location is managed by ballot import and cannot be deleted."
+                    : "The Online location is managed by online voting setup and cannot be deleted.");
         }
 
         _context.Locations.Remove(location);

@@ -701,6 +701,12 @@ defineExpose({
 
   .kiosk-code-field {
     width: 100%;
+
+    .el-input.is-disabled,
+    .el-input.is-disabled .el-input__wrapper,
+    .el-input.is-disabled .el-input__inner {
+      cursor: text;
+    }
   }
 
   .kiosk-code-note {

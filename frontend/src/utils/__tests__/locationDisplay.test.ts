@@ -5,7 +5,11 @@ import {
 } from "../locationDisplay";
 
 describe("formatLocationLabel", () => {
-  const t = (key: string) => (key === "locations.typeOnline" ? "آنلاین" : key);
+  const t = (key: string) => {
+    if (key === "locations.typeOnline") return "آنلاین";
+    if (key === "locations.typeImported") return "وارداتی";
+    return key;
+  };
 
   it("uses i18n for an Online-typed location regardless of name", () => {
     expect(
@@ -13,10 +17,22 @@ describe("formatLocationLabel", () => {
     ).toBe("آنلاین");
   });
 
+  it("uses i18n for an Imported-typed location regardless of name", () => {
+    expect(
+      formatLocationLabel(t, { name: "Hall A", locationType: "Imported" }),
+    ).toBe("وارداتی");
+  });
+
   it("uses the stored name for a paper location even if it is Online", () => {
     expect(
       formatLocationLabel(t, { name: "Online", locationType: "Manual" }),
     ).toBe("Online");
+  });
+
+  it("uses the stored name for a paper location even if it is Imported", () => {
+    expect(
+      formatLocationLabel(t, { name: "Imported", locationType: "Manual" }),
+    ).toBe("Imported");
   });
 
   it("uses the stored name for a paper location", () => {
@@ -27,7 +43,11 @@ describe("formatLocationLabel", () => {
 });
 
 describe("formatLocationLabelForGuid", () => {
-  const t = (key: string) => (key === "locations.typeOnline" ? "آنلاین" : key);
+  const t = (key: string) => {
+    if (key === "locations.typeOnline") return "آنلاین";
+    if (key === "locations.typeImported") return "وارداتی";
+    return key;
+  };
 
   const locations = [
     {
@@ -40,12 +60,23 @@ describe("formatLocationLabelForGuid", () => {
       name: "Hall A",
       locationType: "Online",
     },
+    {
+      locationGuid: "loc-imported",
+      name: "Hall B",
+      locationType: "Imported",
+    },
   ];
 
   it("looks up type by guid and uses i18n for Online", () => {
     expect(
       formatLocationLabelForGuid(t, locations, "loc-online", "Hall A"),
     ).toBe("آنلاین");
+  });
+
+  it("looks up type by guid and uses i18n for Imported", () => {
+    expect(
+      formatLocationLabelForGuid(t, locations, "loc-imported", "Hall B"),
+    ).toBe("وارداتی");
   });
 
   it("looks up a paper location by guid", () => {

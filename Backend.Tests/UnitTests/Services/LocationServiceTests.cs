@@ -198,4 +198,66 @@ public class LocationServiceTests : ServiceTestBase
         Assert.Contains("cannot be deleted", ex.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Single(Context.Locations.Where(l => l.LocationGuid == locationGuid));
     }
+
+    [Fact]
+    public async Task UpdateLocationAsync_Imported_IgnoresNameContactAndCoordinates_AppliesSortOrder()
+    {
+        var locationGuid = Guid.NewGuid();
+        Context.Locations.Add(new Location
+        {
+            LocationGuid = locationGuid,
+            ElectionGuid = ElectionGuid,
+            Name = "Imported",
+            ContactInfo = null,
+            Long = null,
+            Lat = null,
+            SortOrder = 998,
+            LocationTypeCode = nameof(LocationType.Imported),
+            LocationTallyStatus = LocationTallyStatus.NotStarted,
+            BallotsCollected = 0
+        });
+        await Context.SaveChangesAsync();
+
+        var updated = await _service.UpdateLocationAsync(locationGuid, new UpdateLocationDto
+        {
+            Name = "Renamed",
+            ContactInfo = "do not store",
+            Longitude = "-122.4",
+            Latitude = "37.7",
+            SortOrder = 7
+        });
+
+        Assert.NotNull(updated);
+        Assert.Equal("Imported", updated.Name);
+        Assert.Null(updated.ContactInfo);
+        Assert.Equal(7, updated.SortOrder);
+
+        var stored = Context.Locations.Single(l => l.LocationGuid == locationGuid);
+        Assert.Equal("Imported", stored.Name);
+        Assert.Null(stored.ContactInfo);
+        Assert.Equal(7, stored.SortOrder);
+        Assert.Equal(nameof(LocationType.Imported), stored.LocationTypeCode);
+    }
+
+    [Fact]
+    public async Task DeleteLocationAsync_Imported_Throws()
+    {
+        var locationGuid = Guid.NewGuid();
+        Context.Locations.Add(new Location
+        {
+            LocationGuid = locationGuid,
+            ElectionGuid = ElectionGuid,
+            Name = "Imported",
+            LocationTypeCode = nameof(LocationType.Imported),
+            LocationTallyStatus = LocationTallyStatus.NotStarted,
+            BallotsCollected = 0
+        });
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _service.DeleteLocationAsync(locationGuid));
+
+        Assert.Contains("cannot be deleted", ex.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Single(Context.Locations.Where(l => l.LocationGuid == locationGuid));
+    }
 }

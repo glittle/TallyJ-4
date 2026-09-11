@@ -22,12 +22,11 @@ public partial class TallyService : ITallyService
 
     private string FormatLocationName(string? storedName, string? locationTypeCode)
     {
-        if (Backend.Helpers.LocationDisplayHelper.IsOnlineLocationType(locationTypeCode))
-        {
-            return _localizer[Backend.Helpers.LocationDisplayHelper.TypeOnlineKey];
-        }
-
-        return string.IsNullOrWhiteSpace(storedName) ? UnknownLocationName : storedName.Trim();
+        var label = Backend.Helpers.LocationDisplayHelper.FormatName(
+            storedName,
+            locationTypeCode,
+            key => _localizer[key]);
+        return string.IsNullOrWhiteSpace(label) ? UnknownLocationName : label;
     }
 
     private string FormatLocationName(Backend.Entities.Location location) =>

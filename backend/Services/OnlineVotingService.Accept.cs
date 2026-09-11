@@ -74,14 +74,30 @@ public partial class OnlineVotingService
             var countsBefore = await CountPendingAndAcceptedAsync(electionGuid);
 
             // Pass 1: load the expected set, then persist Processing so another
-            // server sharing this database can see the claim.
-            var expectedIds = await _context.OnlineVotingInfos
+            // server sharing this database can see the claim. Empty Submitted
+            // overwrites stay Submitted (pending-but-skipped) until they have
+            // votes again. Already-Processing rows are always retried so a
+            // leftover claim is not stuck.
+            var candidates = await _context.OnlineVotingInfos
                 .Where(o => o.ElectionGuid == electionGuid
                             && (o.Status == OnlineBallotStatus.Submitted
                                 || o.Status == OnlineBallotStatus.Processing))
                 .OrderBy(o => o.PersonGuid)
-                .Select(o => o.RowId)
+                .Select(o => new
+                {
+                    o.RowId,
+                    o.Status,
+                    o.BallotGuid,
+                    o.ListPool
+                })
                 .ToListAsync();
+
+            var expectedIds = candidates
+                .Where(o => OnlineBallotStatus.IsProcessing(o.Status)
+                            || o.BallotGuid != null
+                            || HasVotesToAccept(o.ListPool))
+                .Select(o => o.RowId)
+                .ToList();
 
             await ClaimSubmittedRowsAsProcessingAsync(electionGuid, expectedIds);
 
@@ -255,12 +271,24 @@ public partial class OnlineVotingService
             && payload.Votes.Count > 0;
         var hasLegacyBallot = votingInfo.BallotGuid != null;
 
+        if (!hasLegacyBallot && !hasPendingPayload)
+        {
+            // Empty overwrite (or unreadable payload) with no legacy ballot.
+            // Do not Processed-wipe: that locks the voter out with no OL ballot.
+            // Keep Submitted so they can put names back. Never demote to Draft.
+            votingInfo.Status = OnlineBallotStatus.Submitted;
+            votingInfo.WhenStatus = now;
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
+            return false;
+        }
+
         if (hasLegacyBallot)
         {
             // Already a regular ballot from the previous submit-creates-ballot path.
             // Accept only wipes the online payload and unlinks; do not create another.
         }
-        else if (hasPendingPayload)
+        else
         {
             var ballot = await CreateRegularBallotFromPendingVotesAsync(electionGuid, payload.Votes);
             if (ballot == null)

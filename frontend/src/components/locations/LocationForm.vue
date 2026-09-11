@@ -3,7 +3,7 @@ import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useNotifications } from "@/composables/useNotifications";
 import { type FormInstance, type FormRules, ElMessageBox } from "element-plus";
 import { computed, reactive, ref, watch } from "vue";
-import { isOnlineLocationType } from "@/utils/ballotStartRequirements";
+import { isReservedLocationType } from "@/utils/ballotStartRequirements";
 import { formatLocationLabel } from "@/utils/locationDisplay";
 import { useI18n } from "vue-i18n";
 import { useLocationStore } from "../../stores/locationStore";
@@ -34,13 +34,13 @@ const { handleApiError } = useApiErrorHandler();
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
 const deleting = ref(false);
-const isOnlineLocation = computed(() =>
-  isOnlineLocationType(props.location?.locationType),
+const isReservedLocation = computed(() =>
+  isReservedLocationType(props.location?.locationType),
 );
 const canDelete = computed(
-  () => Boolean(props.showDelete) && !isOnlineLocation.value,
+  () => Boolean(props.showDelete) && !isReservedLocation.value,
 );
-const onlineDisplayName = computed(() =>
+const reservedDisplayName = computed(() =>
   props.location
     ? formatLocationLabel(t, props.location)
     : t("locations.typeOnline"),
@@ -132,7 +132,7 @@ async function handleSubmit() {
     submitting.value = true;
     try {
       if (props.isEdit && props.location) {
-        const dto: UpdateLocationDto = isOnlineLocation.value
+        const dto: UpdateLocationDto = isReservedLocation.value
           ? { sortOrder: form.sortOrder }
           : {
               name: form.name,
@@ -218,11 +218,13 @@ function handleCancel() {
       label-position="left"
     >
       <el-form-item
-        v-if="isOnlineLocation"
+        v-if="isReservedLocation"
         :label="$t('locations.form.name')"
-        data-testid="online-location-name"
+        data-testid="reserved-location-name"
       >
-        <div class="location-form__readonly-name">{{ onlineDisplayName }}</div>
+        <div class="location-form__readonly-name">
+          {{ reservedDisplayName }}
+        </div>
       </el-form-item>
       <el-form-item v-else :label="$t('locations.form.name')" prop="name">
         <el-input
@@ -231,7 +233,7 @@ function handleCancel() {
         />
       </el-form-item>
 
-      <template v-if="!isOnlineLocation">
+      <template v-if="!isReservedLocation">
         <el-form-item
           :label="$t('locations.form.contactInfo')"
           prop="contactInfo"
@@ -291,8 +293,8 @@ function handleCancel() {
         />
         <div class="form-help-text">
           {{
-            isOnlineLocation
-              ? $t("locations.form.onlineSortOnlyHelp")
+            isReservedLocation
+              ? $t("locations.form.reservedSortOnlyHelp")
               : $t("locations.form.sortOrderHelp")
           }}
         </div>

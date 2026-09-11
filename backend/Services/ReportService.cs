@@ -33,15 +33,8 @@ public partial class ReportService : IReportService
         _localizer = localizer;
     }
 
-    private string FormatLocationName(string? storedName, string? locationTypeCode)
-    {
-        if (LocationDisplayHelper.IsOnlineLocationType(locationTypeCode))
-        {
-            return _localizer[LocationDisplayHelper.TypeOnlineKey];
-        }
-
-        return storedName?.Trim() ?? string.Empty;
-    }
+    private string FormatLocationName(string? storedName, string? locationTypeCode) =>
+        LocationDisplayHelper.FormatName(storedName, locationTypeCode, key => _localizer[key]);
 
     private string FormatLocationName(Location location) =>
         FormatLocationName(location.Name, location.LocationTypeCode);

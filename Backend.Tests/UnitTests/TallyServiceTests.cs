@@ -1726,7 +1726,7 @@ public class TallyServiceTests : ServiceTestBase
     public async Task GetMonitorInfoAsync_CountsPendingAndAcceptedOnlineBallotsByStoredStatus()
     {
         var election = await CreateTestElectionAsync();
-        var people = await CreateTestPeopleAsync(election.ElectionGuid, 4);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 5);
 
         Context.OnlineVotingInfos.AddRange(
             new OnlineVotingInfo
@@ -1764,6 +1764,15 @@ public class TallyServiceTests : ServiceTestBase
                 Status = OnlineBallotStatus.Submitted,
                 WhenStatus = DateTimeOffset.UtcNow.AddMinutes(-10),
                 ListPool = "[9]",
+                PoolLocked = true
+            },
+            new OnlineVotingInfo
+            {
+                ElectionGuid = election.ElectionGuid,
+                PersonGuid = people[4].PersonGuid,
+                Status = OnlineBallotStatus.Draft,
+                WhenStatus = DateTimeOffset.UtcNow.AddMinutes(-5),
+                ListPool = """{"votes":[{"voteName":"Draft"}],"pool":[]}""",
                 PoolLocked = true
             });
         await Context.SaveChangesAsync();
