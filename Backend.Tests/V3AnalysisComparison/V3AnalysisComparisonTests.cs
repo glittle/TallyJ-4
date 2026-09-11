@@ -49,7 +49,7 @@ public class V3AnalysisComparisonTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task SyntheticPipeline_ShipsSimpleTiesAndExtras()
+    public void SyntheticPipeline_ShipsSimpleTiesAndExtras()
     {
         var names = V3AnalysisComparisonHarness
             .DiscoverFixtureDirectories(V3AnalysisComparisonHarness.SyntheticPipelineFolder)
