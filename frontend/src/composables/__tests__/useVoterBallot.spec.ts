@@ -192,4 +192,30 @@ describe("useVoterBallot", () => {
     expect(slots[0].person?.fullName).toBe("Alice Smith");
     expect(slots[1].searchText).toBe("Free Name");
   });
+
+  it("applyPriorVotes sets isEditing only when already Submitted", () => {
+    const helpers = useVoterBallotHelpers(() => "B");
+    const slots = createEmptyVoteSlots(1);
+    helpers.applyPriorVotes(
+      slots,
+      {
+        hasVoted: true,
+        whenSubmitted: null,
+        priorVotes: [{ voteName: "Draft Name", positionOnBallot: 1 }],
+      },
+      [],
+    );
+    expect(helpers.isEditing.value).toBe(false);
+
+    helpers.applyPriorVotes(
+      slots,
+      {
+        hasVoted: true,
+        whenSubmitted: new Date("2026-09-11T00:00:00Z"),
+        priorVotes: [{ voteName: "Submitted Name", positionOnBallot: 1 }],
+      },
+      [],
+    );
+    expect(helpers.isEditing.value).toBe(true);
+  });
 });

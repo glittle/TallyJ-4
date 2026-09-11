@@ -195,7 +195,6 @@ const runAutosave = debounce(async () => {
       { silent: true },
     );
     hasPersistedPayload.value = true;
-    isEditing.value = true;
   } catch (error) {
     console.error("Silent ballot autosave failed:", error);
   }
@@ -268,11 +267,13 @@ async function handleSubmit() {
       electionGuid.value,
       buildSubmitPayload(false),
     );
+    const resubmitting = alreadySubmitted.value;
     alreadySubmitted.value = true;
     hasPersistedPayload.value = true;
+    isEditing.value = true;
 
     showSuccessMessage(
-      isEditing.value
+      resubmitting
         ? t("voting.ballot.resubmitSuccess")
         : t("voting.ballot.submitSuccess"),
     );

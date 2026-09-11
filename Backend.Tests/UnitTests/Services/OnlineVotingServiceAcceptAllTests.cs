@@ -68,6 +68,40 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task Submit_EmptyVotes_OverwritesDraftAndSubmittedPayload()
+    {
+        var election = await SeedOpenElectionAsync();
+        var draftVoter = await SeedVoterAsync(election.ElectionGuid, "draft-clear@example.com");
+        var submittedVoter = await SeedVoterAsync(election.ElectionGuid, "submitted-clear@example.com");
+
+        Assert.True((await SubmitPendingAsync(
+            election.ElectionGuid, draftVoter.Email, draftVoter.Person.PersonGuid, isDraft: true)).Success);
+        Assert.True((await SubmitEmptyAsync(
+            election.ElectionGuid, draftVoter.Email, isDraft: true)).Success);
+
+        var draftStatus = await _service.GetVoteStatusAsync(election.ElectionGuid, draftVoter.Email);
+        Assert.True(draftStatus.HasVoted);
+        Assert.Empty(draftStatus.PriorVotes);
+        Assert.Equal(OnlineBallotStatus.Draft, Context.OnlineVotingInfos
+            .Single(o => o.PersonGuid == draftVoter.Person.PersonGuid).Status);
+
+        Assert.True((await SubmitPendingAsync(
+            election.ElectionGuid, submittedVoter.Email, submittedVoter.Person.PersonGuid)).Success);
+        Assert.True((await SubmitEmptyAsync(
+            election.ElectionGuid, submittedVoter.Email, isDraft: false)).Success);
+
+        var submittedStatus = await _service.GetVoteStatusAsync(
+            election.ElectionGuid, submittedVoter.Email);
+        Assert.True(submittedStatus.HasVoted);
+        Assert.Empty(submittedStatus.PriorVotes);
+        Assert.Equal(OnlineBallotStatus.Submitted, Context.OnlineVotingInfos
+            .Single(o => o.PersonGuid == submittedVoter.Person.PersonGuid).Status);
+
+        var summary = await _service.GetAcceptAllSummaryAsync(election.ElectionGuid);
+        Assert.Equal(1, summary!.PendingCount);
+    }
+
+    [Fact]
     public async Task Submit_Draft_IsExcludedFromAcceptAllPending()
     {
         var election = await SeedOpenElectionAsync();
@@ -726,6 +760,20 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
                     PositionOnBallot = 1
                 }
             ],
+            IsDraft = isDraft
+        });
+    }
+
+    private Task<(bool Success, string? Error)> SubmitEmptyAsync(
+        Guid electionGuid,
+        string email,
+        bool isDraft)
+    {
+        return _service.SubmitBallotAsync(new SubmitOnlineBallotDto
+        {
+            ElectionGuid = electionGuid,
+            VoterId = email,
+            Votes = [],
             IsDraft = isDraft
         });
     }

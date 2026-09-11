@@ -181,7 +181,7 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
     status: OnlineVoteStatus,
     votablePeople: OnlinePerson[],
   ) {
-    isEditing.value = status.hasVoted;
+    isEditing.value = isSubmittedOnlineVoteStatus(status);
     notifyWhenProcessed.value = status.notifyWhenProcessed ?? false;
     poolEntries.value = status.listPool ?? [];
 

@@ -15,7 +15,7 @@ Treat online ballot paths with the same rigor as core analysis. Prefer explicit 
 **Status:** active  
 **Evidence:** confirmed (Glen, #303 UAT; voter ballot page)
 
-While the voter fills names, the ballot page silently autosaves to `OnlineVotingInfo` as status **Draft** (payload in `ListPool`). Reload restores those votes. Draft is not Accept-all pending and does not inflate monitor Submitted counts. Clearing the last name overwrites that saved payload (empty Draft, or payload-only if already Submitted) so leave/return does not restore names the voter just removed. A first visit with no names still does not create a Draft.
+While the voter fills names, the ballot page silently autosaves to `OnlineVotingInfo` as status **Draft** (payload in `ListPool`). Reload restores those votes. Draft is not Accept-all pending and does not inflate monitor Submitted counts. Clearing the last name overwrites that saved payload (empty Draft, or payload-only if already Submitted) so leave/return does not restore names the voter just removed. Empty `Votes` is allowed on submit validation for that overwrite. A first visit with no names still does not create a Draft. Monitor `TotalOnlineBallots` is Submitted + Processing + Processed — Draft is not in that total or in pending.
 
 The explicit **Submit Ballot** action writes the same payload as **Submitted**. Accept-all still takes only `Submitted` + `Processing`.
 

@@ -234,7 +234,7 @@ const routes = [
 
         component: () => import("../pages/ballots/CdnBallotImportPage.vue"),
 
-        meta: { titleKey: "nav.importBallots" },
+        meta: { titleKey: "ballots.cdnImport.title" },
       },
 
       {

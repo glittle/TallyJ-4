@@ -329,6 +329,76 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task SubmitBallot_EmptyVotes_OverwritesDraftAndSubmittedThroughValidation()
+    {
+        var email = $"empty_{Guid.NewGuid():N}@example.com";
+        var electionGuid = await SetupOpenElectionWithVoter(email);
+        await EnsureOnlineVoterAsync(email, "E");
+
+        var draft = await Client.PostAsJsonAsync(
+            $"/api/online-voting/{electionGuid}/submitBallot",
+            new SubmitOnlineBallotDto
+            {
+                ElectionGuid = electionGuid,
+                VoterId = email,
+                IsDraft = true,
+                Votes =
+                [
+                    new OnlineVoteDto { VoteName = "Draft Name", PositionOnBallot = 1 }
+                ]
+            });
+        Assert.Equal(HttpStatusCode.OK, draft.StatusCode);
+
+        var clearDraft = await Client.PostAsJsonAsync(
+            $"/api/online-voting/{electionGuid}/submitBallot",
+            new SubmitOnlineBallotDto
+            {
+                ElectionGuid = electionGuid,
+                VoterId = email,
+                IsDraft = true,
+                Votes = []
+            });
+        Assert.Equal(HttpStatusCode.OK, clearDraft.StatusCode);
+
+        var draftStatus = await Client.GetFromJsonAsync<OnlineVoteStatusDto>(
+            $"/api/online-voting/{electionGuid}/{email}/voteStatus");
+        Assert.NotNull(draftStatus);
+        Assert.Empty(draftStatus.PriorVotes ?? []);
+        Assert.Null(draftStatus.WhenSubmitted);
+
+        var submit = await Client.PostAsJsonAsync(
+            $"/api/online-voting/{electionGuid}/submitBallot",
+            new SubmitOnlineBallotDto
+            {
+                ElectionGuid = electionGuid,
+                VoterId = email,
+                IsDraft = false,
+                Votes =
+                [
+                    new OnlineVoteDto { VoteName = "Submitted Name", PositionOnBallot = 1 }
+                ]
+            });
+        Assert.Equal(HttpStatusCode.OK, submit.StatusCode);
+
+        var clearSubmitted = await Client.PostAsJsonAsync(
+            $"/api/online-voting/{electionGuid}/submitBallot",
+            new SubmitOnlineBallotDto
+            {
+                ElectionGuid = electionGuid,
+                VoterId = email,
+                IsDraft = false,
+                Votes = []
+            });
+        Assert.Equal(HttpStatusCode.OK, clearSubmitted.StatusCode);
+
+        var submittedStatus = await Client.GetFromJsonAsync<OnlineVoteStatusDto>(
+            $"/api/online-voting/{electionGuid}/{email}/voteStatus");
+        Assert.NotNull(submittedStatus);
+        Assert.Empty(submittedStatus.PriorVotes ?? []);
+        Assert.NotNull(submittedStatus.WhenSubmitted);
+    }
+
+    [Fact]
     public async Task AcceptAll_WithoutTellerAuth_ReturnsUnauthorized()
     {
         var response = await Client.PostAsync(
