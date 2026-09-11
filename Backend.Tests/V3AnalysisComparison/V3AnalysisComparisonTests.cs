@@ -134,6 +134,68 @@ public class V3AnalysisComparisonTests : ServiceTestBase
     }
 
     [Fact]
+    public void Diff_DuplicatePersonNames_ReportsMismatchInsteadOfThrowing()
+    {
+        var expected = new AnalysisComparisonSnapshot
+        {
+            Counts =
+            [
+                new PersonCountSnapshot { LastName = "Smith", FirstName = "John", VoteCount = 10, Rank = 1, Section = "E" },
+                new PersonCountSnapshot { LastName = "Smith", FirstName = "John", VoteCount = 2, Rank = 4, Section = "O" }
+            ]
+        };
+        var actual = new AnalysisComparisonSnapshot
+        {
+            Counts =
+            [
+                new PersonCountSnapshot { LastName = "Smith", FirstName = "John", VoteCount = 9, Rank = 1, Section = "E" },
+                new PersonCountSnapshot { LastName = "smith", FirstName = "john", VoteCount = 2, Rank = 5, Section = "O" }
+            ]
+        };
+
+        var mismatches = AnalysisComparisonDiff.Diff(expected, actual);
+
+        Assert.Contains(mismatches, m =>
+            m.Contains("Count[Smith, John]")
+            && m.Contains("duplicate name in expected")
+            && m.Contains("rank 1 / 10 votes / E")
+            && m.Contains("rank 4 / 2 votes / O"));
+        Assert.Contains(mismatches, m =>
+            m.Contains("Count[Smith, John]")
+            && m.Contains("duplicate name in v4")
+            && m.Contains("rank 1 / 9 votes / E")
+            && m.Contains("rank 5 / 2 votes / O"));
+    }
+
+    [Fact]
+    public void Diff_DuplicateResultTypeAndTieGroup_ReportsMismatchInsteadOfThrowing()
+    {
+        var expected = new AnalysisComparisonSnapshot
+        {
+            Summaries =
+            [
+                new ResultSummarySnapshot { ResultType = "F", NumVoters = 3 },
+                new ResultSummarySnapshot { ResultType = "F", NumVoters = 4 }
+            ],
+            Ties =
+            [
+                new ResultTieSnapshot { TieBreakGroup = 1, NumInTie = 2, NumToElect = 1 },
+                new ResultTieSnapshot { TieBreakGroup = 1, NumInTie = 3, NumToElect = 1 }
+            ]
+        };
+        var actual = new AnalysisComparisonSnapshot
+        {
+            Summaries = [new ResultSummarySnapshot { ResultType = "F", NumVoters = 3 }],
+            Ties = [new ResultTieSnapshot { TieBreakGroup = 1, NumInTie = 2, NumToElect = 1 }]
+        };
+
+        var mismatches = AnalysisComparisonDiff.Diff(expected, actual);
+
+        Assert.Contains(mismatches, m => m.Contains("ResultSummary[F]") && m.Contains("duplicate ResultType in expected"));
+        Assert.Contains(mismatches, m => m.Contains("ResultTie[1]") && m.Contains("duplicate TieBreakGroup in expected"));
+    }
+
+    [Fact]
     public async Task ExpectedJson_OverridesImportedRows()
     {
         var fixtureDir = Path.Combine(
