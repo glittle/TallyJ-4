@@ -74,14 +74,11 @@ public partial class OnlineVotingService
             }
 
             var payloadJson = SerializePendingPayload(dto.Votes, dto.ListPool);
-            var targetStatus = dto.IsDraft
-                ? OnlineBallotStatus.Draft
-                : OnlineBallotStatus.Submitted;
 
             if (existingVotingInfo != null)
             {
                 var wrote = await TryWritePendingPayloadIfEditableAsync(
-                    existingVotingInfo, payloadJson, now, targetStatus);
+                    existingVotingInfo, payloadJson, now, dto.IsDraft);
                 if (!wrote)
                 {
                     await transaction.RollbackAsync();
@@ -95,7 +92,7 @@ public partial class OnlineVotingService
                     ElectionGuid = dto.ElectionGuid,
                     PersonGuid = person?.PersonGuid ?? Guid.NewGuid(),
                     WhenBallotCreated = now,
-                    Status = targetStatus,
+                    Status = OnlineBallotStatus.StatusAfterWrite(null, dto.IsDraft),
                     WhenStatus = now,
                     ListPool = payloadJson,
                     PoolLocked = true
@@ -229,16 +226,18 @@ public partial class OnlineVotingService
 
     /// <summary>
     /// Writes a pending payload while the row is still Draft or Submitted and has
-    /// no BallotGuid. Sets <paramref name="targetStatus"/> (Draft for autosave,
-    /// Submitted for final submit). Relational providers use a filtered UPDATE so
-    /// a concurrent Accept-all that already set Processing or Processed cannot be
-    /// clobbered. Does not touch BallotGuid.
+    /// no BallotGuid. Draft autosave stays Draft; explicit submit promotes to
+    /// Submitted. Already-Submitted rows stay Submitted even when
+    /// <paramref name="isDraft"/> is true (payload only — never demote).
+    /// Relational providers use a filtered UPDATE so a concurrent Accept-all
+    /// that already set Processing or Processed cannot be clobbered. Does not
+    /// touch BallotGuid.
     /// </summary>
     internal async Task<bool> TryWritePendingPayloadIfEditableAsync(
         OnlineVotingInfo existingVotingInfo,
         string payloadJson,
         DateTimeOffset now,
-        string targetStatus)
+        bool isDraft)
     {
         if (_context.Database.IsRelational())
         {
@@ -250,7 +249,12 @@ public partial class OnlineVotingService
                 .ExecuteUpdateAsync(setters => setters
                     .SetProperty(o => o.WhenBallotCreated, now)
                     .SetProperty(o => o.WhenStatus, now)
-                    .SetProperty(o => o.Status, targetStatus)
+                    .SetProperty(o => o.Status, o =>
+                        o.Status == OnlineBallotStatus.Submitted
+                            ? OnlineBallotStatus.Submitted
+                            : isDraft
+                                ? OnlineBallotStatus.Draft
+                                : OnlineBallotStatus.Submitted)
                     .SetProperty(o => o.ListPool, payloadJson)
                     .SetProperty(o => o.PoolLocked, true));
             return updated == 1;
@@ -264,7 +268,8 @@ public partial class OnlineVotingService
 
         existingVotingInfo.WhenBallotCreated = now;
         existingVotingInfo.WhenStatus = now;
-        existingVotingInfo.Status = targetStatus;
+        existingVotingInfo.Status = OnlineBallotStatus.StatusAfterWrite(
+            existingVotingInfo.Status, isDraft);
         existingVotingInfo.ListPool = payloadJson;
         existingVotingInfo.PoolLocked = true;
         return true;

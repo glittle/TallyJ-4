@@ -33,4 +33,18 @@ public static class OnlineBallotStatus
     /// </summary>
     public static bool IsEditable(string? status) =>
         IsDraft(status) || IsSubmitted(status);
+
+    /// <summary>
+    /// Next status after a voter write. Never demote Submitted to Draft.
+    /// Allowed: Draft→Draft, Draft→Submitted, Submitted→Submitted.
+    /// </summary>
+    public static string StatusAfterWrite(string? currentStatus, bool isDraft)
+    {
+        if (IsSubmitted(currentStatus))
+        {
+            return Submitted;
+        }
+
+        return isDraft ? Draft : Submitted;
+    }
 }

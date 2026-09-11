@@ -101,6 +101,22 @@ export function hasDuplicateVotes(
   return getDuplicateVotePositions(votes, selectionMode).size > 0;
 }
 
+/**
+ * Autosave is Draft only before the first Submitted write. After Submit, or
+ * when status already has whenSubmitted, keep isDraft false so the client
+ * does not ask the server to demote Accept-all pending.
+ */
+export function autosaveAsDraft(alreadySubmitted: boolean): boolean {
+  return !alreadySubmitted;
+}
+
+/** Draft restores have hasVoted but no whenSubmitted. */
+export function isSubmittedOnlineVoteStatus(
+  status: Pick<OnlineVoteStatus, "whenSubmitted"> | null | undefined,
+): boolean {
+  return status?.whenSubmitted != null;
+}
+
 export function buildOnlineVotes(
   votes: VoteSlot[],
   selectionMode: string,

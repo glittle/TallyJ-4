@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import {
+  autosaveAsDraft,
   buildOnlineVotes,
   createEmptyVoteSlots,
   getDuplicateVotePositions,
   getEffectiveVoteName,
   hasDuplicateVotes,
+  isSubmittedOnlineVoteStatus,
   useVoterBallotHelpers,
 } from "../useVoterBallot";
 
@@ -102,6 +104,22 @@ describe("useVoterBallot", () => {
         fullName: "Someone Else",
       }),
     ).toBeNull();
+  });
+
+  it("autosaveAsDraft is false once the ballot is Submitted", () => {
+    expect(autosaveAsDraft(false)).toBe(true);
+    expect(autosaveAsDraft(true)).toBe(false);
+  });
+
+  it("isSubmittedOnlineVoteStatus uses whenSubmitted, not hasVoted", () => {
+    expect(isSubmittedOnlineVoteStatus({ hasVoted: true })).toBe(false);
+    expect(
+      isSubmittedOnlineVoteStatus({
+        hasVoted: true,
+        whenSubmitted: new Date("2026-09-11T00:00:00Z"),
+      }),
+    ).toBe(true);
+    expect(isSubmittedOnlineVoteStatus(null)).toBe(false);
   });
 
   it("applyPriorVotes prefills slots from status", () => {

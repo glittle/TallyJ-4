@@ -19,8 +19,10 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import { useNotifications } from "../../composables/useNotifications";
 import {
+  autosaveAsDraft,
   buildOnlineVotes,
   createEmptyVoteSlots,
+  isSubmittedOnlineVoteStatus,
   useVoterBallotHelpers,
   type VoteSlot,
 } from "../../composables/useVoterBallot";
@@ -38,6 +40,8 @@ const electionGuid = ref(route.params.electionId as string);
 const loading = ref(false);
 const submitting = ref(false);
 const autosaveReady = ref(false);
+/** Once Submitted, later autosaves keep isDraft false (never demote). */
+const alreadySubmitted = ref(false);
 
 const votes = ref<VoteSlot[]>([]);
 
@@ -127,6 +131,8 @@ async function loadElectionData() {
       await onlineVotingStore.loadVotablePeople(electionGuid.value);
     }
 
+    alreadySubmitted.value = isSubmittedOnlineVoteStatus(voteStatus);
+
     const numToElect = electionInfo.numberToElect || 9;
     votes.value = createEmptyVoteSlots(numToElect);
 
@@ -176,7 +182,7 @@ const runAutosave = debounce(async () => {
   try {
     await onlineVotingStore.submitBallot(
       electionGuid.value,
-      buildSubmitPayload(true),
+      buildSubmitPayload(autosaveAsDraft(alreadySubmitted.value)),
       { silent: true },
     );
     isEditing.value = true;
@@ -252,6 +258,7 @@ async function handleSubmit() {
       electionGuid.value,
       buildSubmitPayload(false),
     );
+    alreadySubmitted.value = true;
 
     showSuccessMessage(
       isEditing.value

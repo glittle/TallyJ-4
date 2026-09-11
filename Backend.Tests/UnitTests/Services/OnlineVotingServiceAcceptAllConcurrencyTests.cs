@@ -67,7 +67,7 @@ public class OnlineVotingServiceAcceptAllConcurrencyTests
                 staleRow,
                 """{"votes":[],"pool":[]}""",
                 DateTimeOffset.UtcNow,
-                OnlineBallotStatus.Submitted);
+                isDraft: false);
         Assert.False(wrote);
 
         await using var check = db.CreateContext();
@@ -76,6 +76,34 @@ public class OnlineVotingServiceAcceptAllConcurrencyTests
         Assert.Equal(OnlineBallotStatus.Processed, ovi.Status);
         Assert.Null(ovi.ListPool);
         Assert.Null(ovi.BallotGuid);
+    }
+
+    [Fact]
+    public async Task SubmitWrite_IsDraftOnSubmitted_StaysSubmittedAndAcceptAllPending()
+    {
+        await using var db = await SqliteOnlineVotingDb.CreateAsync();
+        var election = await SeedPendingVoterAsync(db);
+
+        await using var writeContext = db.CreateContext();
+        var row = await writeContext.OnlineVotingInfos.SingleAsync();
+        Assert.Equal(OnlineBallotStatus.Submitted, row.Status);
+
+        var wrote = await CreateService(writeContext, new AlwaysAllowAcceptLock())
+            .TryWritePendingPayloadIfEditableAsync(
+                row,
+                """{"votes":[{"voteName":"Changed"}],"pool":[]}""",
+                DateTimeOffset.UtcNow,
+                isDraft: true);
+        Assert.True(wrote);
+
+        await using var check = db.CreateContext();
+        var ovi = await check.OnlineVotingInfos.SingleAsync();
+        Assert.Equal(OnlineBallotStatus.Submitted, ovi.Status);
+        Assert.Contains("Changed", ovi.ListPool);
+
+        var summary = await CreateService(check, new AlwaysAllowAcceptLock())
+            .GetAcceptAllSummaryAsync(election.ElectionGuid);
+        Assert.Equal(1, summary!.PendingCount);
     }
 
     [Fact]
