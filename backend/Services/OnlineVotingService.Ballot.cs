@@ -355,6 +355,15 @@ public partial class OnlineVotingService
         }
     }
 
+    /// <summary>
+    /// True when ListPool is a pending payload with at least one vote.
+    /// Empty overwrite stays Submitted and is not Accept-all fodder.
+    /// </summary>
+    internal static bool HasVotesToAccept(string? listPool)
+    {
+        return TryReadPendingPayload(listPool, out var payload) && payload.Votes.Count > 0;
+    }
+
     internal static List<OnlinePoolEntryDto> ParseLegacyPoolArray(string? listPool)
     {
         if (string.IsNullOrWhiteSpace(listPool))

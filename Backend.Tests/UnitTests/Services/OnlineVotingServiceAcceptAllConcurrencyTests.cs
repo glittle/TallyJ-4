@@ -107,6 +107,36 @@ public class OnlineVotingServiceAcceptAllConcurrencyTests
     }
 
     [Fact]
+    public async Task AcceptAll_EmptySubmitted_RestoresSubmittedAndLeavesVoterEditable()
+    {
+        await using var db = await SqliteOnlineVotingDb.CreateAsync();
+        var election = await SeedPendingVoterAsync(db);
+
+        await using var writeContext = db.CreateContext();
+        var row = await writeContext.OnlineVotingInfos.SingleAsync();
+        var wrote = await CreateService(writeContext, new AlwaysAllowAcceptLock())
+            .TryWritePendingPayloadIfEditableAsync(
+                row,
+                """{"votes":[],"pool":[]}""",
+                DateTimeOffset.UtcNow,
+                isDraft: false);
+        Assert.True(wrote);
+
+        await using var acceptContext = db.CreateContext();
+        var result = await CreateService(acceptContext, new AlwaysAllowAcceptLock())
+            .AcceptAllPendingAsync(election.ElectionGuid);
+        Assert.True(result.Success);
+        Assert.Equal(0, result.AcceptedCount);
+
+        await using var check = db.CreateContext();
+        Assert.Equal(0, await check.Ballots.CountAsync());
+        var ovi = await check.OnlineVotingInfos.SingleAsync();
+        Assert.Equal(OnlineBallotStatus.Submitted, ovi.Status);
+        Assert.False(string.IsNullOrWhiteSpace(ovi.ListPool));
+        Assert.False(OnlineVotingService.CannotChangeOnlineVote(ovi));
+    }
+
+    [Fact]
     public async Task SecondServer_CompletesLeftoverProcessing_WithoutSecondBallot()
     {
         await using var db = await SqliteOnlineVotingDb.CreateAsync();

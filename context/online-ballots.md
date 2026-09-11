@@ -38,6 +38,8 @@ Advancing **to** Finalized is refused while that same window is currently open (
 
 A logged-in teller may Accept-all current pending online ballots while the online voting window is still open, and may do so more than once. Each run only accepts rows that are `Submitted` or already `Processing` at that moment.
 
+An empty Submitted overwrite (voter cleared every name after Submit) stays `Submitted` — never demoted to Draft. It still counts as pending on the monitor. Accept-all does not claim that payload and does not set `Processed`: there are no votes to turn into an OL ballot, and finalizing would lock the voter out with nothing counted. That row is pending-but-skipped until names are written again. A leftover `Processing` claim with an empty payload is restored to `Submitted` instead of wiped.
+
 Accept-all creates a regular ballot at the Online location (computer code `OL`) as if a teller had typed from paper, then wipes the online payload (`ListPool`, `PoolLocked`, `BallotGuid`) and sets status `Processed`. After that, the voter cannot change the vote. Acceptance is not reversible: we do not keep a link from the online row to the regular ballot.
 
 v3 required the window to be closed before processing. That was rejected here so tellers can accept current pending ballots up to the last moment without shutting voters out.
@@ -46,8 +48,8 @@ A second overlapping Accept-all for the same election on one host is refused (pr
 
 Accept-all is two passes:
 
-1. Load the expected `Submitted` (and already-`Processing`) row ids, then persist `Processing` with `UPDATE … SET Status = Processing WHERE Status = Submitted`. Another server can see that claim. `Processing` is a real stored status (varchar(10); the word fits).
-2. For each expected id, open a transaction and process **only if the row is still `Processing`** (`UPDATE … SET Status = Processed WHERE Status = Processing`). 0 rows means the other server already took it. Ballot create and payload wipe share that transaction; a rollback restores `Processing` so a later run can retry.
+1. Load the expected `Submitted` (and already-`Processing`) row ids, then persist `Processing` with `UPDATE … SET Status = Processing WHERE Status = Submitted`. Another server can see that claim. `Processing` is a real stored status (varchar(10); the word fits). Empty Submitted rows (no votes, no legacy `BallotGuid`) are left out of this claim set.
+2. For each expected id, open a transaction and process **only if the row is still `Processing`** (`UPDATE … SET Status = Processed WHERE Status = Processing`). 0 rows means the other server already took it. Ballot create and payload wipe share that transaction; a rollback restores `Processing` so a later run can retry. If the taken row has no votes and no legacy `BallotGuid`, Status is restored to `Submitted` (not Draft, not Processed).
 
 Submit updates with `WHERE Status = Submitted AND BallotGuid IS NULL`, and rejects when `BallotGuid` is set or status is `Processing`/`Processed`, so it cannot revive a claimed row or mint a second ballot from a legacy submitted row.
 
@@ -62,6 +64,10 @@ Rows that already have a `BallotGuid` from the older submit-creates-ballot path 
 **Rejected alternative:** jump `Submitted` → `Processed` in one transaction with no stored interim. That CAS is atomic, but while one server is still creating ballots the row still looks `Submitted` to everyone else until commit. A persisted `Processing` claim is visible to the other server for the whole run.
 
 **Rejected alternative:** require the online window to be closed before Accept-all (v3). Tellers need to accept what is in hand without closing voting.
+
+**Rejected alternative:** Accept-all an empty Submitted overwrite as `Processed` with no OL ballot (the path `Votes: []` opened). That locks the voter out (`CannotChangeOnlineVote`) with nothing counted if a teller Accept-alls while names are cleared mid-edit.
+
+**Rejected alternative:** demote empty Submitted to Draft so Accept-all ignores it. Draft vs Submitted is never-demote; an emptied resubmit stays Submitted and pending-but-skipped.
 
 **Reason:** pending votes stay changeable until a teller accepts them; accepted votes become ordinary ballots with no remaining online payload.
 
