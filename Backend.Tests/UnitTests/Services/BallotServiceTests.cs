@@ -123,6 +123,33 @@ public class BallotServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task CreateBallotAsync_ImportedLocation_Throws()
+    {
+        var importedLocationGuid = Guid.NewGuid();
+        Context.Locations.Add(new Location
+        {
+            RowId = 2,
+            LocationGuid = importedLocationGuid,
+            ElectionGuid = ElectionGuid,
+            Name = "Imported",
+            LocationTypeCode = nameof(LocationType.Imported)
+        });
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CreateBallotAsync(new CreateBallotDto
+            {
+                ElectionGuid = ElectionGuid,
+                LocationGuid = importedLocationGuid,
+                ComputerCode = "A",
+                Teller1 = "Alice"
+            }));
+
+        Assert.Equal("Ballots cannot be created at the Imported location", ex.Message);
+        Assert.Equal(1, Context.Ballots.Count());
+    }
+
+    [Fact]
     public async Task CreateBallotAsync_UnknownLocation_Throws()
     {
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>

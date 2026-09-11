@@ -29,6 +29,13 @@ public class SubmitOnlineBallotDto
     /// Whether the voter wants to be notified when their ballot is processed.
     /// </summary>
     public bool NotifyWhenProcessed { get; set; }
+
+    /// <summary>
+    /// True for silent autosave while the voter is still filling names.
+    /// Draft rows are restored on reload but are not Accept-all pending.
+    /// False (default) finalizes the ballot as Submitted.
+    /// </summary>
+    public bool IsDraft { get; set; }
 }
 
 /// <summary>

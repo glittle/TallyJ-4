@@ -193,12 +193,27 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   async function submitBallot(
     electionGuid: string,
     data: SubmitOnlineBallotDto,
+    options?: { silent?: boolean },
   ) {
+    const silent = options?.silent === true;
     try {
-      loading.value = true;
-      return await onlineVotingService.submitBallot(electionGuid, data);
+      if (!silent) {
+        loading.value = true;
+      }
+      const response = await onlineVotingService.submitBallot(
+        electionGuid,
+        data,
+      );
+      return response;
+    } catch (error) {
+      if (!silent) {
+        handleApiError(error as any);
+      }
+      throw error;
     } finally {
-      loading.value = false;
+      if (!silent) {
+        loading.value = false;
+      }
     }
   }
 

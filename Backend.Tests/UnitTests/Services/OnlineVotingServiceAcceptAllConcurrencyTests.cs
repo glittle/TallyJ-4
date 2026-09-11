@@ -63,10 +63,11 @@ public class OnlineVotingServiceAcceptAllConcurrencyTests
         Assert.Equal(1, accept.AcceptedCount);
 
         var wrote = await CreateService(staleContext, new AlwaysAllowAcceptLock())
-            .TryWritePendingPayloadIfStillSubmittedAsync(
+            .TryWritePendingPayloadIfEditableAsync(
                 staleRow,
                 """{"votes":[],"pool":[]}""",
-                DateTimeOffset.UtcNow);
+                DateTimeOffset.UtcNow,
+                OnlineBallotStatus.Submitted);
         Assert.False(wrote);
 
         await using var check = db.CreateContext();

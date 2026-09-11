@@ -74,11 +74,14 @@ public partial class OnlineVotingService
             }
 
             var payloadJson = SerializePendingPayload(dto.Votes, dto.ListPool);
+            var targetStatus = dto.IsDraft
+                ? OnlineBallotStatus.Draft
+                : OnlineBallotStatus.Submitted;
 
             if (existingVotingInfo != null)
             {
-                var wrote = await TryWritePendingPayloadIfStillSubmittedAsync(
-                    existingVotingInfo, payloadJson, now);
+                var wrote = await TryWritePendingPayloadIfEditableAsync(
+                    existingVotingInfo, payloadJson, now, targetStatus);
                 if (!wrote)
                 {
                     await transaction.RollbackAsync();
@@ -92,7 +95,7 @@ public partial class OnlineVotingService
                     ElectionGuid = dto.ElectionGuid,
                     PersonGuid = person?.PersonGuid ?? Guid.NewGuid(),
                     WhenBallotCreated = now,
-                    Status = OnlineBallotStatus.Submitted,
+                    Status = targetStatus,
                     WhenStatus = now,
                     ListPool = payloadJson,
                     PoolLocked = true
@@ -146,12 +149,13 @@ public partial class OnlineVotingService
         var cannotChange = votingInfo != null && CannotChangeOnlineVote(votingInfo);
         var isProcessed = votingInfo != null && OnlineBallotStatus.IsProcessed(votingInfo.Status);
         var isProcessing = votingInfo != null && OnlineBallotStatus.IsProcessing(votingInfo.Status);
+        var isDraft = votingInfo != null && OnlineBallotStatus.IsDraft(votingInfo.Status);
         var hasPending = votingInfo != null && OnlineBallotStatus.IsSubmitted(votingInfo.Status);
 
         var priorVotes = new List<OnlineVoteDto>();
         var listPool = new List<OnlinePoolEntryDto>();
 
-        if ((hasPending || isProcessing) && TryReadPendingPayload(votingInfo!.ListPool, out var payload))
+        if ((isDraft || hasPending || isProcessing) && TryReadPendingPayload(votingInfo!.ListPool, out var payload))
         {
             priorVotes = payload.Votes;
             listPool = payload.Pool;
@@ -188,11 +192,17 @@ public partial class OnlineVotingService
         var onlineVoter = await _context.OnlineVoters
             .FirstOrDefaultAsync(ov => ov.VoterId == voterId);
 
-        var hasVoted = person.HasOnlineBallot == true || hasPending || isProcessing || isProcessed;
+        var hasVoted = person.HasOnlineBallot == true
+                       || isDraft
+                       || hasPending
+                       || isProcessing
+                       || isProcessed;
         return new OnlineVoteStatusDto
         {
             HasVoted = hasVoted,
-            WhenSubmitted = votingInfo?.WhenBallotCreated,
+            WhenSubmitted = hasPending || isProcessing || isProcessed
+                ? votingInfo?.WhenBallotCreated
+                : null,
             Message = cannotChange
                 ? "voting.status.alreadyProcessed"
                 : hasVoted
@@ -208,7 +218,7 @@ public partial class OnlineVotingService
     /// <summary>
     /// True when the voter cannot change the vote: Accept-all has claimed the row
     /// (Processing), finished it (Processed), or a legacy submit-creates-ballot row
-    /// still has BallotGuid. Do not null BallotGuid or revive the row.
+    /// still has BallotGuid. Draft and Submitted remain editable.
     /// </summary>
     internal static bool CannotChangeOnlineVote(OnlineVotingInfo votingInfo)
     {
@@ -218,40 +228,43 @@ public partial class OnlineVotingService
     }
 
     /// <summary>
-    /// Writes a new pending payload only while the row is still Submitted and has
-    /// no BallotGuid. Relational providers use UPDATE … WHERE Status='Submitted'
-    /// so a concurrent Accept-all that already set Processing or Processed cannot
-    /// be clobbered by a Submit that loaded Submitted. Does not touch BallotGuid.
+    /// Writes a pending payload while the row is still Draft or Submitted and has
+    /// no BallotGuid. Sets <paramref name="targetStatus"/> (Draft for autosave,
+    /// Submitted for final submit). Relational providers use a filtered UPDATE so
+    /// a concurrent Accept-all that already set Processing or Processed cannot be
+    /// clobbered. Does not touch BallotGuid.
     /// </summary>
-    internal async Task<bool> TryWritePendingPayloadIfStillSubmittedAsync(
+    internal async Task<bool> TryWritePendingPayloadIfEditableAsync(
         OnlineVotingInfo existingVotingInfo,
         string payloadJson,
-        DateTimeOffset now)
+        DateTimeOffset now,
+        string targetStatus)
     {
         if (_context.Database.IsRelational())
         {
             var updated = await _context.OnlineVotingInfos
                 .Where(o => o.RowId == existingVotingInfo.RowId
-                            && o.Status == OnlineBallotStatus.Submitted
-                            && o.BallotGuid == null)
+                            && o.BallotGuid == null
+                            && (o.Status == OnlineBallotStatus.Draft
+                                || o.Status == OnlineBallotStatus.Submitted))
                 .ExecuteUpdateAsync(setters => setters
                     .SetProperty(o => o.WhenBallotCreated, now)
                     .SetProperty(o => o.WhenStatus, now)
-                    .SetProperty(o => o.Status, OnlineBallotStatus.Submitted)
+                    .SetProperty(o => o.Status, targetStatus)
                     .SetProperty(o => o.ListPool, payloadJson)
                     .SetProperty(o => o.PoolLocked, true));
             return updated == 1;
         }
 
         if (CannotChangeOnlineVote(existingVotingInfo)
-            || !OnlineBallotStatus.IsSubmitted(existingVotingInfo.Status))
+            || !OnlineBallotStatus.IsEditable(existingVotingInfo.Status))
         {
             return false;
         }
 
         existingVotingInfo.WhenBallotCreated = now;
         existingVotingInfo.WhenStatus = now;
-        existingVotingInfo.Status = OnlineBallotStatus.Submitted;
+        existingVotingInfo.Status = targetStatus;
         existingVotingInfo.ListPool = payloadJson;
         existingVotingInfo.PoolLocked = true;
         return true;

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildOnlineVotes,
   createEmptyVoteSlots,
+  getDuplicateVotePositions,
   getEffectiveVoteName,
   hasDuplicateVotes,
   useVoterBallotHelpers,
@@ -40,6 +41,17 @@ describe("useVoterBallot", () => {
     expect(hasDuplicateVotes(slots, "B")).toBe(true);
   });
 
+  it("getDuplicateVotePositions returns every duplicated line", () => {
+    const slots = createEmptyVoteSlots(3);
+    slots[0].person = { personGuid: "p1", fullName: "Alice" };
+    slots[0].searchText = "Alice";
+    slots[1].person = { personGuid: "p1", fullName: "Alice" };
+    slots[1].searchText = "Alice";
+    slots[2].searchText = "Bob";
+
+    expect([...getDuplicateVotePositions(slots, "A")].sort()).toEqual([1, 2]);
+  });
+
   it("hasDuplicateVotes detects repeated pool names in both mode", () => {
     const slots = createEmptyVoteSlots(2);
     slots[0].searchText = "Pool Person";
@@ -60,6 +72,36 @@ describe("useVoterBallot", () => {
     expect(poolEntries.value).toHaveLength(1);
     expect(poolEntries.value[0].fullName).toBe("New Person");
     expect(poolForm.value.firstName).toBe("");
+  });
+
+  it("addEntryToNextEmptyVote fills the first empty ballot line", () => {
+    const { takePoolFormEntry, addEntryToNextEmptyVote, poolForm } =
+      useVoterBallotHelpers(() => "C");
+    const slots = createEmptyVoteSlots(2);
+    slots[0].searchText = "Already filled";
+    poolForm.value = {
+      firstName: "New",
+      lastName: "Person",
+      otherInfo: "note",
+    };
+
+    const entry = takePoolFormEntry();
+    expect(entry).not.toBeNull();
+    expect(addEntryToNextEmptyVote(slots, entry!)).toBe(2);
+    expect(slots[1].searchText).toBe("New Person");
+    expect(slots[1].person?.fullName).toBe("New Person");
+  });
+
+  it("addEntryToNextEmptyVote returns null when the ballot is full", () => {
+    const { addEntryToNextEmptyVote } = useVoterBallotHelpers(() => "B");
+    const slots = createEmptyVoteSlots(1);
+    slots[0].freeText = "Taken";
+
+    expect(
+      addEntryToNextEmptyVote(slots, {
+        fullName: "Someone Else",
+      }),
+    ).toBeNull();
   });
 
   it("applyPriorVotes prefills slots from status", () => {

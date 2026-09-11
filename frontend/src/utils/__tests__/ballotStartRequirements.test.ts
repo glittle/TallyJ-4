@@ -70,6 +70,21 @@ describe("getBallotStartBlockReason", () => {
     ).toBe("onlineLocation");
   });
 
+  it("blocks when the selected location is Imported", () => {
+    expect(
+      getBallotStartBlockReason({
+        ...ready,
+        locationType: "Imported",
+      }),
+    ).toBe("importedLocation");
+    expect(
+      getBallotStartBlockReason({
+        ...ready,
+        locationType: "imported",
+      }),
+    ).toBe("importedLocation");
+  });
+
   it("blocks when the main teller is unset", () => {
     expect(getBallotStartBlockReason({ ...ready, teller1: "" })).toBe("teller");
     expect(getBallotStartBlockReason({ ...ready, teller1: "  " })).toBe(
@@ -117,6 +132,9 @@ describe("getBallotStartBlockReason", () => {
     );
     expect(BALLOT_START_BLOCK_MESSAGE_KEY.onlineLocation).toBe(
       "ballots.onlineLocationNotAllowed",
+    );
+    expect(BALLOT_START_BLOCK_MESSAGE_KEY.importedLocation).toBe(
+      "ballots.importedLocationNotAllowed",
     );
     expect(BALLOT_START_BLOCK_MESSAGE_KEY.teller).toBe(
       "ballots.tellerRequired",

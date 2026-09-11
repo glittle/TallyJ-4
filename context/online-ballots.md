@@ -10,6 +10,19 @@ Highest-risk functionality. Random name resolution and online acceptance introdu
 
 Treat online ballot paths with the same rigor as core analysis. Prefer explicit failure and recovery over silent best-effort behavior.
 
+## Draft autosave vs Submitted
+
+**Status:** active  
+**Evidence:** confirmed (Glen, #303 UAT; voter ballot page)
+
+While the voter fills names, the ballot page silently autosaves to `OnlineVotingInfo` as status **Draft** (payload in `ListPool`). Reload restores those votes. Draft is not Accept-all pending and does not inflate monitor Submitted counts.
+
+The explicit **Submit Ballot** action writes the same payload as **Submitted**. Accept-all still takes only `Submitted` + `Processing`.
+
+**Rejected alternative:** autosave as `Submitted`. Incomplete ballots would appear in pending counts and could be Accept-all’d while the voter was still editing.
+
+**Reason:** survive reload without treating an in-progress ballot as ready for tellers.
+
 ## Accept-all of pending online ballots
 
 **Status:** active  
@@ -195,26 +208,30 @@ The typed Online location is added when setup enables online voting, and removed
 
 **Rejected alternative:** create the location only on the first voter ballot. Tellers would not see it in the location list until a vote arrived, and disabling unused online voting would leave an empty reserved location behind.
 
-## Online location display name and edit surface
+## Reserved location display (Online and Imported)
 
 **Status:** active  
-**Evidence:** confirmed (issue #287; Glen, 4 Sep 2026)
+**Evidence:** confirmed (issue #287; Glen, 4 Sep 2026; Imported parity, Glen, #303 UAT)
 
-The reserved Online row is shown with the current-language label (`locations.typeOnline` / `formatLocationLabel`). The stored `Name` is a fallback for reports and logs, not the identity and not what tellers edit.
+Online and Imported are both reserved `LocationType` rows. Identity is the type code, never the stored name. Display uses the current-language label (`locations.typeOnline` / `locations.typeImported` via `formatLocationLabel` / `LocationDisplayHelper`). The stored `Name` is a fallback for reports and logs, not what tellers edit.
 
-On the Locations page the true Online row is marked by type (badge + row treatment). A paper location whose name happens to be “Online” is not that row.
+On the Locations page each reserved row is a single i18n tag (no text+badge duplicate), contact shows `-`, and the row is highlighted by type. A paper location whose name happens to be “Online” or “Imported” is not that row.
 
-Editing that row may change sort order only. Name is read-only (the i18n label). Contact, latitude, and longitude are not offered. The API ignores those fields on an Online-typed update and still refuses delete. Teller create never assigns `LocationType.Online`; `OnlineLocationHelper` is the only creator.
+Editing a reserved row may change sort order only. Name is read-only (the i18n label). Contact, latitude, and longitude are not offered. The API ignores those fields on a reserved-type update and refuses delete. Teller create never assigns Online or Imported; `OnlineLocationHelper` creates Online, and CDN ballot import creates Imported.
 
-**Rejected alternative:** treat a location named “Online” as reserved, or POST the translated label as the stored name. Names are user-facing and translated; writing the current language back would change the stored fallback and still would not identify the row.
+Teller-started paper ballots are blocked at both reserved locations (FE start checks + `BallotService.CreateBallotAsync`). Online remains voter-initiated (`OL`); Imported remains import-initiated (`IM`).
+
+**Rejected alternative:** treat a location named “Online” / “Imported” as reserved, or POST the translated label as the stored name. Names are user-facing and translated; writing the current language back would change the stored fallback and still would not identify the row.
+
+**Rejected alternative:** give Imported a weaker Locations UX than Online (editable name/contact while Online is locked). Both are system-managed stations; tellers should not dress them up as paper locations.
 
 Ballot entry panels and the votes dialog load locations when the ballot’s `locationGuid` is not already in the location store, so `formatLocationLabel` can use type. If that fetch fails, the stored `locationName` remains the display fallback.
 
-The ballots report projects location name + type with `AsNoTracking` instead of materializing the full ballot/location/vote/person graph, then formats Online the same way. That keeps the report label correct without tracking entities for a read-only export.
+The ballots report projects location name + type with `AsNoTracking` instead of materializing the full ballot/location/vote/person graph, then formats reserved types the same way. That keeps the report label correct without tracking entities for a read-only export.
 
 **Rejected alternative:** rely only on `ballot.locationName` in the UI, or keep `Include` graphs for the report. The stored name is the English (or setup-time) fallback and can disagree with the teller’s language; the Include path also tracked entities the report never updates.
 
-**Reason:** tellers need to see which row is the voter-only location, in their language, without being able to rename or dress it up as a paper station.
+**Reason:** tellers need to see which rows are system stations, in their language, without being able to rename them or start paper ballots there.
 
 ## Online and imported ballot codes
 

@@ -8,16 +8,16 @@ const { computerCode } = useComputerCode();
 </script>
 
 <template>
-  <div class="computer-code-badge" :aria-label="t('ballots.computerCodeBadge')">
+  <div
+    v-if="computerCode"
+    class="computer-code-badge"
+    :aria-label="t('ballots.computerCodeBadge')"
+  >
     <el-icon aria-hidden="true">
       <Monitor />
     </el-icon>
     <span class="computer-code-label">
-      {{
-        computerCode
-          ? t("ballots.computerCodeShort", { code: computerCode })
-          : t("ballots.computerCodeUnset")
-      }}
+      {{ t("ballots.computerCodeShort", { code: computerCode }) }}
     </span>
   </div>
 </template>

@@ -242,6 +242,7 @@ describe("StageGroupedSidebarMenu", () => {
       });
       const text = wrapper.text();
       expect(text).toContain("nav.frontDesk");
+      expect(text).not.toContain("nav.importBallots");
       expect(text).not.toContain("people.management");
       expect(text).not.toContain("elections.edit");
       expect(text).not.toContain("nav.tellers");

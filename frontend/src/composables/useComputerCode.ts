@@ -1,11 +1,16 @@
-import { getComputerCode, setComputerCode } from "@/utils/computerCodeStorage";
-import { computed, ref, watch } from "vue";
+import {
+  getComputerCode,
+  getComputerCodesState,
+  refreshComputerCodeFromStorage,
+  setComputerCode,
+} from "@/utils/computerCodeStorage";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
-
-const assignedCodes = ref<Record<string, string>>({});
 
 export function useComputerCode(electionGuid?: string) {
   const route = useRoute();
+  const codesByElection = getComputerCodesState();
+
   const resolvedElectionGuid = computed(
     () => electionGuid ?? (route.params.id as string | undefined) ?? "",
   );
@@ -16,18 +21,14 @@ export function useComputerCode(electionGuid?: string) {
       return "";
     }
 
-    return assignedCodes.value[guid] ?? getComputerCode(guid);
-  });
+    // Track the reactive map so SignalR setComputerCode updates subscribers.
+    const map = codesByElection.value;
+    if (Object.hasOwn(map, guid)) {
+      return map[guid] ?? "";
+    }
 
-  watch(
-    resolvedElectionGuid,
-    (guid) => {
-      if (guid && assignedCodes.value[guid] === undefined) {
-        assignedCodes.value[guid] = getComputerCode(guid);
-      }
-    },
-    { immediate: true },
-  );
+    return getComputerCode(guid);
+  });
 
   function applyAssignedCode(code: string) {
     const guid = resolvedElectionGuid.value;
@@ -36,7 +37,6 @@ export function useComputerCode(electionGuid?: string) {
     }
 
     setComputerCode(guid, code);
-    assignedCodes.value[guid] = code;
   }
 
   function refreshComputerCode() {
@@ -45,7 +45,7 @@ export function useComputerCode(electionGuid?: string) {
       return;
     }
 
-    assignedCodes.value[guid] = getComputerCode(guid);
+    refreshComputerCodeFromStorage(guid);
   }
 
   return {

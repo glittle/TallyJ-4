@@ -23,7 +23,9 @@ import {
 import {
   BALLOT_START_BLOCK_MESSAGE_KEY,
   getBallotStartBlockReason,
+  isImportedLocationType,
   isOnlineLocationType,
+  isReservedLocationType,
   locationTypeForGuid,
   type BallotStartBlockReason,
 } from "@/utils/ballotStartRequirements";
@@ -82,14 +84,24 @@ const searchPanelRef = ref<InstanceType<typeof BallotPersonSearchPanel> | null>(
 );
 
 const canAddVotes = computed(() => props.hasKeyboardTeller !== false);
-const isOnlineLocationSelected = computed(() =>
-  isOnlineLocationType(
-    locationTypeForGuid(
-      locationStore.locations,
-      locationStore.selectedLocationGuid,
-    ),
+const selectedLocationType = computed(() =>
+  locationTypeForGuid(
+    locationStore.locations,
+    locationStore.selectedLocationGuid,
   ),
 );
+const isReservedLocationSelected = computed(() =>
+  isReservedLocationType(selectedLocationType.value),
+);
+const reservedLocationBlockMessage = computed(() => {
+  if (isOnlineLocationType(selectedLocationType.value)) {
+    return t(BALLOT_START_BLOCK_MESSAGE_KEY.onlineLocation);
+  }
+  if (isImportedLocationType(selectedLocationType.value)) {
+    return t(BALLOT_START_BLOCK_MESSAGE_KEY.importedLocation);
+  }
+  return undefined;
+});
 const isOnlineOrImported = computed(() =>
   isOnlineOrImportedComputerCode(props.ballot.computerCode),
 );
@@ -471,12 +483,8 @@ onMounted(async () => {
             type="primary"
             plain
             :loading="creatingNewBallot"
-            :disabled="isOnlineLocationSelected"
-            :title="
-              isOnlineLocationSelected
-                ? $t('ballots.onlineLocationNotAllowed')
-                : undefined
-            "
+            :disabled="isReservedLocationSelected"
+            :title="reservedLocationBlockMessage"
             @click="handleNewBallot"
           >
             <el-icon><Plus /></el-icon>
