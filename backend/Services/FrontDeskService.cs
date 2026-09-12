@@ -386,10 +386,11 @@ public class FrontDeskService : IFrontDeskService
         _context.OnlineVotingInfos.Remove(onlineInfo);
         person.HasOnlineBallot = false;
         _logger.LogInformation(
-            "Withdrew pending {Status} online ballot for person {PersonGuid} after Front Desk method {VotingMethod}",
-            onlineInfo.Status,
-            person.PersonGuid,
-            person.VotingMethod);
+            "Withdrew pending {Status} online ballot for person {PersonGuid}",
+            OnlineBallotStatus.IsDraft(onlineInfo.Status)
+                ? OnlineBallotStatus.Draft
+                : OnlineBallotStatus.Submitted,
+            person.PersonGuid);
     }
 
     // Explicit mapping for FrontDeskVoterDto (replaces logic that was in Mapster profiles).
