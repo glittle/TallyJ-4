@@ -5,11 +5,15 @@ import { h } from "vue";
 import type { PersonListDto } from "../../../types";
 import PeopleTable from "../PeopleTable.vue";
 
-vi.mock("vue-i18n", () => ({
-  useI18n: () => ({
-    t: (key: string) => key,
-  }),
-}));
+vi.mock("vue-i18n", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("vue-i18n")>();
+  return {
+    ...actual,
+    useI18n: () => ({
+      t: (key: string) => key,
+    }),
+  };
+});
 
 const samplePerson: PersonListDto = {
   personGuid: "p-1",

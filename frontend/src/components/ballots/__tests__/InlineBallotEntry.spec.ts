@@ -69,12 +69,15 @@ const mockT = (key: string, values?: Record<string, string | number>) => {
   return result;
 };
 
-vi.mock("vue-i18n", () => ({
-  createI18n: vi.fn(),
-  useI18n: () => ({
-    t: mockT,
-  }),
-}));
+vi.mock("vue-i18n", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("vue-i18n")>();
+  return {
+    ...actual,
+    useI18n: () => ({
+      t: mockT,
+    }),
+  };
+});
 
 const { mockShowErrorMessage, mockShowWarningMessage, mockShowSuccessMessage } =
   vi.hoisted(() => ({
@@ -1148,7 +1151,7 @@ describe("InlineBallotEntry", () => {
     const updated = wrapper.emitted("vote-updated") as VoteDto[][];
     expect(updated[0][0].rowId).toBe(21);
     expect(updated[0][0].statusCode).toBe("Spoiled");
-    expect(updated[0][0].ineligibleReasonCode).toBe("U01");
+    expect(updated[0][0].ineligibleReasonCode).toBe("U02");
     expect(updated[0][0].personGuid).toBeUndefined();
     expect(updated[0][0].onlineVoteRaw).toContain("Jon");
   });

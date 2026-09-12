@@ -4,11 +4,15 @@ import { setActivePinia, createPinia } from "pinia";
 import SidebarStageHeader from "../SidebarStageHeader.vue";
 import StageControl from "../StageControl.vue";
 
-vi.mock("vue-i18n", () => ({
-  useI18n: () => ({
-    t: (key: string) => key,
-  }),
-}));
+vi.mock("vue-i18n", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("vue-i18n")>();
+  return {
+    ...actual,
+    useI18n: () => ({
+      t: (key: string) => key,
+    }),
+  };
+});
 
 vi.mock("@/composables/useNotifications", () => ({
   useNotifications: () => ({
@@ -25,6 +29,8 @@ vi.mock("@/stores/electionStore", () => ({
 
 const globalStubs = {
   ElIcon: { template: "<span />" },
+  ElDialog: { template: "<div class='dialog'><slot /></div>" },
+  ReconciliationReportPanel: { template: "<div class='recon-panel' />" },
   Setting: { template: "<span />" },
   Monitor: { template: "<span />" },
   PieChart: { template: "<span />" },
