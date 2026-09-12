@@ -26,6 +26,13 @@ public class MonitorInfoDto
     public OnlineVotingInfoDto OnlineVotingInfo { get; set; } = new();
 
     /// <summary>
+    /// People counted by voting method. Online includes Processed
+    /// <c>OnlineVotingInfo</c> rows that have no Front Desk method other
+    /// than Online. Counts only — no person identity.
+    /// </summary>
+    public VotingMethodBreakdownDto BallotsByMethod { get; set; } = new();
+
+    /// <summary>
     /// Total number of ballots cast across all locations and online voting.
     /// </summary>
     public int TotalBallots { get; set; }
@@ -126,9 +133,17 @@ public class OnlineVotingInfoDto
 
     /// <summary>
     /// Number of online ballots that are still pending processing
-    /// (<c>Submitted</c> + <c>Processing</c>). Same set Accept-all will take.
+    /// (<c>Submitted</c> + <c>Processing</c>) and have no Front Desk method
+    /// other than Online. Same set Accept-all will take.
     /// </summary>
     public int PendingOnlineBallots { get; set; }
+
+    /// <summary>
+    /// <c>Submitted</c> or <c>Processing</c> rows whose person already has a
+    /// Front Desk method other than Online (in person, mailed, dropped off,
+    /// kiosk, …). Count only; Accept-all will not create a second ballot.
+    /// </summary>
+    public int PendingOnlineVotedAnotherWay { get; set; }
 
     /// <summary>
     /// <c>Submitted</c> rows — voter can still change. Count only; no person identity.
@@ -169,6 +184,19 @@ public class OnlineVotingInfoDto
     /// who / when / pending and accepted counts before and after that run.
     /// </summary>
     public List<AcceptAllOnlineBallotsRunDto> AcceptAllRuns { get; set; } = new();
+}
+
+/// <summary>
+/// Counts of people by voting method. Online is voter-initiated
+/// (Processed or <c>VotingMethod</c> O). Kiosk is Front Desk <c>K</c>.
+/// </summary>
+public class VotingMethodBreakdownDto
+{
+    public int InPerson { get; set; }
+    public int Mailed { get; set; }
+    public int DroppedOff { get; set; }
+    public int Kiosk { get; set; }
+    public int Online { get; set; }
 }
 
 

@@ -58,6 +58,18 @@ const isModeBoth = computed(() => selectionMode.value === "C");
 const canChangeVote = computed(
   () => onlineVotingStore.voteStatus?.canChangeVote !== false,
 );
+const lockedVoteStatusKey = computed(() =>
+  onlineVotingStore.voteStatus?.message ===
+  "voting.status.alreadyVotedAnotherWay"
+    ? "voting.status.alreadyVotedAnotherWay"
+    : "voting.status.alreadyProcessed",
+);
+const lockedVoteSubmitKey = computed(() =>
+  onlineVotingStore.voteStatus?.message ===
+  "voting.status.alreadyVotedAnotherWay"
+    ? "voting.submit.alreadyVotedAnotherWay"
+    : "voting.submit.alreadyProcessed",
+);
 const showVotablePeopleList = computed(
   () => isModeList.value || isModeBoth.value,
 );
@@ -76,9 +88,7 @@ const {
   poolEntries,
 } = useVoterBallotHelpers(() => selectionMode.value);
 
-const duplicateVotePositions = computed(() =>
-  duplicatePositions(votes.value),
-);
+const duplicateVotePositions = computed(() => duplicatePositions(votes.value));
 
 const allVotablePersonOptions = computed(() => {
   const official = onlineVotingStore.votablePeople.map((p) => ({
@@ -251,7 +261,7 @@ function handleAddToPool() {
 
 async function handleSubmit() {
   if (!canChangeVote.value) {
-    showErrorMessage(t("voting.submit.alreadyProcessed"));
+    showErrorMessage(t(lockedVoteSubmitKey.value));
     return;
   }
   if (duplicateVotes(votes.value)) {
@@ -352,7 +362,7 @@ function backToElections() {
                 {{ $t("voting.ballot.editHint") }}
               </ElAlert>
               <ElAlert
-                v-else-if="!isEditing"
+                v-else-if="canChangeVote && !isEditing"
                 type="warning"
                 :closable="false"
                 class="header-status-alert"
@@ -374,13 +384,13 @@ function backToElections() {
         </ElAlert>
 
         <ElAlert
-          v-if="isEditing && !canChangeVote"
+          v-if="!canChangeVote"
           type="warning"
           :closable="false"
           class="ballot-alert"
           data-testid="ballot-processed-alert"
         >
-          {{ $t("voting.status.alreadyProcessed") }}
+          {{ $t(lockedVoteStatusKey) }}
         </ElAlert>
 
         <div class="ballot-body">

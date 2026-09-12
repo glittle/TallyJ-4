@@ -732,6 +732,7 @@ export type FrontDeskFrontDeskVoterDto = {
     area?: string | null;
     canVote?: boolean | null;
     votingMethod?: string | null;
+    onlineBallotStatus?: string | null;
     envNum?: number | null;
     registrationTime?: Date | null;
     votingLocationGuid?: string | null;
@@ -1139,6 +1140,7 @@ export type PeoplePersonDetailDto = {
     teller2?: string | null;
     hasOnlineBallot?: boolean | null;
     hasAcceptedBallot?: boolean;
+    onlineBallotStatus?: string | null;
     registrationHistory?: string | null;
     kioskCode?: string | null;
     unitName?: string | null;
@@ -1662,6 +1664,7 @@ export type ResultsMonitorInfoDto = {
     computers?: Array<ResultsComputerInfoDto> | null;
     locations?: Array<ResultsLocationInfoDto> | null;
     onlineVotingInfo?: ResultsOnlineVotingInfoDto;
+    ballotsByMethod?: ResultsVotingMethodBreakdownDto;
     totalBallots?: number;
     totalVotes?: number;
     lastUpdated?: Date;
@@ -1671,6 +1674,7 @@ export type ResultsOnlineVotingInfoDto = {
     totalOnlineBallots?: number;
     processedOnlineBallots?: number;
     pendingOnlineBallots?: number;
+    pendingOnlineVotedAnotherWay?: number;
     submittedOnlineBallots?: number;
     processingOnlineBallots?: number;
     onlineVotingEnabled?: boolean;
@@ -1858,6 +1862,14 @@ export type ResultsVoteDistributionDto = {
     ballotLengthDistribution?: {
         [key: string]: number;
     } | null;
+};
+
+export type ResultsVotingMethodBreakdownDto = {
+    inPerson?: number;
+    mailed?: number;
+    droppedOff?: number;
+    kiosk?: number;
+    online?: number;
 };
 
 export type SecuritySecurityAuditLogDto = {
@@ -2090,6 +2102,7 @@ export type FrontDeskFrontDeskVoterDtoWritable = {
     area?: string | null;
     canVote?: boolean | null;
     votingMethod?: string | null;
+    onlineBallotStatus?: string | null;
     envNum?: number | null;
     registrationTime?: Date | null;
     votingLocationGuid?: string | null;

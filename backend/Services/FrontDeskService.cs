@@ -3,6 +3,7 @@ using Backend.Context;
 using Backend.Entities;
 using Backend.DTOs.FrontDesk;
 using Backend.DTOs.SignalR;
+using Backend.Enumerations;
 using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,18 +36,17 @@ public class FrontDeskService : IFrontDeskService
     {
         var voters = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true)
-            // .OrderBy(p => p.LastName)
-            // .ThenBy(p => p.FirstName)
             .ToListAsync();
 
-        // Add logging to see the actual RegistrationHistory data
-        foreach (var voter in voters)
-        {
-            _logger.LogInformation("Person {PersonGuid}: RegistrationHistory = '{History}'",
-                voter.PersonGuid, voter.RegistrationHistory ?? "null");
-        }
+        var onlineStatusByPerson = await LoadLatestOnlineStatusByPersonAsync(electionGuid);
 
-        return voters.Select(MapToFrontDeskVoterDto).ToList();
+        return voters.Select(person =>
+            MapToFrontDeskVoterDto(
+                person,
+                onlineStatusByPerson.TryGetValue(person.PersonGuid, out var status)
+                    ? status
+                    : null))
+            .ToList();
     }
 
     /// <inheritdoc />
@@ -72,6 +72,22 @@ public class FrontDeskService : IFrontDeskService
             throw new InvalidOperationException("Person has already checked in");
         }
 
+        var onlineInfo = await LoadLatestOnlineVotingInfoAsync(electionGuid, person.PersonGuid);
+        if (VotingMethodCodes.IsOnline(checkInDto.VotingMethod))
+        {
+            throw new InvalidOperationException(FrontDeskMessageKeys.OnlineIsVoterInitiated);
+        }
+
+        if (onlineInfo != null && OnlineBallotStatus.IsProcessed(onlineInfo.Status))
+        {
+            throw new InvalidOperationException(FrontDeskMessageKeys.AlreadyAcceptedOnline);
+        }
+
+        if (onlineInfo != null && OnlineBallotStatus.IsProcessing(onlineInfo.Status))
+        {
+            throw new InvalidOperationException(FrontDeskMessageKeys.AlreadyProcessingOnline);
+        }
+
         person.RegistrationTime = DateTimeOffset.UtcNow;
         person.VotingMethod = checkInDto.VotingMethod;
         person.VotingLocationGuid = checkInDto.VotingLocationGuid;
@@ -79,15 +95,23 @@ public class FrontDeskService : IFrontDeskService
         person.Teller1 = NormalizeTellerName(checkInDto.Teller1);
         person.Teller2 = NormalizeTellerName(checkInDto.Teller2);
 
-        // Add history entry
         await AddRegistrationHistoryEntry(person, "CheckedIn", person.Teller1, person.Teller2);
+
+        if (VotingMethodCodes.IsRecordedOtherThanOnline(checkInDto.VotingMethod)
+            && onlineInfo != null
+            && OnlineBallotStatus.IsEditable(onlineInfo.Status))
+        {
+            WithdrawPendingOnlineBallot(person, onlineInfo);
+        }
 
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Voter {PersonGuid} checked in for election {ElectionGuid} with envelope {EnvNum}",
             person.PersonGuid, electionGuid, person.EnvNum);
 
-        var voterDto = MapToFrontDeskVoterDto(person);
+        var voterDto = MapToFrontDeskVoterDto(person, person.HasOnlineBallot == true
+            ? onlineInfo?.Status
+            : null);
 
         await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
         await NotifyVoterPersonalRegistrationAsync(person);
@@ -171,7 +195,8 @@ public class FrontDeskService : IFrontDeskService
         _logger.LogInformation("Voter {PersonGuid} unregistered from election {ElectionGuid}. Former envelope: {EnvNum}",
             person.PersonGuid, electionGuid, envNum);
 
-        var voterDto = MapToFrontDeskVoterDto(person);
+        var remainingOnline = await LoadLatestOnlineVotingInfoAsync(electionGuid, person.PersonGuid);
+        var voterDto = MapToFrontDeskVoterDto(person, remainingOnline?.Status);
 
         await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
         await NotifyVoterPersonalRegistrationAsync(person);
@@ -238,9 +263,9 @@ public class FrontDeskService : IFrontDeskService
         _logger.LogInformation("Updated flags for person {PersonGuid} in election {ElectionGuid}",
             person.PersonGuid, electionGuid);
 
-        var voterDto = MapToFrontDeskVoterDto(person);
+        var onlineInfo = await LoadLatestOnlineVotingInfoAsync(electionGuid, person.PersonGuid);
+        var voterDto = MapToFrontDeskVoterDto(person, onlineInfo?.Status);
 
-        // Send SignalR notification to update all connected clients
         await _signalRNotificationService.SendPersonFlagsUpdatedAsync(electionGuid, voterDto);
 
         return voterDto;
@@ -294,7 +319,8 @@ public class FrontDeskService : IFrontDeskService
             electionGuid,
             person.EnvNum);
 
-        var voterDto = MapToFrontDeskVoterDto(person);
+        var onlineInfo = await LoadLatestOnlineVotingInfoAsync(electionGuid, person.PersonGuid);
+        var voterDto = MapToFrontDeskVoterDto(person, onlineInfo?.Status);
         await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
         await NotifyVoterPersonalRegistrationAsync(person);
 
@@ -325,13 +351,56 @@ public class FrontDeskService : IFrontDeskService
         return string.IsNullOrWhiteSpace(tellerName) ? null : tellerName.Trim();
     }
 
+    private async Task<Dictionary<Guid, string>> LoadLatestOnlineStatusByPersonAsync(Guid electionGuid)
+    {
+        var rows = await _context.OnlineVotingInfos
+            .AsNoTracking()
+            .Where(o => o.ElectionGuid == electionGuid)
+            .Select(o => new { o.PersonGuid, o.Status, o.WhenStatus, o.WhenBallotCreated })
+            .ToListAsync();
+
+        return rows
+            .GroupBy(o => o.PersonGuid)
+            .ToDictionary(
+                g => g.Key,
+                g => g
+                    .OrderByDescending(o => o.WhenStatus ?? o.WhenBallotCreated)
+                    .First()
+                    .Status);
+    }
+
+    private async Task<OnlineVotingInfo?> LoadLatestOnlineVotingInfoAsync(Guid electionGuid, Guid personGuid)
+    {
+        return await _context.OnlineVotingInfos
+            .Where(o => o.ElectionGuid == electionGuid && o.PersonGuid == personGuid)
+            .OrderByDescending(o => o.WhenStatus ?? o.WhenBallotCreated)
+            .FirstOrDefaultAsync();
+    }
+
+    /// <summary>
+    /// Discard a Draft or Submitted online row after Front Desk records a
+    /// different method. Processed / Processing rows are never withdrawn.
+    /// </summary>
+    private void WithdrawPendingOnlineBallot(Person person, OnlineVotingInfo onlineInfo)
+    {
+        _context.OnlineVotingInfos.Remove(onlineInfo);
+        person.HasOnlineBallot = false;
+        _logger.LogInformation(
+            "Withdrew pending {Status} online ballot for person {PersonGuid}",
+            OnlineBallotStatus.IsDraft(onlineInfo.Status)
+                ? OnlineBallotStatus.Draft
+                : OnlineBallotStatus.Submitted,
+            person.PersonGuid);
+    }
+
     // Explicit mapping for FrontDeskVoterDto (replaces logic that was in Mapster profiles).
     // Handles the JSON deserialization of RegistrationHistory with good error context.
-    private static FrontDeskVoterDto MapToFrontDeskVoterDto(Person person)
+    private static FrontDeskVoterDto MapToFrontDeskVoterDto(Person person, string? onlineBallotStatus)
     {
         var dto = person.CopyMatchingPropertiesToNew<FrontDeskVoterDto>();
 
         dto.RegistrationHistory = DeserializeRegistrationHistory(person.RegistrationHistory, person.PersonGuid);
+        dto.OnlineBallotStatus = onlineBallotStatus;
 
         return dto;
     }

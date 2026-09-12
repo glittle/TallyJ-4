@@ -16,6 +16,10 @@ import {
 } from "@/utils/activeTellerStorage";
 import { formatNumber } from "@/utils/formatNumber";
 import { formatLocationLabel } from "@/utils/locationDisplay";
+import {
+  getVotingMethodLabel as labelVotingMethod,
+  parseFrontDeskCheckInMethods,
+} from "@/utils/votingMethodLabels";
 import { sortRegistrationHistoryNewestFirst } from "@/utils/formatRegistrationHistory";
 import { Location, Search } from "@element-plus/icons-vue";
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
@@ -119,32 +123,16 @@ const highlightedPersonGuids = ref(new Set<string>());
 const highlightTimers = new Map<string, number>();
 const rowHighlightVersion = ref(0);
 
-const registrationTypes = computed(() => [
-  {
-    value: "I",
-    label: t("frontDesk.votingMethod.inPerson"),
-    key: "1",
-    isVotingMethod: true,
-  },
-  {
-    value: "M",
-    label: t("frontDesk.votingMethod.mail"),
-    key: "2",
-    isVotingMethod: true,
-  },
-  {
-    value: "O",
-    label: t("frontDesk.votingMethod.online"),
-    key: "3",
-    isVotingMethod: true,
-  },
-  {
-    value: "C",
-    label: t("frontDesk.votingMethod.callIn"),
-    key: "4",
-    isVotingMethod: true,
-  },
-]);
+const registrationTypes = computed(() =>
+  parseFrontDeskCheckInMethods(currentElection.value?.votingMethods).map(
+    (value, index) => ({
+      value,
+      label: labelVotingMethod(value, t),
+      key: String(index + 1),
+      isVotingMethod: true,
+    }),
+  ),
+);
 
 // Late-bound registration callbacks for SignalR (registration composable created after voters API)
 const registrationApi = {

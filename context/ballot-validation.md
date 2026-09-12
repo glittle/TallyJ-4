@@ -25,15 +25,15 @@ Tellers need **which rows** do not reconcile before Analyze and Finalize — not
 
 ### What v4 can identify as rows
 
-- **Pending online:** each `OnlineVotingInfo` in `Submitted` or `Processing`, named from `Person`. Processed rows are not pending (acceptance is not reversible; do not re-link accepted ballots).
+- **Pending online:** each `OnlineVotingInfo` in `Submitted` or `Processing` whose person has **no** Front Desk method other than Online, named from `Person`. Processed rows are not pending (acceptance is not reversible; do not re-link accepted ballots). A leftover Submitted row after the person already checked in another way is not a live online vote (Accept-all will not create a ballot) and does not block Analyze.
 - **Duplicate envelope number:** two or more people share `EnvNum`.
-- **Duplicate voting path:** a paper/imported Front Desk method (`P`/`M`/`D`/`C`/`I`/`1`/`2`/`3`) plus a pending or Processed online row for the same person.
+- **Duplicate voting path:** a paper/imported Front Desk method (`P`/`M`/`D`/`C`/`I`/`1`/`2`/`3`) plus a **Processed** online row for the same person (two counted paths). Pending leftover after a method switch is not this kind.
 
 ### Front Desk vs ballot count
 
 Paper and accepted-online ballots have no `PersonGuid`. v4 cannot name which paper voter lacks a ballot. When residual counts differ, the report emits one `FrontDeskVsBallots` row with the two totals.
 
-Front Desk side (accounted): people with a voting method, or a **Processed** online row. v4 submit/accept does not set `VotingMethod`, so Processed is the person-level record that an accepted online vote exists. Pending online people are excluded from that count (they have no `Ballot` yet) and appear as their own rows.
+Front Desk side (accounted): people with a voting method, or a **Processed** online row. v4 submit/accept does not set `VotingMethod`, so Processed is the person-level record that an accepted online vote exists. Live pending online people (no other method) are excluded from that count (they have no `Ballot` yet) and appear as their own rows. People who already recorded another method stay in the Front Desk total even if a leftover pending online row still exists.
 
 Ballot side: every entered ballot, **including spoiled** (`StatusCode != Ok`). Analysis already uses `BallotsReceived + SpoiledBallots` vs envelope totals for `UseOnReports`. Excluding spoiled from this check would invent a false Front Desk mismatch.
 

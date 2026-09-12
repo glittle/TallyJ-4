@@ -224,7 +224,8 @@ const selectedReportName = computed(() => props.selectedReportName);
           <th v-if="votersByAreaData.custom3Name">
             {{ votersByAreaData.custom3Name }}
           </th>
-          <th>{{ $t("reporting.onlineKiosk") }}</th>
+          <th>{{ $t("reporting.online") }}</th>
+          <th>{{ $t("reporting.kiosk") }}</th>
           <th>{{ $t("reporting.imported") }}</th>
         </tr>
       </thead>
@@ -246,7 +247,8 @@ const selectedReportName = computed(() => props.selectedReportName);
           <td v-if="votersByAreaData.custom3Name" class="num">
             {{ a.custom3 }}
           </td>
-          <td class="num">{{ a.online + a.onlineKiosk }}</td>
+          <td class="num">{{ a.online }}</td>
+          <td class="num">{{ a.onlineKiosk }}</td>
           <td class="num">{{ a.imported }}</td>
         </tr>
       </tbody>
@@ -268,11 +270,8 @@ const selectedReportName = computed(() => props.selectedReportName);
           <td v-if="votersByAreaData.custom3Name" class="num">
             {{ votersByAreaData.total.custom3 }}
           </td>
-          <td class="num">
-            {{
-              votersByAreaData.total.online + votersByAreaData.total.onlineKiosk
-            }}
-          </td>
+          <td class="num">{{ votersByAreaData.total.online }}</td>
+          <td class="num">{{ votersByAreaData.total.onlineKiosk }}</td>
           <td class="num">{{ votersByAreaData.total.imported }}</td>
         </tr>
       </tfoot>
@@ -307,7 +306,8 @@ const selectedReportName = computed(() => props.selectedReportName);
           <th v-if="votersByLocationData.custom3Name">
             {{ votersByLocationData.custom3Name }}
           </th>
-          <th>{{ $t("reporting.onlineKiosk") }}</th>
+          <th>{{ $t("reporting.online") }}</th>
+          <th>{{ $t("reporting.kiosk") }}</th>
           <th>{{ $t("reporting.imported") }}</th>
         </tr>
       </thead>
@@ -328,7 +328,8 @@ const selectedReportName = computed(() => props.selectedReportName);
           <td v-if="votersByLocationData.custom3Name" class="num">
             {{ l.custom3 }}
           </td>
-          <td class="num">{{ l.online + l.onlineKiosk }}</td>
+          <td class="num">{{ l.online }}</td>
+          <td class="num">{{ l.onlineKiosk }}</td>
           <td class="num">{{ l.imported }}</td>
         </tr>
       </tbody>
@@ -351,12 +352,8 @@ const selectedReportName = computed(() => props.selectedReportName);
           <td v-if="votersByLocationData.custom3Name" class="num">
             {{ votersByLocationData.total.custom3 }}
           </td>
-          <td class="num">
-            {{
-              votersByLocationData.total.online +
-              votersByLocationData.total.onlineKiosk
-            }}
-          </td>
+          <td class="num">{{ votersByLocationData.total.online }}</td>
+          <td class="num">{{ votersByLocationData.total.onlineKiosk }}</td>
           <td class="num">{{ votersByLocationData.total.imported }}</td>
         </tr>
       </tfoot>

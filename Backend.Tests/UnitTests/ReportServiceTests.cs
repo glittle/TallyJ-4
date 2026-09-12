@@ -641,6 +641,30 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
     }
 
     [Fact]
+    public async Task GetVotersByArea_ProcessedOnlineWithoutMethod_CountsAsOnlineNotKiosk()
+    {
+        var onlinePerson = await AddPerson("Online", "A", canVote: true, area: "North");
+        await AddPerson("Kiosk", "B", canVote: true, area: "North", votingMethod: "K");
+        Context.OnlineVotingInfos.Add(new OnlineVotingInfo
+        {
+            ElectionGuid = _electionGuid,
+            PersonGuid = onlinePerson.PersonGuid,
+            Status = OnlineBallotStatus.Processed,
+            WhenStatus = DateTimeOffset.UtcNow
+        });
+        await Context.SaveChangesAsync();
+
+        var report = await _service.GetVotersByAreaAsync(_electionGuid);
+
+        var north = Assert.Single(report.Areas);
+        Assert.Equal(2, north.Voted);
+        Assert.Equal(1, north.Online);
+        Assert.Equal(1, north.OnlineKiosk);
+        Assert.Equal(1, report.Total.Online);
+        Assert.Equal(1, report.Total.OnlineKiosk);
+    }
+
+    [Fact]
     public async Task GetVotersByLocation_GroupsByLocation()
     {
         var loc1 = await AddLocation("Hall A");
