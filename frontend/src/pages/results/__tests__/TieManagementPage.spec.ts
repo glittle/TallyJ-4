@@ -83,9 +83,26 @@ const stubs = {
     template:
       "<button :disabled='disabled' @click='$emit(\"click\")'><slot /></button>",
   },
-  ElTable: { template: "<div />" },
-  ElTableColumn: { template: "<div />" },
-  ElInputNumber: { template: "<input />" },
+  ElTable: {
+    props: ["data"],
+    template: "<div class='table-stub'><slot /></div>",
+  },
+  ElTableColumn: {
+    template:
+      "<div v-for='row in $parent.data' :key='row.personGuid'><slot :row='row' /></div>",
+  },
+  ElInputNumber: {
+    props: ["modelValue", "valueOnClear"],
+    emits: ["update:modelValue", "change"],
+    template:
+      "<div><input class='tie-count' :value='modelValue' /><button type='button' class='input-clear' @click='onClear'>clear-input</button></div>",
+    methods: {
+      onClear() {
+        this.$emit("update:modelValue", this.valueOnClear);
+        this.$emit("change", this.valueOnClear);
+      },
+    },
+  },
   ElTag: { template: "<span />" },
   ElSkeleton: { template: "<div />" },
   ElEmpty: { template: "<div />" },
@@ -133,5 +150,29 @@ describe("TieManagementPage", () => {
     expect(mockFetchResults).toHaveBeenCalledWith("election-1");
     expect(mockFetchTieDetails).toHaveBeenCalledTimes(2);
     expect(mockShowInfo).toHaveBeenCalled();
+  });
+
+  it("sends explicit 0 after clearing a previous count via the input", async () => {
+    const wrapper = mount(TieManagementPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    const clearInput = wrapper.find(".input-clear");
+    expect(clearInput.exists()).toBe(true);
+    await clearInput.trigger("click");
+
+    const vm = wrapper.vm as unknown as {
+      tieDetails: TieDetailsDto[];
+      saveTieCounts: () => Promise<void>;
+    };
+    expect(vm.tieDetails[0]?.people[0]?.tieBreakCount).toBe(0);
+
+    await vm.saveTieCounts();
+    await flushPromises();
+
+    expect(mockSaveTieCounts).toHaveBeenCalledWith("election-1", [
+      { personGuid: "person-a", tieBreakCount: 0 },
+    ]);
   });
 });

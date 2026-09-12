@@ -7,6 +7,7 @@ import { useRoute } from "vue-router";
 import { useResultStore } from "../../stores/resultStore";
 import type { TiePersonDto, TieDetailsDto } from "../../types";
 import {
+  clearedTieBreakCount,
   collectTieBreakCounts,
   electedTieMissingCounts,
   setClearedTieBreakCount,
@@ -204,7 +205,7 @@ defineExpose({
                         :min="0"
                         :max="999"
                         :precision="0"
-                        :value-on-clear="null"
+                        :value-on-clear="clearedTieBreakCount()"
                         controls-position="right"
                         style="width: 120px"
                         @change="onTieBreakCountChange"
