@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<TallyJ2 xmlns="urn:tallyj.bahai:v2" Exported="2026-01-01T00:00:00Z" Version="3.7.0">
+  <election ElectionGuid="03000000-0000-0000-0000-000000000003" Name="Synthetic extras"
+            ElectionType="LSA" ElectionMode="N" NumberToElect="2" NumberExtra="1" />
+  <resultSummary ResultType="C" NumVoters="3" NumEligibleToVote="4"
+                 InPersonBallots="3" MailedInBallots="0" DroppedOffBallots="0" CalledInBallots="0"
+                 OnlineBallots="0" ImportedBallots="0" Custom1Ballots="0" Custom2Ballots="0" Custom3Ballots="0"
+                 BallotsReceived="3" SpoiledBallots="0" SpoiledVotes="0" TotalVotes="6"
+                 BallotsNeedingReview="0" />
+  <resultSummary ResultType="F" NumVoters="3" NumEligibleToVote="4"
+                 InPersonBallots="3" MailedInBallots="0" DroppedOffBallots="0" CalledInBallots="0"
+                 OnlineBallots="0" ImportedBallots="0" Custom1Ballots="0" Custom2Ballots="0" Custom3Ballots="0"
+                 BallotsReceived="3" SpoiledBallots="0" SpoiledVotes="0" TotalVotes="6"
+                 BallotsNeedingReview="0" UseOnReports="true" />
+  <result Rank="1" Section="E" VoteCount="3" PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc1"
+          IsTied="false" TieBreakRequired="false" CloseToPrev="false" CloseToNext="true" ForceShowInOther="false" />
+  <result Rank="2" Section="E" VoteCount="2" PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc2"
+          IsTied="false" TieBreakRequired="false" CloseToPrev="true" CloseToNext="true" ForceShowInOther="false" />
+  <result Rank="3" Section="X" VoteCount="1" PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc3"
+          IsTied="false" TieBreakRequired="false" RankInExtra="1"
+          CloseToPrev="true" CloseToNext="false" ForceShowInOther="false" />
+  <location Name="Main" LocationGuid="33333333-3333-3333-3333-333333333333" TallyStatus="NotStarted">
+    <ballot StatusCode="Ok" ComputerCode="A" BallotNumAtComputer="1">
+      <vote StatusCode="Ok" PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc1" />
+      <vote StatusCode="Ok" PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc2" />
+    </ballot>
+    <ballot StatusCode="Ok" ComputerCode="A" BallotNumAtComputer="2">
+      <vote StatusCode="Ok" PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc1" />
+      <vote StatusCode="Ok" PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc2" />
+    </ballot>
+    <ballot StatusCode="Ok" ComputerCode="A" BallotNumAtComputer="3">
+      <vote StatusCode="Ok" PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc1" />
+      <vote StatusCode="Ok" PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc3" />
+    </ballot>
+  </location>
+  <person PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc1" LastName="Able" FirstName="Ada" VotingMethod="P" CanVote="true" CanReceiveVotes="true" />
+  <person PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc2" LastName="Best" FirstName="Bea" VotingMethod="P" CanVote="true" CanReceiveVotes="true" />
+  <person PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc3" LastName="Cole" FirstName="Cy" VotingMethod="P" CanVote="true" CanReceiveVotes="true" />
+  <person PersonGuid="cccccccc-cccc-cccc-cccc-ccccccccccc4" LastName="Dale" FirstName="Dee" CanVote="true" CanReceiveVotes="true" />
+</TallyJ2>

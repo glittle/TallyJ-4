@@ -1,0 +1,7 @@
+{
+  "name": "ties",
+  "scenario": "ties",
+  "source": "synthetic-pipeline",
+  "analyzer": "normal",
+  "notes": "Three-way tie entirely in the elected section (tie-break not required). Synthetic pipeline proof, not a production v3 election."
+}

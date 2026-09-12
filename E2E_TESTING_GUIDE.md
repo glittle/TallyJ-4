@@ -30,6 +30,8 @@ Expected local app URL: `https://localhost:8095`
 dotnet test Backend.Tests/Backend.Tests.csproj
 ```
 
+v3 analysis comparison harness (issue #168): `--filter FullyQualifiedName~V3AnalysisComparison`. See `docs/V3_ANALYSIS_COMPARISON.md`. These tests do not use Azure SQL.
+
 ### Frontend typecheck and lint
 
 ```bash

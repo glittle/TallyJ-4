@@ -1,0 +1,7 @@
+{
+  "name": "simple",
+  "scenario": "simple",
+  "source": "synthetic-pipeline",
+  "analyzer": "normal",
+  "notes": "Minimal LSA-style package that proves import → Analyze → diff. Not a production v3 election. Expected numbers come from the v3-shaped analysis rows in package.xml and match the current v4 analyzer for this constructed ballot set."
+}

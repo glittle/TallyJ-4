@@ -1,0 +1,7 @@
+{
+  "name": "extras",
+  "scenario": "extras",
+  "source": "synthetic-pipeline",
+  "analyzer": "normal",
+  "notes": "NumberExtra=1 so the third-place person lands in section X. Synthetic pipeline proof, not a production v3 election."
+}
