@@ -142,6 +142,31 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         Assert.Contains("voting.auth.verify.codeExpired", body);
     }
 
+    [Theory]
+    [InlineData("E")]
+    [InlineData("P")]
+    public async Task VerifyCode_WithEmailOrPhoneRowMatchingKioskCode_DoesNotAuthenticateAsKiosk(string occupantType)
+    {
+        var kioskCode = occupantType == "E" ? "JEMAL" : "JPHON";
+        await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+        await ReplaceKioskOnlineVoterAsAsync(kioskCode, occupantType);
+
+        var response = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
+        {
+            VoterId = kioskCode,
+            VerifyCode = kioskCode
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("voting.auth.verify.codeExpired", body);
+
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var row = await context.OnlineVoters.SingleAsync(ov => ov.VoterId == kioskCode);
+        Assert.Equal(occupantType, row.VoterIdType);
+    }
+
     [Fact]
     public async Task KioskLogout_ClearsVoterCookies_ThenMeIsUnauthorized()
     {
@@ -164,7 +189,14 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         var logout = await Client.PostAsync("/api/online-voting/logout", null);
         Assert.Equal(HttpStatusCode.OK, logout.StatusCode);
 
-        Client.DefaultRequestHeaders.Remove("Cookie");
+        var clearedTokenHeader = GetSetCookieHeader(logout, SecureCookieMiddleware.VoterTokenCookieName);
+        Assert.False(string.IsNullOrWhiteSpace(clearedTokenHeader));
+        Assert.StartsWith($"{SecureCookieMiddleware.VoterTokenCookieName}=", clearedTokenHeader, StringComparison.OrdinalIgnoreCase);
+        var clearedToken = GetSetCookieValue(logout, SecureCookieMiddleware.VoterTokenCookieName);
+        Assert.True(string.IsNullOrEmpty(clearedToken));
+        Assert.Contains("max-age=0", clearedTokenHeader, StringComparison.OrdinalIgnoreCase);
+
+        SetVoterCookie(clearedToken ?? string.Empty);
         var after = await Client.GetAsync("/api/online-voting/me");
         Assert.Equal(HttpStatusCode.Unauthorized, after.StatusCode);
     }
@@ -830,6 +862,15 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
         var election = await context.Elections.SingleAsync(e => e.ElectionGuid == electionGuid);
         election.ElectionStage = stage;
+        await context.SaveChangesAsync();
+    }
+
+    private async Task ReplaceKioskOnlineVoterAsAsync(string voterId, string voterIdType)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var row = await context.OnlineVoters.SingleAsync(ov => ov.VoterId == voterId);
+        row.VoterIdType = voterIdType;
         await context.SaveChangesAsync();
     }
 

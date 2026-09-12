@@ -96,6 +96,8 @@
   "elections.form.typePlaceholder": "선거 유형 선택",
   "elections.form.typeRequired": "선거 유형이 필요합니다",
   "elections.form.useCallInButton": "전화 투표 활성화",
+  "elections.form.useKiosk": "Enable kiosk mode",
+  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
   "elections.form.votingMethods": "투표 방법",
   "elections.form.votingMethodsHelp": "투표가 이루어지는 방법을 선택하세요.",
   "elections.form.votingMethodsPlaceholder": "투표 방법 선택",

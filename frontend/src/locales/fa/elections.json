@@ -96,6 +96,8 @@
   "elections.form.typePlaceholder": "نوع انتخابات را انتخاب کنید",
   "elections.form.typeRequired": "نوع انتخابات الزامی است",
   "elections.form.useCallInButton": "فعال‌سازی رأی‌گیری تلفنی",
+  "elections.form.useKiosk": "Enable kiosk mode",
+  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
   "elections.form.votingMethods": "روش‌های رأی‌گیری",
   "elections.form.votingMethodsHelp": "روش‌هایی که آرا با آنها ثبت خواهند شد را انتخاب کنید.",
   "elections.form.votingMethodsPlaceholder": "روش‌های رأی‌گیری را انتخاب کنید",

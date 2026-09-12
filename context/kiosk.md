@@ -34,6 +34,8 @@ Kiosk login uses the same httpOnly `voter_token` cookie as other online voters. 
 
 Generate/renew is refused after Finalized, after a Front Desk `VotingMethod`, after a consumed empty code, or after a Processed online ballot.
 
+Kiosk `OnlineVoter` reads and stamps require `VoterIdType == C` (same as phone lookups require `P`). A matching `VoterId` on an email or phone row is not a kiosk session and must not be retagged.
+
 ## Setup toggle writes `K` on `VotingMethods`
 
 **Status:** active  

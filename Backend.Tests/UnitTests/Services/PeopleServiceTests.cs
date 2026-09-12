@@ -754,6 +754,60 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.True(KioskCodeLifetime.IsLoginWindowOpen(onlineVoter.VerifyCodeDate));
     }
 
+    [Theory]
+    [InlineData("E")]
+    [InlineData("P")]
+    public async Task GenerateKioskCodeAsync_DoesNotRetagEmailOrPhoneOnlineVoter(string occupantType)
+    {
+        const string code = "COLLX";
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+        person.KioskCode = code;
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = code,
+            VoterIdType = occupantType,
+            VerifyCode = "KEEPME",
+            VerifyCodeDate = DateTimeOffset.UtcNow.AddMinutes(-2),
+            WhenRegistered = DateTimeOffset.UtcNow.AddDays(-1)
+        });
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.GenerateKioskCodeAsync(person.PersonGuid));
+
+        Assert.Equal("This kiosk code is already used as another voter identity.", ex.Message);
+
+        var row = Assert.Single(Context.OnlineVoters);
+        Assert.Equal(code, row.VoterId);
+        Assert.Equal(occupantType, row.VoterIdType);
+        Assert.Equal("KEEPME", row.VerifyCode);
+    }
+
+    [Theory]
+    [InlineData("E")]
+    [InlineData("P")]
+    public async Task GetPersonDetailsAsync_DoesNotUseEmailOrPhoneRowForKioskExpiry(string occupantType)
+    {
+        const string code = "DETLX";
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+        person.KioskCode = code;
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = code,
+            VoterIdType = occupantType,
+            VerifyCodeDate = DateTimeOffset.UtcNow
+        });
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.Equal(code, details!.KioskCode);
+        Assert.False(details.KioskCodeConsumed);
+        Assert.Null(details.KioskCodeExpiresAt);
+    }
+
     [Fact]
     public async Task GenerateKioskCodeAsync_UsedEmptyCode_Throws()
     {

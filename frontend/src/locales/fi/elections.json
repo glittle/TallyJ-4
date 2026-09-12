@@ -96,6 +96,8 @@
   "elections.form.typePlaceholder": "Valitse vaalien tyyppi",
   "elections.form.typeRequired": "Vaalien tyyppi vaaditaan",
   "elections.form.useCallInButton": "Ota käyttöön puhelimitse äänestäminen",
+  "elections.form.useKiosk": "Enable kiosk mode",
+  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
   "elections.form.votingMethods": "Äänestysmenetelmät",
   "elections.form.votingMethodsHelp": "Valitse menetelmät, joilla äänet annetaan.",
   "elections.form.votingMethodsPlaceholder": "Valitse äänestysmenetelmät",

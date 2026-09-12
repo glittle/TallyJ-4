@@ -96,6 +96,8 @@
   "elections.form.typePlaceholder": "حدد نوع الانتخابات",
   "elections.form.typeRequired": "نوع الانتخابات مطلوب",
   "elections.form.useCallInButton": "تفعيل التصويت عبر الهاتف",
+  "elections.form.useKiosk": "Enable kiosk mode",
+  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
   "elections.form.votingMethods": "طرق التصويت",
   "elections.form.votingMethodsHelp": "اختر الطرق التي سيتم بها الإدلاء بالأصوات.",
   "elections.form.votingMethodsPlaceholder": "حدد طرق التصويت",

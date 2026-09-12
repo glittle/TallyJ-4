@@ -310,14 +310,15 @@ public partial class OnlineVotingService
         }
 
         var onlineVoter = await _context.OnlineVoters
-            .FirstOrDefaultAsync(ov => ov.VoterId == normalizedCode);
+            .FirstOrDefaultAsync(ov =>
+                ov.VoterId == normalizedCode &&
+                ov.VoterIdType == KioskCodeLifetime.VoterIdType);
 
         if (onlineVoter == null || !KioskCodeLifetime.IsLoginWindowOpen(onlineVoter.VerifyCodeDate, now))
         {
             return (false, "voting.auth.verify.codeExpired", null);
         }
 
-        onlineVoter.VoterIdType = KioskCodeLifetime.VoterIdType;
         onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;
         onlineVoter.VerifyAttempts = 0;
         await _context.SaveChangesAsync();

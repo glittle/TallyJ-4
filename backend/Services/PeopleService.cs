@@ -600,7 +600,9 @@ public class PeopleService : IPeopleService
 
         var onlineVoter = await _context.OnlineVoters
             .AsNoTracking()
-            .FirstOrDefaultAsync(ov => ov.VoterId == person.KioskCode);
+            .FirstOrDefaultAsync(ov =>
+                ov.VoterId == person.KioskCode &&
+                ov.VoterIdType == KioskCodeLifetime.VoterIdType);
         dto.KioskCodeExpiresAt = KioskCodeLifetime.ExpiresAt(onlineVoter?.VerifyCodeDate);
     }
 
@@ -608,10 +610,20 @@ public class PeopleService : IPeopleService
     {
         var normalized = code.Trim().ToUpperInvariant();
         var onlineVoter = await _context.OnlineVoters
-            .FirstOrDefaultAsync(ov => ov.VoterId == normalized);
+            .FirstOrDefaultAsync(ov =>
+                ov.VoterId == normalized &&
+                ov.VoterIdType == KioskCodeLifetime.VoterIdType);
 
         if (onlineVoter == null)
         {
+            var occupant = await _context.OnlineVoters
+                .FirstOrDefaultAsync(ov => ov.VoterId == normalized);
+            if (occupant != null)
+            {
+                throw new InvalidOperationException(
+                    "This kiosk code is already used as another voter identity.");
+            }
+
             onlineVoter = new OnlineVoter
             {
                 VoterId = normalized,
@@ -619,10 +631,6 @@ public class PeopleService : IPeopleService
                 WhenRegistered = DateTimeOffset.UtcNow
             };
             _context.OnlineVoters.Add(onlineVoter);
-        }
-        else
-        {
-            onlineVoter.VoterIdType = KioskCodeLifetime.VoterIdType;
         }
 
         onlineVoter.VerifyCode = normalized;

@@ -96,6 +96,8 @@
   "elections.form.typePlaceholder": "चुनाव प्रकार चुनें",
   "elections.form.typeRequired": "चुनाव प्रकार आवश्यक है",
   "elections.form.useCallInButton": "कॉल-इन मतदान सक्षम करें",
+  "elections.form.useKiosk": "Enable kiosk mode",
+  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
   "elections.form.votingMethods": "मतदान तरीके",
   "elections.form.votingMethodsHelp": "वे तरीके चुनें जिनके द्वारा मत डाले जाएंगे।",
   "elections.form.votingMethodsPlaceholder": "मतदान तरीके चुनें",

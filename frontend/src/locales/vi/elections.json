@@ -96,6 +96,8 @@
   "elections.form.typePlaceholder": "Chọn loại cuộc bầu cử",
   "elections.form.typeRequired": "Loại cuộc bầu cử là bắt buộc",
   "elections.form.useCallInButton": "Bật Bỏ Phiếu Qua Điện Thoại",
+  "elections.form.useKiosk": "Enable kiosk mode",
+  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
   "elections.form.votingMethods": "Phương Thức Bỏ Phiếu",
   "elections.form.votingMethodsHelp": "Chọn các phương thức bỏ phiếu sẽ được sử dụng.",
   "elections.form.votingMethodsPlaceholder": "Chọn phương thức bỏ phiếu",
