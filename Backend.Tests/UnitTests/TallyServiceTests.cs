@@ -988,9 +988,13 @@ public class TallyServiceTests : ServiceTestBase
 
         Assert.Equal(people[2].PersonGuid, after[0].PersonGuid);
         Assert.Equal("E", after[0].Section);
-        Assert.Equal(5, after[0].TieBreakCount);
-        Assert.Null(after[1].TieBreakCount);
-        Assert.Null(after[2].TieBreakCount);
+
+        var afterByPerson = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid)
+            .ToDictionary(r => r.PersonGuid);
+        Assert.Equal(5, afterByPerson[people[2].PersonGuid].TieBreakCount);
+        Assert.Null(afterByPerson[people[0].PersonGuid].TieBreakCount);
+        Assert.Null(afterByPerson[people[1].PersonGuid].TieBreakCount);
 
         var resultTie = Context.ResultTies.Single(rt => rt.ElectionGuid == election.ElectionGuid);
         Assert.Equal(false, resultTie.IsResolved);

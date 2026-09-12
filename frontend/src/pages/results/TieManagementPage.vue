@@ -112,6 +112,10 @@ function getTieValidation(tie: TieDetailsDto): string | null {
   }
   return null;
 }
+
+defineExpose({
+  saveTieCounts,
+});
 </script>
 
 <template>

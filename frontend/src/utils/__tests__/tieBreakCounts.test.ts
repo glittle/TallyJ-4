@@ -8,10 +8,7 @@ import {
   setClearedTieBreakCount,
 } from "../tieBreakCounts";
 
-function person(
-  guid: string,
-  tieBreakCount?: number | null,
-): TiePersonDto {
+function person(guid: string, tieBreakCount?: number | null): TiePersonDto {
   return {
     personGuid: guid,
     fullName: guid,
@@ -58,9 +55,9 @@ describe("tieBreakCounts", () => {
   });
 
   it("flags elected ties only when a count is missing, not when it is 0", () => {
-    expect(electedTieMissingCounts(tie("E", [person("a", 0), person("b", 1)]))).toBe(
-      false,
-    );
+    expect(
+      electedTieMissingCounts(tie("E", [person("a", 0), person("b", 1)])),
+    ).toBe(false);
     expect(
       electedTieMissingCounts(tie("E", [person("a", 0), person("b", null)])),
     ).toBe(true);

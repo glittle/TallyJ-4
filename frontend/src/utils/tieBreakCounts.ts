@@ -4,7 +4,7 @@ import type { TieCountDto, TieDetailsDto, TiePersonDto } from "../types";
 export function isTieBreakCountUnset(
   tieBreakCount: number | null | undefined,
 ): boolean {
-  return tieBreakCount == null;
+  return tieBreakCount === null || tieBreakCount === undefined;
 }
 
 /**
@@ -17,7 +17,7 @@ export function collectTieBreakCounts(ties: TieDetailsDto[]): TieCountDto[] {
   for (const tie of ties) {
     for (const person of tie.people) {
       const count = person.tieBreakCount;
-      if (count != null) {
+      if (count !== null && count !== undefined) {
         counts.push({
           personGuid: person.personGuid,
           tieBreakCount: count,
@@ -35,7 +35,9 @@ export function electedTieMissingCounts(tie: TieDetailsDto): boolean {
     return false;
   }
 
-  return tie.people.some((person) => isTieBreakCountUnset(person.tieBreakCount));
+  return tie.people.some((person) =>
+    isTieBreakCountUnset(person.tieBreakCount),
+  );
 }
 
 /** Clear writes an explicit 0 so the server overwrites a previous count. */

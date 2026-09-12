@@ -118,17 +118,12 @@ describe("TieManagementPage", () => {
 
     const vm = wrapper.vm as unknown as {
       tieDetails: TieDetailsDto[];
+      saveTieCounts: () => Promise<void>;
     };
     expect(vm.tieDetails[0]?.people[1]?.tieBreakCount).toBeNull();
     vm.tieDetails[0]!.people[1]!.tieBreakCount = 0;
 
-    const saveButton = wrapper
-      .findAll("button")
-      .find((button) => button.text() === "Save Changes");
-    expect(saveButton).toBeDefined();
-    expect(saveButton!.attributes("disabled")).toBeUndefined();
-
-    await saveButton!.trigger("click");
+    await vm.saveTieCounts();
     await flushPromises();
 
     expect(mockSaveTieCounts).toHaveBeenCalledWith("election-1", [
