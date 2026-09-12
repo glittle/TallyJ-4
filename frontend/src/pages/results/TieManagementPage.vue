@@ -1,3 +1,119 @@
+<script setup lang="ts">
+import { useNotifications } from "@/composables/useNotifications";
+import { ElMessageBox } from "element-plus";
+import { computed, onMounted, ref } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
+import { useResultStore } from "../../stores/resultStore";
+import type { TiePersonDto, TieDetailsDto } from "../../types";
+import {
+  collectTieBreakCounts,
+  electedTieMissingCounts,
+  setClearedTieBreakCount,
+} from "../../utils/tieBreakCounts";
+
+const route = useRoute();
+const { t } = useI18n();
+const resultStore = useResultStore();
+const { showSuccessMessage, showErrorMessage, showInfoMessage } =
+  useNotifications();
+
+const electionGuid = route.params.id as string;
+const tieDetails = ref<TieDetailsDto[]>([]);
+const originalTieDetails = ref<TieDetailsDto[]>([]);
+const loading = ref(false);
+const saving = ref(false);
+
+const hasChanges = computed(() => {
+  return (
+    JSON.stringify(tieDetails.value) !==
+    JSON.stringify(originalTieDetails.value)
+  );
+});
+
+onMounted(async () => {
+  await loadTieDetails();
+});
+
+async function loadTieDetails() {
+  try {
+    loading.value = true;
+    const details = await resultStore.fetchTieDetails(electionGuid);
+    tieDetails.value = JSON.parse(JSON.stringify(details)); // Deep copy
+    originalTieDetails.value = JSON.parse(JSON.stringify(details)); // Store original
+  } catch (error) {
+    showErrorMessage(
+      t("tieManagement.loadError") +
+        " " +
+        (error instanceof Error ? error.message : ""),
+    );
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function saveTieCounts() {
+  try {
+    await ElMessageBox.confirm(
+      t("tieManagement.confirmSave"),
+      t("common.confirmation"),
+      {
+        confirmButtonText: t("common.yes"),
+        cancelButtonText: t("common.no"),
+        type: "warning",
+      },
+    );
+
+    saving.value = true;
+
+    const counts = collectTieBreakCounts(tieDetails.value);
+    const response = await resultStore.saveTieCounts(electionGuid, counts);
+
+    if (response.success) {
+      showSuccessMessage(t("tieManagement.saveSuccess"));
+      await resultStore.fetchResults(electionGuid);
+      await loadTieDetails();
+
+      if (response.reAnalysisTriggered) {
+        showInfoMessage(t("tieManagement.reAnalysisTriggered"));
+      }
+    } else {
+      showErrorMessage(response.message || t("tieManagement.saveError"));
+    }
+  } catch (error) {
+    if (error !== "cancel") {
+      showErrorMessage(t("tieManagement.saveError"));
+    }
+  } finally {
+    saving.value = false;
+  }
+}
+
+function onTieBreakCountChange() {
+  // Validation could be added here
+}
+
+function clearTieBreakCount(person: TiePersonDto) {
+  setClearedTieBreakCount(person);
+}
+
+function getSectionLabel(section: string) {
+  const labelMap: Record<string, string> = {
+    E: t("results.elected"),
+    X: t("results.extra"),
+    O: t("results.other"),
+  };
+  return labelMap[section] || section;
+}
+
+function getTieValidation(tie: TieDetailsDto): string | null {
+  if (electedTieMissingCounts(tie)) {
+    return t("tieManagement.validationRequired");
+  }
+  return null;
+}
+</script>
+
 <template>
   <div class="tie-management">
     <el-card>
@@ -84,6 +200,7 @@
                         :min="0"
                         :max="999"
                         :precision="0"
+                        :value-on-clear="null"
                         controls-position="right"
                         style="width: 120px"
                         @change="onTieBreakCountChange"
@@ -123,135 +240,6 @@
     </el-card>
   </div>
 </template>
-
-<script setup lang="ts">
-import { useNotifications } from "@/composables/useNotifications";
-import { ElMessageBox } from "element-plus";
-import { computed, onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
-import { useResultStore } from "../../stores/resultStore";
-import type { TiePersonDto, TieDetailsDto } from "../../types";
-
-const route = useRoute();
-const { t } = useI18n();
-const resultStore = useResultStore();
-const { showSuccessMessage, showErrorMessage, showInfoMessage } =
-  useNotifications();
-
-const electionGuid = route.params.id as string;
-const tieDetails = ref<TieDetailsDto[]>([]);
-const originalTieDetails = ref<TieDetailsDto[]>([]);
-const loading = ref(false);
-const saving = ref(false);
-
-const hasChanges = computed(() => {
-  return (
-    JSON.stringify(tieDetails.value) !==
-    JSON.stringify(originalTieDetails.value)
-  );
-});
-
-onMounted(async () => {
-  await loadTieDetails();
-});
-
-async function loadTieDetails() {
-  try {
-    loading.value = true;
-    const details = await resultStore.fetchTieDetails(electionGuid);
-    tieDetails.value = JSON.parse(JSON.stringify(details)); // Deep copy
-    originalTieDetails.value = JSON.parse(JSON.stringify(details)); // Store original
-  } catch (error) {
-    showErrorMessage(
-      t("tieManagement.loadError") +
-        " " +
-        (error instanceof Error ? error.message : ""),
-    );
-  } finally {
-    loading.value = false;
-  }
-}
-
-async function saveTieCounts() {
-  try {
-    await ElMessageBox.confirm(
-      t("tieManagement.confirmSave"),
-      t("common.confirmation"),
-      {
-        confirmButtonText: t("common.yes"),
-        cancelButtonText: t("common.no"),
-        type: "warning",
-      },
-    );
-
-    saving.value = true;
-
-    // Collect all tie break counts
-    const counts: { personGuid: string; tieBreakCount: number }[] = [];
-
-    tieDetails.value.forEach((tie) => {
-      tie.people.forEach((person) => {
-        if (person.tieBreakCount !== undefined && person.tieBreakCount > 0) {
-          counts.push({
-            personGuid: person.personGuid,
-            tieBreakCount: person.tieBreakCount,
-          });
-        }
-      });
-    });
-
-    const response = await resultStore.saveTieCounts(electionGuid, counts);
-
-    if (response.success) {
-      showSuccessMessage(t("tieManagement.saveSuccess"));
-      await loadTieDetails(); // Reload to get updated data
-
-      if (response.reAnalysisTriggered) {
-        showInfoMessage(t("tieManagement.reAnalysisTriggered"));
-      }
-    } else {
-      showErrorMessage(response.message || t("tieManagement.saveError"));
-    }
-  } catch (error) {
-    if (error !== "cancel") {
-      showErrorMessage(t("tieManagement.saveError"));
-    }
-  } finally {
-    saving.value = false;
-  }
-}
-
-function onTieBreakCountChange() {
-  // Validation could be added here
-}
-
-function clearTieBreakCount(person: TiePersonDto) {
-  person.tieBreakCount = 0;
-}
-
-function getSectionLabel(section: string) {
-  const labelMap: Record<string, string> = {
-    E: t("results.elected"),
-    X: t("results.extra"),
-    O: t("results.other"),
-  };
-  return labelMap[section] || section;
-}
-
-function getTieValidation(tie: TieDetailsDto): string | null {
-  // Check if all people in elected ties have tie break counts
-  if (tie.section === "E") {
-    const peopleWithoutCount = tie.people.filter(
-      (p) => !p.tieBreakCount || p.tieBreakCount === 0,
-    );
-    if (peopleWithoutCount.length > 0) {
-      return t("tieManagement.validationRequired");
-    }
-  }
-  return null;
-}
-</script>
 
 <style lang="less">
 .tie-management {

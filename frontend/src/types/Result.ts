@@ -137,7 +137,8 @@ export interface TiePersonDto {
   personGuid: string;
   fullName: string;
   voteCount: number;
-  tieBreakCount?: number;
+  /** Null/undefined means not entered; 0 is an explicit runoff result. */
+  tieBreakCount?: number | null;
 }
 
 export interface SaveTieCountsRequestDto {
@@ -146,6 +147,7 @@ export interface SaveTieCountsRequestDto {
 
 export interface TieCountDto {
   personGuid: string;
+  /** Explicit runoff result. 0 is valid and must be sent when clearing a previous count. */
   tieBreakCount: number;
 }
 

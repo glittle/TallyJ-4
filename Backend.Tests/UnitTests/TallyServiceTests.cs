@@ -956,6 +956,123 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task SaveTieCountsAsync_PartialGroupCounts_TriggersReanalysis()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 1, numberExtra: 1);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 3);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 3);
+        await CreateThreeWayEqualVoteAsync(ballots, people);
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var before = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid)
+            .ToList();
+        Assert.True(before.All(r => r.TieBreakCount == null));
+
+        var response = await _service.SaveTieCountsAsync(election.ElectionGuid, new SaveTieCountsRequestDto
+        {
+            Counts =
+            [
+                new TieCountDto { PersonGuid = people[2].PersonGuid, TieBreakCount = 5 },
+            ]
+        });
+
+        Assert.True(response.Success);
+        Assert.True(response.ReAnalysisTriggered);
+
+        var after = (await _service.GetTallyResultsAsync(election.ElectionGuid)).Results
+            .OrderBy(r => r.Rank)
+            .ToList();
+
+        Assert.Equal(people[2].PersonGuid, after[0].PersonGuid);
+        Assert.Equal("E", after[0].Section);
+        Assert.Equal(5, after[0].TieBreakCount);
+        Assert.Null(after[1].TieBreakCount);
+        Assert.Null(after[2].TieBreakCount);
+
+        var resultTie = Context.ResultTies.Single(rt => rt.ElectionGuid == election.ElectionGuid);
+        Assert.Equal(false, resultTie.IsResolved);
+    }
+
+    [Fact]
+    public async Task SaveTieCountsAsync_AllZeroCounts_AreValidAndStayUnresolved()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 1, numberExtra: 1);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 3);
+        foreach (var person in people)
+        {
+            person.VotingMethod = "P";
+        }
+
+        await Context.SaveChangesAsync();
+
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 3);
+        await CreateThreeWayEqualVoteAsync(ballots, people);
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var response = await _service.SaveTieCountsAsync(election.ElectionGuid, new SaveTieCountsRequestDto
+        {
+            Counts =
+            [
+                new TieCountDto { PersonGuid = people[0].PersonGuid, TieBreakCount = 0 },
+                new TieCountDto { PersonGuid = people[1].PersonGuid, TieBreakCount = 0 },
+                new TieCountDto { PersonGuid = people[2].PersonGuid, TieBreakCount = 0 },
+            ]
+        });
+
+        Assert.True(response.Success);
+        Assert.True(response.ReAnalysisTriggered);
+
+        var dbResults = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid)
+            .ToList();
+        Assert.Equal(3, dbResults.Count);
+        Assert.All(dbResults, r => Assert.Equal(0, r.TieBreakCount));
+
+        var resultTie = Context.ResultTies.Single(rt => rt.ElectionGuid == election.ElectionGuid);
+        Assert.Equal(false, resultTie.IsResolved);
+
+        var summary = Context.ResultSummaries
+            .First(rs => rs.ElectionGuid == election.ElectionGuid && rs.ResultType == "F");
+        Assert.Equal(false, summary.UseOnReports);
+    }
+
+    [Fact]
+    public async Task SaveTieCountsAsync_ExplicitZero_PreservedDistinctFromUnset()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 1, numberExtra: 1);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 3);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 3);
+        await CreateThreeWayEqualVoteAsync(ballots, people);
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var response = await _service.SaveTieCountsAsync(election.ElectionGuid, new SaveTieCountsRequestDto
+        {
+            Counts =
+            [
+                new TieCountDto { PersonGuid = people[1].PersonGuid, TieBreakCount = 0 },
+            ]
+        });
+
+        Assert.True(response.Success);
+        Assert.True(response.ReAnalysisTriggered);
+
+        var byPerson = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid)
+            .ToDictionary(r => r.PersonGuid);
+
+        Assert.Null(byPerson[people[0].PersonGuid].TieBreakCount);
+        Assert.Equal(0, byPerson[people[1].PersonGuid].TieBreakCount);
+        Assert.Null(byPerson[people[2].PersonGuid].TieBreakCount);
+    }
+
+    [Fact]
     public async Task CalculateNormalElectionAsync_ExtrasAssignRankInExtraSequentially()
     {
         var election = await CreateTestElectionAsync(numberToElect: 2, numberExtra: 3);

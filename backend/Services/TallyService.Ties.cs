@@ -51,7 +51,8 @@ public partial class TallyService
     }
 
     /// <summary>
-    /// Saves tie-breaking vote counts for an election.
+    /// Saves tie-breaking vote counts for an election and re-analyzes when any count is persisted.
+    /// An explicit 0 is a valid runoff result; omit a person to leave their count unset (null).
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
     /// <param name="request">The request containing tie count information.</param>
@@ -68,7 +69,6 @@ public partial class TallyService
         }
 
         var updatedCount = 0;
-        var reAnalysisNeeded = false;
 
         foreach (var count in request.Counts)
         {
@@ -79,43 +79,36 @@ public partial class TallyService
             {
                 result.TieBreakCount = count.TieBreakCount;
                 updatedCount++;
-
-                // Check if this resolves all ties in the group
-                var groupResults = await _context.Results
-                    .Where(r => r.ElectionGuid == electionGuid && r.TieBreakGroup == result.TieBreakGroup && r.IsTied == true)
-                    .ToListAsync();
-
-                if (groupResults.All(r => r.TieBreakCount.HasValue))
-                {
-                    reAnalysisNeeded = true;
-                }
             }
         }
+
+        var reAnalysisTriggered = false;
 
         if (updatedCount > 0)
         {
             await _context.SaveChangesAsync();
             _logger.LogInformation("Saved {Count} tie break counts for election {ElectionGuid}", updatedCount, electionGuid);
 
-            if (reAnalysisNeeded)
+            // Re-analyze after any persisted count (including a single member or all-0).
+            // Partial counts already change rank; v3 always re-ran analysis after save.
+            _logger.LogInformation("Tie-break counts updated, re-analyzing election {ElectionGuid}", electionGuid);
+            if (election.ElectionType == "Oth")
             {
-                _logger.LogInformation("Tie-break counts updated for a tied group, re-analyzing election {ElectionGuid}", electionGuid);
-                if (election.ElectionType == "Oth")
-                {
-                    await CalculateSingleNameElectionAsync(electionGuid);
-                }
-                else
-                {
-                    await CalculateNormalElectionAsync(electionGuid);
-                }
+                await CalculateSingleNameElectionAsync(electionGuid);
             }
+            else
+            {
+                await CalculateNormalElectionAsync(electionGuid);
+            }
+
+            reAnalysisTriggered = true;
         }
 
         return new SaveTieCountsResponseDto
         {
             Success = true,
             Message = $"Successfully saved {updatedCount} tie break counts",
-            ReAnalysisTriggered = reAnalysisNeeded
+            ReAnalysisTriggered = reAnalysisTriggered
         };
     }
 }

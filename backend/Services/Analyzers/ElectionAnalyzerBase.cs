@@ -259,7 +259,7 @@ public abstract class ElectionAnalyzerBase
 
         foreach (var result in Results
             .OrderByDescending(r => r.VoteCount)
-            .ThenByDescending(r => r.TieBreakCount ?? 0)
+            .ThenByDescending(r => r.TieBreakCount ?? 0) // unset (null) ranks the same as an explicit 0
             .ThenBy(r =>
             {
                 var person = People.FirstOrDefault(p => p.PersonGuid == r.PersonGuid);
@@ -401,6 +401,7 @@ public abstract class ElectionAnalyzerBase
         {
             r.TieBreakRequired = !(groupOnlyInOther || groupOnlyInTop);
 
+            // Unset (null) and explicit 0 compare equal; all-0 and all-unset stay unresolved.
             var stillTied = results.Any(other => other != r
                 && (other.TieBreakCount ?? 0) == (r.TieBreakCount ?? 0)
                 && (other.Section != r.Section || r.Section == "X"));
@@ -446,20 +447,15 @@ public abstract class ElectionAnalyzerBase
             resultTie.NumToElect--;
         }
 
-        if (resultTie.TieBreakRequired == true)
-        {
-            foreach (var r in results)
-            {
-                r.TieBreakCount ??= 0;
-            }
-        }
-        else
+        if (resultTie.TieBreakRequired != true)
         {
             foreach (var r in results)
             {
                 r.TieBreakCount = null;
             }
         }
+        // Required ties keep null until a teller enters a value. Explicit 0 is stored
+        // as 0; sorting and still-tied checks treat null as 0 without collapsing the two.
     }
 
     protected virtual void FinalizeSummaries()
