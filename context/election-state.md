@@ -32,7 +32,7 @@ There is no separate `Locked` flag. After analysis is complete and counts reconc
 
 **Rejected alternative:** invent a second lock type or middleware. The existing `ElectionStage.Finalized` check (same as Accept-all) is the lock; `ElectionFinalizedWriteGuard` is only a shared helper.
 
-**What stays writable on purpose:** election settings, locations, teller names, computers, analysis/results, test-election reset, and people-import file upload/mapping (those do not change the roll until execute). GetPersonDetails does not mint a new kiosk code after Finalized. Online-window open/close still gates submit when the election is not Finalized.
+**What stays writable on purpose:** election settings, locations, teller names, computers, analysis/results, test-election reset, and people-import file upload/mapping (those do not change the roll until execute). Person-detail reads never mint a kiosk code (including after Finalized). Generate/renew is a write and is blocked after Finalized. Online-window open/close still gates submit when the election is not Finalized.
 
 **Rejected alternative:** leave online voter submit writable while Finalized because the online window (not stage) already gates it. Rejected — Finalized is the lock for people/ballot mutations, including creating or updating a pending online ballot.
 

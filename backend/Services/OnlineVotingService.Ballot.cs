@@ -110,6 +110,14 @@ public partial class OnlineVotingService
                 person.HasOnlineBallot = true;
             }
 
+            if (!dto.IsDraft && onlineVoter.VoterIdType == KioskCodeLifetime.VoterIdType)
+            {
+                // End the 15-minute login window so the same code cannot open a new
+                // session. Person.KioskCode stays so this JWT can still look up the row.
+                onlineVoter.VerifyCode = null;
+                onlineVoter.VerifyCodeDate = null;
+            }
+
             await ApplyNotifyPreferenceAsync(onlineVoter, dto.NotifyWhenProcessed);
 
             await _context.SaveChangesAsync();

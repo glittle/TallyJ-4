@@ -1,15 +1,24 @@
 <script setup lang="ts">
 import { ElButton, ElCard, ElResult } from "element-plus";
-import { onMounted, ref } from "vue";
-import { useRouter } from "vue-router";
+import { computed, onMounted, ref } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 
 const router = useRouter();
+const route = useRoute();
 const onlineVotingStore = useOnlineVotingStore();
 
+const isKioskHandoff = computed(() => route.query.kiosk === "1");
 const voteStatus = ref(onlineVotingStore.voteStatus);
 
 onMounted(async () => {
+  if (isKioskHandoff.value) {
+    if (onlineVotingStore.isAuthenticated) {
+      await onlineVotingStore.logout();
+    }
+    return;
+  }
+
   if (onlineVotingStore.voterId && onlineVotingStore.electionInfo) {
     voteStatus.value = await onlineVotingStore.checkVoteStatus(
       onlineVotingStore.electionInfo.electionGuid,
@@ -26,6 +35,11 @@ async function handleLogout() {
   await onlineVotingStore.logout();
   router.push("/");
 }
+
+async function handleNextKioskVoter() {
+  await onlineVotingStore.logout();
+  await router.push({ name: "voter-auth", query: { tab: "code" } });
+}
 </script>
 
 <template>
@@ -35,21 +49,31 @@ async function handleLogout() {
         <ElResult
           icon="success"
           :title="$t('voting.confirmation.title')"
-          :sub-title="$t('voting.confirmation.subtitle')"
+          :sub-title="
+            isKioskHandoff
+              ? $t('voting.confirmation.kioskSubtitle')
+              : $t('voting.confirmation.subtitle')
+          "
         >
           <template #extra>
             <div class="confirmation-details">
-              <p v-if="voteStatus?.whenSubmitted">
+              <p v-if="!isKioskHandoff && voteStatus?.whenSubmitted">
                 <strong>{{ $t("voting.confirmation.submitted") }}</strong>
                 {{ new Date(voteStatus.whenSubmitted).toLocaleString() }}
               </p>
-              <p v-if="onlineVotingStore.electionInfo">
+              <p v-if="!isKioskHandoff && onlineVotingStore.electionInfo">
                 <strong>{{ $t("voting.confirmation.election") }}</strong>
                 {{ onlineVotingStore.electionInfo.name }}
               </p>
               <div class="info-message">
-                <p>{{ $t("voting.confirmation.recorded") }}</p>
                 <p>
+                  {{
+                    isKioskHandoff
+                      ? $t("voting.confirmation.kioskRecorded")
+                      : $t("voting.confirmation.recorded")
+                  }}
+                </p>
+                <p v-if="!isKioskHandoff">
                   {{
                     voteStatus?.canChangeVote === false
                       ? $t("voting.confirmation.cannotEdit")
@@ -59,13 +83,26 @@ async function handleLogout() {
               </div>
               <div class="action-buttons">
                 <ElButton
+                  v-if="isKioskHandoff"
+                  type="primary"
+                  size="large"
+                  @click="handleNextKioskVoter"
+                >
+                  {{ $t("voting.confirmation.nextVoter") }}
+                </ElButton>
+                <ElButton
+                  v-else
                   type="primary"
                   size="large"
                   @click="handleBackToElections"
                 >
                   {{ $t("voting.confirmation.backToElections") }}
                 </ElButton>
-                <ElButton size="large" @click="handleLogout">
+                <ElButton
+                  v-if="!isKioskHandoff"
+                  size="large"
+                  @click="handleLogout"
+                >
                   {{ $t("voting.confirmation.close") }}
                 </ElButton>
               </div>

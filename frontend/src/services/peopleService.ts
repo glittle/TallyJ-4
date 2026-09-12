@@ -8,6 +8,7 @@ import {
   getApiPeopleByElectionGuidGetAllPeople,
   getApiPeopleByGuidGetPersonDetails,
   getApiPeopleByElectionGuidGetAllForBallotEntry,
+  postApiPeopleByGuidGenerateKioskCode,
 } from "@/api/gen/configService";
 import type {
   PersonDto,
@@ -112,5 +113,16 @@ export const peopleService = {
       path: { electionGuid },
     });
     return (response.data?.data ?? []) as PersonDto[];
+  },
+
+  async generateKioskCode(personGuid: string): Promise<string> {
+    const response = await postApiPeopleByGuidGenerateKioskCode({
+      path: { guid: personGuid },
+    });
+    const code = response.data?.data;
+    if (!code) {
+      throw new Error("Kiosk code was not returned.");
+    }
+    return code;
   },
 };

@@ -137,9 +137,21 @@ public class PersonDetailDto
     public string? RegistrationHistory { get; set; }
 
     /// <summary>
-    /// The kiosk code assigned to this person for online voting.
+    /// Live kiosk code for this person, or null when none is assigned or the
+    /// code was already used (empty stored value).
     /// </summary>
     public string? KioskCode { get; set; }
+
+    /// <summary>
+    /// When the current kiosk login window ends (mint or last renew + 15 minutes).
+    /// Null when there is no live code or the teller has not minted/renewed yet.
+    /// </summary>
+    public DateTimeOffset? KioskCodeExpiresAt { get; set; }
+
+    /// <summary>
+    /// True when <c>Person.KioskCode</c> is empty (v3 used-code sentinel), not null.
+    /// </summary>
+    public bool KioskCodeConsumed { get; set; }
 
     /// <summary>
     /// The local unit name for this person (convention/regional elections).

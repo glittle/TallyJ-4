@@ -1143,6 +1143,8 @@ export type PeoplePersonDetailDto = {
     onlineBallotStatus?: string | null;
     registrationHistory?: string | null;
     kioskCode?: string | null;
+    kioskCodeExpiresAt?: Date | null;
+    kioskCodeConsumed?: boolean;
     unitName?: string | null;
     voteCount?: number;
     canDelete?: boolean;

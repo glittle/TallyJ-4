@@ -10,6 +10,7 @@ using Backend.DTOs.Results;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Helpers;
+using Backend.Middleware;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -60,6 +61,112 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         var auth = await response.Content.ReadFromJsonAsync<OnlineVoterAuthResponse>();
         Assert.NotNull(auth);
         Assert.Equal(kioskCode, auth.VoterId);
+    }
+
+    [Fact]
+    public async Task VerifyCode_WithExpiredKioskWindow_ReturnsCodeExpired()
+    {
+        var kioskCode = "JEXPD";
+        await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+        await SetKioskVerifyCodeDateAsync(kioskCode, DateTimeOffset.UtcNow.AddMinutes(-16));
+
+        var response = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
+        {
+            VoterId = kioskCode,
+            VerifyCode = kioskCode
+        });
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("voting.auth.verify.codeExpired", body);
+    }
+
+    [Fact]
+    public async Task GenerateKioskCode_RenewsExpiredWindow_ThenAuthSucceeds()
+    {
+        var kioskCode = "JRENW";
+        var electionGuid = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+        await SetElectionVotingMethodsAsync(electionGuid, "K");
+        await SetKioskVerifyCodeDateAsync(kioskCode, DateTimeOffset.UtcNow.AddMinutes(-16));
+
+        var personGuid = await GetPersonGuidByKioskCodeAsync(kioskCode);
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var generate = await Client.PostAsync($"/api/People/{personGuid}/generateKioskCode", null);
+        Assert.Equal(HttpStatusCode.OK, generate.StatusCode);
+
+        Client.DefaultRequestHeaders.Authorization = null;
+        var response = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
+        {
+            VoterId = kioskCode,
+            VerifyCode = kioskCode
+        });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task SubmitKioskBallot_EndsLoginWindow_ThenSameCodeCannotAuthenticate()
+    {
+        var kioskCode = "JSUBM";
+        var electionGuid = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+
+        var auth = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
+        {
+            VoterId = kioskCode,
+            VerifyCode = kioskCode
+        });
+        Assert.Equal(HttpStatusCode.OK, auth.StatusCode);
+
+        var submit = await Client.PostAsJsonAsync(
+            $"/api/online-voting/{electionGuid}/submitBallot",
+            new SubmitOnlineBallotDto
+            {
+                ElectionGuid = electionGuid,
+                VoterId = kioskCode,
+                Votes =
+                [
+                    new OnlineVoteDto { VoteName = "Kiosk Choice", PositionOnBallot = 1 }
+                ]
+            });
+        Assert.Equal(HttpStatusCode.OK, submit.StatusCode);
+
+        var again = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
+        {
+            VoterId = kioskCode,
+            VerifyCode = kioskCode
+        });
+        Assert.Equal(HttpStatusCode.BadRequest, again.StatusCode);
+        var body = await again.Content.ReadAsStringAsync();
+        Assert.Contains("voting.auth.verify.codeExpired", body);
+    }
+
+    [Fact]
+    public async Task KioskLogout_ClearsVoterCookies_ThenMeIsUnauthorized()
+    {
+        var kioskCode = "JLOUT";
+        await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+
+        var auth = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
+        {
+            VoterId = kioskCode,
+            VerifyCode = kioskCode
+        });
+        Assert.Equal(HttpStatusCode.OK, auth.StatusCode);
+        var token = GetSetCookieValue(auth, SecureCookieMiddleware.VoterTokenCookieName);
+        Assert.False(string.IsNullOrWhiteSpace(token));
+
+        SetVoterCookie(token!);
+        var me = await Client.GetAsync("/api/online-voting/me");
+        Assert.Equal(HttpStatusCode.OK, me.StatusCode);
+
+        var logout = await Client.PostAsync("/api/online-voting/logout", null);
+        Assert.Equal(HttpStatusCode.OK, logout.StatusCode);
+
+        Client.DefaultRequestHeaders.Remove("Cookie");
+        var after = await Client.GetAsync("/api/online-voting/me");
+        Assert.Equal(HttpStatusCode.Unauthorized, after.StatusCode);
     }
 
     [Fact]
@@ -689,6 +796,34 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         return candidates;
     }
 
+    private async Task SetKioskVerifyCodeDateAsync(string kioskCode, DateTimeOffset verifyCodeDate)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var onlineVoter = await context.OnlineVoters.SingleAsync(ov => ov.VoterId == kioskCode);
+        onlineVoter.VerifyCodeDate = verifyCodeDate;
+        await context.SaveChangesAsync();
+    }
+
+    private async Task SetElectionVotingMethodsAsync(Guid electionGuid, string votingMethods)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var election = await context.Elections.SingleAsync(e => e.ElectionGuid == electionGuid);
+        election.VotingMethods = votingMethods;
+        await context.SaveChangesAsync();
+    }
+
+    private async Task<Guid> GetPersonGuidByKioskCodeAsync(string kioskCode)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        return await context.People
+            .Where(p => p.KioskCode == kioskCode)
+            .Select(p => p.PersonGuid)
+            .SingleAsync();
+    }
+
     private async Task SetElectionStageAsync(Guid electionGuid, ElectionStage stage)
     {
         using var scope = Factory.Services.CreateScope();
@@ -775,6 +910,18 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
             CanVote = true,
             RowVersion = new byte[8]
         });
+
+        if (!string.IsNullOrWhiteSpace(kioskCode))
+        {
+            context.OnlineVoters.Add(new OnlineVoter
+            {
+                VoterId = kioskCode,
+                VoterIdType = KioskCodeLifetime.VoterIdType,
+                WhenRegistered = DateTimeOffset.UtcNow,
+                VerifyCode = kioskCode,
+                VerifyCodeDate = DateTimeOffset.UtcNow
+            });
+        }
 
         await context.SaveChangesAsync();
         return electionGuid;

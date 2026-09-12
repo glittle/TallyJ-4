@@ -287,6 +287,14 @@ async function handleSubmit() {
         ? t("voting.ballot.resubmitSuccess")
         : t("voting.ballot.submitSuccess"),
     );
+    if (onlineVotingStore.isKioskSession) {
+      await onlineVotingStore.logout();
+      await router.push({
+        name: "voter-confirmation",
+        query: { kiosk: "1" },
+      });
+      return;
+    }
     router.push({ name: "voter-confirmation" });
   } catch (error) {
     console.error("Error submitting ballot:", error);

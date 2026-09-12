@@ -103,6 +103,49 @@ export function electionSupportsKiosk(votingMethods?: string | null): boolean {
   );
 }
 
+/** Adds or removes kiosk (`K`) without rewriting the other stored method tokens. */
+export function setElectionKioskEnabled(
+  votingMethods: string | null | undefined,
+  enabled: boolean,
+): string {
+  const current = votingMethods ?? "";
+  const has = electionSupportsKiosk(current);
+  if (enabled === has) {
+    return current;
+  }
+
+  if (enabled) {
+    if (!current.trim()) {
+      return VOTING_METHOD_KIOSK;
+    }
+    if (current.includes(",")) {
+      return `${current.replace(/,\s*$/, "")},K`;
+    }
+    return `${current}${VOTING_METHOD_KIOSK}`;
+  }
+
+  if (current.includes(",")) {
+    return current
+      .split(",")
+      .map((token) => token.trim())
+      .filter((token) => {
+        const upper = token.toUpperCase();
+        return upper !== VOTING_METHOD_KIOSK && upper !== "KI";
+      })
+      .join(",");
+  }
+
+  const trimmed = current.trim();
+  if (
+    trimmed.length === 2 &&
+    ELECTION_METHOD_ALIASES[trimmed.toUpperCase()] === VOTING_METHOD_KIOSK
+  ) {
+    return "";
+  }
+
+  return current.replace(/K/gi, "");
+}
+
 export function isRecordedOtherThanOnline(method?: string | null): boolean {
   return Boolean(method && RECORDED_OTHER_THAN_ONLINE.has(method));
 }

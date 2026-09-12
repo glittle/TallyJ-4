@@ -29,7 +29,7 @@ public static partial class DbSeeder
             OnlineWhenClose = DateTimeOffset.Now.AddDays(3),
             OnlineCloseIsEstimate = true,
             OnlineSelectionProcess = "A",
-            VotingMethods = "IP,OL",
+            VotingMethods = "IP,OL,K",
             OwnerLoginId = "admin@tallyj.test",
             ShowAsTest = true
         };
@@ -283,6 +283,13 @@ public static partial class DbSeeder
                 : $"{election.VotingMethods},OL";
         }
 
+        if (!election.VotingMethods.Contains("K", StringComparison.OrdinalIgnoreCase))
+        {
+            election.VotingMethods = string.IsNullOrWhiteSpace(election.VotingMethods)
+                ? "K"
+                : $"{election.VotingMethods},K";
+        }
+
         var mainHallGuid = CreateGuid("MainHall");
         if (!await context.Locations.AnyAsync(l => l.LocationGuid == mainHallGuid))
         {
@@ -323,6 +330,26 @@ public static partial class DbSeeder
             existingVoter.KioskCode ??= "VTEST";
             existingVoter.CanVote = true;
             existingVoter.VotingMethod = "O";
+        }
+
+        var kioskVoter = await context.OnlineVoters
+            .FirstOrDefaultAsync(ov => ov.VoterId == "VTEST");
+        if (kioskVoter == null)
+        {
+            context.OnlineVoters.Add(new OnlineVoter
+            {
+                VoterId = "VTEST",
+                VoterIdType = "C",
+                WhenRegistered = DateTimeOffset.UtcNow,
+                VerifyCode = "VTEST",
+                VerifyCodeDate = DateTimeOffset.UtcNow
+            });
+        }
+        else
+        {
+            kioskVoter.VoterIdType = "C";
+            kioskVoter.VerifyCode = "VTEST";
+            kioskVoter.VerifyCodeDate = DateTimeOffset.UtcNow;
         }
 
         var phoneVoter = await context.People

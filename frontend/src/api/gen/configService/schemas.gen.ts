@@ -3819,6 +3819,14 @@ export const People_PersonDetailDtoSchema = {
             type: 'string',
             nullable: true
         },
+        kioskCodeExpiresAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        kioskCodeConsumed: {
+            type: 'boolean'
+        },
         unitName: {
             type: 'string',
             nullable: true

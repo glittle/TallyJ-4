@@ -145,7 +145,7 @@ public partial class OnlineVotingService
             if (string.Equals(dto.VoterId, dto.VerifyCode, StringComparison.OrdinalIgnoreCase))
             {
                 var kioskResult = await TryAuthenticateWithDirectCodeAsync(dto.VoterId);
-                if (kioskResult.Success)
+                if (kioskResult.Success || kioskResult.Error == "voting.auth.verify.codeExpired")
                 {
                     return kioskResult;
                 }
@@ -312,23 +312,13 @@ public partial class OnlineVotingService
         var onlineVoter = await _context.OnlineVoters
             .FirstOrDefaultAsync(ov => ov.VoterId == normalizedCode);
 
-        if (onlineVoter == null)
+        if (onlineVoter == null || !KioskCodeLifetime.IsLoginWindowOpen(onlineVoter.VerifyCodeDate, now))
         {
-            onlineVoter = new OnlineVoter
-            {
-                VoterId = normalizedCode,
-                VoterIdType = "C",
-                WhenRegistered = DateTimeOffset.UtcNow
-            };
-            _context.OnlineVoters.Add(onlineVoter);
-        }
-        else
-        {
-            onlineVoter.VoterIdType = "C";
+            return (false, "voting.auth.verify.codeExpired", null);
         }
 
+        onlineVoter.VoterIdType = KioskCodeLifetime.VoterIdType;
         onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;
-        onlineVoter.VerifyCode = null;
         onlineVoter.VerifyAttempts = 0;
         await _context.SaveChangesAsync();
 

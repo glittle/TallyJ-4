@@ -26,6 +26,8 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   const { handleApiError } = useApiErrorHandler();
 
   const voterId = ref<string | null>(null);
+  /** E=email, P=phone, C=kiosk/personal code. From auth or GET /me. */
+  const voterIdType = ref<string | null>(null);
   const electionInfo = ref<OnlineElectionInfo | null>(null);
   const votablePeople = ref<OnlinePerson[]>([]);
   const voteStatus = ref<OnlineVoteStatus | null>(null);
@@ -48,16 +50,21 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   }
 
   const isAuthenticated = computed(() => !!voterId.value);
+  const isKioskSession = computed(() => voterIdType.value === "C");
 
-  function persistAuth(id: string) {
+  function persistAuth(id: string, type?: string | null) {
     voterId.value = id;
+    if (type) {
+      voterIdType.value = type;
+    }
   }
 
   async function applyAuthResponse(response: {
     voterId?: string | null;
+    voterIdType?: string | null;
   }): Promise<void> {
     if (response.voterId) {
-      persistAuth(response.voterId);
+      persistAuth(response.voterId, response.voterIdType);
       return;
     }
     await restoreSession();
@@ -84,7 +91,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
         if (!session.voterId) {
           return false;
         }
-        persistAuth(session.voterId);
+        persistAuth(session.voterId, session.voterIdType);
         return true;
       } catch {
         secureTokenService.clearVoterSession();
@@ -366,6 +373,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     }
     secureTokenService.clearVoterSession();
     voterId.value = null;
+    voterIdType.value = null;
     electionInfo.value = null;
     votablePeople.value = [];
     voteStatus.value = null;
@@ -375,7 +383,9 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
 
   return {
     voterId,
+    voterIdType,
     isAuthenticated,
+    isKioskSession,
     electionInfo,
     votablePeople,
     voteStatus,

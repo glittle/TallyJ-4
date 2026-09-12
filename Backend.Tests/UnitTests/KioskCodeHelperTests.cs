@@ -35,4 +35,16 @@ public class KioskCodeHelperTests
         Assert.DoesNotContain(code, existing, StringComparer.OrdinalIgnoreCase);
         Assert.StartsWith("S", code);
     }
+
+    [Fact]
+    public void IsLoginWindowOpen_IsTrueWithinFifteenMinutes()
+    {
+        var minted = DateTimeOffset.Parse("2026-09-12T12:00:00Z");
+        Assert.True(KioskCodeLifetime.IsLoginWindowOpen(minted, minted.AddMinutes(14)));
+        Assert.False(KioskCodeLifetime.IsLoginWindowOpen(minted, minted.AddMinutes(15)));
+        Assert.False(KioskCodeLifetime.IsLoginWindowOpen(null, minted));
+        Assert.True(KioskCodeLifetime.IsConsumed(string.Empty));
+        Assert.False(KioskCodeLifetime.IsConsumed(null));
+        Assert.False(KioskCodeLifetime.HasLiveCode(string.Empty));
+    }
 }

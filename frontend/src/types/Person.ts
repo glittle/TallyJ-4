@@ -63,6 +63,8 @@ export interface PersonDetailDto {
   onlineBallotStatus?: string;
   registrationHistory?: string;
   kioskCode?: string;
+  kioskCodeExpiresAt?: string | Date | null;
+  kioskCodeConsumed?: boolean;
   unitName?: string;
   voteCount: number;
   canDelete?: boolean;
