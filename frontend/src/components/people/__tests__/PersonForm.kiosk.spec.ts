@@ -7,6 +7,7 @@ import type { PersonDetailDto, PersonListDto } from "@/types/Person";
 
 const mockGetDetails = vi.fn();
 const mockGenerateKioskCode = vi.fn();
+const handleApiError = vi.fn();
 const currentElection = { votingMethods: "IP,OL,K" };
 
 vi.mock("@/services/peopleService", () => ({
@@ -49,7 +50,7 @@ vi.mock("@/composables/useNotifications", () => ({
 
 vi.mock("@/composables/useApiErrorHandler", () => ({
   useApiErrorHandler: () => ({
-    handleApiError: vi.fn(),
+    handleApiError,
   }),
 }));
 
@@ -76,6 +77,7 @@ describe("PersonForm kiosk generate", () => {
     currentElection.votingMethods = "IP,OL,K";
     mockGetDetails.mockReset();
     mockGenerateKioskCode.mockReset();
+    handleApiError.mockReset();
     mockGetDetails.mockResolvedValue(details());
     mockGenerateKioskCode.mockResolvedValue("SMART");
   });
@@ -144,6 +146,30 @@ describe("PersonForm kiosk generate", () => {
 
     expect(wrapper.find('[data-testid="generate-kiosk-code"]').exists()).toBe(
       false,
+    );
+  });
+
+  it("surfaces the API error on generate failure, not the share/expiry note", async () => {
+    const apiError = new Error("Cannot generate a kiosk code for a person who has already voted.");
+    mockGenerateKioskCode.mockRejectedValue(apiError);
+
+    const wrapper = mount(PersonForm, {
+      props: {
+        electionGuid: "22222222-2222-2222-2222-222222222222",
+        person,
+        isEdit: true,
+      },
+      global: { plugins: [i18n, ElementPlus, pinia] },
+    });
+    await flushPromises();
+
+    await wrapper.get('[data-testid="generate-kiosk-code"]').trigger("click");
+    await flushPromises();
+
+    expect(handleApiError).toHaveBeenCalledWith(apiError);
+    expect(handleApiError).not.toHaveBeenCalledWith(
+      apiError,
+      expect.stringContaining("expires after 15 minutes"),
     );
   });
 });

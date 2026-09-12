@@ -313,7 +313,7 @@ async function handleGenerateKioskCode() {
     await loadPersonDetails();
     showSuccessMessage(t("people.kioskCodeGenerated"));
   } catch (error) {
-    handleApiError(error, t("people.kioskCodeNote"));
+    handleApiError(error);
   } finally {
     generatingKioskCode.value = false;
   }
