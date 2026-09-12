@@ -228,6 +228,9 @@ watch(activeTab, async (newTab) => {
 });
 
 onMounted(() => {
+  if (route.query.tab === "code") {
+    activeTab.value = "code";
+  }
   if (activeTab.value === "google") {
     nextTick(() => {
       syncGoogleButtonRef();

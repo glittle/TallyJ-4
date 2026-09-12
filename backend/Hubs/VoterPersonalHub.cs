@@ -69,7 +69,9 @@ public class VoterPersonalHub : Hub
     }
 
     /// <summary>
-    /// Personal group for one online voter identity (email, phone, or kiosk code).
+    /// Personal group for one online voter identity (email, phone, or
+    /// election-scoped kiosk <c>OnlineVoter.VoterId</c> from
+    /// <c>KioskCodeLifetime.ToVoterId</c> — not the teller-facing letters).
     /// Always trims so join paths and server fan-out use the same group key.
     /// </summary>
     public static string GetGroupName(string voterId)

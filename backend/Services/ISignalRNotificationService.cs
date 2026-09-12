@@ -132,11 +132,12 @@ public interface ISignalRNotificationService
     /// <summary>
     /// Notifies a voter's personal channel that their registration / voting method changed
     /// (VoterPersonalHub <c>updateVoter</c>). Targets groups for the person's email, phone,
-    /// and kiosk code when present (server-derived; not client-supplied).
+    /// and election-scoped kiosk <c>OnlineVoter.VoterId</c> when present
+    /// (<c>KioskCodeLifetime.ToVoterId</c>, not the teller-facing letters).
     /// </summary>
     /// <param name="email">Person email used as online voter id (if any).</param>
     /// <param name="phone">Person phone used as online voter id (if any).</param>
-    /// <param name="kioskCode">Person kiosk code used as online voter id (if any).</param>
+    /// <param name="kioskCode">Election-scoped kiosk voter id (<c>{letters}.{electionGuid:N}</c>), not the raw letters.</param>
     /// <param name="update">Thin personal update payload.</param>
     Task NotifyVoterPersonalUpdateAsync(
         string? email,
@@ -148,7 +149,7 @@ public interface ISignalRNotificationService
     /// Notifies existing sessions for a voter identity that the same identity logged in elsewhere
     /// (VoterPersonalHub <c>updateVoter</c> with <c>login: true</c>).
     /// </summary>
-    /// <param name="voterId">Authenticated online voter id (email, phone, or kiosk code).</param>
+    /// <param name="voterId">Authenticated online voter id (email, phone, or election-scoped kiosk id).</param>
     Task NotifyVoterLoginElsewhereAsync(string voterId);
 
     /// <summary>

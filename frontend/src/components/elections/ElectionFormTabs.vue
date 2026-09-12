@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { useLocalStorage } from "@/composables/useLocalStorage";
+import {
+  electionSupportsKiosk,
+  setElectionKioskEnabled,
+} from "@/utils/votingMethodLabels";
 import { computed, ref, type Ref } from "vue";
 import type {
   CreateElectionDto,
@@ -74,6 +78,22 @@ function tabLabel(tab: string, label: string) {
     ? `${label} ` + '<span class="tab-error-dot"></span>'
     : label;
 }
+
+const kioskEnabled = computed({
+  get: () => electionSupportsKiosk(model.value.votingMethods),
+  set: (enabled: boolean) => {
+    model.value.votingMethods = setElectionKioskEnabled(
+      model.value.votingMethods,
+      enabled,
+    );
+    if (enabled) {
+      model.value.useOnlineVoting = true;
+      if (!model.value.onlineSelectionProcess) {
+        model.value.onlineSelectionProcess = "A";
+      }
+    }
+  },
+});
 
 function onUseOnlineVotingChange(enabled: string | number | boolean) {
   if (enabled && !model.value.onlineSelectionProcess) {
@@ -182,6 +202,13 @@ function onUseOnlineVotingChange(enabled: string | number | boolean) {
     >
       <el-form-item :label="$t('elections.form.useCallInButton')">
         <el-switch v-model="model.useCallInButton" />
+      </el-form-item>
+
+      <el-form-item :label="$t('elections.form.useKiosk')">
+        <el-switch v-model="kioskEnabled" data-testid="election-kiosk-toggle" />
+        <template #help>
+          <span class="form-help">{{ $t("elections.form.useKioskHelp") }}</span>
+        </template>
       </el-form-item>
 
       <el-form-item

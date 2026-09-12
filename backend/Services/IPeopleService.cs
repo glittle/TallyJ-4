@@ -82,7 +82,8 @@ public interface IPeopleService
     Task<PersonDetailDto?> GetPersonDetailsAsync(Guid personGuid);
 
     /// <summary>
-    /// Generates or returns the kiosk code for an unregistered person.
+    /// Mints a kiosk code if the person has none, or renews the 15-minute
+    /// login window on the existing code. Does not mint on person-detail reads.
     /// </summary>
     /// <param name="personGuid">The unique identifier of the person.</param>
     /// <returns>The kiosk code, or null if the person was not found.</returns>

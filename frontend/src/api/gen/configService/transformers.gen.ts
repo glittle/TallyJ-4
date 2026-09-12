@@ -391,6 +391,9 @@ const peoplePersonDetailDtoSchemaResponseTransformer = (data: any) => {
     if (data.registrationTime) {
         data.registrationTime = new Date(data.registrationTime);
     }
+    if (data.kioskCodeExpiresAt) {
+        data.kioskCodeExpiresAt = new Date(data.kioskCodeExpiresAt);
+    }
     if (data.phoneOnlineVoter) {
         data.phoneOnlineVoter = peoplePersonPhoneOnlineVoterDtoSchemaResponseTransformer(data.phoneOnlineVoter);
     }

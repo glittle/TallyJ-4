@@ -96,6 +96,8 @@
   "elections.form.typePlaceholder": "Seleccione el tipo de elección",
   "elections.form.typeRequired": "El tipo de elección es obligatorio",
   "elections.form.useCallInButton": "Activar Votación por Llamada",
+  "elections.form.useKiosk": "Enable kiosk mode",
+  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
   "elections.form.votingMethods": "Métodos de Votación",
   "elections.form.votingMethodsHelp": "Elija los métodos mediante los cuales se emitirán los votos.",
   "elections.form.votingMethodsPlaceholder": "Seleccione los métodos de votación",

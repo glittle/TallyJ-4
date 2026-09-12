@@ -11,6 +11,7 @@ namespace Backend.Tests.UnitTests.Services;
 public class FrontDeskServiceTests : ServiceTestBase
 {
     private readonly FrontDeskService _service;
+    private readonly Mock<ISignalRNotificationService> _signalR = new();
     private readonly Guid _electionGuid = Guid.NewGuid();
 
     public FrontDeskServiceTests()
@@ -18,7 +19,7 @@ public class FrontDeskServiceTests : ServiceTestBase
         _service = new FrontDeskService(
             Context,
             new Mock<ILogger<FrontDeskService>>().Object,
-            new Mock<ISignalRNotificationService>().Object);
+            _signalR.Object);
     }
 
     [Fact]
@@ -175,6 +176,38 @@ public class FrontDeskServiceTests : ServiceTestBase
         Assert.Equal(2, rollCall.Stats.TotalEligible);
         Assert.Equal(1, rollCall.Stats.CheckedIn);
         Assert.Equal(1, rollCall.Stats.NotYetCheckedIn);
+    }
+
+    [Fact]
+    public async Task CheckInVoterAsync_NotifiesKioskPersonalGroupWithScopedVoterId()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedEligiblePerson();
+        person.KioskCode = "SMART";
+        await Context.SaveChangesAsync();
+
+        await _service.CheckInVoterAsync(_electionGuid, new CheckInVoterDto
+        {
+            PersonGuid = person.PersonGuid,
+            VotingMethod = "P",
+            Teller1 = "Ada"
+        });
+
+        var scopedId = KioskCodeLifetime.ToVoterId(_electionGuid, "SMART");
+        _signalR.Verify(
+            s => s.NotifyVoterPersonalUpdateAsync(
+                It.IsAny<string?>(),
+                It.IsAny<string?>(),
+                scopedId,
+                It.IsAny<Backend.DTOs.SignalR.VoterPersonalUpdateDto>()),
+            Times.Once);
+        _signalR.Verify(
+            s => s.NotifyVoterPersonalUpdateAsync(
+                It.IsAny<string?>(),
+                It.IsAny<string?>(),
+                "SMART",
+                It.IsAny<Backend.DTOs.SignalR.VoterPersonalUpdateDto>()),
+            Times.Never);
     }
 
     private void SeedElection(ElectionStage stage)

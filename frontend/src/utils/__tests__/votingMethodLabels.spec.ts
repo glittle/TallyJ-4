@@ -5,6 +5,7 @@ import {
   isRecordedOtherThanOnline,
   parseElectionVotingMethods,
   parseFrontDeskCheckInMethods,
+  setElectionKioskEnabled,
 } from "../votingMethodLabels";
 
 const t = ((key: string) => key) as any;
@@ -48,6 +49,17 @@ describe("votingMethodLabels", () => {
     expect(electionSupportsKiosk("PMDK")).toBe(true);
     expect(electionSupportsKiosk("IP,K")).toBe(true);
     expect(electionSupportsKiosk("PDM")).toBe(false);
+  });
+
+  it("adds and removes kiosk without rewriting other methods", () => {
+    expect(setElectionKioskEnabled("IP,OL", true)).toBe("IP,OL,K");
+    expect(setElectionKioskEnabled("IP,OL,K", false)).toBe("IP,OL");
+    expect(setElectionKioskEnabled("PMD", true)).toBe("PMDK");
+    expect(setElectionKioskEnabled("PMDK", false)).toBe("PMD");
+    expect(setElectionKioskEnabled("", true)).toBe("K");
+    expect(setElectionKioskEnabled("IP,OL,K", true)).toBe("IP,OL,K");
+    expect(setElectionKioskEnabled("KI", false)).toBe("");
+    expect(setElectionKioskEnabled("IP,KI", false)).toBe("IP");
   });
 
   it("omits Online from Front Desk check-in methods", () => {

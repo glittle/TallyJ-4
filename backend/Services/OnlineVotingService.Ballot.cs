@@ -46,17 +46,21 @@ public partial class OnlineVotingService
                 return (false, "voting.submit.notOpen");
             }
 
-            var onlineVoter = await _context.OnlineVoters
-                .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId);
+            var onlineVoter = await FindOnlineVoterForBallotAsync(dto.ElectionGuid, dto.VoterId);
 
             if (onlineVoter == null)
             {
                 return (false, "voting.submit.voterNotFound");
             }
 
-            var person = await _context.People
-                .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid &&
-                                        (p.Email == dto.VoterId || p.Phone == dto.VoterId || p.KioskCode == dto.VoterId));
+            var person = await FindPersonForVoterAsync(dto.ElectionGuid, dto.VoterId);
+            if (person == null &&
+                (onlineVoter.VoterIdType == KioskCodeLifetime.VoterIdType ||
+                 KioskCodeLifetime.TryParseVoterId(dto.VoterId, out _, out _)))
+            {
+                await transaction.RollbackAsync();
+                return (false, "voting.submit.voterNotFound");
+            }
 
             OnlineVotingInfo? existingVotingInfo = null;
             if (person != null)
@@ -110,6 +114,14 @@ public partial class OnlineVotingService
                 person.HasOnlineBallot = true;
             }
 
+            if (!dto.IsDraft && onlineVoter.VoterIdType == KioskCodeLifetime.VoterIdType)
+            {
+                // End the 15-minute login window so the same code cannot open a new
+                // session. Person.KioskCode stays so this JWT can still look up the row.
+                onlineVoter.VerifyCode = null;
+                onlineVoter.VerifyCodeDate = null;
+            }
+
             await ApplyNotifyPreferenceAsync(onlineVoter, dto.NotifyWhenProcessed);
 
             await _context.SaveChangesAsync();
@@ -131,9 +143,7 @@ public partial class OnlineVotingService
     /// <inheritdoc/>
     public async Task<OnlineVoteStatusDto> GetVoteStatusAsync(Guid electionGuid, string voterId)
     {
-        var person = await _context.People
-            .FirstOrDefaultAsync(p => p.ElectionGuid == electionGuid &&
-                                    (p.Email == voterId || p.Phone == voterId || p.KioskCode == voterId));
+        var person = await FindPersonForVoterAsync(electionGuid, voterId);
 
         if (person == null)
         {
@@ -391,5 +401,45 @@ public partial class OnlineVotingService
         {
             return new List<OnlinePoolEntryDto>();
         }
+    }
+
+    private async Task<OnlineVoter?> FindOnlineVoterForBallotAsync(Guid electionGuid, string voterId)
+    {
+        if (KioskCodeLifetime.TryParseVoterId(voterId, out var parsedElection, out var code))
+        {
+            if (parsedElection != electionGuid)
+            {
+                return null;
+            }
+
+            return await _context.OnlineVoters
+                .FirstOrDefaultAsync(ov =>
+                    ov.VoterId == KioskCodeLifetime.ToVoterId(electionGuid, code) &&
+                    ov.VoterIdType == KioskCodeLifetime.VoterIdType);
+        }
+
+        var scopedId = KioskCodeLifetime.ToVoterId(electionGuid, voterId);
+        var kioskRow = await _context.OnlineVoters
+            .FirstOrDefaultAsync(ov =>
+                ov.VoterId == scopedId &&
+                ov.VoterIdType == KioskCodeLifetime.VoterIdType);
+        if (kioskRow != null)
+        {
+            return kioskRow;
+        }
+
+        return await _context.OnlineVoters
+            .FirstOrDefaultAsync(ov => ov.VoterId == voterId);
+    }
+
+    private async Task<Person?> FindPersonForVoterAsync(Guid electionGuid, string voterId)
+    {
+        var parsed = KioskCodeLifetime.TryParseVoterId(voterId, out var kioskElection, out var kioskCode);
+        return await _context.People
+            .FirstOrDefaultAsync(p => p.ElectionGuid == electionGuid &&
+                (p.Email == voterId ||
+                 p.Phone == voterId ||
+                 p.KioskCode == voterId ||
+                 (parsed && p.ElectionGuid == kioskElection && p.KioskCode == kioskCode)));
     }
 }

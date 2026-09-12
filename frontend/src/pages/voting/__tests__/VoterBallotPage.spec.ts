@@ -6,6 +6,8 @@ import type { OnlineElectionInfo, OnlineVoteStatus } from "@/types";
 import VoterBallotPage from "../VoterBallotPage.vue";
 
 const submitBallot = vi.fn().mockResolvedValue({});
+const logout = vi.fn().mockResolvedValue(undefined);
+const push = vi.fn();
 
 const storeState = reactive({
   voterId: "voter@example.com",
@@ -13,6 +15,7 @@ const storeState = reactive({
   votablePeople: [] as { personGuid: string; fullName: string }[],
   voteStatus: null as OnlineVoteStatus | null,
   loginElsewhereNotice: false,
+  isKioskSession: false,
   restoreSession: vi.fn().mockResolvedValue(true),
   ensureVoterHubsConnected: vi.fn().mockResolvedValue(undefined),
   joinElectionBallotPresence: vi.fn().mockResolvedValue(undefined),
@@ -21,11 +24,12 @@ const storeState = reactive({
   checkVoteStatus: vi.fn(),
   loadVotablePeople: vi.fn().mockResolvedValue(undefined),
   submitBallot,
+  logout,
   dismissLoginElsewhereNotice: vi.fn(),
 });
 
 vi.mock("vue-router", () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push }),
   useRoute: () => ({ params: { electionId: "election-1" } }),
 }));
 
@@ -86,6 +90,9 @@ describe("VoterBallotPage silent autosave isDraft", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     submitBallot.mockClear();
+    logout.mockClear();
+    push.mockClear();
+    storeState.isKioskSession = false;
     storeState.electionInfo = openElection;
     storeState.voteStatus = null;
     storeState.restoreSession.mockResolvedValue(true);
@@ -249,5 +256,24 @@ describe("VoterBallotPage silent autosave isDraft", () => {
       i18n.global.t("voting.status.alreadyVotedAnotherWay"),
     );
     expect(submitBallot).not.toHaveBeenCalled();
+  });
+
+  it("logs out after kiosk submit so the next voter starts clean", async () => {
+    storeState.isKioskSession = true;
+    storeState.checkVoteStatus.mockResolvedValue(draftStatus());
+    storeState.voteStatus = draftStatus();
+
+    const wrapper = await mountAndFlushAutosave();
+    submitBallot.mockClear();
+
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    expect(submitBallot).toHaveBeenCalled();
+    expect(logout).toHaveBeenCalled();
+    expect(push).toHaveBeenCalledWith({
+      name: "voter-confirmation",
+      query: { kiosk: "1" },
+    });
   });
 });

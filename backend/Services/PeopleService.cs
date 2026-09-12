@@ -417,10 +417,7 @@ public class PeopleService : IPeopleService
             person,
             OnlineBallotStatus.IsProcessed(onlineStatus));
 
-        if (await ShouldEnsureKioskCodeAsync(person))
-        {
-            dto.KioskCode = await EnsureKioskCodeAsync(person);
-        }
+        await ApplyKioskCodeDetailAsync(person, dto);
 
         return dto;
     }
@@ -441,12 +438,28 @@ public class PeopleService : IPeopleService
             throw new InvalidOperationException("Cannot generate a kiosk code for a person who has already registered.");
         }
 
+        if (KioskCodeLifetime.IsConsumed(person.KioskCode))
+        {
+            throw new InvalidOperationException("This kiosk code has already been used.");
+        }
+
+        var onlineStatus = await LoadLatestOnlineBallotStatusAsync(person.ElectionGuid, person.PersonGuid);
+        if (OnlineBallotStatus.IsProcessed(onlineStatus))
+        {
+            throw new InvalidOperationException("Cannot generate a kiosk code for a person who has already voted.");
+        }
+
         if (!await ElectionSupportsKioskAsync(person.ElectionGuid))
         {
             throw new InvalidOperationException("This election does not support kiosk voting.");
         }
 
-        return await EnsureKioskCodeAsync(person);
+        var code = KioskCodeLifetime.HasLiveCode(person.KioskCode)
+            ? person.KioskCode!
+            : await EnsureKioskCodeAsync(person);
+
+        await StampKioskLoginWindowAsync(person.ElectionGuid, code);
+        return code;
     }
 
     // =====================================================================
@@ -564,24 +577,67 @@ public class PeopleService : IPeopleService
         }
     }
 
-    private async Task<bool> ShouldEnsureKioskCodeAsync(Person person)
+    private async Task ApplyKioskCodeDetailAsync(Person person, PersonDetailDto dto)
     {
-        if (!string.IsNullOrWhiteSpace(person.KioskCode))
+        if (KioskCodeLifetime.IsConsumed(person.KioskCode))
         {
-            return false;
+            dto.KioskCode = null;
+            dto.KioskCodeConsumed = true;
+            dto.KioskCodeExpiresAt = null;
+            return;
         }
 
-        if (!string.IsNullOrWhiteSpace(person.VotingMethod))
+        if (!KioskCodeLifetime.HasLiveCode(person.KioskCode))
         {
-            return false;
+            dto.KioskCode = null;
+            dto.KioskCodeConsumed = false;
+            dto.KioskCodeExpiresAt = null;
+            return;
         }
 
-        if (await ElectionFinalizedWriteGuard.IsLockedAsync(_context, person.ElectionGuid))
+        dto.KioskCode = person.KioskCode;
+        dto.KioskCodeConsumed = false;
+
+        var onlineVoter = await _context.OnlineVoters
+            .AsNoTracking()
+            .FirstOrDefaultAsync(ov =>
+                ov.VoterId == KioskCodeLifetime.ToVoterId(person.ElectionGuid, person.KioskCode!) &&
+                ov.VoterIdType == KioskCodeLifetime.VoterIdType);
+        dto.KioskCodeExpiresAt = KioskCodeLifetime.ExpiresAt(onlineVoter?.VerifyCodeDate);
+    }
+
+    private async Task StampKioskLoginWindowAsync(Guid electionGuid, string code)
+    {
+        var normalized = code.Trim().ToUpperInvariant();
+        var voterId = KioskCodeLifetime.ToVoterId(electionGuid, normalized);
+        var onlineVoter = await _context.OnlineVoters
+            .FirstOrDefaultAsync(ov =>
+                ov.VoterId == voterId &&
+                ov.VoterIdType == KioskCodeLifetime.VoterIdType);
+
+        if (onlineVoter == null)
         {
-            return false;
+            var occupant = await _context.OnlineVoters
+                .FirstOrDefaultAsync(ov => ov.VoterId == voterId);
+            if (occupant != null)
+            {
+                throw new InvalidOperationException(
+                    "This kiosk code is already used as another voter identity.");
+            }
+
+            onlineVoter = new OnlineVoter
+            {
+                VoterId = voterId,
+                VoterIdType = KioskCodeLifetime.VoterIdType,
+                WhenRegistered = DateTimeOffset.UtcNow
+            };
+            _context.OnlineVoters.Add(onlineVoter);
         }
 
-        return await ElectionSupportsKioskAsync(person.ElectionGuid);
+        onlineVoter.VerifyCode = normalized;
+        onlineVoter.VerifyCodeDate = DateTimeOffset.UtcNow;
+        onlineVoter.VerifyAttempts = 0;
+        await _context.SaveChangesAsync();
     }
 
     private async Task<bool> ElectionSupportsKioskAsync(Guid electionGuid)

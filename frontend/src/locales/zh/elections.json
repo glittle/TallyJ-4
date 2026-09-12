@@ -96,6 +96,8 @@
   "elections.form.typePlaceholder": "选择选举类型",
   "elections.form.typeRequired": "选举类型为必填项",
   "elections.form.useCallInButton": "启用电话投票",
+  "elections.form.useKiosk": "Enable kiosk mode",
+  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
   "elections.form.votingMethods": "投票方式",
   "elections.form.votingMethodsHelp": "选择投票的方式。",
   "elections.form.votingMethodsPlaceholder": "选择投票方式",

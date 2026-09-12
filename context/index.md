@@ -10,6 +10,7 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [ballot-validation.md](ballot-validation.md) — pre-finalization integrity; count-reconciliation report before Analyze/Finalize
 - [election-state.md](election-state.md) — teller coordination and high-consequence state transitions
 - [online-ballots.md](online-ballots.md) - Draft autosave vs Submitted, online acceptance (pending until Accept-all), reserved Online/Imported locations, monitor close countdown, anonymous ballot-page sessions, and random name resolution
+- [kiosk.md](kiosk.md) — kiosk as teller-minted 15-minute codes on a shared browser; not mint-on-read
 - [people.md](people.md) - person fields; AgeGroup removed (eligibility is V01/X05); cannot-vote lock after accepted ballot
 - [front-desk.md](front-desk.md) - Ballot Not Received filter; method codes (P not I); pending-online withdraw on method switch; Roll Call / envelope pages not in v4
 - [people-import.md](people-import.md) — three-action import pipeline (not a Next/Previous wizard)

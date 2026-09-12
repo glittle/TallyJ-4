@@ -1,6 +1,7 @@
 using Backend.Context;
 using Backend.Entities;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Backend.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +30,7 @@ public static partial class DbSeeder
             OnlineWhenClose = DateTimeOffset.Now.AddDays(3),
             OnlineCloseIsEstimate = true,
             OnlineSelectionProcess = "A",
-            VotingMethods = "IP,OL",
+            VotingMethods = "IP,OL,K",
             OwnerLoginId = "admin@tallyj.test",
             ShowAsTest = true
         };
@@ -283,6 +284,13 @@ public static partial class DbSeeder
                 : $"{election.VotingMethods},OL";
         }
 
+        if (!election.VotingMethods.Contains("K", StringComparison.OrdinalIgnoreCase))
+        {
+            election.VotingMethods = string.IsNullOrWhiteSpace(election.VotingMethods)
+                ? "K"
+                : $"{election.VotingMethods},K";
+        }
+
         var mainHallGuid = CreateGuid("MainHall");
         if (!await context.Locations.AnyAsync(l => l.LocationGuid == mainHallGuid))
         {
@@ -323,6 +331,33 @@ public static partial class DbSeeder
             existingVoter.KioskCode ??= "VTEST";
             existingVoter.CanVote = true;
             existingVoter.VotingMethod = "O";
+        }
+
+        var kioskVoterId = KioskCodeLifetime.ToVoterId(electionGuid, "VTEST");
+        var kioskVoter = await context.OnlineVoters
+            .FirstOrDefaultAsync(ov =>
+                ov.VoterId == kioskVoterId &&
+                ov.VoterIdType == KioskCodeLifetime.VoterIdType);
+        if (kioskVoter == null)
+        {
+            var occupant = await context.OnlineVoters
+                .FirstOrDefaultAsync(ov => ov.VoterId == kioskVoterId);
+            if (occupant == null)
+            {
+                context.OnlineVoters.Add(new OnlineVoter
+                {
+                    VoterId = kioskVoterId,
+                    VoterIdType = KioskCodeLifetime.VoterIdType,
+                    WhenRegistered = DateTimeOffset.UtcNow,
+                    VerifyCode = "VTEST",
+                    VerifyCodeDate = DateTimeOffset.UtcNow
+                });
+            }
+        }
+        else
+        {
+            kioskVoter.VerifyCode = "VTEST";
+            kioskVoter.VerifyCodeDate = DateTimeOffset.UtcNow;
         }
 
         var phoneVoter = await context.People

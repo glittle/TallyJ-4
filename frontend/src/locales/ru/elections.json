@@ -96,6 +96,8 @@
   "elections.form.typePlaceholder": "Выберите тип выборов",
   "elections.form.typeRequired": "Тип выборов обязателен",
   "elections.form.useCallInButton": "Включить голосование по телефону",
+  "elections.form.useKiosk": "Enable kiosk mode",
+  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
   "elections.form.votingMethods": "Методы голосования",
   "elections.form.votingMethodsHelp": "Выберите методы подачи голосов.",
   "elections.form.votingMethodsPlaceholder": "Выберите методы голосования",

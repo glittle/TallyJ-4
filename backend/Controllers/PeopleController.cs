@@ -214,7 +214,7 @@ public class PeopleController : ControllerBase
     }
 
     /// <summary>
-    /// Generates or returns the kiosk code for an unregistered person.
+    /// Mints a kiosk code if the person has none, or renews the 15-minute login window.
     /// </summary>
     /// <param name="guid">The GUID of the person.</param>
     /// <returns>The kiosk code.</returns>

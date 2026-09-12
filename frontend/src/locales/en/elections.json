@@ -120,6 +120,8 @@
   "elections.form.typePlaceholder": "Select election type",
   "elections.form.typeRequired": "Election type is required",
   "elections.form.useCallInButton": "Enable Call-In Voting",
+  "elections.form.useKiosk": "Enable kiosk mode",
+  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
   "elections.form.votingMethods": "Voting Methods",
   "elections.form.votingMethodsHelp": "Choose the methods by which votes will be cast.",
   "elections.form.votingMethodsPlaceholder": "Select voting methods",

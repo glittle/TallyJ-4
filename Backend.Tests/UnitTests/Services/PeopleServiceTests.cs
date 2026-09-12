@@ -668,7 +668,7 @@ public class PeopleServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task GetPersonDetailsAsync_GeneratesKioskCodeForUnregisteredPerson()
+    public async Task GetPersonDetailsAsync_DoesNotMintKioskCodeOnRead()
     {
         var electionGuid = Guid.NewGuid();
         Context.Elections.Add(new Election
@@ -695,10 +695,182 @@ public class PeopleServiceTests : ServiceTestBase
         var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
 
         Assert.NotNull(details);
-        Assert.NotNull(details.KioskCode);
-        Assert.Equal(5, details.KioskCode.Length);
-        Assert.StartsWith("N", details.KioskCode);
+        Assert.True(string.IsNullOrWhiteSpace(details.KioskCode));
+        Assert.False(details.KioskCodeConsumed);
+        Assert.Null(details.KioskCodeExpiresAt);
+        Assert.True(string.IsNullOrWhiteSpace(Context.People.Single().KioskCode));
         Assert.True(details.CanDelete);
+    }
+
+    [Fact]
+    public async Task GenerateKioskCodeAsync_MintsCodeAndOpensFifteenMinuteWindow()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+
+        var before = DateTimeOffset.UtcNow;
+        var code = await _service.GenerateKioskCodeAsync(person.PersonGuid);
+        var after = DateTimeOffset.UtcNow;
+
+        Assert.NotNull(code);
+        Assert.Equal(5, code.Length);
+        Assert.StartsWith("S", code);
+
+        var stored = Context.People.Single();
+        Assert.Equal(code, stored.KioskCode);
+
+        var onlineVoter = Assert.Single(Context.OnlineVoters);
+        Assert.Equal(KioskCodeLifetime.ToVoterId(electionGuid, code!), onlineVoter.VoterId);
+        Assert.Equal(KioskCodeLifetime.VoterIdType, onlineVoter.VoterIdType);
+        Assert.Equal(code, onlineVoter.VerifyCode);
+        Assert.NotNull(onlineVoter.VerifyCodeDate);
+        Assert.InRange(onlineVoter.VerifyCodeDate.Value, before, after);
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+        Assert.Equal(code, details!.KioskCode);
+        Assert.NotNull(details.KioskCodeExpiresAt);
+        Assert.Equal(
+            onlineVoter.VerifyCodeDate.Value.AddMinutes(KioskCodeLifetime.LifetimeMinutes),
+            details.KioskCodeExpiresAt);
+    }
+
+    [Fact]
+    public async Task GenerateKioskCodeAsync_RenewsSameCodeAndLoginWindow()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+        var first = await _service.GenerateKioskCodeAsync(person.PersonGuid);
+        var firstWindow = Context.OnlineVoters.Single().VerifyCodeDate;
+
+        Context.OnlineVoters.Single().VerifyCodeDate = DateTimeOffset.UtcNow.AddMinutes(-10);
+        await Context.SaveChangesAsync();
+
+        var renewed = await _service.GenerateKioskCodeAsync(person.PersonGuid);
+
+        Assert.Equal(first, renewed);
+        var onlineVoter = Assert.Single(Context.OnlineVoters);
+        Assert.Equal(KioskCodeLifetime.ToVoterId(electionGuid, first!), onlineVoter.VoterId);
+        Assert.True(onlineVoter.VerifyCodeDate > firstWindow);
+        Assert.True(KioskCodeLifetime.IsLoginWindowOpen(onlineVoter.VerifyCodeDate));
+    }
+
+    [Theory]
+    [InlineData("E")]
+    [InlineData("P")]
+    public async Task GenerateKioskCodeAsync_DoesNotRetagEmailOrPhoneOnlineVoter(string occupantType)
+    {
+        const string code = "COLLX";
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+        person.KioskCode = code;
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = KioskCodeLifetime.ToVoterId(electionGuid, code),
+            VoterIdType = occupantType,
+            VerifyCode = "KEEPME",
+            VerifyCodeDate = DateTimeOffset.UtcNow.AddMinutes(-2),
+            WhenRegistered = DateTimeOffset.UtcNow.AddDays(-1)
+        });
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.GenerateKioskCodeAsync(person.PersonGuid));
+
+        Assert.Equal("This kiosk code is already used as another voter identity.", ex.Message);
+
+        var row = Assert.Single(Context.OnlineVoters);
+        Assert.Equal(KioskCodeLifetime.ToVoterId(electionGuid, code), row.VoterId);
+        Assert.Equal(occupantType, row.VoterIdType);
+        Assert.Equal("KEEPME", row.VerifyCode);
+    }
+
+    [Theory]
+    [InlineData("E")]
+    [InlineData("P")]
+    public async Task GetPersonDetailsAsync_DoesNotUseEmailOrPhoneRowForKioskExpiry(string occupantType)
+    {
+        const string code = "DETLX";
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+        person.KioskCode = code;
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = KioskCodeLifetime.ToVoterId(electionGuid, code),
+            VoterIdType = occupantType,
+            VerifyCodeDate = DateTimeOffset.UtcNow
+        });
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.Equal(code, details!.KioskCode);
+        Assert.False(details.KioskCodeConsumed);
+        Assert.Null(details.KioskCodeExpiresAt);
+    }
+
+    [Fact]
+    public async Task GenerateKioskCodeAsync_UsedEmptyCode_Throws()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+        person.KioskCode = string.Empty;
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.GenerateKioskCodeAsync(person.PersonGuid));
+
+        Assert.Equal("This kiosk code has already been used.", ex.Message);
+    }
+
+    [Fact]
+    public async Task GenerateKioskCodeAsync_ElectionWithoutKiosk_Throws()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots, votingMethods: "P");
+        var person = SeedPerson(electionGuid);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.GenerateKioskCodeAsync(person.PersonGuid));
+
+        Assert.Equal("This election does not support kiosk voting.", ex.Message);
+    }
+
+    [Fact]
+    public async Task GenerateKioskCodeAsync_FinalizedElection_Throws()
+    {
+        var electionGuid = SeedElection(ElectionStage.Finalized, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.GenerateKioskCodeAsync(person.PersonGuid));
+
+        Assert.Equal(ElectionStageMessageKeys.FinalizedWriteBlocked, ex.Message);
+    }
+
+    [Fact]
+    public async Task GenerateKioskCodeAsync_FrontDeskVotingMethod_Throws()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+        person.VotingMethod = "P";
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.GenerateKioskCodeAsync(person.PersonGuid));
+
+        Assert.Equal("Cannot generate a kiosk code for a person who has already registered.", ex.Message);
+    }
+
+    [Fact]
+    public async Task GenerateKioskCodeAsync_ProcessedOnlineBallot_Throws()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+        await SeedOnlineVotingInfoAsync(electionGuid, person.PersonGuid, OnlineBallotStatus.Processed);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.GenerateKioskCodeAsync(person.PersonGuid));
+
+        Assert.Equal("Cannot generate a kiosk code for a person who has already voted.", ex.Message);
     }
 
     [Fact]

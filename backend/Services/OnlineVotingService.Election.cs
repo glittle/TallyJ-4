@@ -62,9 +62,13 @@ public partial class OnlineVotingService
         {
             var now = DateTimeOffset.UtcNow;
 
+            var parsedKiosk = KioskCodeLifetime.TryParseVoterId(
+                voterId, out var kioskElection, out var kioskCode);
+
             // Find all elections where this voter is registered (by email, phone, or kiosk code)
             var personElections = await _context.People
-                .Where(p => p.Email == voterId || p.Phone == voterId || p.KioskCode == voterId)
+                .Where(p => p.Email == voterId || p.Phone == voterId || p.KioskCode == voterId
+                    || (parsedKiosk && p.ElectionGuid == kioskElection && p.KioskCode == kioskCode))
                 .Join(_context.Elections,
                     person => person.ElectionGuid,
                     election => election.ElectionGuid,

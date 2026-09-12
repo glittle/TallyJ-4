@@ -333,10 +333,14 @@ public class FrontDeskService : IFrontDeskService
     /// </summary>
     private Task NotifyVoterPersonalRegistrationAsync(Person person)
     {
+        var kioskVoterId = KioskCodeLifetime.HasLiveCode(person.KioskCode)
+            ? KioskCodeLifetime.ToVoterId(person.ElectionGuid, person.KioskCode!)
+            : null;
+
         return _signalRNotificationService.NotifyVoterPersonalUpdateAsync(
             person.Email,
             person.Phone,
-            person.KioskCode,
+            kioskVoterId,
             new VoterPersonalUpdateDto
             {
                 UpdateRegistration = true,

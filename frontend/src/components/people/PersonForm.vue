@@ -98,9 +98,34 @@ const showKioskCode = computed(
   () =>
     electionHasKiosk.value &&
     isEditMode.value &&
-    personDetails.value &&
-    !personDetails.value.votingMethod,
+    personDetails.value !== null &&
+    !personDetails.value.votingMethod &&
+    !personDetails.value.kioskCodeConsumed &&
+    !hasAcceptedBallot(personDetails.value) &&
+    !isAcceptedOnlineBallotStatus(personDetails.value.onlineBallotStatus),
 );
+
+const generatingKioskCode = ref(false);
+
+const kioskExpiry = computed(() => {
+  const raw = personDetails.value?.kioskCodeExpiresAt;
+  if (!raw) {
+    return null;
+  }
+  const expires = new Date(raw);
+  if (Number.isNaN(expires.getTime())) {
+    return null;
+  }
+  const minutesLeft = Math.max(
+    0,
+    Math.ceil((expires.getTime() - Date.now()) / 60_000),
+  );
+  return {
+    expires,
+    minutesLeft,
+    expired: minutesLeft <= 0,
+  };
+});
 
 const canDeletePerson = computed(() => personDetails.value?.canDelete === true);
 
@@ -276,6 +301,23 @@ watch(
   },
   { immediate: true },
 );
+
+async function handleGenerateKioskCode() {
+  if (!props.person) {
+    return;
+  }
+
+  generatingKioskCode.value = true;
+  try {
+    await peopleService.generateKioskCode(props.person.personGuid);
+    await loadPersonDetails();
+    showSuccessMessage(t("people.kioskCodeGenerated"));
+  } catch (error) {
+    handleApiError(error);
+  } finally {
+    generatingKioskCode.value = false;
+  }
+}
 
 async function loadPersonDetails() {
   if (!props.person) {
@@ -560,8 +602,41 @@ defineExpose({
 
       <el-form-item v-if="showKioskCode" :label="$t('people.kioskCode')">
         <div class="kiosk-code-field">
-          <el-input :model-value="personDetails?.kioskCode || ''" disabled />
-          <p class="kiosk-code-note">{{ $t("people.kioskCodeNote") }}</p>
+          <el-input
+            :model-value="personDetails?.kioskCode || ''"
+            disabled
+            :placeholder="$t('people.kioskCodeNone')"
+          />
+          <el-button
+            class="kiosk-code-generate"
+            data-testid="generate-kiosk-code"
+            :loading="generatingKioskCode"
+            @click="handleGenerateKioskCode"
+          >
+            {{
+              personDetails?.kioskCode
+                ? $t("people.kioskCodeRenew")
+                : $t("people.kioskCodeGenerate")
+            }}
+          </el-button>
+          <p
+            v-if="personDetails?.kioskCode && kioskExpiry?.expired"
+            class="kiosk-code-note"
+          >
+            {{ $t("people.kioskCodeExpired") }}
+          </p>
+          <p
+            v-else-if="personDetails?.kioskCode && kioskExpiry"
+            class="kiosk-code-note"
+          >
+            {{
+              $t("people.kioskCodeExpires", {
+                time: kioskExpiry.expires.toLocaleTimeString(),
+                minutes: kioskExpiry.minutesLeft,
+              })
+            }}
+          </p>
+          <p v-else class="kiosk-code-note">{{ $t("people.kioskCodeNote") }}</p>
         </div>
       </el-form-item>
 
@@ -724,6 +799,18 @@ defineExpose({
 
   .kiosk-code-field {
     width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-2);
+
+    .el-input {
+      flex: 1 1 12rem;
+    }
+
+    .kiosk-code-generate {
+      flex: 0 0 auto;
+    }
 
     .el-input.is-disabled,
     .el-input.is-disabled .el-input__wrapper,
@@ -737,6 +824,10 @@ defineExpose({
     margin: var(--spacing-1) 0 0;
     font-size: var(--font-size-sm);
     color: var(--color-neutral-500);
+  }
+
+  .kiosk-code-field .kiosk-code-note {
+    flex: 1 1 100%;
   }
 
   .person-form-delete {
