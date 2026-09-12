@@ -3978,6 +3978,38 @@ export const People_PersonPhoneOnlineVoterDtoSchema = {
         smsStatus: {
             type: 'string',
             nullable: true
+        },
+        recentSmsLogs: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/People_PersonSmsLogDto'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const People_PersonSmsLogDtoSchema = {
+    type: 'object',
+    properties: {
+        sentDate: {
+            type: 'string',
+            format: 'date-time'
+        },
+        lastDate: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        lastStatus: {
+            type: 'string',
+            nullable: true
+        },
+        errorCode: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
         }
     },
     additionalProperties: false

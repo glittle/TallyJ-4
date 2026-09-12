@@ -88,7 +88,7 @@ Skip logs method + status only (no raw phone or email). Voter-facing message reu
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 (maintainer); this slice’s lookup rule  
-**Revisit when:** Front Desk / people list columns, SuperAdmin/teller manual SmsStatus, or recent SmsLog land
+**Revisit when:** Front Desk / people list columns or SuperAdmin/teller manual SmsStatus land
 
 People Management person detail (`GetPersonDetails` / `PersonDetailDto.PhoneOnlineVoter`) shows the global phone OnlineVoter SMS/auth fields. Lookup is both `VoterId == Person.Phone` and `VoterIdType == "P"` (`OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync`). `IX_OnlineVoter_Id` is unique on `VoterId` alone, but paid-send and this UI are type-scoped to `"P"`. A non-P row occupying that `VoterId` is treated as no phone row (never seen); that row’s `SmsStatus` is not shown as the phone’s.
 
@@ -100,7 +100,7 @@ No phone (null/whitespace) → `PhoneOnlineVoter` is null and the UI hides the b
 
 **Rejected alternative:** Front Desk / people list columns in this slice. Optional later; person detail is the required surface.
 
-**Not in this slice:** Front Desk / list columns, SuperAdmin/teller manual set of `SmsStatus`, recent `SmsLog` rows, WhatsAppStatus / GreenAPI `checkWhatsapp` (#255).
+**Not in this slice:** Front Desk / list columns, SuperAdmin/teller manual set of `SmsStatus`, WhatsAppStatus / GreenAPI `checkWhatsapp` (#255). Recent `SmsLog` on person detail is the sixth slice.
 
 ## Twilio status-callback auto-learn (fifth slice)
 
@@ -140,6 +140,27 @@ Logs: method + status/code only. No raw phone or other PII.
 **Rejected alternative:** write `undeliverable` (or set `"OK"` on delivered) in this slice. The selected-code vocabulary is `twilio-{code}`; OK-from-delivered is a later choice.
 
 **Not in this slice:** PaidDestinationPhone, the pre-send SmsStatus gate, `EnsureOnlineVoterForPhoneAsync`, Person UI, SuperAdmin set, SignalR #229, WhatsApp/GreenAPI #255, send-side SmsLog insert.
+
+## Person detail recent SmsLog (sixth slice)
+
+**Status:** active  
+**Evidence:** confirmed (surface); inferred (lookup / limit details)  
+**Source:** issue #254 Person UI “optional recent SmsLog”; existing +/- phone keys from the fifth slice  
+**Revisit when:** send-side SmsLog insert, Front Desk / list columns, or SuperAdmin/teller manual SmsStatus
+
+Person detail (`PersonPhoneOnlineVoterDto.RecentSmsLogs`) shows up to five newest `SmsLog` rows for that Person phone. Lookup is the stored phone plus the +/- E.164 variant (`TwilioSmsStatusHelper.VoterIdLookupKeys` / `SmsLogPhoneHelper.FindRecentForPhoneAsync`). Not election-scoped and not by `PersonGuid` — verification SMS often has neither. Logs are about the phone, so they are attached even when there is no P row (never seen). No phone → `PhoneOnlineVoter` stays null (no log block).
+
+DTO fields: `SentDate`, `LastDate`, `LastStatus`, `ErrorCode`. No phone and no SID (person detail already has the phone; logs must not add extra identifiers). Newest first (`SentDate`, then `RowId`). Empty list when none match; the UI hides the section. Status text is the stored `LastStatus`, or “Sent” when that is null. This slice does **not** insert `SmsLog` on send — it only reads rows that already exist (tests, a future send-side insert, or a callback update of an existing SID).
+
+**Rejected alternative:** election- or PersonGuid-scoped logs. Request-code SMS is pre-election; those columns are often null.
+
+**Rejected alternative:** require a P row before showing logs. A never-seen phone can still have delivery history; the OnlineVoter auth block and SmsLog are separate.
+
+**Rejected alternative:** include SID in the teller DTO. Not needed to see delivery history; keep the payload to status / times / error code.
+
+**Rejected alternative:** send-side `SmsLog` insert in this slice. Still leftover: `PaidVerificationSender` does not write a log or set `StatusCallback`. Until that lands, production person detail will usually have an empty recent list.
+
+**Not in this slice:** send-side SmsLog insert, StatusCallback URL on send, SuperAdmin/teller manual SmsStatus, Front Desk / list columns, WhatsApp/GreenAPI #255, SignalR #229.
 
 ## Related
 

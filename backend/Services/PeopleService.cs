@@ -507,6 +507,7 @@ public class PeopleService : IPeopleService
     /// <summary>
     /// Phone OnlineVoter SMS/auth for person detail. Null when there is no phone (UI hides the block).
     /// Lookup is VoterId == phone and VoterIdType == P; a non-P occupant is treated as no phone row.
+    /// Recent SmsLog is by phone (+/- variant), not by P-row presence.
     /// </summary>
     private async Task<PersonPhoneOnlineVoterDto?> MapPhoneOnlineVoterAsync(string? phone)
     {
@@ -516,9 +517,14 @@ public class PeopleService : IPeopleService
         }
 
         var row = await OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync(_context, phone);
+        var recentSmsLogs = await LoadRecentSmsLogsAsync(phone);
         if (row == null)
         {
-            return new PersonPhoneOnlineVoterDto { HasPhoneRow = false };
+            return new PersonPhoneOnlineVoterDto
+            {
+                HasPhoneRow = false,
+                RecentSmsLogs = recentSmsLogs
+            };
         }
 
         return new PersonPhoneOnlineVoterDto
@@ -526,8 +532,21 @@ public class PeopleService : IPeopleService
             HasPhoneRow = true,
             WhenRegistered = row.WhenRegistered,
             WhenLastLogin = row.WhenLastLogin,
-            SmsStatus = row.SmsStatus
+            SmsStatus = row.SmsStatus,
+            RecentSmsLogs = recentSmsLogs
         };
+    }
+
+    private async Task<List<PersonSmsLogDto>> LoadRecentSmsLogsAsync(string phone)
+    {
+        var logs = await SmsLogPhoneHelper.FindRecentForPhoneAsync(_context, phone);
+        return logs.Select(log => new PersonSmsLogDto
+        {
+            SentDate = log.SentDate,
+            LastDate = log.LastDate,
+            LastStatus = log.LastStatus,
+            ErrorCode = log.ErrorCode
+        }).ToList();
     }
 
     /// <summary>

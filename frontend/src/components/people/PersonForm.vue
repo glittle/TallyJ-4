@@ -251,6 +251,21 @@ const phoneSmsBlocked = computed(
     phoneOnlineVoterSmsState(phoneOnlineVoter.value.smsStatus) === "blocked",
 );
 
+const recentSmsLogs = computed(
+  () => phoneOnlineVoter.value?.recentSmsLogs ?? [],
+);
+
+function smsLogStatusText(status: string | null | undefined): string {
+  return status?.trim() || t("people.phoneOnlineVoter.smsLogNoStatus");
+}
+
+function smsLogTime(log: {
+  sentDate: string | Date;
+  lastDate?: string | Date | null;
+}): string {
+  return formatRegistrationHistoryTime(log.lastDate ?? log.sentDate);
+}
+
 const registrationHistory = computed((): RegistrationHistoryEntryDto[] => {
   if (!personDetails.value?.registrationHistory) {
     return [];
@@ -596,6 +611,32 @@ defineExpose({
               <span>{{ $t("people.phoneOnlineVoter.smsStatus") }}</span>
               <span>{{ phoneSmsText }}</span>
             </div>
+            <div
+              v-if="recentSmsLogs.length > 0"
+              class="phone-online-voter__logs"
+            >
+              <div class="phone-online-voter__row">
+                <span>{{ $t("people.phoneOnlineVoter.recentSms") }}</span>
+              </div>
+              <div
+                v-for="(log, index) in recentSmsLogs"
+                :key="index"
+                class="phone-online-voter__log"
+              >
+                <span>{{ smsLogTime(log) }}</span>
+                <span>
+                  {{ smsLogStatusText(log.lastStatus) }}
+                  <template v-if="log.errorCode != null">
+                    ·
+                    {{
+                      $t("people.phoneOnlineVoter.smsLogError", {
+                        code: log.errorCode,
+                      })
+                    }}
+                  </template>
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </el-form-item>
@@ -795,6 +836,19 @@ defineExpose({
       color: var(--el-color-danger);
       background-color: var(--el-color-danger-light-9);
     }
+  }
+
+  .phone-online-voter__logs {
+    display: grid;
+    gap: var(--spacing-1);
+  }
+
+  .phone-online-voter__log {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-3);
+    padding: 0 var(--spacing-2);
+    color: var(--color-neutral-500);
   }
 
   .kiosk-code-field {

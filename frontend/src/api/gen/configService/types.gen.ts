@@ -1187,6 +1187,14 @@ export type PeoplePersonPhoneOnlineVoterDto = {
     whenRegistered?: Date | null;
     whenLastLogin?: Date | null;
     smsStatus?: string | null;
+    recentSmsLogs?: Array<PeoplePersonSmsLogDto> | null;
+};
+
+export type PeoplePersonSmsLogDto = {
+    sentDate?: Date;
+    lastDate?: Date | null;
+    lastStatus?: string | null;
+    errorCode?: number | null;
 };
 
 export type PeopleUpdatePersonDto = {

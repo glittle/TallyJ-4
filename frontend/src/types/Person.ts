@@ -29,11 +29,19 @@ export interface PersonListDto {
   unitName?: string;
 }
 
+export interface PersonSmsLogDto {
+  sentDate: string | Date;
+  lastDate?: string | Date | null;
+  lastStatus?: string | null;
+  errorCode?: number | null;
+}
+
 export interface PersonPhoneOnlineVoterDto {
   hasPhoneRow: boolean;
   whenRegistered?: string | Date | null;
   whenLastLogin?: string | Date | null;
   smsStatus?: string | null;
+  recentSmsLogs?: PersonSmsLogDto[];
 }
 
 export interface PersonDetailDto {
