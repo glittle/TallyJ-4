@@ -114,13 +114,9 @@ function handleClose() {
         </el-select>
       </el-form-item>
 
-      <el-form-item :label="$t('ballots.computer')">
+      <el-form-item v-if="computerCode" :label="$t('ballots.computer')">
         <span class="assigned-computer-code">
-          {{
-            computerCode
-              ? $t("ballots.computerCodeShort", { code: computerCode })
-              : $t("ballots.computerCodeUnset")
-          }}
+          {{ $t("ballots.computerCodeShort", { code: computerCode }) }}
         </span>
       </el-form-item>
     </el-form>

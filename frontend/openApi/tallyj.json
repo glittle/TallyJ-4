@@ -10709,6 +10709,9 @@
           },
           "notifyWhenProcessed": {
             "type": "boolean"
+          },
+          "isDraft": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

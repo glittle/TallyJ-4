@@ -114,7 +114,8 @@ public class LocationInfoDto
 public class OnlineVotingInfoDto
 {
     /// <summary>
-    /// Total number of online ballots submitted.
+    /// Online ballots that are Submitted, Processing, or Processed.
+    /// Draft autosaves are not included.
     /// </summary>
     public int TotalOnlineBallots { get; set; }
 

@@ -3,6 +3,7 @@
   "nav.dashboard": "Dashboard",
   "nav.elections": "Elections",
   "nav.frontDesk": "Front Desk",
+  "nav.importBallots": "Import Ballots",
   "nav.profile": "Profile",
   "nav.superAdmin": "Super Admin",
   "nav.superAdminUsers": "Login Accounts",

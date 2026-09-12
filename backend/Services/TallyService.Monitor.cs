@@ -177,7 +177,7 @@ public partial class TallyService
             .ToListAsync();
 
         return (
-            statuses.Count,
+            statuses.Count(s => !Backend.Helpers.OnlineBallotStatus.IsDraft(s)),
             statuses.Count(Backend.Helpers.OnlineBallotStatus.IsSubmitted),
             statuses.Count(Backend.Helpers.OnlineBallotStatus.IsProcessing),
             statuses.Count(Backend.Helpers.OnlineBallotStatus.IsProcessed));

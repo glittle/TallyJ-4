@@ -9,6 +9,7 @@ import {
   PieChart,
   Setting,
   Tickets,
+  Upload,
   User,
   UserFilled,
 } from "@element-plus/icons-vue";
@@ -149,6 +150,13 @@ export const STAGE_PAGES: Record<NavElectionStage, NavPageDef[]> = {
       i18nKey: "nav.frontDesk",
       icon: Monitor,
       routePath: (g) => `/elections/${g}/frontdesk`,
+    },
+    {
+      key: "import-ballots",
+      i18nKey: "nav.importBallots",
+      icon: Upload,
+      routePath: (g) => `/elections/${g}/ballots/cdn-import`,
+      adminOnly: true,
     },
   ],
   ProcessingBallots: [

@@ -18,10 +18,13 @@ const mockT = (key: string) => {
   return translations[key] || key;
 };
 
-vi.mock("vue-i18n", () => ({
-  createI18n: vi.fn(),
-  useI18n: () => ({ t: mockT }),
-}));
+vi.mock("vue-i18n", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("vue-i18n")>();
+  return {
+    ...actual,
+    useI18n: () => ({ t: mockT }),
+  };
+});
 
 vi.mock("@/composables/useApiErrorHandler", () => ({
   useApiErrorHandler: () => ({ handleApiError: vi.fn() }),

@@ -1,31 +1,35 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { Delete } from "@element-plus/icons-vue";
 import {
+  ElAlert,
+  ElAutocomplete,
+  ElButton,
   ElCard,
+  ElCheckbox,
+  ElDivider,
+  ElEmpty,
   ElForm,
   ElFormItem,
-  ElAutocomplete,
   ElInput,
-  ElButton,
-  ElAlert,
-  ElEmpty,
   ElTag,
-  ElDivider,
-  ElCheckbox,
 } from "element-plus";
-import { Delete } from "@element-plus/icons-vue";
-import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
-import { useNotifications } from "../../composables/useNotifications";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { resolveUserFacingApiError } from "../../utils/errorHandler";
 import { useI18n } from "vue-i18n";
-import type { OnlinePerson } from "../../types";
+import { useRoute, useRouter } from "vue-router";
+import { useNotifications } from "../../composables/useNotifications";
 import {
-  createEmptyVoteSlots,
+  autosaveAsDraft,
   buildOnlineVotes,
+  createEmptyVoteSlots,
+  isSubmittedOnlineVoteStatus,
+  shouldWriteAutosave,
   useVoterBallotHelpers,
   type VoteSlot,
 } from "../../composables/useVoterBallot";
+import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
+import type { OnlinePerson } from "../../types";
+import { debounce } from "../../utils/debounce";
 
 const router = useRouter();
 const route = useRoute();
@@ -36,6 +40,11 @@ const { showSuccessMessage, showErrorMessage } = useNotifications();
 const electionGuid = ref(route.params.electionId as string);
 const loading = ref(false);
 const submitting = ref(false);
+const autosaveReady = ref(false);
+/** Once Submitted, later autosaves keep isDraft false (never demote). */
+const alreadySubmitted = ref(false);
+/** True after a restore or a successful write, so an empty ballot can overwrite. */
+const hasPersistedPayload = ref(false);
 
 const votes = ref<VoteSlot[]>([]);
 
@@ -58,12 +67,18 @@ const {
   notifyWhenProcessed,
   isEditing,
   duplicateVotes,
+  duplicatePositions,
   canSubmit,
-  submitPoolForm,
+  hasAnyVote,
+  placePoolFormOnBallot,
   poolAsVotablePeople,
   applyPriorVotes,
   poolEntries,
 } = useVoterBallotHelpers(() => selectionMode.value);
+
+const duplicateVotePositions = computed(() =>
+  duplicatePositions(votes.value),
+);
 
 const allVotablePersonOptions = computed(() => {
   const official = onlineVotingStore.votablePeople.map((p) => ({
@@ -94,6 +109,7 @@ onMounted(async () => {
 });
 
 onUnmounted(async () => {
+  runAutosave.flush();
   await onlineVotingStore.leaveElectionBallotPresence();
 });
 
@@ -118,18 +134,71 @@ async function loadElectionData() {
       await onlineVotingStore.loadVotablePeople(electionGuid.value);
     }
 
+    alreadySubmitted.value = isSubmittedOnlineVoteStatus(voteStatus);
+    hasPersistedPayload.value =
+      alreadySubmitted.value ||
+      voteStatus.hasVoted === true ||
+      (voteStatus.priorVotes?.length ?? 0) > 0;
+
     const numToElect = electionInfo.numberToElect || 9;
     votes.value = createEmptyVoteSlots(numToElect);
 
-    if (voteStatus.hasVoted) {
+    if (hasPersistedPayload.value) {
       applyPriorVotes(votes.value, voteStatus, onlineVotingStore.votablePeople);
     }
   } catch (error) {
     console.error("Error loading election data:", error);
   } finally {
     loading.value = false;
+    autosaveReady.value = true;
   }
 }
+
+function buildSubmitPayload(isDraft: boolean) {
+  const onlineVotes = buildOnlineVotes(votes.value, selectionMode.value).map(
+    (v) => ({
+      ...v,
+      personGuid:
+        v.personGuid && !String(v.personGuid).startsWith("pool-")
+          ? v.personGuid
+          : undefined,
+    }),
+  );
+
+  return {
+    electionGuid: electionGuid.value,
+    voterId: onlineVotingStore.voterId!,
+    votes: onlineVotes,
+    listPool: poolEntries.value,
+    notifyWhenProcessed: notifyWhenProcessed.value,
+    isDraft,
+  };
+}
+
+const runAutosave = debounce(async () => {
+  if (!autosaveReady.value || !canChangeVote.value || submitting.value) {
+    return;
+  }
+  if (
+    !shouldWriteAutosave(hasAnyVote(votes.value), hasPersistedPayload.value)
+  ) {
+    return;
+  }
+  if (!onlineVotingStore.voterId) {
+    return;
+  }
+
+  try {
+    await onlineVotingStore.submitBallot(
+      electionGuid.value,
+      buildSubmitPayload(autosaveAsDraft(alreadySubmitted.value)),
+      { silent: true },
+    );
+    hasPersistedPayload.value = true;
+  } catch (error) {
+    console.error("Silent ballot autosave failed:", error);
+  }
+}, 800);
 
 function handlePersonSelect(
   position: number,
@@ -142,6 +211,7 @@ function handlePersonSelect(
   slot.person = item.person;
   slot.searchText = item.value;
   slot.freeText = "";
+  runAutosave();
 }
 
 function handleSearchInput(position: number, value: string) {
@@ -153,6 +223,7 @@ function handleSearchInput(position: number, value: string) {
     slot.person = null;
   }
   slot.searchText = value;
+  runAutosave();
 }
 
 function clearVote(position: number) {
@@ -161,13 +232,21 @@ function clearVote(position: number) {
     slot.person = null;
     slot.freeText = "";
     slot.searchText = "";
+    runAutosave();
   }
 }
 
 function handleAddToPool() {
-  if (!submitPoolForm()) {
+  const placed = placePoolFormOnBallot(votes.value);
+  if (placed === "empty-name") {
     showErrorMessage(t("voting.ballot.poolNameRequired"));
+    return;
   }
+  if (placed === "full") {
+    showErrorMessage(t("voting.ballot.ballotFull"));
+    return;
+  }
+  runAutosave();
 }
 
 async function handleSubmit() {
@@ -181,28 +260,20 @@ async function handleSubmit() {
   }
 
   try {
+    runAutosave.cancel();
     submitting.value = true;
 
-    const onlineVotes = buildOnlineVotes(votes.value, selectionMode.value).map(
-      (v) => ({
-        ...v,
-        personGuid:
-          v.personGuid && !String(v.personGuid).startsWith("pool-")
-            ? v.personGuid
-            : undefined,
-      }),
+    await onlineVotingStore.submitBallot(
+      electionGuid.value,
+      buildSubmitPayload(false),
     );
-
-    await onlineVotingStore.submitBallot(electionGuid.value, {
-      electionGuid: electionGuid.value,
-      voterId: onlineVotingStore.voterId!,
-      votes: onlineVotes,
-      listPool: poolEntries.value,
-      notifyWhenProcessed: notifyWhenProcessed.value,
-    });
+    const resubmitting = alreadySubmitted.value;
+    alreadySubmitted.value = true;
+    hasPersistedPayload.value = true;
+    isEditing.value = true;
 
     showSuccessMessage(
-      isEditing.value
+      resubmitting
         ? t("voting.ballot.resubmitSuccess")
         : t("voting.ballot.submitSuccess"),
     );
@@ -216,6 +287,23 @@ async function handleSubmit() {
     submitting.value = false;
   }
 }
+
+watch(
+  () =>
+    votes.value.map((v) => ({
+      personGuid: v.person?.personGuid,
+      searchText: v.searchText,
+      freeText: v.freeText,
+    })),
+  () => {
+    runAutosave();
+  },
+  { deep: true },
+);
+
+watch(notifyWhenProcessed, () => {
+  runAutosave();
+});
 
 function backToElections() {
   router.push({ name: "voter-elections" });
@@ -249,10 +337,28 @@ function backToElections() {
               </p>
             </div>
             <div class="header-right">
-              <ElTag type="success">{{ $t("voting.ballot.openNow") }}</ElTag>
-              <ElTag v-if="isEditing" type="warning" class="editing-tag">
-                {{ $t("voting.ballot.editing") }}
-              </ElTag>
+              <div class="header-tags">
+                <ElTag type="success">{{ $t("voting.ballot.openNow") }}</ElTag>
+                <ElTag v-if="isEditing" type="warning">
+                  {{ $t("voting.ballot.editing") }}
+                </ElTag>
+              </div>
+              <ElAlert
+                v-if="isEditing && canChangeVote"
+                type="info"
+                :closable="false"
+                class="header-status-alert"
+              >
+                {{ $t("voting.ballot.editHint") }}
+              </ElAlert>
+              <ElAlert
+                v-else-if="!isEditing"
+                type="warning"
+                :closable="false"
+                class="header-status-alert"
+              >
+                {{ $t("voting.ballot.onceWarning") }}
+              </ElAlert>
             </div>
           </div>
         </template>
@@ -277,24 +383,6 @@ function backToElections() {
           {{ $t("voting.status.alreadyProcessed") }}
         </ElAlert>
 
-        <ElAlert
-          v-if="isEditing && canChangeVote"
-          type="info"
-          :closable="false"
-          class="ballot-alert"
-        >
-          {{ $t("voting.ballot.editHint") }}
-        </ElAlert>
-
-        <ElAlert
-          v-if="duplicateVotes(votes)"
-          type="error"
-          :closable="false"
-          class="ballot-alert"
-        >
-          {{ $t("voting.ballot.duplicateError") }}
-        </ElAlert>
-
         <div class="ballot-body">
           <div v-if="isModeBoth" class="left-panel">
             <h3>{{ $t("voting.ballot.addToPool") }}</h3>
@@ -314,7 +402,10 @@ function backToElections() {
                   :placeholder="$t('voting.ballot.lastNamePlaceholder')"
                 />
               </ElFormItem>
-              <ElFormItem :label="$t('voting.ballot.extraInfo')">
+              <ElFormItem
+                :label="$t('voting.ballot.extraInfo')"
+                label-position="top"
+              >
                 <ElInput
                   v-model="poolForm.otherInfo"
                   type="textarea"
@@ -376,6 +467,15 @@ function backToElections() {
               {{ $t("voting.ballot.myBallot") }}
             </div>
 
+            <ElAlert
+              v-if="duplicateVotes(votes)"
+              type="error"
+              :closable="false"
+              class="ballot-alert"
+            >
+              {{ $t("voting.ballot.duplicateError") }}
+            </ElAlert>
+
             <ElForm @submit.prevent="handleSubmit">
               <div
                 v-for="vote in votes"
@@ -387,6 +487,7 @@ function backToElections() {
                     (isModeRandom && vote.freeText) ||
                     (isModeBoth && (vote.searchText || vote.freeText)) ||
                     (isModeList && vote.searchText),
+                  'vote-duplicate': duplicateVotePositions.has(vote.position),
                 }"
               >
                 <span class="vote-number">{{ vote.position }}.</span>
@@ -424,6 +525,7 @@ function backToElections() {
                   :placeholder="$t('voting.ballot.namePlaceholder')"
                   class="vote-input"
                   size="default"
+                  @update:model-value="runAutosave"
                 />
 
                 <span v-if="vote.person" class="person-tag">
@@ -456,15 +558,6 @@ function backToElections() {
                   {{ $t("voting.ballot.notifyWhenProcessed") }}
                 </ElCheckbox>
               </div>
-
-              <ElAlert
-                v-if="!isEditing"
-                type="warning"
-                :closable="false"
-                class="ballot-warning"
-              >
-                {{ $t("voting.ballot.onceWarning") }}
-              </ElAlert>
 
               <div class="submit-actions">
                 <ElButton
@@ -500,7 +593,7 @@ function backToElections() {
   padding: 20px;
 
   .ballot-container {
-    max-width: 900px;
+    max-width: 1190px;
     margin: 0 auto;
 
     .loading-text {
@@ -513,8 +606,12 @@ function backToElections() {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
+        gap: 16px;
 
         .header-left {
+          flex: 1;
+          min-width: 0;
+
           h2 {
             margin: 4px 0;
             color: var(--el-color-primary);
@@ -527,8 +624,24 @@ function backToElections() {
           }
         }
 
-        .editing-tag {
-          margin-top: 8px;
+        .header-right {
+          flex: 0 1 340px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 8px;
+
+          .header-tags {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 8px;
+          }
+
+          .header-status-alert {
+            width: 100%;
+            margin: 0;
+          }
         }
       }
 
@@ -628,6 +741,11 @@ function backToElections() {
           border-color: var(--el-color-success-light-5);
         }
 
+        &.vote-duplicate {
+          background-color: var(--el-color-danger-light-9);
+          border-color: var(--el-color-danger);
+        }
+
         .vote-number {
           font-size: 13px;
           color: var(--el-text-color-secondary);
@@ -652,10 +770,6 @@ function backToElections() {
             min-height: unset;
           }
         }
-      }
-
-      .ballot-warning {
-        margin: 16px 0;
       }
 
       .submit-actions {

@@ -39,10 +39,10 @@ GUIDs stay on `IneligibleReasonEnum` only so old JSON packages and v2/v3 XML can
 
 v3 disabled eligibility options with `CanVote === false` once the person had a voting method. The person-form tip said they cannot change to a non-voting option after voting. v4 only had the Finalized write lock (#308) — tellers could still set X/R reasons after check-in or Accept-all.
 
-`HasAcceptedBallot` is Front Desk `VotingMethod` (the paper/mail/call-in record that a ballot was received) or an `OnlineVotingInfo` row with status `Processed` (Accept-all). `Person.HasOnlineBallot` is set on voter submit while the row is still `Submitted` and is not the accepted signal. Pending `Submitted` / `Processing` rows do not lock. V-group reasons (can vote, cannot receive) stay allowed so votes they already received can still be spoiled.
+`HasAcceptedBallot` is Front Desk `VotingMethod` (the paper/mail/call-in record that a ballot was received) or an `OnlineVotingInfo` row with status `Processed` (Accept-all). `Person.HasOnlineBallot` is set on the first online write (Draft autosave or Submitted) and is not the accepted signal. Pending `Submitted` / `Processing` rows do not lock. Draft is also not accepted. V-group reasons (can vote, cannot receive) stay allowed so votes they already received can still be spoiled.
 
 The API throws `people.cannotMarkCannotVoteAfterVoted` before copying fields. Person detail exposes the combined `HasAcceptedBallot` flag; the person form disables X/R from that signal, not from `hasOnlineBallot`. Finalized still wins first.
 
 **Rejected alternative:** UI-only disable, matching v3. Rejected — #171 asked to verify the status cannot be changed; a write gate matches other Front Desk locks.
 
-**Rejected alternative:** treat `Person.HasOnlineBallot` as the online half of “accepted”. Rejected — that flag is set on voter submit, not Accept-all. Accepted vs pending is `OnlineVotingInfo.Status` (`Processed` vs `Submitted` / `Processing`). Paper check-in still uses `VotingMethod`.
+**Rejected alternative:** treat `Person.HasOnlineBallot` as the online half of “accepted”. Rejected — that flag is set on the first online write (including Draft), not Accept-all. Accepted vs pending is `OnlineVotingInfo.Status` (`Processed` vs `Submitted` / `Processing`). Paper check-in still uses `VotingMethod`.

@@ -83,6 +83,16 @@ describe("electionStages", () => {
       expect(frontdesk?.adminOnly).toBeFalsy();
     });
 
+    it("places Import Ballots after Front Desk as admin-only", () => {
+      const pages = STAGE_PAGES.GatheringBallots;
+      expect(pages.map((p) => p.key)).toEqual(["frontdesk", "import-ballots"]);
+      const importBallots = pages.find((p) => p.key === "import-ballots");
+      expect(importBallots?.adminOnly).toBe(true);
+      expect(importBallots?.routePath("abc-123")).toBe(
+        "/elections/abc-123/ballots/cdn-import",
+      );
+    });
+
     it("does not mark Enter Ballots as admin-only (Guest-visible)", () => {
       const ballots = STAGE_PAGES.ProcessingBallots.find(
         (p) => p.key === "ballots",

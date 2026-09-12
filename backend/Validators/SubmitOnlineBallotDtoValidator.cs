@@ -23,9 +23,10 @@ public class SubmitOnlineBallotDtoValidator : AbstractValidator<SubmitOnlineBall
             .MaximumLength(250)
             .WithMessage("Voter ID cannot exceed 250 characters");
 
+        // Empty Votes is a payload overwrite (clear last name on Draft or
+        // Submitted). A first visit does not POST an empty ballot.
         RuleFor(x => x.Votes)
-            .NotEmpty()
-            .WithMessage("At least one vote is required");
+            .NotNull();
 
         RuleForEach(x => x.Votes).ChildRules(vote =>
         {

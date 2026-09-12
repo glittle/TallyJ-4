@@ -2,6 +2,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { createI18n } from "vue-i18n";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { defineComponent, h } from "vue";
 import type { LocationDto } from "@/types";
 import LocationsListPage from "../LocationsListPage.vue";
 
@@ -10,6 +11,7 @@ const mockLocations: LocationDto[] = [
     locationGuid: "loc-hall",
     electionGuid: "elec-1",
     name: "Main Hall",
+    contactInfo: "555-0100",
     locationType: "Manual",
     sortOrder: 1,
   },
@@ -17,6 +19,7 @@ const mockLocations: LocationDto[] = [
     locationGuid: "loc-named-online",
     electionGuid: "elec-1",
     name: "Online",
+    contactInfo: "desk",
     locationType: "Manual",
     sortOrder: 2,
   },
@@ -24,8 +27,17 @@ const mockLocations: LocationDto[] = [
     locationGuid: "loc-true-online",
     electionGuid: "elec-1",
     name: "Hall A",
+    contactInfo: "Online",
     locationType: "Online",
     sortOrder: 999,
+  },
+  {
+    locationGuid: "loc-imported",
+    electionGuid: "elec-1",
+    name: "Hall B",
+    contactInfo: "Imported",
+    locationType: "Imported",
+    sortOrder: 998,
   },
 ];
 
@@ -42,7 +54,7 @@ vi.mock("@/stores/locationStore", () => ({
     pagination: {
       pageNumber: 1,
       pageSize: 50,
-      totalCount: 3,
+      totalCount: 4,
       totalPages: 1,
     },
     fetchLocations: mockFetchLocations,
@@ -62,7 +74,7 @@ const i18n = createI18n({
     fa: {
       locations: {
         typeOnline: "آنلاین",
-        onlineVotingBadge: "رای‌گیری آنلاین",
+        typeImported: "وارداتی",
         form: {
           name: "Name",
           contactInfo: "Contact",
@@ -82,13 +94,38 @@ const i18n = createI18n({
   },
 });
 
+const ElTableColumnStub = defineComponent({
+  name: "ElTableColumn",
+  props: {
+    prop: { type: String, default: "" },
+  },
+  setup(props, { slots }) {
+    return () =>
+      h(
+        "div",
+        { "data-prop": props.prop || "col" },
+        mockLocations.map((row) =>
+          h(
+            "div",
+            {
+              key: `${row.locationGuid}-${props.prop || "col"}`,
+              "data-location-guid": row.locationGuid,
+              "data-col": props.prop || "col",
+            },
+            slots.default?.({ row }),
+          ),
+        ),
+      );
+  },
+});
+
 describe("LocationsListPage", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     mockFetchLocations.mockReset().mockResolvedValue(undefined);
   });
 
-  it("marks the true Online location by type, not by the name Online", async () => {
+  it("marks reserved Online and Imported rows by type, not by name", async () => {
     const wrapper = mount(LocationsListPage, {
       global: {
         plugins: [i18n],
@@ -109,23 +146,7 @@ describe("LocationsListPage", () => {
               </div>
             `,
           },
-          ElTableColumn: {
-            props: ["prop"],
-            template: `
-              <div>
-                <div
-                  v-for="row in [
-                    { locationGuid: 'loc-hall', name: 'Main Hall', locationType: 'Manual' },
-                    { locationGuid: 'loc-named-online', name: 'Online', locationType: 'Manual' },
-                    { locationGuid: 'loc-true-online', name: 'Hall A', locationType: 'Online' },
-                  ]"
-                  :key="row.locationGuid + (prop || 'col')"
-                >
-                  <slot name="default" :row="row" />
-                </div>
-              </div>
-            `,
-          },
+          ElTableColumn: ElTableColumnStub,
           ElButton: {
             template:
               '<button type="button" @click="$emit(\'click\')"><slot /></button>',
@@ -143,22 +164,43 @@ describe("LocationsListPage", () => {
 
     expect(mockFetchLocations).toHaveBeenCalledWith("elec-1", 1, 50);
     expect(wrapper.text()).toContain("آنلاین");
-    expect(wrapper.text()).toContain("رای‌گیری آنلاین");
+    expect(wrapper.text()).toContain("وارداتی");
     expect(wrapper.text()).toContain("Main Hall");
 
-    const badgeCount = wrapper
-      .findAll(".el-tag")
-      .filter((tag) => tag.text().includes("رای‌گیری آنلاین")).length;
-    expect(badgeCount).toBe(1);
+    const reservedNameTags = wrapper.findAll('[data-col="name"] .el-tag');
+    expect(reservedNameTags).toHaveLength(2);
+    expect(reservedNameTags.map((tag) => tag.text()).sort()).toEqual([
+      "آنلاین",
+      "وارداتی",
+    ]);
+
+    const onlineContact = wrapper.find(
+      '[data-col="contactInfo"][data-location-guid="loc-true-online"]',
+    );
+    expect(onlineContact.text()).toBe("-");
+
+    const importedContact = wrapper.find(
+      '[data-col="contactInfo"][data-location-guid="loc-imported"]',
+    );
+    expect(importedContact.text()).toBe("-");
+
+    const namedOnlineContact = wrapper.find(
+      '[data-col="contactInfo"][data-location-guid="loc-named-online"]',
+    );
+    expect(namedOnlineContact.text()).toContain("desk");
 
     const rows = wrapper.findAll(".location-row");
     const trueOnline = rows.find(
       (row) => row.attributes("data-location-guid") === "loc-true-online",
     );
+    const imported = rows.find(
+      (row) => row.attributes("data-location-guid") === "loc-imported",
+    );
     const namedOnline = rows.find(
       (row) => row.attributes("data-location-guid") === "loc-named-online",
     );
-    expect(trueOnline?.classes()).toContain("is-online-location");
-    expect(namedOnline?.classes()).not.toContain("is-online-location");
+    expect(trueOnline?.classes()).toContain("is-reserved-location");
+    expect(imported?.classes()).toContain("is-reserved-location");
+    expect(namedOnline?.classes()).not.toContain("is-reserved-location");
   });
 });

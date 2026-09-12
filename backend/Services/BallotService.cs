@@ -97,8 +97,8 @@ public class BallotService : IBallotService
     /// <param name="createDto">The data transfer object containing ballot creation information.</param>
     /// <returns>A BallotDto representing the created ballot.</returns>
     /// <exception cref="InvalidOperationException">
-    /// Thrown when the location is missing, not in the election, or is the Online location
-    /// (reserved for voter-initiated ballots).
+    /// Thrown when the location is missing, not in the election, or is a reserved
+    /// Online / Imported location (not for teller-created paper ballots).
     /// </exception>
     public async Task<BallotDto> CreateBallotAsync(CreateBallotDto createDto)
     {
@@ -117,6 +117,12 @@ public class BallotService : IBallotService
         {
             throw new InvalidOperationException(
                 "Ballots cannot be created at the Online location");
+        }
+
+        if (location.LocationTypeEnum == LocationType.Imported)
+        {
+            throw new InvalidOperationException(
+                "Ballots cannot be created at the Imported location");
         }
 
         var nextBallotNum = await _context.Ballots

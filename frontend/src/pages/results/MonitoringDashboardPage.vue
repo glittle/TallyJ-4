@@ -4,10 +4,6 @@
       <template #header>
         <div class="card-header">
           <div class="header-actions">
-            <el-button @click="handleImportCdn">
-              <el-icon><Upload /></el-icon>
-              {{ $t("ballots.cdnImport.button") }}
-            </el-button>
             <el-button
               type="primary"
               :loading="loading"
@@ -473,20 +469,18 @@ import {
   DocumentChecked,
   Location,
   Monitor,
-  Upload,
 } from "@element-plus/icons-vue";
 import { ElMessageBox } from "element-plus";
 import { DateTime } from "luxon";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute, useRouter } from "vue-router";
+import { useRoute } from "vue-router";
 import { signalrService } from "../../services/signalrService";
 import { useResultStore } from "../../stores/resultStore";
 import { onlineBallotMonitorStatus } from "../../utils/onlineBallotMonitorStatus";
 import type { AcceptAllOnlineBallotsRunDto, MonitorInfoDto } from "../../types";
 
 const route = useRoute();
-const router = useRouter();
 const resultStore = useResultStore();
 const electionStore = useElectionStore();
 const { handleApiError } = useApiErrorHandler();
@@ -646,10 +640,6 @@ async function teardownOnlineElectionListener() {
     onlineElectionHandler = null;
     frontDeskConnection = null;
   }
-}
-
-function handleImportCdn() {
-  router.push(`/elections/${electionGuid}/ballots/cdn-import`);
 }
 
 async function confirmAcceptAll() {

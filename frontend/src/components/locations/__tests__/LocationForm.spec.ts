@@ -35,6 +35,7 @@ const i18n = createI18n({
     en: {
       locations: {
         typeOnline: "Online",
+        typeImported: "Imported",
         form: {
           name: "Location Name",
           namePlaceholder: "Enter location name",
@@ -54,7 +55,7 @@ const i18n = createI18n({
           sortOrder: "Sort Order",
           sortOrderHelp: "Used to order locations",
           sortOrderInvalid: "invalid",
-          onlineSortOnlyHelp: "Only the sort order can be changed",
+          reservedSortOnlyHelp: "Only the sort order can be changed",
           save: "Save",
           create: "Create",
           cancel: "Cancel",
@@ -76,6 +77,17 @@ const onlineLocation: LocationDto = {
   latitude: "2",
   sortOrder: 999,
   locationType: "Online",
+};
+
+const importedLocation: LocationDto = {
+  locationGuid: "loc-imported",
+  electionGuid: "elec-1",
+  name: "Hall B",
+  contactInfo: "should hide",
+  longitude: "1",
+  latitude: "2",
+  sortOrder: 998,
+  locationType: "Imported",
 };
 
 const paperLocation: LocationDto = {
@@ -131,7 +143,7 @@ describe("LocationForm", () => {
   it("locks name, contact, and coordinates for the Online location", () => {
     const wrapper = mountForm(onlineLocation);
 
-    expect(wrapper.find('[data-testid="online-location-name"]').text()).toBe(
+    expect(wrapper.find('[data-testid="reserved-location-name"]').text()).toBe(
       "Online",
     );
     expect(wrapper.find('[data-testid="location-contact"]').exists()).toBe(
@@ -150,12 +162,24 @@ describe("LocationForm", () => {
     expect(wrapper.text()).not.toContain("Delete");
   });
 
+  it("locks name, contact, and coordinates for the Imported location", () => {
+    const wrapper = mountForm(importedLocation);
+
+    expect(wrapper.find('[data-testid="reserved-location-name"]').text()).toBe(
+      "Imported",
+    );
+    expect(wrapper.find('[data-testid="location-contact"]').exists()).toBe(
+      false,
+    );
+    expect(wrapper.text()).not.toContain("Delete");
+  });
+
   it("keeps name and contact editable for a paper location", () => {
     const wrapper = mountForm(paperLocation);
 
-    expect(wrapper.find('[data-testid="online-location-name"]').exists()).toBe(
-      false,
-    );
+    expect(
+      wrapper.find('[data-testid="reserved-location-name"]').exists(),
+    ).toBe(false);
     expect(wrapper.find('[data-testid="location-contact"]').exists()).toBe(
       true,
     );
@@ -177,6 +201,21 @@ describe("LocationForm", () => {
 
     expect(mockUpdateLocation).toHaveBeenCalledWith("elec-1", "loc-online", {
       sortOrder: 999,
+    });
+  });
+
+  it("posts only sortOrder when saving the Imported location", async () => {
+    const wrapper = mountForm(importedLocation);
+    const saveButton = wrapper
+      .findAll("button")
+      .find((button) => button.text().includes("Save"));
+    expect(saveButton).toBeTruthy();
+
+    await saveButton!.trigger("click");
+    await flushPromises();
+
+    expect(mockUpdateLocation).toHaveBeenCalledWith("elec-1", "loc-imported", {
+      sortOrder: 998,
     });
   });
 });

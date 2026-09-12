@@ -10,6 +10,23 @@ Highest-risk functionality. Random name resolution and online acceptance introdu
 
 Treat online ballot paths with the same rigor as core analysis. Prefer explicit failure and recovery over silent best-effort behavior.
 
+## Draft autosave vs Submitted
+
+**Status:** active  
+**Evidence:** confirmed (Glen, #303 UAT; voter ballot page)
+
+While the voter fills names, the ballot page silently autosaves to `OnlineVotingInfo` as status **Draft** (payload in `ListPool`). Reload restores those votes. Draft is not Accept-all pending and does not inflate monitor Submitted counts. Clearing the last name overwrites that saved payload (empty Draft, or payload-only if already Submitted) so leave/return does not restore names the voter just removed. Empty `Votes` is allowed on submit validation for that overwrite. A first visit with no names still does not create a Draft. Monitor `TotalOnlineBallots` is Submitted + Processing + Processed — Draft is not in that total or in pending.
+
+The explicit **Submit Ballot** action writes the same payload as **Submitted**. Accept-all still takes only `Submitted` + `Processing`.
+
+Once a row is **Submitted**, later autosaves (reload restore, notify toggle, or a debounced save after Submit) update the payload only. They do not demote Status back to Draft. Allowed writes are Draft→Draft, Draft→Submitted, Submitted→Submitted. The client sends `isDraft: false` after Submit so it agrees with the server; the server also refuses demotion if a stale Draft flag arrives.
+
+**Rejected alternative:** autosave as `Submitted`. Incomplete ballots would appear in pending counts and could be Accept-all’d while the voter was still editing.
+
+**Rejected alternative:** follow `IsDraft` even after Submit. That dropped a finished ballot out of Accept-all pending / monitor Submitted counts on silent autosave.
+
+**Reason:** survive reload without treating an in-progress ballot as ready for tellers, and keep a submitted ballot pending until Accept-all.
+
 ## Accept-all of pending online ballots
 
 **Status:** active  
@@ -21,6 +38,8 @@ Advancing **to** Finalized is refused while that same window is currently open (
 
 A logged-in teller may Accept-all current pending online ballots while the online voting window is still open, and may do so more than once. Each run only accepts rows that are `Submitted` or already `Processing` at that moment.
 
+An empty Submitted overwrite (voter cleared every name after Submit) stays `Submitted` — never demoted to Draft. It still counts as pending on the monitor. Accept-all does not claim that payload and does not set `Processed`: there are no votes to turn into an OL ballot, and finalizing would lock the voter out with nothing counted. That row is pending-but-skipped until names are written again. A leftover `Processing` claim with an empty payload is restored to `Submitted` instead of wiped.
+
 Accept-all creates a regular ballot at the Online location (computer code `OL`) as if a teller had typed from paper, then wipes the online payload (`ListPool`, `PoolLocked`, `BallotGuid`) and sets status `Processed`. After that, the voter cannot change the vote. Acceptance is not reversible: we do not keep a link from the online row to the regular ballot.
 
 v3 required the window to be closed before processing. That was rejected here so tellers can accept current pending ballots up to the last moment without shutting voters out.
@@ -29,8 +48,8 @@ A second overlapping Accept-all for the same election on one host is refused (pr
 
 Accept-all is two passes:
 
-1. Load the expected `Submitted` (and already-`Processing`) row ids, then persist `Processing` with `UPDATE … SET Status = Processing WHERE Status = Submitted`. Another server can see that claim. `Processing` is a real stored status (varchar(10); the word fits).
-2. For each expected id, open a transaction and process **only if the row is still `Processing`** (`UPDATE … SET Status = Processed WHERE Status = Processing`). 0 rows means the other server already took it. Ballot create and payload wipe share that transaction; a rollback restores `Processing` so a later run can retry.
+1. Load the expected `Submitted` (and already-`Processing`) row ids, then persist `Processing` with `UPDATE … SET Status = Processing WHERE Status = Submitted`. Another server can see that claim. `Processing` is a real stored status (varchar(10); the word fits). Empty Submitted rows (no votes, no legacy `BallotGuid`) are left out of this claim set.
+2. For each expected id, open a transaction and process **only if the row is still `Processing`** (`UPDATE … SET Status = Processed WHERE Status = Processing`). 0 rows means the other server already took it. Ballot create and payload wipe share that transaction; a rollback restores `Processing` so a later run can retry. If the taken row has no votes and no legacy `BallotGuid`, Status is restored to `Submitted` (not Draft, not Processed).
 
 Submit updates with `WHERE Status = Submitted AND BallotGuid IS NULL`, and rejects when `BallotGuid` is set or status is `Processing`/`Processed`, so it cannot revive a claimed row or mint a second ballot from a legacy submitted row.
 
@@ -45,6 +64,10 @@ Rows that already have a `BallotGuid` from the older submit-creates-ballot path 
 **Rejected alternative:** jump `Submitted` → `Processed` in one transaction with no stored interim. That CAS is atomic, but while one server is still creating ballots the row still looks `Submitted` to everyone else until commit. A persisted `Processing` claim is visible to the other server for the whole run.
 
 **Rejected alternative:** require the online window to be closed before Accept-all (v3). Tellers need to accept what is in hand without closing voting.
+
+**Rejected alternative:** Accept-all an empty Submitted overwrite as `Processed` with no OL ballot (the path `Votes: []` opened). That locks the voter out (`CannotChangeOnlineVote`) with nothing counted if a teller Accept-alls while names are cleared mid-edit.
+
+**Rejected alternative:** demote empty Submitted to Draft so Accept-all ignores it. Draft vs Submitted is never-demote; an emptied resubmit stays Submitted and pending-but-skipped.
 
 **Reason:** pending votes stay changeable until a teller accepts them; accepted votes become ordinary ballots with no remaining online payload.
 
@@ -98,18 +121,18 @@ v3 used “Expected to close” when the close was an estimate and “Will close
 
 **Rejected alternative:** put the 5-minute / close-now buttons only on the header Online Voting drawer. Rejected — v3 tellers used them on Monitor Progress; the header already has the date pickers.
 
-**Rejected alternative:** implement named “active voters building a ballot” in the same slice. Rejected — v4 has no Draft/`OnlineVotingInfo` status for an in-progress ballot, and a named list next to pending/accepted OL counts would reopen the secret-ballot pairing #188 closed. Anonymous ballot-page sessions are the later #184 item (see below).
+**Rejected alternative:** implement named “active voters building a ballot” in the same slice. Rejected — Draft is restore-only and is not Accept-all pending; a named list next to pending/accepted OL counts would reopen the secret-ballot pairing #188 closed. Anonymous ballot-page sessions are the later #184 item (see below).
 
 **Reason:** tellers need a visible, testable 5-minute close on the monitor without pairing voters to ballots.
 
 ## Monitor: connected online voters (sessions, not names)
 
 **Status:** active  
-**Evidence:** confirmed (issue #184 remaining slice; `OnlineVotingService.Ballot.cs` creates `OnlineVotingInfo` on submit as `Submitted`; v3 `AllVotersHub` docs in `docs/Hubs-in-v3.md` have no connection-count API and no Draft while composing)
+**Evidence:** confirmed (issue #184 remaining slice; Draft autosave exists for restore only; v3 `AllVotersHub` docs in `docs/Hubs-in-v3.md` have no connection-count API and no named composing list)
 
 v3 Monitor (this repo’s hub docs) pushed online window changes via FrontDeskHub. It did not document a named “who is building a ballot” list, and v3 `AllVotersHub` was a global notify group with no membership-count API.
 
-v4 still has no Draft status: `OnlineVotingInfo` is created on **submit** as `Submitted`. Composing lives only in the voter’s browser. “Building a ballot” is therefore not stored and is not shown.
+v4 Draft is silent autosave only (not Accept-all pending). The monitor still does not list who is composing. “Building a ballot” is not shown as names.
 
 The monitor shows **Connected online voters → Ballot-page sessions**: an anonymous count of AllVotersHub connections that called `JoinElection` for this election (the voter ballot page). One person with two tabs counts as two. The API and UI return that integer only — no person name, email, phone, kiosk, voter id, row id, or WhenStatus. `IOnlineVoterPresenceService` stores connection id → election GUID only.
 
@@ -121,7 +144,7 @@ The count is same-host in-memory. Two app servers do not share it. Auto-refresh 
 
 **Rejected alternative:** put the site-wide `AllVoters` connection count on a per-election monitor. A voter on another election’s list would inflate this election. Misleading.
 
-**Rejected alternative:** new Draft status or a composing heartbeat. Larger infra; not needed for “is anyone currently on this election’s ballot page?”
+**Rejected alternative:** use Draft (or a composing heartbeat) as a named “building a ballot” list. Draft exists for reload restore; putting those names next to pending/accepted OL counts would reopen the secret-ballot pairing #188 closed. Not needed for “is anyone currently on this election’s ballot page?”
 
 **Rejected alternative:** count unique voter ids (hashed) instead of sessions. Rejected for this slice — the product ask is sessions, and storing voter ids next to an election (even hashed) is extra identity surface for no teller gain.
 
@@ -195,26 +218,30 @@ The typed Online location is added when setup enables online voting, and removed
 
 **Rejected alternative:** create the location only on the first voter ballot. Tellers would not see it in the location list until a vote arrived, and disabling unused online voting would leave an empty reserved location behind.
 
-## Online location display name and edit surface
+## Reserved location display (Online and Imported)
 
 **Status:** active  
-**Evidence:** confirmed (issue #287; Glen, 4 Sep 2026)
+**Evidence:** confirmed (issue #287; Glen, 4 Sep 2026; Imported parity, Glen, #303 UAT)
 
-The reserved Online row is shown with the current-language label (`locations.typeOnline` / `formatLocationLabel`). The stored `Name` is a fallback for reports and logs, not the identity and not what tellers edit.
+Online and Imported are both reserved `LocationType` rows. Identity is the type code, never the stored name. Display uses the current-language label (`locations.typeOnline` / `locations.typeImported` via `formatLocationLabel` / `LocationDisplayHelper`). The stored `Name` is a fallback for reports and logs, not what tellers edit.
 
-On the Locations page the true Online row is marked by type (badge + row treatment). A paper location whose name happens to be “Online” is not that row.
+On the Locations page each reserved row is a single i18n tag (no text+badge duplicate), contact shows `-`, and the row is highlighted by type. A paper location whose name happens to be “Online” or “Imported” is not that row.
 
-Editing that row may change sort order only. Name is read-only (the i18n label). Contact, latitude, and longitude are not offered. The API ignores those fields on an Online-typed update and still refuses delete. Teller create never assigns `LocationType.Online`; `OnlineLocationHelper` is the only creator.
+Editing a reserved row may change sort order only. Name is read-only (the i18n label). Contact, latitude, and longitude are not offered. The API ignores those fields on a reserved-type update and refuses delete. Teller create never assigns Online or Imported; `OnlineLocationHelper` creates Online, and CDN ballot import creates Imported.
 
-**Rejected alternative:** treat a location named “Online” as reserved, or POST the translated label as the stored name. Names are user-facing and translated; writing the current language back would change the stored fallback and still would not identify the row.
+Teller-started paper ballots are blocked at both reserved locations (FE start checks + `BallotService.CreateBallotAsync`). Online remains voter-initiated (`OL`); Imported remains import-initiated (`IM`).
+
+**Rejected alternative:** treat a location named “Online” / “Imported” as reserved, or POST the translated label as the stored name. Names are user-facing and translated; writing the current language back would change the stored fallback and still would not identify the row.
+
+**Rejected alternative:** give Imported a weaker Locations UX than Online (editable name/contact while Online is locked). Both are system-managed stations; tellers should not dress them up as paper locations.
 
 Ballot entry panels and the votes dialog load locations when the ballot’s `locationGuid` is not already in the location store, so `formatLocationLabel` can use type. If that fetch fails, the stored `locationName` remains the display fallback.
 
-The ballots report projects location name + type with `AsNoTracking` instead of materializing the full ballot/location/vote/person graph, then formats Online the same way. That keeps the report label correct without tracking entities for a read-only export.
+The ballots report projects location name + type with `AsNoTracking` instead of materializing the full ballot/location/vote/person graph, then formats reserved types the same way. That keeps the report label correct without tracking entities for a read-only export.
 
 **Rejected alternative:** rely only on `ballot.locationName` in the UI, or keep `Include` graphs for the report. The stored name is the English (or setup-time) fallback and can disagree with the teller’s language; the Include path also tracked entities the report never updates.
 
-**Reason:** tellers need to see which row is the voter-only location, in their language, without being able to rename or dress it up as a paper station.
+**Reason:** tellers need to see which rows are system stations, in their language, without being able to rename them or start paper ballots there.
 
 ## Online and imported ballot codes
 
