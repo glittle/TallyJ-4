@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Backend.Helpers;
 using Backend.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -81,6 +82,35 @@ public class VoterPersonalHubTests
         var (hub, _) = CreateHub(user);
 
         await Assert.ThrowsAsync<HubException>(() => hub.Join());
+    }
+
+    [Fact]
+    public async Task Join_kioskSession_uses_election_scoped_voterId()
+    {
+        var electionGuid = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+        var scopedId = KioskCodeLifetime.ToVoterId(electionGuid, "SMART");
+        var (hub, groups) = CreateHub(new ClaimsPrincipal(new ClaimsIdentity(
+        [
+            new Claim("voterId", scopedId),
+            new Claim("voterIdType", KioskCodeLifetime.VoterIdType),
+            new Claim("voterType", "online"),
+        ], "TestAuth")));
+
+        await hub.Join();
+
+        groups.Verify(
+            g => g.AddToGroupAsync(
+                "conn-voter",
+                VoterPersonalHub.GetGroupName(scopedId),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+        groups.Verify(
+            g => g.AddToGroupAsync(
+                "conn-voter",
+                VoterPersonalHub.GetGroupName("SMART"),
+                It.IsAny<CancellationToken>()),
+            Times.Never);
+        Assert.Equal($"Voter{scopedId}", VoterPersonalHub.GetGroupName(scopedId));
     }
 
     [Fact]

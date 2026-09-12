@@ -43,7 +43,9 @@ v4 submit does not empty `Person.KioskCode`; empty is the v3 used-code sentinel 
 **Status:** active  
 **Evidence:** inferred (`IX_PersonKioskCode` is `(ElectionGuid, KioskCode)`; `OnlineVoter.VoterId` is globally unique)
 
-`Person.KioskCode` letters may repeat across elections. The 15-minute window lives on an `OnlineVoter` row keyed `CODE.{electionGuid:N}` (type C). Mint/renew/submit in election A must not stamp or clear election B. Auth of the typed letters binds the single open window; if two open elections both have a live window for those letters, login is refused rather than picking `FirstOrDefault`.
+`Person.KioskCode` letters may repeat across elections. The 15-minute window lives on an `OnlineVoter` row keyed `{normalizedLetters}.{electionGuid:N}` (type C) — the same string `KioskCodeLifetime.ToVoterId` returns, e.g. `SMART.` plus 32 hex digits. Mint/renew/submit in election A must not stamp or clear election B. A kiosk submit must use a scoped id whose parsed election matches `dto.ElectionGuid`; otherwise it is refused and no pending ballot is created. Auth of the typed letters binds the single open window; if two open elections both have a live window for those letters, login is refused with `voting.auth.verify.voterNotFound` rather than picking `FirstOrDefault`.
+
+Front Desk personal notify targets `ToVoterId(election, letters)` so `VoterPersonalHub` (`Voter{jwtVoterId}`) reaches the kiosk session. The teller-facing letters alone are not the online voter id.
 
 **Rejected alternative:** keep one global `OnlineVoter` per letter-code. Two open elections with `SMART` would share and close each other’s window.
 

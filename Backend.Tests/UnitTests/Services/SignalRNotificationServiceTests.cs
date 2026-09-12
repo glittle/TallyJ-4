@@ -1,6 +1,7 @@
 using Backend.DTOs.FrontDesk;
 using Backend.DTOs.SignalR;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Backend.Hubs;
 using Backend.Services;
 using Microsoft.AspNetCore.SignalR;
@@ -376,6 +377,27 @@ public class SignalRNotificationServiceTests
                 It.IsAny<CancellationToken>()),
             Times.Once);
         Assert.False(groupProxies.ContainsKey(otherGroup));
+    }
+
+    [Fact]
+    public async Task NotifyVoterPersonalUpdateAsync_kiosk_group_is_election_scoped_voterId()
+    {
+        var (service, _, _, _, _, _, _, voterPersonalClients, groupProxies) = CreateService();
+        var scopedId = KioskCodeLifetime.ToVoterId(_electionGuid, "SMART");
+        var update = new VoterPersonalUpdateDto
+        {
+            UpdateRegistration = true,
+            ElectionGuid = _electionGuid
+        };
+
+        await service.NotifyVoterPersonalUpdateAsync(null, null, scopedId, update);
+
+        var scopedGroup = VoterPersonalHub.GetGroupName(scopedId);
+        var lettersGroup = VoterPersonalHub.GetGroupName("SMART");
+        voterPersonalClients.Verify(c => c.Group(scopedGroup), Times.Once);
+        voterPersonalClients.Verify(c => c.Group(lettersGroup), Times.Never);
+        Assert.True(groupProxies.ContainsKey(scopedGroup));
+        Assert.False(groupProxies.ContainsKey(lettersGroup));
     }
 
     [Fact]

@@ -229,6 +229,36 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         Assert.Equal(KioskCodeLifetime.ToVoterId(electionB, kioskCode), sessionB!.VoterId);
     }
 
+    [Fact]
+    public async Task SubmitKioskBallot_ToOtherElection_RefusesAndLeavesWindowOpen()
+    {
+        const string kioskCode = "JXBND";
+        var electionA = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+        var electionB = await SetupOpenElectionWithVoter(email: "other@example.com");
+        var stampA = await ReadKioskVerifyCodeDateAsync(electionA, kioskCode);
+
+        var submitB = await Client.PostAsJsonAsync(
+            $"/api/online-voting/{electionB}/submitBallot",
+            new SubmitOnlineBallotDto
+            {
+                ElectionGuid = electionB,
+                VoterId = KioskCodeLifetime.ToVoterId(electionA, kioskCode),
+                Votes =
+                [
+                    new OnlineVoteDto { VoteName = "Wrong Election", PositionOnBallot = 1 }
+                ]
+            });
+
+        Assert.Equal(HttpStatusCode.BadRequest, submitB.StatusCode);
+        var body = await submitB.Content.ReadAsStringAsync();
+        Assert.Contains("voting.submit.voterNotFound", body);
+        Assert.Equal(stampA, await ReadKioskVerifyCodeDateAsync(electionA, kioskCode));
+
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        Assert.False(await context.OnlineVotingInfos.AnyAsync(o => o.ElectionGuid == electionB));
+    }
+
     [Theory]
     [InlineData("E")]
     [InlineData("P")]
