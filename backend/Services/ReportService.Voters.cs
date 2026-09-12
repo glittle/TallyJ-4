@@ -1,5 +1,6 @@
 using Backend.DTOs.Reports;
 using Backend.Entities;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -125,11 +126,12 @@ public partial class ReportService
         var people = await _context.People
             .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true)
             .ToListAsync();
+        var processedOnline = await LoadProcessedOnlinePersonGuidsAsync(electionGuid);
 
         var areas = people
             .GroupBy(p => p.Area ?? "(unknown)")
             .OrderBy(g => g.Key)
-            .Select(g => BuildAreaRow(g.Key, g.ToList()))
+            .Select(g => BuildAreaRow(g.Key, g.ToList(), processedOnline))
             .ToList();
 
         return new VotersByAreaReportDto
@@ -140,27 +142,35 @@ public partial class ReportService
             Custom2Name = ParseCustomMethodName(election.CustomMethods, 1),
             Custom3Name = ParseCustomMethodName(election.CustomMethods, 2),
             Areas = areas,
-            Total = BuildAreaRow("Total", people)
+            Total = BuildAreaRow("Total", people, processedOnline)
         };
     }
 
-    private static AreaRowDto BuildAreaRow(string name, List<Person> people)
+    private static AreaRowDto BuildAreaRow(
+        string name,
+        List<Person> people,
+        HashSet<Guid> processedOnline)
     {
+        var breakdown = VotingMethodCodes.Count(people.Select(p =>
+            (p.VotingMethod, processedOnline.Contains(p.PersonGuid))));
         return new AreaRowDto
         {
             AreaName = name,
             TotalEligible = people.Count,
-            Voted = people.Count(p => !string.IsNullOrEmpty(p.VotingMethod)),
-            InPerson = people.Count(p => p.VotingMethod == "P"),
-            MailedIn = people.Count(p => p.VotingMethod == "M"),
-            DroppedOff = people.Count(p => p.VotingMethod == "D"),
-            CalledIn = people.Count(p => p.VotingMethod == "C"),
-            Custom1 = people.Count(p => p.VotingMethod == "1"),
-            Custom2 = people.Count(p => p.VotingMethod == "2"),
-            Custom3 = people.Count(p => p.VotingMethod == "3"),
-            Online = people.Count(p => p.VotingMethod == "O"),
-            OnlineKiosk = people.Count(p => p.VotingMethod == "K"),
-            Imported = people.Count(p => p.VotingMethod == "I")
+            Voted = people.Count(p =>
+                VotingMethodCodes.HasVotedForCounts(
+                    p.VotingMethod,
+                    processedOnline.Contains(p.PersonGuid))),
+            InPerson = breakdown.InPerson,
+            MailedIn = breakdown.Mailed,
+            DroppedOff = breakdown.DroppedOff,
+            CalledIn = breakdown.CalledIn,
+            Custom1 = breakdown.Custom1,
+            Custom2 = breakdown.Custom2,
+            Custom3 = breakdown.Custom3,
+            Online = breakdown.Online,
+            OnlineKiosk = breakdown.Kiosk,
+            Imported = breakdown.Imported
         };
     }
 
@@ -171,14 +181,15 @@ public partial class ReportService
             .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true)
             .ToListAsync();
         var locations = await _context.Locations.Where(l => l.ElectionGuid == electionGuid).ToListAsync();
+        var processedOnline = await LoadProcessedOnlinePersonGuidsAsync(electionGuid);
 
         var locationRows = locations
             .GroupJoin(people, l => l.LocationGuid, p => p.VotingLocationGuid ?? Guid.Empty,
-                (l, pList) => BuildLocationRow(FormatLocationName(l), pList.ToList()))
+                (l, pList) => BuildLocationRow(FormatLocationName(l), pList.ToList(), processedOnline))
             .OrderBy(r => r.LocationName)
             .ToList();
 
-        var totalRow = BuildLocationRow("Total", people);
+        var totalRow = BuildLocationRow("Total", people, processedOnline);
 
         return new VotersByLocationReportDto
         {
@@ -192,23 +203,38 @@ public partial class ReportService
         };
     }
 
-    private static LocationRowDto BuildLocationRow(string name, List<Person> people)
+    private static LocationRowDto BuildLocationRow(
+        string name,
+        List<Person> people,
+        HashSet<Guid> processedOnline)
     {
+        var breakdown = VotingMethodCodes.Count(people.Select(p =>
+            (p.VotingMethod, processedOnline.Contains(p.PersonGuid))));
         return new LocationRowDto
         {
             LocationName = name,
             TotalVoters = people.Count,
-            InPerson = people.Count(p => p.VotingMethod == "P"),
-            MailedIn = people.Count(p => p.VotingMethod == "M"),
-            DroppedOff = people.Count(p => p.VotingMethod == "D"),
-            CalledIn = people.Count(p => p.VotingMethod == "C"),
-            Custom1 = people.Count(p => p.VotingMethod == "1"),
-            Custom2 = people.Count(p => p.VotingMethod == "2"),
-            Custom3 = people.Count(p => p.VotingMethod == "3"),
-            Online = people.Count(p => p.VotingMethod == "O"),
-            OnlineKiosk = people.Count(p => p.VotingMethod == "K"),
-            Imported = people.Count(p => p.VotingMethod == "I")
+            InPerson = breakdown.InPerson,
+            MailedIn = breakdown.Mailed,
+            DroppedOff = breakdown.DroppedOff,
+            CalledIn = breakdown.CalledIn,
+            Custom1 = breakdown.Custom1,
+            Custom2 = breakdown.Custom2,
+            Custom3 = breakdown.Custom3,
+            Online = breakdown.Online,
+            OnlineKiosk = breakdown.Kiosk,
+            Imported = breakdown.Imported
         };
+    }
+
+    private async Task<HashSet<Guid>> LoadProcessedOnlinePersonGuidsAsync(Guid electionGuid)
+    {
+        var guids = await _context.OnlineVotingInfos
+            .AsNoTracking()
+            .Where(o => o.ElectionGuid == electionGuid && o.Status == OnlineBallotStatus.Processed)
+            .Select(o => o.PersonGuid)
+            .ToListAsync();
+        return guids.ToHashSet();
     }
 
     public async Task<VotersByLocationAreaReportDto> GetVotersByLocationAreaAsync(Guid electionGuid)

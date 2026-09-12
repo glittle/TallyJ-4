@@ -31,9 +31,16 @@ public class FrontDeskVoterDto
     public bool? CanVote { get; set; }
 
     /// <summary>
-    /// The voting method (e.g., 'P' for paper, 'O' for online).
+    /// The voting method (e.g., 'P' for in person, 'M' mailed, 'D' dropped off).
     /// </summary>
     public string? VotingMethod { get; set; }
+
+    /// <summary>
+    /// Latest <c>OnlineVotingInfo.Status</c> for this person, if any
+    /// (Draft, Submitted, Processing, Processed). Front Desk may show
+    /// per-person pending vs accepted. Monitor lists stay counts-only.
+    /// </summary>
+    public string? OnlineBallotStatus { get; set; }
 
     /// <summary>
     /// The envelope number assigned to the voter.

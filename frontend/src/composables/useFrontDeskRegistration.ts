@@ -5,6 +5,10 @@ import type {
 import { getActiveTellerPayload } from "@/utils/activeTellerStorage";
 import { resolveUserFacingApiError } from "@/utils/errorHandler";
 import { formatRegistrationHistoryDetails } from "@/utils/formatRegistrationHistory";
+import {
+  isRecordedOtherThanOnline,
+  isWithdrawableOnlineBallotStatus,
+} from "@/utils/votingMethodLabels";
 import { ElMessageBox } from "element-plus";
 import { computed, nextTick, ref, type ComputedRef, type Ref } from "vue";
 
@@ -319,6 +323,29 @@ export function useFrontDeskRegistration(
     }
 
     const personGuid = options.selectedVoter.value.personGuid;
+    const pendingOnline = isWithdrawableOnlineBallotStatus(
+      options.selectedVoter.value.onlineBallotStatus,
+    );
+
+    if (pendingOnline && isRecordedOtherThanOnline(votingMethod)) {
+      try {
+        await ElMessageBox.confirm(
+          options.t("frontDesk.confirm.withdrawPendingOnline.message", {
+            name: options.selectedVoter.value.fullName,
+          }),
+          options.t("frontDesk.confirm.withdrawPendingOnline.title"),
+          {
+            confirmButtonText: options.t(
+              "frontDesk.confirm.withdrawPendingOnline.confirm",
+            ),
+            cancelButtonText: options.t("common.cancel"),
+            type: "warning",
+          },
+        );
+      } catch {
+        return;
+      }
+    }
 
     pendingVotingMethod.value = votingMethod;
     checkInInProgress.value = true;

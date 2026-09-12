@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import type { FrontDeskVoterDto } from "@/types/FrontDesk";
 import {
+  getVotingMethodLabel as labelVotingMethod,
+  getVotingMethodTagType,
+  isAcceptedOnlineBallotStatus,
+  isPendingOnlineBallotStatus,
+} from "@/utils/votingMethodLabels";
+import {
   ElAutoResizer,
   ElButton,
   ElTableV2,
@@ -48,35 +54,20 @@ const tableData = computed(() => {
 });
 
 function getVotingMethodLabel(method?: string): string {
-  switch (method) {
-    case "I":
-      return t("frontDesk.votingMethod.inPerson");
-    case "M":
-      return t("frontDesk.votingMethod.mail");
-    case "O":
-      return t("frontDesk.votingMethod.online");
-    case "C":
-      return t("frontDesk.votingMethod.callIn");
-    default:
-      return method ?? t("frontDesk.common.dash");
-  }
+  return labelVotingMethod(method, t);
 }
 
-function getVotingMethodTagType(
-  method: string,
-): "success" | "info" | "primary" | "warning" {
-  switch (method) {
-    case "I":
-      return "success";
-    case "M":
-      return "info";
-    case "O":
-      return "primary";
-    case "C":
-      return "warning";
-    default:
-      return "info";
+function onlineStatusLabel(status?: string): string | null {
+  if (isPendingOnlineBallotStatus(status)) {
+    return t("frontDesk.onlineStatus.pending");
   }
+  if (isAcceptedOnlineBallotStatus(status)) {
+    return t("frontDesk.onlineStatus.accepted");
+  }
+  if (status === "Draft") {
+    return t("frontDesk.onlineStatus.draft");
+  }
+  return null;
 }
 
 const flagColorPalette = [
@@ -154,14 +145,33 @@ const columns = computed<Column<FrontDeskVoterDto>[]>(() => {
       title: t("frontDesk.table.method"),
       width: widths.method,
       cellRenderer: ({ rowData }) => {
-        if (!rowData.votingMethod) {
+        const methodTag = rowData.votingMethod
+          ? h(
+              ElTag,
+              { type: getVotingMethodTagType(rowData.votingMethod) },
+              () => getVotingMethodLabel(rowData.votingMethod),
+            )
+          : null;
+        const onlineLabel = onlineStatusLabel(rowData.onlineBallotStatus);
+        const onlineTag = onlineLabel
+          ? h(
+              ElTag,
+              {
+                type: isAcceptedOnlineBallotStatus(rowData.onlineBallotStatus)
+                  ? "success"
+                  : "warning",
+                size: "small",
+              },
+              () => onlineLabel,
+            )
+          : null;
+        if (!methodTag && !onlineTag) {
           return h("span", t("frontDesk.common.dash"));
         }
-        return h(
-          ElTag,
-          { type: getVotingMethodTagType(rowData.votingMethod) },
-          () => getVotingMethodLabel(rowData.votingMethod),
-        );
+        return h("div", { class: "front-desk-method-cell" }, [
+          methodTag,
+          onlineTag,
+        ]);
       },
     },
     {
@@ -333,7 +343,8 @@ defineExpose({ scrollToSelectedRow });
     font-weight: normal;
   }
 
-  .front-desk-flag-tags {
+  .front-desk-flag-tags,
+  .front-desk-method-cell {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;

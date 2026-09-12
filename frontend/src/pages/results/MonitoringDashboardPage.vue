@@ -93,6 +93,57 @@
           </el-col>
         </el-row>
 
+        <el-card
+          v-if="monitorInfo.ballotsByMethod"
+          class="method-breakdown-card"
+          data-testid="ballots-by-method"
+          style="margin-bottom: 20px"
+        >
+          <template #header>
+            <span>{{ $t("monitoring.ballotsByMethod.title") }}</span>
+          </template>
+          <p class="online-ballot-breakdown-note">
+            {{ $t("monitoring.ballotsByMethod.note") }}
+          </p>
+          <el-descriptions :column="5" border>
+            <el-descriptions-item
+              :label="$t('monitoring.ballotsByMethod.inPerson')"
+            >
+              <span data-testid="method-count-in-person">{{
+                monitorInfo.ballotsByMethod.inPerson
+              }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item
+              :label="$t('monitoring.ballotsByMethod.mailed')"
+            >
+              <span data-testid="method-count-mailed">{{
+                monitorInfo.ballotsByMethod.mailed
+              }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item
+              :label="$t('monitoring.ballotsByMethod.droppedOff')"
+            >
+              <span data-testid="method-count-dropped-off">{{
+                monitorInfo.ballotsByMethod.droppedOff
+              }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item
+              :label="$t('monitoring.ballotsByMethod.kiosk')"
+            >
+              <span data-testid="method-count-kiosk">{{
+                monitorInfo.ballotsByMethod.kiosk
+              }}</span>
+            </el-descriptions-item>
+            <el-descriptions-item
+              :label="$t('monitoring.ballotsByMethod.online')"
+            >
+              <span data-testid="method-count-online">{{
+                monitorInfo.ballotsByMethod.online
+              }}</span>
+            </el-descriptions-item>
+          </el-descriptions>
+        </el-card>
+
         <!-- Last Updated -->
         <el-alert
           :title="
@@ -338,7 +389,7 @@
             <p class="online-ballot-breakdown-note">
               {{ $t("monitoring.onlineBallots.countsOnly") }}
             </p>
-            <el-descriptions :column="3" border>
+            <el-descriptions :column="4" border>
               <!-- Submitted only. Summary "Pending" is Submitted + Processing. -->
               <el-descriptions-item
                 :label="$t('monitoring.onlineBallots.status.Submitted')"
@@ -368,6 +419,16 @@
                   data-testid="accepted-online-ballots-count"
                 >
                   {{ acceptedOnlineCount }}
+                </el-tag>
+              </el-descriptions-item>
+              <el-descriptions-item
+                :label="$t('monitoring.onlineBallots.votedAnotherWay')"
+              >
+                <el-tag
+                  type="info"
+                  data-testid="pending-online-voted-another-way-count"
+                >
+                  {{ pendingOnlineVotedAnotherWay }}
                 </el-tag>
               </el-descriptions-item>
             </el-descriptions>
@@ -509,6 +570,9 @@ const acceptedOnlineCount = computed(
 );
 const connectedOnlineVoterSessions = computed(
   () => monitorInfo.value?.onlineVotingInfo.connectedOnlineVoterSessions ?? 0,
+);
+const pendingOnlineVotedAnotherWay = computed(
+  () => monitorInfo.value?.onlineVotingInfo.pendingOnlineVotedAnotherWay ?? 0,
 );
 const onlineBallotStatusView = onlineBallotMonitorStatus;
 const refreshInterval = ref<number | null>(null);

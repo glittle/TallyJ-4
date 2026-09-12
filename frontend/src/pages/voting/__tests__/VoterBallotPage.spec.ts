@@ -228,4 +228,26 @@ describe("VoterBallotPage silent autosave isDraft", () => {
       expect(payload.isDraft).toBe(false);
     }
   });
+
+  it("shows already-voted-another-way when the vote is locked that way", async () => {
+    storeState.checkVoteStatus.mockResolvedValue({
+      hasVoted: true,
+      canChangeVote: false,
+      message: "voting.status.alreadyVotedAnotherWay",
+      priorVotes: [],
+    });
+    storeState.voteStatus = {
+      hasVoted: true,
+      canChangeVote: false,
+      message: "voting.status.alreadyVotedAnotherWay",
+      priorVotes: [],
+    };
+
+    const wrapper = await mountAndFlushAutosave();
+    const alert = wrapper.get("[data-testid='ballot-processed-alert']");
+    expect(alert.text()).toContain(
+      i18n.global.t("voting.status.alreadyVotedAnotherWay"),
+    );
+    expect(submitBallot).not.toHaveBeenCalled();
+  });
 });

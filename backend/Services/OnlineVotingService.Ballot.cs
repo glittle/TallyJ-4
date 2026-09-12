@@ -73,6 +73,12 @@ public partial class OnlineVotingService
                 return (false, "voting.submit.alreadyProcessed");
             }
 
+            if (VotingMethodCodes.IsRecordedOtherThanOnline(person?.VotingMethod))
+            {
+                await transaction.RollbackAsync();
+                return (false, "voting.submit.alreadyVotedAnotherWay");
+            }
+
             var payloadJson = SerializePendingPayload(dto.Votes, dto.ListPool);
 
             if (existingVotingInfo != null)
@@ -143,7 +149,9 @@ public partial class OnlineVotingService
             .OrderByDescending(ov => ov.WhenBallotCreated)
             .FirstOrDefaultAsync();
 
-        var cannotChange = votingInfo != null && CannotChangeOnlineVote(votingInfo);
+        var votedAnotherWay = VotingMethodCodes.IsRecordedOtherThanOnline(person.VotingMethod);
+        var cannotChange = (votingInfo != null && CannotChangeOnlineVote(votingInfo))
+                           || votedAnotherWay;
         var isProcessed = votingInfo != null && OnlineBallotStatus.IsProcessed(votingInfo.Status);
         var isProcessing = votingInfo != null && OnlineBallotStatus.IsProcessing(votingInfo.Status);
         var isDraft = votingInfo != null && OnlineBallotStatus.IsDraft(votingInfo.Status);
@@ -193,18 +201,21 @@ public partial class OnlineVotingService
                        || isDraft
                        || hasPending
                        || isProcessing
-                       || isProcessed;
+                       || isProcessed
+                       || votedAnotherWay;
         return new OnlineVoteStatusDto
         {
             HasVoted = hasVoted,
             WhenSubmitted = hasPending || isProcessing || isProcessed
                 ? votingInfo?.WhenBallotCreated
                 : null,
-            Message = cannotChange
-                ? "voting.status.alreadyProcessed"
-                : hasVoted
-                    ? "voting.status.alreadyVoted"
-                    : "voting.status.notVoted",
+            Message = votedAnotherWay
+                ? "voting.status.alreadyVotedAnotherWay"
+                : cannotChange
+                    ? "voting.status.alreadyProcessed"
+                    : hasVoted
+                        ? "voting.status.alreadyVoted"
+                        : "voting.status.notVoted",
             PriorVotes = priorVotes,
             ListPool = listPool,
             NotifyWhenProcessed = HasNotifyProcessedPreference(onlineVoter?.EmailCodes),

@@ -3,6 +3,10 @@ import type {
   FrontDeskVoterDto,
   RegistrationHistoryEntryDto,
 } from "@/types/FrontDesk";
+import {
+  isAcceptedOnlineBallotStatus,
+  isPendingOnlineBallotStatus,
+} from "@/utils/votingMethodLabels";
 import { Check, Close } from "@element-plus/icons-vue";
 import { nextTick, ref, watch } from "vue";
 
@@ -83,6 +87,30 @@ defineExpose({
             {{ $t("frontDesk.dialog.area") }}
             {{ voter.area }}
           </span>
+          <el-tag
+            v-if="isPendingOnlineBallotStatus(voter.onlineBallotStatus)"
+            type="warning"
+            size="small"
+            class="voter-online-status"
+          >
+            {{ $t("frontDesk.onlineStatus.pending") }}
+          </el-tag>
+          <el-tag
+            v-else-if="isAcceptedOnlineBallotStatus(voter.onlineBallotStatus)"
+            type="success"
+            size="small"
+            class="voter-online-status"
+          >
+            {{ $t("frontDesk.onlineStatus.accepted") }}
+          </el-tag>
+          <el-tag
+            v-else-if="voter.onlineBallotStatus === 'Draft'"
+            type="info"
+            size="small"
+            class="voter-online-status"
+          >
+            {{ $t("frontDesk.onlineStatus.draft") }}
+          </el-tag>
         </div>
         <div class="registration-header-actions">
           <el-button

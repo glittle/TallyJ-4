@@ -91,6 +91,13 @@ const mockMonitor: MonitorInfoDto = {
     connectedOnlineVoterSessions: 2,
     acceptAllRuns: [],
   },
+  ballotsByMethod: {
+    inPerson: 4,
+    mailed: 2,
+    droppedOff: 1,
+    kiosk: 1,
+    online: 3,
+  },
   totalBallots: 10,
   totalVotes: 20,
   lastUpdated: new Date().toISOString(),
@@ -208,6 +215,27 @@ describe("MonitoringDashboardPage Accept all", () => {
     const button = wrapper.find("[data-testid='accept-all-online-ballots']");
     expect(button.exists()).toBe(true);
     expect(button.attributes("disabled")).toBeUndefined();
+  });
+
+  it("shows ballots-by-method counts without voter names", async () => {
+    const wrapper = await mountPage();
+    expect(wrapper.find("[data-testid='ballots-by-method']").exists()).toBe(
+      true,
+    );
+    expect(wrapper.find("[data-testid='method-count-in-person']").text()).toBe(
+      "4",
+    );
+    expect(wrapper.find("[data-testid='method-count-mailed']").text()).toBe(
+      "2",
+    );
+    expect(
+      wrapper.find("[data-testid='method-count-dropped-off']").text(),
+    ).toBe("1");
+    expect(wrapper.find("[data-testid='method-count-kiosk']").text()).toBe("1");
+    expect(wrapper.find("[data-testid='method-count-online']").text()).toBe(
+      "3",
+    );
+    expect(wrapper.text()).not.toContain("Ada");
   });
 
   it("disables Accept all when nothing is pending", async () => {

@@ -9791,6 +9791,10 @@
             "type": "string",
             "nullable": true
           },
+          "onlineBallotStatus": {
+            "type": "string",
+            "nullable": true
+          },
           "envNum": {
             "type": "integer",
             "format": "int32",
@@ -11220,6 +11224,10 @@
           },
           "hasAcceptedBallot": {
             "type": "boolean"
+          },
+          "onlineBallotStatus": {
+            "type": "string",
+            "nullable": true
           },
           "registrationHistory": {
             "type": "string",
@@ -13067,6 +13075,9 @@
           "onlineVotingInfo": {
             "$ref": "#/components/schemas/Results_OnlineVotingInfoDto"
           },
+          "ballotsByMethod": {
+            "$ref": "#/components/schemas/Results_VotingMethodBreakdownDto"
+          },
           "totalBallots": {
             "type": "integer",
             "format": "int32"
@@ -13094,6 +13105,10 @@
             "format": "int32"
           },
           "pendingOnlineBallots": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pendingOnlineVotedAnotherWay": {
             "type": "integer",
             "format": "int32"
           },
@@ -13731,6 +13746,32 @@
               "format": "int32"
             },
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Results_VotingMethodBreakdownDto": {
+        "type": "object",
+        "properties": {
+          "inPerson": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mailed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "droppedOff": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "kiosk": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "online": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

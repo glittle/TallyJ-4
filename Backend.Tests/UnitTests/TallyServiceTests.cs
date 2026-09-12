@@ -1906,6 +1906,48 @@ public class TallyServiceTests : ServiceTestBase
         Assert.Equal(1, online.ProcessingOnlineBallots);
         Assert.Equal(3, online.PendingOnlineBallots);
         Assert.Equal(1, online.ProcessedOnlineBallots);
+        Assert.Equal(0, online.PendingOnlineVotedAnotherWay);
+        Assert.Equal(1, result.BallotsByMethod.Online);
+        Assert.Equal(0, result.BallotsByMethod.InPerson);
+    }
+
+    [Fact]
+    public async Task GetMonitorInfoAsync_CountsMethodsAndPendingVotedAnotherWay()
+    {
+        var election = await CreateTestElectionAsync();
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 5);
+        people[0].VotingMethod = "P";
+        people[1].VotingMethod = "M";
+        people[2].VotingMethod = "D";
+        people[3].VotingMethod = "K";
+        Context.OnlineVotingInfos.AddRange(
+            new OnlineVotingInfo
+            {
+                ElectionGuid = election.ElectionGuid,
+                PersonGuid = people[0].PersonGuid,
+                Status = OnlineBallotStatus.Submitted,
+                WhenStatus = DateTimeOffset.UtcNow
+            },
+            new OnlineVotingInfo
+            {
+                ElectionGuid = election.ElectionGuid,
+                PersonGuid = people[4].PersonGuid,
+                Status = OnlineBallotStatus.Processed,
+                WhenStatus = DateTimeOffset.UtcNow
+            });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetMonitorInfoAsync(election.ElectionGuid);
+
+        Assert.Equal(1, result.BallotsByMethod.InPerson);
+        Assert.Equal(1, result.BallotsByMethod.Mailed);
+        Assert.Equal(1, result.BallotsByMethod.DroppedOff);
+        Assert.Equal(1, result.BallotsByMethod.Kiosk);
+        Assert.Equal(1, result.BallotsByMethod.Online);
+        Assert.Equal(0, result.OnlineVotingInfo.PendingOnlineBallots);
+        Assert.Equal(1, result.OnlineVotingInfo.PendingOnlineVotedAnotherWay);
+        Assert.Equal(1, result.OnlineVotingInfo.ProcessedOnlineBallots);
+        Assert.Equal(1, result.OnlineVotingInfo.TotalOnlineBallots);
     }
 
     [Fact]

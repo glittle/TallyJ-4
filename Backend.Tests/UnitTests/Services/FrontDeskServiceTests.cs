@@ -3,6 +3,7 @@ using Moq;
 using Backend.DTOs.FrontDesk;
 using Backend.Entities;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Backend.Services;
 
 namespace Backend.Tests.UnitTests.Services;
@@ -53,6 +54,98 @@ public class FrontDeskServiceTests : ServiceTestBase
 
         Assert.Equal("P", result.VotingMethod);
         Assert.NotNull(Context.People.Single().RegistrationTime);
+    }
+
+    [Fact]
+    public async Task CheckInVoterAsync_ProcessedOnline_Throws()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedEligiblePerson();
+        Context.OnlineVotingInfos.Add(new OnlineVotingInfo
+        {
+            ElectionGuid = _electionGuid,
+            PersonGuid = person.PersonGuid,
+            Status = OnlineBallotStatus.Processed,
+            WhenStatus = DateTimeOffset.UtcNow
+        });
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CheckInVoterAsync(_electionGuid, new CheckInVoterDto
+            {
+                PersonGuid = person.PersonGuid,
+                VotingMethod = "P",
+                Teller1 = "Ada"
+            }));
+
+        Assert.Equal(FrontDeskMessageKeys.AlreadyAcceptedOnline, ex.Message);
+        Assert.Null(Context.People.Single().RegistrationTime);
+    }
+
+    [Fact]
+    public async Task CheckInVoterAsync_OnlineMethod_Throws()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedEligiblePerson();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CheckInVoterAsync(_electionGuid, new CheckInVoterDto
+            {
+                PersonGuid = person.PersonGuid,
+                VotingMethod = "O",
+                Teller1 = "Ada"
+            }));
+
+        Assert.Equal(FrontDeskMessageKeys.OnlineIsVoterInitiated, ex.Message);
+        Assert.Null(Context.People.Single().RegistrationTime);
+    }
+
+    [Fact]
+    public async Task CheckInVoterAsync_SubmittedOnline_WithdrawsPendingAndRecordsMethod()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedEligiblePerson();
+        person.HasOnlineBallot = true;
+        Context.OnlineVotingInfos.Add(new OnlineVotingInfo
+        {
+            ElectionGuid = _electionGuid,
+            PersonGuid = person.PersonGuid,
+            Status = OnlineBallotStatus.Submitted,
+            WhenStatus = DateTimeOffset.UtcNow,
+            ListPool = """{"votes":[{"voteName":"Ada"}],"pool":[]}"""
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.CheckInVoterAsync(_electionGuid, new CheckInVoterDto
+        {
+            PersonGuid = person.PersonGuid,
+            VotingMethod = "M",
+            Teller1 = "Ada"
+        });
+
+        Assert.Equal("M", result.VotingMethod);
+        Assert.Null(result.OnlineBallotStatus);
+        Assert.False(Context.People.Single().HasOnlineBallot);
+        Assert.Empty(Context.OnlineVotingInfos);
+    }
+
+    [Fact]
+    public async Task GetEligibleVotersAsync_IncludesLatestOnlineBallotStatus()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedEligiblePerson();
+        Context.OnlineVotingInfos.Add(new OnlineVotingInfo
+        {
+            ElectionGuid = _electionGuid,
+            PersonGuid = person.PersonGuid,
+            Status = OnlineBallotStatus.Submitted,
+            WhenStatus = DateTimeOffset.UtcNow
+        });
+        await Context.SaveChangesAsync();
+
+        var voters = await _service.GetEligibleVotersAsync(_electionGuid);
+
+        Assert.Equal(OnlineBallotStatus.Submitted, Assert.Single(voters).OnlineBallotStatus);
     }
 
     [Fact]

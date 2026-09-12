@@ -17,6 +17,7 @@ public abstract class ElectionAnalyzerBase
     protected List<Ballot> Ballots = new();
     protected List<Vote> Votes = new();
     protected List<Person> People = new();
+    protected HashSet<Guid> ProcessedOnlinePersonGuids = new();
     protected List<Result> Results = new();
     protected List<ResultTie> ResultTies = new();
     protected ResultSummary ResultSummaryCalc = new();
@@ -120,6 +121,14 @@ public abstract class ElectionAnalyzerBase
             .Where(p => p.ElectionGuid == TargetElection.ElectionGuid)
             .ToListAsync();
 
+        ProcessedOnlinePersonGuids = (await Context.OnlineVotingInfos
+                .AsNoTracking()
+                .Where(o => o.ElectionGuid == TargetElection.ElectionGuid
+                            && o.Status == OnlineBallotStatus.Processed)
+                .Select(o => o.PersonGuid)
+                .ToListAsync())
+            .ToHashSet();
+
         Results = new List<Result>();
         ResultTies = new List<ResultTie>();
 
@@ -190,18 +199,24 @@ public abstract class ElectionAnalyzerBase
 
     protected virtual void FillResultSummaryCalc()
     {
-        ResultSummaryCalc.NumVoters = People.Count(p => !string.IsNullOrEmpty(p.VotingMethod));
+        var breakdown = VotingMethodCodes.Count(People.Select(p =>
+            (p.VotingMethod, ProcessedOnlinePersonGuids.Contains(p.PersonGuid))));
+
+        ResultSummaryCalc.NumVoters = People.Count(p =>
+            VotingMethodCodes.HasVotedForCounts(
+                p.VotingMethod,
+                ProcessedOnlinePersonGuids.Contains(p.PersonGuid)));
         ResultSummaryCalc.NumEligibleToVote = People.Count(p => p.CanVote == true);
 
-        ResultSummaryCalc.InPersonBallots = People.Count(p => p.VotingMethod == "P");
-        ResultSummaryCalc.MailedInBallots = People.Count(p => p.VotingMethod == "M");
-        ResultSummaryCalc.DroppedOffBallots = People.Count(p => p.VotingMethod == "D");
-        ResultSummaryCalc.CalledInBallots = People.Count(p => p.VotingMethod == "C");
-        ResultSummaryCalc.OnlineBallots = People.Count(p => p.VotingMethod == "O" || p.VotingMethod == "K");
-        ResultSummaryCalc.ImportedBallots = People.Count(p => p.VotingMethod == "I");
-        ResultSummaryCalc.Custom1Ballots = People.Count(p => p.VotingMethod == "1");
-        ResultSummaryCalc.Custom2Ballots = People.Count(p => p.VotingMethod == "2");
-        ResultSummaryCalc.Custom3Ballots = People.Count(p => p.VotingMethod == "3");
+        ResultSummaryCalc.InPersonBallots = breakdown.InPerson;
+        ResultSummaryCalc.MailedInBallots = breakdown.Mailed;
+        ResultSummaryCalc.DroppedOffBallots = breakdown.DroppedOff;
+        ResultSummaryCalc.CalledInBallots = breakdown.CalledIn;
+        ResultSummaryCalc.OnlineBallots = breakdown.Online + breakdown.Kiosk;
+        ResultSummaryCalc.ImportedBallots = breakdown.Imported;
+        ResultSummaryCalc.Custom1Ballots = breakdown.Custom1;
+        ResultSummaryCalc.Custom2Ballots = breakdown.Custom2;
+        ResultSummaryCalc.Custom3Ballots = breakdown.Custom3;
     }
 
     protected virtual void CalculateBallotStatistics()

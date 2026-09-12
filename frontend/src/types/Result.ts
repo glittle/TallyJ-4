@@ -187,11 +187,20 @@ export interface PresentationTieDto {
 }
 
 // Monitor Info DTOs
+export interface VotingMethodBreakdownDto {
+  inPerson: number;
+  mailed: number;
+  droppedOff: number;
+  kiosk: number;
+  online: number;
+}
+
 export interface MonitorInfoDto {
   electionGuid: string;
   computers: ComputerInfoDto[];
   locations: LocationInfoDto[];
   onlineVotingInfo: OnlineVotingInfoDto;
+  ballotsByMethod?: VotingMethodBreakdownDto;
   totalBallots: number;
   totalVotes: number;
   lastUpdated: string;
@@ -228,6 +237,7 @@ export interface OnlineVotingInfoDto {
   totalOnlineBallots: number;
   processedOnlineBallots: number;
   pendingOnlineBallots: number;
+  pendingOnlineVotedAnotherWay?: number;
   submittedOnlineBallots?: number;
   processingOnlineBallots?: number;
   onlineVotingEnabled: boolean;

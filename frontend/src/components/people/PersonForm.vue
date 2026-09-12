@@ -22,6 +22,8 @@ import {
 import {
   electionSupportsKiosk,
   getVotingMethodLabel,
+  isAcceptedOnlineBallotStatus,
+  isPendingOnlineBallotStatus,
 } from "@/utils/votingMethodLabels";
 import { type FormInstance, type FormRules, ElMessageBox } from "element-plus";
 import { computed, onMounted, reactive, ref, watch } from "vue";
@@ -128,6 +130,20 @@ const selectedEligibility = computed(() => {
 const currentVotingMethodLabel = computed(() =>
   getVotingMethodLabel(personDetails.value?.votingMethod, t),
 );
+
+const onlineBallotStatusLabel = computed(() => {
+  const status = personDetails.value?.onlineBallotStatus;
+  if (isPendingOnlineBallotStatus(status)) {
+    return t("people.onlineStatus.pending");
+  }
+  if (isAcceptedOnlineBallotStatus(status)) {
+    return t("people.onlineStatus.accepted");
+  }
+  if (status === "Draft") {
+    return t("people.onlineStatus.draft");
+  }
+  return null;
+});
 
 const registrationHistoryTitle = computed(() => {
   if (personDetails.value?.votingMethod) {
@@ -563,10 +579,17 @@ defineExpose({
       <el-divider />
 
       <div
-        v-if="registrationHistory.length > 0 || personDetails.votingMethod"
+        v-if="
+          registrationHistory.length > 0 ||
+          personDetails.votingMethod ||
+          onlineBallotStatusLabel
+        "
         class="registration-history"
       >
         <h4>{{ registrationHistoryTitle }}</h4>
+        <p v-if="onlineBallotStatusLabel" class="online-ballot-status">
+          {{ onlineBallotStatusLabel }}
+        </p>
         <el-timeline v-if="registrationHistory.length > 0">
           <el-timeline-item
             v-for="(entry, index) in registrationHistory"
@@ -709,7 +732,8 @@ defineExpose({
     }
   }
 
-  .kiosk-code-note {
+  .kiosk-code-note,
+  .online-ballot-status {
     margin: var(--spacing-1) 0 0;
     font-size: var(--font-size-sm);
     color: var(--color-neutral-500);
