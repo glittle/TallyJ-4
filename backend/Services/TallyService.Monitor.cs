@@ -72,7 +72,9 @@ public partial class TallyService
                 var hasBallotStats = ballotStatsByCode.TryGetValue(active.ComputerCode, out var stats);
                 var locationName = hasBallotStats
                     ? stats.LastKnownLocationName
-                    : assignedLocationsByCode.GetValueOrDefault(active.ComputerCode, string.Empty);
+                    : assignedLocationsByCode.TryGetValue(active.ComputerCode, out var assigned)
+                        ? assigned
+                        : string.Empty;
 
                 return new ComputerInfoDto
                 {

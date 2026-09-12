@@ -150,7 +150,10 @@ export function parseElectionVotingMethods(
       .map((part) => part.trim())
       .filter(Boolean)
       .forEach(addToken);
-  } else if (trimmed.length === 2 && ELECTION_METHOD_ALIASES[trimmed.toUpperCase()]) {
+  } else if (
+    trimmed.length === 2 &&
+    ELECTION_METHOD_ALIASES[trimmed.toUpperCase()]
+  ) {
     add(ELECTION_METHOD_ALIASES[trimmed.toUpperCase()]!);
   } else {
     for (const ch of trimmed) {

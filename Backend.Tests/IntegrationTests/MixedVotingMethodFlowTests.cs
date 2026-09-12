@@ -48,7 +48,6 @@ public class MixedVotingMethodFlowTests : IntegrationTestBase
 
         await SubmitOnlineAsync(electionGuid, onlineEmail, candidates);
         await SubmitOnlineAsync(electionGuid, switchEmail, candidates);
-        await SubmitOnlineAsync(electionGuid, pendingEmail, candidates);
 
         var switchCheckIn = await PostJsonAsync(
             $"/api/{electionGuid}/frontdesk/checkInVoter",
@@ -68,6 +67,8 @@ public class MixedVotingMethodFlowTests : IntegrationTestBase
         var acceptBody = await DeserializeResponseAsync<AcceptAllOnlineBallotsResultDto>(accept);
         Assert.True(acceptBody!.Success);
         Assert.Equal(1, acceptBody.AcceptedCount);
+
+        await SubmitOnlineAsync(electionGuid, pendingEmail, candidates);
 
         var monitor = await DeserializeResponseAsync<MonitorInfoDto>(
             await GetAsync($"/api/results/election/{electionGuid}/monitor"));

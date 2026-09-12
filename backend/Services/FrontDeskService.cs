@@ -43,7 +43,9 @@ public class FrontDeskService : IFrontDeskService
         return voters.Select(person =>
             MapToFrontDeskVoterDto(
                 person,
-                onlineStatusByPerson.GetValueOrDefault(person.PersonGuid)))
+                onlineStatusByPerson.TryGetValue(person.PersonGuid, out var status)
+                    ? status
+                    : null))
             .ToList();
     }
 

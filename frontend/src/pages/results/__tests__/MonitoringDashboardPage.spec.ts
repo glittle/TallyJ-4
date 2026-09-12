@@ -228,9 +228,9 @@ describe("MonitoringDashboardPage Accept all", () => {
     expect(wrapper.find("[data-testid='method-count-mailed']").text()).toBe(
       "2",
     );
-    expect(wrapper.find("[data-testid='method-count-dropped-off']").text()).toBe(
-      "1",
-    );
+    expect(
+      wrapper.find("[data-testid='method-count-dropped-off']").text(),
+    ).toBe("1");
     expect(wrapper.find("[data-testid='method-count-kiosk']").text()).toBe("1");
     expect(wrapper.find("[data-testid='method-count-online']").text()).toBe(
       "3",

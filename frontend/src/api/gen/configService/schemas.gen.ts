@@ -2325,6 +2325,10 @@ export const FrontDesk_FrontDeskVoterDtoSchema = {
             type: 'string',
             nullable: true
         },
+        onlineBallotStatus: {
+            type: 'string',
+            nullable: true
+        },
         envNum: {
             type: 'integer',
             format: 'int32',
@@ -3802,6 +3806,10 @@ export const People_PersonDetailDtoSchema = {
         },
         hasAcceptedBallot: {
             type: 'boolean'
+        },
+        onlineBallotStatus: {
+            type: 'string',
+            nullable: true
         },
         registrationHistory: {
             type: 'string',
@@ -5706,6 +5714,9 @@ export const Results_MonitorInfoDtoSchema = {
         onlineVotingInfo: {
             $ref: '#/components/schemas/Results_OnlineVotingInfoDto'
         },
+        ballotsByMethod: {
+            $ref: '#/components/schemas/Results_VotingMethodBreakdownDto'
+        },
         totalBallots: {
             type: 'integer',
             format: 'int32'
@@ -5734,6 +5745,10 @@ export const Results_OnlineVotingInfoDtoSchema = {
             format: 'int32'
         },
         pendingOnlineBallots: {
+            type: 'integer',
+            format: 'int32'
+        },
+        pendingOnlineVotedAnotherWay: {
             type: 'integer',
             format: 'int32'
         },
@@ -6391,6 +6406,33 @@ export const Results_VoteDistributionDtoSchema = {
                 format: 'int32'
             },
             nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Results_VotingMethodBreakdownDtoSchema = {
+    type: 'object',
+    properties: {
+        inPerson: {
+            type: 'integer',
+            format: 'int32'
+        },
+        mailed: {
+            type: 'integer',
+            format: 'int32'
+        },
+        droppedOff: {
+            type: 'integer',
+            format: 'int32'
+        },
+        kiosk: {
+            type: 'integer',
+            format: 'int32'
+        },
+        online: {
+            type: 'integer',
+            format: 'int32'
         }
     },
     additionalProperties: false
@@ -7191,6 +7233,10 @@ export const FrontDesk_FrontDeskVoterDtoWritableSchema = {
             nullable: true
         },
         votingMethod: {
+            type: 'string',
+            nullable: true
+        },
+        onlineBallotStatus: {
             type: 'string',
             nullable: true
         },

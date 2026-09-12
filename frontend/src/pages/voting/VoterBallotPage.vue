@@ -88,9 +88,7 @@ const {
   poolEntries,
 } = useVoterBallotHelpers(() => selectionMode.value);
 
-const duplicateVotePositions = computed(() =>
-  duplicatePositions(votes.value),
-);
+const duplicateVotePositions = computed(() => duplicatePositions(votes.value));
 
 const allVotablePersonOptions = computed(() => {
   const official = onlineVotingStore.votablePeople.map((p) => ({

@@ -572,8 +572,7 @@ const connectedOnlineVoterSessions = computed(
   () => monitorInfo.value?.onlineVotingInfo.connectedOnlineVoterSessions ?? 0,
 );
 const pendingOnlineVotedAnotherWay = computed(
-  () =>
-    monitorInfo.value?.onlineVotingInfo.pendingOnlineVotedAnotherWay ?? 0,
+  () => monitorInfo.value?.onlineVotingInfo.pendingOnlineVotedAnotherWay ?? 0,
 );
 const onlineBallotStatusView = onlineBallotMonitorStatus;
 const refreshInterval = ref<number | null>(null);

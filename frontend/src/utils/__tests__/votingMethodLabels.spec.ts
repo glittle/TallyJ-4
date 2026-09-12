@@ -11,14 +11,19 @@ const t = ((key: string) => key) as any;
 
 describe("votingMethodLabels", () => {
   it("maps Person.VotingMethod letters, not Imported as In Person", () => {
-    expect(getVotingMethodLabel("P", t)).toBe("frontDesk.votingMethod.inPerson");
-    expect(getVotingMethodLabel("I", t)).toBe("frontDesk.votingMethod.imported");
+    expect(getVotingMethodLabel("P", t)).toBe(
+      "frontDesk.votingMethod.inPerson",
+    );
+    expect(getVotingMethodLabel("I", t)).toBe(
+      "frontDesk.votingMethod.imported",
+    );
     expect(getVotingMethodLabel("D", t)).toBe("people.votingMethod.droppedOff");
     expect(getVotingMethodLabel("K", t)).toBe("people.votingMethod.kiosk");
   });
 
   it("parses concatenated letters and comma-separated aliases", () => {
-    expect(parseElectionVotingMethods("PDM")).toEqual(["P", "M", "D"]);
+    expect(parseElectionVotingMethods("PMD")).toEqual(["P", "M", "D"]);
+    expect(parseElectionVotingMethods("PDM")).toEqual(["P", "D", "M"]);
     expect(parseElectionVotingMethods("IP,OL")).toEqual(["P", "O"]);
     expect(parseElectionVotingMethods("PMDKO")).toEqual([
       "P",
@@ -46,12 +51,7 @@ describe("votingMethodLabels", () => {
   });
 
   it("omits Online from Front Desk check-in methods", () => {
-    expect(parseFrontDeskCheckInMethods("PMDKO")).toEqual([
-      "P",
-      "M",
-      "D",
-      "K",
-    ]);
+    expect(parseFrontDeskCheckInMethods("PMDKO")).toEqual(["P", "M", "D", "K"]);
     expect(parseFrontDeskCheckInMethods("IP,OL")).toEqual(["P"]);
   });
 });
