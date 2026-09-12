@@ -48,6 +48,7 @@ public class TiePersonDto
 
     /// <summary>
     /// The tie-break vote count for this person.
+    /// Null means no count has been entered; 0 is an explicit runoff result.
     /// </summary>
     public int? TieBreakCount { get; set; }
 }
@@ -75,6 +76,7 @@ public class TieCountDto
 
     /// <summary>
     /// The tie-break vote count for this person.
+    /// 0 is an explicit runoff result (distinct from an omitted / unset person).
     /// </summary>
     public int TieBreakCount { get; set; }
 }

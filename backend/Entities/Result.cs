@@ -35,6 +35,9 @@ public partial class Result
 
     public bool? TieBreakRequired { get; set; }
 
+    /// <summary>
+    /// Tie-break runoff votes. Null means not entered; 0 is an explicit runoff result.
+    /// </summary>
     public int? TieBreakCount { get; set; }
 
     public bool? IsTieResolved { get; set; }

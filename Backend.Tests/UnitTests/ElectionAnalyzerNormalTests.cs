@@ -962,6 +962,114 @@ public class ElectionAnalyzerNormalTests : IDisposable
     }
 
     [Fact]
+    public async Task RequiredTie_LeavesUnsetTieBreakCountNull()
+    {
+        var election = CreateElection(numberToElect: 1, numberExtra: 1);
+        _samplePeople = new List<Person>
+        {
+            MakePerson("a0"),
+            MakePerson("a1"),
+            MakePerson("a2"),
+        };
+        _context.SaveChanges();
+
+        var ballots = new[] { MakeBallot(), MakeBallot(), MakeBallot() };
+        MakeVote(ballots[0], _samplePeople[0]);
+        MakeVote(ballots[1], _samplePeople[1]);
+        MakeVote(ballots[2], _samplePeople[2]);
+
+        await RunAnalysis(election);
+
+        var results = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .ToList();
+
+        Assert.Equal(3, results.Count);
+        Assert.True(results.All(r => r.TieBreakRequired == true));
+        Assert.True(results.All(r => r.TieBreakCount == null));
+    }
+
+    [Fact]
+    public async Task ExplicitZero_IsPreservedAcrossReanalysisAndDistinctFromUnset()
+    {
+        var election = CreateElection(numberToElect: 1, numberExtra: 1);
+        _samplePeople = new List<Person>
+        {
+            MakePerson("a0"),
+            MakePerson("a1"),
+            MakePerson("a2"),
+        };
+        _context.SaveChanges();
+
+        var ballots = new[] { MakeBallot(), MakeBallot(), MakeBallot() };
+        MakeVote(ballots[0], _samplePeople[0]);
+        MakeVote(ballots[1], _samplePeople[1]);
+        MakeVote(ballots[2], _samplePeople[2]);
+
+        await RunAnalysis(election);
+
+        var results = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .ToList();
+        var resultByPerson = results.ToDictionary(r => r.PersonGuid);
+        resultByPerson[_samplePeople[1].PersonGuid].TieBreakCount = 0;
+        _context.SaveChanges();
+
+        await RunAnalysis(election);
+
+        resultByPerson = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .ToDictionary(r => r.PersonGuid);
+
+        Assert.Null(resultByPerson[_samplePeople[0].PersonGuid].TieBreakCount);
+        Assert.Equal(0, resultByPerson[_samplePeople[1].PersonGuid].TieBreakCount);
+        Assert.Null(resultByPerson[_samplePeople[2].PersonGuid].TieBreakCount);
+    }
+
+    [Fact]
+    public async Task AllZeroTieBreakCounts_RemainUnresolved()
+    {
+        var election = CreateElection(numberToElect: 1, numberExtra: 1);
+        _samplePeople = new List<Person>
+        {
+            MakePerson("a0", votingMethod: "P"),
+            MakePerson("a1", votingMethod: "P"),
+            MakePerson("a2", votingMethod: "P"),
+        };
+        _context.SaveChanges();
+
+        var ballots = new[] { MakeBallot(), MakeBallot(), MakeBallot() };
+        MakeVote(ballots[0], _samplePeople[0]);
+        MakeVote(ballots[1], _samplePeople[1]);
+        MakeVote(ballots[2], _samplePeople[2]);
+
+        await RunAnalysis(election);
+
+        var results = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .ToList();
+        foreach (var result in results)
+        {
+            result.TieBreakCount = 0;
+        }
+
+        _context.SaveChanges();
+
+        await RunAnalysis(election);
+
+        results = _context.Results
+            .Where(r => r.ElectionGuid == _electionGuid)
+            .ToList();
+        var resultTie = _context.ResultTies.Single(rt => rt.ElectionGuid == _electionGuid);
+        var summary = _context.ResultSummaries
+            .First(rs => rs.ElectionGuid == _electionGuid && rs.ResultType == "F");
+
+        Assert.All(results, r => Assert.Equal(0, r.TieBreakCount));
+        Assert.Equal(false, resultTie.IsResolved);
+        Assert.Equal(false, summary.UseOnReports);
+    }
+
+    [Fact]
     public async Task UnresolvedTies_BlockUseOnReports_ThenResolvedAllowsReports()
     {
         var election = CreateElection(numberToElect: 1, numberExtra: 1);
