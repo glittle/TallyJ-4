@@ -1,6 +1,7 @@
 using Backend.Context;
 using Backend.Entities;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Backend.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -332,22 +333,29 @@ public static partial class DbSeeder
             existingVoter.VotingMethod = "O";
         }
 
+        var kioskVoterId = KioskCodeLifetime.ToVoterId(electionGuid, "VTEST");
         var kioskVoter = await context.OnlineVoters
-            .FirstOrDefaultAsync(ov => ov.VoterId == "VTEST");
+            .FirstOrDefaultAsync(ov =>
+                ov.VoterId == kioskVoterId &&
+                ov.VoterIdType == KioskCodeLifetime.VoterIdType);
         if (kioskVoter == null)
         {
-            context.OnlineVoters.Add(new OnlineVoter
+            var occupant = await context.OnlineVoters
+                .FirstOrDefaultAsync(ov => ov.VoterId == kioskVoterId);
+            if (occupant == null)
             {
-                VoterId = "VTEST",
-                VoterIdType = "C",
-                WhenRegistered = DateTimeOffset.UtcNow,
-                VerifyCode = "VTEST",
-                VerifyCodeDate = DateTimeOffset.UtcNow
-            });
+                context.OnlineVoters.Add(new OnlineVoter
+                {
+                    VoterId = kioskVoterId,
+                    VoterIdType = KioskCodeLifetime.VoterIdType,
+                    WhenRegistered = DateTimeOffset.UtcNow,
+                    VerifyCode = "VTEST",
+                    VerifyCodeDate = DateTimeOffset.UtcNow
+                });
+            }
         }
         else
         {
-            kioskVoter.VoterIdType = "C";
             kioskVoter.VerifyCode = "VTEST";
             kioskVoter.VerifyCodeDate = DateTimeOffset.UtcNow;
         }

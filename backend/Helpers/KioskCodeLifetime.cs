@@ -44,4 +44,59 @@ public static class KioskCodeLifetime
 
         return expiresAt > (now ?? DateTimeOffset.UtcNow);
     }
+
+    /// <summary>
+    /// Election-scoped <c>OnlineVoter.VoterId</c> for a kiosk code. Person letters
+    /// stay unique per election; the login window row must not be shared globally.
+    /// </summary>
+    public static string ToVoterId(Guid electionGuid, string code)
+    {
+        var normalized = code.Trim().ToUpperInvariant();
+        return $"{normalized}.{electionGuid:N}";
+    }
+
+    public static bool TryParseVoterId(string? voterId, out Guid electionGuid, out string code)
+    {
+        electionGuid = default;
+        code = string.Empty;
+        if (string.IsNullOrWhiteSpace(voterId))
+        {
+            return false;
+        }
+
+        var dot = voterId.LastIndexOf('.');
+        if (dot <= 0 || voterId.Length - dot != 33)
+        {
+            return false;
+        }
+
+        if (!Guid.TryParseExact(voterId[(dot + 1)..], "N", out electionGuid))
+        {
+            return false;
+        }
+
+        code = voterId[..dot].Trim().ToUpperInvariant();
+        return code.Length > 0;
+    }
+
+    /// <summary>
+    /// True when <paramref name="voterId"/> is the short letters or the
+    /// election-scoped kiosk <see cref="ToVoterId"/> for this person.
+    /// </summary>
+    public static bool PersonMatchesVoterId(Guid electionGuid, string? kioskCode, string voterId)
+    {
+        if (!HasLiveCode(kioskCode))
+        {
+            return false;
+        }
+
+        if (string.Equals(kioskCode, voterId, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return TryParseVoterId(voterId, out var parsedElection, out var code)
+               && parsedElection == electionGuid
+               && string.Equals(kioskCode, code, StringComparison.OrdinalIgnoreCase);
+    }
 }

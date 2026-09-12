@@ -458,7 +458,7 @@ public class PeopleService : IPeopleService
             ? person.KioskCode!
             : await EnsureKioskCodeAsync(person);
 
-        await StampKioskLoginWindowAsync(code);
+        await StampKioskLoginWindowAsync(person.ElectionGuid, code);
         return code;
     }
 
@@ -601,23 +601,24 @@ public class PeopleService : IPeopleService
         var onlineVoter = await _context.OnlineVoters
             .AsNoTracking()
             .FirstOrDefaultAsync(ov =>
-                ov.VoterId == person.KioskCode &&
+                ov.VoterId == KioskCodeLifetime.ToVoterId(person.ElectionGuid, person.KioskCode!) &&
                 ov.VoterIdType == KioskCodeLifetime.VoterIdType);
         dto.KioskCodeExpiresAt = KioskCodeLifetime.ExpiresAt(onlineVoter?.VerifyCodeDate);
     }
 
-    private async Task StampKioskLoginWindowAsync(string code)
+    private async Task StampKioskLoginWindowAsync(Guid electionGuid, string code)
     {
         var normalized = code.Trim().ToUpperInvariant();
+        var voterId = KioskCodeLifetime.ToVoterId(electionGuid, normalized);
         var onlineVoter = await _context.OnlineVoters
             .FirstOrDefaultAsync(ov =>
-                ov.VoterId == normalized &&
+                ov.VoterId == voterId &&
                 ov.VoterIdType == KioskCodeLifetime.VoterIdType);
 
         if (onlineVoter == null)
         {
             var occupant = await _context.OnlineVoters
-                .FirstOrDefaultAsync(ov => ov.VoterId == normalized);
+                .FirstOrDefaultAsync(ov => ov.VoterId == voterId);
             if (occupant != null)
             {
                 throw new InvalidOperationException(
@@ -626,7 +627,7 @@ public class PeopleService : IPeopleService
 
             onlineVoter = new OnlineVoter
             {
-                VoterId = normalized,
+                VoterId = voterId,
                 VoterIdType = KioskCodeLifetime.VoterIdType,
                 WhenRegistered = DateTimeOffset.UtcNow
             };

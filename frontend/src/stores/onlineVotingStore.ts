@@ -54,9 +54,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
 
   function persistAuth(id: string, type?: string | null) {
     voterId.value = id;
-    if (type) {
-      voterIdType.value = type;
-    }
+    voterIdType.value = type ?? null;
   }
 
   async function applyAuthResponse(response: {

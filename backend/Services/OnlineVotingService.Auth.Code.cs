@@ -81,6 +81,12 @@ public partial class OnlineVotingService
                 return BuildRequestCodeResponse("voting.auth.requestCode.notRegistered");
             }
 
+            // Kiosk login is teller-stamped and election-scoped; do not create a global row here.
+            if (dto.VoterIdType == KioskCodeLifetime.VoterIdType)
+            {
+                return BuildRequestCodeResponse("voting.auth.requestCode.sent");
+            }
+
             // 5. Create or update OnlineVoter record for tracking (reuse the phone+paid load when present)
             if (onlineVoter == null)
             {
@@ -299,22 +305,40 @@ public partial class OnlineVotingService
             return (false, "voting.auth.verify.voterNotFound", null);
         }
 
-        var person = await _context.People
-            .FirstOrDefaultAsync(p => openElectionGuids.Contains(p.ElectionGuid) &&
-                                      p.KioskCode != null &&
-                                      p.KioskCode.ToUpper() == normalizedCode);
+        var people = await _context.People
+            .Where(p => openElectionGuids.Contains(p.ElectionGuid) &&
+                        p.KioskCode != null &&
+                        p.KioskCode != string.Empty &&
+                        p.KioskCode.ToUpper() == normalizedCode)
+            .ToListAsync();
 
-        if (person == null)
+        if (people.Count == 0)
         {
             return (false, "voting.auth.verify.voterNotFound", null);
         }
 
-        var onlineVoter = await _context.OnlineVoters
-            .FirstOrDefaultAsync(ov =>
-                ov.VoterId == normalizedCode &&
-                ov.VoterIdType == KioskCodeLifetime.VoterIdType);
+        OnlineVoter? onlineVoter = null;
+        foreach (var candidate in people)
+        {
+            var scopedId = KioskCodeLifetime.ToVoterId(candidate.ElectionGuid, normalizedCode);
+            var row = await _context.OnlineVoters
+                .FirstOrDefaultAsync(ov =>
+                    ov.VoterId == scopedId &&
+                    ov.VoterIdType == KioskCodeLifetime.VoterIdType);
+            if (row == null || !KioskCodeLifetime.IsLoginWindowOpen(row.VerifyCodeDate, now))
+            {
+                continue;
+            }
 
-        if (onlineVoter == null || !KioskCodeLifetime.IsLoginWindowOpen(onlineVoter.VerifyCodeDate, now))
+            if (onlineVoter != null)
+            {
+                return (false, "voting.auth.verify.voterNotFound", null);
+            }
+
+            onlineVoter = row;
+        }
+
+        if (onlineVoter == null)
         {
             return (false, "voting.auth.verify.codeExpired", null);
         }

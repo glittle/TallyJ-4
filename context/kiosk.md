@@ -36,6 +36,19 @@ Generate/renew is refused after Finalized, after a Front Desk `VotingMethod`, af
 
 Kiosk `OnlineVoter` reads and stamps require `VoterIdType == C` (same as phone lookups require `P`). A matching `VoterId` on an email or phone row is not a kiosk session and must not be retagged.
 
+v4 submit does not empty `Person.KioskCode`; empty is the v3 used-code sentinel only.
+
+## Login window is election-scoped
+
+**Status:** active  
+**Evidence:** inferred (`IX_PersonKioskCode` is `(ElectionGuid, KioskCode)`; `OnlineVoter.VoterId` is globally unique)
+
+`Person.KioskCode` letters may repeat across elections. The 15-minute window lives on an `OnlineVoter` row keyed `CODE.{electionGuid:N}` (type C). Mint/renew/submit in election A must not stamp or clear election B. Auth of the typed letters binds the single open window; if two open elections both have a live window for those letters, login is refused rather than picking `FirstOrDefault`.
+
+**Rejected alternative:** keep one global `OnlineVoter` per letter-code. Two open elections with `SMART` would share and close each other’s window.
+
+**Rejected alternative:** enforce global uniqueness of live letters at mint time. That would change the teller-facing code when another election already used it, and the person index is already per-election.
+
 ## Setup toggle writes `K` on `VotingMethods`
 
 **Status:** active  

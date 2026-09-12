@@ -47,4 +47,22 @@ public class KioskCodeHelperTests
         Assert.False(KioskCodeLifetime.IsConsumed(null));
         Assert.False(KioskCodeLifetime.HasLiveCode(string.Empty));
     }
+
+    [Fact]
+    public void ToVoterId_IsElectionScopedAndRoundTrips()
+    {
+        var electionA = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+        var electionB = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+
+        var idA = KioskCodeLifetime.ToVoterId(electionA, "smart");
+        var idB = KioskCodeLifetime.ToVoterId(electionB, "SMART");
+
+        Assert.NotEqual(idA, idB);
+        Assert.True(KioskCodeLifetime.TryParseVoterId(idA, out var parsedElection, out var code));
+        Assert.Equal(electionA, parsedElection);
+        Assert.Equal("SMART", code);
+        Assert.True(KioskCodeLifetime.PersonMatchesVoterId(electionA, "SMART", idA));
+        Assert.False(KioskCodeLifetime.PersonMatchesVoterId(electionB, "SMART", idA));
+        Assert.True(KioskCodeLifetime.PersonMatchesVoterId(electionA, "SMART", "SMART"));
+    }
 }

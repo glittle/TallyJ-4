@@ -122,4 +122,28 @@ describe("PersonForm kiosk generate", () => {
 
     expect(wrapper.text()).not.toContain("Kiosk Code");
   });
+
+  it("hides Make/Renew when the person already has an accepted or processed ballot", async () => {
+    mockGetDetails.mockResolvedValue(
+      details({
+        kioskCode: "SMART",
+        hasAcceptedBallot: true,
+        onlineBallotStatus: "Processed",
+      }),
+    );
+
+    const wrapper = mount(PersonForm, {
+      props: {
+        electionGuid: "22222222-2222-2222-2222-222222222222",
+        person,
+        isEdit: true,
+      },
+      global: { plugins: [i18n, ElementPlus, pinia] },
+    });
+    await flushPromises();
+
+    expect(wrapper.find('[data-testid="generate-kiosk-code"]').exists()).toBe(
+      false,
+    );
+  });
 });

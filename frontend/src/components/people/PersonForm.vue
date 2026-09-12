@@ -100,7 +100,9 @@ const showKioskCode = computed(
     isEditMode.value &&
     personDetails.value !== null &&
     !personDetails.value.votingMethod &&
-    !personDetails.value.kioskCodeConsumed,
+    !personDetails.value.kioskCodeConsumed &&
+    !hasAcceptedBallot(personDetails.value) &&
+    !isAcceptedOnlineBallotStatus(personDetails.value.onlineBallotStatus),
 );
 
 const generatingKioskCode = ref(false);

@@ -46,17 +46,14 @@ public partial class OnlineVotingService
                 return (false, "voting.submit.notOpen");
             }
 
-            var onlineVoter = await _context.OnlineVoters
-                .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId);
+            var onlineVoter = await FindOnlineVoterForBallotAsync(dto.ElectionGuid, dto.VoterId);
 
             if (onlineVoter == null)
             {
                 return (false, "voting.submit.voterNotFound");
             }
 
-            var person = await _context.People
-                .FirstOrDefaultAsync(p => p.ElectionGuid == dto.ElectionGuid &&
-                                        (p.Email == dto.VoterId || p.Phone == dto.VoterId || p.KioskCode == dto.VoterId));
+            var person = await FindPersonForVoterAsync(dto.ElectionGuid, dto.VoterId);
 
             OnlineVotingInfo? existingVotingInfo = null;
             if (person != null)
@@ -139,9 +136,7 @@ public partial class OnlineVotingService
     /// <inheritdoc/>
     public async Task<OnlineVoteStatusDto> GetVoteStatusAsync(Guid electionGuid, string voterId)
     {
-        var person = await _context.People
-            .FirstOrDefaultAsync(p => p.ElectionGuid == electionGuid &&
-                                    (p.Email == voterId || p.Phone == voterId || p.KioskCode == voterId));
+        var person = await FindPersonForVoterAsync(electionGuid, voterId);
 
         if (person == null)
         {
@@ -399,5 +394,35 @@ public partial class OnlineVotingService
         {
             return new List<OnlinePoolEntryDto>();
         }
+    }
+
+    private async Task<OnlineVoter?> FindOnlineVoterForBallotAsync(Guid electionGuid, string voterId)
+    {
+        var scopedId = KioskCodeLifetime.TryParseVoterId(voterId, out var parsedElection, out var code)
+            ? KioskCodeLifetime.ToVoterId(parsedElection, code)
+            : KioskCodeLifetime.ToVoterId(electionGuid, voterId);
+
+        var kioskRow = await _context.OnlineVoters
+            .FirstOrDefaultAsync(ov =>
+                ov.VoterId == scopedId &&
+                ov.VoterIdType == KioskCodeLifetime.VoterIdType);
+        if (kioskRow != null)
+        {
+            return kioskRow;
+        }
+
+        return await _context.OnlineVoters
+            .FirstOrDefaultAsync(ov => ov.VoterId == voterId);
+    }
+
+    private async Task<Person?> FindPersonForVoterAsync(Guid electionGuid, string voterId)
+    {
+        var parsed = KioskCodeLifetime.TryParseVoterId(voterId, out var kioskElection, out var kioskCode);
+        return await _context.People
+            .FirstOrDefaultAsync(p => p.ElectionGuid == electionGuid &&
+                (p.Email == voterId ||
+                 p.Phone == voterId ||
+                 p.KioskCode == voterId ||
+                 (parsed && p.ElectionGuid == kioskElection && p.KioskCode == kioskCode)));
     }
 }

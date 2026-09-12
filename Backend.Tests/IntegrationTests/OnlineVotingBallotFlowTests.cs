@@ -28,7 +28,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
     public async Task VerifyCode_WithKioskCode_AuthenticatesDirectly()
     {
         var kioskCode = "JTEST";
-        await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+        var electionGuid = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
 
         var response = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
         {
@@ -39,7 +39,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var auth = await response.Content.ReadFromJsonAsync<OnlineVoterAuthResponse>();
         Assert.NotNull(auth);
-        Assert.Equal(kioskCode, auth.VoterId);
+        Assert.Equal(KioskCodeLifetime.ToVoterId(electionGuid, kioskCode), auth.VoterId);
         Assert.Equal("C", auth.VoterIdType);
         Assert.True(string.IsNullOrEmpty(auth.Token));
         Assert.False(string.IsNullOrWhiteSpace(GetSetCookieValue(response, "voter_token")));
@@ -49,7 +49,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
     public async Task VerifyCode_WithKPrefixedKioskCode_AuthenticatesDirectly()
     {
         var kioskCode = "JABCD";
-        await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+        var electionGuid = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
 
         var response = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
         {
@@ -60,15 +60,15 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var auth = await response.Content.ReadFromJsonAsync<OnlineVoterAuthResponse>();
         Assert.NotNull(auth);
-        Assert.Equal(kioskCode, auth.VoterId);
+        Assert.Equal(KioskCodeLifetime.ToVoterId(electionGuid, kioskCode), auth.VoterId);
     }
 
     [Fact]
     public async Task VerifyCode_WithExpiredKioskWindow_ReturnsCodeExpired()
     {
         var kioskCode = "JEXPD";
-        await SetupOpenElectionWithVoter(kioskCode: kioskCode);
-        await SetKioskVerifyCodeDateAsync(kioskCode, DateTimeOffset.UtcNow.AddMinutes(-16));
+        var electionGuid = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+        await SetKioskVerifyCodeDateAsync(electionGuid, kioskCode, DateTimeOffset.UtcNow.AddMinutes(-16));
 
         var response = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
         {
@@ -87,7 +87,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         var kioskCode = "JRENW";
         var electionGuid = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
         await SetElectionVotingMethodsAsync(electionGuid, "K");
-        await SetKioskVerifyCodeDateAsync(kioskCode, DateTimeOffset.UtcNow.AddMinutes(-16));
+        await SetKioskVerifyCodeDateAsync(electionGuid, kioskCode, DateTimeOffset.UtcNow.AddMinutes(-16));
 
         var personGuid = await GetPersonGuidByKioskCodeAsync(kioskCode);
         var token = await GetAuthTokenAsync();
@@ -118,13 +118,14 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
             VerifyCode = kioskCode
         });
         Assert.Equal(HttpStatusCode.OK, auth.StatusCode);
+        var session = await auth.Content.ReadFromJsonAsync<OnlineVoterAuthResponse>();
 
         var submit = await Client.PostAsJsonAsync(
             $"/api/online-voting/{electionGuid}/submitBallot",
             new SubmitOnlineBallotDto
             {
                 ElectionGuid = electionGuid,
-                VoterId = kioskCode,
+                VoterId = session!.VoterId,
                 Votes =
                 [
                     new OnlineVoteDto { VoteName = "Kiosk Choice", PositionOnBallot = 1 }
@@ -142,14 +143,100 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         Assert.Contains("voting.auth.verify.codeExpired", body);
     }
 
+    [Fact]
+    public async Task DraftKioskSubmit_DoesNotEndLoginWindow()
+    {
+        var kioskCode = "JDRFT";
+        var electionGuid = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+
+        var auth = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
+        {
+            VoterId = kioskCode,
+            VerifyCode = kioskCode
+        });
+        Assert.Equal(HttpStatusCode.OK, auth.StatusCode);
+        var session = await auth.Content.ReadFromJsonAsync<OnlineVoterAuthResponse>();
+
+        var draft = await Client.PostAsJsonAsync(
+            $"/api/online-voting/{electionGuid}/submitBallot",
+            new SubmitOnlineBallotDto
+            {
+                ElectionGuid = electionGuid,
+                VoterId = session!.VoterId,
+                IsDraft = true,
+                Votes =
+                [
+                    new OnlineVoteDto { VoteName = "Draft Choice", PositionOnBallot = 1 }
+                ]
+            });
+        Assert.Equal(HttpStatusCode.OK, draft.StatusCode);
+
+        Client.DefaultRequestHeaders.Remove("Cookie");
+        var again = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
+        {
+            VoterId = kioskCode,
+            VerifyCode = kioskCode
+        });
+        Assert.Equal(HttpStatusCode.OK, again.StatusCode);
+    }
+
+    [Fact]
+    public async Task SameKioskLetters_InTwoElections_DoNotShareOrCloseEachOthersWindow()
+    {
+        const string kioskCode = "SMART";
+        var electionA = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+        var electionB = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+        await SetElectionVotingMethodsAsync(electionA, "K");
+
+        var stampA = await ReadKioskVerifyCodeDateAsync(electionA, kioskCode);
+        await SetKioskVerifyCodeDateAsync(electionB, kioskCode, DateTimeOffset.UtcNow.AddMinutes(-5));
+        var stampB = await ReadKioskVerifyCodeDateAsync(electionB, kioskCode);
+
+        var personA = await GetPersonGuidByKioskCodeAsync(kioskCode, electionA);
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+        var renew = await Client.PostAsync($"/api/People/{personA}/generateKioskCode", null);
+        Assert.Equal(HttpStatusCode.OK, renew.StatusCode);
+        Client.DefaultRequestHeaders.Authorization = null;
+
+        Assert.True(await ReadKioskVerifyCodeDateAsync(electionA, kioskCode) > stampA);
+        Assert.Equal(stampB, await ReadKioskVerifyCodeDateAsync(electionB, kioskCode));
+
+        var submitA = await Client.PostAsJsonAsync(
+            $"/api/online-voting/{electionA}/submitBallot",
+            new SubmitOnlineBallotDto
+            {
+                ElectionGuid = electionA,
+                VoterId = KioskCodeLifetime.ToVoterId(electionA, kioskCode),
+                Votes =
+                [
+                    new OnlineVoteDto { VoteName = "Choice A", PositionOnBallot = 1 }
+                ]
+            });
+        Assert.Equal(HttpStatusCode.OK, submitA.StatusCode);
+
+        Assert.Null(await ReadKioskVerifyCodeDateAsync(electionA, kioskCode));
+        Assert.Equal(stampB, await ReadKioskVerifyCodeDateAsync(electionB, kioskCode));
+
+        Client.DefaultRequestHeaders.Remove("Cookie");
+        var authB = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
+        {
+            VoterId = kioskCode,
+            VerifyCode = kioskCode
+        });
+        Assert.Equal(HttpStatusCode.OK, authB.StatusCode);
+        var sessionB = await authB.Content.ReadFromJsonAsync<OnlineVoterAuthResponse>();
+        Assert.Equal(KioskCodeLifetime.ToVoterId(electionB, kioskCode), sessionB!.VoterId);
+    }
+
     [Theory]
     [InlineData("E")]
     [InlineData("P")]
     public async Task VerifyCode_WithEmailOrPhoneRowMatchingKioskCode_DoesNotAuthenticateAsKiosk(string occupantType)
     {
         var kioskCode = occupantType == "E" ? "JEMAL" : "JPHON";
-        await SetupOpenElectionWithVoter(kioskCode: kioskCode);
-        await ReplaceKioskOnlineVoterAsAsync(kioskCode, occupantType);
+        var electionGuid = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+        await ReplaceKioskOnlineVoterAsAsync(electionGuid, kioskCode, occupantType);
 
         var response = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
         {
@@ -163,7 +250,8 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
 
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
-        var row = await context.OnlineVoters.SingleAsync(ov => ov.VoterId == kioskCode);
+        var row = await context.OnlineVoters.SingleAsync(ov =>
+            ov.VoterId == KioskCodeLifetime.ToVoterId(electionGuid, kioskCode));
         Assert.Equal(occupantType, row.VoterIdType);
     }
 
@@ -828,11 +916,15 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         return candidates;
     }
 
-    private async Task SetKioskVerifyCodeDateAsync(string kioskCode, DateTimeOffset verifyCodeDate)
+    private async Task SetKioskVerifyCodeDateAsync(
+        Guid electionGuid,
+        string kioskCode,
+        DateTimeOffset verifyCodeDate)
     {
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
-        var onlineVoter = await context.OnlineVoters.SingleAsync(ov => ov.VoterId == kioskCode);
+        var voterId = KioskCodeLifetime.ToVoterId(electionGuid, kioskCode);
+        var onlineVoter = await context.OnlineVoters.SingleAsync(ov => ov.VoterId == voterId);
         onlineVoter.VerifyCodeDate = verifyCodeDate;
         await context.SaveChangesAsync();
     }
@@ -846,13 +938,27 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         await context.SaveChangesAsync();
     }
 
-    private async Task<Guid> GetPersonGuidByKioskCodeAsync(string kioskCode)
+    private async Task<Guid> GetPersonGuidByKioskCodeAsync(string kioskCode, Guid? electionGuid = null)
     {
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
-        return await context.People
-            .Where(p => p.KioskCode == kioskCode)
-            .Select(p => p.PersonGuid)
+        var query = context.People.Where(p => p.KioskCode == kioskCode);
+        if (electionGuid != null)
+        {
+            query = query.Where(p => p.ElectionGuid == electionGuid);
+        }
+
+        return await query.Select(p => p.PersonGuid).SingleAsync();
+    }
+
+    private async Task<DateTimeOffset?> ReadKioskVerifyCodeDateAsync(Guid electionGuid, string kioskCode)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var voterId = KioskCodeLifetime.ToVoterId(electionGuid, kioskCode);
+        return await context.OnlineVoters
+            .Where(ov => ov.VoterId == voterId)
+            .Select(ov => ov.VerifyCodeDate)
             .SingleAsync();
     }
 
@@ -865,10 +971,14 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         await context.SaveChangesAsync();
     }
 
-    private async Task ReplaceKioskOnlineVoterAsAsync(string voterId, string voterIdType)
+    private async Task ReplaceKioskOnlineVoterAsAsync(
+        Guid electionGuid,
+        string kioskCode,
+        string voterIdType)
     {
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var voterId = KioskCodeLifetime.ToVoterId(electionGuid, kioskCode);
         var row = await context.OnlineVoters.SingleAsync(ov => ov.VoterId == voterId);
         row.VoterIdType = voterIdType;
         await context.SaveChangesAsync();
@@ -956,7 +1066,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         {
             context.OnlineVoters.Add(new OnlineVoter
             {
-                VoterId = kioskCode,
+                VoterId = KioskCodeLifetime.ToVoterId(electionGuid, kioskCode),
                 VoterIdType = KioskCodeLifetime.VoterIdType,
                 WhenRegistered = DateTimeOffset.UtcNow,
                 VerifyCode = kioskCode,

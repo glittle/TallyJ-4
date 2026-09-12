@@ -720,7 +720,7 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Equal(code, stored.KioskCode);
 
         var onlineVoter = Assert.Single(Context.OnlineVoters);
-        Assert.Equal(code, onlineVoter.VoterId);
+        Assert.Equal(KioskCodeLifetime.ToVoterId(electionGuid, code!), onlineVoter.VoterId);
         Assert.Equal(KioskCodeLifetime.VoterIdType, onlineVoter.VoterIdType);
         Assert.Equal(code, onlineVoter.VerifyCode);
         Assert.NotNull(onlineVoter.VerifyCodeDate);
@@ -749,7 +749,7 @@ public class PeopleServiceTests : ServiceTestBase
 
         Assert.Equal(first, renewed);
         var onlineVoter = Assert.Single(Context.OnlineVoters);
-        Assert.Equal(first, onlineVoter.VoterId);
+        Assert.Equal(KioskCodeLifetime.ToVoterId(electionGuid, first!), onlineVoter.VoterId);
         Assert.True(onlineVoter.VerifyCodeDate > firstWindow);
         Assert.True(KioskCodeLifetime.IsLoginWindowOpen(onlineVoter.VerifyCodeDate));
     }
@@ -765,7 +765,7 @@ public class PeopleServiceTests : ServiceTestBase
         person.KioskCode = code;
         Context.OnlineVoters.Add(new OnlineVoter
         {
-            VoterId = code,
+            VoterId = KioskCodeLifetime.ToVoterId(electionGuid, code),
             VoterIdType = occupantType,
             VerifyCode = "KEEPME",
             VerifyCodeDate = DateTimeOffset.UtcNow.AddMinutes(-2),
@@ -779,7 +779,7 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Equal("This kiosk code is already used as another voter identity.", ex.Message);
 
         var row = Assert.Single(Context.OnlineVoters);
-        Assert.Equal(code, row.VoterId);
+        Assert.Equal(KioskCodeLifetime.ToVoterId(electionGuid, code), row.VoterId);
         Assert.Equal(occupantType, row.VoterIdType);
         Assert.Equal("KEEPME", row.VerifyCode);
     }
@@ -795,7 +795,7 @@ public class PeopleServiceTests : ServiceTestBase
         person.KioskCode = code;
         Context.OnlineVoters.Add(new OnlineVoter
         {
-            VoterId = code,
+            VoterId = KioskCodeLifetime.ToVoterId(electionGuid, code),
             VoterIdType = occupantType,
             VerifyCodeDate = DateTimeOffset.UtcNow
         });
@@ -844,6 +844,33 @@ public class PeopleServiceTests : ServiceTestBase
             _service.GenerateKioskCodeAsync(person.PersonGuid));
 
         Assert.Equal(ElectionStageMessageKeys.FinalizedWriteBlocked, ex.Message);
+    }
+
+    [Fact]
+    public async Task GenerateKioskCodeAsync_FrontDeskVotingMethod_Throws()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+        person.VotingMethod = "P";
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.GenerateKioskCodeAsync(person.PersonGuid));
+
+        Assert.Equal("Cannot generate a kiosk code for a person who has already registered.", ex.Message);
+    }
+
+    [Fact]
+    public async Task GenerateKioskCodeAsync_ProcessedOnlineBallot_Throws()
+    {
+        var electionGuid = SeedElection(ElectionStage.GatheringBallots, votingMethods: "K");
+        var person = SeedPerson(electionGuid);
+        await SeedOnlineVotingInfoAsync(electionGuid, person.PersonGuid, OnlineBallotStatus.Processed);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.GenerateKioskCodeAsync(person.PersonGuid));
+
+        Assert.Equal("Cannot generate a kiosk code for a person who has already voted.", ex.Message);
     }
 
     [Fact]

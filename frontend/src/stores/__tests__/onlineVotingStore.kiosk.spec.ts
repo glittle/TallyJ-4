@@ -72,4 +72,21 @@ describe("onlineVotingStore kiosk session isolation", () => {
     expect(store.voteStatus).toBeNull();
     expect(store.electionInfo).toBeNull();
   });
+
+  it("does not leave a stale kiosk type when the next auth omits voterIdType", async () => {
+    const store = useOnlineVotingStore();
+    verifyCode.mockResolvedValueOnce({ voterId: "SMART", voterIdType: "C" });
+    await store.verifyCode({ voterId: "SMART", verifyCode: "SMART" });
+    expect(store.isKioskSession).toBe(true);
+
+    verifyCode.mockResolvedValueOnce({ voterId: "pat@example.com" });
+    await store.verifyCode({
+      voterId: "pat@example.com",
+      verifyCode: "123456",
+    });
+
+    expect(store.voterId).toBe("pat@example.com");
+    expect(store.voterIdType).toBeNull();
+    expect(store.isKioskSession).toBe(false);
+  });
 });
