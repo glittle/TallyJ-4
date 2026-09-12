@@ -41,7 +41,7 @@ v3 disabled eligibility options with `CanVote === false` once the person had a v
 
 `HasAcceptedBallot` is Front Desk `VotingMethod` (the paper/mail/call-in record that a ballot was received) or an `OnlineVotingInfo` row with status `Processed` (Accept-all). `Person.HasOnlineBallot` is set on the first online write (Draft autosave or Submitted) and is not the accepted signal. Pending `Submitted` / `Processing` rows do not lock. Draft is also not accepted. V-group reasons (can vote, cannot receive) stay allowed so votes they already received can still be spoiled.
 
-The API throws `people.cannotMarkCannotVoteAfterVoted` before copying fields. Person detail exposes the combined `HasAcceptedBallot` flag; the person form disables X/R from that signal, not from `hasOnlineBallot`. Finalized still wins first.
+The API throws `people.cannotMarkCannotVoteAfterVoted` before copying fields. Person detail exposes the combined `HasAcceptedBallot` flag and the latest `OnlineBallotStatus` (Draft / Submitted / Processing / Processed) so tellers can see pending vs accepted online on the person form. The person form disables X/R from `HasAcceptedBallot`, not from `hasOnlineBallot`. Finalized still wins first. Front Desk shows the same per-person online status; the monitor stays counts-only.
 
 **Rejected alternative:** UI-only disable, matching v3. Rejected — #171 asked to verify the status cannot be changed; a write gate matches other Front Desk locks.
 

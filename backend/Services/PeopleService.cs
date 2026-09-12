@@ -183,8 +183,8 @@ public class PeopleService : IPeopleService
 
         var previousIneligibleReasonCode = person.IneligibleReasonCode;
 
-        var hasProcessedOnlineBallot = await HasProcessedOnlineBallotAsync(person.ElectionGuid, person.PersonGuid);
-        if (PersonEligibilityHelper.HasAcceptedBallot(person, hasProcessedOnlineBallot)
+        var onlineStatus = await LoadLatestOnlineBallotStatusAsync(person.ElectionGuid, person.PersonGuid);
+        if (PersonEligibilityHelper.HasAcceptedBallot(person, OnlineBallotStatus.IsProcessed(onlineStatus))
             && !string.Equals(previousIneligibleReasonCode, updateDto.IneligibleReasonCode, StringComparison.Ordinal)
             && PersonEligibilityHelper.ReasonRemovesVoteEligibility(updateDto.IneligibleReasonCode))
         {
@@ -409,9 +409,13 @@ public class PeopleService : IPeopleService
         dto.VoteCount = person.Results.FirstOrDefault()?.VoteCount ?? 0;
         dto.CanDelete = await CanDeletePersonAsync(person);
         dto.PhoneOnlineVoter = await MapPhoneOnlineVoterAsync(person.Phone);
+        var onlineStatus = await LoadLatestOnlineBallotStatusAsync(
+            person.ElectionGuid,
+            person.PersonGuid);
+        dto.OnlineBallotStatus = onlineStatus;
         dto.HasAcceptedBallot = PersonEligibilityHelper.HasAcceptedBallot(
             person,
-            await HasProcessedOnlineBallotAsync(person.ElectionGuid, person.PersonGuid));
+            OnlineBallotStatus.IsProcessed(onlineStatus));
 
         if (await ShouldEnsureKioskCodeAsync(person))
         {
@@ -514,15 +518,16 @@ public class PeopleService : IPeopleService
     }
 
     /// <summary>
-    /// True when this person has an online ballot that Accept-all has already processed
-    /// (<see cref="OnlineBallotStatus.Processed"/>). Pending Submitted / Processing rows do not count.
+    /// Latest <c>OnlineVotingInfo.Status</c>, or null when this person has no online row.
     /// </summary>
-    private async Task<bool> HasProcessedOnlineBallotAsync(Guid electionGuid, Guid personGuid)
+    private async Task<string?> LoadLatestOnlineBallotStatusAsync(Guid electionGuid, Guid personGuid)
     {
-        return await _context.OnlineVotingInfos.AnyAsync(o =>
-            o.ElectionGuid == electionGuid
-            && o.PersonGuid == personGuid
-            && o.Status == OnlineBallotStatus.Processed);
+        return await _context.OnlineVotingInfos
+            .AsNoTracking()
+            .Where(o => o.ElectionGuid == electionGuid && o.PersonGuid == personGuid)
+            .OrderByDescending(o => o.WhenStatus ?? o.WhenBallotCreated)
+            .Select(o => o.Status)
+            .FirstOrDefaultAsync();
     }
 
     private async Task<bool> CanDeletePersonAsync(Person person)
@@ -586,7 +591,7 @@ public class PeopleService : IPeopleService
             .Select(e => e.VotingMethods)
             .FirstOrDefaultAsync();
 
-        return votingMethods?.Contains('K', StringComparison.OrdinalIgnoreCase) == true;
+        return VotingMethodCodes.ElectionSupportsKiosk(votingMethods);
     }
 
     private const int MaxKioskCodeSaveAttempts = 20;

@@ -149,6 +149,29 @@ public class ElectionCountReconciliationTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task EvaluateAsync_PaperMethodAndPendingOnline_IsNotDuplicateOrPendingBlocker()
+    {
+        var electionGuid = await SeedElectionAsync();
+        var location = await AddLocationAsync(electionGuid);
+        var person = await AddPersonAsync(electionGuid, "Switched", "Voter", votingMethod: "P");
+        await AddOnlineAsync(electionGuid, person.PersonGuid, OnlineBallotStatus.Submitted);
+        await AddBallotAsync(location.LocationGuid, BallotStatus.Ok, 1);
+
+        var report = await ElectionCountReconciliation.EvaluateAsync(Context, electionGuid);
+
+        Assert.True(report.IsReconciled);
+        Assert.Equal(1, report.FrontDeskCount);
+        Assert.Equal(1, report.BallotCount);
+        Assert.Equal(0, report.PendingOnlineCount);
+        Assert.DoesNotContain(
+            report.Mismatches,
+            m => m.Kind == CountReconciliationMismatchKinds.PendingOnline);
+        Assert.DoesNotContain(
+            report.Mismatches,
+            m => m.Kind == CountReconciliationMismatchKinds.DuplicateVotingPath);
+    }
+
+    [Fact]
     public async Task EvaluateAsync_PaperMethodAndOnline_IsDuplicateVotingPath()
     {
         var electionGuid = await SeedElectionAsync();

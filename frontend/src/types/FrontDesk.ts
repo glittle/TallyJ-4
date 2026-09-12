@@ -16,6 +16,7 @@ export interface FrontDeskVoterDto {
   area?: string;
   canVote?: boolean;
   votingMethod?: string;
+  onlineBallotStatus?: string;
   envNum?: number;
   registrationTime?: string;
   votingLocationGuid?: string;

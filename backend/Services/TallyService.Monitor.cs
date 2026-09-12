@@ -1,6 +1,7 @@
 using Backend;
 using Backend.DTOs.Results;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -110,8 +111,8 @@ public partial class TallyService
         }).ToList();
 
         var onlineCounts = await CountOnlineBallotStatusesAsync(electionGuid);
+        var methodBreakdown = await CountBallotsByMethodAsync(electionGuid, onlineCounts.ProcessedPersonGuids);
 
-        // Get online voting information
         var onlineVotingInfo = new OnlineVotingInfoDto
         {
             OnlineVotingEnabled = election.OnlineWhenOpen.HasValue,
@@ -121,6 +122,7 @@ public partial class TallyService
             SubmittedOnlineBallots = onlineCounts.Submitted,
             ProcessingOnlineBallots = onlineCounts.Processing,
             PendingOnlineBallots = onlineCounts.Submitted + onlineCounts.Processing,
+            PendingOnlineVotedAnotherWay = onlineCounts.VotedAnotherWay,
             ProcessedOnlineBallots = onlineCounts.Processed,
             ConnectedOnlineVoterSessions = _onlineVoterPresenceService.CountSessions(electionGuid),
             AcceptAllRuns = await LoadAcceptAllRunsAsync(electionGuid)
@@ -140,6 +142,14 @@ public partial class TallyService
             Computers = computers,
             Locations = locations,
             OnlineVotingInfo = onlineVotingInfo,
+            BallotsByMethod = new VotingMethodBreakdownDto
+            {
+                InPerson = methodBreakdown.InPerson,
+                Mailed = methodBreakdown.Mailed,
+                DroppedOff = methodBreakdown.DroppedOff,
+                Kiosk = methodBreakdown.Kiosk,
+                Online = methodBreakdown.Online
+            },
             TotalBallots = totalBallots,
             TotalVotes = totalVotes,
             LastUpdated = DateTimeOffset.UtcNow
@@ -165,22 +175,64 @@ public partial class TallyService
     /// <summary>
     /// Status counts only from <c>OnlineVotingInfo.Status</c>. No person name,
     /// contact, row id, or WhenStatus — a named or timed list can be paired
-    /// with the OL ballots Accept-all creates.
+    /// with the OL ballots Accept-all creates. Pending excludes people who
+    /// already recorded a Front Desk method other than Online.
     /// </summary>
-    private async Task<(int Total, int Submitted, int Processing, int Processed)>
+    private async Task<(
+        int Total,
+        int Submitted,
+        int Processing,
+        int Processed,
+        int VotedAnotherWay,
+        HashSet<Guid> ProcessedPersonGuids)>
         CountOnlineBallotStatusesAsync(Guid electionGuid)
     {
-        var statuses = await _context.OnlineVotingInfos
+        var rows = await _context.OnlineVotingInfos
             .AsNoTracking()
             .Where(o => o.ElectionGuid == electionGuid)
-            .Select(o => o.Status)
+            .Select(o => new { o.PersonGuid, o.Status })
             .ToListAsync();
 
+        var personGuids = rows.Select(r => r.PersonGuid).Distinct().ToList();
+        var votedAnotherWay = (await _context.People
+                .AsNoTracking()
+                .Where(p => personGuids.Contains(p.PersonGuid))
+                .Select(p => new { p.PersonGuid, p.VotingMethod })
+                .ToListAsync())
+            .Where(p => VotingMethodCodes.IsRecordedOtherThanOnline(p.VotingMethod))
+            .Select(p => p.PersonGuid)
+            .ToHashSet();
+
+        var live = rows.Where(r => !votedAnotherWay.Contains(r.PersonGuid)).ToList();
+        var processedGuids = rows
+            .Where(r => OnlineBallotStatus.IsProcessed(r.Status))
+            .Select(r => r.PersonGuid)
+            .ToHashSet();
+
         return (
-            statuses.Count(s => !Backend.Helpers.OnlineBallotStatus.IsDraft(s)),
-            statuses.Count(Backend.Helpers.OnlineBallotStatus.IsSubmitted),
-            statuses.Count(Backend.Helpers.OnlineBallotStatus.IsProcessing),
-            statuses.Count(Backend.Helpers.OnlineBallotStatus.IsProcessed));
+            live.Count(s => !OnlineBallotStatus.IsDraft(s.Status)),
+            live.Count(s => OnlineBallotStatus.IsSubmitted(s.Status)),
+            live.Count(s => OnlineBallotStatus.IsProcessing(s.Status)),
+            rows.Count(s => OnlineBallotStatus.IsProcessed(s.Status)),
+            rows.Count(s =>
+                votedAnotherWay.Contains(s.PersonGuid)
+                && (OnlineBallotStatus.IsSubmitted(s.Status)
+                    || OnlineBallotStatus.IsProcessing(s.Status))),
+            processedGuids);
+    }
+
+    private async Task<VotingMethodBreakdown> CountBallotsByMethodAsync(
+        Guid electionGuid,
+        HashSet<Guid> processedPersonGuids)
+    {
+        var people = await _context.People
+            .AsNoTracking()
+            .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true)
+            .Select(p => new { p.PersonGuid, p.VotingMethod })
+            .ToListAsync();
+
+        return VotingMethodCodes.Count(people.Select(p =>
+            (p.VotingMethod, processedPersonGuids.Contains(p.PersonGuid))));
     }
 
     private async Task<List<AcceptAllOnlineBallotsRunDto>> LoadAcceptAllRunsAsync(Guid electionGuid)

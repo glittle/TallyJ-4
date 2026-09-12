@@ -1,4 +1,5 @@
 using Backend.DTOs.OnlineVoting;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -103,11 +104,13 @@ public partial class OnlineVotingService
                     DateOfElection = x.Election.DateOfElection,
                     IsOpen = isOpen,
                     HasOnlineVoting = hasOnlineVoting,
-                    HasVoted = x.Person.HasOnlineBallot == true,
+                    HasVoted = x.Person.HasOnlineBallot == true
+                               || VotingMethodCodes.IsRecordedOtherThanOnline(x.Person.VotingMethod),
                     VoterName = x.Person.FullName,
                     BallotStatus = votingInfo?.Status,
                     WhenBallotStatus = votingInfo?.WhenStatus,
-                    CanChangeVote = votingInfo == null || !CannotChangeOnlineVote(votingInfo)
+                    CanChangeVote = (votingInfo == null || !CannotChangeOnlineVote(votingInfo))
+                                    && !VotingMethodCodes.IsRecordedOtherThanOnline(x.Person.VotingMethod)
                 };
             })
             .OrderBy(e => !e.IsOpen)

@@ -93,10 +93,13 @@ Issue #169 is the test script for this process, not a second product build. Cove
 
 The monitor tells pending from accepted using `OnlineVotingInfo.Status` counts only:
 
-- **Pending** = `Submitted` + `Processing` (same set Accept-all will take).
+- **Pending** = `Submitted` + `Processing` for people who have **no** Front Desk method other than Online (same set Accept-all will take).
+- **Pending, voted another way** = leftover `Submitted`/`Processing` after a paper/mail/kiosk/imported check-in. Count only. Accept-all will not create a ballot.
 - **Submitted** = still changeable.
 - **Processing** = claimed by Accept-all; submit is already blocked.
 - **Accepted** = `Processed`.
+
+The same monitor page also shows **ballots by method** (In Person, Mailed, Dropped Off, Kiosk, Online) as people counts. Online includes Processed rows that have no other Front Desk method — v4 Accept-all does not set `VotingMethod`.
 
 No person name, email, phone, kiosk, voter id, row id, or WhenStatus is returned or rendered for these rows. Front Desk / people roll may still show who voted; that is a different surface and is not paired with the OL ballots Accept-all creates.
 
@@ -109,6 +112,21 @@ No person name, email, phone, kiosk, voter id, row id, or WhenStatus is returned
 **Rejected alternative:** treat the accepted side as a join to the regular `Ballot`. Acceptance is not reversible and must not reconnect the online row to the counted ballot.
 
 **Reason:** tellers need pending vs accepted (and Submitted vs Processing) across multiple Accept-all runs while the window stays open, without a secret-ballot leak.
+
+## Mixed methods: do not accept a second ballot
+
+**Status:** active  
+**Evidence:** inferred (issue #194; Accept-all still creates an OL ballot unless skipped; Front Desk check-in used to ignore online status)
+
+If a voter submits online and then votes another way, the Front Desk method wins for that person: the pending Draft/Submitted row is withdrawn on check-in. Accept-all also skips (and removes) leftover Submitted/Processing rows when the person already has P/M/D/C/I/K/1/2/3. Online submit is refused after those methods. Processed online still locks cannot-vote and refuses Front Desk check-in.
+
+Kiosk on Front Desk is a recorded method (`K`), counted separately from Online. Kiosk *login* (kiosk code → online ballot) is still the online path until a teller records `K`.
+
+**Rejected alternative:** treat `Person.HasOnlineBallot` or a Draft row as already voted. Rejected — Draft is restore-only; pending Submitted is still changeable; the accepted signal is Processed or a Front Desk method.
+
+**Rejected alternative:** set `VotingMethod=O` on Accept-all. Rejected — existing recon/people docs treat Processed without a method as the online record; changing Accept-all would relitigate #188.
+
+**Reason:** real elections mix methods; the counted ballot must be one path per person.
 
 ## Monitor: 5-minute close countdown
 

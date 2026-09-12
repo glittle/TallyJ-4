@@ -60,6 +60,7 @@ export interface PersonDetailDto {
   teller2?: string;
   hasOnlineBallot?: boolean;
   hasAcceptedBallot?: boolean;
+  onlineBallotStatus?: string;
   registrationHistory?: string;
   kioskCode?: string;
   unitName?: string;

@@ -125,6 +125,12 @@ public class PersonDetailDto
     public bool HasAcceptedBallot { get; set; }
 
     /// <summary>
+    /// Latest <c>OnlineVotingInfo.Status</c> (Draft, Submitted, Processing,
+    /// Processed), or null when this person has no online row.
+    /// </summary>
+    public string? OnlineBallotStatus { get; set; }
+
+    /// <summary>
     /// JSON array of registration history entries.
     /// Each entry contains timestamp, action, and metadata.
     /// </summary>

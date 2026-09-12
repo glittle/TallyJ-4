@@ -22,14 +22,26 @@ public partial class OnlineVotingService
         var rows = await _context.OnlineVotingInfos
             .AsNoTracking()
             .Where(o => o.ElectionGuid == electionGuid)
-            .Select(o => o.Status)
+            .Select(o => new { o.PersonGuid, o.Status })
             .ToListAsync();
+
+        var personGuids = rows.Select(r => r.PersonGuid).Distinct().ToList();
+        var votedAnotherWay = (await _context.People
+                .AsNoTracking()
+                .Where(p => personGuids.Contains(p.PersonGuid))
+                .Select(p => new { p.PersonGuid, p.VotingMethod })
+                .ToListAsync())
+            .Where(p => VotingMethodCodes.IsRecordedOtherThanOnline(p.VotingMethod))
+            .Select(p => p.PersonGuid)
+            .ToHashSet();
 
         return new AcceptAllOnlineBallotsSummaryDto
         {
             PendingCount = rows.Count(s =>
-                OnlineBallotStatus.IsSubmitted(s) || OnlineBallotStatus.IsProcessing(s)),
-            ProcessedCount = rows.Count(OnlineBallotStatus.IsProcessed)
+                !votedAnotherWay.Contains(s.PersonGuid)
+                && (OnlineBallotStatus.IsSubmitted(s.Status)
+                    || OnlineBallotStatus.IsProcessing(s.Status))),
+            ProcessedCount = rows.Count(s => OnlineBallotStatus.IsProcessed(s.Status))
         };
     }
 
@@ -86,16 +98,28 @@ public partial class OnlineVotingService
                 .Select(o => new
                 {
                     o.RowId,
+                    o.PersonGuid,
                     o.Status,
                     o.BallotGuid,
                     o.ListPool
                 })
                 .ToListAsync();
 
+            var candidatePersonGuids = candidates.Select(o => o.PersonGuid).Distinct().ToList();
+            var votedAnotherWay = (await _context.People
+                    .AsNoTracking()
+                    .Where(p => candidatePersonGuids.Contains(p.PersonGuid))
+                    .Select(p => new { p.PersonGuid, p.VotingMethod })
+                    .ToListAsync())
+                .Where(p => VotingMethodCodes.IsRecordedOtherThanOnline(p.VotingMethod))
+                .Select(p => p.PersonGuid)
+                .ToHashSet();
+
             var expectedIds = candidates
-                .Where(o => OnlineBallotStatus.IsProcessing(o.Status)
-                            || o.BallotGuid != null
-                            || HasVotesToAccept(o.ListPool))
+                .Where(o => !votedAnotherWay.Contains(o.PersonGuid)
+                            && (OnlineBallotStatus.IsProcessing(o.Status)
+                                || o.BallotGuid != null
+                                || HasVotesToAccept(o.ListPool)))
                 .Select(o => o.RowId)
                 .ToList();
 
@@ -150,12 +174,25 @@ public partial class OnlineVotingService
         var rows = await _context.OnlineVotingInfos
             .AsNoTracking()
             .Where(o => o.ElectionGuid == electionGuid)
-            .Select(o => o.Status)
+            .Select(o => new { o.PersonGuid, o.Status })
             .ToListAsync();
 
+        var personGuids = rows.Select(r => r.PersonGuid).Distinct().ToList();
+        var votedAnotherWay = (await _context.People
+                .AsNoTracking()
+                .Where(p => personGuids.Contains(p.PersonGuid))
+                .Select(p => new { p.PersonGuid, p.VotingMethod })
+                .ToListAsync())
+            .Where(p => VotingMethodCodes.IsRecordedOtherThanOnline(p.VotingMethod))
+            .Select(p => p.PersonGuid)
+            .ToHashSet();
+
         return (
-            rows.Count(s => OnlineBallotStatus.IsSubmitted(s) || OnlineBallotStatus.IsProcessing(s)),
-            rows.Count(OnlineBallotStatus.IsProcessed));
+            rows.Count(s =>
+                !votedAnotherWay.Contains(s.PersonGuid)
+                && (OnlineBallotStatus.IsSubmitted(s.Status)
+                    || OnlineBallotStatus.IsProcessing(s.Status))),
+            rows.Count(s => OnlineBallotStatus.IsProcessed(s.Status)));
     }
 
     /// <summary>
@@ -264,6 +301,22 @@ public partial class OnlineVotingService
         if (votingInfo == null)
         {
             await transaction.RollbackAsync();
+            return false;
+        }
+
+        var person = await _context.People
+            .FirstOrDefaultAsync(p =>
+                p.ElectionGuid == electionGuid && p.PersonGuid == votingInfo.PersonGuid);
+        if (VotingMethodCodes.IsRecordedOtherThanOnline(person?.VotingMethod))
+        {
+            _context.OnlineVotingInfos.Remove(votingInfo);
+            if (person != null)
+            {
+                person.HasOnlineBallot = false;
+            }
+
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
             return false;
         }
 

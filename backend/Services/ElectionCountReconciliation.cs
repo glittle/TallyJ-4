@@ -15,10 +15,6 @@ namespace Backend.Services;
 /// </summary>
 public static class ElectionCountReconciliation
 {
-    private static readonly HashSet<string> PaperOrImportedMethods = new(StringComparer.Ordinal)
-    {
-        "P", "M", "D", "C", "I", "1", "2", "3"
-    };
 
     public static async Task<CountReconciliationReportDto> EvaluateAsync(
         MainDbContext context,
@@ -93,6 +89,13 @@ public static class ElectionCountReconciliation
         foreach (var (personGuid, rows) in pendingByPerson.OrderBy(p => p.Key))
         {
             peopleByGuid.TryGetValue(personGuid, out var person);
+            if (VotingMethodCodes.IsRecordedOtherThanOnline(person.VotingMethod))
+            {
+                // Leftover pending after a method switch. Accept-all will not
+                // create a ballot; this is not a live online vote.
+                continue;
+            }
+
             mismatches.Add(new CountReconciliationMismatchDto
             {
                 Kind = CountReconciliationMismatchKinds.PendingOnline,
@@ -126,19 +129,18 @@ public static class ElectionCountReconciliation
 
         foreach (var person in people.OrderBy(p => p.LastName).ThenBy(p => p.FirstName))
         {
-            if (!IsPaperOrImportedMethod(person.VotingMethod))
+            if (!VotingMethodCodes.IsPaperOrImported(person.VotingMethod))
             {
                 continue;
             }
 
-            var hasOnlinePath = pendingByPerson.ContainsKey(person.PersonGuid)
-                                || processedPersonGuids.Contains(person.PersonGuid);
-            if (!hasOnlinePath)
+            // Only Processed + paper is two counted paths. Pending leftover
+            // after a switch is not a second ballot.
+            if (!processedPersonGuids.Contains(person.PersonGuid))
             {
                 continue;
             }
 
-            pendingByPerson.TryGetValue(person.PersonGuid, out var pendingRows);
             mismatches.Add(new CountReconciliationMismatchDto
             {
                 Kind = CountReconciliationMismatchKinds.DuplicateVotingPath,
@@ -146,17 +148,21 @@ public static class ElectionCountReconciliation
                 PersonName = FormatPersonName(person),
                 VotingMethod = person.VotingMethod,
                 EnvNum = person.EnvNum,
-                OnlineStatus = pendingRows?[0].Status
-                    ?? (processedPersonGuids.Contains(person.PersonGuid)
-                        ? OnlineBallotStatus.Processed
-                        : null)
+                OnlineStatus = OnlineBallotStatus.Processed
             });
         }
 
-        var pendingPersonGuids = pendingByPerson.Keys.ToHashSet();
+        var blockingPendingGuids = pendingByPerson
+            .Where(kv =>
+            {
+                peopleByGuid.TryGetValue(kv.Key, out var pendingPerson);
+                return !VotingMethodCodes.IsRecordedOtherThanOnline(pendingPerson.VotingMethod);
+            })
+            .Select(kv => kv.Key)
+            .ToHashSet();
         var frontDeskAccounted = people.Count(p =>
             IsRegisteredForBallotCount(p, processedPersonGuids)
-            && !pendingPersonGuids.Contains(p.PersonGuid));
+            && !blockingPendingGuids.Contains(p.PersonGuid));
 
         var ballotCount = ballots.Count;
         var spoiledBallotCount = ballots.Count(b => b.StatusCode != BallotStatus.Ok);
@@ -176,7 +182,7 @@ public static class ElectionCountReconciliation
             IsReconciled = mismatches.Count == 0,
             FrontDeskCount = frontDeskAccounted,
             BallotCount = ballotCount,
-            PendingOnlineCount = pendingByPerson.Count,
+            PendingOnlineCount = blockingPendingGuids.Count,
             SpoiledBallotCount = spoiledBallotCount,
             Mismatches = mismatches
         };
@@ -195,9 +201,6 @@ public static class ElectionCountReconciliation
         return !string.IsNullOrEmpty(person.VotingMethod)
                || processedPersonGuids.Contains(person.PersonGuid);
     }
-
-    private static bool IsPaperOrImportedMethod(string? votingMethod) =>
-        !string.IsNullOrEmpty(votingMethod) && PaperOrImportedMethods.Contains(votingMethod);
 
     private static string FormatPersonName(PersonSnapshot person)
     {

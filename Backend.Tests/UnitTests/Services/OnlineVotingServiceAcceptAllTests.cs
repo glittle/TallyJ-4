@@ -733,6 +733,44 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
         return ballotGuid;
     }
 
+    [Fact]
+    public async Task AcceptAll_SkipsSubmittedWhenPersonAlreadyHasPaperMethod()
+    {
+        var election = await SeedOpenElectionAsync();
+        var (person, email) = await SeedVoterAsync(election.ElectionGuid);
+        Assert.True((await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid)).Success);
+
+        person.VotingMethod = "P";
+        person.RegistrationTime = DateTimeOffset.UtcNow;
+        await Context.SaveChangesAsync();
+
+        var summary = await _service.GetAcceptAllSummaryAsync(election.ElectionGuid);
+        Assert.Equal(0, summary!.PendingCount);
+
+        var accept = await _service.AcceptAllPendingAsync(election.ElectionGuid);
+        Assert.True(accept.Success);
+        Assert.Equal(0, accept.AcceptedCount);
+        Assert.Equal(0, Context.Ballots.Count());
+        Assert.Empty(Context.OnlineVotingInfos);
+        Assert.False(Context.People.Single(p => p.PersonGuid == person.PersonGuid).HasOnlineBallot);
+    }
+
+    [Fact]
+    public async Task Submit_AfterPaperCheckIn_IsRefused()
+    {
+        var election = await SeedOpenElectionAsync();
+        var (person, email) = await SeedVoterAsync(election.ElectionGuid);
+        person.VotingMethod = "D";
+        person.RegistrationTime = DateTimeOffset.UtcNow;
+        await Context.SaveChangesAsync();
+
+        var submit = await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid);
+
+        Assert.False(submit.Success);
+        Assert.Equal("voting.submit.alreadyVotedAnotherWay", submit.Error);
+        Assert.Empty(Context.OnlineVotingInfos);
+    }
+
     private async Task<Election> SeedOpenElectionAsync()
     {
         var election = new Election
