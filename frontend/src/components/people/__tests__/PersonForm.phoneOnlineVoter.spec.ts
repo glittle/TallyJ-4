@@ -6,10 +6,12 @@ import { pinia, i18n } from "@/test/setup";
 import type { PersonDetailDto, PersonListDto } from "@/types/Person";
 
 const mockGetDetails = vi.fn();
+const mockSetPhoneSmsStatus = vi.fn();
 
 vi.mock("@/services/peopleService", () => ({
   peopleService: {
     getDetails: (...args: unknown[]) => mockGetDetails(...args),
+    setPhoneSmsStatus: (...args: unknown[]) => mockSetPhoneSmsStatus(...args),
   },
 }));
 
@@ -230,5 +232,58 @@ describe("PersonForm phone OnlineVoter status", () => {
     expect(text).toContain("undelivered");
     expect(text).toContain("Error 30003");
     expect(text).toContain("Sent");
+  });
+
+  it("sets OK on the stored phone P row", async () => {
+    mockGetDetails.mockResolvedValue(
+      details({
+        phoneOnlineVoter: {
+          hasPhoneRow: true,
+          whenRegistered: null,
+          whenLastLogin: null,
+          smsStatus: "landline",
+        },
+      }),
+    );
+    mockSetPhoneSmsStatus.mockResolvedValue({
+      hasPhoneRow: true,
+      smsStatus: "OK",
+    });
+
+    const wrapper = await mountEditForm();
+    await wrapper.get('[data-testid="set-sms-status-ok"]').trigger("click");
+    await flushPromises();
+
+    expect(mockSetPhoneSmsStatus).toHaveBeenCalledWith(person.personGuid, "OK");
+    expect(mockGetDetails).toHaveBeenCalledTimes(2);
+  });
+
+  it("sets a block reason on the stored phone P row", async () => {
+    mockGetDetails.mockResolvedValue(
+      details({
+        phoneOnlineVoter: {
+          hasPhoneRow: true,
+          whenRegistered: null,
+          whenLastLogin: null,
+          smsStatus: "OK",
+        },
+      }),
+    );
+    mockSetPhoneSmsStatus.mockResolvedValue({
+      hasPhoneRow: true,
+      smsStatus: "admin",
+    });
+
+    const wrapper = await mountEditForm();
+    await wrapper
+      .get('[data-testid="set-sms-status-reason"]')
+      .setValue("admin");
+    await wrapper.get('[data-testid="set-sms-status-block"]').trigger("click");
+    await flushPromises();
+
+    expect(mockSetPhoneSmsStatus).toHaveBeenCalledWith(
+      person.personGuid,
+      "admin",
+    );
   });
 });

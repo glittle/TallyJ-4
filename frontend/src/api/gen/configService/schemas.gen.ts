@@ -664,6 +664,30 @@ export const ApiResponsePeople_PersonDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ApiResponsePeople_PersonPhoneOnlineVoterDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            $ref: '#/components/schemas/People_PersonPhoneOnlineVoterDto'
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ApiResponsePublic_PublicHomeDtoSchema = {
     type: 'object',
     properties: {
@@ -4009,6 +4033,17 @@ export const People_PersonSmsLogDtoSchema = {
         errorCode: {
             type: 'integer',
             format: 'int32',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const People_SetPersonPhoneSmsStatusDtoSchema = {
+    type: 'object',
+    properties: {
+        smsStatus: {
+            type: 'string',
             nullable: true
         }
     },

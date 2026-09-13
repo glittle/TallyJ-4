@@ -48,4 +48,33 @@ public class OnlineVoterSmsStatusTests
     {
         Assert.Equal("twilio-30003", OnlineVoterSmsStatus.TwilioReason(30003));
     }
+
+    [Theory]
+    [InlineData("OK", "OK")]
+    [InlineData("ok", "OK")]
+    [InlineData(" Ok ", "OK")]
+    [InlineData("landline", "landline")]
+    [InlineData(" admin ", "admin")]
+    [InlineData("twilio-30003", "twilio-30003")]
+    public void TryNormalizeManualValue_OkOrReason(string input, string expected)
+    {
+        Assert.True(OnlineVoterSmsStatus.TryNormalizeManualValue(input, out var normalized));
+        Assert.Equal(expected, normalized);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void TryNormalizeManualValue_Empty_False(string? input)
+    {
+        Assert.False(OnlineVoterSmsStatus.TryNormalizeManualValue(input, out var normalized));
+        Assert.Null(normalized);
+    }
+
+    [Fact]
+    public void TryNormalizeManualValue_Over50_False()
+    {
+        Assert.False(OnlineVoterSmsStatus.TryNormalizeManualValue(new string('x', 51), out _));
+    }
 }

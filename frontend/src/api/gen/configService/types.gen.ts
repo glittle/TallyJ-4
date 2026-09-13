@@ -191,6 +191,13 @@ export type ApiResponsePeoplePersonDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponsePeoplePersonPhoneOnlineVoterDto = {
+    success?: boolean;
+    data?: PeoplePersonPhoneOnlineVoterDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponsePublicPublicHomeDto = {
     success?: boolean;
     data?: PublicPublicHomeDto;
@@ -1195,6 +1202,10 @@ export type PeoplePersonSmsLogDto = {
     lastDate?: Date | null;
     lastStatus?: string | null;
     errorCode?: number | null;
+};
+
+export type PeopleSetPersonPhoneSmsStatusDto = {
+    smsStatus?: string | null;
 };
 
 export type PeopleUpdatePersonDto = {
@@ -3889,6 +3900,24 @@ export type PostApiPeopleByGuidGenerateKioskCodeResponses = {
 };
 
 export type PostApiPeopleByGuidGenerateKioskCodeResponse = PostApiPeopleByGuidGenerateKioskCodeResponses[keyof PostApiPeopleByGuidGenerateKioskCodeResponses];
+
+export type PutApiPeopleByGuidSetPhoneSmsStatusData = {
+    body?: PeopleSetPersonPhoneSmsStatusDto;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/People/{guid}/setPhoneSmsStatus';
+};
+
+export type PutApiPeopleByGuidSetPhoneSmsStatusResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePeoplePersonPhoneOnlineVoterDto;
+};
+
+export type PutApiPeopleByGuidSetPhoneSmsStatusResponse = PutApiPeopleByGuidSetPhoneSmsStatusResponses[keyof PutApiPeopleByGuidSetPhoneSmsStatusResponses];
 
 export type PostApiPeopleImportByElectionGuidUploadData = {
     body?: {

@@ -9,11 +9,13 @@ import {
   getApiPeopleByGuidGetPersonDetails,
   getApiPeopleByElectionGuidGetAllForBallotEntry,
   postApiPeopleByGuidGenerateKioskCode,
+  putApiPeopleByGuidSetPhoneSmsStatus,
 } from "@/api/gen/configService";
 import type {
   PersonDto,
   PersonListDto,
   PersonDetailDto,
+  PersonPhoneOnlineVoterDto,
   CreatePersonDto,
   UpdatePersonDto,
 } from "../types";
@@ -124,5 +126,16 @@ export const peopleService = {
       throw new Error("Kiosk code was not returned.");
     }
     return code;
+  },
+
+  async setPhoneSmsStatus(
+    personGuid: string,
+    smsStatus: string,
+  ): Promise<PersonPhoneOnlineVoterDto> {
+    const response = await putApiPeopleByGuidSetPhoneSmsStatus({
+      path: { guid: personGuid },
+      body: { smsStatus },
+    });
+    return response.data?.data as PersonPhoneOnlineVoterDto;
   },
 };

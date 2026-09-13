@@ -110,3 +110,7 @@ export interface UpdatePersonDto {
   otherInfo?: string;
   ineligibleReasonCode?: string;
 }
+
+export interface SetPersonPhoneSmsStatusDto {
+  smsStatus: string;
+}

@@ -173,6 +173,19 @@ public class OnlineVoterPhoneHelperTests : ServiceTestBase
         Assert.Equal("twilio-30003", (await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == phone)).SmsStatus);
     }
 
+    [Fact]
+    public async Task FindTrackedPhoneOnlineVoterAsync_AfterEnsure_FindsUnsavedAddedRow()
+    {
+        const string phone = "+14168972672";
+        await OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync(Context, phone);
+
+        var row = await OnlineVoterPhoneHelper.FindTrackedPhoneOnlineVoterAsync(Context, phone);
+
+        Assert.NotNull(row);
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Equal(EntityState.Added, Context.Entry(row).State);
+    }
+
     [Theory]
     [InlineData("E")]
     [InlineData("C")]

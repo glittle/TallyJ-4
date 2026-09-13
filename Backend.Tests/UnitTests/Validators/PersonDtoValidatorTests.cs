@@ -55,4 +55,26 @@ public class PersonDtoValidatorTests
         Assert.Contains(result.Errors, e => e.ErrorMessage == "Invalid ineligibility reason code");
         Assert.DoesNotContain(result.Errors, e => e.ErrorMessage.Contains("Internal"));
     }
+
+    [Theory]
+    [InlineData("OK")]
+    [InlineData("ok")]
+    [InlineData("landline")]
+    public void SetPhoneSmsStatus_Valid_Passes(string smsStatus)
+    {
+        var validator = new SetPersonPhoneSmsStatusDtoValidator();
+        var result = validator.Validate(new SetPersonPhoneSmsStatusDto { SmsStatus = smsStatus });
+        Assert.True(result.IsValid);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   ")]
+    public void SetPhoneSmsStatus_Empty_Fails(string? smsStatus)
+    {
+        var validator = new SetPersonPhoneSmsStatusDtoValidator();
+        var result = validator.Validate(new SetPersonPhoneSmsStatusDto { SmsStatus = smsStatus! });
+        Assert.False(result.IsValid);
+    }
 }
