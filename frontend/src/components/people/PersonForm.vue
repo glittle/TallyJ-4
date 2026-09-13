@@ -658,7 +658,9 @@ defineExpose({
                 v-model="smsBlockReason"
                 data-testid="set-sms-status-reason"
                 size="small"
-                :placeholder="$t('people.phoneOnlineVoter.blockReasonPlaceholder')"
+                :placeholder="
+                  $t('people.phoneOnlineVoter.blockReasonPlaceholder')
+                "
                 maxlength="50"
                 @keyup.enter="handleSetSmsStatusBlocked"
               />
