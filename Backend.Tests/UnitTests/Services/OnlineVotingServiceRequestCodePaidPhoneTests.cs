@@ -155,6 +155,38 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task RequestCode_AfterDeliveredCallbackSetsOk_CallsMockedProvider()
+    {
+        await SeedOpenElectionWithPerson(phone: ValidPhone);
+        await SeedOnlineVoter(ValidPhone, "twilio-30003");
+        Context.SmsLogs.Add(new SmsLog
+        {
+            SmsSid = "SMdelivered",
+            Phone = ValidPhone,
+            SentDate = DateTimeOffset.UtcNow,
+            LastStatus = "sent"
+        });
+        await Context.SaveChangesAsync();
+        var statusService = new TwilioSmsStatusService(
+            Context, Mock.Of<ILogger<TwilioSmsStatusService>>());
+        await statusService.ProcessCallbackAsync(
+            "SMdelivered", "delivered", ValidPhone, errorCode: null);
+
+        var row = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == ValidPhone);
+        Assert.Equal(OnlineVoterSmsStatus.Ok, row.SmsStatus);
+        Assert.True(OnlineVoterSmsStatus.AllowsPaidSend(row.SmsStatus));
+
+        _paidSender
+            .Setup(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
+
+        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        _paidSender.Verify(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()), Times.Once);
+    }
+
+    [Fact]
     public async Task RequestCode_SmsStatusOk_Registered_CallsMockedProvider()
     {
         await SeedOpenElectionWithPerson(phone: ValidPhone);
