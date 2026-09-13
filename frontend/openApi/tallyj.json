@@ -4307,6 +4307,171 @@
         }
       }
     },
+    "/api/People/{electionGuid}/notifyWhatsApp": {
+      "post": {
+        "tags": [
+          "People"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_StartWhatsAppNotifyDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_StartWhatsAppNotifyDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_StartWhatsAppNotifyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_WhatsAppNotifyStatusDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_WhatsAppNotifyStatusDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_WhatsAppNotifyStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/People/{electionGuid}/abortWhatsAppNotify": {
+      "post": {
+        "tags": [
+          "People"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_AbortWhatsAppNotifyDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_AbortWhatsAppNotifyDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_AbortWhatsAppNotifyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_WhatsAppNotifyStatusDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_WhatsAppNotifyStatusDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_WhatsAppNotifyStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/People/{electionGuid}/whatsAppNotifyStatus": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "queueToken",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_WhatsAppNotifyStatusDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_WhatsAppNotifyStatusDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_WhatsAppNotifyStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/PeopleImport/{electionGuid}/upload": {
       "post": {
         "tags": [
@@ -8525,6 +8690,29 @@
         },
         "additionalProperties": false
       },
+      "ApiResponsePeople_WhatsAppNotifyStatusDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/People_WhatsAppNotifyStatusDto"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApiResponsePublic_PublicHomeDto": {
         "type": "object",
         "properties": {
@@ -11428,6 +11616,16 @@
         },
         "additionalProperties": false
       },
+      "People_AbortWhatsAppNotifyDto": {
+        "type": "object",
+        "properties": {
+          "queueToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "People_CheckSelectedWhatsAppDto": {
         "type": "object",
         "properties": {
@@ -11880,6 +12078,20 @@
         },
         "additionalProperties": false
       },
+      "People_StartWhatsAppNotifyDto": {
+        "type": "object",
+        "properties": {
+          "personGuids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "People_UpdatePersonDto": {
         "type": "object",
         "properties": {
@@ -11921,6 +12133,59 @@
           },
           "ineligibleReasonCode": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "People_WhatsAppNotifyPersonResultDto": {
+        "type": "object",
+        "properties": {
+          "personGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "outcome": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "People_WhatsAppNotifyStatusDto": {
+        "type": "object",
+        "properties": {
+          "queueToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "running": {
+            "type": "boolean"
+          },
+          "cancelled": {
+            "type": "boolean"
+          },
+          "queued": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skipped": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/People_WhatsAppNotifyPersonResultDto"
+            },
             "nullable": true
           }
         },

@@ -215,7 +215,7 @@ async function handleCheckWhatsAppSelected() {
 }
 
 function stopNotifyPoll() {
-  if (notifyPollTimer != null) {
+  if (notifyPollTimer !== null) {
     window.clearInterval(notifyPollTimer);
     notifyPollTimer = null;
   }
@@ -518,19 +518,13 @@ async function handleDeleteAllPeople() {
         }}
       </p>
       <ul v-if="notifyWhatsAppResults" class="whatsapp-check-results">
-        <li
-          v-for="row in notifyWhatsAppResults.results"
-          :key="row.personGuid"
-        >
+        <li v-for="row in notifyWhatsAppResults.results" :key="row.personGuid">
           {{ resultPersonName(row.personGuid) }} —
           {{ whatsAppNotifyOutcomeLabel(row.outcome, t) }}
         </li>
       </ul>
       <template #footer>
-        <el-button
-          v-if="notifyingWhatsApp"
-          @click="handleAbortWhatsAppNotify"
-        >
+        <el-button v-if="notifyingWhatsApp" @click="handleAbortWhatsAppNotify">
           {{ $t("people.notifyWhatsAppAbort") }}
         </el-button>
         <el-button @click="showNotifyWhatsAppResults = false">
