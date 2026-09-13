@@ -73,7 +73,10 @@ describe("PeopleTable", () => {
         selectedGuids: [],
       },
       global: {
-        components: { ElButton, ElCheckbox: { template: "<span class='cb' />" } },
+        components: {
+          ElButton,
+          ElCheckbox: { template: "<span class='cb' />" },
+        },
         directives: { loading: () => undefined },
         stubs: {
           ElAutoResizer: AutoResizerStub,
@@ -140,7 +143,10 @@ describe("PeopleTable", () => {
         selectedGuids: [],
       },
       global: {
-        components: { ElButton, ElCheckbox: { template: "<span class='cb' />" } },
+        components: {
+          ElButton,
+          ElCheckbox: { template: "<span class='cb' />" },
+        },
         directives: { loading: () => undefined },
         stubs: {
           ElAutoResizer: AutoResizerStub,
@@ -163,20 +169,18 @@ describe("PeopleTable", () => {
         selectedGuids: [],
       },
       global: {
-        components: {
-          ElButton,
+        components: { ElButton },
+        directives: { loading: () => undefined },
+        stubs: {
+          ElAutoResizer: AutoResizerStub,
+          ElTableV2: TableStub,
+          ElIcon: { template: "<span />" },
           ElCheckbox: {
             props: ["modelValue"],
             emits: ["change"],
             template:
               '<button class="select-stub" @click="$emit(\'change\', true)" />',
           },
-        },
-        directives: { loading: () => undefined },
-        stubs: {
-          ElAutoResizer: AutoResizerStub,
-          ElTableV2: TableStub,
-          ElIcon: { template: "<span />" },
         },
       },
     });

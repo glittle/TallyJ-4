@@ -719,7 +719,8 @@ public class PeopleService : IPeopleService
             }
 
             row.WhatsAppStatus = check.Status;
-            await _context.SaveChangesAsync(cancellationToken);
+            // Persist a completed provider result even if the request was just cancelled.
+            await _context.SaveChangesAsync(CancellationToken.None);
             providerCalls++;
 
             _logger.LogInformation(

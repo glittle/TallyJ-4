@@ -12,7 +12,9 @@ export function selectedPeopleWithPhone(
   selectedGuids: string[],
 ): PersonListDto[] {
   const selected = new Set(selectedGuids);
-  return people.filter((person) => selected.has(person.personGuid) && personHasPhone(person));
+  return people.filter(
+    (person) => selected.has(person.personGuid) && personHasPhone(person),
+  );
 }
 
 export function canCheckSelectedWhatsApp(

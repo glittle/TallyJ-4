@@ -21,7 +21,10 @@ const noPhone: PersonListDto = {
 describe("whatsAppCheckSelected", () => {
   it("selects only chosen people who have a phone", () => {
     expect(
-      selectedPeopleWithPhone([withPhone, noPhone], [withPhone.personGuid, noPhone.personGuid]),
+      selectedPeopleWithPhone(
+        [withPhone, noPhone],
+        [withPhone.personGuid, noPhone.personGuid],
+      ),
     ).toEqual([withPhone]);
   });
 
@@ -29,7 +32,9 @@ describe("whatsAppCheckSelected", () => {
     expect(canCheckSelectedWhatsApp(2, 1)).toBe(true);
     expect(canCheckSelectedWhatsApp(0, 0)).toBe(false);
     expect(canCheckSelectedWhatsApp(1, 0)).toBe(false);
-    expect(canCheckSelectedWhatsApp(MAX_WHATSAPP_CHECK_SELECTED + 1, 1)).toBe(false);
+    expect(canCheckSelectedWhatsApp(MAX_WHATSAPP_CHECK_SELECTED + 1, 1)).toBe(
+      false,
+    );
   });
 
   it("maps outcomes to i18n keys", () => {

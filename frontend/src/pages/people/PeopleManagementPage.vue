@@ -285,11 +285,10 @@ async function handleDeleteAllPeople() {
               >
                 {{ $t("people.checkWhatsAppSelectedCancel") }}
               </el-button>
-              <span
-                v-if="selectedGuids.length"
-                class="selected-count"
-              >
-                {{ $t("people.selectedCount", { count: selectedGuids.length }) }}
+              <span v-if="selectedGuids.length" class="selected-count">
+                {{
+                  $t("people.selectedCount", { count: selectedGuids.length })
+                }}
               </span>
             </el-space>
           </div>
@@ -362,10 +361,7 @@ async function handleDeleteAllPeople() {
         {{ $t("people.checkWhatsAppSelectedCancelled") }}
       </p>
       <ul v-if="checkWhatsAppResults" class="whatsapp-check-results">
-        <li
-          v-for="row in checkWhatsAppResults.results"
-          :key="row.personGuid"
-        >
+        <li v-for="row in checkWhatsAppResults.results" :key="row.personGuid">
           {{ resultPersonName(row.personGuid) }} —
           {{ whatsAppCheckOutcomeLabel(row.outcome, t) }}
         </li>
