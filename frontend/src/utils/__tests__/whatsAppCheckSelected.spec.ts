@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import type { PersonListDto } from "@/types/Person";
 import {
   canCheckSelectedWhatsApp,
+  isWhatsAppCheckAbortError,
   MAX_WHATSAPP_CHECK_SELECTED,
+  nextSelectedGuidsAfterWhatsAppCheck,
   selectedPeopleWithPhone,
   whatsAppCheckOutcomeLabel,
 } from "../whatsAppCheckSelected";
@@ -43,6 +45,27 @@ describe("whatsAppCheckSelected", () => {
     );
     expect(whatsAppCheckOutcomeLabel("skipped-no-phone", (key) => key)).toBe(
       "people.checkWhatsAppSelectedOutcome.skipped-no-phone",
+    );
+  });
+
+  it("treats AbortError as the UI cancel path, not result.cancelled", () => {
+    expect(
+      isWhatsAppCheckAbortError(new DOMException("Aborted", "AbortError")),
+    ).toBe(true);
+    expect(isWhatsAppCheckAbortError({ name: "AbortError" })).toBe(true);
+    expect(isWhatsAppCheckAbortError({ cancelled: true })).toBe(false);
+  });
+
+  it("clears selection after a completed check or AbortError cancel", () => {
+    const selected = ["p-1", "p-2"];
+    expect(nextSelectedGuidsAfterWhatsAppCheck(selected, "completed")).toEqual(
+      [],
+    );
+    expect(nextSelectedGuidsAfterWhatsAppCheck(selected, "aborted")).toEqual(
+      [],
+    );
+    expect(nextSelectedGuidsAfterWhatsAppCheck(selected, "failed")).toEqual(
+      selected,
     );
   });
 });

@@ -18,7 +18,9 @@ import type {
 } from "../../types";
 import {
   canCheckSelectedWhatsApp,
+  isWhatsAppCheckAbortError,
   MAX_WHATSAPP_CHECK_SELECTED,
+  nextSelectedGuidsAfterWhatsAppCheck,
   selectedPeopleWithPhone,
   whatsAppCheckOutcomeLabel,
 } from "@/utils/whatsAppCheckSelected";
@@ -168,25 +170,29 @@ async function handleCheckWhatsAppSelected() {
     );
     checkWhatsAppResults.value = result;
     showCheckWhatsAppResults.value = true;
-    if (result.cancelled) {
-      showErrorMessage(t("people.checkWhatsAppSelectedCancelled"));
-    } else {
-      showSuccessMessage(
-        t("people.checkWhatsAppSelectedSummary", {
-          checked: result.checked,
-          ok: result.ok,
-          noWa: result.noWa,
-          failed: result.failed,
-          skipped: result.skipped,
-        }),
-      );
-    }
+    showSuccessMessage(
+      t("people.checkWhatsAppSelectedSummary", {
+        checked: result.checked,
+        ok: result.ok,
+        noWa: result.noWa,
+        failed: result.failed,
+        skipped: result.skipped,
+      }),
+    );
     await peopleStore.fetchPeopleList(electionGuid);
-    selectedGuids.value = [];
+    selectedGuids.value = nextSelectedGuidsAfterWhatsAppCheck(
+      selectedGuids.value,
+      "completed",
+    );
   } catch (error) {
-    if (isAbortError(error)) {
+    if (isWhatsAppCheckAbortError(error)) {
+      // Cancel aborts fetch — no response body / result.cancelled dialog.
       showErrorMessage(t("people.checkWhatsAppSelectedCancelled"));
       await peopleStore.fetchPeopleList(electionGuid);
+      selectedGuids.value = nextSelectedGuidsAfterWhatsAppCheck(
+        selectedGuids.value,
+        "aborted",
+      );
     } else {
       handleApiError(error);
     }
@@ -194,16 +200,6 @@ async function handleCheckWhatsAppSelected() {
     checkingWhatsApp.value = false;
     checkWhatsAppAbort = null;
   }
-}
-
-function isAbortError(error: unknown): boolean {
-  return (
-    (error instanceof DOMException && error.name === "AbortError") ||
-    (typeof error === "object" &&
-      error !== null &&
-      "name" in error &&
-      (error as { name?: string }).name === "AbortError")
-  );
 }
 
 async function handleDeleteAllPeople() {
@@ -356,9 +352,6 @@ async function handleDeleteAllPeople() {
             skipped: checkWhatsAppResults.skipped,
           })
         }}
-      </p>
-      <p v-if="checkWhatsAppResults?.cancelled">
-        {{ $t("people.checkWhatsAppSelectedCancelled") }}
       </p>
       <ul v-if="checkWhatsAppResults" class="whatsapp-check-results">
         <li v-for="row in checkWhatsAppResults.results" :key="row.personGuid">
