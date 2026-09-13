@@ -88,6 +88,18 @@ public interface IPeopleService
     /// <param name="personGuid">The unique identifier of the person.</param>
     /// <returns>The kiosk code, or null if the person was not found.</returns>
     Task<string?> GenerateKioskCodeAsync(Guid personGuid);
+
+    /// <summary>
+    /// Sets <c>OnlineVoter.SmsStatus</c> on the phone P row for this person's
+    /// stored phone (<c>VoterId == Person.Phone</c> and <c>VoterIdType == "P"</c>).
+    /// Ensures a P row when none exists. Does not convert a non-P occupant.
+    /// </summary>
+    /// <param name="personGuid">The unique identifier of the person.</param>
+    /// <param name="dto">OK or a short block reason.</param>
+    /// <returns>The updated phone OnlineVoter fields, or null if the person was not found.</returns>
+    Task<PersonPhoneOnlineVoterDto?> SetPersonPhoneSmsStatusAsync(
+        Guid personGuid,
+        SetPersonPhoneSmsStatusDto dto);
 }
 
 

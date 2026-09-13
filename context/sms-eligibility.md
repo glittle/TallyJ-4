@@ -5,7 +5,7 @@
 ## Evidence: confirmed
 
 **Source:** issue #254 (maintainer); July 555-range send incident described there  
-**Revisit when:** SuperAdmin/teller manual SmsStatus, Front Desk / list columns, or NANP reserved-range rules change
+**Revisit when:** Front Desk / list columns, or NANP reserved-range rules change
 
 ## In-code gate before any paid provider
 
@@ -65,7 +65,7 @@ Skip logs method + status only (no raw phone or email). Voter-facing message reu
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 (maintainer)  
-**Revisit when:** email/kiosk rows need the same ensure, or SuperAdmin/teller manual SmsStatus lands
+**Revisit when:** email/kiosk rows need the same ensure
 
 `OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync` (and the batch `EnsureOnlineVotersForPhonesAsync` for import) inserts a `VoterIdType = "P"` row keyed by `VoterId` = the phone as stored on `Person`. Callers: `PeopleService` create/update, `PeopleImportService` load batches, and `DbSeeder` so SeedOnStartup phones are usable locally.
 
@@ -88,7 +88,7 @@ Skip logs method + status only (no raw phone or email). Voter-facing message reu
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 (maintainer); this slice’s lookup rule  
-**Revisit when:** Front Desk / people list columns or SuperAdmin/teller manual SmsStatus land
+**Revisit when:** Front Desk / people list columns land
 
 People Management person detail (`GetPersonDetails` / `PersonDetailDto.PhoneOnlineVoter`) shows the global phone OnlineVoter SMS/auth fields. Lookup is both `VoterId == Person.Phone` and `VoterIdType == "P"` (`OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync`). `IX_OnlineVoter_Id` is unique on `VoterId` alone, but paid-send and this UI are type-scoped to `"P"`. A non-P row occupying that `VoterId` is treated as no phone row (never seen); that row’s `SmsStatus` is not shown as the phone’s.
 
@@ -100,14 +100,14 @@ No phone (null/whitespace) → `PhoneOnlineVoter` is null and the UI hides the b
 
 **Rejected alternative:** Front Desk / people list columns in this slice. Optional later; person detail is the required surface.
 
-**Not in this slice:** Front Desk / list columns, SuperAdmin/teller manual set of `SmsStatus`, WhatsAppStatus / GreenAPI `checkWhatsapp` (#255). Recent `SmsLog` on person detail is the sixth slice.
+**Not in this slice:** Front Desk / list columns, WhatsAppStatus / GreenAPI `checkWhatsapp` (#255). Recent `SmsLog` on person detail is the sixth slice. Manual SmsStatus is the eighth slice.
 
 ## Twilio status-callback auto-learn (fifth slice)
 
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 (maintainer); this slice’s callback rules  
-**Revisit when:** SuperAdmin/teller manual SmsStatus, setting OK from delivered, or WhatsApp / GreenAPI #255
+**Revisit when:** setting OK from delivered, or WhatsApp / GreenAPI #255
 
 v3 already had one Twilio status callback: `PublicController.SmsStatus` → `TwilioHelper.LogSmsStatus` (update the existing `SmsLog` row by SID). v4 had the `SmsLog` table but no callback. This slice ports that **single** path to `POST /api/Public/smsStatus` and hooks auto-learn there. There is no second callback endpoint.
 
@@ -146,7 +146,7 @@ Logs: method + status/code only. No raw phone or other PII.
 **Status:** active  
 **Evidence:** confirmed (surface); inferred (lookup / limit details)  
 **Source:** issue #254 Person UI “optional recent SmsLog”; existing +/- phone keys from the fifth slice  
-**Revisit when:** Front Desk / list columns or SuperAdmin/teller manual SmsStatus
+**Revisit when:** Front Desk / list columns
 
 Person detail (`PersonPhoneOnlineVoterDto.RecentSmsLogs`) shows up to five newest `SmsLog` rows for that Person phone. Lookup is the stored phone plus the +/- E.164 variant (`TwilioSmsStatusHelper.VoterIdLookupKeys` / `SmsLogPhoneHelper.FindRecentForPhoneAsync`). Not election-scoped and not by `PersonGuid` — verification SMS often has neither. Logs are about the phone, so they are attached even when there is no P row (never seen). No phone → `PhoneOnlineVoter` stays null (no log block).
 
@@ -160,14 +160,14 @@ DTO fields: `SentDate`, `LastDate`, `LastStatus`, `ErrorCode`. No phone and no S
 
 **Rejected alternative:** send-side `SmsLog` insert in this slice. That is the seventh slice.
 
-**Not in this slice:** send-side SmsLog insert (seventh), StatusCallback URL on send, SuperAdmin/teller manual SmsStatus, Front Desk / list columns, WhatsApp/GreenAPI #255, SignalR #229.
+**Not in this slice:** send-side SmsLog insert (seventh), StatusCallback URL on send, Front Desk / list columns, WhatsApp/GreenAPI #255, SignalR #229. Manual SmsStatus is the eighth slice.
 
 ## Send-side SmsLog insert + StatusCallback (seventh slice)
 
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 leftover after #325; v3 `TwilioHelper.SendSmsAsync` / `SendVoice` insert + `twilio-CallbackUrl`  
-**Revisit when:** SuperAdmin/teller manual SmsStatus, Front Desk / list columns, setting OK from delivered, or WhatsApp / GreenAPI #255
+**Revisit when:** Front Desk / list columns, setting OK from delivered, or WhatsApp / GreenAPI #255
 
 On a successful paid SMS / voice / WhatsApp send, persist an `SmsLog` so person-detail recent logs (#325 / sixth slice) have real rows. Fields: SID, phone as sent (the request-code `VoterId`, not a rewritten E.164), `SentDate` / `LastDate` UTC now, `LastStatus` from the provider JSON (`status` / GreenAPI `idMessage` send uses `"submitted"`). `ElectionGuid` and `PersonGuid` stay null — `requestCode` is pre-election; person detail already looks up by phone (+/- variant).
 
@@ -183,7 +183,32 @@ The callback still never inserts (fifth slice). Auto-learn still uses Twilio `To
 
 **Rejected alternative:** a new callback URL or endpoint. Wire the existing public SmsStatus path.
 
-**Not in this slice:** SuperAdmin/teller manual SmsStatus, Front Desk / list columns, setting `SmsStatus` to `"OK"` from delivered, WhatsApp / GreenAPI product work (#255), SignalR #229, rate limits #192.
+**Not in this slice:** Front Desk / list columns, setting `SmsStatus` to `"OK"` from delivered, WhatsApp / GreenAPI product work (#255), SignalR #229, rate limits #192. Manual SmsStatus is the eighth slice.
+
+## Teller manual SmsStatus (eighth slice)
+
+**Status:** active  
+**Evidence:** confirmed (privilege model from existing People routes); inferred (Ensure-if-missing on set)  
+**Source:** issue #254 leftover after #327; PeopleController `[Authorize]` (same as UpdatePerson)  
+**Revisit when:** Front Desk / list columns, setting OK from a delivered callback, or WhatsApp / GreenAPI #255
+
+Person detail can set `OnlineVoter.SmsStatus` on the phone P row (`VoterId == Person.Phone` and `VoterIdType == "P"`). Values are `"OK"` (unblock) or a short block reason (max 50 after trim). Null/unchecked is not set here. Lowercase `ok` is stored as `"OK"` so it cannot accidentally become a block reason (`AllowsPaidSend` is exact `"OK"`).
+
+Privilege matches other People writes: `[Authorize]` only. SuperAdmin is the dashboard email-list policy, not a people-edit role — no new role and no SuperAdmin-only gate. Guest-teller JWT can hit the same People APIs as UpdatePerson if they have a token; People Management is the teller UI.
+
+Uses the **stored** `Person.Phone`, not unsaved form edits. If there is no P row, `EnsureOnlineVoterForPhoneAsync` creates one (same helper as Person write) then sets status. A non-P occupant of that `VoterId` is not converted; the set fails. `WhenRegistered` / `WhenLastLogin` stay as they are. Paid-send still uses `if SmsStatus is not null AND SmsStatus != "OK" → do not send`.
+
+Not election-scoped and not under `ElectionFinalizedWriteGuard`: this is global paid-channel eligibility for the phone, not an election-person write.
+
+Logs: method + status only. No raw phone or other PII.
+
+**Rejected alternative:** SuperAdmin-only (`[Authorize(Policy = "SuperAdmin")]`). SuperAdmin is not who edits people today; tellers already update Person rows.
+
+**Rejected alternative:** put `SmsStatus` on `UpdatePersonDto`. It lives on the global OnlineVoter row; a dedicated action keeps person save (per-election fields) separate from a global eligibility stamp and always uses the stored phone.
+
+**Rejected alternative:** require an existing P row and refuse never-seen phones. Person write already ensures a row; ensuring here covers older data so a teller can still block or unblock from person detail.
+
+**Not in this slice:** Front Desk / list columns, setting `"OK"` from a delivered Twilio callback, WhatsApp / GreenAPI #255, SignalR #229.
 
 ## Related
 

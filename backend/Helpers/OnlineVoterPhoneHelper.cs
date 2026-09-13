@@ -128,6 +128,13 @@ public static class OnlineVoterPhoneHelper
             return Task.FromResult<OnlineVoter?>(null);
         }
 
+        var local = context.OnlineVoters.Local.FirstOrDefault(
+            ov => ov.VoterId == phone && ov.VoterIdType == PhoneVoterIdType);
+        if (local != null)
+        {
+            return Task.FromResult<OnlineVoter?>(local);
+        }
+
         return context.OnlineVoters.FirstOrDefaultAsync(
             ov => ov.VoterId == phone && ov.VoterIdType == PhoneVoterIdType,
             cancellationToken);

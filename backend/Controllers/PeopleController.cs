@@ -237,6 +237,36 @@ public class PeopleController : ControllerBase
             return BadRequest(ApiResponse<string>.ErrorResponse(ex.Message));
         }
     }
+
+    /// <summary>
+    /// Sets <c>OnlineVoter.SmsStatus</c> on the phone P row for this person's
+    /// stored phone. Same <c>[Authorize]</c> as other People writes (teller;
+    /// SuperAdmin is not a separate people-edit role).
+    /// </summary>
+    /// <param name="guid">The GUID of the person.</param>
+    /// <param name="dto"><c>OK</c> or a short block reason.</param>
+    /// <returns>The updated phone OnlineVoter SMS/auth fields.</returns>
+    [HttpPut("{guid}/setPhoneSmsStatus")]
+    public async Task<ActionResult<ApiResponse<PersonPhoneOnlineVoterDto>>> SetPhoneSmsStatus(
+        Guid guid,
+        SetPersonPhoneSmsStatusDto dto)
+    {
+        try
+        {
+            var status = await _peopleService.SetPersonPhoneSmsStatusAsync(guid, dto);
+
+            if (status == null)
+            {
+                return NotFound(ApiResponse<PersonPhoneOnlineVoterDto>.ErrorResponse("Person not found"));
+            }
+
+            return Ok(ApiResponse<PersonPhoneOnlineVoterDto>.SuccessResponse(status));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<PersonPhoneOnlineVoterDto>.ErrorResponse(ex.Message));
+        }
+    }
 }
 
 

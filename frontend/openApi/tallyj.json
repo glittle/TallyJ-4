@@ -4149,6 +4149,65 @@
         }
       }
     },
+    "/api/People/{guid}/setPhoneSmsStatus": {
+      "put": {
+        "tags": [
+          "People"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_SetPersonPhoneSmsStatusDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_SetPersonPhoneSmsStatusDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_SetPersonPhoneSmsStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_PersonPhoneOnlineVoterDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_PersonPhoneOnlineVoterDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_PersonPhoneOnlineVoterDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/PeopleImport/{electionGuid}/upload": {
       "post": {
         "tags": [
@@ -8201,6 +8260,29 @@
         },
         "additionalProperties": false
       },
+      "ApiResponsePeople_PersonPhoneOnlineVoterDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/People_PersonPhoneOnlineVoterDto"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApiResponsePublic_PublicHomeDto": {
         "type": "object",
         "properties": {
@@ -11435,6 +11517,16 @@
           "errorCode": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "People_SetPersonPhoneSmsStatusDto": {
+        "type": "object",
+        "properties": {
+          "smsStatus": {
+            "type": "string",
             "nullable": true
           }
         },

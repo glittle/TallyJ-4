@@ -1,4 +1,5 @@
 using Backend.DTOs.OnlineVoting;
+using Backend.DTOs.People;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Helpers;
@@ -314,6 +315,66 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
         Assert.NotEqual("voting.auth.requestCode.invalidPhone", result.MessageKey);
         Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(email, It.IsAny<string>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task RequestCode_HonorsSmsStatusSetThroughPeopleService()
+    {
+        const string phone = "+14168972694";
+        var electionGuid = Guid.NewGuid();
+        var personGuid = Guid.NewGuid();
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Manual SmsStatus paid-send honor",
+            UseOnlineVoting = true,
+            OnlineWhenOpen = DateTimeOffset.UtcNow.AddHours(-1),
+            OnlineWhenClose = DateTimeOffset.UtcNow.AddHours(1),
+            ElectionStage = ElectionStage.GatheringBallots,
+            NumberToElect = 9,
+            RowVersion = new byte[8]
+        });
+        Context.People.Add(new Person
+        {
+            ElectionGuid = electionGuid,
+            PersonGuid = personGuid,
+            FirstName = "Test",
+            LastName = "Voter",
+            Phone = phone,
+            CanVote = true,
+            RowVersion = new byte[8]
+        });
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            SmsStatus = null
+        });
+        await Context.SaveChangesAsync();
+
+        var peopleService = new PeopleService(
+            Context,
+            Mock.Of<ILogger<PeopleService>>(),
+            Mock.Of<ISignalRNotificationService>());
+
+        await peopleService.SetPersonPhoneSmsStatusAsync(
+            personGuid,
+            new SetPersonPhoneSmsStatusDto { SmsStatus = "admin" });
+
+        var blocked = await _service.RequestVerificationCodeAsync(PaidSmsRequest(phone));
+        Assert.Equal("voting.auth.requestCode.invalidPhone", blocked.MessageKey);
+        _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+
+        await peopleService.SetPersonPhoneSmsStatusAsync(
+            personGuid,
+            new SetPersonPhoneSmsStatusDto { SmsStatus = "OK" });
+        _paidSender
+            .Setup(s => s.SendSmsAsync(phone, It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var allowed = await _service.RequestVerificationCodeAsync(PaidSmsRequest(phone));
+        Assert.Equal("voting.auth.requestCode.sent", allowed.MessageKey);
+        _paidSender.Verify(s => s.SendSmsAsync(phone, It.IsAny<string>()), Times.Once);
     }
 
     private static RequestCodeDto PaidSmsRequest(string phone) => new()

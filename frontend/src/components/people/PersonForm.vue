@@ -106,6 +106,8 @@ const showKioskCode = computed(
 );
 
 const generatingKioskCode = ref(false);
+const settingSmsStatus = ref(false);
+const smsBlockReason = ref("");
 
 const kioskExpiry = computed(() => {
   const raw = personDetails.value?.kioskCodeExpiresAt;
@@ -302,6 +304,7 @@ function resetForm() {
   form.ineligibleReasonCode = props.requireEligibility
     ? ""
     : ELIGIBLE_REASON_VALUE;
+  smsBlockReason.value = "";
 }
 
 watch(
@@ -312,10 +315,41 @@ watch(
     } else if (!props.isEdit) {
       resetForm();
       personDetails.value = null;
+      smsBlockReason.value = "";
     }
   },
   { immediate: true },
 );
+
+async function applyPhoneSmsStatus(smsStatus: string) {
+  if (!props.person) {
+    return;
+  }
+
+  settingSmsStatus.value = true;
+  try {
+    await peopleService.setPhoneSmsStatus(props.person.personGuid, smsStatus);
+    await loadPersonDetails();
+    showSuccessMessage(t("people.phoneOnlineVoter.setSuccess"));
+  } catch (error) {
+    handleApiError(error);
+  } finally {
+    settingSmsStatus.value = false;
+  }
+}
+
+async function handleSetSmsStatusOk() {
+  await applyPhoneSmsStatus("OK");
+}
+
+async function handleSetSmsStatusBlocked() {
+  const reason = smsBlockReason.value.trim();
+  if (!reason) {
+    return;
+  }
+  await applyPhoneSmsStatus(reason);
+  smsBlockReason.value = "";
+}
 
 async function handleGenerateKioskCode() {
   if (!props.person) {
@@ -611,6 +645,38 @@ defineExpose({
               <span>{{ $t("people.phoneOnlineVoter.smsStatus") }}</span>
               <span>{{ phoneSmsText }}</span>
             </div>
+            <div class="phone-online-voter__set">
+              <el-button
+                data-testid="set-sms-status-ok"
+                size="small"
+                :loading="settingSmsStatus"
+                @click="handleSetSmsStatusOk"
+              >
+                {{ $t("people.phoneOnlineVoter.setOk") }}
+              </el-button>
+              <el-input
+                v-model="smsBlockReason"
+                data-testid="set-sms-status-reason"
+                size="small"
+                :placeholder="
+                  $t('people.phoneOnlineVoter.blockReasonPlaceholder')
+                "
+                maxlength="50"
+                @keyup.enter="handleSetSmsStatusBlocked"
+              />
+              <el-button
+                data-testid="set-sms-status-block"
+                size="small"
+                :loading="settingSmsStatus"
+                :disabled="!smsBlockReason.trim()"
+                @click="handleSetSmsStatusBlocked"
+              >
+                {{ $t("people.phoneOnlineVoter.block") }}
+              </el-button>
+            </div>
+            <p class="phone-online-voter__hint">
+              {{ $t("people.phoneOnlineVoter.globalHint") }}
+            </p>
             <div
               v-if="recentSmsLogs.length > 0"
               class="phone-online-voter__logs"
@@ -836,6 +902,25 @@ defineExpose({
       color: var(--el-color-danger);
       background-color: var(--el-color-danger-light-9);
     }
+  }
+
+  .phone-online-voter__set {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-2);
+    padding: 0 var(--spacing-2);
+
+    .el-input {
+      flex: 1 1 12rem;
+    }
+  }
+
+  .phone-online-voter__hint {
+    margin: 0;
+    padding: 0 var(--spacing-2);
+    font-size: var(--font-size-sm);
+    color: var(--color-neutral-500);
   }
 
   .phone-online-voter__logs {
