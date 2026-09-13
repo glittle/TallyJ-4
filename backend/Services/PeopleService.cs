@@ -462,6 +462,50 @@ public class PeopleService : IPeopleService
         return code;
     }
 
+    /// <inheritdoc />
+    public async Task<PersonPhoneOnlineVoterDto?> SetPersonPhoneSmsStatusAsync(
+        Guid personGuid,
+        SetPersonPhoneSmsStatusDto dto)
+    {
+        var person = await _context.People.FirstOrDefaultAsync(p => p.PersonGuid == personGuid);
+        if (person == null)
+        {
+            return null;
+        }
+
+        if (string.IsNullOrWhiteSpace(person.Phone))
+        {
+            throw new InvalidOperationException(PeopleMessageKeys.PhoneSmsStatusNoPhone);
+        }
+
+        if (!OnlineVoterSmsStatus.TryNormalizeManualValue(dto.SmsStatus, out var status) || status is null)
+        {
+            throw new InvalidOperationException(PeopleMessageKeys.PhoneSmsStatusInvalid);
+        }
+
+        var row = await OnlineVoterPhoneHelper.FindTrackedPhoneOnlineVoterAsync(_context, person.Phone);
+        if (row == null)
+        {
+            await OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync(_context, person.Phone);
+            row = await OnlineVoterPhoneHelper.FindTrackedPhoneOnlineVoterAsync(_context, person.Phone);
+        }
+
+        if (row == null)
+        {
+            throw new InvalidOperationException(PeopleMessageKeys.PhoneSmsStatusNoPhoneRow);
+        }
+
+        row.SmsStatus = status;
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation(
+            "Set phone SmsStatus for person {PersonGuid} to {SmsStatus}",
+            personGuid,
+            status);
+
+        return await MapPhoneOnlineVoterAsync(person.Phone);
+    }
+
     // =====================================================================
     // Explicit mapping helpers (replaces logic previously hidden in Mapster profiles).
     // =====================================================================

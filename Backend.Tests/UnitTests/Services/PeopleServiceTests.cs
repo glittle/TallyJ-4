@@ -1318,6 +1318,143 @@ public class PeopleServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task SetPersonPhoneSmsStatusAsync_Ok_OnExistingPRow()
+    {
+        const string phone = "+14168972690";
+        var registered = DateTimeOffset.Parse("2026-04-01T12:00:00Z");
+        var person = await SeedPersonWithPhoneRow(phone, smsStatus: "twilio-30003", whenRegistered: registered);
+
+        var result = await _service.SetPersonPhoneSmsStatusAsync(
+            person.PersonGuid,
+            new SetPersonPhoneSmsStatusDto { SmsStatus = "ok" });
+
+        Assert.NotNull(result);
+        Assert.True(result.HasPhoneRow);
+        Assert.Equal(OnlineVoterSmsStatus.Ok, result.SmsStatus);
+        Assert.Equal(registered, result.WhenRegistered);
+
+        var row = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == phone);
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Equal(OnlineVoterSmsStatus.Ok, row.SmsStatus);
+        Assert.Equal(registered, row.WhenRegistered);
+    }
+
+    [Fact]
+    public async Task SetPersonPhoneSmsStatusAsync_Reason_OnExistingPRow()
+    {
+        const string phone = "+14168972691";
+        var person = await SeedPersonWithPhoneRow(phone, smsStatus: OnlineVoterSmsStatus.Ok);
+
+        var result = await _service.SetPersonPhoneSmsStatusAsync(
+            person.PersonGuid,
+            new SetPersonPhoneSmsStatusDto { SmsStatus = " landline " });
+
+        Assert.NotNull(result);
+        Assert.Equal("landline", result.SmsStatus);
+
+        var row = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == phone);
+        Assert.Equal("landline", row.SmsStatus);
+        Assert.True(OnlineVoterSmsStatus.AllowsPaidSend(OnlineVoterSmsStatus.Ok));
+        Assert.False(OnlineVoterSmsStatus.AllowsPaidSend(row.SmsStatus));
+    }
+
+    [Fact]
+    public async Task SetPersonPhoneSmsStatusAsync_NoPRow_EnsuresThenSets()
+    {
+        const string phone = "+14168972692";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        var result = await _service.SetPersonPhoneSmsStatusAsync(
+            person.PersonGuid,
+            new SetPersonPhoneSmsStatusDto { SmsStatus = "admin" });
+
+        Assert.NotNull(result);
+        Assert.True(result.HasPhoneRow);
+        Assert.Equal("admin", result.SmsStatus);
+        Assert.Null(result.WhenRegistered);
+
+        var row = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == phone);
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Equal("admin", row.SmsStatus);
+        Assert.Null(row.WhenRegistered);
+    }
+
+    [Fact]
+    public async Task SetPersonPhoneSmsStatusAsync_NonPOccupant_DoesNotConvert()
+    {
+        const string phone = "+14168972693";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "E",
+            SmsStatus = null
+        });
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.SetPersonPhoneSmsStatusAsync(
+                person.PersonGuid,
+                new SetPersonPhoneSmsStatusDto { SmsStatus = "OK" }));
+
+        Assert.Equal(PeopleMessageKeys.PhoneSmsStatusNoPhoneRow, ex.Message);
+        var occupant = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == phone);
+        Assert.Equal("E", occupant.VoterIdType);
+        Assert.Null(occupant.SmsStatus);
+    }
+
+    [Fact]
+    public async Task SetPersonPhoneSmsStatusAsync_NoPhone_Throws()
+    {
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.SetPersonPhoneSmsStatusAsync(
+                person.PersonGuid,
+                new SetPersonPhoneSmsStatusDto { SmsStatus = "OK" }));
+
+        Assert.Equal(PeopleMessageKeys.PhoneSmsStatusNoPhone, ex.Message);
+    }
+
+    [Fact]
+    public async Task SetPersonPhoneSmsStatusAsync_UnknownPerson_ReturnsNull()
+    {
+        var result = await _service.SetPersonPhoneSmsStatusAsync(
+            Guid.NewGuid(),
+            new SetPersonPhoneSmsStatusDto { SmsStatus = "OK" });
+
+        Assert.Null(result);
+    }
+
+    [Fact]
     public async Task CreatePersonAsync_FinalizedElection_Throws()
     {
         var electionGuid = SeedElection(ElectionStage.Finalized);
@@ -1676,6 +1813,32 @@ public class PeopleServiceTests : ServiceTestBase
         };
         Context.People.Add(person);
         Context.SaveChanges();
+        return person;
+    }
+
+    private async Task<Person> SeedPersonWithPhoneRow(
+        string phone,
+        string? smsStatus,
+        DateTimeOffset? whenRegistered = null)
+    {
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            SmsStatus = smsStatus,
+            WhenRegistered = whenRegistered
+        });
+        await Context.SaveChangesAsync();
         return person;
     }
 }
