@@ -33,6 +33,8 @@ type Translate = (key: string, values?: Record<string, unknown>) => string;
 export type UseFrontDeskRegistrationOptions = {
   electionGuid: Ref<string>;
   hasActiveTeller: Ref<boolean> | ComputedRef<boolean>;
+  /** Finalized is the existing registration-done write lock. */
+  isElectionFinalized: Ref<boolean> | ComputedRef<boolean>;
   electionFlags: Ref<string[]> | ComputedRef<string[]>;
   registrationTypes: ComputedRef<RegistrationTypeOption[]>;
   selectedVoter: Ref<FrontDeskVoterDto | null>;
@@ -146,9 +148,13 @@ export function useFrontDeskRegistration(
     });
   }
 
+  const registrationWritesAllowed = computed(
+    () => options.hasActiveTeller.value && !options.isElectionFinalized.value,
+  );
+
   function getInitialDialogButtonIndex(): number {
     if (
-      !options.hasActiveTeller.value ||
+      !registrationWritesAllowed.value ||
       (options.selectedVoter.value?.isCheckedIn &&
         options.electionFlags.value.length === 0)
     ) {
@@ -164,7 +170,7 @@ export function useFrontDeskRegistration(
     if (button.isClose) {
       return true;
     }
-    return options.hasActiveTeller.value;
+    return registrationWritesAllowed.value;
   }
 
   function isDialogButtonFocusable(button: FrontDeskDialogButton): boolean {
@@ -327,7 +333,7 @@ export function useFrontDeskRegistration(
     if (
       !options.selectedVoter.value ||
       checkInInProgress.value ||
-      !options.hasActiveTeller.value
+      !registrationWritesAllowed.value
     ) {
       return;
     }
@@ -409,7 +415,7 @@ export function useFrontDeskRegistration(
   }
 
   async function toggleFlag(flag: string) {
-    if (!options.selectedVoter.value || !options.hasActiveTeller.value) {
+    if (!options.selectedVoter.value || !registrationWritesAllowed.value) {
       return;
     }
 
@@ -516,7 +522,7 @@ export function useFrontDeskRegistration(
   async function handleUnregisterSelected() {
     if (
       !options.selectedVoter.value ||
-      !options.hasActiveTeller.value ||
+      !registrationWritesAllowed.value ||
       !hasDeskRegistration(options.selectedVoter.value)
     ) {
       return;
@@ -549,6 +555,7 @@ export function useFrontDeskRegistration(
     pendingVotingMethod,
     checkInInProgress,
     pendingCheckInPersonGuid,
+    registrationWritesAllowed,
     dialogButtons,
     openRegistrationDialog,
     closeRegistrationDialog,
