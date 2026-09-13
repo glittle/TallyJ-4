@@ -11,8 +11,9 @@ public static class JsonRequestVoterId
     internal const int MaxBodyBytes = 16 * 1024;
 
     /// <summary>
-    /// Enables buffering, parses <c>voterId</c> / <c>VoterId</c> from JSON, then rewinds the body.
-    /// Returns null when the body is missing, too large, not JSON, or has no non-empty voterId.
+    /// Parses <c>voterId</c> / <c>VoterId</c> from JSON, then leaves a rewindable body
+    /// for model binding. Returns null when the body is missing, too large, not JSON,
+    /// or has no non-empty voterId.
     /// The read is capped at <see cref="MaxBodyBytes"/> even when ContentLength is unset (chunked).
     /// </summary>
     public static async Task<string?> TryReadAsync(HttpRequest request, CancellationToken cancellationToken)
@@ -29,23 +30,22 @@ public static class JsonRequestVoterId
             return null;
         }
 
-        request.EnableBuffering();
-        var body = request.Body;
-        var originalPosition = body.CanSeek ? body.Position : 0;
+        var capped = await ReadAtMostAsync(request.Body, MaxBodyBytes, cancellationToken);
+        if (capped == null)
+        {
+            return null;
+        }
+
+        request.Body = new MemoryStream(capped, writable: false);
+        request.ContentLength = capped.Length;
+
+        if (capped.Length == 0)
+        {
+            return null;
+        }
 
         try
         {
-            var capped = await ReadAtMostAsync(body, MaxBodyBytes, cancellationToken);
-            if (capped == null)
-            {
-                return null;
-            }
-
-            if (capped.Length == 0)
-            {
-                return null;
-            }
-
             using var document = JsonDocument.Parse(capped);
             return FindVoterId(document.RootElement);
         }
@@ -53,18 +53,12 @@ public static class JsonRequestVoterId
         {
             return null;
         }
-        finally
-        {
-            if (body.CanSeek)
-            {
-                body.Position = originalPosition;
-            }
-        }
     }
 
     /// <summary>
     /// Reads at most <paramref name="maxBytes"/> from <paramref name="body"/>.
     /// Returns null if the stream has more than that (overflow); otherwise the bytes read.
+    /// Stops after <paramref name="maxBytes"/> + 1 so a chunked body cannot be slurped.
     /// </summary>
     internal static async Task<byte[]?> ReadAtMostAsync(Stream body, int maxBytes, CancellationToken cancellationToken)
     {
