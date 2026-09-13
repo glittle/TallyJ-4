@@ -6179,6 +6179,103 @@
         }
       }
     },
+    "/api/Results/election/{electionGuid}/manual-counts": {
+      "get": {
+        "tags": [
+          "Results"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Results_AnalyzeCountSummariesDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Results_AnalyzeCountSummariesDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Results_AnalyzeCountSummariesDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Results"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Results_AnalyzeCountRowDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Results_AnalyzeCountRowDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Results_AnalyzeCountRowDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Results_AnalyzeCountSummariesDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Results_AnalyzeCountSummariesDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Results_AnalyzeCountSummariesDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Results/election/{electionGuid}/ties/save": {
       "post": {
         "tags": [
@@ -9245,6 +9342,10 @@
             "type": "boolean",
             "nullable": true
           },
+          "guestTellersCanAddPeople": {
+            "type": "boolean",
+            "nullable": true
+          },
           "onlineCloseIsEstimate": {
             "type": "boolean",
             "nullable": true
@@ -9386,6 +9487,9 @@
           "maskVotingMethod": {
             "type": "boolean",
             "nullable": true
+          },
+          "guestTellersCanAddPeople": {
+            "type": "boolean"
           },
           "onlineCloseIsEstimate": {
             "type": "boolean",
@@ -9640,6 +9744,10 @@
             "nullable": true
           },
           "maskVotingMethod": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "guestTellersCanAddPeople": {
             "type": "boolean",
             "nullable": true
           },
@@ -12853,6 +12961,72 @@
           "acceptedAfter": {
             "type": "integer",
             "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Results_AnalyzeCountRowDto": {
+        "type": "object",
+        "properties": {
+          "numEligibleToVote": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "inPersonBallots": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "droppedOffBallots": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "mailedInBallots": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "calledInBallots": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "custom1Ballots": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "custom2Ballots": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "custom3Ballots": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "spoiledManualBallots": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Results_AnalyzeCountSummariesDto": {
+        "type": "object",
+        "properties": {
+          "calculated": {
+            "$ref": "#/components/schemas/Results_AnalyzeCountRowDto"
+          },
+          "manual": {
+            "$ref": "#/components/schemas/Results_AnalyzeCountRowDto"
+          },
+          "final": {
+            "$ref": "#/components/schemas/Results_AnalyzeCountRowDto"
           }
         },
         "additionalProperties": false

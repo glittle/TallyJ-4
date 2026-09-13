@@ -197,10 +197,7 @@ async function handleSubmit() {
     <p v-if="isPersonLessVote" class="ballot-add-person-panel__hint">
       {{ $t("ballots.personLessVoteHint") }}
     </p>
-    <p
-      v-else-if="canAddNames"
-      class="ballot-add-person-panel__hint"
-    >
+    <p v-else-if="canAddNames" class="ballot-add-person-panel__hint">
       {{ $t("ballots.addNewNameIncludingSpoiled") }}
     </p>
     <p v-else class="ballot-add-person-panel__hint">

@@ -10,6 +10,8 @@ import {
   getApiResultsElectionByElectionGuidPresentation,
   getApiResultsElectionByElectionGuidDetailedStatistics,
   getApiResultsElectionByElectionGuidReconciliation,
+  getApiResultsElectionByElectionGuidManualCounts,
+  postApiResultsElectionByElectionGuidManualCounts,
 } from "@/api/gen/configService";
 import type {
   TallyResultDto,
@@ -26,7 +28,6 @@ import type {
   AnalyzeCountSummariesDto,
   AnalyzeCountRowDto,
 } from "../types";
-import { client } from "@/api/gen/configService/client.gen";
 
 export const resultService = {
   async calculateTally(
@@ -154,8 +155,7 @@ export const resultService = {
   async getManualCounts(
     electionGuid: string,
   ): Promise<AnalyzeCountSummariesDto> {
-    const response = await client.get({
-      url: "/api/Results/election/{electionGuid}/manual-counts",
+    const response = await getApiResultsElectionByElectionGuidManualCounts({
       path: { electionGuid },
     });
     return response.data as AnalyzeCountSummariesDto;
@@ -165,11 +165,9 @@ export const resultService = {
     electionGuid: string,
     request: AnalyzeCountRowDto,
   ): Promise<AnalyzeCountSummariesDto> {
-    const response = await client.post({
-      url: "/api/Results/election/{electionGuid}/manual-counts",
+    const response = await postApiResultsElectionByElectionGuidManualCounts({
       path: { electionGuid },
       body: request,
-      headers: { "Content-Type": "application/json" },
     });
     return response.data as AnalyzeCountSummariesDto;
   },

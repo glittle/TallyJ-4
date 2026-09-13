@@ -514,6 +514,7 @@ export type ElectionsCreateElectionDto = {
     useCallInButton?: boolean | null;
     hidePreBallotPages?: boolean | null;
     maskVotingMethod?: boolean | null;
+    guestTellersCanAddPeople?: boolean | null;
     onlineCloseIsEstimate?: boolean | null;
     onlineSelectionProcess?: string | null;
     emailFromAddress?: string | null;
@@ -552,6 +553,7 @@ export type ElectionsElectionDto = {
     useCallInButton?: boolean | null;
     hidePreBallotPages?: boolean | null;
     maskVotingMethod?: boolean | null;
+    guestTellersCanAddPeople?: boolean;
     onlineCloseIsEstimate?: boolean | null;
     onlineSelectionProcess?: string | null;
     emailFromAddress?: string | null;
@@ -623,6 +625,7 @@ export type ElectionsUpdateElectionDto = {
     useCallInButton?: boolean | null;
     hidePreBallotPages?: boolean | null;
     maskVotingMethod?: boolean | null;
+    guestTellersCanAddPeople?: boolean | null;
     onlineCloseIsEstimate?: boolean | null;
     onlineSelectionProcess?: string | null;
     emailFromAddress?: string | null;
@@ -1585,6 +1588,24 @@ export type ResultsAcceptAllOnlineBallotsRunDto = {
     acceptedBefore?: number;
     pendingAfter?: number;
     acceptedAfter?: number;
+};
+
+export type ResultsAnalyzeCountRowDto = {
+    numEligibleToVote?: number | null;
+    inPersonBallots?: number | null;
+    droppedOffBallots?: number | null;
+    mailedInBallots?: number | null;
+    calledInBallots?: number | null;
+    custom1Ballots?: number | null;
+    custom2Ballots?: number | null;
+    custom3Ballots?: number | null;
+    spoiledManualBallots?: number | null;
+};
+
+export type ResultsAnalyzeCountSummariesDto = {
+    calculated?: ResultsAnalyzeCountRowDto;
+    manual?: ResultsAnalyzeCountRowDto;
+    final?: ResultsAnalyzeCountRowDto;
 };
 
 export type ResultsComputerInfoDto = {
@@ -4749,6 +4770,42 @@ export type GetApiResultsByElectionGuidByTieBreakGroupTiesResponses = {
 };
 
 export type GetApiResultsByElectionGuidByTieBreakGroupTiesResponse = GetApiResultsByElectionGuidByTieBreakGroupTiesResponses[keyof GetApiResultsByElectionGuidByTieBreakGroupTiesResponses];
+
+export type GetApiResultsElectionByElectionGuidManualCountsData = {
+    body?: never;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/Results/election/{electionGuid}/manual-counts';
+};
+
+export type GetApiResultsElectionByElectionGuidManualCountsResponses = {
+    /**
+     * OK
+     */
+    200: ResultsAnalyzeCountSummariesDto;
+};
+
+export type GetApiResultsElectionByElectionGuidManualCountsResponse = GetApiResultsElectionByElectionGuidManualCountsResponses[keyof GetApiResultsElectionByElectionGuidManualCountsResponses];
+
+export type PostApiResultsElectionByElectionGuidManualCountsData = {
+    body?: ResultsAnalyzeCountRowDto;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/Results/election/{electionGuid}/manual-counts';
+};
+
+export type PostApiResultsElectionByElectionGuidManualCountsResponses = {
+    /**
+     * OK
+     */
+    200: ResultsAnalyzeCountSummariesDto;
+};
+
+export type PostApiResultsElectionByElectionGuidManualCountsResponse = PostApiResultsElectionByElectionGuidManualCountsResponses[keyof PostApiResultsElectionByElectionGuidManualCountsResponses];
 
 export type PostApiResultsElectionByElectionGuidTiesSaveData = {
     body?: ResultsSaveTieCountsRequestDto;

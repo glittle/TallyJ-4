@@ -65,7 +65,7 @@ function copyManualIntoDraft(manual?: AnalyzeCountRowDto | null) {
 }
 
 function displayCount(value: number | null | undefined): string {
-  return value == null ? "—" : String(value);
+  return value === null || value === undefined ? "—" : String(value);
 }
 
 async function loadCounts() {

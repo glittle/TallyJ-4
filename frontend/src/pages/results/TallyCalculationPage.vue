@@ -32,7 +32,9 @@ const reconciliationLoading = computed(
   () => resultStore.loading && !resultStore.reconciliation,
 );
 const canAnalyze = computed(() => reconciliation.value?.isReconciled === true);
-const isFinalized = computed(() => election.value?.electionStage === "Finalized");
+const isFinalized = computed(
+  () => election.value?.electionStage === "Finalized",
+);
 const showCalledIn = computed(() => election.value?.useCallInButton === true);
 
 function customMethodName(index: number): string | undefined {

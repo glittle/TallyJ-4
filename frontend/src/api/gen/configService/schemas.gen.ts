@@ -1690,6 +1690,10 @@ export const Elections_CreateElectionDtoSchema = {
             type: 'boolean',
             nullable: true
         },
+        guestTellersCanAddPeople: {
+            type: 'boolean',
+            nullable: true
+        },
         onlineCloseIsEstimate: {
             type: 'boolean',
             nullable: true
@@ -1833,6 +1837,9 @@ export const Elections_ElectionDtoSchema = {
         maskVotingMethod: {
             type: 'boolean',
             nullable: true
+        },
+        guestTellersCanAddPeople: {
+            type: 'boolean'
         },
         onlineCloseIsEstimate: {
             type: 'boolean',
@@ -2092,6 +2099,10 @@ export const Elections_UpdateElectionDtoSchema = {
             nullable: true
         },
         maskVotingMethod: {
+            type: 'boolean',
+            nullable: true
+        },
+        guestTellersCanAddPeople: {
             type: 'boolean',
             nullable: true
         },
@@ -5414,6 +5425,74 @@ export const Results_AcceptAllOnlineBallotsRunDtoSchema = {
         acceptedAfter: {
             type: 'integer',
             format: 'int32'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Results_AnalyzeCountRowDtoSchema = {
+    type: 'object',
+    properties: {
+        numEligibleToVote: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        inPersonBallots: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        droppedOffBallots: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        mailedInBallots: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        calledInBallots: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        custom1Ballots: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        custom2Ballots: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        custom3Ballots: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        spoiledManualBallots: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Results_AnalyzeCountSummariesDtoSchema = {
+    type: 'object',
+    properties: {
+        calculated: {
+            $ref: '#/components/schemas/Results_AnalyzeCountRowDto'
+        },
+        manual: {
+            $ref: '#/components/schemas/Results_AnalyzeCountRowDto'
+        },
+        final: {
+            $ref: '#/components/schemas/Results_AnalyzeCountRowDto'
         }
     },
     additionalProperties: false
