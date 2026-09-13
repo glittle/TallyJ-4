@@ -42,8 +42,7 @@ public class GreenApiWhatsAppClientTests
         Assert.Equal(
             "https://api.green-api.com/waInstance1234/checkWhatsapp/token",
             handler.LastRequest?.RequestUri?.ToString());
-        var body = await handler.LastRequest!.Content!.ReadAsStringAsync();
-        Assert.Contains("14168972671", body);
+        Assert.Contains("14168972671", handler.LastBody);
     }
 
     [Fact]
@@ -108,15 +107,22 @@ public class GreenApiWhatsAppClientTests
 
         public HttpRequestMessage? LastRequest { get; private set; }
 
-        protected override Task<HttpResponseMessage> SendAsync(
+        public string LastBody { get; private set; } = "";
+
+        protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
             LastRequest = request;
-            return Task.FromResult(new HttpResponseMessage(_statusCode)
+            if (request.Content != null)
+            {
+                LastBody = await request.Content.ReadAsStringAsync(cancellationToken);
+            }
+
+            return new HttpResponseMessage(_statusCode)
             {
                 Content = new StringContent(_responseBody)
-            });
+            };
         }
     }
 }
