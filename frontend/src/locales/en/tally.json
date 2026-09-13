@@ -44,7 +44,7 @@
   "tally.reconciliation.loadError": "Failed to load the reconciliation report",
   "tally.reconciliation.finalizeBlocked": "Counts do not reconcile. Resolve the mismatches below (or on Calculate Tally) before finalizing.",
   "tally.manualCounts.title": "Voter counts",
-  "tally.manualCounts.hint": "Override Eligible Voters when confidential people were added as Confidential 1, Confidential 2, and so on, and the listed count should stay as it was. Leave a field empty to use the calculated value. Saving does not re-run Analyze.",
+  "tally.manualCounts.hint": "Leave a field empty to use the calculated value. Saving does not re-run Analyze.",
   "tally.manualCounts.counts": "Counts",
   "tally.manualCounts.calculated": "Calculated",
   "tally.manualCounts.override": "Override",

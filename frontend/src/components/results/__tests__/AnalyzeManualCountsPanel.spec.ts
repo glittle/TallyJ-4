@@ -54,6 +54,7 @@ describe("AnalyzeManualCountsPanel", () => {
     expect(mockFetch).toHaveBeenCalledWith("election-1");
     expect(wrapper.text()).toContain("Eligible Voters");
     expect(wrapper.text()).toContain("6");
+    expect(wrapper.text()).not.toMatch(/confidential/i);
 
     await wrapper.get('[data-testid="save-manual-counts"]').trigger("click");
     await flushPromises();

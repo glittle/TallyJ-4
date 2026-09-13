@@ -1,22 +1,17 @@
 using Backend.Context;
-using Backend.DTOs.Results;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Helpers;
-using Backend.Services;
 using Backend.Services.Analyzers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Moq;
 
 namespace Backend.Tests.UnitTests;
 
 /// <summary>
-/// #186 confidential voter workflow: add as “Confidential X”, then bump
-/// Eligible Voters with the v3 Analyze manual override (ResultType M).
+/// #186 confidential voter: add as “Confidential X” (ordinary person).
+/// Calculated eligible and in-person increase. There is no override step.
 /// </summary>
 public class Issue186ConfidentialVoterTests : IDisposable
 {
@@ -62,91 +57,6 @@ public class Issue186ConfidentialVoterTests : IDisposable
     }
 
     [Fact]
-    public async Task ManualEligibleOverride_IsFinalAfterAnalyze()
-    {
-        var election = SeedElection();
-        SeedPerson(election.ElectionGuid, "Ada", "List", canVote: true);
-        SeedPerson(election.ElectionGuid, "Confidential 1", "", canVote: true);
-        await _context.SaveChangesAsync();
-
-        _context.ResultSummaries.Add(new ResultSummary
-        {
-            ElectionGuid = election.ElectionGuid,
-            ResultType = "M",
-            NumEligibleToVote = 1
-        });
-        await _context.SaveChangesAsync();
-
-        await new ElectionAnalyzerNormal(_context, NullLogger.Instance, election).AnalyzeAsync();
-
-        var calc = _context.ResultSummaries.Single(rs =>
-            rs.ElectionGuid == election.ElectionGuid && rs.ResultType == "C");
-        var final = _context.ResultSummaries.Single(rs =>
-            rs.ElectionGuid == election.ElectionGuid && rs.ResultType == "F");
-        Assert.Equal(2, calc.NumEligibleToVote);
-        Assert.Equal(1, final.NumEligibleToVote);
-    }
-
-    [Fact]
-    public async Task SaveManualCounts_PersistsOverride_WithoutReanalyze()
-    {
-        var election = SeedElection();
-        SeedPerson(election.ElectionGuid, "Ada", "List", canVote: true);
-        await _context.SaveChangesAsync();
-
-        var service = CreateTallyService();
-        var saved = await service.SaveManualCountsAsync(
-            election.ElectionGuid,
-            new AnalyzeCountRowDto { NumEligibleToVote = 12, InPersonBallots = 3 });
-
-        Assert.Equal(12, saved.Manual.NumEligibleToVote);
-        Assert.Equal(3, saved.Manual.InPersonBallots);
-        Assert.Equal(12, saved.Final.NumEligibleToVote);
-        Assert.Equal(1, saved.Calculated.NumEligibleToVote);
-
-        var stored = _context.ResultSummaries.Single(rs =>
-            rs.ElectionGuid == election.ElectionGuid && rs.ResultType == "M");
-        Assert.Equal(12, stored.NumEligibleToVote);
-        Assert.Equal(3, stored.InPersonBallots);
-        Assert.False(_context.ResultSummaries.Any(rs =>
-            rs.ElectionGuid == election.ElectionGuid && rs.ResultType == "F"));
-    }
-
-    [Fact]
-    public async Task SaveManualCounts_WhenPriorFinalExists_PanelFinalUsesNewManual()
-    {
-        var election = SeedElection();
-        SeedPerson(election.ElectionGuid, "Ada", "List", canVote: true);
-        SeedPerson(election.ElectionGuid, "Confidential 1", "", canVote: true);
-        _context.ResultSummaries.AddRange(
-            new ResultSummary
-            {
-                ElectionGuid = election.ElectionGuid,
-                ResultType = "C",
-                NumEligibleToVote = 2
-            },
-            new ResultSummary
-            {
-                ElectionGuid = election.ElectionGuid,
-                ResultType = "F",
-                NumEligibleToVote = 2
-            });
-        await _context.SaveChangesAsync();
-
-        var saved = await CreateTallyService().SaveManualCountsAsync(
-            election.ElectionGuid,
-            new AnalyzeCountRowDto { NumEligibleToVote = 1 });
-
-        Assert.Equal(1, saved.Manual.NumEligibleToVote);
-        Assert.Equal(1, saved.Final.NumEligibleToVote);
-        Assert.Equal(2, saved.Calculated.NumEligibleToVote);
-
-        var storedFinal = _context.ResultSummaries.Single(rs =>
-            rs.ElectionGuid == election.ElectionGuid && rs.ResultType == "F");
-        Assert.Equal(2, storedFinal.NumEligibleToVote);
-    }
-
-    [Fact]
     public async Task CheckInConfidential1_CountsAsInPerson()
     {
         var election = SeedElection();
@@ -167,7 +77,7 @@ public class Issue186ConfidentialVoterTests : IDisposable
         var election = new Election
         {
             ElectionGuid = Guid.NewGuid(),
-            Name = "Confidential workflow",
+            Name = "Confidential 1 is an ordinary person",
             NumberToElect = 2,
             ElectionType = "LSA",
             ElectionStage = ElectionStage.GatheringBallots,
@@ -198,19 +108,5 @@ public class Issue186ConfidentialVoterTests : IDisposable
         };
         _context.People.Add(person);
         return person;
-    }
-
-    private TallyService CreateTallyService()
-    {
-        var localizer = new Mock<IStringLocalizer<TallyService>>();
-        localizer.Setup(l => l[It.IsAny<string>()])
-            .Returns((string key) => new LocalizedString(key, key));
-        return new TallyService(
-            _context,
-            Mock.Of<ILogger<TallyService>>(),
-            Mock.Of<ISignalRNotificationService>(),
-            Mock.Of<IComputerAssignmentService>(),
-            Mock.Of<IOnlineVoterPresenceService>(),
-            localizer.Object);
     }
 }

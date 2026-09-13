@@ -11,7 +11,7 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [election-state.md](election-state.md) — teller coordination and high-consequence state transitions
 - [online-ballots.md](online-ballots.md) - Draft autosave vs Submitted, online acceptance (pending until Accept-all), reserved Online/Imported locations, monitor close countdown, anonymous ballot-page sessions, and random name resolution
 - [kiosk.md](kiosk.md) — kiosk as teller-minted 15-minute codes on a shared browser; not mint-on-read
-- [people.md](people.md) - person fields; AgeGroup removed (eligibility is V01/X05); cannot-vote lock after accepted ballot; guest Can Add People / Name not in the List; Confidential X is a named person plus Eligible Voters override
+- [people.md](people.md) - person fields; AgeGroup removed (eligibility is V01/X05); cannot-vote lock after accepted ballot; guest Can Add People / Name not in the List; Confidential X is a named ordinary person
 - [front-desk.md](front-desk.md) - Ballot Not Received filter; method codes (P not I); pending-online withdraw on method switch; Roll Call / envelope pages not in v4
 - [people-import.md](people-import.md) — three-action import pipeline (not a Next/Previous wizard)
 - [sms-eligibility.md](sms-eligibility.md) — reject reserved/fictional/malformed phones before paid SMS/voice/WhatsApp; OnlineVoter.SmsStatus; ensure phone row on Person write; person detail phone status and recent SmsLog; Twilio callback auto-learn and delivered OK; send-side SmsLog + StatusCallback; teller manual SmsStatus; Front Desk / people list SMS hint

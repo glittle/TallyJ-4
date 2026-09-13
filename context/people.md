@@ -65,10 +65,12 @@ v4 already had `BallotAddPersonPanel` (U01 / U02 / create person). The missing p
 ## Confidential voters are ordinary people named Confidential X
 
 **Status:** active  
-**Evidence:** confirmed (issue #186; no Confidential feature in v3 code)  
-**Source:** v3 convention (Add New Person + Front Desk + Analyze SaveManual Eligible Voters)  
+**Evidence:** confirmed (Glen product correction on #186 / PR #334; no Confidential feature in v3 code)  
+**Source:** v3 convention (Add New Person + Front Desk check-in)  
 **Revisit when:** a jurisdiction asks for a first-class anonymous-voter type
 
-There is no Confidential person type. Tellers add `Confidential 1`, `Confidential 2`, and so on as normal eligible people, check them in, and if the listed eligible count should stay as it was, they override **Eligible Voters** on Analyze (`ResultType` `M`). See [election-analysis.md](election-analysis.md).
+There is no Confidential person type and no Analyze step for them. Tellers add `Confidential 1`, `Confidential 2`, and so on as normal eligible people and check them in. Calculated Eligible Voters and In Person go up the same as for any other person. Analyze does not mention confidential.
 
 **Rejected alternative:** an Add Confidential button or auto-numbered Confidential N. Rejected — v3 never had that product.
+
+**Rejected alternative:** override Eligible Voters on Analyze so the listed count stays as it was. Rejected — adding the person is supposed to increase the calculated eligible count.
