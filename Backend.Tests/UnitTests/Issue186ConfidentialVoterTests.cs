@@ -113,6 +113,40 @@ public class Issue186ConfidentialVoterTests : IDisposable
     }
 
     [Fact]
+    public async Task SaveManualCounts_WhenPriorFinalExists_PanelFinalUsesNewManual()
+    {
+        var election = SeedElection();
+        SeedPerson(election.ElectionGuid, "Ada", "List", canVote: true);
+        SeedPerson(election.ElectionGuid, "Confidential 1", "", canVote: true);
+        _context.ResultSummaries.AddRange(
+            new ResultSummary
+            {
+                ElectionGuid = election.ElectionGuid,
+                ResultType = "C",
+                NumEligibleToVote = 2
+            },
+            new ResultSummary
+            {
+                ElectionGuid = election.ElectionGuid,
+                ResultType = "F",
+                NumEligibleToVote = 2
+            });
+        await _context.SaveChangesAsync();
+
+        var saved = await CreateTallyService().SaveManualCountsAsync(
+            election.ElectionGuid,
+            new AnalyzeCountRowDto { NumEligibleToVote = 1 });
+
+        Assert.Equal(1, saved.Manual.NumEligibleToVote);
+        Assert.Equal(1, saved.Final.NumEligibleToVote);
+        Assert.Equal(2, saved.Calculated.NumEligibleToVote);
+
+        var storedFinal = _context.ResultSummaries.Single(rs =>
+            rs.ElectionGuid == election.ElectionGuid && rs.ResultType == "F");
+        Assert.Equal(2, storedFinal.NumEligibleToVote);
+    }
+
+    [Fact]
     public async Task CheckInConfidential1_CountsAsInPerson()
     {
         var election = SeedElection();

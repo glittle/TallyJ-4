@@ -15,7 +15,8 @@ public partial class TallyService
     /// <summary>
     /// v3 Analyze count table. Calculated is the stored C row, or a live
     /// people-count when Analyze has not run yet. Manual nulls mean no override.
-    /// Final is F when present, otherwise Manual ?? Calculated.
+    /// Final for this panel is always Manual ?? Calculated so Save Values is
+    /// visible before the next Calculate rewrites stored F.
     /// </summary>
     public async Task<AnalyzeCountSummariesDto> GetAnalyzeCountSummariesAsync(Guid electionGuid)
     {
@@ -34,22 +35,18 @@ public partial class TallyService
 
         var calculated = summaries.FirstOrDefault(rs => rs.ResultType == ResultTypeCalculated);
         var manual = summaries.FirstOrDefault(rs => rs.ResultType == ResultTypeManual);
-        var final = summaries.FirstOrDefault(rs => rs.ResultType == ResultTypeFinal);
 
         var calculatedRow = calculated != null
             ? ToCountRow(calculated)
             : await LiveCalculatedCountsAsync(electionGuid);
 
         var manualRow = ToCountRow(manual);
-        var finalRow = final != null
-            ? ToCountRow(final)
-            : CombineManualOverCalculated(calculatedRow, manualRow);
 
         return new AnalyzeCountSummariesDto
         {
             Calculated = calculatedRow,
             Manual = manualRow,
-            Final = finalRow
+            Final = CombineManualOverCalculated(calculatedRow, manualRow)
         };
     }
 

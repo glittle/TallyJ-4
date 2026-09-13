@@ -327,6 +327,12 @@ public class ResultsController : ControllerBase
         }
     }
 
+    /// <summary>
+    /// Saves tie-breaking vote counts for an election.
+    /// </summary>
+    /// <param name="electionGuid">The GUID of the election.</param>
+    /// <param name="request">The tie counts request data.</param>
+    /// <returns>The response indicating the result of saving tie counts.</returns>
     [HttpPost("election/{electionGuid:guid}/ties/save")]
     public async Task<ActionResult<SaveTieCountsResponseDto>> SaveTieCounts(Guid electionGuid, [FromBody] SaveTieCountsRequestDto request)
     {

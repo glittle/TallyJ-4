@@ -163,6 +163,34 @@ public class Issue186NameNotInTheListTests : IDisposable
         Assert.Equal("Newname", person.LastName);
     }
 
+    [Fact]
+    public async Task IsTellerWithoutAccessCode_WhenGuestAddDisabled_Succeeds()
+    {
+        var election = SeedElection(guestCanAdd: false);
+        var accessor = new Mock<IHttpContextAccessor>();
+        var identity = new ClaimsIdentity("Local");
+        identity.AddClaim(new Claim(GuestTellerClaims.IsTellerClaimType, "true"));
+        identity.AddClaim(new Claim(GuestTellerClaims.AuthMethodClaimType, "Local"));
+        accessor.Setup(a => a.HttpContext).Returns(new DefaultHttpContext
+        {
+            User = new ClaimsPrincipal(identity)
+        });
+        var service = new PeopleService(
+            _context,
+            Mock.Of<ILogger<PeopleService>>(),
+            Mock.Of<ISignalRNotificationService>(),
+            accessor.Object);
+
+        var person = await service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = election.ElectionGuid,
+            LastName = "Newname",
+            FirstName = "Pat"
+        });
+
+        Assert.Equal("Newname", person.LastName);
+    }
+
     private Election SeedElection(bool guestCanAdd = false)
     {
         var election = new Election
@@ -227,6 +255,9 @@ public class Issue186NameNotInTheListTests : IDisposable
         if (guestTeller)
         {
             identity.AddClaim(new Claim(GuestTellerClaims.IsTellerClaimType, "true"));
+            identity.AddClaim(new Claim(
+                GuestTellerClaims.AuthMethodClaimType,
+                GuestTellerClaims.AccessCodeAuthMethod));
         }
 
         accessor.Setup(a => a.HttpContext).Returns(new DefaultHttpContext
