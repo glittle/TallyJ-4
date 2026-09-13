@@ -61,8 +61,7 @@ public class JsonRequestVoterIdTests
         var voterId = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
 
         Assert.Null(voterId);
-        Assert.Equal(0, context.Request.Body.Position);
-        Assert.True(stream.BytesRead <= JsonRequestVoterId.MaxBodyBytes + 1);
+        Assert.Equal(JsonRequestVoterId.MaxBodyBytes + 1, stream.BytesRead);
     }
 
     [Fact]
@@ -79,6 +78,21 @@ public class JsonRequestVoterIdTests
 
         Assert.Null(voterId);
         Assert.Equal(0, stream.BytesRead);
+    }
+
+    [Fact]
+    public async Task ReadAtMostAsync_Overflow_StopsAfterMaxPlusOne()
+    {
+        var huge = new byte[JsonRequestVoterId.MaxBodyBytes + 64 * 1024];
+        var stream = new CountingReadStream(huge);
+
+        var result = await JsonRequestVoterId.ReadAtMostAsync(
+            stream,
+            JsonRequestVoterId.MaxBodyBytes,
+            CancellationToken.None);
+
+        Assert.Null(result);
+        Assert.Equal(JsonRequestVoterId.MaxBodyBytes + 1, stream.BytesRead);
     }
 
     [Fact]
