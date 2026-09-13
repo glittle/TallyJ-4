@@ -22,8 +22,16 @@ public static class OnlineVoterWhatsAppStatus
     public const string CheckFailed = "check-failed";
 
     /// <summary>
-    /// WhatsApp send is allowed when status is unset (not yet checked) or explicitly OK.
+    /// Verify-code WhatsApp send is allowed when status is unset (not yet checked) or explicitly OK.
     /// </summary>
     public static bool AllowsSend(string? whatsAppStatus) =>
         whatsAppStatus is null || whatsAppStatus == Ok;
+
+    /// <summary>
+    /// Head-teller notify send is allowed only when status is explicitly OK.
+    /// Unchecked (null), no-wa, check-failed, and any other reason are skipped.
+    /// Does not consult <see cref="OnlineVoterSmsStatus"/>.
+    /// </summary>
+    public static bool AllowsNotify(string? whatsAppStatus) =>
+        whatsAppStatus == Ok;
 }

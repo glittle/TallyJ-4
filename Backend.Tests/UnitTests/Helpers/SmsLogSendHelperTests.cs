@@ -22,6 +22,25 @@ public class SmsLogSendHelperTests
     }
 
     [Fact]
+    public void TryCreate_NotifySend_SetsElectionAndPerson()
+    {
+        var electionGuid = Guid.NewGuid();
+        var personGuid = Guid.NewGuid();
+
+        var log = SmsLogSendHelper.TryCreate(
+            "WA123",
+            "+14168972671",
+            lastStatus: null,
+            electionGuid,
+            personGuid);
+
+        Assert.NotNull(log);
+        Assert.Equal(electionGuid, log.ElectionGuid);
+        Assert.Equal(personGuid, log.PersonGuid);
+        Assert.Equal(SmsLogSendHelper.DefaultLastStatus, log.LastStatus);
+    }
+
+    [Fact]
     public void TryCreate_ProviderStatus_Used()
     {
         var log = SmsLogSendHelper.TryCreate("SMabc", "+14168972671", "queued");

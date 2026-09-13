@@ -1,4 +1,5 @@
 using Backend.DTOs.People;
+using Backend.Enumerations;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -15,16 +16,22 @@ namespace Backend.Controllers;
 public class PeopleController : ControllerBase
 {
     private readonly IPeopleService _peopleService;
+    private readonly IWhatsAppNotifyQueue _whatsAppNotifyQueue;
     private readonly ILogger<PeopleController> _logger;
 
     /// <summary>
     /// Initializes a new instance of the PeopleController.
     /// </summary>
     /// <param name="peopleService">The people service for person operations.</param>
+    /// <param name="whatsAppNotifyQueue">Head-teller WhatsApp notify queue.</param>
     /// <param name="logger">The logger for recording operations.</param>
-    public PeopleController(IPeopleService peopleService, ILogger<PeopleController> logger)
+    public PeopleController(
+        IPeopleService peopleService,
+        IWhatsAppNotifyQueue whatsAppNotifyQueue,
+        ILogger<PeopleController> logger)
     {
         _peopleService = peopleService;
+        _whatsAppNotifyQueue = whatsAppNotifyQueue;
         _logger = logger;
     }
 
@@ -320,6 +327,72 @@ public class PeopleController : ControllerBase
         {
             return BadRequest(ApiResponse<CheckSelectedWhatsAppResultDto>.ErrorResponse(ex.Message));
         }
+    }
+
+    /// <summary>
+    /// Queue a WhatsApp notify to selected known-OK phone numbers in this
+    /// election (v3 <c>SendHeadTellerMessage</c>). Same <c>[Authorize]</c> as
+    /// other People writes. Election-scoped; max
+    /// <see cref="StartWhatsAppNotifyDto.MaxSelectedPeople"/>. Does not convert
+    /// a non-P occupant. Does not use <c>SmsStatus</c> as the allow rule.
+    /// </summary>
+    [HttpPost("{electionGuid}/notifyWhatsApp")]
+    public async Task<ActionResult<ApiResponse<WhatsAppNotifyStatusDto>>> NotifyWhatsApp(
+        Guid electionGuid,
+        StartWhatsAppNotifyDto dto,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _whatsAppNotifyQueue.StartAsync(
+                electionGuid,
+                dto.PersonGuids,
+                cancellationToken);
+
+            return Ok(ApiResponse<WhatsAppNotifyStatusDto>.SuccessResponse(result));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<WhatsAppNotifyStatusDto>.ErrorResponse(ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Abort the active WhatsApp notify queue for this election (or the given
+    /// token). Already-sent messages stay sent.
+    /// </summary>
+    [HttpPost("{electionGuid}/abortWhatsAppNotify")]
+    public ActionResult<ApiResponse<WhatsAppNotifyStatusDto>> AbortWhatsAppNotify(
+        Guid electionGuid,
+        AbortWhatsAppNotifyDto? dto)
+    {
+        var result = _whatsAppNotifyQueue.Abort(electionGuid, dto?.QueueToken);
+        if (result == null)
+        {
+            return NotFound(ApiResponse<WhatsAppNotifyStatusDto>.ErrorResponse(
+                PeopleMessageKeys.WhatsAppNotifyNotFound));
+        }
+
+        return Ok(ApiResponse<WhatsAppNotifyStatusDto>.SuccessResponse(result));
+    }
+
+    /// <summary>
+    /// Latest WhatsApp notify run for this election (or the given token).
+    /// Poll for sent / skipped / failed / cancelled. Not live SignalR.
+    /// </summary>
+    [HttpGet("{electionGuid}/whatsAppNotifyStatus")]
+    public ActionResult<ApiResponse<WhatsAppNotifyStatusDto>> GetWhatsAppNotifyStatus(
+        Guid electionGuid,
+        [FromQuery] string? queueToken)
+    {
+        var result = _whatsAppNotifyQueue.GetStatus(electionGuid, queueToken);
+        if (result == null)
+        {
+            return NotFound(ApiResponse<WhatsAppNotifyStatusDto>.ErrorResponse(
+                PeopleMessageKeys.WhatsAppNotifyNotFound));
+        }
+
+        return Ok(ApiResponse<WhatsAppNotifyStatusDto>.SuccessResponse(result));
     }
 }
 

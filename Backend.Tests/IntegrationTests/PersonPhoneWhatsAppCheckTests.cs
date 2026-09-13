@@ -76,6 +76,42 @@ public class PersonPhoneWhatsAppCheckTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task NotifyWhatsApp_Anonymous_Unauthorized()
+    {
+        var response = await PostJsonAsync(
+            $"/api/People/{Guid.NewGuid()}/notifyWhatsApp",
+            new StartWhatsAppNotifyDto { PersonGuids = [Guid.NewGuid()] });
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task AbortWhatsAppNotify_Anonymous_Unauthorized()
+    {
+        var response = await PostJsonAsync(
+            $"/api/People/{Guid.NewGuid()}/abortWhatsAppNotify",
+            new AbortWhatsAppNotifyDto());
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task NotifyWhatsApp_OverMax_BadRequest()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var dto = new StartWhatsAppNotifyDto
+        {
+            PersonGuids = Enumerable.Range(0, StartWhatsAppNotifyDto.MaxSelectedPeople + 1)
+                .Select(_ => Guid.NewGuid())
+                .ToList()
+        };
+        var response = await PostJsonAsync($"/api/People/{Guid.NewGuid()}/notifyWhatsApp", dto);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
     public async Task CheckWhatsAppSelected_NotConfigured_DoesNotPersist()
     {
         var token = await GetAuthTokenAsync();

@@ -43,9 +43,29 @@ public static class PeopleMessageKeys
     public const string PhoneWhatsAppNotConfigured = "people.phoneOnlineVoter.whatsAppNotConfigured";
 
     /// <summary>
-    /// Check-selected list is longer than the per-request bound.
+    /// Check-selected or notify-start list is longer than the per-request bound.
     /// </summary>
     public const string PhoneWhatsAppTooMany = "people.phoneOnlineVoter.whatsAppTooMany";
+
+    /// <summary>
+    /// Election has no <c>SmsText</c> for the head-teller WhatsApp notify body.
+    /// </summary>
+    public const string WhatsAppNotifyTextNotSet = "people.notifyWhatsApp.textNotSet";
+
+    /// <summary>
+    /// A notify queue is already running for this election.
+    /// </summary>
+    public const string WhatsAppNotifyAlreadyRunning = "people.notifyWhatsApp.alreadyRunning";
+
+    /// <summary>
+    /// Election GUID on the notify URL was not found.
+    /// </summary>
+    public const string WhatsAppNotifyElectionNotFound = "people.notifyWhatsApp.electionNotFound";
+
+    /// <summary>
+    /// No notify run (or matching token) for this election.
+    /// </summary>
+    public const string WhatsAppNotifyNotFound = "people.notifyWhatsApp.notFound";
 
     /// <summary>
     /// Guest teller tried to add a person while GuestTellersCanAddPeople is off (v3 GA).

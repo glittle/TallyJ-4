@@ -22,4 +22,14 @@ public class OnlineVoterWhatsAppStatusTests
     {
         Assert.False(OnlineVoterWhatsAppStatus.AllowsSend(whatsAppStatus));
     }
+
+    [Fact]
+    public void AllowsNotify_OnlyExactOk()
+    {
+        Assert.True(OnlineVoterWhatsAppStatus.AllowsNotify("OK"));
+        Assert.False(OnlineVoterWhatsAppStatus.AllowsNotify(null));
+        Assert.False(OnlineVoterWhatsAppStatus.AllowsNotify("no-wa"));
+        Assert.False(OnlineVoterWhatsAppStatus.AllowsNotify("check-failed"));
+        Assert.False(OnlineVoterWhatsAppStatus.AllowsNotify("ok"));
+    }
 }

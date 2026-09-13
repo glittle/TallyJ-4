@@ -16,10 +16,16 @@ public static class SmsLogSendHelper
 
     /// <summary>
     /// A new log row for a successful send, or null when SID or phone is missing.
-    /// <see cref="SmsLog.ElectionGuid"/> and <see cref="SmsLog.PersonGuid"/> stay null —
-    /// request-code SMS is pre-election (person detail looks up by phone).
+    /// Request-code SMS leaves <see cref="SmsLog.ElectionGuid"/> and
+    /// <see cref="SmsLog.PersonGuid"/> null (pre-election). Head-teller notify
+    /// passes those when the send is election-scoped.
     /// </summary>
-    public static SmsLog? TryCreate(string? sid, string? phone, string? lastStatus)
+    public static SmsLog? TryCreate(
+        string? sid,
+        string? phone,
+        string? lastStatus,
+        Guid? electionGuid = null,
+        Guid? personGuid = null)
     {
         if (string.IsNullOrWhiteSpace(sid) || string.IsNullOrWhiteSpace(phone))
         {
@@ -37,7 +43,9 @@ public static class SmsLogSendHelper
             Phone = Clip(phone, 50),
             SentDate = utcNow,
             LastDate = utcNow,
-            LastStatus = status
+            LastStatus = status,
+            ElectionGuid = electionGuid,
+            PersonGuid = personGuid
         };
     }
 

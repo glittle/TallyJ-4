@@ -278,7 +278,7 @@ Batch lookup is `FindPhoneOnlineVotersAsync` (P rows only) so Front Desk / peopl
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #255 (maintainer); provider comment that v4 stays on GreenAPI  
-**Revisit when:** head-teller notify / abort queue, or Front Desk WhatsApp column
+**Revisit when:** Front Desk / people-list WhatsApp column, or notify “Has WhatsApp” filter
 
 WhatsApp stays one voter-facing channel. Backend stays on **GreenAPI** (`checkWhatsapp` + existing `sendMessage`). Meta Cloud API and Twilio WhatsApp are out. Presence is stored on **OnlineVoter**, not Person: `WhatsAppStatus` `string?` max 50, non-unicode (`varchar(50)`).
 
@@ -309,7 +309,7 @@ Person detail shows unchecked / OK / reason from the P-row lookup, same pattern 
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #255 leftover after #339; this slice’s check-selected contract  
-**Revisit when:** head-teller notify queue / abort, or a people-list WhatsApp column
+**Revisit when:** Front Desk / people-list WhatsApp column, or notify “Has WhatsApp” filter
 
 `CheckMultipleWhatsAppAsync` checks a **selected** list of person GUIDs in **one election**. Same teller `[Authorize]` as other People writes. Same P-row gate as one-phone check: persist only when `VoterId == Person.Phone` and `VoterIdType == "P"`. A non-P occupant is skipped, not converted. No phone is skipped. A GUID that is not in that election is ignored (`skipped-other-election`). GreenAPI is still `IGreenApiWhatsAppClient.CheckWhatsAppAsync` (production POSTs; tests mock). When GreenAPI is not configured, nothing is persisted.
 
@@ -325,7 +325,30 @@ Selected people are checked even if they already have a status — the teller ch
 
 **Rejected alternative:** a dedicated abort-queue endpoint (v3 notify abort). Rejected for this slice — cancel is the HTTP request token only.
 
-**Not in this slice:** head-teller notify send + jitter + abort queue, Front Desk / people-list WhatsApp column, notify “Has WhatsApp” filter, SignalR #229, #254 SMS leftovers. #255 stays open.
+**Not in this slice (at the time):** head-teller notify send + jitter + abort queue (now landed; see below), Front Desk / people-list WhatsApp column, notify “Has WhatsApp” filter, SignalR #229, #254 SMS leftovers. #255 stays open.
+
+## Head-teller WhatsApp notify queue (third slice of #255)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #255 leftover after #340; v3 `SendHeadTellerMessage` / `AbortQueue`; this slice’s send rule  
+**Revisit when:** Front Desk / people-list WhatsApp column, or notify “Has WhatsApp” filter
+
+v4 has no Setup/Notify page and no email/SMS head-teller blast. The existing People list (same `PeopleTable` as check-selected) is the notify surface — do not invent a second notify page. Message body is the election’s existing `SmsText` (edited on Configure this Election), with v3 placeholders `{PersonName}`, `{FirstName}`, `{VoterContact}`, `{hostSite}`.
+
+Start queues selected person GUIDs in **one election**. Send only when the phone P row is `VoterId == Person.Phone` and `VoterIdType == "P"` **and** `WhatsAppStatus == "OK"`. Skip unchecked (null), `no-wa`, `check-failed`, other non-OK reasons, no-phone, and non-P (do not convert). A GUID not in that election is ignored. **`SmsStatus` is not the WhatsApp allow rule** — a landline/blocked SMS status still sends if WhatsApp is OK.
+
+Background sequential GreenAPI `sendMessage` (same client/path as verify-code). 3–15s jitter between provider calls (injectable delay in tests). Abort token stops remaining sends; already-sent stay sent. Successful sends persist `SmsLog` via `SmsLogSendHelper` with `ElectionGuid` + `PersonGuid` (verify-code logs still leave those null). Bound to 100 selected GUIDs. Same teller `[Authorize]` as other People writes — `HeadTellerAccess` is registered but unused on Setup/People writes; SuperAdmin is not a people-edit role.
+
+No live SignalR progress (#229). The UI polls a per-run summary (sent / skipped / failed / cancelled). Production POSTs when GreenAPI is configured; tests mock HTTP / sender.
+
+**Rejected alternative:** a new Setup/Notify page (v3 `Notify.cshtml`). Rejected — #340 already put selection on the People list; this slice adds send/abort there.
+
+**Rejected alternative:** reuse `AllowsSend` (null or OK) for notify. Rejected — notify is only known-OK numbers; unchecked must be skipped until check-selected has run.
+
+**Rejected alternative:** treat `SmsStatus` as the WhatsApp allow rule. Rejected — the fields stay independent.
+
+**Not in this slice:** Front Desk / people-list WhatsApp column, notify “Has WhatsApp” filter, email/SMS blast, SignalR #229, #254 SMS leftovers. #255 stays open.
 
 ## Related
 
