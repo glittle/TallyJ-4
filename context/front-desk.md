@@ -60,6 +60,10 @@ Header stats and `IsCheckedIn` used `RegistrationTime` only. Accept-all does not
 
 **Rejected alternative:** leave Front Desk on `RegistrationTime` and only document the difference. Rejected — #185 asked the three surfaces to match.
 
+Unregister (and other desk-registration undo) stays on `RegistrationTime`. Accept-all does not create a Front Desk registration, so the overlay must not offer Unregister for Processed-only rows.
+
+**Rejected alternative:** let Unregister clear Processed online. Rejected — `UnregisterVoterAsync` still requires `RegistrationTime`; online acceptance is not a desk check-in.
+
 ## Front Desk SMS column is the phone P-row hint
 
 **Status:** active  

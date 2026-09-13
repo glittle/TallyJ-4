@@ -2,6 +2,7 @@ using System.IO.Compression;
 using System.Text;
 using Microsoft.Extensions.Localization;
 using Moq;
+using Backend.DTOs.Reports;
 using Backend.Entities;
 using Backend.Helpers;
 using Backend.Services;
@@ -70,6 +71,64 @@ public class ReportDownloadAllTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task GetAllReportsZip_VotersByAreaCsv_IncludesNamedCustomMethodColumn()
+    {
+        SeedElection(customMethods: "Special1|Special2");
+        Context.Locations.Add(new Location
+        {
+            ElectionGuid = _electionGuid,
+            LocationGuid = Guid.NewGuid(),
+            Name = "Hall"
+        });
+        Context.People.Add(new Person
+        {
+            ElectionGuid = _electionGuid,
+            PersonGuid = Guid.NewGuid(),
+            LastName = "Custom",
+            FirstName = "One",
+            CanVote = true,
+            VotingMethod = "1",
+            Area = "North",
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        var (zipBytes, _) = await _service.GetAllReportsZipAsync(_electionGuid);
+        using var zip = new ZipArchive(new MemoryStream(zipBytes), ZipArchiveMode.Read);
+        var byArea = zip.GetEntry("VotersByArea.csv");
+        Assert.NotNull(byArea);
+        using var reader = new StreamReader(byArea!.Open(), Encoding.UTF8);
+        var csv = await reader.ReadToEndAsync();
+
+        Assert.Contains("Special1", csv);
+        Assert.Contains("Special2", csv);
+        var headerLine = csv.Split('\n').First(line => line.StartsWith("Area,"));
+        Assert.Contains("Called In,Special1,Special2,Online", headerLine);
+    }
+
+    [Fact]
+    public void WriteVotersByLocationCsv_IncludesNamedCustomMethodColumn()
+    {
+        using var writer = new StringWriter();
+        ReportCsvFormatter.Write(
+            writer,
+            "VotersByLocation",
+            "Voting Method by Venue",
+            new VotersByLocationReportDto
+            {
+                ElectionName = "CountCheck",
+                Custom1Name = "Special1",
+                Locations = [],
+                Total = new LocationRowDto { LocationName = "Total", Custom1 = 2 }
+            });
+
+        var csv = writer.ToString();
+        Assert.Contains("Special1", csv);
+        Assert.Contains("Called In,Special1,Online", csv);
+        Assert.Contains("2", csv);
+    }
+
+    [Fact]
     public async Task GetReportByCode_Unknown_Throws()
     {
         SeedElection();
@@ -79,7 +138,7 @@ public class ReportDownloadAllTests : ServiceTestBase
             _service.GetReportByCodeAsync(_electionGuid, "NotAReport"));
     }
 
-    private void SeedElection()
+    private void SeedElection(string? customMethods = null)
     {
         Context.Elections.Add(new Election
         {
@@ -88,6 +147,7 @@ public class ReportDownloadAllTests : ServiceTestBase
             ElectionType = "LSA",
             NumberToElect = 3,
             VotingMethods = "P,IM",
+            CustomMethods = customMethods,
             RowVersion = new byte[8]
         });
     }

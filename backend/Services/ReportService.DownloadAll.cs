@@ -165,14 +165,7 @@ internal static class ReportCsvFormatter
                 WriteVotersByArea(writer, byArea);
                 break;
             case VotersByLocationReportDto byLocation:
-                WriteRow(writer, "Election", byLocation.ElectionName);
-                WriteRow(writer, "Location", "Voters", "In Person", "Mailed In", "Dropped Off", "Called In", "Online", "Kiosk", "Imported");
-                foreach (var row in byLocation.Locations.Concat([byLocation.Total]))
-                {
-                    WriteRow(writer, row.LocationName, row.TotalVoters.ToString(), row.InPerson.ToString(),
-                        row.MailedIn.ToString(), row.DroppedOff.ToString(), row.CalledIn.ToString(),
-                        row.Online.ToString(), row.OnlineKiosk.ToString(), row.Imported.ToString());
-                }
+                WriteVotersByLocation(writer, byLocation);
                 break;
             case VotersByLocationAreaReportDto byLocArea:
                 WriteRow(writer, "Election", byLocArea.ElectionName);
@@ -270,9 +263,11 @@ internal static class ReportCsvFormatter
         WriteRow(writer, "Election", report.ElectionName);
         var headers = new List<string>
         {
-            "Area", "18+", "18-21", "Voted", "In Person", "Mailed In", "Dropped Off", "Called In",
-            "Online", "Kiosk"
+            "Area", "18+", "18-21", "Voted", "In Person", "Mailed In", "Dropped Off", "Called In"
         };
+        AppendNamedCustomHeaders(headers, report.Custom1Name, report.Custom2Name, report.Custom3Name);
+        headers.Add("Online");
+        headers.Add("Kiosk");
         if (report.ShowImported)
         {
             headers.Add("Imported");
@@ -290,16 +285,96 @@ internal static class ReportCsvFormatter
                 row.InPerson.ToString(),
                 row.MailedIn.ToString(),
                 row.DroppedOff.ToString(),
-                row.CalledIn.ToString(),
-                row.Online.ToString(),
-                row.OnlineKiosk.ToString()
+                row.CalledIn.ToString()
             };
+            AppendNamedCustomCells(cells, report.Custom1Name, row.Custom1, report.Custom2Name, row.Custom2,
+                report.Custom3Name, row.Custom3);
+            cells.Add(row.Online.ToString());
+            cells.Add(row.OnlineKiosk.ToString());
             if (report.ShowImported)
             {
                 cells.Add(row.Imported.ToString());
             }
 
             WriteRow(writer, cells.ToArray());
+        }
+    }
+
+    private static void WriteVotersByLocation(TextWriter writer, VotersByLocationReportDto report)
+    {
+        WriteRow(writer, "Election", report.ElectionName);
+        var headers = new List<string>
+        {
+            "Location", "Voters", "In Person", "Mailed In", "Dropped Off", "Called In"
+        };
+        AppendNamedCustomHeaders(headers, report.Custom1Name, report.Custom2Name, report.Custom3Name);
+        headers.AddRange(["Online", "Kiosk", "Imported"]);
+
+        WriteRow(writer, headers.ToArray());
+        foreach (var row in report.Locations.Concat([report.Total]))
+        {
+            var cells = new List<string>
+            {
+                row.LocationName,
+                row.TotalVoters.ToString(),
+                row.InPerson.ToString(),
+                row.MailedIn.ToString(),
+                row.DroppedOff.ToString(),
+                row.CalledIn.ToString()
+            };
+            AppendNamedCustomCells(cells, report.Custom1Name, row.Custom1, report.Custom2Name, row.Custom2,
+                report.Custom3Name, row.Custom3);
+            cells.Add(row.Online.ToString());
+            cells.Add(row.OnlineKiosk.ToString());
+            cells.Add(row.Imported.ToString());
+            WriteRow(writer, cells.ToArray());
+        }
+    }
+
+    private static void AppendNamedCustomHeaders(
+        List<string> headers,
+        string? custom1Name,
+        string? custom2Name,
+        string? custom3Name)
+    {
+        if (!string.IsNullOrEmpty(custom1Name))
+        {
+            headers.Add(custom1Name);
+        }
+
+        if (!string.IsNullOrEmpty(custom2Name))
+        {
+            headers.Add(custom2Name);
+        }
+
+        if (!string.IsNullOrEmpty(custom3Name))
+        {
+            headers.Add(custom3Name);
+        }
+    }
+
+    private static void AppendNamedCustomCells(
+        List<string> cells,
+        string? custom1Name,
+        int custom1,
+        string? custom2Name,
+        int custom2,
+        string? custom3Name,
+        int custom3)
+    {
+        if (!string.IsNullOrEmpty(custom1Name))
+        {
+            cells.Add(custom1.ToString());
+        }
+
+        if (!string.IsNullOrEmpty(custom2Name))
+        {
+            cells.Add(custom2.ToString());
+        }
+
+        if (!string.IsNullOrEmpty(custom3Name))
+        {
+            cells.Add(custom3.ToString());
         }
     }
 

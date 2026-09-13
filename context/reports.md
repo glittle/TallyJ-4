@@ -26,7 +26,7 @@ v3’s **Eligible and Voted by Area** table labeled the CanVote total **Adults**
 
 v3 had no “download all”. v4 already had print and a separate advanced export (`ReportExportService`) that is not this teller family.
 
-**Chosen:** `GET /api/Reports/{guid}/DownloadAll` returns a zip of one CSV per `GetAvailableReports` code. Same names and payloads as the on-screen reports.
+**Chosen:** `GET /api/Reports/{guid}/DownloadAll` returns a zip of one CSV per `GetAvailableReports` code. Same names and payloads as the on-screen reports, including Custom1/2/3 columns when those method names are set (same `v-if` rule as the Vue tables).
 
 **Rejected alternative:** a new report family or the advanced PDF/Excel export. Rejected — #185 asked to test download-all if missing, not invent another catalog.
 
