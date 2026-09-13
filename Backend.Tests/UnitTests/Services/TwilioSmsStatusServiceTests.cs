@@ -151,14 +151,125 @@ public class TwilioSmsStatusServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task Delivered_DoesNotSetSmsStatusToOk()
+    public async Task Delivered_UnknownSid_DoesNotSetOk_DoesNotInsertLog()
     {
         await SeedPhoneVoter(StoredPhone, smsStatus: null);
 
-        await _service.ProcessCallbackAsync("SMtest", "delivered", TwilioTo, errorCode: null);
+        await _service.ProcessCallbackAsync("SMmissing", "delivered", TwilioTo, errorCode: null);
+
+        Assert.Empty(await Context.SmsLogs.ToListAsync());
+        var row = await PhoneRow(StoredPhone);
+        Assert.Null(row.SmsStatus);
+    }
+
+    [Fact]
+    public async Task Delivered_ExistingSid_SetsOkOnPRow()
+    {
+        await SeedPhoneVoter(StoredPhone, smsStatus: null);
+        await SeedSmsLog("SMexisting");
+
+        await _service.ProcessCallbackAsync("SMexisting", "delivered", TwilioTo, errorCode: null);
+
+        var row = await PhoneRow(StoredPhone);
+        Assert.Equal(OnlineVoterSmsStatus.Ok, row.SmsStatus);
+        Assert.True(OnlineVoterSmsStatus.AllowsPaidSend(row.SmsStatus));
+    }
+
+    [Fact]
+    public async Task Delivered_ExistingSid_OverwritesManualBlock_AllowsPaidSend()
+    {
+        await SeedPhoneVoter(StoredPhone, smsStatus: "admin");
+        await SeedSmsLog("SMexisting");
+
+        await _service.ProcessCallbackAsync("SMexisting", "delivered", TwilioTo, errorCode: null);
+
+        var row = await PhoneRow(StoredPhone);
+        Assert.Equal(OnlineVoterSmsStatus.Ok, row.SmsStatus);
+        Assert.True(OnlineVoterSmsStatus.AllowsPaidSend(row.SmsStatus));
+    }
+
+    [Fact]
+    public async Task Delivered_ExistingSid_OverwritesTwilioBlock()
+    {
+        await SeedPhoneVoter(StoredPhone, smsStatus: "twilio-30003");
+        await SeedSmsLog("SMexisting");
+
+        await _service.ProcessCallbackAsync("SMexisting", "delivered", TwilioTo, errorCode: null);
+
+        var row = await PhoneRow(StoredPhone);
+        Assert.Equal(OnlineVoterSmsStatus.Ok, row.SmsStatus);
+    }
+
+    [Theory]
+    [InlineData("E")]
+    [InlineData("C")]
+    [InlineData("T")]
+    public async Task Delivered_ExistingSid_NonPOccupant_NotConverted(string voterIdType)
+    {
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = StoredPhone,
+            VoterIdType = voterIdType,
+            SmsStatus = "admin"
+        });
+        await SeedSmsLog("SMexisting");
+
+        await _service.ProcessCallbackAsync("SMexisting", "delivered", TwilioTo, errorCode: null);
+
+        var row = Assert.Single(await Context.OnlineVoters.ToListAsync());
+        Assert.Equal(voterIdType, row.VoterIdType);
+        Assert.Equal("admin", row.SmsStatus);
+        Assert.Single(await Context.SmsLogs.ToListAsync());
+    }
+
+    [Fact]
+    public async Task Delivered_ExistingSid_NoPRow_DoesNotInsertVoter()
+    {
+        await SeedSmsLog("SMexisting");
+
+        await _service.ProcessCallbackAsync("SMexisting", "delivered", TwilioTo, errorCode: null);
+
+        Assert.Empty(await Context.OnlineVoters.ToListAsync());
+        var log = Assert.Single(await Context.SmsLogs.ToListAsync());
+        Assert.Equal("delivered", log.LastStatus);
+    }
+
+    [Fact]
+    public async Task Failed_ExistingSid_DoesNotSetOk()
+    {
+        await SeedPhoneVoter(StoredPhone, smsStatus: null);
+        await SeedSmsLog("SMexisting");
+
+        await _service.ProcessCallbackAsync("SMexisting", "failed", TwilioTo, 30003);
+
+        var row = await PhoneRow(StoredPhone);
+        Assert.Equal("twilio-30003", row.SmsStatus);
+        Assert.False(OnlineVoterSmsStatus.AllowsPaidSend(row.SmsStatus));
+    }
+
+    [Fact]
+    public async Task Sent_ExistingSid_DoesNotSetOk()
+    {
+        await SeedPhoneVoter(StoredPhone, smsStatus: null);
+        await SeedSmsLog("SMexisting");
+
+        await _service.ProcessCallbackAsync("SMexisting", "sent", TwilioTo, errorCode: null);
 
         var row = await PhoneRow(StoredPhone);
         Assert.Null(row.SmsStatus);
+    }
+
+    [Fact]
+    public async Task Completed_ExistingCallSid_SetsOkOnPRow()
+    {
+        await SeedPhoneVoter(StoredPhone, smsStatus: null);
+        await SeedSmsLog("CAexisting");
+
+        await _service.ProcessCallbackAsync("CAexisting", "completed", TwilioTo, errorCode: null);
+
+        var row = await PhoneRow(StoredPhone);
+        Assert.Equal(OnlineVoterSmsStatus.Ok, row.SmsStatus);
+        Assert.True(OnlineVoterSmsStatus.AllowsPaidSend(row.SmsStatus));
     }
 
     [Fact]
@@ -223,6 +334,18 @@ public class TwilioSmsStatusServiceTests : ServiceTestBase
             VoterId = voterId,
             VoterIdType = OnlineVoterPhoneHelper.PhoneVoterIdType,
             SmsStatus = smsStatus
+        });
+        await Context.SaveChangesAsync();
+    }
+
+    private async Task SeedSmsLog(string sid)
+    {
+        Context.SmsLogs.Add(new SmsLog
+        {
+            SmsSid = sid,
+            Phone = StoredPhone,
+            SentDate = DateTimeOffset.Parse("2026-08-01T00:00:00Z"),
+            LastStatus = "sent"
         });
         await Context.SaveChangesAsync();
     }
