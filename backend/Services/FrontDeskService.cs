@@ -77,39 +77,32 @@ public class FrontDeskService : IFrontDeskService
             throw new InvalidOperationException("Person has already checked in");
         }
 
-        var onlineInfo = await LoadLatestOnlineVotingInfoAsync(electionGuid, person.PersonGuid);
         if (VotingMethodCodes.IsOnline(checkInDto.VotingMethod))
         {
             throw new InvalidOperationException(FrontDeskMessageKeys.OnlineIsVoterInitiated);
         }
 
-        if (onlineInfo != null && OnlineBallotStatus.IsProcessed(onlineInfo.Status))
+        var onlineInfo = await LoadLatestOnlineVotingInfoAsync(electionGuid, person.PersonGuid);
+        await ThrowIfOnlineBlocksCheckInAsync(onlineInfo);
+
+        if (_context.Database.IsRelational())
         {
-            throw new InvalidOperationException(FrontDeskMessageKeys.AlreadyAcceptedOnline);
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                await ApplyCheckInAndWithdrawAsync(person, checkInDto, onlineInfo);
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
-
-        if (onlineInfo != null && OnlineBallotStatus.IsProcessing(onlineInfo.Status))
+        else
         {
-            throw new InvalidOperationException(FrontDeskMessageKeys.AlreadyProcessingOnline);
+            await ApplyCheckInAndWithdrawAsync(person, checkInDto, onlineInfo);
         }
-
-        person.RegistrationTime = DateTimeOffset.UtcNow;
-        person.VotingMethod = checkInDto.VotingMethod;
-        person.VotingLocationGuid = checkInDto.VotingLocationGuid;
-
-        person.Teller1 = NormalizeTellerName(checkInDto.Teller1);
-        person.Teller2 = NormalizeTellerName(checkInDto.Teller2);
-
-        await AddRegistrationHistoryEntry(person, "CheckedIn", person.Teller1, person.Teller2);
-
-        if (VotingMethodCodes.IsRecordedOtherThanOnline(checkInDto.VotingMethod)
-            && onlineInfo != null
-            && OnlineBallotStatus.IsEditable(onlineInfo.Status))
-        {
-            WithdrawPendingOnlineBallot(person, onlineInfo);
-        }
-
-        await _context.SaveChangesAsync();
 
         _logger.LogInformation("Voter {PersonGuid} checked in for election {ElectionGuid} with envelope {EnvNum}",
             person.PersonGuid, electionGuid, person.EnvNum);
@@ -414,9 +407,114 @@ public class FrontDeskService : IFrontDeskService
     }
 
     /// <summary>
+    /// Processing / Processed must refuse even when this context still tracks
+    /// a stale Submitted row (Accept-all claimed or finished on another
+    /// context). Relational reads Status from the database, not the tracker.
+    /// </summary>
+    private async Task ThrowIfOnlineBlocksCheckInAsync(OnlineVotingInfo? onlineInfo)
+    {
+        if (onlineInfo == null)
+        {
+            return;
+        }
+
+        var status = onlineInfo.Status;
+        if (_context.Database.IsRelational())
+        {
+            var dbStatus = await _context.OnlineVotingInfos
+                .AsNoTracking()
+                .Where(o => o.RowId == onlineInfo.RowId)
+                .Select(o => o.Status)
+                .FirstOrDefaultAsync();
+            if (dbStatus == null)
+            {
+                return;
+            }
+
+            status = dbStatus;
+        }
+
+        if (OnlineBallotStatus.IsProcessed(status))
+        {
+            throw new InvalidOperationException(FrontDeskMessageKeys.AlreadyAcceptedOnline);
+        }
+
+        if (OnlineBallotStatus.IsProcessing(status))
+        {
+            throw new InvalidOperationException(FrontDeskMessageKeys.AlreadyProcessingOnline);
+        }
+    }
+
+    private async Task ApplyCheckInAndWithdrawAsync(
+        Person person,
+        CheckInVoterDto checkInDto,
+        OnlineVotingInfo? onlineInfo)
+    {
+        person.RegistrationTime = DateTimeOffset.UtcNow;
+        person.VotingMethod = checkInDto.VotingMethod;
+        person.VotingLocationGuid = checkInDto.VotingLocationGuid;
+
+        person.Teller1 = NormalizeTellerName(checkInDto.Teller1);
+        person.Teller2 = NormalizeTellerName(checkInDto.Teller2);
+
+        await AddRegistrationHistoryEntry(person, "CheckedIn", person.Teller1, person.Teller2);
+
+        if (VotingMethodCodes.IsRecordedOtherThanOnline(checkInDto.VotingMethod)
+            && onlineInfo != null)
+        {
+            await WithdrawPendingOnlineIfStillEditableAsync(person, onlineInfo);
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    /// <summary>
     /// Discard a Draft or Submitted online row after Front Desk records a
     /// different method. The row is removed; Unregister and later method
     /// changes do not restore it. Processed / Processing rows are never withdrawn.
+    /// Relational delete is a compare-and-swap on Status so a concurrent
+    /// Accept-all claim cannot be removed while we also write a desk method.
+    /// </summary>
+    private async Task WithdrawPendingOnlineIfStillEditableAsync(
+        Person person,
+        OnlineVotingInfo onlineInfo)
+    {
+        if (_context.Database.IsRelational())
+        {
+            var deleted = await _context.OnlineVotingInfos
+                .Where(o => o.RowId == onlineInfo.RowId
+                            && (o.Status == OnlineBallotStatus.Draft
+                                || o.Status == OnlineBallotStatus.Submitted))
+                .ExecuteDeleteAsync();
+            _context.Entry(onlineInfo).State = EntityState.Detached;
+
+            if (deleted == 0)
+            {
+                await ThrowIfOnlineBlocksCheckInAsync(onlineInfo);
+                person.HasOnlineBallot = false;
+                return;
+            }
+
+            person.HasOnlineBallot = false;
+            _logger.LogInformation(
+                "Withdrew pending online ballot for person {PersonGuid}",
+                person.PersonGuid);
+            return;
+        }
+
+        if (!OnlineBallotStatus.IsEditable(onlineInfo.Status))
+        {
+            await ThrowIfOnlineBlocksCheckInAsync(onlineInfo);
+            return;
+        }
+
+        WithdrawPendingOnlineBallot(person, onlineInfo);
+    }
+
+    /// <summary>
+    /// Discard a Draft or Submitted online row after Front Desk records a
+    /// different method. In-memory tests use this path; relational check-in
+    /// deletes with a Status filter instead.
     /// </summary>
     private void WithdrawPendingOnlineBallot(Person person, OnlineVotingInfo onlineInfo)
     {

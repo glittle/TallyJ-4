@@ -97,6 +97,25 @@ Leaving Finalized (confirmed FullTeller stage change) is what reopens those writ
 
 **Reason:** one write lock for people/ballot mutations, including changing how someone registered.
 
+## Accept-all vs Front Desk same-moment race
+
+**Status:** active  
+**Evidence:** confirmed (issue #336 second slice; SQLite `Issue336AcceptAllFrontDeskRaceTests`)  
+**Source:** issue #336 leftover after #337  
+**Revisit when:** Accept-all or check-in grows a third writer of `OnlineVotingInfo.Status`
+
+Committed order already had one counted vote: check-in first withdraws Draft/Submitted and Accept-all skips; Accept-all first to **Processing** / **Processed** and Front Desk refuses (`alreadyProcessingOnline` / `alreadyAcceptedOnline`); pass 2 drops the row if a desk method is already recorded; withdraw + Unregister leaves Accept-all nothing.
+
+The leftover hole was a Front Desk `DbContext` that had already tracked **Submitted**. EF identity resolution keeps that Status after another context claims **Processing** or writes **Processed**. Check-in then deleted the claimed/processed row and wrote a desk method — In Person plus an Online ballot.
+
+**Chosen:** no new product lock. Check-in re-reads Status from the database (not the tracker) and withdraws only with `DELETE … WHERE Status IN (Draft, Submitted)`. 0 rows and the row is now Processing/Processed still throws the existing keys, so a desk method is not recorded on top of a newly Processed online ballot. Accept-all is unchanged.
+
+**Rejected alternative:** a new election-scoped lock that serializes Accept-all with Front Desk. Rejected — #336 said not to invent a product lock; Status compare-and-swap on the existing withdraw/claim is enough.
+
+**Rejected alternative:** tests-only and leave the stale-context write. Rejected — SQLite proved check-in would record a second counted method after Accept-all had already claimed or processed.
+
+**Reason:** one counted vote per person. The desk method wins only while the online row is still Draft or Submitted.
+
 ## Front Desk SMS column is the phone P-row hint
 
 **Status:** active  
