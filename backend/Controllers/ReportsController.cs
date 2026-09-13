@@ -170,4 +170,11 @@ public class ReportsController : ControllerBase
         var report = await _reportService.GetVoterEmailsAsync(electionGuid);
         return Ok(report);
     }
+
+    [HttpGet("{electionGuid:guid}/DownloadAll")]
+    public async Task<IActionResult> DownloadAll(Guid electionGuid)
+    {
+        var (content, fileName) = await _reportService.GetAllReportsZipAsync(electionGuid);
+        return File(content, "application/zip", fileName);
+    }
 }

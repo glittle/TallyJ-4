@@ -218,6 +218,7 @@ export interface VotersByAreaReport {
   custom1Name?: string;
   custom2Name?: string;
   custom3Name?: string;
+  showImported: boolean;
   areas: AreaRow[];
   total: AreaRow;
 }
@@ -225,6 +226,8 @@ export interface VotersByAreaReport {
 export interface AreaRow {
   areaName: string;
   totalEligible: number;
+  eligible18Plus: number;
+  eligible18To21: number;
   voted: number;
   inPerson: number;
   mailedIn: number;

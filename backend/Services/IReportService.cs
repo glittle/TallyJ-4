@@ -23,4 +23,5 @@ public interface IReportService
     Task<ChangedPeopleReportDto> GetChangedPeopleAsync(Guid electionGuid);
     Task<AllNonEligibleReportDto> GetAllNonEligibleAsync(Guid electionGuid);
     Task<VoterEmailsReportDto> GetVoterEmailsAsync(Guid electionGuid);
+    Task<(byte[] Content, string FileName)> GetAllReportsZipAsync(Guid electionGuid);
 }

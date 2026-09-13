@@ -286,6 +286,72 @@ public class FrontDeskServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task GetStatsAsync_ProcessedOnlineWithoutRegistrationTime_CountsAsCheckedIn()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var paper = SeedEligiblePerson();
+        paper.VotingMethod = "P";
+        paper.RegistrationTime = DateTimeOffset.UtcNow;
+        var online = SeedEligiblePerson();
+        Context.OnlineVotingInfos.Add(new OnlineVotingInfo
+        {
+            ElectionGuid = _electionGuid,
+            PersonGuid = online.PersonGuid,
+            Status = OnlineBallotStatus.Processed,
+            WhenStatus = DateTimeOffset.UtcNow
+        });
+        SeedEligiblePerson();
+        await Context.SaveChangesAsync();
+
+        var stats = await _service.GetStatsAsync(_electionGuid);
+
+        Assert.Equal(3, stats.TotalEligible);
+        Assert.Equal(2, stats.CheckedIn);
+        Assert.Equal(1, stats.NotYetCheckedIn);
+    }
+
+    [Fact]
+    public async Task GetEligibleVotersAsync_ProcessedOnline_IsCheckedIn()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var online = SeedEligiblePerson();
+        Context.OnlineVotingInfos.Add(new OnlineVotingInfo
+        {
+            ElectionGuid = _electionGuid,
+            PersonGuid = online.PersonGuid,
+            Status = OnlineBallotStatus.Processed,
+            WhenStatus = DateTimeOffset.UtcNow
+        });
+        await Context.SaveChangesAsync();
+
+        var voters = await _service.GetEligibleVotersAsync(_electionGuid);
+
+        var row = Assert.Single(voters);
+        Assert.True(row.IsCheckedIn);
+        Assert.Equal(OnlineBallotStatus.Processed, row.OnlineBallotStatus);
+    }
+
+    [Fact]
+    public async Task GetEligibleVotersAsync_SubmittedOnline_IsNotCheckedIn()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var pending = SeedEligiblePerson();
+        Context.OnlineVotingInfos.Add(new OnlineVotingInfo
+        {
+            ElectionGuid = _electionGuid,
+            PersonGuid = pending.PersonGuid,
+            Status = OnlineBallotStatus.Submitted,
+            WhenStatus = DateTimeOffset.UtcNow
+        });
+        await Context.SaveChangesAsync();
+
+        var voters = await _service.GetEligibleVotersAsync(_electionGuid);
+
+        var row = Assert.Single(voters);
+        Assert.False(row.IsCheckedIn);
+    }
+
+    [Fact]
     public async Task GetRollCallAsync_ReturnsEligibleVotersAndStats()
     {
         SeedElection(ElectionStage.GatheringBallots);

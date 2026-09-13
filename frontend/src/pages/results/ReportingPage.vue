@@ -16,6 +16,7 @@ const selectedReport = ref<string>("");
 const reportData = ref<unknown>(null);
 const loading = ref(false);
 const loadingList = ref(true);
+const downloading = ref(false);
 const error = ref("");
 
 const ballotReports = computed(() =>
@@ -66,6 +67,26 @@ function goBack() {
 function printPage() {
   globalThis.print();
 }
+
+async function downloadAll() {
+  downloading.value = true;
+  error.value = "";
+  try {
+    const blob = await reportService.downloadAllReports(electionGuid.value);
+    const url = globalThis.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "election-reports.zip";
+    document.body.appendChild(a);
+    a.click();
+    globalThis.URL.revokeObjectURL(url);
+    a.remove();
+  } catch {
+    error.value = t("reporting.downloadAllError");
+  } finally {
+    downloading.value = false;
+  }
+}
 </script>
 
 <template>
@@ -100,7 +121,15 @@ function printPage() {
           <el-button type="primary" @click="printPage">
             {{ $t("reporting.print") }}
           </el-button>
+          <el-button
+            :loading="downloading"
+            :disabled="loadingList || !availableReports.length"
+            @click="downloadAll"
+          >
+            {{ $t("reporting.downloadAll") }}
+          </el-button>
           <p class="print-hint">{{ $t("reporting.printHint") }}</p>
+          <p class="print-hint">{{ $t("reporting.downloadAllHint") }}</p>
         </div>
         <div class="chooser-actions">
           <el-button @click="goBack">{{ $t("common.back") }}</el-button>
