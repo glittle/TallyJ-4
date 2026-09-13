@@ -67,7 +67,7 @@ const electionFlags = computed(() => {
 });
 
 /** Matches --front-desk-table-max-width in styles/tokens.less */
-const FRONT_DESK_TABLE_WIDTH = 900;
+const FRONT_DESK_TABLE_WIDTH = 988;
 
 const frontDeskTableColumnWidths = computed(() => {
   const hasFlags = electionFlags.value.length > 0;
@@ -75,6 +75,7 @@ const frontDeskTableColumnWidths = computed(() => {
     fullName: 220,
     method: 150,
     sms: 88,
+    whatsApp: 88,
     bahaiId: 110,
     area: 160,
     flags: 90,
@@ -85,6 +86,7 @@ const frontDeskTableColumnWidths = computed(() => {
     base.fullName +
     base.method +
     base.sms +
+    base.whatsApp +
     base.bahaiId +
     base.area +
     base.time +

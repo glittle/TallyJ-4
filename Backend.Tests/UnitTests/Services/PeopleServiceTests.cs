@@ -1333,18 +1333,26 @@ public class PeopleServiceTests : ServiceTestBase
             });
         Context.OnlineVoters.AddRange(
             new OnlineVoter { VoterId = importedPhone, VoterIdType = "P", SmsStatus = null },
-            new OnlineVoter { VoterId = okPhone, VoterIdType = "P", SmsStatus = "OK" },
+            new OnlineVoter
+            {
+                VoterId = okPhone,
+                VoterIdType = "P",
+                SmsStatus = "OK",
+                WhatsAppStatus = "OK"
+            },
             new OnlineVoter
             {
                 VoterId = blockedPhone,
                 VoterIdType = "P",
-                SmsStatus = "landline"
+                SmsStatus = "landline",
+                WhatsAppStatus = "no-wa"
             },
             new OnlineVoter
             {
                 VoterId = nonPPhone,
                 VoterIdType = "E",
-                SmsStatus = "admin"
+                SmsStatus = "admin",
+                WhatsAppStatus = "OK"
             });
         await Context.SaveChangesAsync();
 
@@ -1356,20 +1364,28 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.NotNull(neverSeen);
         Assert.False(neverSeen.HasPhoneRow);
         Assert.Null(neverSeen.SmsStatus);
+        Assert.Null(neverSeen.WhatsAppStatus);
 
         var imported = list.Single(p => p.Phone == importedPhone).PhoneOnlineVoter;
         Assert.NotNull(imported);
         Assert.True(imported.HasPhoneRow);
         Assert.Null(imported.WhenRegistered);
         Assert.Null(imported.SmsStatus);
+        Assert.Null(imported.WhatsAppStatus);
 
-        Assert.Equal("OK", list.Single(p => p.Phone == okPhone).PhoneOnlineVoter?.SmsStatus);
-        Assert.Equal("landline", list.Single(p => p.Phone == blockedPhone).PhoneOnlineVoter?.SmsStatus);
+        var okHint = list.Single(p => p.Phone == okPhone).PhoneOnlineVoter;
+        Assert.Equal("OK", okHint?.SmsStatus);
+        Assert.Equal("OK", okHint?.WhatsAppStatus);
+
+        var blockedHint = list.Single(p => p.Phone == blockedPhone).PhoneOnlineVoter;
+        Assert.Equal("landline", blockedHint?.SmsStatus);
+        Assert.Equal("no-wa", blockedHint?.WhatsAppStatus);
 
         var nonP = list.Single(p => p.Phone == nonPPhone).PhoneOnlineVoter;
         Assert.NotNull(nonP);
         Assert.False(nonP.HasPhoneRow);
         Assert.Null(nonP.SmsStatus);
+        Assert.Null(nonP.WhatsAppStatus);
     }
 
     [Fact]

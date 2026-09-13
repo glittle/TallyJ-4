@@ -86,7 +86,7 @@ public class PersonDto
     public int VoteCount { get; set; }
 
     /// <summary>
-    /// Compact phone SMS/auth hint. Null when the person has no phone.
+    /// Compact phone SMS + WhatsApp hint. Null when the person has no phone.
     /// Same P-row contract as person detail so create/update can refresh the people list.
     /// </summary>
     public PersonPhoneSmsHintDto? PhoneOnlineVoter { get; set; }

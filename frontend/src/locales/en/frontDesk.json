@@ -22,6 +22,7 @@
   "frontDesk.table.envNum": "Env #",
   "frontDesk.table.method": "Method",
   "frontDesk.table.sms": "SMS",
+  "frontDesk.table.whatsApp": "WhatsApp",
   "frontDesk.table.flags": "Flags",
   "frontDesk.table.time": "When",
   "frontDesk.keyboardHint": "Use keyboard to navigate ↑ ↓ and check in.",

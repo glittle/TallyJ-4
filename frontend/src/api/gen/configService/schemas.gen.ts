@@ -4178,6 +4178,10 @@ export const People_PersonPhoneSmsHintDtoSchema = {
         smsStatus: {
             type: 'string',
             nullable: true
+        },
+        whatsAppStatus: {
+            type: 'string',
+            nullable: true
         }
     },
     additionalProperties: false
