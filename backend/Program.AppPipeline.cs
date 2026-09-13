@@ -74,7 +74,7 @@ public static class ProgramAppPipeline
             await remoteLogService.SendLogAsync($"Started up - SiteType: {siteType} - Url: {FrontendUrlResolver.GetOrigin(configuration, app.Environment)} at {DateTime.Now}");
         }
 
-        // Applies X-Forwarded-For / Proto (see AuthForwardedHeaders). Before anything that reads RemoteIpAddress or IsHttps.
+        // Proto only (see ForwardedHeadersOptions). Before UseHttpsRedirection.
         app.UseForwardedHeaders();
 
         app.UseExceptionHandler();

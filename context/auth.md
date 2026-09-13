@@ -48,24 +48,27 @@ Online voters use the same JWT claims as before (`voterType=online`, `voterId`, 
 
 **Status:** active  
 **Evidence:** confirmed  
-**Source:** issue #192 remaining work; PR #328 review (prefer RemoteIp after UseForwardedHeaders; do not key leftmost XFF)  
-**Revisit when:** ingress hop count changes (ForwardLimit), or rate limits move off the in-memory middleware
+**Source:** issue #192 remaining work; PR #328 review — leftmost XFF is client-spoofable; Azure Front Door docs (append socket IP)  
+**Revisit when:** ingress changes (no longer App Service / Front Door), or rate limits move off the in-memory middleware
 
-> Superseded 2026-09: keying on the **leftmost** X-Forwarded-For / Forwarded IP. Azure Front Door and App Service **append** the connecting socket IP. Leftmost is client-supplied; rotating it opened a new 5/min bucket.
+> Superseded 2026-09: keying on the **leftmost** X-Forwarded-For / Forwarded IP. Azure Front Door and App Service **append** the connecting socket IP. Leftmost is whatever the client sent (`fake` or `fake, real`), so a new leftmost address opened a new 5/min bucket and bypassed the limit.
 
-> Superseded 2026-09: a parallel “infrastructure peer + rightmost public” reader that ignored `RemoteIpAddress` after `UseForwardedHeaders`, and proto-only forwarded headers. Rate-limit keys now follow the same hop walk the pipeline already applies.
+> Superseded 2026-09: keying on `RemoteIpAddress` after `UseForwardedHeaders` applies XFF with ForwardLimit 2. Tried after the rightmost-public design and reverted — trust-all + a hop limit can still rewrite RemoteIp from a client-controlled chain.
 
-Auth rate-limit keys use `Connection.RemoteIpAddress` **after** `UseForwardedHeaders`. That middleware applies `X-Forwarded-For` and `X-Forwarded-Proto` with `AuthForwardedHeaders.ForwardLimit` (2: Front Door + App Service). It walks from the right; entries left of that window are not applied. KnownProxies / KnownIPNetworks / KnownNetworks are cleared so the Azure hop is trusted (loopback-only defaults would leave RemoteIp as the platform).
+Auth rate-limit keys use the IP the **trusted ingress** saw, not a client-supplied leftmost address.
 
-`GetClientIpAddress` does not parse headers when RemoteIp is already set. Header parsing is only a fallback when remote is null (test host): the same right-to-left walk with the same forward limit. Leftmost is never chosen first.
+- **No proxy hop** (public `RemoteIpAddress`): key is that address. XFF / Forwarded are ignored so a direct client cannot pick a bucket.
+- **Infrastructure peer** (`RemoteIpAddress` is null, loopback, or private — TestServer, App Service ARR, Docker): parse XFF (else RFC 7239 `Forwarded`) and take the **rightmost public** IP. That is the socket address the platform appended. Private / loopback / link-local / CGNAT (100.64/10) suffix hops are skipped. Two connecting clients behind one proxy therefore get two buckets; changing only the leftmost XFF stays in the same bucket.
 
-The same in-memory middleware still owns the limits. Paths include the existing teller auth set plus anonymous voter `requestCode` / `verifyCode` and the cheap OAuth POSTs (`/api/auth/google/one-tap|facebook|kakao|telegram` and `/api/online-voting/*Auth`). 429 bodies return the i18n key `error.tooManyRequests` (English catalog only; other locales fall back). Verify failures keep `codeExpired`, `tooManyAttempts`, and `noCodeFound` (used-or-missing after the code is cleared). The SPA resolves those keys instead of a single generic verify message.
+`UseForwardedHeaders` is proto-only (`X-Forwarded-Proto`) with KnownProxies / KnownIPNetworks / KnownNetworks cleared so Azure TLS termination still sets `Request.IsHttps`. It does **not** apply `X-Forwarded-For`: trust-all + ForwardLimit would rewrite `RemoteIpAddress` from the client-controlled chain and make spoofing easier. Rate-limit keying reads the headers itself under the infrastructure-peer check above.
 
-**Rejected alternative:** leftmost XFF as “original client.” Front Door’s docs say an existing XFF is appended; the left side is attacker-controlled.
+The same in-memory middleware still owns the limits. Paths include the existing teller auth set plus anonymous voter `requestCode` / `verifyCode` and the cheap OAuth POSTs (`/api/auth/google/one-tap|facebook|kakao|telegram` and `/api/online-voting/*Auth`). 429 bodies return the i18n key `error.tooManyRequests` (same pattern as voter verify keys). That string lives only in `frontend/src/locales/en/errors.json`; other locales are not given English placeholders (missing keys fall back to English). Verify failures keep `codeExpired`, `tooManyAttempts`, and `noCodeFound` (used-or-missing after the code is cleared). The SPA resolves those keys instead of a single generic verify message.
 
-**Rejected alternative:** parse XFF on every request and ignore RemoteIp. That duplicates and can disagree with `UseForwardedHeaders`.
+**Rejected alternative:** leftmost XFF as “original client.” Front Door’s own docs say an existing XFF is appended; the left side is attacker-controlled.
 
-**Rejected alternative:** keep keying on pre-forwarded `RemoteIpAddress` only. On Azure UAT that address is the platform hop, so one client locks everyone out or the limit never isolates a single attacker.
+**Rejected alternative:** `UseForwardedHeaders` for XFF with KnownProxies cleared and ForwardLimit 2. That trust-all walk can set `RemoteIpAddress` to a spoofed entry, after which a “use RemoteIp” key is also spoofable.
+
+**Rejected alternative:** keep keying on `RemoteIpAddress` only. On Azure UAT that address is the platform hop, so one client locks everyone out or the limit never isolates a single attacker.
 
 **Rejected alternative:** add a separate `alreadyUsed` key. After a successful verify the stored code is cleared; used and never-issued are the same row state (`noCodeFound`).
 
