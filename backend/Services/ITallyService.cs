@@ -72,6 +72,16 @@ public interface ITallyService
     Task<SaveTieCountsResponseDto> SaveTieCountsAsync(Guid electionGuid, SaveTieCountsRequestDto request);
 
     /// <summary>
+    /// v3 Analyze count table (calculated / manual override / final).
+    /// </summary>
+    Task<AnalyzeCountSummariesDto> GetAnalyzeCountSummariesAsync(Guid electionGuid);
+
+    /// <summary>
+    /// v3 SaveManual: persist ResultType M voter-count overrides.
+    /// </summary>
+    Task<AnalyzeCountSummariesDto> SaveManualCountsAsync(Guid electionGuid, AnalyzeCountRowDto request);
+
+    /// <summary>
     /// Generates a comprehensive election report.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>

@@ -7,6 +7,8 @@ import {
   type OnlineRawVote,
 } from "@/utils/onlineVoteRaw";
 import { computed, nextTick, ref, watch } from "vue";
+import { isGuestTeller } from "@/domain/guestTellerAccess";
+import { useElectionStore } from "../../stores/electionStore";
 import { usePeopleStore } from "../../stores/peopleStore";
 import type { CreatePersonDto } from "../../types";
 import type { SearchablePersonDto } from "../../types/Person";
@@ -27,7 +29,15 @@ const emit = defineEmits<{
 }>();
 
 const peopleStore = usePeopleStore();
+const electionStore = useElectionStore();
 const { handleApiError } = useApiErrorHandler();
+
+const canAddNames = computed(() => {
+  if (!isGuestTeller()) {
+    return true;
+  }
+  return electionStore.currentElection?.guestTellersCanAddPeople === true;
+});
 
 const personFormRef = ref<InstanceType<typeof PersonForm>>();
 const voteEntryType = ref<BallotVoteEntryType>("U02");
@@ -35,6 +45,10 @@ const submitting = ref(false);
 
 const isPersonLessVote = computed(
   () => voteEntryType.value === "U01" || voteEntryType.value === "U02",
+);
+
+const showPersonForm = computed(
+  () => !isPersonLessVote.value && canAddNames.value,
 );
 
 const rawNameReference = computed(() =>
@@ -84,6 +98,10 @@ async function handleSubmit() {
     } finally {
       submitting.value = false;
     }
+    return;
+  }
+
+  if (!canAddNames.value) {
     return;
   }
 
@@ -170,7 +188,7 @@ async function handleSubmit() {
             {{ $t("ballots.voteEntryUnidentifiable") }}
           </el-radio>
           <el-radio value="normal">
-            {{ $t("ballots.voteEntryNormal") }}
+            {{ $t("ballots.voteEntryNameNotInTheList") }}
           </el-radio>
         </el-radio-group>
       </el-form-item>
@@ -179,9 +197,18 @@ async function handleSubmit() {
     <p v-if="isPersonLessVote" class="ballot-add-person-panel__hint">
       {{ $t("ballots.personLessVoteHint") }}
     </p>
+    <p
+      v-else-if="canAddNames"
+      class="ballot-add-person-panel__hint"
+    >
+      {{ $t("ballots.addNewNameIncludingSpoiled") }}
+    </p>
+    <p v-else class="ballot-add-person-panel__hint">
+      {{ $t("ballots.askHeadTellerToAddName") }}
+    </p>
 
     <PersonForm
-      v-else
+      v-if="showPersonForm"
       ref="personFormRef"
       :election-guid="electionGuid"
       :is-edit="false"
@@ -192,7 +219,12 @@ async function handleSubmit() {
 
     <div class="ballot-add-person-panel__actions">
       <el-button @click="$emit('cancel')">{{ $t("common.cancel") }}</el-button>
-      <el-button type="primary" :loading="submitting" @click="handleSubmit">
+      <el-button
+        type="primary"
+        :loading="submitting"
+        :disabled="!isPersonLessVote && !canAddNames"
+        @click="handleSubmit"
+      >
         {{ $t("common.save") }}
       </el-button>
     </div>

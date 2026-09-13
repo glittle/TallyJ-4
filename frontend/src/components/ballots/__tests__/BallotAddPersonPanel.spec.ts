@@ -8,7 +8,10 @@ const mockT = (key: string) => {
   const translations: Record<string, string> = {
     "ballots.rawVoteNameReference": "Name entered on the ballot",
     "ballots.voteEntryType": "Vote entry type",
-    "ballots.voteEntryNormal": "Normal vote",
+    "ballots.voteEntryNormal": "Full Name",
+    "ballots.voteEntryNameNotInTheList": "Name not in the List",
+    "ballots.addNewNameIncludingSpoiled": "Add new name (including spoiled)",
+    "ballots.askHeadTellerToAddName": "(Ask head teller to add required name)",
     "ballots.voteEntryUnidentifiable": "Unidentifiable (U01)",
     "ballots.voteEntryUnreadable": "Unreadable (U02)",
     "ballots.personLessVoteHint": "No person record will be created.",
@@ -28,6 +31,21 @@ vi.mock("vue-i18n", async (importOriginal) => {
 
 vi.mock("@/composables/useApiErrorHandler", () => ({
   useApiErrorHandler: () => ({ handleApiError: vi.fn() }),
+}));
+
+const { isGuestTellerMock, currentElection } = vi.hoisted(() => ({
+  isGuestTellerMock: vi.fn(() => false),
+  currentElection: { guestTellersCanAddPeople: false },
+}));
+
+vi.mock("@/domain/guestTellerAccess", () => ({
+  isGuestTeller: () => isGuestTellerMock(),
+}));
+
+vi.mock("@/stores/electionStore", () => ({
+  useElectionStore: () => ({
+    currentElection,
+  }),
 }));
 
 vi.mock("@/stores/peopleStore", () => ({
@@ -53,6 +71,8 @@ const PersonFormStub = {
 describe("BallotAddPersonPanel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    isGuestTellerMock.mockReturnValue(false);
+    currentElection.guestTellersCanAddPeople = false;
   });
 
   function mountPanel() {
@@ -104,5 +124,33 @@ describe("BallotAddPersonPanel", () => {
     ).form;
     expect(form.firstName).toBe("Jon");
     expect(form.lastName).toBe("Smyth");
+    expect(wrapper.text()).toContain("Name not in the List");
+    expect(wrapper.text()).toContain("Add new name (including spoiled)");
+  });
+
+  it("asks a guest teller to wait when Can Add People is off", async () => {
+    isGuestTellerMock.mockReturnValue(true);
+    currentElection.guestTellersCanAddPeople = false;
+    const wrapper = mountPanel();
+    (wrapper.vm as { voteEntryType: string }).voteEntryType = "normal";
+    await nextTick();
+
+    expect(wrapper.text()).toContain("(Ask head teller to add required name)");
+    expect(wrapper.findComponent({ name: "PersonForm" }).exists()).toBe(false);
+    const save = wrapper
+      .findAllComponents(ElButton)
+      .find((button) => button.text() === "Save");
+    expect(save?.props("disabled")).toBe(true);
+  });
+
+  it("lets a guest teller add a name when Can Add People is on", async () => {
+    isGuestTellerMock.mockReturnValue(true);
+    currentElection.guestTellersCanAddPeople = true;
+    const wrapper = mountPanel();
+    (wrapper.vm as { voteEntryType: string }).voteEntryType = "normal";
+    await nextTick();
+
+    expect(wrapper.findComponent({ name: "PersonForm" }).exists()).toBe(true);
+    expect(wrapper.text()).toContain("Add new name (including spoiled)");
   });
 });

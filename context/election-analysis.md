@@ -56,3 +56,20 @@ v3 always re-ran analysis after saving tie-break counts (the Analyze button is �
 **Rejected alternative:** reject all-0 as invalid. Rejected — v3 accepted those values; they simply do not resolve the tie.
 
 **Rejected alternative:** keep filling required ties with 0 (`??= 0`). Rejected — that is what made default and explicit 0 indistinguishable, which #198 asked to separate.
+
+## Analyze manual voter counts persist M without re-running Analyze
+
+**Status:** active  
+**Evidence:** confirmed (v3 `AfterController.SaveManual` / `ResultsModel.SaveManualResults`; issue #186)  
+**Source:** TallyJ-3.0 Analyze count table (Calculated / Override / Final); v4 count-reconciliation gate  
+**Revisit when:** Analyze is allowed to run without a reconciled Front Desk vs ballot report
+
+v3’s Analyze page had Eligible Voters and method counts (In Person, Dropped Off, Mailed In, Called In, custom) with an Override column. Save Values wrote `ResultType = M`. Online and Imported stayed calculated-only. Analyzer `CombineCalcAndManualSummaries` already applies `manual ?? calculated` into Final.
+
+v3 re-ran analysis immediately after SaveManual. v4 Save Values only persists M (`GET/POST .../manual-counts`). The next Calculate applies the overrides. That keeps Analyze behind the count-reconciliation / pending-online gates (#190). Confidential workflow uses the Eligible Voters override after adding people named Confidential X.
+
+**Rejected alternative:** re-analyze on save, matching v3. Rejected — v4 Analyze is blocked while Front Desk and ballots do not reconcile; a silent re-run would skip that gate.
+
+**Rejected alternative:** invent override columns for Online or Imported. Rejected — v3 left those calculated-only.
+
+**Rejected alternative:** treat this table as #198 tie/extra counts. Rejected — `SaveTieCounts` is a different Analyze control.

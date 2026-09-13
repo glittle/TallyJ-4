@@ -212,6 +212,9 @@ namespace Backend.Migrations
                     b.Property<string>("Flags")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("GuestTellersCanAddPeople")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("HidePreBallotPages")
                         .HasColumnType("bit");
 

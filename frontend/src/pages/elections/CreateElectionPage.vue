@@ -64,6 +64,7 @@ let form = reactive<CreateElectionDto>({
   showFullReport: true,
   listForPublic: false,
   showAsTest: false,
+  guestTellersCanAddPeople: false,
   useOnlineVoting: false,
   onlineSelectionProcess: "A",
 });

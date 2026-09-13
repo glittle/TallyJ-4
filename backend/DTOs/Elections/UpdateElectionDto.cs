@@ -108,6 +108,12 @@ public class UpdateElectionDto
     public bool? MaskVotingMethod { get; set; }
 
     /// <summary>
+    /// When true, guest tellers may add a person for a “Name not in the List” vote.
+    /// Default false (v3 GA).
+    /// </summary>
+    public bool? GuestTellersCanAddPeople { get; set; }
+
+    /// <summary>
     /// Whether the online close time is an estimate.
     /// </summary>
     public bool? OnlineCloseIsEstimate { get; set; }

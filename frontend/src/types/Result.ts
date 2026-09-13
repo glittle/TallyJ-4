@@ -151,6 +151,25 @@ export interface TieCountDto {
   tieBreakCount: number;
 }
 
+/** v3 Analyze count table. Null on a manual field means no override. */
+export interface AnalyzeCountRowDto {
+  numEligibleToVote?: number | null;
+  inPersonBallots?: number | null;
+  droppedOffBallots?: number | null;
+  mailedInBallots?: number | null;
+  calledInBallots?: number | null;
+  custom1Ballots?: number | null;
+  custom2Ballots?: number | null;
+  custom3Ballots?: number | null;
+  spoiledManualBallots?: number | null;
+}
+
+export interface AnalyzeCountSummariesDto {
+  calculated: AnalyzeCountRowDto;
+  manual: AnalyzeCountRowDto;
+  final: AnalyzeCountRowDto;
+}
+
 export interface SaveTieCountsResponseDto {
   success: boolean;
   message: string;

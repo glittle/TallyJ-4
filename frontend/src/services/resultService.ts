@@ -23,7 +23,10 @@ import type {
   MonitorInfoDto,
   DetailedStatisticsDto,
   CountReconciliationReportDto,
+  AnalyzeCountSummariesDto,
+  AnalyzeCountRowDto,
 } from "../types";
+import { client } from "@/api/gen/configService/client.gen";
 
 export const resultService = {
   async calculateTally(
@@ -146,5 +149,28 @@ export const resultService = {
       path: { electionGuid },
     });
     return response.data as CountReconciliationReportDto;
+  },
+
+  async getManualCounts(
+    electionGuid: string,
+  ): Promise<AnalyzeCountSummariesDto> {
+    const response = await client.get({
+      url: "/api/Results/election/{electionGuid}/manual-counts",
+      path: { electionGuid },
+    });
+    return response.data as AnalyzeCountSummariesDto;
+  },
+
+  async saveManualCounts(
+    electionGuid: string,
+    request: AnalyzeCountRowDto,
+  ): Promise<AnalyzeCountSummariesDto> {
+    const response = await client.post({
+      url: "/api/Results/election/{electionGuid}/manual-counts",
+      path: { electionGuid },
+      body: request,
+      headers: { "Content-Type": "application/json" },
+    });
+    return response.data as AnalyzeCountSummariesDto;
   },
 };

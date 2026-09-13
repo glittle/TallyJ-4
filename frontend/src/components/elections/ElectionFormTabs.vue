@@ -51,6 +51,7 @@ const tabFields: Record<string, string[]> = {
   ],
   advanced: [
     "electionPasscode",
+    "guestTellersCanAddPeople",
     "linkedElectionGuid",
     "linkedElectionKind",
     "flags",
@@ -386,6 +387,18 @@ function onUseOnlineVotingChange(enabled: string | number | boolean) {
         <template #help>
           <span class="form-help">{{
             $t("elections.form.electionPasscodeHelp")
+          }}</span>
+        </template>
+      </el-form-item>
+
+      <el-form-item :label="$t('elections.form.guestTellersCanAddPeople')">
+        <el-switch
+          v-model="model.guestTellersCanAddPeople"
+          data-testid="guest-tellers-can-add-people"
+        />
+        <template #help>
+          <span class="form-help">{{
+            $t("elections.form.guestTellersCanAddPeopleHelp")
           }}</span>
         </template>
       </el-form-item>

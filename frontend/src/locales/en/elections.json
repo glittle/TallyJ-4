@@ -68,6 +68,8 @@
   "elections.form.electionMode": "Election Mode",
   "elections.form.electionPasscode": "Election Passcode",
   "elections.form.electionPasscodeHelp": "A passcode is required for teller login.",
+  "elections.form.guestTellersCanAddPeople": "Can Add People?",
+  "elections.form.guestTellersCanAddPeopleHelp": "When a guest teller needs to record a name that is not in the list (including spoiled), can they add that person? If not, a logged-in teller must add new names.",
   "elections.form.electionPasscodePlaceholder": "Enter passcode",
   "elections.form.emailFromAddress": "Email From Address",
   "elections.form.emailFromAddressPlaceholder": "Enter sender email address",

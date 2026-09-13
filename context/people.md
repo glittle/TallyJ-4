@@ -46,3 +46,29 @@ The API throws `people.cannotMarkCannotVoteAfterVoted` before copying fields. Pe
 **Rejected alternative:** UI-only disable, matching v3. Rejected — #171 asked to verify the status cannot be changed; a write gate matches other Front Desk locks.
 
 **Rejected alternative:** treat `Person.HasOnlineBallot` as the online half of “accepted”. Rejected — that flag is set on the first online write (including Draft), not Accept-all. Accepted vs pending is `OnlineVotingInfo.Status` (`Processed` vs `Submitted` / `Processing`). Paper check-in still uses `VotingMethod`.
+
+## Guest tellers add people only when Can Add People is on
+
+**Status:** active  
+**Evidence:** confirmed (v3 ExtraSetting GA / `Election.GuestTellersCanAddPeople`; issue #186)  
+**Source:** TallyJ-3.0 `PeopleModel.SavePerson`, `BallotNormal.cshtml.js` `prepareReasons`, Setup “Can Add People?”  
+**Revisit when:** a logged-in assistant role is added that is neither guest nor full teller
+
+v3 had no special “Name not in the List” spoil GUID. The ballot spoiled-reason dropdown started with an optgroup **Name not in the List**: either “Add new name (including spoiled)” when `GuestTellersCanAddPeople` was on, or “(Ask head teller to add required name)” when it was off. Adding an eligible person is a valid vote. Known/full tellers could always add. Guests could add only when that election flag was on (default off).
+
+v4 already had `BallotAddPersonPanel` (U01 / U02 / create person). The missing product pieces were the election switch (next to the access code, same as v3), the guest write gate on `PeopleService.CreatePersonAsync` (`people.guestCannotAddPeople`), and the v3 labels on ballot entry.
+
+**Rejected alternative:** a dedicated spoil reason or vote type for “name not in the list”. Rejected — v3 treated it as adding a person, not as a reason GUID.
+
+**Rejected alternative:** let guests add people whenever they can enter ballots. Rejected — v3 defaulted GA to false so a logged-in teller had to add new names.
+
+## Confidential voters are ordinary people named Confidential X
+
+**Status:** active  
+**Evidence:** confirmed (issue #186; no Confidential feature in v3 code)  
+**Source:** v3 convention (Add New Person + Front Desk + Analyze SaveManual Eligible Voters)  
+**Revisit when:** a jurisdiction asks for a first-class anonymous-voter type
+
+There is no Confidential person type. Tellers add `Confidential 1`, `Confidential 2`, and so on as normal eligible people, check them in, and if the listed eligible count should stay as it was, they override **Eligible Voters** on Analyze (`ResultType` `M`). See [election-analysis.md](election-analysis.md).
+
+**Rejected alternative:** an Add Confidential button or auto-numbered Confidential N. Rejected — v3 never had that product.

@@ -138,6 +138,7 @@ public abstract class ElectionImportExportBase
         public string? CustomMethods { get; set; }
         public string? VotingMethods { get; set; }
         public string? Flags { get; set; }
+        public bool GuestTellersCanAddPeople { get; set; }
     }
 
     protected sealed class JsonLocation
