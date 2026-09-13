@@ -131,6 +131,13 @@ public class JsonRequestVoterIdTests
         {
         }
 
+        public override int Read(byte[] buffer, int offset, int count)
+        {
+            var read = base.Read(buffer, offset, count);
+            BytesRead += read;
+            return read;
+        }
+
         public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
         {
             var read = await base.ReadAsync(buffer, cancellationToken);
