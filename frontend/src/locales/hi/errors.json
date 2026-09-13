@@ -8,6 +8,7 @@
   "error.serverError": "सर्वर त्रुटि। कृपया बाद में पुनः प्रयास करें।",
   "error.sessionExpired": "आपका सत्र समाप्त हो गया है। कृपया फिर से लॉग इन करें।",
   "error.somethingWentWrong": "कुछ गलत हो गया",
+  "error.tooManyRequests": "Too many requests. Please try again later.",
   "error.tryAgain": "पुनः प्रयास करें",
   "error.unauthorized": "आप इस क्रिया को करने के लिए अधिकृत नहीं हैं।",
   "error.validationError": "कृपया अपना इनपुट जाँचें और पुनः प्रयास करें।",

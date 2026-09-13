@@ -8,6 +8,7 @@
   "error.serverError": "Pogreška poslužitelja. Molimo pokušajte ponovo kasnije.",
   "error.sessionExpired": "Vaša je sesija istekla. Molimo prijavite se ponovo.",
   "error.somethingWentWrong": "Nešto je pošlo po krivu",
+  "error.tooManyRequests": "Too many requests. Please try again later.",
   "error.tryAgain": "Pokušaj ponovo",
   "error.unauthorized": "Nemate ovlasti za izvođenje ove radnje.",
   "error.validationError": "Molimo provjerite unos i pokušajte ponovo.",

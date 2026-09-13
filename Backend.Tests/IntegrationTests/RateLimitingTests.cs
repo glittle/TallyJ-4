@@ -5,6 +5,8 @@ using System.Text.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Backend.DTOs.Auth;
+using Backend.DTOs.OnlineVoting;
+using Backend.Middleware;
 using Xunit;
 
 namespace Backend.Tests.IntegrationTests;
@@ -69,6 +71,87 @@ public class RateLimitingTests : IntegrationTestBase
 
         // Assert - Last request should be rate limited
         lastResponse!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+        var body = await lastResponse.Content.ReadAsStringAsync();
+        body.Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
+        body.Should().NotContain("Too many requests. Please try again later.");
+    }
+
+    [Fact]
+    public async Task Login_TwoClientsBehindOneProxy_AreNotOneBucket()
+    {
+        var loginRequest = new LoginRequest
+        {
+            Email = "admin@tallyj.test",
+            Password = "WrongPassword"
+        };
+
+        HttpResponseMessage? lastForFirstClient = null;
+        for (int i = 0; i < 6; i++)
+        {
+            lastForFirstClient = await PostJsonWithForwardedFor(
+                "/api/auth/login",
+                loginRequest,
+                "203.0.113.10, 10.0.0.4");
+            await Task.Delay(50);
+        }
+
+        lastForFirstClient!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+
+        var otherClient = await PostJsonWithForwardedFor(
+            "/api/auth/login",
+            loginRequest,
+            "203.0.113.20, 10.0.0.4");
+
+        otherClient.StatusCode.Should().NotBe(HttpStatusCode.TooManyRequests);
+    }
+
+    [Fact]
+    public async Task RequestCode_ExceedsRateLimit_Returns429()
+    {
+        var request = new RequestCodeDto
+        {
+            VoterId = "rate-limit@example.com",
+            VoterIdType = "E",
+            DeliveryMethod = "email"
+        };
+
+        HttpResponseMessage? lastResponse = null;
+        for (int i = 0; i < 6; i++)
+        {
+            lastResponse = await PostJsonWithForwardedFor(
+                "/api/online-voting/requestCode",
+                request,
+                "203.0.113.30");
+            await Task.Delay(50);
+        }
+
+        lastResponse!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+        var body = await lastResponse.Content.ReadAsStringAsync();
+        body.Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
+    }
+
+    [Fact]
+    public async Task VerifyCode_ExceedsRateLimit_Returns429()
+    {
+        var request = new VerifyCodeDto
+        {
+            VoterId = "rate-limit@example.com",
+            VerifyCode = "XXXXXX"
+        };
+
+        HttpResponseMessage? lastResponse = null;
+        for (int i = 0; i < 6; i++)
+        {
+            lastResponse = await PostJsonWithForwardedFor(
+                "/api/online-voting/verifyCode",
+                request,
+                "203.0.113.40");
+            await Task.Delay(50);
+        }
+
+        lastResponse!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+        var body = await lastResponse.Content.ReadAsStringAsync();
+        body.Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
     }
 
     [Fact]
@@ -275,6 +358,22 @@ public class RateLimitingTests : IntegrationTestBase
 
         // Assert - Last request should be rate limited
         lastResponse!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+    }
+
+    private async Task<HttpResponseMessage> PostJsonWithForwardedFor<T>(
+        string path,
+        T body,
+        string forwardedFor)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, path)
+        {
+            Content = new StringContent(
+                JsonSerializer.Serialize(body),
+                Encoding.UTF8,
+                "application/json")
+        };
+        request.Headers.Add("X-Forwarded-For", forwardedFor);
+        return await Client.SendAsync(request);
     }
 }
 

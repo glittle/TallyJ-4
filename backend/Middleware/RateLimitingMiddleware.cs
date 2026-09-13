@@ -1,29 +1,44 @@
-using System.Collections.Concurrent;
 using System.Net;
 using Backend;
 using Backend.DTOs.Security;
+using Backend.Helpers;
 using Backend.Services;
 
 namespace Backend.Middleware;
 
 /// <summary>
-/// Simple in-memory rate limiting middleware for authentication endpoints.
+/// In-memory rate limiting for anonymous teller and voter authentication endpoints.
+/// Keys by original client IP (X-Forwarded-For / Forwarded, then remote address)
+/// so Azure Front Door / App Service hops do not collapse every voter into one bucket.
 /// </summary>
 public class RateLimitingMiddleware
 {
+    public const string TooManyRequestsKey = "error.tooManyRequests";
+
     private readonly RequestDelegate _next;
     private readonly ILogger<RateLimitingMiddleware> _logger;
     private readonly RateLimitStore _store;
 
-    // Rate limits: key = endpoint, value = (max requests, time window)
-    private static readonly Dictionary<string, (int MaxRequests, TimeSpan Window)> _rateLimits = new()
-    {
-        { "/api/auth/login", (5, TimeSpan.FromMinutes(1)) },
-        { "/api/auth/registerAccount", (3, TimeSpan.FromHours(1)) },
-        { "/api/auth/verify2fa", (10, TimeSpan.FromMinutes(1)) },
-        { "/api/auth/forgotPassword", (3, TimeSpan.FromHours(1)) },
-        { "/api/auth/resetPassword", (3, TimeSpan.FromHours(1)) }
-    };
+    // Rate limits: key = endpoint path (case-insensitive), value = (max requests, time window)
+    private static readonly Dictionary<string, (int MaxRequests, TimeSpan Window)> RateLimits =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "/api/auth/login", (5, TimeSpan.FromMinutes(1)) },
+            { "/api/auth/registerAccount", (3, TimeSpan.FromHours(1)) },
+            { "/api/auth/verify2fa", (10, TimeSpan.FromMinutes(1)) },
+            { "/api/auth/forgotPassword", (3, TimeSpan.FromHours(1)) },
+            { "/api/auth/resetPassword", (3, TimeSpan.FromHours(1)) },
+            { "/api/auth/google/one-tap", (5, TimeSpan.FromMinutes(1)) },
+            { "/api/auth/facebook", (5, TimeSpan.FromMinutes(1)) },
+            { "/api/auth/kakao", (5, TimeSpan.FromMinutes(1)) },
+            { "/api/auth/telegram", (5, TimeSpan.FromMinutes(1)) },
+            { "/api/online-voting/requestCode", (5, TimeSpan.FromMinutes(1)) },
+            { "/api/online-voting/verifyCode", (5, TimeSpan.FromMinutes(1)) },
+            { "/api/online-voting/googleAuth", (5, TimeSpan.FromMinutes(1)) },
+            { "/api/online-voting/facebookAuth", (5, TimeSpan.FromMinutes(1)) },
+            { "/api/online-voting/kakaoAuth", (5, TimeSpan.FromMinutes(1)) },
+            { "/api/online-voting/telegramAuth", (5, TimeSpan.FromMinutes(1)) }
+        };
 
     /// <summary>
     /// Initializes a new instance of the RateLimitingMiddleware.
@@ -38,8 +53,6 @@ public class RateLimitingMiddleware
         _store = store;
     }
 
-    // Note: SecurityAuditService is resolved per-request to avoid circular dependencies
-
     /// <summary>
     /// Processes the HTTP request and applies rate limiting if configured for the endpoint.
     /// </summary>
@@ -48,17 +61,15 @@ public class RateLimitingMiddleware
     /// <returns>A task representing the asynchronous operation.</returns>
     public async Task InvokeAsync(HttpContext context, ISecurityAuditService securityAuditService)
     {
-        var path = context.Request.Path.Value;
-        if (path != null && _rateLimits.TryGetValue(path, out var limit))
+        var path = NormalizePath(context.Request.Path.Value);
+        if (path != null && RateLimits.TryGetValue(path, out var limit))
         {
-            var clientKey = GetClientKey(context);
-            var clientIp = context.Connection.RemoteIpAddress?.ToString();
+            var clientIp = context.GetClientIpAddress();
+            var clientKey = GetClientKey(path, clientIp);
             var userAgent = context.Request.Headers.UserAgent.ToString();
 
-            // Clean up old requests
             CleanupOldRequests(clientKey, limit.Window);
 
-            // Check if rate limit exceeded
             var requests = _store.RequestLog.GetOrAdd(clientKey, _ => new List<DateTime>());
             if (requests.Count >= limit.MaxRequests)
             {
@@ -76,22 +87,29 @@ public class RateLimitingMiddleware
 
                 context.Response.StatusCode = (int)HttpStatusCode.TooManyRequests;
                 context.Response.ContentType = "application/json";
-                await context.Response.WriteAsync("{\"error\":\"Too many requests. Please try again later.\"}");
+                await context.Response.WriteAsync($"{{\"error\":\"{TooManyRequestsKey}\"}}");
                 return;
             }
 
-            // Record this request
             requests.Add(DateTime.UtcNow);
         }
 
         await _next(context);
     }
 
-    private string GetClientKey(HttpContext context)
+    internal static string GetClientKey(string path, string clientIp)
     {
-        // Use IP address as client identifier (in production, consider more sophisticated approaches)
-        var ipAddress = context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-        return $"{context.Request.Path}_{ipAddress}";
+        return $"{path.ToLowerInvariant()}_{clientIp}";
+    }
+
+    internal static string? NormalizePath(string? path)
+    {
+        if (string.IsNullOrEmpty(path))
+        {
+            return path;
+        }
+
+        return path.TrimEnd('/');
     }
 
     private void CleanupOldRequests(string clientKey, TimeSpan window)
@@ -101,7 +119,6 @@ public class RateLimitingMiddleware
             var cutoff = DateTime.UtcNow - window;
             requests.RemoveAll(r => r < cutoff);
 
-            // Remove empty lists to prevent memory leaks
             if (requests.Count == 0)
             {
                 _store.RequestLog.TryRemove(clientKey, out _);
@@ -109,5 +126,3 @@ public class RateLimitingMiddleware
         }
     }
 }
-
-

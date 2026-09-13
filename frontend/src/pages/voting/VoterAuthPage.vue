@@ -11,16 +11,15 @@ import { useRoute, useRouter } from "vue-router";
 import VoterAuthFaq from "@/components/voting/VoterAuthFaq.vue";
 import VoterAuthRequestTabs from "@/components/voting/VoterAuthRequestTabs.vue";
 import VoterAuthVerifyStep from "@/components/voting/VoterAuthVerifyStep.vue";
-import { useApiErrorHandler } from "../../composables/useApiErrorHandler";
 import { useNotifications } from "../../composables/useNotifications";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
+import { resolveUserFacingApiError } from "../../utils/errorHandler";
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
-const { handleApiError } = useApiErrorHandler();
 
 const activeTab = useLocalStorage("voterLoginTab", "google");
 const step = ref<"request" | "verify">("request");
@@ -112,7 +111,9 @@ async function handleRequestEmailCode() {
     step.value = "verify";
     showSuccessMessage(t(messageKey));
   } catch (error) {
-    handleApiError(error, t("voting.auth.email.sendFailed"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("voting.auth.email.sendFailed")),
+    );
   } finally {
     loading.value = false;
   }
@@ -130,7 +131,9 @@ async function handleRequestPhoneCode() {
     step.value = "verify";
     showSuccessMessage(t(messageKey));
   } catch (error) {
-    handleApiError(error, t("voting.auth.phone.sendFailed"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("voting.auth.phone.sendFailed")),
+    );
   } finally {
     loading.value = false;
   }
@@ -145,7 +148,9 @@ async function handleDirectCodeLogin() {
     });
     await redirectAfterAuth();
   } catch (error) {
-    handleApiError(error, t("voting.auth.code.failed"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("voting.auth.code.failed")),
+    );
   } finally {
     loading.value = false;
   }
@@ -157,7 +162,9 @@ async function handleVerifyCode() {
     await onlineVotingStore.verifyCode(verificationForm.value);
     await redirectAfterAuth();
   } catch (error) {
-    handleApiError(error, t("voting.auth.verify.failed"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("voting.auth.verify.failed")),
+    );
   } finally {
     loading.value = false;
   }
@@ -201,7 +208,9 @@ const handleGoogleCredentialCallback = async (
     await onlineVotingStore.googleAuth({ credential: response.credential });
     await redirectAfterAuth();
   } catch (error) {
-    handleApiError(error, t("voting.auth.google.error"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("voting.auth.google.error")),
+    );
   } finally {
     loading.value = false;
   }

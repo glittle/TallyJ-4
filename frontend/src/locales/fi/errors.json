@@ -8,6 +8,7 @@
   "error.serverError": "Palvelinvirhe. Yritä myöhemmin uudelleen.",
   "error.sessionExpired": "Istuntosi on vanhentunut. Kirjaudu sisään uudelleen.",
   "error.somethingWentWrong": "Jotain meni pieleen",
+  "error.tooManyRequests": "Too many requests. Please try again later.",
   "error.tryAgain": "Yritä uudelleen",
   "error.unauthorized": "Sinulla ei ole oikeuksia suorittaa tätä toimintoa.",
   "error.validationError": "Tarkista syötteesi ja yritä uudelleen.",

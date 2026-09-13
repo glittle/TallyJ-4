@@ -10,6 +10,7 @@ using Backend.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration.Json;
@@ -166,6 +167,20 @@ void ConfigureServices(WebApplicationBuilder builder)
 
     services.Configure<JsonLocalizationOptions>(builderConfiguration.GetSection(JsonLocalizationOptions.SectionName));
     services.AddJsonLocalization();
+
+    // Azure App Service / Front Door is the only ingress on UAT/prod. Default KnownProxies
+    // is loopback, which leaves Connection.RemoteIpAddress as the platform hop.
+    services.Configure<ForwardedHeadersOptions>(options =>
+    {
+        options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        options.KnownProxies.Clear();
+        options.KnownIPNetworks.Clear();
+#pragma warning disable ASPDEPR005
+        // .NET 10 dual-list: clear both so platform hops are trusted (issue #63627).
+        options.KnownNetworks.Clear();
+#pragma warning restore ASPDEPR005
+        options.ForwardLimit = 2;
+    });
 
     services.AddHttpClient("GreenApi");
     services.AddHttpClient("Facebook", c =>

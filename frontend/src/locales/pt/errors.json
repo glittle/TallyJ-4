@@ -8,6 +8,7 @@
   "error.serverError": "Erro do servidor. Por favor, tente novamente mais tarde.",
   "error.sessionExpired": "Sua sessão expirou. Por favor, faça login novamente.",
   "error.somethingWentWrong": "Algo deu errado",
+  "error.tooManyRequests": "Too many requests. Please try again later.",
   "error.tryAgain": "Tentar Novamente",
   "error.unauthorized": "Você não está autorizado a realizar esta ação.",
   "error.validationError": "Por favor, verifique sua entrada e tente novamente.",

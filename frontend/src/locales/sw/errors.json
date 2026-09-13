@@ -8,6 +8,7 @@
   "error.serverError": "Kosa la seva. Tafadhali jaribu tena baadaye.",
   "error.sessionExpired": "Kipindi chako kimeisha. Tafadhali ingia tena.",
   "error.somethingWentWrong": "Kitu kimeenda vibaya",
+  "error.tooManyRequests": "Too many requests. Please try again later.",
   "error.tryAgain": "Jaribu Tena",
   "error.unauthorized": "Huna ruhusa ya kufanya kitendo hiki.",
   "error.validationError": "Tafadhali angalia ingizo lako na jaribu tena.",

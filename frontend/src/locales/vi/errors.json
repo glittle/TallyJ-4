@@ -8,6 +8,7 @@
   "error.serverError": "Lỗi máy chủ. Vui lòng thử lại sau.",
   "error.sessionExpired": "Phiên của bạn đã hết hạn. Vui lòng đăng nhập lại.",
   "error.somethingWentWrong": "Đã xảy ra lỗi",
+  "error.tooManyRequests": "Too many requests. Please try again later.",
   "error.tryAgain": "Thử Lại",
   "error.unauthorized": "Bạn không có quyền thực hiện hành động này.",
   "error.validationError": "Vui lòng kiểm tra dữ liệu nhập và thử lại.",

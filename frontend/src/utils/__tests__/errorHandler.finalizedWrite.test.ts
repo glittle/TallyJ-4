@@ -49,3 +49,37 @@ describe("finalized write refusal messages", () => {
     );
   });
 });
+
+describe("voter auth verify and rate-limit keys", () => {
+  it("surfaces expired, used-or-missing, and too-many verify keys", () => {
+    expect(
+      resolveUserFacingApiError(
+        { error: "voting.auth.verify.codeExpired" },
+        "Could not verify that code. Please check it and try again.",
+      ),
+    ).toBe("Verification code has expired. Please request a new code.");
+
+    expect(
+      resolveUserFacingApiError(
+        { error: "voting.auth.verify.noCodeFound" },
+        "Could not verify that code. Please check it and try again.",
+      ),
+    ).toBe("No verification code found. Please request a new code.");
+
+    expect(
+      resolveUserFacingApiError(
+        { error: "voting.auth.verify.tooManyAttempts" },
+        "Could not verify that code. Please check it and try again.",
+      ),
+    ).toBe("Too many failed attempts. Please request a new code.");
+  });
+
+  it("surfaces the 429 i18n key instead of raw English", () => {
+    expect(
+      resolveUserFacingApiError(
+        { error: "error.tooManyRequests" },
+        "Something went wrong",
+      ),
+    ).toBe("Too many requests. Please try again later.");
+  });
+});
