@@ -17,8 +17,7 @@ vi.mock("@/services/reportService", () => ({
     getAvailableReports: (...args: unknown[]) =>
       mockGetAvailableReports(...args),
     getReport: (...args: unknown[]) => mockGetReport(...args),
-    downloadAllReports: (...args: unknown[]) =>
-      mockDownloadAllReports(...args),
+    downloadAllReports: (...args: unknown[]) => mockDownloadAllReports(...args),
   },
 }));
 
@@ -45,7 +44,11 @@ describe("ReportingPage download all", () => {
     mockGetReport.mockReset();
     mockDownloadAllReports.mockReset();
     mockGetAvailableReports.mockResolvedValue([
-      { code: "VotersByArea", name: "Eligible and Voted by Area", category: "Voter Reports" },
+      {
+        code: "VotersByArea",
+        name: "Eligible and Voted by Area",
+        category: "Voter Reports",
+      },
     ]);
     mockDownloadAllReports.mockResolvedValue(new Blob(["zip"]));
     vi.stubGlobal("URL", {
@@ -55,25 +58,9 @@ describe("ReportingPage download all", () => {
   });
 
   it("downloads every listed report in one click", async () => {
-    const click = vi.fn();
-    const anchor = {
-      href: "",
-      download: "",
-      click,
-    } as unknown as HTMLAnchorElement;
-    const createElement = vi
-      .spyOn(document, "createElement")
-      .mockImplementation((tag: string) => {
-        if (tag === "a") {
-          return anchor;
-        }
-        return document.createElement(tag);
-      });
-    const append = vi
-      .spyOn(document.body, "appendChild")
-      .mockImplementation((node) => node);
-    const remove = vi.fn();
-    Object.defineProperty(anchor, "remove", { value: remove });
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => undefined);
 
     const wrapper = mount(ReportingPage, {
       global: { plugins: [i18n], stubs },
@@ -90,9 +77,9 @@ describe("ReportingPage download all", () => {
 
     expect(mockDownloadAllReports).toHaveBeenCalledWith("elec-1");
     expect(click).toHaveBeenCalled();
-    expect(anchor.download).toBe("election-reports.zip");
+    const clicked = click.mock.instances[0] as HTMLAnchorElement;
+    expect(clicked.download).toBe("election-reports.zip");
 
-    createElement.mockRestore();
-    append.mockRestore();
+    click.mockRestore();
   });
 });

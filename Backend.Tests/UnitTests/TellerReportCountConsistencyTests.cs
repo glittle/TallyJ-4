@@ -44,10 +44,11 @@ public class TellerReportCountConsistencyTests : ServiceTestBase
             WhenStatus = DateTimeOffset.UtcNow
         });
 
-        AddBallot();
-        AddBallot();
-        AddBallot();
-        AddBallot();
+        var candidate = AddPerson("Candidate", "C", votingMethod: null, area: "North");
+        AddBallotWithVotes(candidate);
+        AddBallotWithVotes(candidate);
+        AddBallotWithVotes(candidate);
+        AddBallotWithVotes(candidate);
         await Context.SaveChangesAsync();
 
         var frontDesk = new FrontDeskService(
@@ -70,7 +71,7 @@ public class TellerReportCountConsistencyTests : ServiceTestBase
             rs.ElectionGuid == _electionGuid && rs.ResultType == "F");
         var main = await reports.GetMainReportAsync(_electionGuid);
 
-        Assert.Equal(5, stats.TotalEligible);
+        Assert.Equal(6, stats.TotalEligible);
         Assert.Equal(4, stats.CheckedIn);
         Assert.Equal(4, voters.Count(v => v.IsCheckedIn));
 
@@ -78,7 +79,7 @@ public class TellerReportCountConsistencyTests : ServiceTestBase
         Assert.Equal(4, recon.FrontDeskCount);
         Assert.Equal(4, recon.BallotCount);
 
-        Assert.Equal(5, byArea.Total.Eligible18Plus);
+        Assert.Equal(6, byArea.Total.Eligible18Plus);
         Assert.Equal(1, byArea.Total.Eligible18To21);
         Assert.Equal(4, byArea.Total.Voted);
         Assert.Equal(1, byArea.Total.InPerson);
@@ -87,7 +88,7 @@ public class TellerReportCountConsistencyTests : ServiceTestBase
         Assert.Equal(1, byArea.Total.Online);
         Assert.True(byArea.ShowImported);
 
-        Assert.Equal(5, summary.NumEligibleToVote);
+        Assert.Equal(6, summary.NumEligibleToVote);
         Assert.Equal(4, summary.NumVoters);
         Assert.Equal(4, summary.BallotsReceived);
         Assert.Equal(0, summary.SpoiledBallots);
@@ -133,10 +134,10 @@ public class TellerReportCountConsistencyTests : ServiceTestBase
             ElectionGuid = _electionGuid,
             Name = "Count consistency",
             ElectionType = "LSA",
-            NumberToElect = 3,
+            NumberToElect = 1,
             NumberExtra = 0,
             VotingMethods = "P,M,IM",
-            ElectionStage = ElectionStage.Tallying,
+            ElectionStage = ElectionStage.ProcessingBallots,
             RowVersion = new byte[8]
         });
         Context.Locations.Add(new Location
@@ -174,15 +175,24 @@ public class TellerReportCountConsistencyTests : ServiceTestBase
         return person;
     }
 
-    private void AddBallot(BallotStatus status = BallotStatus.Ok)
+    private void AddBallotWithVotes(Person candidate)
     {
-        Context.Ballots.Add(new Ballot
+        var ballot = new Ballot
         {
             LocationGuid = _locationGuid,
             BallotGuid = Guid.NewGuid(),
-            StatusCode = status,
+            StatusCode = BallotStatus.Ok,
             ComputerCode = "A",
             BallotNumAtComputer = Context.Ballots.Count() + 1,
+            RowVersion = new byte[8]
+        };
+        Context.Ballots.Add(ballot);
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballot.BallotGuid,
+            PersonGuid = candidate.PersonGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Ok,
             RowVersion = new byte[8]
         });
     }

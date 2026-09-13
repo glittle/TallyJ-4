@@ -57,9 +57,10 @@ const selectedReportName = computed(() => props.selectedReportName);
 </script>
 
 <template>
-  <div class="reporting-voter-reports">
+  <div
     v-if="selectedReport === 'AllCanReceive' && allCanReceiveData"
-    class="report-generic" >
+    class="report-generic"
+  >
     <h2>{{ selectedReportName }}</h2>
     <div class="report-meta">
       <div>{{ allCanReceiveData.electionName }}</div>

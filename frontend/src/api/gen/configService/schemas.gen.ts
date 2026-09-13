@@ -4273,6 +4273,14 @@ export const Reports_AreaRowDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
+        eligible18Plus: {
+            type: 'integer',
+            format: 'int32'
+        },
+        eligible18To21: {
+            type: 'integer',
+            format: 'int32'
+        },
         voted: {
             type: 'integer',
             format: 'int32'
@@ -5220,6 +5228,9 @@ export const Reports_VotersByAreaReportDtoSchema = {
         custom3Name: {
             type: 'string',
             nullable: true
+        },
+        showImported: {
+            type: 'boolean'
         },
         areas: {
             type: 'array',
