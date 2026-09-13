@@ -222,7 +222,9 @@ defineExpose({
             :type="hasFlag(voter, flag) ? 'success' : 'default'"
             size="large"
             class="dialog-option-button"
-            :disabled="!hasActiveTeller || isElectionFinalized || checkInInProgress"
+            :disabled="
+              !hasActiveTeller || isElectionFinalized || checkInInProgress
+            "
             :class="{
               'keyboard-focused-button': isDialogButtonKeyboardFocused(flag),
             }"
