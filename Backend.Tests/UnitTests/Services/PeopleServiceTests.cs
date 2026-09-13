@@ -926,13 +926,18 @@ public class PeopleServiceTests : ServiceTestBase
         });
         await Context.SaveChangesAsync();
 
-        await _service.CreatePersonAsync(new CreatePersonDto
+        var created = await _service.CreatePersonAsync(new CreatePersonDto
         {
             ElectionGuid = Guid.NewGuid(),
             LastName = "Smith",
             FirstName = "Pat",
             Phone = phone
         });
+
+        Assert.NotNull(created.PhoneOnlineVoter);
+        Assert.True(created.PhoneOnlineVoter.HasPhoneRow);
+        Assert.Equal("undeliverable", created.PhoneOnlineVoter.SmsStatus);
+        Assert.Equal(registered, created.PhoneOnlineVoter.WhenRegistered);
 
         var rows = await Context.OnlineVoters.Where(ov => ov.VoterId == phone).ToListAsync();
         var row = Assert.Single(rows);
@@ -1221,6 +1226,111 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Null(details.PhoneOnlineVoter.WhenLastLogin);
         Assert.Null(details.PhoneOnlineVoter.SmsStatus);
         Assert.Empty(details.PhoneOnlineVoter.RecentSmsLogs);
+    }
+
+    [Fact]
+    public async Task GetAllPeopleForListAsync_PhoneSmsHint_MatchesPersonDetailContract()
+    {
+        var electionGuid = Guid.NewGuid();
+        const string neverSeenPhone = "+14168972700";
+        const string importedPhone = "+14168972701";
+        const string okPhone = "+14168972702";
+        const string blockedPhone = "+14168972703";
+        const string nonPPhone = "+14168972704";
+
+        Context.People.AddRange(
+            new Person
+            {
+                PersonGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
+                LastName = "NoPhone",
+                FirstName = "Pat",
+                RowVersion = new byte[8]
+            },
+            new Person
+            {
+                PersonGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
+                LastName = "NeverSeen",
+                FirstName = "Pat",
+                Phone = neverSeenPhone,
+                RowVersion = new byte[8]
+            },
+            new Person
+            {
+                PersonGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
+                LastName = "Imported",
+                FirstName = "Pat",
+                Phone = importedPhone,
+                RowVersion = new byte[8]
+            },
+            new Person
+            {
+                PersonGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
+                LastName = "Ok",
+                FirstName = "Pat",
+                Phone = okPhone,
+                RowVersion = new byte[8]
+            },
+            new Person
+            {
+                PersonGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
+                LastName = "Blocked",
+                FirstName = "Pat",
+                Phone = blockedPhone,
+                RowVersion = new byte[8]
+            },
+            new Person
+            {
+                PersonGuid = Guid.NewGuid(),
+                ElectionGuid = electionGuid,
+                LastName = "NonP",
+                FirstName = "Pat",
+                Phone = nonPPhone,
+                RowVersion = new byte[8]
+            });
+        Context.OnlineVoters.AddRange(
+            new OnlineVoter { VoterId = importedPhone, VoterIdType = "P", SmsStatus = null },
+            new OnlineVoter { VoterId = okPhone, VoterIdType = "P", SmsStatus = "OK" },
+            new OnlineVoter
+            {
+                VoterId = blockedPhone,
+                VoterIdType = "P",
+                SmsStatus = "landline"
+            },
+            new OnlineVoter
+            {
+                VoterId = nonPPhone,
+                VoterIdType = "E",
+                SmsStatus = "admin"
+            });
+        await Context.SaveChangesAsync();
+
+        var list = await _service.GetAllPeopleForListAsync(electionGuid);
+
+        Assert.Null(list.Single(p => p.Phone == null).PhoneOnlineVoter);
+
+        var neverSeen = list.Single(p => p.Phone == neverSeenPhone).PhoneOnlineVoter;
+        Assert.NotNull(neverSeen);
+        Assert.False(neverSeen.HasPhoneRow);
+        Assert.Null(neverSeen.SmsStatus);
+
+        var imported = list.Single(p => p.Phone == importedPhone).PhoneOnlineVoter;
+        Assert.NotNull(imported);
+        Assert.True(imported.HasPhoneRow);
+        Assert.Null(imported.WhenRegistered);
+        Assert.Null(imported.SmsStatus);
+
+        Assert.Equal("OK", list.Single(p => p.Phone == okPhone).PhoneOnlineVoter?.SmsStatus);
+        Assert.Equal("landline", list.Single(p => p.Phone == blockedPhone).PhoneOnlineVoter?.SmsStatus);
+
+        var nonP = list.Single(p => p.Phone == nonPPhone).PhoneOnlineVoter;
+        Assert.NotNull(nonP);
+        Assert.False(nonP.HasPhoneRow);
+        Assert.Null(nonP.SmsStatus);
     }
 
     [Fact]

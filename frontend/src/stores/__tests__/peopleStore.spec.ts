@@ -293,6 +293,7 @@ describe("usePeopleStore", () => {
         canVote: true,
         canReceiveVotes: false,
         ineligibleReasonCode: "V01",
+        phoneOnlineVoter: undefined,
       });
     });
   });

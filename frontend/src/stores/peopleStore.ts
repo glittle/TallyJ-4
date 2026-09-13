@@ -176,6 +176,7 @@ export const usePeopleStore = defineStore("people", () => {
       canVote: person.canVote,
       canReceiveVotes: person.canReceiveVotes,
       ineligibleReasonCode: person.ineligibleReasonCode,
+      phoneOnlineVoter: person.phoneOnlineVoter,
     };
   }
 
@@ -186,6 +187,12 @@ export const usePeopleStore = defineStore("people", () => {
     );
 
     if (index !== -1) {
+      if (
+        listEntry.phoneOnlineVoter === undefined &&
+        peopleList.value[index].phoneOnlineVoter !== undefined
+      ) {
+        listEntry.phoneOnlineVoter = peopleList.value[index].phoneOnlineVoter;
+      }
       peopleList.value[index] = listEntry;
     } else {
       peopleList.value.push(listEntry);

@@ -69,17 +69,19 @@ const FRONT_DESK_TABLE_WIDTH = 900;
 const frontDeskTableColumnWidths = computed(() => {
   const hasFlags = electionFlags.value.length > 0;
   const base = {
-    fullName: 250,
+    fullName: 220,
     method: 150,
-    bahaiId: 120,
-    area: 200,
+    sms: 88,
+    bahaiId: 110,
+    area: 160,
     flags: 90,
-    time: 130,
+    time: 120,
     envNum: 90,
   };
   const fixedSum =
     base.fullName +
     base.method +
+    base.sms +
     base.bahaiId +
     base.area +
     base.time +

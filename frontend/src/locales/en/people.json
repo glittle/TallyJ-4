@@ -192,6 +192,8 @@
   "people.phoneOnlineVoter.firstRegistered": "First registered {time}",
   "people.phoneOnlineVoter.lastLogin": "Last login",
   "people.phoneOnlineVoter.smsStatus": "SMS status",
+  "people.phoneOnlineVoter.smsColumn": "SMS",
+  "people.phoneOnlineVoter.imported": "Imported",
   "people.phoneOnlineVoter.smsUnchecked": "Unchecked",
   "people.phoneOnlineVoter.smsOk": "OK",
   "people.phoneOnlineVoter.smsBlocked": "Blocked ({reason})",

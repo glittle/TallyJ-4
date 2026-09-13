@@ -1,3 +1,9 @@
+export interface PersonPhoneSmsHintDto {
+  hasPhoneRow: boolean;
+  whenRegistered?: string | Date | null;
+  smsStatus?: string | null;
+}
+
 export interface PersonDto {
   personGuid: string;
   firstName?: string;
@@ -15,6 +21,7 @@ export interface PersonDto {
   combinedSoundCodes?: string;
   ineligibleReasonCode?: string;
   voteCount: number;
+  phoneOnlineVoter?: PersonPhoneSmsHintDto | null;
 }
 
 export interface PersonListDto {
@@ -27,6 +34,7 @@ export interface PersonListDto {
   canReceiveVotes?: boolean;
   ineligibleReasonCode?: string;
   unitName?: string;
+  phoneOnlineVoter?: PersonPhoneSmsHintDto | null;
 }
 
 export interface PersonSmsLogDto {
@@ -36,11 +44,8 @@ export interface PersonSmsLogDto {
   errorCode?: number | null;
 }
 
-export interface PersonPhoneOnlineVoterDto {
-  hasPhoneRow: boolean;
-  whenRegistered?: string | Date | null;
+export interface PersonPhoneOnlineVoterDto extends PersonPhoneSmsHintDto {
   whenLastLogin?: string | Date | null;
-  smsStatus?: string | null;
   recentSmsLogs?: PersonSmsLogDto[];
 }
 

@@ -748,6 +748,7 @@ export type FrontDeskFrontDeskVoterDto = {
     readonly isCheckedIn?: boolean;
     flags?: string | null;
     registrationHistory?: Array<FrontDeskRegistrationHistoryEntryDto> | null;
+    phoneOnlineVoter?: PeoplePersonPhoneSmsHintDto;
 };
 
 export type FrontDeskRegistrationHistoryEntryDto = {
@@ -1175,6 +1176,7 @@ export type PeoplePersonDto = {
     combinedSoundCodes?: string | null;
     ineligibleReasonCode?: string | null;
     voteCount?: number;
+    phoneOnlineVoter?: PeoplePersonPhoneSmsHintDto;
 };
 
 export type PeoplePersonListDto = {
@@ -1187,6 +1189,7 @@ export type PeoplePersonListDto = {
     canReceiveVotes?: boolean | null;
     ineligibleReasonCode?: string | null;
     unitName?: string | null;
+    phoneOnlineVoter?: PeoplePersonPhoneSmsHintDto;
 };
 
 export type PeoplePersonPhoneOnlineVoterDto = {
@@ -1195,6 +1198,12 @@ export type PeoplePersonPhoneOnlineVoterDto = {
     whenLastLogin?: Date | null;
     smsStatus?: string | null;
     recentSmsLogs?: Array<PeoplePersonSmsLogDto> | null;
+};
+
+export type PeoplePersonPhoneSmsHintDto = {
+    hasPhoneRow?: boolean;
+    whenRegistered?: Date | null;
+    smsStatus?: string | null;
 };
 
 export type PeoplePersonSmsLogDto = {
@@ -2131,6 +2140,7 @@ export type FrontDeskFrontDeskVoterDtoWritable = {
     teller2?: string | null;
     flags?: string | null;
     registrationHistory?: Array<FrontDeskRegistrationHistoryEntryDto> | null;
+    phoneOnlineVoter?: PeoplePersonPhoneSmsHintDto;
 };
 
 export type FrontDeskRollCallDtoWritable = {

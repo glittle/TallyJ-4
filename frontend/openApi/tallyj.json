@@ -9926,6 +9926,9 @@
               "$ref": "#/components/schemas/FrontDesk_RegistrationHistoryEntryDto"
             },
             "nullable": true
+          },
+          "phoneOnlineVoter": {
+            "$ref": "#/components/schemas/People_PersonPhoneSmsHintDto"
           }
         },
         "additionalProperties": false
@@ -11422,6 +11425,9 @@
           "voteCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "phoneOnlineVoter": {
+            "$ref": "#/components/schemas/People_PersonPhoneSmsHintDto"
           }
         },
         "additionalProperties": false
@@ -11464,6 +11470,9 @@
           "unitName": {
             "type": "string",
             "nullable": true
+          },
+          "phoneOnlineVoter": {
+            "$ref": "#/components/schemas/People_PersonPhoneSmsHintDto"
           }
         },
         "additionalProperties": false
@@ -11493,6 +11502,24 @@
             "items": {
               "$ref": "#/components/schemas/People_PersonSmsLogDto"
             },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "People_PersonPhoneSmsHintDto": {
+        "type": "object",
+        "properties": {
+          "hasPhoneRow": {
+            "type": "boolean"
+          },
+          "whenRegistered": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "smsStatus": {
+            "type": "string",
             "nullable": true
           }
         },

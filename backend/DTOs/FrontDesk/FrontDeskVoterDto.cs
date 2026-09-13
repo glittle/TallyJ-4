@@ -1,4 +1,6 @@
-﻿namespace Backend.DTOs.FrontDesk;
+﻿using Backend.DTOs.People;
+
+namespace Backend.DTOs.FrontDesk;
 
 /// <summary>
 /// Data transfer object representing a voter at the front desk.
@@ -81,6 +83,12 @@ public class FrontDeskVoterDto
     /// Registration history entries for this voter.
     /// </summary>
     public List<RegistrationHistoryEntryDto>? RegistrationHistory { get; set; }
+
+    /// <summary>
+    /// Compact phone SMS/auth hint. Null when the person has no phone.
+    /// Same P-row contract as person detail. Front Desk does not expose the raw phone.
+    /// </summary>
+    public PersonPhoneSmsHintDto? PhoneOnlineVoter { get; set; }
 }
 
 

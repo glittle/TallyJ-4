@@ -85,6 +85,8 @@ public class PeopleService : IPeopleService
             return dto;
         }).ToList();
 
+        await ApplyPhoneSmsHintsAsync(peopleDtos, people);
+
         return PaginatedResponse<PersonDto>.Create(peopleDtos, pageNumber, pageSize, totalCount);
     }
 
@@ -106,6 +108,7 @@ public class PeopleService : IPeopleService
 
         var dto = MapToPersonDto(person);
         dto.VoteCount = person.Results.FirstOrDefault()?.VoteCount ?? 0;
+        dto.PhoneOnlineVoter = await LoadPhoneSmsHintAsync(person.Phone);
 
         return dto;
     }
@@ -382,7 +385,9 @@ public class PeopleService : IPeopleService
             .ThenBy(p => p.FirstName)
             .ToListAsync();
 
-        return people.Select(MapToPersonListDto).ToList();
+        var dtos = people.Select(MapToPersonListDto).ToList();
+        await ApplyPhoneSmsHintsAsync(dtos, people);
+        return dtos;
     }
 
     /// <summary>
@@ -546,6 +551,39 @@ public class PeopleService : IPeopleService
         dto.CanVote = PersonEligibilityHelper.CanVote(person);
         dto.CanReceiveVotes = PersonEligibilityHelper.CanReceiveVotes(person);
         return dto;
+    }
+
+    private async Task<PersonPhoneSmsHintDto?> LoadPhoneSmsHintAsync(string? phone)
+    {
+        return OnlineVoterPhoneHelper.ToListHint(
+            phone,
+            await OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync(_context, phone));
+    }
+
+    private async Task ApplyPhoneSmsHintsAsync(
+        IReadOnlyList<PersonListDto> dtos,
+        IReadOnlyList<Person> people)
+    {
+        var rows = await OnlineVoterPhoneHelper.FindPhoneOnlineVotersAsync(
+            _context,
+            people.Select(p => p.Phone));
+        for (var i = 0; i < dtos.Count; i++)
+        {
+            dtos[i].PhoneOnlineVoter = OnlineVoterPhoneHelper.ToListHint(people[i].Phone, rows);
+        }
+    }
+
+    private async Task ApplyPhoneSmsHintsAsync(
+        IReadOnlyList<PersonDto> dtos,
+        IReadOnlyList<Person> people)
+    {
+        var rows = await OnlineVoterPhoneHelper.FindPhoneOnlineVotersAsync(
+            _context,
+            people.Select(p => p.Phone));
+        for (var i = 0; i < dtos.Count; i++)
+        {
+            dtos[i].PhoneOnlineVoter = OnlineVoterPhoneHelper.ToListHint(people[i].Phone, rows);
+        }
     }
 
     /// <summary>

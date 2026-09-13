@@ -3,6 +3,8 @@ import type { PersonPhoneOnlineVoterDto } from "@/types/Person";
 import {
   phoneOnlineVoterAuthState,
   phoneOnlineVoterSmsState,
+  phoneSmsListHint,
+  phoneSmsListLabel,
 } from "../phoneOnlineVoterStatus";
 
 function status(
@@ -55,5 +57,66 @@ describe("phoneOnlineVoterSmsState", () => {
 
   it("is blocked for any other stored reason", () => {
     expect(phoneOnlineVoterSmsState("landline")).toBe("blocked");
+  });
+});
+
+describe("phoneSmsListHint", () => {
+  it("is none when there is no phone block", () => {
+    expect(phoneSmsListHint(null)).toBe("none");
+    expect(phoneSmsListHint(undefined)).toBe("none");
+  });
+
+  it("is neverSeen when a phone has no matching P row", () => {
+    expect(phoneSmsListHint(status({ hasPhoneRow: false }))).toBe("neverSeen");
+  });
+
+  it("is imported when a P row exists and has not been used for auth", () => {
+    expect(
+      phoneSmsListHint(status({ hasPhoneRow: true, whenRegistered: null })),
+    ).toBe("imported");
+  });
+
+  it("is unchecked when registered but SmsStatus is still null", () => {
+    expect(
+      phoneSmsListHint(
+        status({
+          hasPhoneRow: true,
+          whenRegistered: "2026-04-01T12:00:00Z",
+          smsStatus: null,
+        }),
+      ),
+    ).toBe("unchecked");
+  });
+
+  it("is ok or blocked from SmsStatus even when the row is imported-only", () => {
+    expect(
+      phoneSmsListHint(
+        status({ hasPhoneRow: true, whenRegistered: null, smsStatus: "OK" }),
+      ),
+    ).toBe("ok");
+    expect(
+      phoneSmsListHint(
+        status({
+          hasPhoneRow: true,
+          whenRegistered: null,
+          smsStatus: "landline",
+        }),
+      ),
+    ).toBe("blocked");
+  });
+
+  it("does not treat a missing P row as the occupant's block reason", () => {
+    // Backend omits a non-P occupant's SmsStatus; the list contract is never-seen.
+    expect(
+      phoneSmsListHint(
+        status({ hasPhoneRow: false, smsStatus: null, whenRegistered: null }),
+      ),
+    ).toBe("neverSeen");
+    expect(
+      phoneSmsListLabel(
+        status({ hasPhoneRow: false, smsStatus: null }),
+        (key) => key,
+      ),
+    ).toBe("people.phoneOnlineVoter.neverSeen");
   });
 });

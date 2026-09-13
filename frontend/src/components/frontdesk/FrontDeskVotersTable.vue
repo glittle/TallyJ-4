@@ -7,6 +7,11 @@ import {
   isPendingOnlineBallotStatus,
 } from "@/utils/votingMethodLabels";
 import {
+  phoneSmsListHint,
+  phoneSmsListLabel,
+  phoneSmsListTagType,
+} from "@/utils/phoneOnlineVoterStatus";
+import {
   ElAutoResizer,
   ElButton,
   ElTableV2,
@@ -30,6 +35,7 @@ const props = defineProps<{
   columnWidths: {
     fullName: number;
     method: number;
+    sms: number;
     bahaiId: number;
     area: number;
     flags: number;
@@ -172,6 +178,26 @@ const columns = computed<Column<FrontDeskVoterDto>[]>(() => {
           methodTag,
           onlineTag,
         ]);
+      },
+    },
+    {
+      key: "sms",
+      title: t("frontDesk.table.sms"),
+      width: widths.sms,
+      cellRenderer: ({ rowData }) => {
+        const hint = phoneSmsListHint(rowData.phoneOnlineVoter);
+        if (hint === "none") {
+          return h("span", t("frontDesk.common.dash"));
+        }
+        return h(
+          ElTag,
+          {
+            size: "small",
+            type: phoneSmsListTagType(hint),
+            class: `front-desk-sms-tag front-desk-sms-tag--${hint}`,
+          },
+          () => phoneSmsListLabel(rowData.phoneOnlineVoter, t),
+        );
       },
     },
     {
