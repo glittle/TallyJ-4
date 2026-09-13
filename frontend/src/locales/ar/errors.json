@@ -8,7 +8,6 @@
   "error.serverError": "خطأ في الخادم. يرجى المحاولة لاحقًا.",
   "error.sessionExpired": "انتهت صلاحية جلستك. يرجى تسجيل الدخول مرة أخرى.",
   "error.somethingWentWrong": "حدث خطأ ما",
-  "error.tooManyRequests": "Too many requests. Please try again later.",
   "error.tryAgain": "حاول مرة أخرى",
   "error.unauthorized": "غير مصرح لك بتنفيذ هذا الإجراء.",
   "error.validationError": "يرجى التحقق من إدخالك وحاول مرة أخرى.",

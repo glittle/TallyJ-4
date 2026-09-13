@@ -8,7 +8,6 @@
   "error.serverError": "Ошибка сервера. Пожалуйста, попробуйте позже.",
   "error.sessionExpired": "Ваша сессия истекла. Пожалуйста, войдите снова.",
   "error.somethingWentWrong": "Что-то пошло не так",
-  "error.tooManyRequests": "Too many requests. Please try again later.",
   "error.tryAgain": "Попробовать еще раз",
   "error.unauthorized": "У вас нет прав для выполнения этого действия.",
   "error.validationError": "Пожалуйста, проверьте введенные данные и попробуйте еще раз.",

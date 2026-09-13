@@ -8,7 +8,6 @@
   "error.serverError": "서버 오류입니다. 나중에 다시 시도해 주세요.",
   "error.sessionExpired": "세션이 만료되었습니다. 다시 로그인해 주세요.",
   "error.somethingWentWrong": "오류가 발생했습니다",
-  "error.tooManyRequests": "Too many requests. Please try again later.",
   "error.tryAgain": "다시 시도",
   "error.unauthorized": "이 작업을 수행할 권한이 없습니다.",
   "error.validationError": "입력 내용을 확인하고 다시 시도해 주세요.",

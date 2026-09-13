@@ -8,7 +8,6 @@
   "error.serverError": "服务器错误。请稍后重试。",
   "error.sessionExpired": "您的会话已过期。请重新登录。",
   "error.somethingWentWrong": "出了些问题",
-  "error.tooManyRequests": "Too many requests. Please try again later.",
   "error.tryAgain": "重试",
   "error.unauthorized": "您无权执行此操作。",
   "error.validationError": "请检查您的输入并重试。",

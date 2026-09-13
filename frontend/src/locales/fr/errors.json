@@ -8,7 +8,6 @@
   "error.serverError": "Erreur serveur. Veuillez réessayer plus tard.",
   "error.sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
   "error.somethingWentWrong": "Une erreur est survenue",
-  "error.tooManyRequests": "Too many requests. Please try again later.",
   "error.tryAgain": "Réessayer",
   "error.unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
   "error.validationError": "Veuillez vérifier vos informations et réessayer.",
