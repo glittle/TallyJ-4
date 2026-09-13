@@ -38,6 +38,50 @@ public class JsonRequestVoterIdTests
     }
 
     [Fact]
+    public async Task TryReadAsync_ChunkedBodyWithinMax_ReadsVoterId_AndRewinds()
+    {
+        var context = BodyContext("""{"voterId":"chunked@example.com"}""", setContentLength: false);
+
+        var voterId = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
+
+        Assert.Equal("chunked@example.com", voterId);
+        Assert.Equal(0, context.Request.Body.Position);
+    }
+
+    [Fact]
+    public async Task TryReadAsync_ChunkedBodyOverMax_ReturnsNull_WithoutReadingWholeBody()
+    {
+        var huge = new byte[JsonRequestVoterId.MaxBodyBytes + 64 * 1024];
+        Encoding.UTF8.GetBytes("""{"voterId":"overflow@example.com","pad":"""").CopyTo(huge, 0);
+        var stream = new CountingReadStream(huge);
+        var context = new DefaultHttpContext();
+        context.Request.Body = stream;
+        context.Request.ContentType = "application/json";
+
+        var voterId = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
+
+        Assert.Null(voterId);
+        Assert.Equal(0, context.Request.Body.Position);
+        Assert.True(stream.BytesRead <= JsonRequestVoterId.MaxBodyBytes + 1);
+    }
+
+    [Fact]
+    public async Task TryReadAsync_ContentLengthOverMax_ReturnsNull_WithoutReading()
+    {
+        var huge = new byte[JsonRequestVoterId.MaxBodyBytes + 1];
+        var stream = new CountingReadStream(huge);
+        var context = new DefaultHttpContext();
+        context.Request.Body = stream;
+        context.Request.ContentLength = huge.Length;
+        context.Request.ContentType = "application/json";
+
+        var voterId = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
+
+        Assert.Null(voterId);
+        Assert.Equal(0, stream.BytesRead);
+    }
+
+    [Fact]
     public void NormalizeForRateLimit_FoldsCase()
     {
         Assert.Equal(
@@ -65,13 +109,33 @@ public class JsonRequestVoterIdTests
             RateLimitingMiddleware.GetClientKey(path, "203.0.113.20"));
     }
 
-    private static DefaultHttpContext BodyContext(string json)
+    private static DefaultHttpContext BodyContext(string json, bool setContentLength = true)
     {
         var context = new DefaultHttpContext();
         var bytes = Encoding.UTF8.GetBytes(json);
         context.Request.Body = new MemoryStream(bytes);
-        context.Request.ContentLength = bytes.Length;
+        if (setContentLength)
+        {
+            context.Request.ContentLength = bytes.Length;
+        }
+
         context.Request.ContentType = "application/json";
         return context;
+    }
+
+    private sealed class CountingReadStream : MemoryStream
+    {
+        public int BytesRead { get; private set; }
+
+        public CountingReadStream(byte[] buffer) : base(buffer)
+        {
+        }
+
+        public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
+        {
+            var read = await base.ReadAsync(buffer, cancellationToken);
+            BytesRead += read;
+            return read;
+        }
     }
 }

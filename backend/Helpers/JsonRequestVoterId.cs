@@ -13,6 +13,7 @@ public static class JsonRequestVoterId
     /// <summary>
     /// Enables buffering, parses <c>voterId</c> / <c>VoterId</c> from JSON, then rewinds the body.
     /// Returns null when the body is missing, too large, not JSON, or has no non-empty voterId.
+    /// The read is capped at <see cref="MaxBodyBytes"/> even when ContentLength is unset (chunked).
     /// </summary>
     public static async Task<string?> TryReadAsync(HttpRequest request, CancellationToken cancellationToken)
     {
@@ -34,7 +35,18 @@ public static class JsonRequestVoterId
 
         try
         {
-            using var document = await JsonDocument.ParseAsync(body, cancellationToken: cancellationToken);
+            var capped = await ReadAtMostAsync(body, MaxBodyBytes, cancellationToken);
+            if (capped == null)
+            {
+                return null;
+            }
+
+            if (capped.Length == 0)
+            {
+                return null;
+            }
+
+            using var document = JsonDocument.Parse(capped);
             return FindVoterId(document.RootElement);
         }
         catch (JsonException)
@@ -48,6 +60,38 @@ public static class JsonRequestVoterId
                 body.Position = originalPosition;
             }
         }
+    }
+
+    /// <summary>
+    /// Reads at most <paramref name="maxBytes"/> from <paramref name="body"/>.
+    /// Returns null if the stream has more than that (overflow); otherwise the bytes read.
+    /// </summary>
+    internal static async Task<byte[]?> ReadAtMostAsync(Stream body, int maxBytes, CancellationToken cancellationToken)
+    {
+        var buffer = new byte[maxBytes + 1];
+        var total = 0;
+        while (total < buffer.Length)
+        {
+            var read = await body.ReadAsync(buffer.AsMemory(total, buffer.Length - total), cancellationToken);
+            if (read == 0)
+            {
+                break;
+            }
+
+            total += read;
+        }
+
+        if (total > maxBytes)
+        {
+            return null;
+        }
+
+        if (total == 0)
+        {
+            return [];
+        }
+
+        return buffer.AsSpan(0, total).ToArray();
     }
 
     internal static string? FindVoterId(JsonElement root)
