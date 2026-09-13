@@ -120,3 +120,18 @@ export interface UpdatePersonDto {
 export interface SetPersonPhoneSmsStatusDto {
   smsStatus: string;
 }
+
+export interface CheckSelectedWhatsAppPersonResultDto {
+  personGuid: string;
+  outcome: string;
+}
+
+export interface CheckSelectedWhatsAppResultDto {
+  cancelled: boolean;
+  checked: number;
+  ok: number;
+  noWa: number;
+  failed: number;
+  skipped: number;
+  results: CheckSelectedWhatsAppPersonResultDto[];
+}

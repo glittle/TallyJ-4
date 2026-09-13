@@ -616,6 +616,30 @@ export const ApiResponsePaginatedResponseSuperAdmin_SuperAdminUserDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ApiResponsePeople_CheckSelectedWhatsAppResultDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            $ref: '#/components/schemas/People_CheckSelectedWhatsAppResultDto'
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ApiResponsePeople_PersonDetailDtoSchema = {
     type: 'object',
     properties: {
@@ -3692,6 +3716,73 @@ export const PaginatedResponseTellers_TellerDtoSchema = {
         hasNextPage: {
             type: 'boolean',
             readOnly: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const People_CheckSelectedWhatsAppDtoSchema = {
+    type: 'object',
+    properties: {
+        personGuids: {
+            type: 'array',
+            items: {
+                type: 'string',
+                format: 'uuid'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const People_CheckSelectedWhatsAppPersonResultDtoSchema = {
+    type: 'object',
+    properties: {
+        personGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        outcome: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const People_CheckSelectedWhatsAppResultDtoSchema = {
+    type: 'object',
+    properties: {
+        cancelled: {
+            type: 'boolean'
+        },
+        checked: {
+            type: 'integer',
+            format: 'int32'
+        },
+        ok: {
+            type: 'integer',
+            format: 'int32'
+        },
+        noWa: {
+            type: 'integer',
+            format: 'int32'
+        },
+        failed: {
+            type: 'integer',
+            format: 'int32'
+        },
+        skipped: {
+            type: 'integer',
+            format: 'int32'
+        },
+        results: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/People_CheckSelectedWhatsAppPersonResultDto'
+            },
+            nullable: true
         }
     },
     additionalProperties: false

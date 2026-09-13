@@ -177,6 +177,13 @@ export type ApiResponsePaginatedResponseSuperAdminSuperAdminUserDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponsePeopleCheckSelectedWhatsAppResultDto = {
+    success?: boolean;
+    data?: PeopleCheckSelectedWhatsAppResultDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponsePeoplePersonDetailDto = {
     success?: boolean;
     data?: PeoplePersonDetailDto;
@@ -1111,6 +1118,25 @@ export type PaginatedResponseTellersTellerDto = {
     readonly totalPages?: number;
     readonly hasPreviousPage?: boolean;
     readonly hasNextPage?: boolean;
+};
+
+export type PeopleCheckSelectedWhatsAppDto = {
+    personGuids?: Array<string> | null;
+};
+
+export type PeopleCheckSelectedWhatsAppPersonResultDto = {
+    personGuid?: string;
+    outcome?: string | null;
+};
+
+export type PeopleCheckSelectedWhatsAppResultDto = {
+    cancelled?: boolean;
+    checked?: number;
+    ok?: number;
+    noWa?: number;
+    failed?: number;
+    skipped?: number;
+    results?: Array<PeopleCheckSelectedWhatsAppPersonResultDto> | null;
 };
 
 export type PeopleCreatePersonDto = {
@@ -3971,6 +3997,24 @@ export type PostApiPeopleByGuidCheckWhatsAppResponses = {
 };
 
 export type PostApiPeopleByGuidCheckWhatsAppResponse = PostApiPeopleByGuidCheckWhatsAppResponses[keyof PostApiPeopleByGuidCheckWhatsAppResponses];
+
+export type PostApiPeopleByElectionGuidCheckWhatsAppSelectedData = {
+    body?: PeopleCheckSelectedWhatsAppDto;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/People/{electionGuid}/checkWhatsAppSelected';
+};
+
+export type PostApiPeopleByElectionGuidCheckWhatsAppSelectedResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePeopleCheckSelectedWhatsAppResultDto;
+};
+
+export type PostApiPeopleByElectionGuidCheckWhatsAppSelectedResponse = PostApiPeopleByElectionGuidCheckWhatsAppSelectedResponses[keyof PostApiPeopleByElectionGuidCheckWhatsAppSelectedResponses];
 
 export type PostApiPeopleImportByElectionGuidUploadData = {
     body?: {

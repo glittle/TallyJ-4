@@ -278,7 +278,7 @@ Batch lookup is `FindPhoneOnlineVotersAsync` (P rows only) so Front Desk / peopl
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #255 (maintainer); provider comment that v4 stays on GreenAPI  
-**Revisit when:** bulk check / notify / abort queue, or Front Desk WhatsApp column
+**Revisit when:** head-teller notify / abort queue, or Front Desk WhatsApp column
 
 WhatsApp stays one voter-facing channel. Backend stays on **GreenAPI** (`checkWhatsapp` + existing `sendMessage`). Meta Cloud API and Twilio WhatsApp are out. Presence is stored on **OnlineVoter**, not Person: `WhatsAppStatus` `string?` max 50, non-unicode (`varchar(50)`).
 
@@ -302,7 +302,30 @@ Person detail shows unchecked / OK / reason from the P-row lookup, same pattern 
 
 **Rejected alternative:** Meta Cloud API or Twilio WhatsApp as the v4 provider. Rejected — business verification never landed; this issue stays GreenAPI-shaped.
 
-**Not in this slice:** bulk `CheckMultipleWhatsAppAsync`, head-teller notify queue, abort token, Front Desk / people-list WhatsApp column, SignalR #229, #254 SMS leftovers.
+**Not in this slice (first slice):** bulk `CheckMultipleWhatsAppAsync`, head-teller notify queue, abort token, Front Desk / people-list WhatsApp column, SignalR #229, #254 SMS leftovers.
+
+## Bulk check selected WhatsApp (second slice of #255)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #255 leftover after #339; this slice’s check-selected contract  
+**Revisit when:** head-teller notify queue / abort, or a people-list WhatsApp column
+
+`CheckMultipleWhatsAppAsync` checks a **selected** list of person GUIDs in **one election**. Same teller `[Authorize]` as other People writes. Same P-row gate as one-phone check: persist only when `VoterId == Person.Phone` and `VoterIdType == "P"`. A non-P occupant is skipped, not converted. No phone is skipped. A GUID that is not in that election is ignored (`skipped-other-election`). GreenAPI is still `IGreenApiWhatsAppClient.CheckWhatsAppAsync` (production POSTs; tests mock). When GreenAPI is not configured, nothing is persisted.
+
+The request is bounded (`MaxSelectedPeople` = 100) so one call cannot check an entire imported roll. Provider calls are sequential with a 200–400 ms pause between them so a selected list of ~20 does not burst GreenAPI. If the request abort token fires, remaining checks stop and the response includes what finished plus `cancelled` for the rest. This is **not** the head-teller notify send queue.
+
+The People list (same `PeopleTable`, not a second grid) has row selection and **Check WhatsApp** for the current selection. Per-row / summary outcomes: OK / no-wa / failed / skipped. No Front Desk WhatsApp column, no notify “Has WhatsApp” filter, no notify send/abort queue.
+
+Selected people are checked even if they already have a status — the teller chose this set. v3 skipped already-checked numbers; that is left for a later filter if notify needs “unchecked only.”
+
+**Rejected alternative:** skip already-checked numbers (v3 `CheckMultipleWhatsAppAsync`). Rejected for this slice — “check selected” means the current selection, including a re-check.
+
+**Rejected alternative:** a second people grid or notify page for the action. Rejected — the existing People list already had leftover bulk-action strings; selection belongs there.
+
+**Rejected alternative:** a dedicated abort-queue endpoint (v3 notify abort). Rejected for this slice — cancel is the HTTP request token only.
+
+**Not in this slice:** head-teller notify send + jitter + abort queue, Front Desk / people-list WhatsApp column, notify “Has WhatsApp” filter, SignalR #229, #254 SMS leftovers. #255 stays open.
 
 ## Related
 

@@ -60,6 +60,23 @@ public class GreenApiWhatsAppClientTests
     }
 
     [Fact]
+    public async Task CheckWhatsAppAsync_Cancelled_RethrowsWithoutMappingToCheckFailed()
+    {
+        var handler = new StubHandler(HttpStatusCode.OK, """{"existsWhatsapp":true}""")
+        {
+            ThrowCanceled = true
+        };
+        var httpFactory = new Mock<IHttpClientFactory>();
+        httpFactory.Setup(f => f.CreateClient("GreenApi")).Returns(new HttpClient(handler));
+        var client = CreateClient(httpFactory.Object, Configured());
+        using var cts = new CancellationTokenSource();
+        cts.Cancel();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            client.CheckWhatsAppAsync(ValidPhone, cts.Token));
+    }
+
+    [Fact]
     public async Task CheckWhatsAppAsync_HttpFailure_ReturnsCheckFailed()
     {
         var handler = new StubHandler(HttpStatusCode.BadRequest, """{"error":true}""");
@@ -109,11 +126,18 @@ public class GreenApiWhatsAppClientTests
 
         public string LastBody { get; private set; } = "";
 
+        public bool ThrowCanceled { get; init; }
+
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request,
             CancellationToken cancellationToken)
         {
             LastRequest = request;
+            if (ThrowCanceled)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+            }
+
             if (request.Content != null)
             {
                 LastBody = await request.Content.ReadAsStringAsync(cancellationToken);

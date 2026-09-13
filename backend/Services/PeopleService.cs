@@ -23,6 +23,18 @@ public class PeopleService : IPeopleService
     private readonly ISignalRNotificationService _signalRNotificationService;
     private readonly IHttpContextAccessor? _httpContextAccessor;
     private readonly IGreenApiWhatsAppClient? _greenApiWhatsAppClient;
+    private readonly Func<CancellationToken, Task> _delayBetweenProviderCalls;
+
+    /// <summary>
+    /// Pause between GreenAPI <c>checkWhatsapp</c> calls so a selected list
+    /// of ~20 does not burst the provider. Inclusive range.
+    /// </summary>
+    internal const int ProviderCallDelayMinMs = 200;
+
+    /// <summary>
+    /// Upper bound (inclusive) for the pause between GreenAPI checks.
+    /// </summary>
+    internal const int ProviderCallDelayMaxMs = 400;
 
     /// <summary>
     /// Initializes a new instance of the PeopleService.
@@ -32,13 +44,21 @@ public class PeopleService : IPeopleService
         ILogger<PeopleService> logger,
         ISignalRNotificationService signalRNotificationService,
         IHttpContextAccessor? httpContextAccessor = null,
-        IGreenApiWhatsAppClient? greenApiWhatsAppClient = null)
+        IGreenApiWhatsAppClient? greenApiWhatsAppClient = null,
+        Func<CancellationToken, Task>? delayBetweenProviderCalls = null)
     {
         _context = context;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
         _httpContextAccessor = httpContextAccessor;
         _greenApiWhatsAppClient = greenApiWhatsAppClient;
+        _delayBetweenProviderCalls = delayBetweenProviderCalls ?? DefaultDelayBetweenProviderCalls;
+    }
+
+    private static Task DefaultDelayBetweenProviderCalls(CancellationToken cancellationToken)
+    {
+        var ms = Random.Shared.Next(ProviderCallDelayMinMs, ProviderCallDelayMaxMs + 1);
+        return Task.Delay(ms, cancellationToken);
     }
 
     /// <summary>
@@ -603,6 +623,149 @@ public class PeopleService : IPeopleService
             check.Status);
 
         return await MapPhoneOnlineVoterAsync(person.Phone);
+    }
+
+    /// <inheritdoc />
+    public async Task<CheckSelectedWhatsAppResultDto> CheckMultipleWhatsAppAsync(
+        Guid electionGuid,
+        IReadOnlyList<Guid> personGuids,
+        CancellationToken cancellationToken = default)
+    {
+        if (personGuids.Count > CheckSelectedWhatsAppDto.MaxSelectedPeople)
+        {
+            throw new InvalidOperationException(PeopleMessageKeys.PhoneWhatsAppTooMany);
+        }
+
+        if (_greenApiWhatsAppClient == null)
+        {
+            throw new InvalidOperationException(PeopleMessageKeys.PhoneWhatsAppNotConfigured);
+        }
+
+        var requested = personGuids.Distinct().ToList();
+        var result = new CheckSelectedWhatsAppResultDto();
+        if (requested.Count == 0)
+        {
+            return result;
+        }
+
+        var people = await _context.People
+            .Where(p => p.ElectionGuid == electionGuid && requested.Contains(p.PersonGuid))
+            .ToListAsync(cancellationToken);
+        var byGuid = people.ToDictionary(p => p.PersonGuid);
+
+        var providerCalls = 0;
+        var remainingCancelled = false;
+
+        foreach (var personGuid in requested)
+        {
+            if (remainingCancelled || cancellationToken.IsCancellationRequested)
+            {
+                AddWhatsAppCheckOutcome(result, personGuid, WhatsAppCheckOutcome.Cancelled);
+                continue;
+            }
+
+            if (!byGuid.TryGetValue(personGuid, out var person))
+            {
+                AddWhatsAppCheckOutcome(result, personGuid, WhatsAppCheckOutcome.SkippedOtherElection);
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(person.Phone))
+            {
+                AddWhatsAppCheckOutcome(result, personGuid, WhatsAppCheckOutcome.SkippedNoPhone);
+                continue;
+            }
+
+            await OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync(
+                _context, person.Phone, cancellationToken);
+            var row = await OnlineVoterPhoneHelper.FindTrackedPhoneOnlineVoterAsync(
+                _context, person.Phone, cancellationToken);
+            // Identifier gate: persist only on VoterId + VoterIdType == "P". Do not convert.
+            if (row == null || row.VoterIdType != "P")
+            {
+                AddWhatsAppCheckOutcome(result, personGuid, WhatsAppCheckOutcome.SkippedNonP);
+                continue;
+            }
+
+            if (providerCalls > 0)
+            {
+                try
+                {
+                    await _delayBetweenProviderCalls(cancellationToken);
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    remainingCancelled = true;
+                    AddWhatsAppCheckOutcome(result, personGuid, WhatsAppCheckOutcome.Cancelled);
+                    continue;
+                }
+            }
+
+            GreenApiWhatsAppCheckResult check;
+            try
+            {
+                check = await _greenApiWhatsAppClient.CheckWhatsAppAsync(person.Phone, cancellationToken);
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                remainingCancelled = true;
+                AddWhatsAppCheckOutcome(result, personGuid, WhatsAppCheckOutcome.Cancelled);
+                continue;
+            }
+
+            if (!check.ProviderCalled)
+            {
+                throw new InvalidOperationException(PeopleMessageKeys.PhoneWhatsAppNotConfigured);
+            }
+
+            row.WhatsAppStatus = check.Status;
+            // Persist a completed provider result even if the request was just cancelled.
+            await _context.SaveChangesAsync(CancellationToken.None);
+            providerCalls++;
+
+            _logger.LogInformation(
+                "Set phone WhatsAppStatus for person {PersonGuid} to {WhatsAppStatus}",
+                personGuid,
+                check.Status);
+
+            AddWhatsAppCheckOutcome(result, personGuid, check.Status);
+        }
+
+        return result;
+    }
+
+    private static void AddWhatsAppCheckOutcome(
+        CheckSelectedWhatsAppResultDto result,
+        Guid personGuid,
+        string outcome)
+    {
+        result.Results.Add(new CheckSelectedWhatsAppPersonResultDto
+        {
+            PersonGuid = personGuid,
+            Outcome = outcome
+        });
+
+        switch (outcome)
+        {
+            case WhatsAppCheckOutcome.Ok:
+                result.Checked++;
+                result.Ok++;
+                break;
+            case WhatsAppCheckOutcome.NoWa:
+                result.Checked++;
+                result.NoWa++;
+                break;
+            case WhatsAppCheckOutcome.CheckFailed:
+                result.Checked++;
+                result.Failed++;
+                break;
+            case WhatsAppCheckOutcome.Cancelled:
+                result.Cancelled = true;
+                break;
+            default:
+                result.Skipped++;
+                break;
+        }
     }
 
     // =====================================================================

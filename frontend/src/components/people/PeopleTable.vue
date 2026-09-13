@@ -4,6 +4,7 @@ import {
   ElAutoResizer,
   ElTableV2,
   ElButton,
+  ElCheckbox,
   ElIcon,
   ElTag,
 } from "element-plus";
@@ -19,17 +20,76 @@ import {
 
 const { t } = useI18n();
 
-defineProps<{
+const props = defineProps<{
   people: PersonListDto[];
   loading: boolean;
   tableHeight: number;
+  selectedGuids: string[];
 }>();
 
 const emit = defineEmits<{
   edit: [person: PersonListDto];
+  "update:selectedGuids": [guids: string[]];
 }>();
 
+const selectedSet = computed(() => new Set(props.selectedGuids));
+
+const allVisibleSelected = computed(
+  () =>
+    props.people.length > 0 &&
+    props.people.every((person) => selectedSet.value.has(person.personGuid)),
+);
+
+const someVisibleSelected = computed(() =>
+  props.people.some((person) => selectedSet.value.has(person.personGuid)),
+);
+
+function setSelected(guids: string[]) {
+  emit("update:selectedGuids", guids);
+}
+
+function toggleRow(personGuid: string, selected: boolean) {
+  const next = new Set(props.selectedGuids);
+  if (selected) {
+    next.add(personGuid);
+  } else {
+    next.delete(personGuid);
+  }
+  setSelected([...next]);
+}
+
+function toggleVisible(selected: boolean) {
+  const next = new Set(props.selectedGuids);
+  for (const person of props.people) {
+    if (selected) {
+      next.add(person.personGuid);
+    } else {
+      next.delete(person.personGuid);
+    }
+  }
+  setSelected([...next]);
+}
+
 const columns = computed<Column<any>[]>(() => [
+  {
+    key: "selection",
+    width: 50,
+    cellRenderer: ({ rowData }: { rowData: PersonListDto }) =>
+      h(ElCheckbox, {
+        class: "people-table__select",
+        modelValue: selectedSet.value.has(rowData.personGuid),
+        onChange: (value: string | number | boolean) =>
+          toggleRow(rowData.personGuid, value === true),
+      }),
+    headerCellRenderer: () =>
+      h(ElCheckbox, {
+        class: "people-table__select-all",
+        modelValue: allVisibleSelected.value,
+        indeterminate: someVisibleSelected.value && !allVisibleSelected.value,
+        onChange: (value: string | number | boolean) =>
+          toggleVisible(value === true),
+      }),
+  },
   {
     key: "fullName",
     dataKey: "fullName",
@@ -118,6 +178,7 @@ const columns = computed<Column<any>[]>(() => [
           :data="people"
           :width="width"
           :height="height"
+          row-key="personGuid"
           fixed
         />
       </template>

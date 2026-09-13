@@ -11,12 +11,14 @@ import {
   postApiPeopleByGuidGenerateKioskCode,
   putApiPeopleByGuidSetPhoneSmsStatus,
   postApiPeopleByGuidCheckWhatsApp,
+  postApiPeopleByElectionGuidCheckWhatsAppSelected,
 } from "@/api/gen/configService";
 import type {
   PersonDto,
   PersonListDto,
   PersonDetailDto,
   PersonPhoneOnlineVoterDto,
+  CheckSelectedWhatsAppResultDto,
   CreatePersonDto,
   UpdatePersonDto,
 } from "../types";
@@ -145,5 +147,18 @@ export const peopleService = {
       path: { guid: personGuid },
     });
     return response.data?.data as PersonPhoneOnlineVoterDto;
+  },
+
+  async checkWhatsAppSelected(
+    electionGuid: string,
+    personGuids: string[],
+    signal?: AbortSignal,
+  ): Promise<CheckSelectedWhatsAppResultDto> {
+    const response = await postApiPeopleByElectionGuidCheckWhatsAppSelected({
+      path: { electionGuid },
+      body: { personGuids },
+      signal,
+    });
+    return response.data?.data as CheckSelectedWhatsAppResultDto;
   },
 };

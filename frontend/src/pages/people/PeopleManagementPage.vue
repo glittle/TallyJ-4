@@ -10,8 +10,18 @@ import PeopleTable from "../../components/people/PeopleTable.vue";
 import PersonForm from "../../components/people/PersonForm.vue";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { peopleImportService } from "@/services/peopleImportService";
+import { peopleService } from "@/services/peopleService";
 import { usePeopleStore } from "../../stores/peopleStore";
-import type { PersonListDto } from "../../types";
+import type {
+  CheckSelectedWhatsAppResultDto,
+  PersonListDto,
+} from "../../types";
+import {
+  canCheckSelectedWhatsApp,
+  MAX_WHATSAPP_CHECK_SELECTED,
+  selectedPeopleWithPhone,
+  whatsAppCheckOutcomeLabel,
+} from "@/utils/whatsAppCheckSelected";
 
 const router = useRouter();
 const route = useRoute();
@@ -36,6 +46,11 @@ const { height: tableHeight } = useViewportTableHeight(tableWrapperRef, {
 
 const loading = computed(() => peopleStore.loading);
 const allPeople = computed(() => peopleStore.peopleList);
+const selectedGuids = ref<string[]>([]);
+const checkingWhatsApp = ref(false);
+const checkWhatsAppResults = ref<CheckSelectedWhatsAppResultDto | null>(null);
+const showCheckWhatsAppResults = ref(false);
+let checkWhatsAppAbort: AbortController | null = null;
 
 const filteredPeople = computed(() => {
   if (!searchQuery.value) {
@@ -48,6 +63,16 @@ const filteredPeople = computed(() => {
       p.email?.toLowerCase().includes(query),
   );
 });
+
+const selectedWithPhone = computed(() =>
+  selectedPeopleWithPhone(allPeople.value, selectedGuids.value),
+);
+const canCheckWhatsApp = computed(() =>
+  canCheckSelectedWhatsApp(
+    selectedGuids.value.length,
+    selectedWithPhone.value.length,
+  ),
+);
 
 const personDrawerTitle = computed(() => {
   if (drawerMode.value === "add") {
@@ -105,6 +130,80 @@ function handlePersonDeleted() {
 
 function handleImport() {
   router.push(`/elections/${electionGuid}/people/import`);
+}
+
+function resultPersonName(personGuid: string): string {
+  return (
+    allPeople.value.find((person) => person.personGuid === personGuid)
+      ?.fullName ?? personGuid
+  );
+}
+
+function cancelCheckWhatsAppSelected() {
+  checkWhatsAppAbort?.abort();
+}
+
+async function handleCheckWhatsAppSelected() {
+  if (!canCheckWhatsApp.value) {
+    if (selectedGuids.value.length > MAX_WHATSAPP_CHECK_SELECTED) {
+      showErrorMessage(
+        t("people.phoneOnlineVoter.whatsAppTooMany", {
+          max: MAX_WHATSAPP_CHECK_SELECTED,
+        }),
+      );
+    } else {
+      showErrorMessage(t("people.checkWhatsAppSelectedNone"));
+    }
+    return;
+  }
+
+  checkWhatsAppAbort?.abort();
+  checkWhatsAppAbort = new AbortController();
+  checkingWhatsApp.value = true;
+  try {
+    const result = await peopleService.checkWhatsAppSelected(
+      electionGuid,
+      selectedGuids.value,
+      checkWhatsAppAbort.signal,
+    );
+    checkWhatsAppResults.value = result;
+    showCheckWhatsAppResults.value = true;
+    if (result.cancelled) {
+      showErrorMessage(t("people.checkWhatsAppSelectedCancelled"));
+    } else {
+      showSuccessMessage(
+        t("people.checkWhatsAppSelectedSummary", {
+          checked: result.checked,
+          ok: result.ok,
+          noWa: result.noWa,
+          failed: result.failed,
+          skipped: result.skipped,
+        }),
+      );
+    }
+    await peopleStore.fetchPeopleList(electionGuid);
+    selectedGuids.value = [];
+  } catch (error) {
+    if (isAbortError(error)) {
+      showErrorMessage(t("people.checkWhatsAppSelectedCancelled"));
+      await peopleStore.fetchPeopleList(electionGuid);
+    } else {
+      handleApiError(error);
+    }
+  } finally {
+    checkingWhatsApp.value = false;
+    checkWhatsAppAbort = null;
+  }
+}
+
+function isAbortError(error: unknown): boolean {
+  return (
+    (error instanceof DOMException && error.name === "AbortError") ||
+    (typeof error === "object" &&
+      error !== null &&
+      "name" in error &&
+      (error as { name?: string }).name === "AbortError")
+  );
 }
 
 async function handleDeleteAllPeople() {
@@ -168,6 +267,29 @@ async function handleDeleteAllPeople() {
                 </el-icon>
                 {{ $t("people.importPeople") }}
               </el-button>
+              <el-button
+                type="default"
+                :disabled="!canCheckWhatsApp || checkingWhatsApp"
+                :loading="checkingWhatsApp"
+                @click="handleCheckWhatsAppSelected"
+              >
+                {{
+                  $t("people.checkWhatsAppSelected", {
+                    count: selectedWithPhone.length,
+                  })
+                }}
+              </el-button>
+              <el-button
+                v-if="checkingWhatsApp"
+                @click="cancelCheckWhatsAppSelected"
+              >
+                {{ $t("people.checkWhatsAppSelectedCancel") }}
+              </el-button>
+              <span v-if="selectedGuids.length" class="selected-count">
+                {{
+                  $t("people.selectedCount", { count: selectedGuids.length })
+                }}
+              </span>
             </el-space>
           </div>
           <el-button
@@ -184,6 +306,7 @@ async function handleDeleteAllPeople() {
 
       <div ref="tableWrapperRef" class="people-table-wrapper">
         <PeopleTable
+          v-model:selected-guids="selectedGuids"
           :people="filteredPeople"
           :loading="loading"
           :table-height="tableHeight"
@@ -217,6 +340,38 @@ async function handleDeleteAllPeople() {
         @cancel="showPersonDrawer = false"
       />
     </el-drawer>
+
+    <el-dialog
+      v-model="showCheckWhatsAppResults"
+      :title="$t('people.checkWhatsAppSelectedResults')"
+      width="520px"
+    >
+      <p v-if="checkWhatsAppResults">
+        {{
+          $t("people.checkWhatsAppSelectedSummary", {
+            checked: checkWhatsAppResults.checked,
+            ok: checkWhatsAppResults.ok,
+            noWa: checkWhatsAppResults.noWa,
+            failed: checkWhatsAppResults.failed,
+            skipped: checkWhatsAppResults.skipped,
+          })
+        }}
+      </p>
+      <p v-if="checkWhatsAppResults?.cancelled">
+        {{ $t("people.checkWhatsAppSelectedCancelled") }}
+      </p>
+      <ul v-if="checkWhatsAppResults" class="whatsapp-check-results">
+        <li v-for="row in checkWhatsAppResults.results" :key="row.personGuid">
+          {{ resultPersonName(row.personGuid) }} —
+          {{ whatsAppCheckOutcomeLabel(row.outcome, t) }}
+        </li>
+      </ul>
+      <template #footer>
+        <el-button @click="showCheckWhatsAppResults = false">
+          {{ $t("people.checkWhatsAppSelectedClose") }}
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -257,6 +412,18 @@ async function handleDeleteAllPeople() {
     display: flex;
     align-items: center;
   }
+
+  .selected-count {
+    color: var(--el-text-color-secondary);
+    font-size: var(--el-font-size-small);
+  }
+}
+
+.whatsapp-check-results {
+  margin: 12px 0 0;
+  padding-left: 20px;
+  max-height: 240px;
+  overflow: auto;
 }
 
 .person-form-drawer {

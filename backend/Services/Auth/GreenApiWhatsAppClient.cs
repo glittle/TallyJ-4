@@ -61,6 +61,10 @@ public class GreenApiWhatsAppClient : IGreenApiWhatsAppClient
                 status);
             return GreenApiWhatsAppCheckResult.FromProvider(status);
         }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException)
         {
             _logger.LogWarning(ex, "{Method}: GreenAPI checkWhatsapp failed", nameof(CheckWhatsAppAsync));
