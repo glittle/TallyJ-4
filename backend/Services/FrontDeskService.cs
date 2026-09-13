@@ -174,6 +174,8 @@ public class FrontDeskService : IFrontDeskService
     }
 
     /// <inheritdoc />
+    /// Desk-only: requires <see cref="Person.RegistrationTime"/>. Does not
+    /// restore an online row that check-in already withdrew.
     public async Task<FrontDeskVoterDto> UnregisterVoterAsync(Guid electionGuid, UnregisterVoterDto unregisterDto)
     {
         await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, electionGuid);
@@ -413,7 +415,8 @@ public class FrontDeskService : IFrontDeskService
 
     /// <summary>
     /// Discard a Draft or Submitted online row after Front Desk records a
-    /// different method. Processed / Processing rows are never withdrawn.
+    /// different method. The row is removed; Unregister and later method
+    /// changes do not restore it. Processed / Processing rows are never withdrawn.
     /// </summary>
     private void WithdrawPendingOnlineBallot(Person person, OnlineVotingInfo onlineInfo)
     {

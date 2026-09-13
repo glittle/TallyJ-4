@@ -38,6 +38,9 @@ const activeTellers = ref<ActiveTellers>(getActiveTellers());
 const hasActiveTeller = computed(() =>
   Boolean(activeTellers.value.teller1.trim()),
 );
+const isElectionFinalized = computed(
+  () => electionStore.currentStage === "Finalized",
+);
 
 function onTellersChanged(tellers: ActiveTellers) {
   activeTellers.value = tellers;
@@ -246,6 +249,7 @@ const {
 } = useFrontDeskRegistration({
   electionGuid,
   hasActiveTeller,
+  isElectionFinalized,
   electionFlags,
   registrationTypes,
   selectedVoter,
@@ -590,6 +594,7 @@ onUnmounted(async () => {
             :registration-types="registrationTypes"
             :election-flags="electionFlags"
             :has-active-teller="hasActiveTeller"
+            :is-election-finalized="isElectionFinalized"
             :check-in-in-progress="checkInInProgress"
             :pending-voting-method="pendingVotingMethod"
             :selected-button-index="selectedButtonIndex"

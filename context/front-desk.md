@@ -64,6 +64,39 @@ Unregister (and other desk-registration undo) stays on `RegistrationTime`. Accep
 
 **Rejected alternative:** let Unregister clear Processed online. Rejected — `UnregisterVoterAsync` still requires `RegistrationTime`; online acceptance is not a desk check-in.
 
+## Repeatable desk method while registration is open
+
+**Status:** active  
+**Evidence:** confirmed (Glen, issue #336, 2026-09-13)  
+**Source:** issue #336 after #186 / #334 / #335  
+**Revisit when:** tellers need in-place method buttons without Unregister
+
+A pending online row (Draft / Submitted) can be superseded by a desk method. Check-in still withdraws that row (same #186 path). After that, the teller may change the desk method until registration is done.
+
+**Chosen:** keep Unregister + re-check-in. The overlay already offers Unregister when `RegistrationTime` is set, hides method buttons while checked in, and shows them again after Unregister. A second check-in records the new method. No in-place “change method” API.
+
+The withdrawn online row is deleted. Unregister clears only the desk fields; it does not recreate the row. Accept-all therefore has nothing to process for that person, including after a later Unregister or a second method. There is no separate process-one endpoint — Accept-all is the only accept path.
+
+Processing / Processed stay refused. Unregister is still not offered without `RegistrationTime`.
+
+**Rejected alternative:** add in-place method-change buttons on the checked-in overlay. Rejected — Unregister + re-check-in already updates the choice and is offered while registration is open.
+
+**Rejected alternative:** invent a new “registration closed” flag or lock Front Desk when leaving Gathering. Rejected — see below.
+
+## Registration-done is the Finalized write lock
+
+**Status:** active  
+**Evidence:** confirmed (existing `ElectionFinalizedWriteGuard`; Glen, issue #336)  
+**Source:** [election-state.md](election-state.md); `FrontDeskService` check-in / Unregister / flags / envelope  
+
+There is no separate “end registration” switch. Head tellers already lock people and ballot writes by advancing to **Finalized** (`ElectionFinalizedWriteGuard`). Check-in and Unregister already throw `elections.finalizedWriteBlocked`. The overlay uses that same stage: method, Unregister, and flag writes are not actionable while `electionStage === Finalized`. The notice reuses `elections.finalizedWriteBlocked` (same phrase as the API).
+
+Leaving Finalized (confirmed FullTeller stage change) is what reopens those writes. Gathering / Processing / SettingUp do not lock Front Desk.
+
+**Rejected alternative:** a second lock that closes Front Desk when the election leaves GatheringBallots. Rejected — #336 asked to reuse an existing gate; Finalized already is that lock.
+
+**Reason:** one write lock for people/ballot mutations, including changing how someone registered.
+
 ## Front Desk SMS column is the phone P-row hint
 
 **Status:** active  

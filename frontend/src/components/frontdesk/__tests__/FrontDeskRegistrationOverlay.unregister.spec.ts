@@ -29,7 +29,10 @@ const stubs = {
   ElTimelineItem: { template: "<div />" },
 };
 
-function mountOverlay(row: FrontDeskVoterDto) {
+function mountOverlay(
+  row: FrontDeskVoterDto,
+  extras: { isElectionFinalized?: boolean } = {},
+) {
   return mount(FrontDeskRegistrationOverlay, {
     props: {
       voter: row,
@@ -37,6 +40,7 @@ function mountOverlay(row: FrontDeskVoterDto) {
       registrationTypes: [{ value: "P", label: "In Person" }],
       electionFlags: [],
       hasActiveTeller: true,
+      isElectionFinalized: extras.isElectionFinalized ?? false,
       checkInInProgress: false,
       pendingVotingMethod: null,
       selectedButtonIndex: 0,
@@ -75,5 +79,19 @@ describe("FrontDeskRegistrationOverlay Unregister", () => {
     expect(wrapper.find('[data-dialog-button="__unregister__"]').exists()).toBe(
       true,
     );
+  });
+
+  it("disables Unregister when the election is Finalized", () => {
+    const wrapper = mountOverlay(
+      voter({
+        votingMethod: "P",
+        registrationTime: "2026-09-13T12:00:00Z",
+      }),
+      { isElectionFinalized: true },
+    );
+
+    const button = wrapper.find('[data-dialog-button="__unregister__"]');
+    expect(button.exists()).toBe(true);
+    expect(button.attributes("disabled")).toBeDefined();
   });
 });

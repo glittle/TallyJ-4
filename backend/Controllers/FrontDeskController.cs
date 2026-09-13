@@ -117,7 +117,7 @@ public class FrontDeskController : ControllerBase
     }
 
     /// <summary>
-    /// Unregisters a voter (removes their check-in status).
+    /// Unregisters a desk check-in. Does not restore a withdrawn online row.
     /// </summary>
     /// <param name="electionGuid">The election GUID.</param>
     /// <param name="unregisterDto">The unregister data.</param>

@@ -23,11 +23,16 @@ function voter(overrides: Partial<FrontDeskVoterDto> = {}): FrontDeskVoterDto {
   };
 }
 
-function setup(selected: FrontDeskVoterDto | null) {
+function setup(
+  selected: FrontDeskVoterDto | null,
+  extras: { isElectionFinalized?: boolean } = {},
+) {
   const unregisterVoter = vi.fn();
+  const checkInVoter = vi.fn();
   const api = useFrontDeskRegistration({
     electionGuid: ref("elec-1"),
     hasActiveTeller: ref(true),
+    isElectionFinalized: ref(extras.isElectionFinalized ?? false),
     electionFlags: ref([]),
     registrationTypes: computed(() => [
       { value: "P", label: "In Person", key: "", isVotingMethod: true },
@@ -35,14 +40,14 @@ function setup(selected: FrontDeskVoterDto | null) {
     selectedVoter: ref(selected),
     searchInputRef: ref(null),
     registrationOverlayRef: ref(null),
-    checkInVoter: vi.fn(),
+    checkInVoter,
     unregisterVoter,
     savePersonFlags: vi.fn(),
     t: (key) => key,
     showSuccessMessage: vi.fn(),
     showErrorMessage: vi.fn(),
   });
-  return { api, unregisterVoter };
+  return { api, unregisterVoter, checkInVoter };
 }
 
 describe("useFrontDeskRegistration Unregister gate", () => {
@@ -75,5 +80,36 @@ describe("useFrontDeskRegistration Unregister gate", () => {
 
     const { api } = setup(desk);
     expect(api.dialogButtons.value.some((b) => b.isUnregister)).toBe(true);
+    expect(api.dialogButtons.value.some((b) => b.isVotingMethod)).toBe(false);
+  });
+
+  it("offers method buttons after Unregister so the teller can change method", () => {
+    const unregistered = voter({
+      isCheckedIn: false,
+      votingMethod: undefined,
+      registrationTime: undefined,
+    });
+    const { api } = setup(unregistered);
+    expect(api.dialogButtons.value.some((b) => b.isUnregister)).toBe(false);
+    expect(api.dialogButtons.value.some((b) => b.isVotingMethod)).toBe(true);
+  });
+
+  it("does not call Unregister or check-in when the election is Finalized", async () => {
+    const desk = voter({
+      isCheckedIn: true,
+      votingMethod: "P",
+      registrationTime: "2026-09-13T12:00:00Z",
+    });
+    const { api, unregisterVoter, checkInVoter } = setup(desk, {
+      isElectionFinalized: true,
+    });
+
+    expect(api.registrationWritesAllowed.value).toBe(false);
+    await api.handleUnregisterSelected();
+    expect(confirm).not.toHaveBeenCalled();
+    expect(unregisterVoter).not.toHaveBeenCalled();
+
+    api.clickDialogButton("P");
+    expect(checkInVoter).not.toHaveBeenCalled();
   });
 });

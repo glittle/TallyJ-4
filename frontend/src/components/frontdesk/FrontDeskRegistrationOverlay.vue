@@ -17,6 +17,7 @@ const props = defineProps<{
   registrationTypes: { value: string; label: string }[];
   electionFlags: string[];
   hasActiveTeller: boolean;
+  isElectionFinalized: boolean;
   checkInInProgress: boolean;
   pendingVotingMethod: string | null;
   selectedButtonIndex: number;
@@ -62,7 +63,16 @@ defineExpose({
   >
     <div class="registration-buttons">
       <el-alert
-        v-if="!hasActiveTeller"
+        v-if="isElectionFinalized"
+        type="warning"
+        :title="$t('elections.stage.Finalized')"
+        :description="$t('elections.finalizedWriteBlocked')"
+        show-icon
+        :closable="false"
+        class="teller-required-alert"
+      />
+      <el-alert
+        v-else-if="!hasActiveTeller"
         type="warning"
         :title="$t('frontDesk.tellerRequired.title')"
         :description="$t('frontDesk.tellerRequired.message')"
@@ -120,7 +130,7 @@ defineExpose({
             size="large"
             data-dialog-button="__unregister__"
             class="unregister-button dialog-option-button"
-            :disabled="!hasActiveTeller"
+            :disabled="!hasActiveTeller || isElectionFinalized"
             :class="{
               'keyboard-focused-button':
                 isDialogButtonKeyboardFocused('__unregister__'),
@@ -185,6 +195,7 @@ defineExpose({
             class="dialog-option-button"
             :disabled="
               !hasActiveTeller ||
+              isElectionFinalized ||
               (checkInInProgress && pendingVotingMethod !== type.value)
             "
             :class="{
@@ -211,7 +222,7 @@ defineExpose({
             :type="hasFlag(voter, flag) ? 'success' : 'default'"
             size="large"
             class="dialog-option-button"
-            :disabled="!hasActiveTeller || checkInInProgress"
+            :disabled="!hasActiveTeller || isElectionFinalized || checkInInProgress"
             :class="{
               'keyboard-focused-button': isDialogButtonKeyboardFocused(flag),
             }"

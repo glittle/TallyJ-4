@@ -37,7 +37,8 @@ public interface IFrontDeskService
     Task<FrontDeskStatsDto> GetStatsAsync(Guid electionGuid);
 
     /// <summary>
-    /// Unregisters a voter (removes their check-in status).
+    /// Unregisters a desk check-in (clears <c>RegistrationTime</c> and method).
+    /// Does not recreate a withdrawn pending online row.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
     /// <param name="unregisterDto">The unregister data.</param>
