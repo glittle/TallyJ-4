@@ -82,4 +82,13 @@ describe("voter auth verify and rate-limit keys", () => {
       ),
     ).toBe("Too many requests. Please try again later.");
   });
+
+  it("surfaces the 413 i18n key instead of raw English", () => {
+    expect(
+      resolveUserFacingApiError(
+        { error: "error.payloadTooLarge" },
+        "Something went wrong",
+      ),
+    ).toBe("This request is too large.");
+  });
 });

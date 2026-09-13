@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Backend.DTOs.Auth;
 using Backend.DTOs.OnlineVoting;
+using Backend.Helpers;
 using Backend.Middleware;
 using Xunit;
 
@@ -191,6 +192,51 @@ public class RateLimitingTests : IntegrationTestBase
         lastResponse!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
         var body = await lastResponse.Content.ReadAsStringAsync();
         body.Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
+    }
+
+    [Fact]
+    public async Task RequestCode_PaddedBodyWithRealVoterId_Returns413()
+    {
+        var response = await PostRawJsonWithForwardedFor(
+            "/api/online-voting/requestCode",
+            PaddedRequestCodeJson("padded-evade@example.com"),
+            "203.0.113.80");
+
+        response.StatusCode.Should().Be(HttpStatusCode.RequestEntityTooLarge);
+        var body = await response.Content.ReadAsStringAsync();
+        body.Should().Contain(RateLimitingMiddleware.PayloadTooLargeKey);
+    }
+
+    [Fact]
+    public async Task RequestCode_PaddedBody_DoesNotEvadeIdentifierLimit()
+    {
+        var voterId = "padded-same-id@example.com";
+        var request = new RequestCodeDto
+        {
+            VoterId = voterId,
+            VoterIdType = "E",
+            DeliveryMethod = "email"
+        };
+
+        HttpResponseMessage? lastNormal = null;
+        for (int i = 0; i < 6; i++)
+        {
+            lastNormal = await PostJsonWithForwardedFor(
+                "/api/online-voting/requestCode",
+                request,
+                "203.0.113.81");
+            await Task.Delay(50);
+        }
+
+        lastNormal!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+
+        var padded = await PostRawJsonWithForwardedFor(
+            "/api/online-voting/requestCode",
+            PaddedRequestCodeJson(voterId),
+            "203.0.113.99");
+
+        padded.StatusCode.Should().Be(HttpStatusCode.RequestEntityTooLarge);
+        padded.StatusCode.Should().NotBe(HttpStatusCode.OK);
     }
 
     [Fact]
@@ -464,15 +510,31 @@ public class RateLimitingTests : IntegrationTestBase
         T body,
         string forwardedFor)
     {
+        return await PostRawJsonWithForwardedFor(
+            path,
+            JsonSerializer.Serialize(body),
+            forwardedFor);
+    }
+
+    private async Task<HttpResponseMessage> PostRawJsonWithForwardedFor(
+        string path,
+        string json,
+        string forwardedFor)
+    {
         var request = new HttpRequestMessage(HttpMethod.Post, path)
         {
-            Content = new StringContent(
-                JsonSerializer.Serialize(body),
-                Encoding.UTF8,
-                "application/json")
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
         };
         request.Headers.Add("X-Forwarded-For", forwardedFor);
         return await Client.SendAsync(request);
+    }
+
+    private static string PaddedRequestCodeJson(string voterId)
+    {
+        var prefix =
+            $"{{\"voterId\":\"{voterId}\",\"voterIdType\":\"E\",\"deliveryMethod\":\"email\",\"pad\":\"";
+        var padLength = JsonRequestVoterId.MaxBodyBytes - prefix.Length + 32;
+        return prefix + new string('x', padLength) + "\"}";
     }
 }
 

@@ -47,6 +47,9 @@ export function useApiErrorHandler() {
           case 404:
             message = t("error.notFound");
             break;
+          case 413:
+            message = data?.error || t("error.payloadTooLarge");
+            break;
           case 429:
             message = data?.error || t("error.tooManyRequests");
             break;

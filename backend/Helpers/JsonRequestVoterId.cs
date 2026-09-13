@@ -2,6 +2,25 @@ using System.Text.Json;
 
 namespace Backend.Helpers;
 
+public enum JsonRequestVoterIdStatus
+{
+    Found,
+    Missing,
+    TooLarge
+}
+
+public readonly record struct JsonRequestVoterIdRead(JsonRequestVoterIdStatus Status, string? VoterId)
+{
+    public static JsonRequestVoterIdRead Found(string voterId) =>
+        new(JsonRequestVoterIdStatus.Found, voterId);
+
+    public static JsonRequestVoterIdRead Missing() =>
+        new(JsonRequestVoterIdStatus.Missing, null);
+
+    public static JsonRequestVoterIdRead TooLarge() =>
+        new(JsonRequestVoterIdStatus.TooLarge, null);
+}
+
 /// <summary>
 /// Reads <c>voterId</c> from a JSON request body without consuming it for later model binding.
 /// Used by auth rate limits that key on the identifier in the body.
@@ -12,28 +31,32 @@ public static class JsonRequestVoterId
 
     /// <summary>
     /// Parses <c>voterId</c> / <c>VoterId</c> from JSON, then leaves a rewindable body
-    /// for model binding. Returns null when the body is missing, too large, not JSON,
-    /// or has no non-empty voterId.
-    /// The read is capped at <see cref="MaxBodyBytes"/> even when ContentLength is unset (chunked).
+    /// for model binding when the body fits in <see cref="MaxBodyBytes"/>.
+    /// <see cref="JsonRequestVoterIdStatus.TooLarge"/> is returned when ContentLength
+    /// exceeds the cap or a chunked peek overflows — the caller must reject, not
+    /// treat that as a missing identifier. Empty / malformed / absent voterId is
+    /// <see cref="JsonRequestVoterIdStatus.Missing"/>.
     /// </summary>
-    public static async Task<string?> TryReadAsync(HttpRequest request, CancellationToken cancellationToken)
+    public static async Task<JsonRequestVoterIdRead> TryReadAsync(
+        HttpRequest request,
+        CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
 
         if (request.ContentLength is 0)
         {
-            return null;
+            return JsonRequestVoterIdRead.Missing();
         }
 
         if (request.ContentLength is > MaxBodyBytes)
         {
-            return null;
+            return JsonRequestVoterIdRead.TooLarge();
         }
 
         var capped = await ReadAtMostAsync(request.Body, MaxBodyBytes, cancellationToken);
         if (capped == null)
         {
-            return null;
+            return JsonRequestVoterIdRead.TooLarge();
         }
 
         request.Body = new MemoryStream(capped, writable: false);
@@ -41,17 +64,20 @@ public static class JsonRequestVoterId
 
         if (capped.Length == 0)
         {
-            return null;
+            return JsonRequestVoterIdRead.Missing();
         }
 
         try
         {
             using var document = JsonDocument.Parse(capped);
-            return FindVoterId(document.RootElement);
+            var voterId = FindVoterId(document.RootElement);
+            return voterId == null
+                ? JsonRequestVoterIdRead.Missing()
+                : JsonRequestVoterIdRead.Found(voterId);
         }
         catch (JsonException)
         {
-            return null;
+            return JsonRequestVoterIdRead.Missing();
         }
     }
 

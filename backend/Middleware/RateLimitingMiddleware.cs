@@ -11,13 +11,15 @@ namespace Backend.Middleware;
 /// <summary>
 /// In-memory rate limiting for anonymous teller and voter authentication endpoints.
 /// Teller routes stay tight per trusted-ingress IP. Voter code routes use a per-VoterId
-/// bucket (body, after EnableBuffering) plus a loose per-IP venue ceiling so a hall
-/// behind one public NAT is not locked after a few people. Leftmost XFF is never used
+/// bucket (capped JSON peek) plus a loose per-IP venue ceiling so a hall
+/// behind one public NAT is not locked after a few people. Oversized bodies are
+/// rejected (413); they are not demoted to missing:{ip}. Leftmost XFF is never used
 /// to split venue clients (see GetClientIpAddress).
 /// </summary>
 public class RateLimitingMiddleware
 {
     public const string TooManyRequestsKey = "error.tooManyRequests";
+    public const string PayloadTooLargeKey = "error.payloadTooLarge";
 
     public const int VoterIdentifierMaxRequests = 5;
     public const int VoterVenueIpMaxRequests = 60;
@@ -90,10 +92,16 @@ public class RateLimitingMiddleware
         if (VoterCodePaths.Contains(path))
         {
             clientIp = context.GetClientIpAddress();
-            var voterId = await JsonRequestVoterId.TryReadAsync(context.Request, context.RequestAborted);
-            var identifier = voterId == null
-                ? $"missing:{clientIp}"
-                : JsonRequestVoterId.NormalizeForRateLimit(voterId);
+            var peek = await JsonRequestVoterId.TryReadAsync(context.Request, context.RequestAborted);
+            if (peek.Status == JsonRequestVoterIdStatus.TooLarge)
+            {
+                await WritePayloadTooLargeAsync(context, path, clientIp);
+                return;
+            }
+
+            var identifier = peek.Status == JsonRequestVoterIdStatus.Found && peek.VoterId != null
+                ? JsonRequestVoterId.NormalizeForRateLimit(peek.VoterId)
+                : $"missing:{clientIp}";
 
             buckets =
             [
@@ -196,6 +204,15 @@ public class RateLimitingMiddleware
         }
 
         return false;
+    }
+
+    private async Task WritePayloadTooLargeAsync(HttpContext context, string path, string clientIp)
+    {
+        _logger.LogWarning("Rejected oversized voter auth body for {Path} from {ClientIp}", path, clientIp);
+
+        context.Response.StatusCode = (int)HttpStatusCode.RequestEntityTooLarge;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync($"{{\"error\":\"{PayloadTooLargeKey}\"}}");
     }
 
     private void CleanupOldRequests(string clientKey, TimeSpan window)

@@ -12,9 +12,10 @@ public class JsonRequestVoterIdTests
     {
         var context = BodyContext("""{"voterId":"Alex@Example.com","voterIdType":"E"}""");
 
-        var voterId = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
+        var peek = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
 
-        Assert.Equal("Alex@Example.com", voterId);
+        Assert.Equal(JsonRequestVoterIdStatus.Found, peek.Status);
+        Assert.Equal("Alex@Example.com", peek.VoterId);
         Assert.Equal(0, context.Request.Body.Position);
     }
 
@@ -23,18 +24,27 @@ public class JsonRequestVoterIdTests
     {
         var context = BodyContext("""{"VoterId":"rate-limit@example.com","VerifyCode":"XXXXXX"}""");
 
-        var voterId = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
+        var peek = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
 
-        Assert.Equal("rate-limit@example.com", voterId);
+        Assert.Equal(JsonRequestVoterIdStatus.Found, peek.Status);
+        Assert.Equal("rate-limit@example.com", peek.VoterId);
     }
 
     [Fact]
-    public async Task TryReadAsync_EmptyOrMissing_ReturnsNull()
+    public async Task TryReadAsync_EmptyOrMissing_IsMissingNotTooLarge()
     {
-        Assert.Null(await JsonRequestVoterId.TryReadAsync(BodyContext("").Request, CancellationToken.None));
-        Assert.Null(await JsonRequestVoterId.TryReadAsync(BodyContext("{}").Request, CancellationToken.None));
-        Assert.Null(await JsonRequestVoterId.TryReadAsync(BodyContext("""{"voterId":"  "}""").Request, CancellationToken.None));
-        Assert.Null(await JsonRequestVoterId.TryReadAsync(BodyContext("not-json").Request, CancellationToken.None));
+        Assert.Equal(
+            JsonRequestVoterIdStatus.Missing,
+            (await JsonRequestVoterId.TryReadAsync(BodyContext("").Request, CancellationToken.None)).Status);
+        Assert.Equal(
+            JsonRequestVoterIdStatus.Missing,
+            (await JsonRequestVoterId.TryReadAsync(BodyContext("{}").Request, CancellationToken.None)).Status);
+        Assert.Equal(
+            JsonRequestVoterIdStatus.Missing,
+            (await JsonRequestVoterId.TryReadAsync(BodyContext("""{"voterId":"  "}""").Request, CancellationToken.None)).Status);
+        Assert.Equal(
+            JsonRequestVoterIdStatus.Missing,
+            (await JsonRequestVoterId.TryReadAsync(BodyContext("not-json").Request, CancellationToken.None)).Status);
     }
 
     [Fact]
@@ -42,14 +52,15 @@ public class JsonRequestVoterIdTests
     {
         var context = BodyContext("""{"voterId":"chunked@example.com"}""", setContentLength: false);
 
-        var voterId = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
+        var peek = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
 
-        Assert.Equal("chunked@example.com", voterId);
+        Assert.Equal(JsonRequestVoterIdStatus.Found, peek.Status);
+        Assert.Equal("chunked@example.com", peek.VoterId);
         Assert.Equal(0, context.Request.Body.Position);
     }
 
     [Fact]
-    public async Task TryReadAsync_ChunkedBodyOverMax_ReturnsNull_WithoutReadingWholeBody()
+    public async Task TryReadAsync_ChunkedBodyOverMax_IsTooLarge_WithoutReadingWholeBody()
     {
         var huge = new byte[JsonRequestVoterId.MaxBodyBytes + 64 * 1024];
         Encoding.UTF8.GetBytes("{\"voterId\":\"overflow@example.com\",\"pad\":\"").CopyTo(huge, 0);
@@ -58,14 +69,15 @@ public class JsonRequestVoterIdTests
         context.Request.Body = stream;
         context.Request.ContentType = "application/json";
 
-        var voterId = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
+        var peek = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
 
-        Assert.Null(voterId);
+        Assert.Equal(JsonRequestVoterIdStatus.TooLarge, peek.Status);
+        Assert.Null(peek.VoterId);
         Assert.Equal(JsonRequestVoterId.MaxBodyBytes + 1, stream.BytesRead);
     }
 
     [Fact]
-    public async Task TryReadAsync_ContentLengthOverMax_ReturnsNull_WithoutReading()
+    public async Task TryReadAsync_ContentLengthOverMax_IsTooLarge_WithoutReading()
     {
         var huge = new byte[JsonRequestVoterId.MaxBodyBytes + 1];
         var stream = new CountingReadStream(huge);
@@ -74,9 +86,10 @@ public class JsonRequestVoterIdTests
         context.Request.ContentLength = huge.Length;
         context.Request.ContentType = "application/json";
 
-        var voterId = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
+        var peek = await JsonRequestVoterId.TryReadAsync(context.Request, CancellationToken.None);
 
-        Assert.Null(voterId);
+        Assert.Equal(JsonRequestVoterIdStatus.TooLarge, peek.Status);
+        Assert.Null(peek.VoterId);
         Assert.Equal(0, stream.BytesRead);
     }
 
