@@ -123,7 +123,7 @@ public class RateLimitingTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RequestCode_ExceedsRateLimit_Returns429()
+    public async Task RequestCode_SameVoterId_ExceedsIdentifierLimit_Returns429()
     {
         var request = new RequestCodeDto
         {
@@ -148,7 +148,53 @@ public class RateLimitingTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task VerifyCode_ExceedsRateLimit_Returns429()
+    public async Task RequestCode_SameVenueIp_DifferentVoterIds_DoesNotRateLimitAtSixth()
+    {
+        HttpResponseMessage? lastResponse = null;
+        for (int i = 0; i < 6; i++)
+        {
+            lastResponse = await PostJsonWithForwardedFor(
+                "/api/online-voting/requestCode",
+                new RequestCodeDto
+                {
+                    VoterId = $"venue-voter-{i}@example.com",
+                    VoterIdType = "E",
+                    DeliveryMethod = "email"
+                },
+                "203.0.113.31");
+            await Task.Delay(50);
+        }
+
+        lastResponse!.StatusCode.Should().NotBe(HttpStatusCode.TooManyRequests);
+    }
+
+    [Fact]
+    public async Task RequestCode_SpoofedLeftmostXForwardedFor_SameVoterId_DoesNotEvade()
+    {
+        var request = new RequestCodeDto
+        {
+            VoterId = "spoof-voter@example.com",
+            VoterIdType = "E",
+            DeliveryMethod = "email"
+        };
+
+        HttpResponseMessage? lastResponse = null;
+        for (int i = 0; i < 6; i++)
+        {
+            lastResponse = await PostJsonWithForwardedFor(
+                "/api/online-voting/requestCode",
+                request,
+                $"198.51.100.{i + 1}, 203.0.113.71, 10.0.0.4");
+            await Task.Delay(50);
+        }
+
+        lastResponse!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+        var body = await lastResponse.Content.ReadAsStringAsync();
+        body.Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
+    }
+
+    [Fact]
+    public async Task VerifyCode_SameVoterId_ExceedsIdentifierLimit_Returns429()
     {
         var request = new VerifyCodeDto
         {
@@ -169,6 +215,42 @@ public class RateLimitingTests : IntegrationTestBase
         lastResponse!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
         var body = await lastResponse.Content.ReadAsStringAsync();
         body.Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
+    }
+
+    [Fact]
+    public async Task VerifyCode_SameVenueIp_DifferentVoterIds_DoesNotRateLimitAtSixth()
+    {
+        HttpResponseMessage? lastResponse = null;
+        for (int i = 0; i < 6; i++)
+        {
+            lastResponse = await PostJsonWithForwardedFor(
+                "/api/online-voting/verifyCode",
+                new VerifyCodeDto
+                {
+                    VoterId = $"venue-verify-{i}@example.com",
+                    VerifyCode = "XXXXXX"
+                },
+                "203.0.113.41");
+            await Task.Delay(50);
+        }
+
+        lastResponse!.StatusCode.Should().NotBe(HttpStatusCode.TooManyRequests);
+    }
+
+    [Fact]
+    public async Task GoogleAuth_SameVenueIp_SixthCall_DoesNotRateLimit()
+    {
+        HttpResponseMessage? lastResponse = null;
+        for (int i = 0; i < 6; i++)
+        {
+            lastResponse = await PostJsonWithForwardedFor(
+                "/api/online-voting/googleAuth",
+                new GoogleAuthForVoterDto { Credential = $"not-a-real-token-{i}" },
+                "203.0.113.42");
+            await Task.Delay(50);
+        }
+
+        lastResponse!.StatusCode.Should().NotBe(HttpStatusCode.TooManyRequests);
     }
 
     [Fact]

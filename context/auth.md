@@ -49,7 +49,7 @@ Online voters use the same JWT claims as before (`voterType=online`, `voterId`, 
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #192 remaining work; PR #328 review — leftmost XFF is client-spoofable; Azure Front Door docs (append socket IP)  
-**Revisit when:** ingress changes (no longer App Service / Front Door), or rate limits move off the in-memory middleware
+**Revisit when:** ingress changes (no longer App Service / Front Door), venue halls regularly exceed the 60/min IP ceiling, or rate limits move off the in-memory middleware
 
 > Superseded 2026-09: keying on the **leftmost** X-Forwarded-For / Forwarded IP. Azure Front Door and App Service **append** the connecting socket IP. Leftmost is whatever the client sent (`fake` or `fake, real`), so a new leftmost address opened a new 5/min bucket and bypassed the limit.
 
@@ -62,7 +62,9 @@ Auth rate-limit keys use the IP the **trusted ingress** saw, not a client-suppli
 
 `UseForwardedHeaders` is proto-only (`X-Forwarded-Proto`) with KnownProxies / KnownIPNetworks / KnownNetworks cleared so Azure TLS termination still sets `Request.IsHttps`. It does **not** apply `X-Forwarded-For`: trust-all + ForwardLimit would rewrite `RemoteIpAddress` from the client-controlled chain and make spoofing easier. Rate-limit keying reads the headers itself under the infrastructure-peer check above.
 
-The same in-memory middleware still owns the limits. Paths include the existing teller auth set plus anonymous voter `requestCode` / `verifyCode` and the cheap OAuth POSTs (`/api/auth/google/one-tap|facebook|kakao|telegram` and `/api/online-voting/*Auth`). 429 bodies return the i18n key `error.tooManyRequests` (same pattern as voter verify keys). That string lives only in `frontend/src/locales/en/errors.json`; other locales are not given English placeholders (missing keys fall back to English). Verify failures keep `codeExpired`, `tooManyAttempts`, and `noCodeFound` (used-or-missing after the code is cleared). The SPA resolves those keys instead of a single generic verify message.
+The same in-memory middleware still owns the limits. Teller `/api/auth/login` (and register / 2FA / password / teller OAuth) stay **tight per trusted-ingress IP** (5/min login). Anonymous voter `requestCode` / `verifyCode` do **not** use that 5/min IP bucket: elections often share one venue WiFi / community NAT, so a public `RemoteIp` is the whole hall. Those routes use a **5/min per VoterId** bucket (JSON body, `EnableBuffering` then rewind so model binding still works) plus a **60/min per trusted-ingress IP** venue ceiling. Missing/unreadable `voterId` is treated as one identifier scoped to that IP (`missing:{ip}`), not as a free pass. Voter OAuth (`/api/online-voting/*Auth`) has no VoterId in the body — venue IP ceiling only. Teller OAuth stays on the tight IP table.
+
+429 bodies return the i18n key `error.tooManyRequests` (same pattern as voter verify keys). That string lives only in `frontend/src/locales/en/errors.json`; other locales are not given English placeholders (missing keys fall back to English). Verify failures keep `codeExpired`, `tooManyAttempts`, and `noCodeFound` (used-or-missing after the code is cleared). The SPA resolves those keys instead of a single generic verify message. `VerifyAttempts` on `OnlineVoter` still locks five failed codes for that row; the middleware 429 is a cheap pre-service cap.
 
 **Rejected alternative:** leftmost XFF as “original client.” Front Door’s own docs say an existing XFF is appended; the left side is attacker-controlled.
 
@@ -71,5 +73,11 @@ The same in-memory middleware still owns the limits. Paths include the existing 
 **Rejected alternative:** keep keying on `RemoteIpAddress` only. On Azure UAT that address is the platform hop, so one client locks everyone out or the limit never isolates a single attacker.
 
 **Rejected alternative:** add a separate `alreadyUsed` key. After a successful verify the stored code is cleared; used and never-issued are the same row state (`noCodeFound`).
+
+**Rejected alternative:** split venue clients by trusting leftmost XFF. That reopens the spoof bypass. Two clients Azure actually distinguishes (two public RemoteIps, or two rightmost-public hops behind an infrastructure peer) stay two IP buckets; people behind one real public NAT share the venue ceiling and are separated by VoterId.
+
+**Rejected alternative:** keep 5/min per IP on `requestCode` / `verifyCode`. A hall on one public address locks after a few voters — the opposite of the Front Door “one proxy hop” problem.
+
+**Rejected alternative:** endpoint filter or service-level identifier limit as the primary mechanism. An endpoint filter sees the bound DTO but would split IP vs identifier across two pipeline stages. Service-level already has `VerifyAttempts`; it runs after routing/DB work and still needs an IP ceiling in middleware. Buffering in the existing middleware keeps both buckets in one place.
 
 **Rejected alternative:** rebuild on ASP.NET `RateLimiter` or add a new auth flow. #192 said do not rebuild auth; this slice only fixes keying, coverage, and i18n bodies.
