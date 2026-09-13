@@ -7,11 +7,13 @@ import type { PersonDetailDto, PersonListDto } from "@/types/Person";
 
 const mockGetDetails = vi.fn();
 const mockSetPhoneSmsStatus = vi.fn();
+const mockCheckWhatsApp = vi.fn();
 
 vi.mock("@/services/peopleService", () => ({
   peopleService: {
     getDetails: (...args: unknown[]) => mockGetDetails(...args),
     setPhoneSmsStatus: (...args: unknown[]) => mockSetPhoneSmsStatus(...args),
+    checkWhatsApp: (...args: unknown[]) => mockCheckWhatsApp(...args),
   },
 }));
 
@@ -285,5 +287,92 @@ describe("PersonForm phone OnlineVoter status", () => {
       person.personGuid,
       "admin",
     );
+  });
+
+  it("shows WhatsApp status from the P-row field only", async () => {
+    mockGetDetails.mockResolvedValue(
+      details({
+        phoneOnlineVoter: {
+          hasPhoneRow: true,
+          whenRegistered: null,
+          whenLastLogin: null,
+          smsStatus: "OK",
+          whatsAppStatus: "no-wa",
+        },
+      }),
+    );
+
+    const wrapper = await mountEditForm();
+    const row = wrapper.get('[data-testid="whatsapp-status-row"]');
+
+    expect(row.text()).toContain("WhatsApp status");
+    expect(row.text()).toContain("no-wa");
+    expect(row.classes()).toContain("is-blocked");
+  });
+
+  it("shows unchecked WhatsApp when the P row has no WhatsAppStatus", async () => {
+    mockGetDetails.mockResolvedValue(
+      details({
+        phoneOnlineVoter: {
+          hasPhoneRow: true,
+          whenRegistered: null,
+          whenLastLogin: null,
+          smsStatus: null,
+          whatsAppStatus: null,
+        },
+      }),
+    );
+
+    const wrapper = await mountEditForm();
+    const row = wrapper.get('[data-testid="whatsapp-status-row"]');
+
+    expect(row.text()).toContain("Unchecked");
+    expect(row.classes()).not.toContain("is-blocked");
+  });
+
+  it("does not treat a non-P occupant as a WhatsApp status", async () => {
+    mockGetDetails.mockResolvedValue(
+      details({
+        phoneOnlineVoter: {
+          hasPhoneRow: false,
+          whenRegistered: null,
+          whenLastLogin: null,
+          smsStatus: null,
+          whatsAppStatus: null,
+        },
+      }),
+    );
+
+    const wrapper = await mountEditForm();
+    const row = wrapper.get('[data-testid="whatsapp-status-row"]');
+
+    expect(row.text()).toContain("Unchecked");
+    expect(row.text()).not.toContain("OK");
+    expect(row.text()).not.toContain("no-wa");
+  });
+
+  it("checks WhatsApp on the stored phone P row", async () => {
+    mockGetDetails.mockResolvedValue(
+      details({
+        phoneOnlineVoter: {
+          hasPhoneRow: true,
+          whenRegistered: null,
+          whenLastLogin: null,
+          smsStatus: null,
+          whatsAppStatus: null,
+        },
+      }),
+    );
+    mockCheckWhatsApp.mockResolvedValue({
+      hasPhoneRow: true,
+      whatsAppStatus: "OK",
+    });
+
+    const wrapper = await mountEditForm();
+    await wrapper.get('[data-testid="check-whatsapp"]').trigger("click");
+    await flushPromises();
+
+    expect(mockCheckWhatsApp).toHaveBeenCalledWith(person.personGuid);
+    expect(mockGetDetails).toHaveBeenCalledTimes(2);
   });
 });

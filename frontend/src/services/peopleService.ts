@@ -10,6 +10,7 @@ import {
   getApiPeopleByElectionGuidGetAllForBallotEntry,
   postApiPeopleByGuidGenerateKioskCode,
   putApiPeopleByGuidSetPhoneSmsStatus,
+  postApiPeopleByGuidCheckWhatsApp,
 } from "@/api/gen/configService";
 import type {
   PersonDto,
@@ -135,6 +136,13 @@ export const peopleService = {
     const response = await putApiPeopleByGuidSetPhoneSmsStatus({
       path: { guid: personGuid },
       body: { smsStatus },
+    });
+    return response.data?.data as PersonPhoneOnlineVoterDto;
+  },
+
+  async checkWhatsApp(personGuid: string): Promise<PersonPhoneOnlineVoterDto> {
+    const response = await postApiPeopleByGuidCheckWhatsApp({
+      path: { guid: personGuid },
     });
     return response.data?.data as PersonPhoneOnlineVoterDto;
   },

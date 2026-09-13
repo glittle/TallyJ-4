@@ -25,7 +25,7 @@ public static class OnlineVoterPhoneHelper
     /// (no convert, no wipe, no second row).
     /// Does not call <see cref="DbContext.SaveChangesAsync(CancellationToken)"/>.
     /// Does not change <see cref="OnlineVoter.WhenRegistered"/>, <see cref="OnlineVoter.WhenLastLogin"/>,
-    /// or <see cref="OnlineVoter.SmsStatus"/> on an existing row.
+    /// <see cref="OnlineVoter.SmsStatus"/>, or <see cref="OnlineVoter.WhatsAppStatus"/> on an existing row.
     /// </summary>
     public static Task EnsureOnlineVoterForPhoneAsync(
         MainDbContext context,
@@ -115,7 +115,8 @@ public static class OnlineVoterPhoneHelper
     /// <see cref="OnlineVoter.VoterId"/> equals the phone and
     /// <see cref="OnlineVoter.VoterIdType"/> is <see cref="PhoneVoterIdType"/>.
     /// Same predicate as <see cref="FindPhoneOnlineVoterAsync"/> but not AsNoTracking,
-    /// so callers can write <see cref="OnlineVoter.SmsStatus"/>.
+    /// so callers can write <see cref="OnlineVoter.SmsStatus"/> or
+    /// <see cref="OnlineVoter.WhatsAppStatus"/>.
     /// Does not look up by VoterId alone. A non-P row occupying that VoterId is not returned.
     /// </summary>
     public static Task<OnlineVoter?> FindTrackedPhoneOnlineVoterAsync(

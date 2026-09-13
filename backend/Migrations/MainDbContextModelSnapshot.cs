@@ -533,6 +533,11 @@ namespace Backend.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)");
 
+                    b.Property<string>("WhatsAppStatus")
+                        .HasMaxLength(50)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(50)");
+
                     b.Property<int?>("VerifyAttempts")
                         .HasColumnType("int");
 

@@ -1200,6 +1200,7 @@ export type PeoplePersonPhoneOnlineVoterDto = {
     whenRegistered?: Date | null;
     whenLastLogin?: Date | null;
     smsStatus?: string | null;
+    whatsAppStatus?: string | null;
     recentSmsLogs?: Array<PeoplePersonSmsLogDto> | null;
 };
 
@@ -3952,6 +3953,24 @@ export type PutApiPeopleByGuidSetPhoneSmsStatusResponses = {
 };
 
 export type PutApiPeopleByGuidSetPhoneSmsStatusResponse = PutApiPeopleByGuidSetPhoneSmsStatusResponses[keyof PutApiPeopleByGuidSetPhoneSmsStatusResponses];
+
+export type PostApiPeopleByGuidCheckWhatsAppData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/People/{guid}/checkWhatsApp';
+};
+
+export type PostApiPeopleByGuidCheckWhatsAppResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePeoplePersonPhoneOnlineVoterDto;
+};
+
+export type PostApiPeopleByGuidCheckWhatsAppResponse = PostApiPeopleByGuidCheckWhatsAppResponses[keyof PostApiPeopleByGuidCheckWhatsAppResponses];
 
 export type PostApiPeopleImportByElectionGuidUploadData = {
     body?: {

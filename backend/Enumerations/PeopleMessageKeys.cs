@@ -28,6 +28,21 @@ public static class PeopleMessageKeys
     public const string PhoneSmsStatusInvalid = "people.phoneOnlineVoter.invalidStatus";
 
     /// <summary>
+    /// Person has no stored phone, so there is no P row to check WhatsApp on.
+    /// </summary>
+    public const string PhoneWhatsAppNoPhone = "people.phoneOnlineVoter.whatsAppNoPhone";
+
+    /// <summary>
+    /// No phone OnlineVoter P row could be written (non-P occupant of that VoterId).
+    /// </summary>
+    public const string PhoneWhatsAppNoPhoneRow = "people.phoneOnlineVoter.whatsAppNoPhoneRow";
+
+    /// <summary>
+    /// GreenAPI is not configured, so WhatsApp presence was not checked or persisted.
+    /// </summary>
+    public const string PhoneWhatsAppNotConfigured = "people.phoneOnlineVoter.whatsAppNotConfigured";
+
+    /// <summary>
     /// Guest teller tried to add a person while GuestTellersCanAddPeople is off (v3 GA).
     /// </summary>
     public const string GuestCannotAddPeople = "people.guestCannotAddPeople";

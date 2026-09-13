@@ -267,6 +267,33 @@ public class PeopleController : ControllerBase
             return BadRequest(ApiResponse<PersonPhoneOnlineVoterDto>.ErrorResponse(ex.Message));
         }
     }
+
+    /// <summary>
+    /// GreenAPI <c>checkWhatsapp</c> for this person's stored phone. Persists
+    /// <c>OnlineVoter.WhatsAppStatus</c> on the phone P row. Same
+    /// <c>[Authorize]</c> as other People writes. Does not convert a non-P occupant.
+    /// </summary>
+    /// <param name="guid">The GUID of the person.</param>
+    /// <returns>The updated phone OnlineVoter SMS/WhatsApp/auth fields.</returns>
+    [HttpPost("{guid}/checkWhatsApp")]
+    public async Task<ActionResult<ApiResponse<PersonPhoneOnlineVoterDto>>> CheckWhatsApp(Guid guid)
+    {
+        try
+        {
+            var status = await _peopleService.CheckPersonPhoneWhatsAppAsync(guid);
+
+            if (status == null)
+            {
+                return NotFound(ApiResponse<PersonPhoneOnlineVoterDto>.ErrorResponse("Person not found"));
+            }
+
+            return Ok(ApiResponse<PersonPhoneOnlineVoterDto>.SuccessResponse(status));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<PersonPhoneOnlineVoterDto>.ErrorResponse(ex.Message));
+        }
+    }
 }
 
 

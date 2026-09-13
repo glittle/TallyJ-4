@@ -18,6 +18,7 @@ import {
 import {
   phoneOnlineVoterAuthState,
   phoneOnlineVoterSmsState,
+  phoneOnlineVoterWhatsAppState,
 } from "@/utils/phoneOnlineVoterStatus";
 import {
   electionSupportsKiosk,
@@ -107,6 +108,7 @@ const showKioskCode = computed(
 
 const generatingKioskCode = ref(false);
 const settingSmsStatus = ref(false);
+const checkingWhatsApp = ref(false);
 const smsBlockReason = ref("");
 
 const kioskExpiry = computed(() => {
@@ -253,6 +255,30 @@ const phoneSmsBlocked = computed(
     phoneOnlineVoterSmsState(phoneOnlineVoter.value.smsStatus) === "blocked",
 );
 
+const phoneWhatsAppText = computed(() => {
+  const status = phoneOnlineVoter.value;
+  if (!status) {
+    return "";
+  }
+  const state = phoneOnlineVoterWhatsAppState(status.whatsAppStatus);
+  if (state === "unchecked") {
+    return t("people.phoneOnlineVoter.whatsAppUnchecked");
+  }
+  if (state === "ok") {
+    return t("people.phoneOnlineVoter.whatsAppOk");
+  }
+  return t("people.phoneOnlineVoter.whatsAppReason", {
+    reason: status.whatsAppStatus,
+  });
+});
+
+const phoneWhatsAppNotOk = computed(
+  () =>
+    phoneOnlineVoter.value !== null &&
+    phoneOnlineVoterWhatsAppState(phoneOnlineVoter.value.whatsAppStatus) ===
+      "blocked",
+);
+
 const recentSmsLogs = computed(
   () => phoneOnlineVoter.value?.recentSmsLogs ?? [],
 );
@@ -349,6 +375,23 @@ async function handleSetSmsStatusBlocked() {
   }
   await applyPhoneSmsStatus(reason);
   smsBlockReason.value = "";
+}
+
+async function handleCheckWhatsApp() {
+  if (!props.person) {
+    return;
+  }
+
+  checkingWhatsApp.value = true;
+  try {
+    await peopleService.checkWhatsApp(props.person.personGuid);
+    await loadPersonDetails();
+    showSuccessMessage(t("people.phoneOnlineVoter.checkWhatsAppSuccess"));
+  } catch (error) {
+    handleApiError(error);
+  } finally {
+    checkingWhatsApp.value = false;
+  }
 }
 
 async function handleGenerateKioskCode() {
@@ -644,6 +687,24 @@ defineExpose({
             >
               <span>{{ $t("people.phoneOnlineVoter.smsStatus") }}</span>
               <span>{{ phoneSmsText }}</span>
+            </div>
+            <div
+              class="phone-online-voter__row"
+              :class="{ 'is-blocked': phoneWhatsAppNotOk }"
+              data-testid="whatsapp-status-row"
+            >
+              <span>{{ $t("people.phoneOnlineVoter.whatsAppStatus") }}</span>
+              <span>{{ phoneWhatsAppText }}</span>
+            </div>
+            <div class="phone-online-voter__set">
+              <el-button
+                data-testid="check-whatsapp"
+                size="small"
+                :loading="checkingWhatsApp"
+                @click="handleCheckWhatsApp"
+              >
+                {{ $t("people.phoneOnlineVoter.checkWhatsApp") }}
+              </el-button>
             </div>
             <div class="phone-online-voter__set">
               <el-button

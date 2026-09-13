@@ -32,6 +32,7 @@ public class OnlineVoterPhoneHelperTests : ServiceTestBase
         Assert.Null(row.WhenRegistered);
         Assert.Null(row.WhenLastLogin);
         Assert.Null(row.SmsStatus);
+        Assert.Null(row.WhatsAppStatus);
     }
 
     [Fact]

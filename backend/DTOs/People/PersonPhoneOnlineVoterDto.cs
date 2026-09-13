@@ -32,6 +32,13 @@ public class PersonPhoneOnlineVoterDto
     public string? SmsStatus { get; set; }
 
     /// <summary>
+    /// <c>OnlineVoter.WhatsAppStatus</c> from the matching P row.
+    /// null = not yet checked; "OK" = has WhatsApp; any other value is the reason.
+    /// Null when there is no matching P row.
+    /// </summary>
+    public string? WhatsAppStatus { get; set; }
+
+    /// <summary>
     /// Newest <c>SmsLog</c> rows for this Person phone (exact stored string, then
     /// the +/- variant). Empty when there are no logs. Not election-scoped.
     /// Shown even when <see cref="HasPhoneRow"/> is false.

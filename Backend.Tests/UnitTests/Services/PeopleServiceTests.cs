@@ -6,6 +6,7 @@ using Backend.DTOs.People;
 using Backend.Services;
 using Backend.Enumerations;
 using Backend.Helpers;
+using Backend.Services.Auth;
 
 namespace Backend.Tests.UnitTests.Services;
 
@@ -892,6 +893,7 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Null(row.WhenRegistered);
         Assert.Null(row.WhenLastLogin);
         Assert.Null(row.SmsStatus);
+        Assert.Null(row.WhatsAppStatus);
     }
 
     [Fact]
@@ -1085,6 +1087,7 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Null(details.PhoneOnlineVoter.WhenRegistered);
         Assert.Null(details.PhoneOnlineVoter.WhenLastLogin);
         Assert.Null(details.PhoneOnlineVoter.SmsStatus);
+        Assert.Null(details.PhoneOnlineVoter.WhatsAppStatus);
         Assert.Empty(details.PhoneOnlineVoter.RecentSmsLogs);
     }
 
@@ -1120,6 +1123,7 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Null(details.PhoneOnlineVoter.WhenRegistered);
         Assert.Null(details.PhoneOnlineVoter.WhenLastLogin);
         Assert.Null(details.PhoneOnlineVoter.SmsStatus);
+        Assert.Null(details.PhoneOnlineVoter.WhatsAppStatus);
         Assert.Empty(details.PhoneOnlineVoter.RecentSmsLogs);
     }
 
@@ -1157,6 +1161,39 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Equal(registered, details.PhoneOnlineVoter.WhenRegistered);
         Assert.Equal(lastLogin, details.PhoneOnlineVoter.WhenLastLogin);
         Assert.Equal("OK", details.PhoneOnlineVoter.SmsStatus);
+        Assert.Null(details.PhoneOnlineVoter.WhatsAppStatus);
+    }
+
+    [Fact]
+    public async Task GetPersonDetailsAsync_PhoneRow_WhatsAppStatusFromPRowOnly()
+    {
+        const string phone = "+14168972685";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            SmsStatus = "OK",
+            WhatsAppStatus = "no-wa"
+        });
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.NotNull(details.PhoneOnlineVoter);
+        Assert.True(details.PhoneOnlineVoter.HasPhoneRow);
+        Assert.Equal("OK", details.PhoneOnlineVoter.SmsStatus);
+        Assert.Equal("no-wa", details.PhoneOnlineVoter.WhatsAppStatus);
     }
 
     [Fact]
@@ -1212,6 +1249,7 @@ public class PeopleServiceTests : ServiceTestBase
             VoterId = phone,
             VoterIdType = existingType,
             SmsStatus = "admin",
+            WhatsAppStatus = "OK",
             WhenRegistered = DateTimeOffset.Parse("2026-01-01T00:00:00Z"),
             WhenLastLogin = DateTimeOffset.Parse("2026-01-02T00:00:00Z")
         });
@@ -1225,6 +1263,7 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Null(details.PhoneOnlineVoter.WhenRegistered);
         Assert.Null(details.PhoneOnlineVoter.WhenLastLogin);
         Assert.Null(details.PhoneOnlineVoter.SmsStatus);
+        Assert.Null(details.PhoneOnlineVoter.WhatsAppStatus);
         Assert.Empty(details.PhoneOnlineVoter.RecentSmsLogs);
     }
 
@@ -1562,6 +1601,241 @@ public class PeopleServiceTests : ServiceTestBase
             new SetPersonPhoneSmsStatusDto { SmsStatus = "OK" });
 
         Assert.Null(result);
+    }
+
+    [Theory]
+    [InlineData("OK")]
+    [InlineData("no-wa")]
+    public async Task CheckPersonPhoneWhatsAppAsync_PersistsProviderResultOnPRow(
+        string expectedStatus)
+    {
+        const string phone = "+14168972710";
+        var person = await SeedPersonWithPhoneRow(phone, smsStatus: "OK", whatsAppStatus: null);
+        var client = MockWhatsAppClient(GreenApiWhatsAppCheckResult.FromProvider(expectedStatus));
+        var service = CreateServiceWithWhatsApp(client.Object);
+
+        var result = await service.CheckPersonPhoneWhatsAppAsync(person.PersonGuid);
+
+        Assert.NotNull(result);
+        Assert.True(result.HasPhoneRow);
+        Assert.Equal(expectedStatus, result.WhatsAppStatus);
+        Assert.Equal("OK", result.SmsStatus);
+
+        var row = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == phone);
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Equal(expectedStatus, row.WhatsAppStatus);
+        Assert.Equal("OK", row.SmsStatus);
+        client.Verify(c => c.CheckWhatsAppAsync(phone, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task CheckPersonPhoneWhatsAppAsync_NoPRow_EnsuresThenPersists()
+    {
+        const string phone = "+14168972711";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+        var client = MockWhatsAppClient(
+            GreenApiWhatsAppCheckResult.FromProvider(OnlineVoterWhatsAppStatus.Ok));
+        var service = CreateServiceWithWhatsApp(client.Object);
+
+        var result = await service.CheckPersonPhoneWhatsAppAsync(person.PersonGuid);
+
+        Assert.NotNull(result);
+        Assert.True(result.HasPhoneRow);
+        Assert.Equal(OnlineVoterWhatsAppStatus.Ok, result.WhatsAppStatus);
+        var row = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == phone);
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Equal(OnlineVoterWhatsAppStatus.Ok, row.WhatsAppStatus);
+        Assert.Null(row.WhenRegistered);
+    }
+
+    [Theory]
+    [InlineData("E")]
+    [InlineData("C")]
+    [InlineData("T")]
+    public async Task CheckPersonPhoneWhatsAppAsync_NonPOccupant_DoesNotConvert(string existingType)
+    {
+        const string phone = "+14168972712";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = existingType,
+            WhatsAppStatus = null
+        });
+        await Context.SaveChangesAsync();
+        var client = new Mock<IGreenApiWhatsAppClient>(MockBehavior.Strict);
+        var service = CreateServiceWithWhatsApp(client.Object);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.CheckPersonPhoneWhatsAppAsync(person.PersonGuid));
+
+        Assert.Equal(PeopleMessageKeys.PhoneWhatsAppNoPhoneRow, ex.Message);
+        var occupant = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == phone);
+        Assert.Equal(existingType, occupant.VoterIdType);
+        Assert.Null(occupant.WhatsAppStatus);
+        client.Verify(c => c.CheckWhatsAppAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CheckPersonPhoneWhatsAppAsync_NotConfigured_DoesNotPersist()
+    {
+        const string phone = "+14168972713";
+        var person = await SeedPersonWithPhoneRow(phone, smsStatus: null, whatsAppStatus: null);
+        var client = MockWhatsAppClient(GreenApiWhatsAppCheckResult.NotConfigured());
+        var service = CreateServiceWithWhatsApp(client.Object);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.CheckPersonPhoneWhatsAppAsync(person.PersonGuid));
+
+        Assert.Equal(PeopleMessageKeys.PhoneWhatsAppNotConfigured, ex.Message);
+        var row = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == phone);
+        Assert.Null(row.WhatsAppStatus);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_PhoneChange_ClearsWhatsAppStatusOnNewNumber_DoesNotCopyOld()
+    {
+        const string oldPhone = "+14168972714";
+        const string newPhone = "+14168972715";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = oldPhone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.AddRange(
+            new OnlineVoter
+            {
+                VoterId = oldPhone,
+                VoterIdType = "P",
+                WhatsAppStatus = OnlineVoterWhatsAppStatus.Ok,
+                SmsStatus = "OK"
+            },
+            new OnlineVoter
+            {
+                VoterId = newPhone,
+                VoterIdType = "P",
+                WhatsAppStatus = "no-wa",
+                SmsStatus = "OK"
+            });
+        await Context.SaveChangesAsync();
+
+        await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = newPhone
+        });
+
+        var oldRow = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == oldPhone);
+        Assert.Equal(OnlineVoterWhatsAppStatus.Ok, oldRow.WhatsAppStatus);
+        Assert.Equal("OK", oldRow.SmsStatus);
+
+        var newRow = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == newPhone);
+        Assert.Equal("P", newRow.VoterIdType);
+        Assert.Null(newRow.WhatsAppStatus);
+        Assert.Equal("OK", newRow.SmsStatus);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_PhoneUnchanged_DoesNotClearWhatsAppStatus()
+    {
+        const string phone = "+14168972716";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            WhatsAppStatus = OnlineVoterWhatsAppStatus.Ok,
+            SmsStatus = "OK"
+        });
+        await Context.SaveChangesAsync();
+
+        await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone
+        });
+
+        var row = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == phone);
+        Assert.Equal(OnlineVoterWhatsAppStatus.Ok, row.WhatsAppStatus);
+        Assert.Equal("OK", row.SmsStatus);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_PhoneChange_NonPOccupantOfNewNumber_NotConverted()
+    {
+        const string oldPhone = "+14168972717";
+        const string newPhone = "+14168972718";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = oldPhone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.AddRange(
+            new OnlineVoter
+            {
+                VoterId = oldPhone,
+                VoterIdType = "P",
+                WhatsAppStatus = OnlineVoterWhatsAppStatus.Ok
+            },
+            new OnlineVoter
+            {
+                VoterId = newPhone,
+                VoterIdType = "E",
+                WhatsAppStatus = "OK"
+            });
+        await Context.SaveChangesAsync();
+
+        await _service.UpdatePersonAsync(person.PersonGuid, new UpdatePersonDto
+        {
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = newPhone
+        });
+
+        var occupant = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == newPhone);
+        Assert.Equal("E", occupant.VoterIdType);
+        Assert.Equal("OK", occupant.WhatsAppStatus);
+        Assert.Equal(1, await Context.OnlineVoters.CountAsync(ov => ov.VoterId == newPhone));
     }
 
     [Fact]
@@ -1926,10 +2200,23 @@ public class PeopleServiceTests : ServiceTestBase
         return person;
     }
 
+    private PeopleService CreateServiceWithWhatsApp(IGreenApiWhatsAppClient client) =>
+        new(Context, _loggerMock.Object, _signalRMock.Object, greenApiWhatsAppClient: client);
+
+    private static Mock<IGreenApiWhatsAppClient> MockWhatsAppClient(GreenApiWhatsAppCheckResult result)
+    {
+        var client = new Mock<IGreenApiWhatsAppClient>();
+        client
+            .Setup(c => c.CheckWhatsAppAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(result);
+        return client;
+    }
+
     private async Task<Person> SeedPersonWithPhoneRow(
         string phone,
         string? smsStatus,
-        DateTimeOffset? whenRegistered = null)
+        DateTimeOffset? whenRegistered = null,
+        string? whatsAppStatus = null)
     {
         var person = new Person
         {
@@ -1946,6 +2233,7 @@ public class PeopleServiceTests : ServiceTestBase
             VoterId = phone,
             VoterIdType = "P",
             SmsStatus = smsStatus,
+            WhatsAppStatus = whatsAppStatus,
             WhenRegistered = whenRegistered
         });
         await Context.SaveChangesAsync();
