@@ -3,7 +3,7 @@ using System.Text.Json;
 namespace Backend.Helpers;
 
 /// <summary>
-/// GreenAPI <c>checkWhatsapp</c> URL, phone digits, and response mapping.
+/// GreenAPI <c>checkWhatsapp</c> / <c>sendMessage</c> URL, phone digits, and response mapping.
 /// Does not call HTTP and does not persist.
 /// </summary>
 public static class GreenApiWhatsAppHelper
@@ -30,6 +30,44 @@ public static class GreenApiWhatsAppHelper
     {
         var root = baseUrl.TrimEnd('/');
         return $"{root}/waInstance{idInstance}/checkWhatsapp/{apiToken}";
+    }
+
+    /// <summary>
+    /// <c>{baseUrl}/waInstance{idInstance}/sendMessage/{apiToken}</c>.
+    /// Same path as verify-code <c>sendMessage</c>.
+    /// </summary>
+    public static string BuildSendUrl(string baseUrl, string idInstance, string apiToken)
+    {
+        var root = baseUrl.TrimEnd('/');
+        return $"{root}/waInstance{idInstance}/sendMessage/{apiToken}";
+    }
+
+    /// <summary>
+    /// GreenAPI chat id for <c>sendMessage</c>: digits + <c>@c.us</c>.
+    /// </summary>
+    public static string ChatId(string phone) => $"{NormalizePhone(phone)}@c.us";
+
+    /// <summary>
+    /// Reads <c>idMessage</c> from a successful <c>sendMessage</c> body.
+    /// </summary>
+    public static string? ReadMessageId(string? json, bool successStatusCode)
+    {
+        if (!successStatusCode || string.IsNullOrWhiteSpace(json))
+        {
+            return null;
+        }
+
+        try
+        {
+            using var doc = JsonDocument.Parse(json);
+            return doc.RootElement.TryGetProperty("idMessage", out var el)
+                ? el.GetString()
+                : null;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
     }
 
     /// <summary>

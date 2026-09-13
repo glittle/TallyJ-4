@@ -12,6 +12,9 @@ import {
   putApiPeopleByGuidSetPhoneSmsStatus,
   postApiPeopleByGuidCheckWhatsApp,
   postApiPeopleByElectionGuidCheckWhatsAppSelected,
+  postApiPeopleByElectionGuidNotifyWhatsApp,
+  postApiPeopleByElectionGuidAbortWhatsAppNotify,
+  getApiPeopleByElectionGuidWhatsAppNotifyStatus,
 } from "@/api/gen/configService";
 import type {
   PersonDto,
@@ -19,6 +22,7 @@ import type {
   PersonDetailDto,
   PersonPhoneOnlineVoterDto,
   CheckSelectedWhatsAppResultDto,
+  WhatsAppNotifyStatusDto,
   CreatePersonDto,
   UpdatePersonDto,
 } from "../types";
@@ -160,5 +164,38 @@ export const peopleService = {
       signal,
     });
     return response.data?.data as CheckSelectedWhatsAppResultDto;
+  },
+
+  async startWhatsAppNotify(
+    electionGuid: string,
+    personGuids: string[],
+  ): Promise<WhatsAppNotifyStatusDto> {
+    const response = await postApiPeopleByElectionGuidNotifyWhatsApp({
+      path: { electionGuid },
+      body: { personGuids },
+    });
+    return response.data?.data as WhatsAppNotifyStatusDto;
+  },
+
+  async abortWhatsAppNotify(
+    electionGuid: string,
+    queueToken?: string,
+  ): Promise<WhatsAppNotifyStatusDto> {
+    const response = await postApiPeopleByElectionGuidAbortWhatsAppNotify({
+      path: { electionGuid },
+      body: { queueToken },
+    });
+    return response.data?.data as WhatsAppNotifyStatusDto;
+  },
+
+  async getWhatsAppNotifyStatus(
+    electionGuid: string,
+    queueToken?: string,
+  ): Promise<WhatsAppNotifyStatusDto> {
+    const response = await getApiPeopleByElectionGuidWhatsAppNotifyStatus({
+      path: { electionGuid },
+      query: { queueToken },
+    });
+    return response.data?.data as WhatsAppNotifyStatusDto;
   },
 };

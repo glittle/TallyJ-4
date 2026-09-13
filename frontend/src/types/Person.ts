@@ -135,3 +135,19 @@ export interface CheckSelectedWhatsAppResultDto {
   skipped: number;
   results: CheckSelectedWhatsAppPersonResultDto[];
 }
+
+export interface WhatsAppNotifyPersonResultDto {
+  personGuid: string;
+  outcome: string;
+}
+
+export interface WhatsAppNotifyStatusDto {
+  queueToken: string;
+  running: boolean;
+  cancelled: boolean;
+  queued: number;
+  sent: number;
+  skipped: number;
+  failed: number;
+  results: WhatsAppNotifyPersonResultDto[];
+}

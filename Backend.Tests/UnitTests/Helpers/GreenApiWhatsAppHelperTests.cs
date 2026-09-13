@@ -29,6 +29,35 @@ public class GreenApiWhatsAppHelperTests
     }
 
     [Fact]
+    public void BuildSendUrl_UsesSendMessagePath()
+    {
+        Assert.Equal(
+            "https://api.green-api.com/waInstance1234/sendMessage/token",
+            GreenApiWhatsAppHelper.BuildSendUrl("https://api.green-api.com/", "1234", "token"));
+    }
+
+    [Fact]
+    public void ChatId_DigitsAtCUs()
+    {
+        Assert.Equal("14168972671@c.us", GreenApiWhatsAppHelper.ChatId("+1 416-897-2671"));
+    }
+
+    [Fact]
+    public void ReadMessageId_Success_ReturnsId()
+    {
+        Assert.Equal(
+            "true_123",
+            GreenApiWhatsAppHelper.ReadMessageId("""{"idMessage":"true_123"}""", true));
+    }
+
+    [Fact]
+    public void ReadMessageId_Failure_Null()
+    {
+        Assert.Null(GreenApiWhatsAppHelper.ReadMessageId("""{"idMessage":"true_123"}""", false));
+        Assert.Null(GreenApiWhatsAppHelper.ReadMessageId("{}", true));
+    }
+
+    [Fact]
     public void MapCheckResponse_ExistsTrue_IsOk()
     {
         Assert.Equal(

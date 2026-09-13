@@ -15,6 +15,7 @@ import { usePeopleStore } from "../../stores/peopleStore";
 import type {
   CheckSelectedWhatsAppResultDto,
   PersonListDto,
+  WhatsAppNotifyStatusDto,
 } from "../../types";
 import {
   canCheckSelectedWhatsApp,
@@ -22,6 +23,11 @@ import {
   selectedPeopleWithPhone,
   whatsAppCheckOutcomeLabel,
 } from "@/utils/whatsAppCheckSelected";
+import {
+  canNotifySelectedWhatsApp,
+  notifyCancelledCount,
+  whatsAppNotifyOutcomeLabel,
+} from "@/utils/whatsAppNotify";
 
 const router = useRouter();
 const route = useRoute();
@@ -51,6 +57,11 @@ const checkingWhatsApp = ref(false);
 const checkWhatsAppResults = ref<CheckSelectedWhatsAppResultDto | null>(null);
 const showCheckWhatsAppResults = ref(false);
 let checkWhatsAppAbort: AbortController | null = null;
+const notifyingWhatsApp = ref(false);
+const notifyWhatsAppResults = ref<WhatsAppNotifyStatusDto | null>(null);
+const showNotifyWhatsAppResults = ref(false);
+let notifyWhatsAppToken: string | null = null;
+let notifyPollTimer: number | null = null;
 
 const filteredPeople = computed(() => {
   if (!searchQuery.value) {
@@ -69,6 +80,12 @@ const selectedWithPhone = computed(() =>
 );
 const canCheckWhatsApp = computed(() =>
   canCheckSelectedWhatsApp(
+    selectedGuids.value.length,
+    selectedWithPhone.value.length,
+  ),
+);
+const canNotifyWhatsApp = computed(() =>
+  canNotifySelectedWhatsApp(
     selectedGuids.value.length,
     selectedWithPhone.value.length,
   ),
@@ -95,6 +112,7 @@ onMounted(async () => {
 });
 
 onUnmounted(async () => {
+  stopNotifyPoll();
   try {
     await peopleStore.leaveElection(electionGuid);
   } catch (error) {
@@ -196,6 +214,92 @@ async function handleCheckWhatsAppSelected() {
   }
 }
 
+function stopNotifyPoll() {
+  if (notifyPollTimer !== null) {
+    window.clearInterval(notifyPollTimer);
+    notifyPollTimer = null;
+  }
+}
+
+function applyNotifyStatus(status: WhatsAppNotifyStatusDto) {
+  notifyWhatsAppResults.value = status;
+  notifyWhatsAppToken = status.queueToken;
+  if (!status.running) {
+    stopNotifyPoll();
+    notifyingWhatsApp.value = false;
+  }
+}
+
+async function pollNotifyStatus() {
+  if (!notifyWhatsAppToken) {
+    return;
+  }
+  try {
+    const status = await peopleService.getWhatsAppNotifyStatus(
+      electionGuid,
+      notifyWhatsAppToken,
+    );
+    applyNotifyStatus(status);
+  } catch (error) {
+    stopNotifyPoll();
+    notifyingWhatsApp.value = false;
+    handleApiError(error);
+  }
+}
+
+async function handleNotifyWhatsApp() {
+  if (!canNotifyWhatsApp.value) {
+    if (selectedGuids.value.length > MAX_WHATSAPP_CHECK_SELECTED) {
+      showErrorMessage(
+        t("people.phoneOnlineVoter.whatsAppTooMany", {
+          max: MAX_WHATSAPP_CHECK_SELECTED,
+        }),
+      );
+    } else {
+      showErrorMessage(t("people.notifyWhatsAppNone"));
+    }
+    return;
+  }
+
+  notifyingWhatsApp.value = true;
+  showNotifyWhatsAppResults.value = true;
+  try {
+    const status = await peopleService.startWhatsAppNotify(
+      electionGuid,
+      selectedGuids.value,
+    );
+    applyNotifyStatus(status);
+    if (status.running) {
+      showSuccessMessage(
+        t("people.notifyWhatsAppQueued", { queued: status.queued }),
+      );
+      stopNotifyPoll();
+      notifyPollTimer = window.setInterval(() => {
+        void pollNotifyStatus();
+      }, 2000);
+    }
+  } catch (error) {
+    notifyingWhatsApp.value = false;
+    handleApiError(error);
+  }
+}
+
+async function handleAbortWhatsAppNotify() {
+  if (!notifyWhatsAppToken) {
+    return;
+  }
+  try {
+    const status = await peopleService.abortWhatsAppNotify(
+      electionGuid,
+      notifyWhatsAppToken,
+    );
+    applyNotifyStatus(status);
+    await pollNotifyStatus();
+  } catch (error) {
+    handleApiError(error);
+  }
+}
+
 function isAbortError(error: unknown): boolean {
   return (
     (error instanceof DOMException && error.name === "AbortError") ||
@@ -285,6 +389,24 @@ async function handleDeleteAllPeople() {
               >
                 {{ $t("people.checkWhatsAppSelectedCancel") }}
               </el-button>
+              <el-button
+                type="default"
+                :disabled="!canNotifyWhatsApp || notifyingWhatsApp"
+                :loading="notifyingWhatsApp"
+                @click="handleNotifyWhatsApp"
+              >
+                {{
+                  $t("people.notifyWhatsApp", {
+                    count: selectedWithPhone.length,
+                  })
+                }}
+              </el-button>
+              <el-button
+                v-if="notifyingWhatsApp"
+                @click="handleAbortWhatsAppNotify"
+              >
+                {{ $t("people.notifyWhatsAppAbort") }}
+              </el-button>
               <span v-if="selectedGuids.length" class="selected-count">
                 {{
                   $t("people.selectedCount", { count: selectedGuids.length })
@@ -369,6 +491,44 @@ async function handleDeleteAllPeople() {
       <template #footer>
         <el-button @click="showCheckWhatsAppResults = false">
           {{ $t("people.checkWhatsAppSelectedClose") }}
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog
+      v-model="showNotifyWhatsAppResults"
+      :title="$t('people.notifyWhatsAppResults')"
+      width="520px"
+    >
+      <p v-if="notifyWhatsAppResults">
+        {{
+          $t("people.notifyWhatsAppSummary", {
+            sent: notifyWhatsAppResults.sent,
+            skipped: notifyWhatsAppResults.skipped,
+            failed: notifyWhatsAppResults.failed,
+            cancelled: notifyCancelledCount(notifyWhatsAppResults.results),
+          })
+        }}
+      </p>
+      <p v-if="notifyWhatsAppResults?.running">
+        {{
+          $t("people.notifyWhatsAppQueued", {
+            queued: notifyWhatsAppResults.queued,
+          })
+        }}
+      </p>
+      <ul v-if="notifyWhatsAppResults" class="whatsapp-check-results">
+        <li v-for="row in notifyWhatsAppResults.results" :key="row.personGuid">
+          {{ resultPersonName(row.personGuid) }} —
+          {{ whatsAppNotifyOutcomeLabel(row.outcome, t) }}
+        </li>
+      </ul>
+      <template #footer>
+        <el-button v-if="notifyingWhatsApp" @click="handleAbortWhatsAppNotify">
+          {{ $t("people.notifyWhatsAppAbort") }}
+        </el-button>
+        <el-button @click="showNotifyWhatsAppResults = false">
+          {{ $t("people.notifyWhatsAppClose") }}
         </el-button>
       </template>
     </el-dialog>

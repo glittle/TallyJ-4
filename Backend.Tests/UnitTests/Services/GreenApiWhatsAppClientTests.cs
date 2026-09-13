@@ -77,6 +77,46 @@ public class GreenApiWhatsAppClientTests
     }
 
     [Fact]
+    public async Task SendMessageAsync_NotConfigured_DoesNotCreateHttpClient()
+    {
+        var httpFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
+        var client = CreateClient(httpFactory.Object);
+
+        var result = await client.SendMessageAsync(ValidPhone, "Hello");
+
+        Assert.False(result.ProviderCalled);
+        Assert.False(result.Sent);
+        httpFactory.Verify(f => f.CreateClient(It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task SendMessageAsync_Configured_PostsSendMessage()
+    {
+        var handler = new StubHandler(HttpStatusCode.OK, """{"idMessage":"true_abc"}""");
+        var httpFactory = new Mock<IHttpClientFactory>();
+        httpFactory.Setup(f => f.CreateClient("GreenApi")).Returns(new HttpClient(handler));
+        var client = CreateClient(httpFactory.Object, Configured());
+
+        var result = await client.SendMessageAsync(ValidPhone, "Hello {FirstName}");
+
+        Assert.True(result.ProviderCalled);
+        Assert.True(result.Sent);
+        Assert.Equal("true_abc", result.MessageId);
+        Assert.Equal(
+            "https://api.green-api.com/waInstance1234/sendMessage/token",
+            handler.LastRequest?.RequestUri?.ToString());
+        Assert.Contains("14168972671@c.us", handler.LastBody);
+        Assert.Contains("Hello {FirstName}", handler.LastBody);
+    }
+
+    [Fact]
+    public void IsConfigured_MatchesHelper()
+    {
+        Assert.False(CreateClient(Mock.Of<IHttpClientFactory>()).IsConfigured());
+        Assert.True(CreateClient(Mock.Of<IHttpClientFactory>(), Configured()).IsConfigured());
+    }
+
+    [Fact]
     public async Task CheckWhatsAppAsync_HttpFailure_ReturnsCheckFailed()
     {
         var handler = new StubHandler(HttpStatusCode.BadRequest, """{"error":true}""");

@@ -205,6 +205,13 @@ export type ApiResponsePeoplePersonPhoneOnlineVoterDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponsePeopleWhatsAppNotifyStatusDto = {
+    success?: boolean;
+    data?: PeopleWhatsAppNotifyStatusDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponsePublicPublicHomeDto = {
     success?: boolean;
     data?: PublicPublicHomeDto;
@@ -1120,6 +1127,10 @@ export type PaginatedResponseTellersTellerDto = {
     readonly hasNextPage?: boolean;
 };
 
+export type PeopleAbortWhatsAppNotifyDto = {
+    queueToken?: string | null;
+};
+
 export type PeopleCheckSelectedWhatsAppDto = {
     personGuids?: Array<string> | null;
 };
@@ -1247,6 +1258,10 @@ export type PeopleSetPersonPhoneSmsStatusDto = {
     smsStatus?: string | null;
 };
 
+export type PeopleStartWhatsAppNotifyDto = {
+    personGuids?: Array<string> | null;
+};
+
 export type PeopleUpdatePersonDto = {
     lastName?: string | null;
     firstName?: string | null;
@@ -1258,6 +1273,22 @@ export type PeopleUpdatePersonDto = {
     email?: string | null;
     phone?: string | null;
     ineligibleReasonCode?: string | null;
+};
+
+export type PeopleWhatsAppNotifyPersonResultDto = {
+    personGuid?: string;
+    outcome?: string | null;
+};
+
+export type PeopleWhatsAppNotifyStatusDto = {
+    queueToken?: string | null;
+    running?: boolean;
+    cancelled?: boolean;
+    queued?: number;
+    sent?: number;
+    skipped?: number;
+    failed?: number;
+    results?: Array<PeopleWhatsAppNotifyPersonResultDto> | null;
 };
 
 export type PublicAvailableElectionDto = {
@@ -4015,6 +4046,62 @@ export type PostApiPeopleByElectionGuidCheckWhatsAppSelectedResponses = {
 };
 
 export type PostApiPeopleByElectionGuidCheckWhatsAppSelectedResponse = PostApiPeopleByElectionGuidCheckWhatsAppSelectedResponses[keyof PostApiPeopleByElectionGuidCheckWhatsAppSelectedResponses];
+
+export type PostApiPeopleByElectionGuidNotifyWhatsAppData = {
+    body?: PeopleStartWhatsAppNotifyDto;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/People/{electionGuid}/notifyWhatsApp';
+};
+
+export type PostApiPeopleByElectionGuidNotifyWhatsAppResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePeopleWhatsAppNotifyStatusDto;
+};
+
+export type PostApiPeopleByElectionGuidNotifyWhatsAppResponse = PostApiPeopleByElectionGuidNotifyWhatsAppResponses[keyof PostApiPeopleByElectionGuidNotifyWhatsAppResponses];
+
+export type PostApiPeopleByElectionGuidAbortWhatsAppNotifyData = {
+    body?: PeopleAbortWhatsAppNotifyDto;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/People/{electionGuid}/abortWhatsAppNotify';
+};
+
+export type PostApiPeopleByElectionGuidAbortWhatsAppNotifyResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePeopleWhatsAppNotifyStatusDto;
+};
+
+export type PostApiPeopleByElectionGuidAbortWhatsAppNotifyResponse = PostApiPeopleByElectionGuidAbortWhatsAppNotifyResponses[keyof PostApiPeopleByElectionGuidAbortWhatsAppNotifyResponses];
+
+export type GetApiPeopleByElectionGuidWhatsAppNotifyStatusData = {
+    body?: never;
+    path: {
+        electionGuid: string;
+    };
+    query?: {
+        queueToken?: string;
+    };
+    url: '/api/People/{electionGuid}/whatsAppNotifyStatus';
+};
+
+export type GetApiPeopleByElectionGuidWhatsAppNotifyStatusResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePeopleWhatsAppNotifyStatusDto;
+};
+
+export type GetApiPeopleByElectionGuidWhatsAppNotifyStatusResponse = GetApiPeopleByElectionGuidWhatsAppNotifyStatusResponses[keyof GetApiPeopleByElectionGuidWhatsAppNotifyStatusResponses];
 
 export type PostApiPeopleImportByElectionGuidUploadData = {
     body?: {
