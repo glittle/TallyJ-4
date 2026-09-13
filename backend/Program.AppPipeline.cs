@@ -74,7 +74,7 @@ public static class ProgramAppPipeline
             await remoteLogService.SendLogAsync($"Started up - SiteType: {siteType} - Url: {FrontendUrlResolver.GetOrigin(configuration, app.Environment)} at {DateTime.Now}");
         }
 
-        // Before any middleware that reads RemoteIpAddress or Request.IsHttps.
+        // Proto only (see ForwardedHeadersOptions). Before UseHttpsRedirection.
         app.UseForwardedHeaders();
 
         app.UseExceptionHandler();

@@ -25,11 +25,21 @@ public class HttpContextExtensionsClientIpTests
     }
 
     [Fact]
-    public void GetClientIpAddress_XForwardedFor_UsesLeftmostClientNotProxy()
+    public void GetClientIpAddress_PublicRemoteIp_IgnoresSpoofedXForwardedFor()
+    {
+        var context = new DefaultHttpContext();
+        context.Connection.RemoteIpAddress = IPAddress.Parse("198.51.100.10");
+        context.Request.Headers["X-Forwarded-For"] = "203.0.113.99";
+
+        Assert.Equal("198.51.100.10", context.GetClientIpAddress());
+    }
+
+    [Fact]
+    public void GetClientIpAddress_InfrastructurePeer_UsesRightmostPublicNotLeftmost()
     {
         var context = new DefaultHttpContext();
         context.Connection.RemoteIpAddress = IPAddress.Parse("10.0.0.4");
-        context.Request.Headers["X-Forwarded-For"] = "203.0.113.10, 10.0.0.4";
+        context.Request.Headers["X-Forwarded-For"] = "198.51.100.1, 203.0.113.10, 10.0.0.4";
 
         Assert.Equal("203.0.113.10", context.GetClientIpAddress());
     }
@@ -58,11 +68,32 @@ public class HttpContextExtensionsClientIpTests
     }
 
     [Fact]
-    public void GetClientIpAddress_ForwardedHeader_UsesForParameter()
+    public void GetClientIpAddress_SpoofedLeftmost_StaysSameBucket()
+    {
+        var proxy = IPAddress.Parse("10.0.0.4");
+
+        var first = new DefaultHttpContext();
+        first.Connection.RemoteIpAddress = proxy;
+        first.Request.Headers["X-Forwarded-For"] = "198.51.100.1, 203.0.113.10, 10.0.0.4";
+
+        var spoofed = new DefaultHttpContext();
+        spoofed.Connection.RemoteIpAddress = proxy;
+        spoofed.Request.Headers["X-Forwarded-For"] = "198.51.100.99, 203.0.113.10, 10.0.0.4";
+
+        var keyA = RateLimitingMiddleware.GetClientKey("/api/auth/login", first.GetClientIpAddress());
+        var keyB = RateLimitingMiddleware.GetClientKey("/api/auth/login", spoofed.GetClientIpAddress());
+
+        Assert.Equal("203.0.113.10", first.GetClientIpAddress());
+        Assert.Equal(keyA, keyB);
+    }
+
+    [Fact]
+    public void GetClientIpAddress_ForwardedHeader_UsesRightmostPublicFor()
     {
         var context = new DefaultHttpContext();
         context.Connection.RemoteIpAddress = IPAddress.Parse("10.0.0.4");
-        context.Request.Headers["Forwarded"] = "for=198.51.100.22;proto=https;by=10.0.0.4";
+        context.Request.Headers["Forwarded"] =
+            "for=198.51.100.1;proto=https, for=198.51.100.22;proto=https;by=10.0.0.4";
 
         Assert.Equal("198.51.100.22", context.GetClientIpAddress());
     }

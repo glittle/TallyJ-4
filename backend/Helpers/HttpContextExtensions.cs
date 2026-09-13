@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Net.Sockets;
 
 namespace Backend.Helpers;
 
@@ -9,54 +10,102 @@ public static class HttpContextExtensions
 {
     /// <summary>
     /// Client IP for rate-limit keys and audit fields.
-    /// Prefers the original client from X-Forwarded-For / Forwarded (leftmost valid IP)
-    /// when a proxy hop is present; otherwise uses the connection remote address.
+    /// When the TCP peer is an infrastructure hop (loopback, private, or unspecified),
+    /// uses the rightmost public address from X-Forwarded-For / Forwarded — the hop
+    /// Azure App Service / Front Door appended. Otherwise uses the connection address
+    /// and ignores client-supplied forwarded headers.
     /// </summary>
     public static string GetClientIpAddress(this HttpContext httpContext)
     {
         ArgumentNullException.ThrowIfNull(httpContext);
 
-        if (TryReadForwardedClientIp(httpContext.Request, out var forwardedIp))
+        var remoteIp = httpContext.Connection.RemoteIpAddress;
+        if (IsInfrastructurePeer(remoteIp) &&
+            TryGetTrustedIngressClientIp(httpContext.Request, out var forwardedIp))
         {
             return forwardedIp;
         }
 
-        return httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+        return remoteIp?.ToString() ?? "unknown";
     }
 
     /// <summary>
-    /// Reads the original client IP from proxy headers. Leftmost X-Forwarded-For
-    /// entry is the originating client; later entries are successive proxies.
+    /// True when the TCP peer is a reverse-proxy / platform hop we can recognize
+    /// without a proxy allow-list (TestServer, App Service ARR, Docker).
+    /// A public RemoteIpAddress is treated as the connecting client; XFF is not trusted.
     /// </summary>
-    internal static bool TryReadForwardedClientIp(HttpRequest request, out string ip)
+    internal static bool IsInfrastructurePeer(IPAddress? remoteIp)
     {
-        if (request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
-        {
-            foreach (var headerValue in forwardedFor)
-            {
-                if (string.IsNullOrWhiteSpace(headerValue))
-                {
-                    continue;
-                }
+        return remoteIp is null || IsNonPublicAddress(remoteIp);
+    }
 
-                foreach (var part in headerValue.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+    /// <summary>
+    /// Rightmost public IP from X-Forwarded-For (preferred) or RFC 7239 Forwarded.
+    /// Azure Front Door and App Service append the connecting socket IP; leftmost
+    /// entries are client-supplied and must not choose the rate-limit bucket.
+    /// </summary>
+    internal static bool TryGetTrustedIngressClientIp(HttpRequest request, out string ip)
+    {
+        if (TryGetRightmostPublicIp(ReadXForwardedForAddresses(request), out ip))
+        {
+            return true;
+        }
+
+        return TryGetRightmostPublicIp(ReadForwardedForAddresses(request), out ip);
+    }
+
+    internal static IReadOnlyList<IPAddress> ReadXForwardedForAddresses(HttpRequest request)
+    {
+        var addresses = new List<IPAddress>();
+        if (!request.Headers.TryGetValue("X-Forwarded-For", out var forwardedFor))
+        {
+            return addresses;
+        }
+
+        foreach (var headerValue in forwardedFor)
+        {
+            if (string.IsNullOrWhiteSpace(headerValue))
+            {
+                continue;
+            }
+
+            foreach (var part in headerValue.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
+            {
+                if (TryParseIp(part, out var parsed))
                 {
-                    if (TryNormalizeIp(part, out ip))
-                    {
-                        return true;
-                    }
+                    addresses.Add(parsed);
                 }
             }
         }
 
-        if (request.Headers.TryGetValue("Forwarded", out var forwarded))
+        return addresses;
+    }
+
+    internal static IReadOnlyList<IPAddress> ReadForwardedForAddresses(HttpRequest request)
+    {
+        var addresses = new List<IPAddress>();
+        if (!request.Headers.TryGetValue("Forwarded", out var forwarded))
         {
-            foreach (var headerValue in forwarded)
+            return addresses;
+        }
+
+        foreach (var headerValue in forwarded)
+        {
+            AppendRfc7239ForwardedFor(headerValue, addresses);
+        }
+
+        return addresses;
+    }
+
+    private static bool TryGetRightmostPublicIp(IReadOnlyList<IPAddress> addresses, out string ip)
+    {
+        for (var i = addresses.Count - 1; i >= 0; i--)
+        {
+            var candidate = NormalizeMappedAddress(addresses[i]);
+            if (!IsNonPublicAddress(candidate))
             {
-                if (TryParseRfc7239ForwardedFor(headerValue, out ip))
-                {
-                    return true;
-                }
+                ip = candidate.ToString();
+                return true;
             }
         }
 
@@ -64,12 +113,11 @@ public static class HttpContextExtensions
         return false;
     }
 
-    private static bool TryParseRfc7239ForwardedFor(string? header, out string ip)
+    private static void AppendRfc7239ForwardedFor(string? header, List<IPAddress> addresses)
     {
-        ip = string.Empty;
         if (string.IsNullOrWhiteSpace(header))
         {
-            return false;
+            return;
         }
 
         foreach (var element in header.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries))
@@ -99,26 +147,50 @@ public static class HttpContextExtensions
                     }
                 }
 
-                if (TryNormalizeIp(raw, out ip))
+                if (TryParseIp(raw, out var parsed))
                 {
-                    return true;
+                    addresses.Add(parsed);
                 }
             }
         }
-
-        return false;
     }
 
-    private static bool TryNormalizeIp(string candidate, out string ip)
+    internal static bool IsNonPublicAddress(IPAddress address)
     {
-        ip = string.Empty;
-        if (!IPAddress.TryParse(candidate, out var parsed))
+        address = NormalizeMappedAddress(address);
+
+        if (IPAddress.IsLoopback(address) ||
+            address.Equals(IPAddress.Any) ||
+            address.Equals(IPAddress.IPv6Any) ||
+            address.IsIPv6LinkLocal ||
+            address.IsIPv6SiteLocal ||
+            address.IsIPv6UniqueLocal)
+        {
+            return true;
+        }
+
+        if (address.AddressFamily != AddressFamily.InterNetwork)
         {
             return false;
         }
 
-        ip = parsed.ToString();
-        return true;
+        var bytes = address.GetAddressBytes();
+        return bytes[0] == 10
+               || bytes[0] == 127
+               || (bytes[0] == 172 && bytes[1] >= 16 && bytes[1] <= 31)
+               || (bytes[0] == 192 && bytes[1] == 168)
+               || (bytes[0] == 169 && bytes[1] == 254)
+               || (bytes[0] == 100 && bytes[1] >= 64 && bytes[1] <= 127);
+    }
+
+    private static IPAddress NormalizeMappedAddress(IPAddress address)
+    {
+        return address.IsIPv4MappedToIPv6 ? address.MapToIPv4() : address;
+    }
+
+    private static bool TryParseIp(string candidate, out IPAddress parsed)
+    {
+        return IPAddress.TryParse(candidate, out parsed!);
     }
 
     /// <summary>
@@ -154,5 +226,3 @@ public static class HttpContextExtensions
         return httpContext.TraceIdentifier;
     }
 }
-
-

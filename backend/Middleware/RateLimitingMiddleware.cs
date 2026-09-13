@@ -8,8 +8,9 @@ namespace Backend.Middleware;
 
 /// <summary>
 /// In-memory rate limiting for anonymous teller and voter authentication endpoints.
-/// Keys by original client IP (X-Forwarded-For / Forwarded, then remote address)
-/// so Azure Front Door / App Service hops do not collapse every voter into one bucket.
+/// Keys by the IP the trusted ingress actually saw (see GetClientIpAddress),
+/// so Azure Front Door / App Service hops do not collapse every voter into one bucket
+/// and a client-supplied leftmost X-Forwarded-For cannot open a new bucket.
 /// </summary>
 public class RateLimitingMiddleware
 {

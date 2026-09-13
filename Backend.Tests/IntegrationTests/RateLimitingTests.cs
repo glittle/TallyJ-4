@@ -99,6 +99,30 @@ public class RateLimitingTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task Login_SpoofedLeftmostXForwardedFor_DoesNotEvadeLimit()
+    {
+        var loginRequest = new LoginRequest
+        {
+            Email = "rate-limit-spoof@example.com",
+            Password = "WrongPassword"
+        };
+
+        HttpResponseMessage? lastResponse = null;
+        for (int i = 0; i < 6; i++)
+        {
+            lastResponse = await PostJsonWithForwardedFor(
+                "/api/auth/login",
+                loginRequest,
+                $"198.51.100.{i + 1}, 203.0.113.70, 10.0.0.4");
+            await Task.Delay(50);
+        }
+
+        lastResponse!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+        var body = await lastResponse.Content.ReadAsStringAsync();
+        body.Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
+    }
+
+    [Fact]
     public async Task RequestCode_ExceedsRateLimit_Returns429()
     {
         var request = new RequestCodeDto
