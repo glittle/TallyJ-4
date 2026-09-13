@@ -52,7 +52,7 @@ public class JsonRequestVoterIdTests
     public async Task TryReadAsync_ChunkedBodyOverMax_ReturnsNull_WithoutReadingWholeBody()
     {
         var huge = new byte[JsonRequestVoterId.MaxBodyBytes + 64 * 1024];
-        Encoding.UTF8.GetBytes("""{"voterId":"overflow@example.com","pad":"""").CopyTo(huge, 0);
+        Encoding.UTF8.GetBytes("{\"voterId\":\"overflow@example.com\",\"pad\":\"").CopyTo(huge, 0);
         var stream = new CountingReadStream(huge);
         var context = new DefaultHttpContext();
         context.Request.Body = stream;
