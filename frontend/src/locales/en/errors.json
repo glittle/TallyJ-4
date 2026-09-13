@@ -8,6 +8,7 @@
   "error.serverError": "Server error. Please try again later.",
   "error.sessionExpired": "Your session has expired. Please log in again.",
   "error.somethingWentWrong": "Something went wrong",
+  "error.payloadTooLarge": "This request is too large.",
   "error.tooManyRequests": "Too many requests. Please try again later.",
   "error.tryAgain": "Try Again",
   "error.unauthorized": "You are not authorized to perform this action.",
