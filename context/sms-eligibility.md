@@ -107,7 +107,7 @@ No phone (null/whitespace) → `PhoneOnlineVoter` is null and the UI hides the b
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 (maintainer); this slice’s callback rules  
-**Revisit when:** SuperAdmin/teller manual SmsStatus, setting OK from delivered, or WhatsApp / GreenAPI #255
+**Revisit when:** SuperAdmin/teller manual SmsStatus, Front Desk / list columns, or WhatsApp / GreenAPI #255
 
 v3 already had one Twilio status callback: `PublicController.SmsStatus` → `TwilioHelper.LogSmsStatus` (update the existing `SmsLog` row by SID). v4 had the `SmsLog` table but no callback. This slice ports that **single** path to `POST /api/Public/smsStatus` and hooks auto-learn there. There is no second callback endpoint.
 
@@ -123,7 +123,9 @@ if MessageStatus is undelivered or failed
 → SmsStatus = "twilio-{code}"
 ```
 
-Allow-list (destination lastingly unusable): `30003` unreachable, `30005` unknown destination, `30006` landline/unreachable, `30004` filtered, `21211` invalid To, `21614` not a mobile. Mapped reason is always `twilio-{code}` (fits `varchar(50)`). Unlisted or missing `ErrorCode` on a terminal failure does **not** write (transient failures must not permanently block). `queued` / `sending` / `sent` / `delivered` never write. This slice does **not** set `SmsStatus` to `"OK"` from a delivered callback.
+Allow-list (destination lastingly unusable): `30003` unreachable, `30005` unknown destination, `30006` landline/unreachable, `30004` filtered, `21211` invalid To, `21614` not a mobile. Mapped reason is always `twilio-{code}` (fits `varchar(50)`). Unlisted or missing `ErrorCode` on a terminal failure does **not** write (transient failures must not permanently block). `queued` / `sending` / `sent` never write a block. This slice did **not** set `SmsStatus` to `"OK"` from a delivered callback.
+
+> Superseded 2026-09: delivered/completed on an existing SmsLog SID now sets `"OK"` — see eighth slice. Failure auto-learn is unchanged.
 
 **Lookup:** Twilio `To` may be E.164 with `+` while `OnlineVoter.VoterId` is the Person phone as stored (with or without `+`). Auth still compares `Person.Phone == dto.VoterId` exactly. The callback tries the trimmed `To`, then the +/- variant. The EF query is `VoterId == key AND VoterIdType == "P"` — same as paid-send and `FindTrackedPhoneOnlineVoterAsync` (tracked, not the AsNoTracking helper). A non-P occupant of a candidate `VoterId` is not returned (no convert, no wipe). If no matching P row exists, skip; do not create an `OnlineVoter` from a callback. Do not rewrite Person phones.
 
@@ -167,7 +169,7 @@ DTO fields: `SentDate`, `LastDate`, `LastStatus`, `ErrorCode`. No phone and no S
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 leftover after #325; v3 `TwilioHelper.SendSmsAsync` / `SendVoice` insert + `twilio-CallbackUrl`  
-**Revisit when:** SuperAdmin/teller manual SmsStatus, Front Desk / list columns, setting OK from delivered, or WhatsApp / GreenAPI #255
+**Revisit when:** SuperAdmin/teller manual SmsStatus, Front Desk / list columns, or WhatsApp / GreenAPI #255
 
 On a successful paid SMS / voice / WhatsApp send, persist an `SmsLog` so person-detail recent logs (#325 / sixth slice) have real rows. Fields: SID, phone as sent (the request-code `VoterId`, not a rewritten E.164), `SentDate` / `LastDate` UTC now, `LastStatus` from the provider JSON (`status` / GreenAPI `idMessage` send uses `"submitted"`). `ElectionGuid` and `PersonGuid` stay null — `requestCode` is pre-election; person detail already looks up by phone (+/- variant).
 
@@ -175,7 +177,7 @@ Do **not** insert when the destination is rejected, the provider is not configur
 
 Twilio SMS and voice set `StatusCallback` to the existing `POST /api/Public/smsStatus`. URL order (v3 `twilio-CallbackUrl`): `Twilio:StatusCallbackUrl` if it is a usable absolute http(s) URL (origin-only values get the path appended), else `ClientEnv:apiUrl` + `/api/Public/smsStatus`, else `ClientEnv:frontendUrl` + that path (same-host production). Omit the form field when none resolve — the log row is still written. GreenAPI WhatsApp has no Twilio callback.
 
-The callback still never inserts (fifth slice). Auto-learn still uses Twilio `To` and does not require a log row. Voice callbacks may send `CallSid` / `CallStatus`; those are the same update-by-SID path, not a second endpoint.
+The callback still never inserts (fifth slice). Failure auto-learn still uses Twilio `To` and does not require a log row. Delivered OK (eighth slice) does require that SID. Voice callbacks may send `CallSid` / `CallStatus`; those are the same update-by-SID path, not a second endpoint.
 
 **Rejected alternative:** insert a log row from the callback if send forgot one. That inverts v3 `LogSmsStatus` and would create rows for SIDs we did not send.
 
@@ -183,7 +185,41 @@ The callback still never inserts (fifth slice). Auto-learn still uses Twilio `To
 
 **Rejected alternative:** a new callback URL or endpoint. Wire the existing public SmsStatus path.
 
-**Not in this slice:** SuperAdmin/teller manual SmsStatus, Front Desk / list columns, setting `SmsStatus` to `"OK"` from delivered, WhatsApp / GreenAPI product work (#255), SignalR #229, rate limits #192.
+**Not in this slice:** SuperAdmin/teller manual SmsStatus, Front Desk / list columns, setting `SmsStatus` to `"OK"` from delivered (eighth slice), WhatsApp / GreenAPI product work (#255), SignalR #229, rate limits #192.
+
+## Set `SmsStatus` OK from delivered callback (eighth slice)
+
+**Status:** active  
+**Evidence:** confirmed (leftover after #327; Twilio success statuses)  
+**Source:** issue #254 leftover after send-side SmsLog + StatusCallback; this slice’s SID + overwrite rules  
+**Revisit when:** SuperAdmin/teller manual SmsStatus lands, Front Desk / list columns, or WhatsApp / GreenAPI #255
+
+A successful Twilio StatusCallback now sets the matching phone P row to `"OK"` so a never-seen or previously blocked phone is not stuck until a teller clicks Set OK.
+
+**Write rule:**
+
+```text
+if MessageStatus / CallStatus is delivered (SMS) or completed (voice)
+   AND an SmsLog row already exists for the SID
+   AND an OnlineVoter row exists with VoterId matching To (+/- variant) AND VoterIdType == "P"
+→ SmsStatus = "OK"
+```
+
+SMS success is `delivered` (handset received the message). Voice success is `completed` (call finished). `sent` / `queued` / `sending` / `accepted` are not success — the carrier accepted the request, not the destination. Voice `busy` / `no-answer` / `canceled` are not lasting-unusable and do not write a block (fifth-slice failure allow-list unchanged).
+
+The SID must already exist in `SmsLog` (send-side insert from the seventh slice). Granting eligibility is not the same as learning a block: failure auto-learn still uses Twilio `To` without a log row; delivered OK does not. Unknown SID still does not insert a log or an OnlineVoter. A non-P occupant of that `VoterId` is not converted.
+
+**Manual / existing block:** there was no written product rule that a teller block must stay sticky after a later successful delivery. Delivered success overwrites any current reason (`admin`, `landline`, `twilio-{code}`, …) to `"OK"` — the phone just worked. Failure auto-learn still leaves an existing block alone (`CanLearnFromCallback`). A later selected hard failure may overwrite `"OK"` again.
+
+Logs: method + status only. No raw phone or other PII. Same signature gate as the fifth slice.
+
+**Rejected alternative:** set OK from `To` without an SmsLog SID (same as failure auto-learn). Blocking a destination from a signed failure is defensive; marking a phone OK should only follow a message we sent.
+
+**Rejected alternative:** keep a manual block sticky when delivered later succeeds. No such rule was written. The phone working is stronger evidence than the earlier reason.
+
+**Rejected alternative:** treat SMS `sent` as success. Twilio `sent` is carrier handoff, not handset delivery.
+
+**Not in this slice:** SuperAdmin/teller manual set UI (#331), Front Desk / list columns, #255 WhatsApp, #229 SignalR, #192 UAT SMS.
 
 ## Related
 

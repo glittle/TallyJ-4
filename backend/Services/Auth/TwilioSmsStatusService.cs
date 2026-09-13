@@ -6,8 +6,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Backend.Services.Auth;
 
 /// <summary>
-/// Single Twilio status-callback path (v3 Public/SmsStatus). Updates SmsLog when present
-/// and auto-learns a lasting SmsStatus block on a matching phone OnlineVoter row.
+/// Single Twilio status-callback path (v3 Public/SmsStatus). Updates SmsLog when present,
+/// auto-learns a lasting SmsStatus block on selected terminal failures, and sets
+/// SmsStatus to OK when a delivered/completed callback matches an existing SID.
 /// </summary>
 public class TwilioSmsStatusService : ITwilioSmsStatusService
 {
@@ -28,8 +29,13 @@ public class TwilioSmsStatusService : ITwilioSmsStatusService
         int? errorCode,
         CancellationToken cancellationToken = default)
     {
-        await UpdateSmsLogIfPresentAsync(smsSid, messageStatus, to, errorCode, cancellationToken);
+        var log = await UpdateSmsLogIfPresentAsync(smsSid, messageStatus, to, errorCode, cancellationToken);
         await TryLearnSmsStatusAsync(messageStatus, to, errorCode, cancellationToken);
+        if (log != null)
+        {
+            await TrySetOkFromDeliveredAsync(messageStatus, to, cancellationToken);
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
     }
 
@@ -37,7 +43,7 @@ public class TwilioSmsStatusService : ITwilioSmsStatusService
     /// v3 <c>TwilioHelper.LogSmsStatus</c>: update the existing SmsLog row for this SID.
     /// Do not insert a log row from a callback.
     /// </summary>
-    private async Task UpdateSmsLogIfPresentAsync(
+    private async Task<SmsLog?> UpdateSmsLogIfPresentAsync(
         string? smsSid,
         string? messageStatus,
         string? to,
@@ -46,14 +52,14 @@ public class TwilioSmsStatusService : ITwilioSmsStatusService
     {
         if (string.IsNullOrWhiteSpace(smsSid))
         {
-            return;
+            return null;
         }
 
         var log = await _context.SmsLogs
             .FirstOrDefaultAsync(sl => sl.SmsSid == smsSid, cancellationToken);
         if (log == null)
         {
-            return;
+            return null;
         }
 
         log.LastStatus = messageStatus;
@@ -63,6 +69,8 @@ public class TwilioSmsStatusService : ITwilioSmsStatusService
         {
             log.Phone = to.Trim();
         }
+
+        return log;
     }
 
     private async Task TryLearnSmsStatusAsync(
@@ -107,6 +115,43 @@ public class TwilioSmsStatusService : ITwilioSmsStatusService
     }
 
     /// <summary>
+    /// Delivered/completed on an existing SID means the phone just worked. Set the
+    /// matching P row to OK even when a teller (or earlier callback) had blocked it.
+    /// Does not insert a row. Does not convert a non-P occupant.
+    /// </summary>
+    private async Task TrySetOkFromDeliveredAsync(
+        string? messageStatus,
+        string? to,
+        CancellationToken cancellationToken)
+    {
+        if (!TwilioSmsStatusHelper.IsDeliveredSuccess(messageStatus))
+        {
+            return;
+        }
+
+        var row = await FindExistingPhoneOnlineVoterAsync(to, cancellationToken);
+        if (row == null)
+        {
+            _logger.LogInformation(
+                "{Method}: no phone OnlineVoter ({Status})",
+                nameof(ProcessCallbackAsync),
+                KnownMessageStatus(messageStatus));
+            return;
+        }
+
+        if (row.SmsStatus == OnlineVoterSmsStatus.Ok)
+        {
+            return;
+        }
+
+        row.SmsStatus = OnlineVoterSmsStatus.Ok;
+        _logger.LogInformation(
+            "{Method}: set SmsStatus OK ({Status})",
+            nameof(ProcessCallbackAsync),
+            KnownMessageStatus(messageStatus));
+    }
+
+    /// <summary>
     /// Existing phone row whose VoterId matches Twilio To (exact stored string, then
     /// the +/- variant). The query is <c>VoterId == key AND VoterIdType == "P"</c>
     /// (same as paid-send / <see cref="OnlineVoterPhoneHelper.FindTrackedPhoneOnlineVoterAsync"/>).
@@ -136,6 +181,7 @@ public class TwilioSmsStatusService : ITwilioSmsStatusService
             "undelivered" => "undelivered",
             "failed" => "failed",
             "delivered" => "delivered",
+            "completed" => "completed",
             "sent" => "sent",
             "queued" => "queued",
             "sending" => "sending",

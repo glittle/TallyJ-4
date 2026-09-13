@@ -6,12 +6,22 @@ namespace Backend.Helpers;
 public static class TwilioSmsStatusHelper
 {
     /// <summary>
-    /// Terminal delivery failures. Intermediate and success statuses are ignored for auto-learn.
+    /// Terminal delivery failures. Intermediate and success statuses are ignored for failure auto-learn.
     /// </summary>
     public static bool IsTerminalFailure(string? messageStatus) =>
         messageStatus is not null
         && (messageStatus.Equals("undelivered", StringComparison.OrdinalIgnoreCase)
             || messageStatus.Equals("failed", StringComparison.OrdinalIgnoreCase));
+
+    /// <summary>
+    /// Terminal delivery success. SMS <c>delivered</c> means the handset received the
+    /// message. Voice <c>completed</c> is the call-finished success status. Carrier
+    /// <c>sent</c> / <c>queued</c> / <c>sending</c> are not success.
+    /// </summary>
+    public static bool IsDeliveredSuccess(string? messageStatus) =>
+        messageStatus is not null
+        && (messageStatus.Equals("delivered", StringComparison.OrdinalIgnoreCase)
+            || messageStatus.Equals("completed", StringComparison.OrdinalIgnoreCase));
 
     /// <summary>
     /// Twilio error codes that mean the destination is lastingly unusable for paid SMS.
