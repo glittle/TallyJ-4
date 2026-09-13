@@ -23,9 +23,6 @@ public class RateLimitingTests : IntegrationTestBase
     [Fact]
     public async Task Login_WithinRateLimit_Succeeds()
     {
-        // Arrange - ensure test user exists
-        await GetAuthTokenAsync("admin@tallyj.test", "TestPass123!");
-
         var loginRequest = new LoginRequest
         {
             Email = "admin@tallyj.test",
@@ -50,7 +47,7 @@ public class RateLimitingTests : IntegrationTestBase
         // Arrange
         var loginRequest = new LoginRequest
         {
-            Email = "admin@tallyj.test",
+            Email = "rate-limit-login@example.com",
             Password = "WrongPassword"
         };
 
@@ -58,15 +55,11 @@ public class RateLimitingTests : IntegrationTestBase
         HttpResponseMessage? lastResponse = null;
         for (int i = 0; i < 6; i++)
         {
-            var content = new StringContent(
-                JsonSerializer.Serialize(loginRequest),
-                Encoding.UTF8,
-                "application/json");
-
-            lastResponse = await Client.PostAsync("/api/auth/login", content);
-
-            // Small delay to ensure requests are processed
-            await Task.Delay(200);
+            lastResponse = await PostJsonWithForwardedFor(
+                "/api/auth/login",
+                loginRequest,
+                "203.0.113.50");
+            await Task.Delay(50);
         }
 
         // Assert - Last request should be rate limited
@@ -81,7 +74,7 @@ public class RateLimitingTests : IntegrationTestBase
     {
         var loginRequest = new LoginRequest
         {
-            Email = "admin@tallyj.test",
+            Email = "rate-limit-proxy@example.com",
             Password = "WrongPassword"
         };
 
