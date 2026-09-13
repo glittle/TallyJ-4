@@ -3,6 +3,7 @@ namespace Backend.Services.Auth;
 /// <summary>
 /// Sends a verification code over a paid channel (SMS / voice / WhatsApp).
 /// Implementations must not call a provider when <see cref="Backend.Helpers.PaidDestinationPhone"/> rejects the destination.
+/// A successful provider send should persist an <c>SmsLog</c> and (Twilio) set StatusCallback.
 /// </summary>
 public interface IPaidVerificationSender
 {

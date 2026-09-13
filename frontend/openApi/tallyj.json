@@ -4781,6 +4781,12 @@
                   "SmsStatus": {
                     "type": "string"
                   },
+                  "CallSid": {
+                    "type": "string"
+                  },
+                  "CallStatus": {
+                    "type": "string"
+                  },
                   "To": {
                     "type": "string"
                   },
@@ -4807,6 +4813,12 @@
                   "style": "form"
                 },
                 "SmsStatus": {
+                  "style": "form"
+                },
+                "CallSid": {
+                  "style": "form"
+                },
+                "CallStatus": {
                   "style": "form"
                 },
                 "To": {

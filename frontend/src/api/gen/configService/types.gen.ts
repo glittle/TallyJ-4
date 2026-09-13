@@ -4131,6 +4131,8 @@ export type PostApiPublicSmsStatusData = {
         SmsSid?: string;
         MessageStatus?: string;
         SmsStatus?: string;
+        CallSid?: string;
+        CallStatus?: string;
         To?: string;
         ErrorCode?: number;
         Sid?: string;

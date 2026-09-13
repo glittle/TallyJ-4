@@ -49,7 +49,7 @@ Common optional settings:
 - `Google__ClientId`
 - `Google__ClientSecret`
 - `Email__*`
-- `Twilio__*`
+- `Twilio__*` (optional `Twilio__StatusCallbackUrl` is the full public `POST /api/Public/smsStatus` URL Twilio should call; otherwise `ClientEnv:apiUrl` or `ClientEnv:frontendUrl` plus that path)
 - `GreenApi__*`
 - `Telegram__*`
 - `SuperAdmin__Emails`

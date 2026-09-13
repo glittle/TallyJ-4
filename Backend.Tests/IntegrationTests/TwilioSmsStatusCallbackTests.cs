@@ -77,6 +77,55 @@ public class TwilioSmsStatusCallbackTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task SmsStatus_Signed_UpdatesExistingSmsLog_DoesNotInsert()
+    {
+        const string phone = "+16048971238";
+        const string sid = "SMintegrationLog";
+        await SeedPhoneRow(phone);
+        await SeedSmsLog(sid, phone, lastStatus: "queued");
+
+        var fields = new Dictionary<string, string>
+        {
+            ["MessageSid"] = sid,
+            ["MessageStatus"] = "delivered",
+            ["To"] = phone
+        };
+
+        var response = await PostSmsStatusAsync(fields, sign: true);
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        using var verify = Factory.Services.CreateScope();
+        var db = verify.ServiceProvider.GetRequiredService<MainDbContext>();
+        var logs = await db.SmsLogs.Where(sl => sl.Phone == phone).ToListAsync();
+        var log = Assert.Single(logs);
+        Assert.Equal(sid, log.SmsSid);
+        Assert.Equal("delivered", log.LastStatus);
+        Assert.NotNull(log.LastDate);
+        Assert.Null(await ReadSmsStatus(phone));
+    }
+
+    [Fact]
+    public async Task SmsStatus_Signed_UnknownSid_DoesNotInsertSmsLog()
+    {
+        const string phone = "+16048971239";
+        await SeedPhoneRow(phone);
+
+        var fields = new Dictionary<string, string>
+        {
+            ["MessageSid"] = "SMnever-sent",
+            ["MessageStatus"] = "delivered",
+            ["To"] = phone
+        };
+
+        var response = await PostSmsStatusAsync(fields, sign: true);
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        using var verify = Factory.Services.CreateScope();
+        var db = verify.ServiceProvider.GetRequiredService<MainDbContext>();
+        Assert.Empty(await db.SmsLogs.Where(sl => sl.SmsSid == "SMnever-sent").ToListAsync());
+    }
+
+    [Fact]
     public async Task SmsStatus_InvalidSignature_Forbidden_DoesNotWriteSmsStatus()
     {
         const string phone = "+16048971237";
@@ -111,6 +160,20 @@ public class TwilioSmsStatusCallbackTests : IntegrationTestBase
         {
             VoterId = phone,
             VoterIdType = OnlineVoterPhoneHelper.PhoneVoterIdType
+        });
+        await db.SaveChangesAsync();
+    }
+
+    private async Task SeedSmsLog(string sid, string phone, string lastStatus)
+    {
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        db.SmsLogs.Add(new SmsLog
+        {
+            SmsSid = sid,
+            Phone = phone,
+            SentDate = DateTimeOffset.Parse("2026-08-01T00:00:00Z"),
+            LastStatus = lastStatus
         });
         await db.SaveChangesAsync();
     }

@@ -107,11 +107,11 @@ No phone (null/whitespace) → `PhoneOnlineVoter` is null and the UI hides the b
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 (maintainer); this slice’s callback rules  
-**Revisit when:** SuperAdmin/teller manual SmsStatus, setting OK from delivered, send-side SmsLog insert, or WhatsApp / GreenAPI #255
+**Revisit when:** SuperAdmin/teller manual SmsStatus, setting OK from delivered, or WhatsApp / GreenAPI #255
 
 v3 already had one Twilio status callback: `PublicController.SmsStatus` → `TwilioHelper.LogSmsStatus` (update the existing `SmsLog` row by SID). v4 had the `SmsLog` table but no callback. This slice ports that **single** path to `POST /api/Public/smsStatus` and hooks auto-learn there. There is no second callback endpoint.
 
-**SmsLog:** if a row exists for the SID (`MessageSid` or `SmsSid`), update `LastStatus`, `ErrorCode`, `LastDate`, and `Phone` (v3 `LogSmsStatus`). Do not insert a log row from a callback. v4 `PaidVerificationSender` still does not write `SmsLog` on send; auto-learn therefore does **not** require a log row — it uses Twilio `To`.
+**SmsLog:** if a row exists for the SID (`MessageSid`, `SmsSid`, or voice `CallSid`), update `LastStatus`, `ErrorCode`, `LastDate`, and `Phone` (v3 `LogSmsStatus`). Do not insert a log row from a callback. Send-side insert is the seventh slice; auto-learn still does **not** require a log row — it uses Twilio `To`.
 
 **Auto-learn write rule:**
 
@@ -139,18 +139,18 @@ Logs: method + status/code only. No raw phone or other PII.
 
 **Rejected alternative:** write `undeliverable` (or set `"OK"` on delivered) in this slice. The selected-code vocabulary is `twilio-{code}`; OK-from-delivered is a later choice.
 
-**Not in this slice:** PaidDestinationPhone, the pre-send SmsStatus gate, `EnsureOnlineVoterForPhoneAsync`, Person UI, SuperAdmin set, SignalR #229, WhatsApp/GreenAPI #255, send-side SmsLog insert.
+**Not in this slice:** PaidDestinationPhone, the pre-send SmsStatus gate, `EnsureOnlineVoterForPhoneAsync`, Person UI, SuperAdmin set, SignalR #229, WhatsApp/GreenAPI #255. Send-side SmsLog insert is the seventh slice.
 
 ## Person detail recent SmsLog (sixth slice)
 
 **Status:** active  
 **Evidence:** confirmed (surface); inferred (lookup / limit details)  
 **Source:** issue #254 Person UI “optional recent SmsLog”; existing +/- phone keys from the fifth slice  
-**Revisit when:** send-side SmsLog insert, Front Desk / list columns, or SuperAdmin/teller manual SmsStatus
+**Revisit when:** Front Desk / list columns or SuperAdmin/teller manual SmsStatus
 
 Person detail (`PersonPhoneOnlineVoterDto.RecentSmsLogs`) shows up to five newest `SmsLog` rows for that Person phone. Lookup is the stored phone plus the +/- E.164 variant (`TwilioSmsStatusHelper.VoterIdLookupKeys` / `SmsLogPhoneHelper.FindRecentForPhoneAsync`). Not election-scoped and not by `PersonGuid` — verification SMS often has neither. Logs are about the phone, so they are attached even when there is no P row (never seen). No phone → `PhoneOnlineVoter` stays null (no log block).
 
-DTO fields: `SentDate`, `LastDate`, `LastStatus`, `ErrorCode`. No phone and no SID (person detail already has the phone; logs must not add extra identifiers). Newest first (`SentDate`, then `RowId`). Empty list when none match; the UI hides the section. Status text is the stored `LastStatus`, or “Sent” when that is null. This slice does **not** insert `SmsLog` on send — it only reads rows that already exist (tests, a future send-side insert, or a callback update of an existing SID).
+DTO fields: `SentDate`, `LastDate`, `LastStatus`, `ErrorCode`. No phone and no SID (person detail already has the phone; logs must not add extra identifiers). Newest first (`SentDate`, then `RowId`). Empty list when none match; the UI hides the section. Status text is the stored `LastStatus`, or “Sent” when that is null. Rows come from the seventh-slice send insert (and later callback updates of that SID).
 
 **Rejected alternative:** election- or PersonGuid-scoped logs. Request-code SMS is pre-election; those columns are often null.
 
@@ -158,9 +158,32 @@ DTO fields: `SentDate`, `LastDate`, `LastStatus`, `ErrorCode`. No phone and no S
 
 **Rejected alternative:** include SID in the teller DTO. Not needed to see delivery history; keep the payload to status / times / error code.
 
-**Rejected alternative:** send-side `SmsLog` insert in this slice. Still leftover: `PaidVerificationSender` does not write a log or set `StatusCallback`. Until that lands, production person detail will usually have an empty recent list.
+**Rejected alternative:** send-side `SmsLog` insert in this slice. That is the seventh slice.
 
-**Not in this slice:** send-side SmsLog insert, StatusCallback URL on send, SuperAdmin/teller manual SmsStatus, Front Desk / list columns, WhatsApp/GreenAPI #255, SignalR #229.
+**Not in this slice:** send-side SmsLog insert (seventh), StatusCallback URL on send, SuperAdmin/teller manual SmsStatus, Front Desk / list columns, WhatsApp/GreenAPI #255, SignalR #229.
+
+## Send-side SmsLog insert + StatusCallback (seventh slice)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #254 leftover after #325; v3 `TwilioHelper.SendSmsAsync` / `SendVoice` insert + `twilio-CallbackUrl`  
+**Revisit when:** SuperAdmin/teller manual SmsStatus, Front Desk / list columns, setting OK from delivered, or WhatsApp / GreenAPI #255
+
+On a successful paid SMS / voice / WhatsApp send, persist an `SmsLog` so person-detail recent logs (#325 / sixth slice) have real rows. Fields: SID, phone as sent (the request-code `VoterId`, not a rewritten E.164), `SentDate` / `LastDate` UTC now, `LastStatus` from the provider JSON (`status` / GreenAPI `idMessage` send uses `"submitted"`). `ElectionGuid` and `PersonGuid` stay null — `requestCode` is pre-election; person detail already looks up by phone (+/- variant).
+
+Do **not** insert when the destination is rejected, the provider is not configured (dev skip still returns success), the HTTP send fails, or the provider body has no SID. A failed log insert must not fail the voter send (code already went out). Logs still must not include raw phone or other PII.
+
+Twilio SMS and voice set `StatusCallback` to the existing `POST /api/Public/smsStatus`. URL order (v3 `twilio-CallbackUrl`): `Twilio:StatusCallbackUrl` if it is a usable absolute http(s) URL (origin-only values get the path appended), else `ClientEnv:apiUrl` + `/api/Public/smsStatus`, else `ClientEnv:frontendUrl` + that path (same-host production). Omit the form field when none resolve — the log row is still written. GreenAPI WhatsApp has no Twilio callback.
+
+The callback still never inserts (fifth slice). Auto-learn still uses Twilio `To` and does not require a log row. Voice callbacks may send `CallSid` / `CallStatus`; those are the same update-by-SID path, not a second endpoint.
+
+**Rejected alternative:** insert a log row from the callback if send forgot one. That inverts v3 `LogSmsStatus` and would create rows for SIDs we did not send.
+
+**Rejected alternative:** require `ElectionGuid` / `PersonGuid` on verification SMS. `requestCode` is not election-scoped; #325 already looks up by phone for that reason.
+
+**Rejected alternative:** a new callback URL or endpoint. Wire the existing public SmsStatus path.
+
+**Not in this slice:** SuperAdmin/teller manual SmsStatus, Front Desk / list columns, setting `SmsStatus` to `"OK"` from delivered, WhatsApp / GreenAPI product work (#255), SignalR #229, rate limits #192.
 
 ## Related
 
