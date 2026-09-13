@@ -1,10 +1,15 @@
 <script setup lang="ts">
 import { CircleCheck } from "@element-plus/icons-vue";
-import { ElAutoResizer, ElTableV2, ElButton, ElIcon } from "element-plus";
+import { ElAutoResizer, ElTableV2, ElButton, ElIcon, ElTag } from "element-plus";
 import { useI18n } from "vue-i18n";
 import { computed, h } from "vue";
 import type { PersonListDto } from "../../types";
 import type { Column } from "element-plus";
+import {
+  phoneSmsListHint,
+  phoneSmsListLabel,
+  phoneSmsListTagType,
+} from "@/utils/phoneOnlineVoterStatus";
 
 const { t } = useI18n();
 
@@ -67,6 +72,26 @@ const columns = computed<Column<any>[]>(() => [
     dataKey: "phone",
     title: t("people.phone"),
     width: 130,
+  },
+  {
+    key: "sms",
+    title: t("people.phoneOnlineVoter.smsColumn"),
+    width: 140,
+    cellRenderer: ({ rowData }: { rowData: PersonListDto }) => {
+      const hint = phoneSmsListHint(rowData.phoneOnlineVoter);
+      if (hint === "none") {
+        return h("span", {}, "");
+      }
+      return h(
+        ElTag,
+        {
+          size: "small",
+          type: phoneSmsListTagType(hint),
+          class: `people-table__sms people-table__sms--${hint}`,
+        },
+        { default: () => phoneSmsListLabel(rowData.phoneOnlineVoter, t) },
+      );
+    },
   },
   {
     key: "area",

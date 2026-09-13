@@ -86,4 +86,64 @@ describe("PeopleTable", () => {
     expect(nameButton.exists()).toBe(true);
     expect(nameButton.text()).toBe(samplePerson.fullName);
   });
+
+  it("renders a compact SMS hint for people who have a phone", () => {
+    const withPhone: PersonListDto = {
+      ...samplePerson,
+      phoneOnlineVoter: {
+        hasPhoneRow: true,
+        whenRegistered: null,
+        smsStatus: "landline",
+      },
+    };
+    const wrapper = mount(PeopleTable, {
+      props: {
+        people: [withPhone],
+        loading: false,
+        tableHeight: 400,
+      },
+      global: {
+        components: { ElButton, ElTag: { template: "<span><slot /></span>" } },
+        directives: { loading: () => undefined },
+        stubs: {
+          ElAutoResizer: AutoResizerStub,
+          ElTableV2: TableStub,
+          ElIcon: { template: "<span />" },
+          ElTag: {
+            props: ["type", "size"],
+            template: '<span class="sms-tag"><slot /></span>',
+          },
+        },
+      },
+    });
+
+    expect(wrapper.text()).toContain("people.phoneOnlineVoter.smsBlocked");
+  });
+
+  it("does not invent an SMS hint when the person has no phone", () => {
+    const noPhone: PersonListDto = {
+      ...samplePerson,
+      phone: undefined,
+      phoneOnlineVoter: null,
+    };
+    const wrapper = mount(PeopleTable, {
+      props: {
+        people: [noPhone],
+        loading: false,
+        tableHeight: 400,
+      },
+      global: {
+        components: { ElButton },
+        directives: { loading: () => undefined },
+        stubs: {
+          ElAutoResizer: AutoResizerStub,
+          ElTableV2: TableStub,
+          ElIcon: { template: "<span />" },
+        },
+      },
+    });
+
+    expect(wrapper.text()).not.toContain("people.phoneOnlineVoter.neverSeen");
+    expect(wrapper.text()).not.toContain("people.phoneOnlineVoter.smsOk");
+  });
 });

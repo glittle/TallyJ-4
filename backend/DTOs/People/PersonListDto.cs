@@ -50,4 +50,10 @@ public class PersonListDto
     /// The unit name assigned to this person (when unit-based voting is in use).
     /// </summary>
     public string? UnitName { get; set; }
+
+    /// <summary>
+    /// Compact phone SMS/auth hint. Null when the person has no phone.
+    /// Same P-row contract as person detail; does not include last-login or SmsLog.
+    /// </summary>
+    public PersonPhoneSmsHintDto? PhoneOnlineVoter { get; set; }
 }

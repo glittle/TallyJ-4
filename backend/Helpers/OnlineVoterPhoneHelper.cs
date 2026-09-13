@@ -1,4 +1,5 @@
 using Backend.Context;
+using Backend.DTOs.People;
 using Backend.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -138,5 +139,83 @@ public static class OnlineVoterPhoneHelper
         return context.OnlineVoters.FirstOrDefaultAsync(
             ov => ov.VoterId == phone && ov.VoterIdType == PhoneVoterIdType,
             cancellationToken);
+    }
+
+    /// <summary>
+    /// Phone OnlineVoter P rows for the given Person phone strings.
+    /// Only <see cref="PhoneVoterIdType"/> rows are returned. A non-P occupant
+    /// of a candidate <see cref="OnlineVoter.VoterId"/> is omitted (never seen).
+    /// Keyed by stored <see cref="OnlineVoter.VoterId"/> (Person phone as stored).
+    /// </summary>
+    public static async Task<Dictionary<string, OnlineVoter>> FindPhoneOnlineVotersAsync(
+        MainDbContext context,
+        IEnumerable<string?> phones,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(phones);
+
+        var distinctPhones = phones
+            .Where(p => !string.IsNullOrWhiteSpace(p))
+            .Select(p => p!)
+            .Distinct()
+            .ToList();
+
+        if (distinctPhones.Count == 0)
+        {
+            return new Dictionary<string, OnlineVoter>(StringComparer.Ordinal);
+        }
+
+        var rows = await context.OnlineVoters
+            .AsNoTracking()
+            .Where(ov =>
+                distinctPhones.Contains(ov.VoterId) && ov.VoterIdType == PhoneVoterIdType)
+            .ToListAsync(cancellationToken);
+
+        return rows.ToDictionary(ov => ov.VoterId, StringComparer.Ordinal);
+    }
+
+    /// <summary>
+    /// Compact list/Front Desk hint. Null when there is no phone (UI hides the cell).
+    /// A missing or non-P <paramref name="phoneRow"/> is never seen
+    /// (<see cref="PersonPhoneSmsHintDto.HasPhoneRow"/> false; status/dates unset).
+    /// </summary>
+    public static PersonPhoneSmsHintDto? ToListHint(string? phone, OnlineVoter? phoneRow)
+    {
+        if (string.IsNullOrWhiteSpace(phone))
+        {
+            return null;
+        }
+
+        if (phoneRow == null || phoneRow.VoterIdType != PhoneVoterIdType)
+        {
+            return new PersonPhoneSmsHintDto { HasPhoneRow = false };
+        }
+
+        return new PersonPhoneSmsHintDto
+        {
+            HasPhoneRow = true,
+            WhenRegistered = phoneRow.WhenRegistered,
+            SmsStatus = phoneRow.SmsStatus
+        };
+    }
+
+    /// <summary>
+    /// Same as <see cref="ToListHint(string?, OnlineVoter?)"/> using a batch
+    /// dictionary from <see cref="FindPhoneOnlineVotersAsync"/>.
+    /// </summary>
+    public static PersonPhoneSmsHintDto? ToListHint(
+        string? phone,
+        IReadOnlyDictionary<string, OnlineVoter> rowsByVoterId)
+    {
+        ArgumentNullException.ThrowIfNull(rowsByVoterId);
+
+        OnlineVoter? row = null;
+        if (!string.IsNullOrWhiteSpace(phone))
+        {
+            rowsByVoterId.TryGetValue(phone, out row);
+        }
+
+        return ToListHint(phone, row);
     }
 }

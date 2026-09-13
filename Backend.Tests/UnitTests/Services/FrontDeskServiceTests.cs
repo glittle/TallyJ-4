@@ -55,6 +55,32 @@ public class FrontDeskServiceTests : ServiceTestBase
 
         Assert.Equal("P", result.VotingMethod);
         Assert.NotNull(Context.People.Single().RegistrationTime);
+        Assert.Null(result.PhoneOnlineVoter);
+    }
+
+    [Fact]
+    public async Task CheckInVoterAsync_PhoneWithPRow_IncludesSmsHint()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedEligiblePerson(phone: "+14168972720");
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = person.Phone!,
+            VoterIdType = "P",
+            SmsStatus = "OK"
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.CheckInVoterAsync(_electionGuid, new CheckInVoterDto
+        {
+            PersonGuid = person.PersonGuid,
+            VotingMethod = "P",
+            Teller1 = "Ada"
+        });
+
+        Assert.NotNull(result.PhoneOnlineVoter);
+        Assert.True(result.PhoneOnlineVoter.HasPhoneRow);
+        Assert.Equal("OK", result.PhoneOnlineVoter.SmsStatus);
     }
 
     [Fact]
@@ -150,6 +176,50 @@ public class FrontDeskServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task GetEligibleVotersAsync_PhoneSmsHint_MatchesPersonDetailContract()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var noPhone = SeedEligiblePerson();
+        var neverSeen = SeedEligiblePerson(phone: "+14168972710");
+        var imported = SeedEligiblePerson(phone: "+14168972711");
+        var ok = SeedEligiblePerson(phone: "+14168972712");
+        var blocked = SeedEligiblePerson(phone: "+14168972713");
+        var nonP = SeedEligiblePerson(phone: "+14168972714");
+
+        Context.OnlineVoters.AddRange(
+            new OnlineVoter { VoterId = imported.Phone!, VoterIdType = "P", SmsStatus = null },
+            new OnlineVoter { VoterId = ok.Phone!, VoterIdType = "P", SmsStatus = "OK" },
+            new OnlineVoter { VoterId = blocked.Phone!, VoterIdType = "P", SmsStatus = "undeliverable" },
+            new OnlineVoter { VoterId = nonP.Phone!, VoterIdType = "E", SmsStatus = "admin" });
+        await Context.SaveChangesAsync();
+
+        var voters = await _service.GetEligibleVotersAsync(_electionGuid);
+
+        Assert.Null(voters.Single(v => v.PersonGuid == noPhone.PersonGuid).PhoneOnlineVoter);
+
+        var neverSeenHint = voters.Single(v => v.PersonGuid == neverSeen.PersonGuid).PhoneOnlineVoter;
+        Assert.NotNull(neverSeenHint);
+        Assert.False(neverSeenHint.HasPhoneRow);
+        Assert.Null(neverSeenHint.SmsStatus);
+
+        var importedHint = voters.Single(v => v.PersonGuid == imported.PersonGuid).PhoneOnlineVoter;
+        Assert.NotNull(importedHint);
+        Assert.True(importedHint.HasPhoneRow);
+        Assert.Null(importedHint.WhenRegistered);
+        Assert.Null(importedHint.SmsStatus);
+
+        Assert.Equal("OK", voters.Single(v => v.PersonGuid == ok.PersonGuid).PhoneOnlineVoter?.SmsStatus);
+        Assert.Equal(
+            "undeliverable",
+            voters.Single(v => v.PersonGuid == blocked.PersonGuid).PhoneOnlineVoter?.SmsStatus);
+
+        var nonPHint = voters.Single(v => v.PersonGuid == nonP.PersonGuid).PhoneOnlineVoter;
+        Assert.NotNull(nonPHint);
+        Assert.False(nonPHint.HasPhoneRow);
+        Assert.Null(nonPHint.SmsStatus);
+    }
+
+    [Fact]
     public async Task GetEligibleVotersAsync_FinalizedElection_StillReads()
     {
         SeedElection(ElectionStage.Finalized);
@@ -224,7 +294,7 @@ public class FrontDeskServiceTests : ServiceTestBase
         Context.SaveChanges();
     }
 
-    private Person SeedEligiblePerson()
+    private Person SeedEligiblePerson(string? phone = null)
     {
         var person = new Person
         {
@@ -232,6 +302,7 @@ public class FrontDeskServiceTests : ServiceTestBase
             ElectionGuid = _electionGuid,
             FirstName = "Ada",
             LastName = "Smith",
+            Phone = phone,
             CanVote = true,
             CanReceiveVotes = true,
             RowVersion = new byte[8]

@@ -228,4 +228,76 @@ public class OnlineVoterPhoneHelperTests : ServiceTestBase
 
         Assert.Null(row);
     }
+
+    [Fact]
+    public async Task FindPhoneOnlineVotersAsync_ReturnsOnlyPRowsKeyedByStoredPhone()
+    {
+        const string okPhone = "+14168972690";
+        const string blockedPhone = "+14168972691";
+        const string emailOccupant = "+14168972692";
+        Context.OnlineVoters.AddRange(
+            new OnlineVoter { VoterId = okPhone, VoterIdType = "P", SmsStatus = "OK" },
+            new OnlineVoter { VoterId = blockedPhone, VoterIdType = "P", SmsStatus = "landline" },
+            new OnlineVoter { VoterId = emailOccupant, VoterIdType = "E", SmsStatus = "admin" });
+        await Context.SaveChangesAsync();
+
+        var rows = await OnlineVoterPhoneHelper.FindPhoneOnlineVotersAsync(
+            Context,
+            [okPhone, blockedPhone, emailOccupant, "   ", null, okPhone]);
+
+        Assert.Equal(2, rows.Count);
+        Assert.Equal("OK", rows[okPhone].SmsStatus);
+        Assert.Equal("landline", rows[blockedPhone].SmsStatus);
+        Assert.False(rows.ContainsKey(emailOccupant));
+    }
+
+    [Fact]
+    public void ToListHint_NoPhone_ReturnsNull()
+    {
+        Assert.Null(OnlineVoterPhoneHelper.ToListHint(null, phoneRow: null));
+        Assert.Null(OnlineVoterPhoneHelper.ToListHint("  ", phoneRow: null));
+    }
+
+    [Fact]
+    public void ToListHint_MissingOrNonPRow_IsNeverSeen()
+    {
+        var neverSeen = OnlineVoterPhoneHelper.ToListHint("+14168972693", phoneRow: null);
+        Assert.NotNull(neverSeen);
+        Assert.False(neverSeen.HasPhoneRow);
+        Assert.Null(neverSeen.WhenRegistered);
+        Assert.Null(neverSeen.SmsStatus);
+
+        var occupant = new OnlineVoter
+        {
+            VoterId = "+14168972693",
+            VoterIdType = "E",
+            SmsStatus = "admin",
+            WhenRegistered = DateTimeOffset.Parse("2026-01-01T00:00:00Z")
+        };
+        var ignored = OnlineVoterPhoneHelper.ToListHint(occupant.VoterId, occupant);
+        Assert.NotNull(ignored);
+        Assert.False(ignored.HasPhoneRow);
+        Assert.Null(ignored.WhenRegistered);
+        Assert.Null(ignored.SmsStatus);
+    }
+
+    [Fact]
+    public void ToListHint_PRow_CopiesWhenRegisteredAndSmsStatus()
+    {
+        var registered = DateTimeOffset.Parse("2026-04-01T12:00:00Z");
+        var row = new OnlineVoter
+        {
+            VoterId = "+14168972694",
+            VoterIdType = "P",
+            SmsStatus = "OK",
+            WhenRegistered = registered
+        };
+
+        var hint = OnlineVoterPhoneHelper.ToListHint(row.VoterId, row);
+
+        Assert.NotNull(hint);
+        Assert.True(hint.HasPhoneRow);
+        Assert.Equal(registered, hint.WhenRegistered);
+        Assert.Equal("OK", hint.SmsStatus);
+    }
 }

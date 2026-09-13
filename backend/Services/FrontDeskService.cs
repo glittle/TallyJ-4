@@ -2,6 +2,7 @@ using System.Text.Json;
 using Backend.Context;
 using Backend.Entities;
 using Backend.DTOs.FrontDesk;
+using Backend.DTOs.People;
 using Backend.DTOs.SignalR;
 using Backend.Enumerations;
 using Backend.Helpers;
@@ -39,13 +40,17 @@ public class FrontDeskService : IFrontDeskService
             .ToListAsync();
 
         var onlineStatusByPerson = await LoadLatestOnlineStatusByPersonAsync(electionGuid);
+        var phoneRows = await OnlineVoterPhoneHelper.FindPhoneOnlineVotersAsync(
+            _context,
+            voters.Select(p => p.Phone));
 
         return voters.Select(person =>
             MapToFrontDeskVoterDto(
                 person,
                 onlineStatusByPerson.TryGetValue(person.PersonGuid, out var status)
                     ? status
-                    : null))
+                    : null,
+                OnlineVoterPhoneHelper.ToListHint(person.Phone, phoneRows)))
             .ToList();
     }
 
@@ -109,9 +114,12 @@ public class FrontDeskService : IFrontDeskService
         _logger.LogInformation("Voter {PersonGuid} checked in for election {ElectionGuid} with envelope {EnvNum}",
             person.PersonGuid, electionGuid, person.EnvNum);
 
-        var voterDto = MapToFrontDeskVoterDto(person, person.HasOnlineBallot == true
-            ? onlineInfo?.Status
-            : null);
+        var voterDto = MapToFrontDeskVoterDto(
+            person,
+            person.HasOnlineBallot == true
+                ? onlineInfo?.Status
+                : null,
+            await LoadPhoneSmsHintAsync(person.Phone));
 
         await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
         await NotifyVoterPersonalRegistrationAsync(person);
@@ -196,7 +204,10 @@ public class FrontDeskService : IFrontDeskService
             person.PersonGuid, electionGuid, envNum);
 
         var remainingOnline = await LoadLatestOnlineVotingInfoAsync(electionGuid, person.PersonGuid);
-        var voterDto = MapToFrontDeskVoterDto(person, remainingOnline?.Status);
+        var voterDto = MapToFrontDeskVoterDto(
+            person,
+            remainingOnline?.Status,
+            await LoadPhoneSmsHintAsync(person.Phone));
 
         await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
         await NotifyVoterPersonalRegistrationAsync(person);
@@ -264,7 +275,10 @@ public class FrontDeskService : IFrontDeskService
             person.PersonGuid, electionGuid);
 
         var onlineInfo = await LoadLatestOnlineVotingInfoAsync(electionGuid, person.PersonGuid);
-        var voterDto = MapToFrontDeskVoterDto(person, onlineInfo?.Status);
+        var voterDto = MapToFrontDeskVoterDto(
+            person,
+            onlineInfo?.Status,
+            await LoadPhoneSmsHintAsync(person.Phone));
 
         await _signalRNotificationService.SendPersonFlagsUpdatedAsync(electionGuid, voterDto);
 
@@ -320,7 +334,10 @@ public class FrontDeskService : IFrontDeskService
             person.EnvNum);
 
         var onlineInfo = await LoadLatestOnlineVotingInfoAsync(electionGuid, person.PersonGuid);
-        var voterDto = MapToFrontDeskVoterDto(person, onlineInfo?.Status);
+        var voterDto = MapToFrontDeskVoterDto(
+            person,
+            onlineInfo?.Status,
+            await LoadPhoneSmsHintAsync(person.Phone));
         await _signalRNotificationService.NotifyPersonCheckedInAsync(electionGuid, voterDto);
         await NotifyVoterPersonalRegistrationAsync(person);
 
@@ -397,14 +414,25 @@ public class FrontDeskService : IFrontDeskService
             person.PersonGuid);
     }
 
+    private async Task<PersonPhoneSmsHintDto?> LoadPhoneSmsHintAsync(string? phone)
+    {
+        return OnlineVoterPhoneHelper.ToListHint(
+            phone,
+            await OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync(_context, phone));
+    }
+
     // Explicit mapping for FrontDeskVoterDto (replaces logic that was in Mapster profiles).
     // Handles the JSON deserialization of RegistrationHistory with good error context.
-    private static FrontDeskVoterDto MapToFrontDeskVoterDto(Person person, string? onlineBallotStatus)
+    private static FrontDeskVoterDto MapToFrontDeskVoterDto(
+        Person person,
+        string? onlineBallotStatus,
+        PersonPhoneSmsHintDto? phoneOnlineVoter)
     {
         var dto = person.CopyMatchingPropertiesToNew<FrontDeskVoterDto>();
 
         dto.RegistrationHistory = DeserializeRegistrationHistory(person.RegistrationHistory, person.PersonGuid);
         dto.OnlineBallotStatus = onlineBallotStatus;
+        dto.PhoneOnlineVoter = phoneOnlineVoter;
 
         return dto;
     }

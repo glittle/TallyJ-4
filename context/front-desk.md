@@ -45,3 +45,14 @@ v3 Roll Call and Sort Envelopes existed only for the Roll ballot process. Count 
 `GET .../frontdesk/rollCall` is a leftover that returns eligible voters plus check-in stats. Envelope numbers live on Front Desk (`ENABLE_ENVELOPE_NUMBERS` is still off). Envelope *counting* is the Analyze count-reconciliation report, not a Gathering page.
 
 **Rejected alternative:** rebuild the v3 projector and envelope pages for #171. Rejected — they depended on a process v4 does not have; the remaining API is covered by tests, not a new UI.
+
+## Front Desk SMS column is the phone P-row hint
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #254 leftover; [sms-eligibility.md](sms-eligibility.md) tenth slice  
+**Revisit when:** Front Desk should open person detail for Set OK / Block
+
+Eligible-voter rows include a compact `PhoneOnlineVoter` hint (never-seen / imported / OK / block reason) for people who have a phone. Lookup is P-row scoped; a non-P occupant’s status is not shown. The raw phone is not added to the Front Desk DTO. Set OK / Block stays on person detail — row-click is still check-in.
+
+**Rejected alternative:** inline SMS edits on Front Desk. Person detail already has that action; Front Desk is check-in.

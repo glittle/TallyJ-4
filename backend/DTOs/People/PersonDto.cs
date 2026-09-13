@@ -84,6 +84,12 @@ public class PersonDto
     /// The number of votes this person has received.
     /// </summary>
     public int VoteCount { get; set; }
+
+    /// <summary>
+    /// Compact phone SMS/auth hint. Null when the person has no phone.
+    /// Same P-row contract as person detail so create/update can refresh the people list.
+    /// </summary>
+    public PersonPhoneSmsHintDto? PhoneOnlineVoter { get; set; }
 }
 
 

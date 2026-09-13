@@ -5,7 +5,7 @@
 ## Evidence: confirmed
 
 **Source:** issue #254 (maintainer); July 555-range send incident described there  
-**Revisit when:** Front Desk / list columns, or NANP reserved-range rules change
+**Revisit when:** NANP reserved-range rules change
 
 ## In-code gate before any paid provider
 
@@ -88,7 +88,7 @@ Skip logs method + status only (no raw phone or email). Voter-facing message reu
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 (maintainer); this slice’s lookup rule  
-**Revisit when:** Front Desk / people list columns land
+**Revisit when:** WhatsAppStatus / GreenAPI `checkWhatsapp` (#255) lands on person detail
 
 People Management person detail (`GetPersonDetails` / `PersonDetailDto.PhoneOnlineVoter`) shows the global phone OnlineVoter SMS/auth fields. Lookup is both `VoterId == Person.Phone` and `VoterIdType == "P"` (`OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync`). `IX_OnlineVoter_Id` is unique on `VoterId` alone, but paid-send and this UI are type-scoped to `"P"`. A non-P row occupying that `VoterId` is treated as no phone row (never seen); that row’s `SmsStatus` is not shown as the phone’s.
 
@@ -100,14 +100,14 @@ No phone (null/whitespace) → `PhoneOnlineVoter` is null and the UI hides the b
 
 **Rejected alternative:** Front Desk / people list columns in this slice. Optional later; person detail is the required surface.
 
-**Not in this slice:** Front Desk / list columns, WhatsAppStatus / GreenAPI `checkWhatsapp` (#255). Recent `SmsLog` on person detail is the sixth slice. Manual SmsStatus is the eighth slice.
+**Not in this slice:** WhatsAppStatus / GreenAPI `checkWhatsapp` (#255). Recent `SmsLog` on person detail is the sixth slice. Manual SmsStatus is the eighth slice. Delivered-callback OK is the ninth slice. Front Desk / list columns are the tenth slice.
 
 ## Twilio status-callback auto-learn (fifth slice)
 
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 (maintainer); this slice’s callback rules  
-**Revisit when:** Front Desk / list columns, or WhatsApp / GreenAPI #255
+**Revisit when:** WhatsApp / GreenAPI #255
 
 v3 already had one Twilio status callback: `PublicController.SmsStatus` → `TwilioHelper.LogSmsStatus` (update the existing `SmsLog` row by SID). v4 had the `SmsLog` table but no callback. This slice ports that **single** path to `POST /api/Public/smsStatus` and hooks auto-learn there. There is no second callback endpoint.
 
@@ -148,7 +148,7 @@ Logs: method + status/code only. No raw phone or other PII.
 **Status:** active  
 **Evidence:** confirmed (surface); inferred (lookup / limit details)  
 **Source:** issue #254 Person UI “optional recent SmsLog”; existing +/- phone keys from the fifth slice  
-**Revisit when:** Front Desk / list columns
+**Revisit when:** Front Desk should show recent SmsLog (it does not; person detail does)
 
 Person detail (`PersonPhoneOnlineVoterDto.RecentSmsLogs`) shows up to five newest `SmsLog` rows for that Person phone. Lookup is the stored phone plus the +/- E.164 variant (`TwilioSmsStatusHelper.VoterIdLookupKeys` / `SmsLogPhoneHelper.FindRecentForPhoneAsync`). Not election-scoped and not by `PersonGuid` — verification SMS often has neither. Logs are about the phone, so they are attached even when there is no P row (never seen). No phone → `PhoneOnlineVoter` stays null (no log block).
 
@@ -162,14 +162,14 @@ DTO fields: `SentDate`, `LastDate`, `LastStatus`, `ErrorCode`. No phone and no S
 
 **Rejected alternative:** send-side `SmsLog` insert in this slice. That is the seventh slice.
 
-**Not in this slice:** send-side SmsLog insert (seventh), StatusCallback URL on send, Front Desk / list columns, WhatsApp/GreenAPI #255, SignalR #229. Manual SmsStatus is the eighth slice.
+**Not in this slice:** send-side SmsLog insert (seventh), StatusCallback URL on send, WhatsApp/GreenAPI #255, SignalR #229. Manual SmsStatus is the eighth slice. Delivered-callback OK is the ninth slice. Front Desk / list columns are the tenth slice.
 
 ## Send-side SmsLog insert + StatusCallback (seventh slice)
 
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 leftover after #325; v3 `TwilioHelper.SendSmsAsync` / `SendVoice` insert + `twilio-CallbackUrl`  
-**Revisit when:** Front Desk / list columns, or WhatsApp / GreenAPI #255
+**Revisit when:** WhatsApp / GreenAPI #255
 
 On a successful paid SMS / voice / WhatsApp send, persist an `SmsLog` so person-detail recent logs (#325 / sixth slice) have real rows. Fields: SID, phone as sent (the request-code `VoterId`, not a rewritten E.164), `SentDate` / `LastDate` UTC now, `LastStatus` from the provider JSON (`status` / GreenAPI `idMessage` send uses `"submitted"`). `ElectionGuid` and `PersonGuid` stay null — `requestCode` is pre-election; person detail already looks up by phone (+/- variant).
 
@@ -185,14 +185,14 @@ The callback still never inserts (fifth slice). Failure auto-learn still uses Tw
 
 **Rejected alternative:** a new callback URL or endpoint. Wire the existing public SmsStatus path.
 
-**Not in this slice:** Front Desk / list columns, setting `SmsStatus` to `"OK"` from delivered (ninth slice), WhatsApp / GreenAPI product work (#255), SignalR #229, rate limits #192. Manual SmsStatus is the eighth slice.
+**Not in this slice:** setting `SmsStatus` to `"OK"` from delivered (ninth slice), WhatsApp / GreenAPI product work (#255), SignalR #229, rate limits #192. Manual SmsStatus is the eighth slice. Front Desk / list columns are the tenth slice.
 
 ## Teller manual SmsStatus (eighth slice)
 
 **Status:** active  
 **Evidence:** confirmed (privilege model from existing People routes); inferred (Ensure-if-missing on set)  
 **Source:** issue #254 leftover after #327; PeopleController `[Authorize]` (same as UpdatePerson)  
-**Revisit when:** Front Desk / list columns, or WhatsApp / GreenAPI #255
+**Revisit when:** WhatsApp / GreenAPI #255
 
 Person detail can set `OnlineVoter.SmsStatus` on the phone P row (`VoterId == Person.Phone` and `VoterIdType == "P"`). Values are `"OK"` (unblock) or a short block reason (max 50 after trim). Null/unchecked is not set here. Lowercase `ok` is stored as `"OK"` so it cannot accidentally become a block reason (`AllowsPaidSend` is exact `"OK"`).
 
@@ -212,14 +212,14 @@ Logs: method + status only. No raw phone or other PII.
 
 **Rejected alternative:** require an existing P row and refuse never-seen phones. Person write already ensures a row; ensuring here covers older data so a teller can still block or unblock from person detail.
 
-**Not in this slice:** Front Desk / list columns, WhatsApp / GreenAPI #255, SignalR #229. Setting `"OK"` from a delivered Twilio callback is the ninth slice.
+**Not in this slice:** WhatsApp / GreenAPI #255, SignalR #229. Setting `"OK"` from a delivered Twilio callback is the ninth slice. Front Desk / list columns are the tenth slice.
 
 ## Set `SmsStatus` OK from delivered callback (ninth slice)
 
 **Status:** active  
 **Evidence:** confirmed (leftover after #327; Twilio success statuses)  
 **Source:** issue #254 leftover after send-side SmsLog + StatusCallback; this slice’s SID + overwrite rules  
-**Revisit when:** Front Desk / list columns, or WhatsApp / GreenAPI #255
+**Revisit when:** WhatsApp / GreenAPI #255
 
 A successful Twilio StatusCallback now sets the matching phone P row to `"OK"` so a never-seen or previously blocked phone is not stuck until a teller clicks Set OK.
 
@@ -246,7 +246,32 @@ Logs: method + status only. No raw phone or other PII. Same signature gate as th
 
 **Rejected alternative:** treat SMS `sent` as success. Twilio `sent` is carrier handoff, not handset delivery.
 
-**Not in this slice:** Front Desk / list columns, #255 WhatsApp, #229 SignalR, #192 UAT SMS. Teller manual set is the eighth slice.
+**Not in this slice:** Front Desk / list columns (tenth slice), #255 WhatsApp, #229 SignalR, #192 UAT SMS. Teller manual set is the eighth slice.
+
+## Front Desk / people list SMS hint (tenth slice)
+
+**Status:** active  
+**Evidence:** confirmed (P-row contract from person detail); inferred (compact list vocabulary)  
+**Source:** issue #254 leftover after #331; person-detail lookup rule  
+**Revisit when:** Front Desk should open person detail for Set OK / Block, or WhatsApp / GreenAPI #255
+
+People list (`PersonListDto.PhoneOnlineVoter`) and Front Desk (`FrontDeskVoterDto.PhoneOnlineVoter`) show a compact phone SMS hint for people who have a phone. Same P-row contract as person detail: `VoterId == Person.Phone` and `VoterIdType == "P"`. A non-P occupant of that `VoterId` is never seen (`HasPhoneRow` false; that row’s `SmsStatus` is not shown). No phone → the property is null and the cell is empty / a dash.
+
+The list DTO is slim (`PersonPhoneSmsHintDto`: `HasPhoneRow`, `WhenRegistered`, `SmsStatus`). It does not include last-login or recent SmsLog — those stay on person detail. Create/update `PersonDto` carries the same slim hint so the people-list cache is not wiped on save. Front Desk does not add the raw phone to the voter row.
+
+Compact cell (SMS first): blocked reason / OK / never-seen / imported (`HasPhoneRow` and `WhenRegistered` null) / unchecked (registered, `SmsStatus` still null). Set OK / Block stays on person detail; the list has no new edit surface.
+
+Batch lookup is `FindPhoneOnlineVotersAsync` (P rows only) so Front Desk / people list do not N+1.
+
+**Rejected alternative:** look up by `VoterId` only. Same reason as person detail — a non-P occupant’s status is not the phone’s.
+
+**Rejected alternative:** embed full `PersonPhoneOnlineVoterDto` (last-login + SmsLog) on every list row. The list only needs the compact hint; logs stay on person detail.
+
+**Rejected alternative:** inline Set OK / Block on Front Desk or the people list. Person detail already has that teller action; Front Desk row-click is check-in, not people edit.
+
+**Rejected alternative:** stack this leftover on the delivered-callback OK work (#332). The list reads status already on main after #331; #332 (ninth slice) can write OK from a delivered callback independently.
+
+**Not in this slice:** delivered-callback OK is the ninth slice (#332). WhatsApp / GreenAPI #255, SignalR #229, rate limits #192. #254 stays open.
 
 ## Related
 

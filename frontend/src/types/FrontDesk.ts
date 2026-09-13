@@ -1,3 +1,5 @@
+import type { PersonPhoneSmsHintDto } from "./Person";
+
 export interface RegistrationHistoryEntryDto {
   timestamp: string;
   action: string;
@@ -25,6 +27,7 @@ export interface FrontDeskVoterDto {
   isCheckedIn: boolean;
   flags?: string;
   registrationHistory?: RegistrationHistoryEntryDto[];
+  phoneOnlineVoter?: PersonPhoneSmsHintDto | null;
 }
 
 export interface CheckInVoterDto {

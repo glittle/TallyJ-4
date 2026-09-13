@@ -2390,6 +2390,9 @@ export const FrontDesk_FrontDeskVoterDtoSchema = {
                 $ref: '#/components/schemas/FrontDesk_RegistrationHistoryEntryDto'
             },
             nullable: true
+        },
+        phoneOnlineVoter: {
+            $ref: '#/components/schemas/People_PersonPhoneSmsHintDto'
         }
     },
     additionalProperties: false
@@ -3935,6 +3938,9 @@ export const People_PersonDtoSchema = {
         voteCount: {
             type: 'integer',
             format: 'int32'
+        },
+        phoneOnlineVoter: {
+            $ref: '#/components/schemas/People_PersonPhoneSmsHintDto'
         }
     },
     additionalProperties: false
@@ -3978,6 +3984,9 @@ export const People_PersonListDtoSchema = {
         unitName: {
             type: 'string',
             nullable: true
+        },
+        phoneOnlineVoter: {
+            $ref: '#/components/schemas/People_PersonPhoneSmsHintDto'
         }
     },
     additionalProperties: false
@@ -4008,6 +4017,25 @@ export const People_PersonPhoneOnlineVoterDtoSchema = {
             items: {
                 $ref: '#/components/schemas/People_PersonSmsLogDto'
             },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const People_PersonPhoneSmsHintDtoSchema = {
+    type: 'object',
+    properties: {
+        hasPhoneRow: {
+            type: 'boolean'
+        },
+        whenRegistered: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        smsStatus: {
+            type: 'string',
             nullable: true
         }
     },
@@ -7348,6 +7376,9 @@ export const FrontDesk_FrontDeskVoterDtoWritableSchema = {
                 $ref: '#/components/schemas/FrontDesk_RegistrationHistoryEntryDto'
             },
             nullable: true
+        },
+        phoneOnlineVoter: {
+            $ref: '#/components/schemas/People_PersonPhoneSmsHintDto'
         }
     },
     additionalProperties: false
