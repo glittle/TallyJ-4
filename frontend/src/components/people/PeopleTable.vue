@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { CircleCheck } from "@element-plus/icons-vue";
-import { ElAutoResizer, ElTableV2, ElButton, ElIcon, ElTag } from "element-plus";
+import {
+  ElAutoResizer,
+  ElTableV2,
+  ElButton,
+  ElIcon,
+  ElTag,
+} from "element-plus";
 import { useI18n } from "vue-i18n";
 import { computed, h } from "vue";
 import type { PersonListDto } from "../../types";

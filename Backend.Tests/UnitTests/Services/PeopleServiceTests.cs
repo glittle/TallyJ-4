@@ -1311,23 +1311,23 @@ public class PeopleServiceTests : ServiceTestBase
 
         var list = await _service.GetAllPeopleForListAsync(electionGuid);
 
-        Assert.Null(list.Single(p => p.LastName == "NoPhone").PhoneOnlineVoter);
+        Assert.Null(list.Single(p => p.Phone == null).PhoneOnlineVoter);
 
-        var neverSeen = list.Single(p => p.LastName == "NeverSeen").PhoneOnlineVoter;
+        var neverSeen = list.Single(p => p.Phone == neverSeenPhone).PhoneOnlineVoter;
         Assert.NotNull(neverSeen);
         Assert.False(neverSeen.HasPhoneRow);
         Assert.Null(neverSeen.SmsStatus);
 
-        var imported = list.Single(p => p.LastName == "Imported").PhoneOnlineVoter;
+        var imported = list.Single(p => p.Phone == importedPhone).PhoneOnlineVoter;
         Assert.NotNull(imported);
         Assert.True(imported.HasPhoneRow);
         Assert.Null(imported.WhenRegistered);
         Assert.Null(imported.SmsStatus);
 
-        Assert.Equal("OK", list.Single(p => p.LastName == "Ok").PhoneOnlineVoter?.SmsStatus);
-        Assert.Equal("landline", list.Single(p => p.LastName == "Blocked").PhoneOnlineVoter?.SmsStatus);
+        Assert.Equal("OK", list.Single(p => p.Phone == okPhone).PhoneOnlineVoter?.SmsStatus);
+        Assert.Equal("landline", list.Single(p => p.Phone == blockedPhone).PhoneOnlineVoter?.SmsStatus);
 
-        var nonP = list.Single(p => p.LastName == "NonP").PhoneOnlineVoter;
+        var nonP = list.Single(p => p.Phone == nonPPhone).PhoneOnlineVoter;
         Assert.NotNull(nonP);
         Assert.False(nonP.HasPhoneRow);
         Assert.Null(nonP.SmsStatus);

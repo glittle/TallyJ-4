@@ -14,9 +14,7 @@ vi.mock("vue-i18n", async (importOriginal) => {
   };
 });
 
-function voter(
-  overrides: Partial<FrontDeskVoterDto> = {},
-): FrontDeskVoterDto {
+function voter(overrides: Partial<FrontDeskVoterDto> = {}): FrontDeskVoterDto {
   return {
     personGuid: "p-1",
     fullName: "Smith, Ada",
