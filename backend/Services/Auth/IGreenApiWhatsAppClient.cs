@@ -22,7 +22,8 @@ public interface IGreenApiWhatsAppClient
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// GreenAPI <c>sendMessage</c> for an arbitrary body (verify-code and head-teller notify).
+    /// GreenAPI <c>sendMessage</c> for a head-teller notify body.
+    /// Verify-code WhatsApp still uses <c>PaidVerificationSender</c>'s own send path.
     /// When GreenAPI is not configured, <see cref="GreenApiWhatsAppSendResult.ProviderCalled"/>
     /// is false and no HTTP request is made.
     /// </summary>

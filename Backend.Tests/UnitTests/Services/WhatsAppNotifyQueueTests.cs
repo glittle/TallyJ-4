@@ -287,9 +287,61 @@ public class WhatsAppNotifyQueueTests : IDisposable
         Assert.Equal(PeopleMessageKeys.WhatsAppNotifyTextNotSet, ex.Message);
     }
 
+    [Fact]
+    public async Task Start_OverlappingStarts_OneRunAndAlreadyRunning()
+    {
+        var electionGuid = Guid.NewGuid();
+        var person = await SeedPersonAsync(electionGuid, "+14168972912", whatsAppStatus: "OK");
+        var bothClassified = new TaskCompletionSource();
+        var releaseClaim = new TaskCompletionSource();
+        var classified = 0;
+        var sendContinue = new TaskCompletionSource();
+        var client = new Mock<IGreenApiWhatsAppClient>();
+        client.Setup(c => c.IsConfigured()).Returns(true);
+        client
+            .Setup(c => c.SendMessageAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Returns(async (string _, string _, CancellationToken _) =>
+            {
+                await sendContinue.Task;
+                return GreenApiWhatsAppSendResult.Succeeded("id-overlap");
+            });
+        var queue = CreateQueue(client, beforeClaim: async ct =>
+        {
+            if (Interlocked.Increment(ref classified) == 2)
+            {
+                bothClassified.TrySetResult();
+            }
+
+            await releaseClaim.Task.WaitAsync(ct);
+        });
+
+        var first = queue.StartAsync(electionGuid, [person.PersonGuid]);
+        var second = queue.StartAsync(electionGuid, [person.PersonGuid]);
+        await bothClassified.Task.WaitAsync(TimeSpan.FromSeconds(2));
+        releaseClaim.TrySetResult();
+
+        var outcomes = await Task.WhenAll(RecordStart(first), RecordStart(second));
+        var succeeded = outcomes.Where(o => o.Status != null).ToList();
+        var failed = outcomes.Where(o => o.Error != null).ToList();
+
+        Assert.Single(succeeded);
+        Assert.Single(failed);
+        Assert.Equal(PeopleMessageKeys.WhatsAppNotifyAlreadyRunning, failed[0].Error!.Message);
+        Assert.Equal(succeeded[0].Status!.QueueToken, queue.GetStatus(electionGuid)!.QueueToken);
+        Assert.True(succeeded[0].Status!.Running);
+
+        sendContinue.TrySetResult();
+        var done = await WaitUntilIdle(queue, electionGuid);
+        Assert.Equal(1, done.Sent);
+        client.Verify(
+            c => c.SendMessageAsync(person.Phone!, It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
     private WhatsAppNotifyQueue CreateQueue(
         Mock<IGreenApiWhatsAppClient> client,
-        Func<CancellationToken, Task>? delay = null)
+        Func<CancellationToken, Task>? delay = null,
+        Func<CancellationToken, Task>? beforeClaim = null)
     {
         var services = new ServiceCollection();
         services.AddScoped<MainDbContext>(_ => new TestMainDbContext(_options));
@@ -306,7 +358,21 @@ public class WhatsAppNotifyQueueTests : IDisposable
             provider.GetRequiredService<IServiceScopeFactory>(),
             configuration,
             Mock.Of<ILogger<WhatsAppNotifyQueue>>(),
-            delay ?? (_ => Task.CompletedTask));
+            delay ?? (_ => Task.CompletedTask),
+            beforeClaim);
+    }
+
+    private static async Task<(WhatsAppNotifyStatusDto? Status, Exception? Error)> RecordStart(
+        Task<WhatsAppNotifyStatusDto> start)
+    {
+        try
+        {
+            return (await start, null);
+        }
+        catch (Exception ex)
+        {
+            return (null, ex);
+        }
     }
 
     private static Mock<IGreenApiWhatsAppClient> MockSender()

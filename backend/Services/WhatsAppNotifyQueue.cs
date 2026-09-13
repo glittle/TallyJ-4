@@ -29,6 +29,7 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
     private readonly IConfiguration _configuration;
     private readonly ILogger<WhatsAppNotifyQueue> _logger;
     private readonly Func<CancellationToken, Task> _delayBetweenSends;
+    private readonly Func<CancellationToken, Task>? _beforeClaim;
     private readonly ConcurrentDictionary<Guid, NotifyRun> _runs = new();
     private readonly ConcurrentDictionary<Guid, object> _electionLocks = new();
 
@@ -36,12 +37,14 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
         IServiceScopeFactory scopeFactory,
         IConfiguration configuration,
         ILogger<WhatsAppNotifyQueue> logger,
-        Func<CancellationToken, Task>? delayBetweenSends = null)
+        Func<CancellationToken, Task>? delayBetweenSends = null,
+        Func<CancellationToken, Task>? beforeClaim = null)
     {
         _scopeFactory = scopeFactory;
         _configuration = configuration;
         _logger = logger;
         _delayBetweenSends = delayBetweenSends ?? DefaultDelayBetweenSends;
+        _beforeClaim = beforeClaim;
     }
 
     private static Task DefaultDelayBetweenSends(CancellationToken cancellationToken)
@@ -154,6 +157,12 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
             Skipped = results.Count(r => WhatsAppNotifyOutcome.IsSkip(r.Outcome))
         };
 
+        if (_beforeClaim != null)
+        {
+            await _beforeClaim(cancellationToken);
+        }
+
+        var startProcess = false;
         lock (electionLock)
         {
             if (_runs.TryGetValue(electionGuid, out var raced) && raced.Running)
@@ -161,18 +170,18 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
                 throw new InvalidOperationException(PeopleMessageKeys.WhatsAppNotifyAlreadyRunning);
             }
 
+            // Claim before publish so a second overlapping Start cannot insert another pipeline.
+            startProcess = work.Count > 0;
+            run.Running = startProcess;
             _runs[electionGuid] = run;
         }
 
-        if (work.Count == 0)
+        if (startProcess)
         {
-            run.Running = false;
-            return Snapshot(run);
+            var token = run.Cts.Token;
+            run.ProcessTask = Task.Run(() => ProcessAsync(run, token), CancellationToken.None);
         }
 
-        run.Running = true;
-        var token = run.Cts.Token;
-        run.ProcessTask = Task.Run(() => ProcessAsync(run, token), CancellationToken.None);
         return Snapshot(run);
     }
 
