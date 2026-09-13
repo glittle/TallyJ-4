@@ -42,6 +42,7 @@ The backend reads standard ASP.NET Core configuration sources. At minimum, set:
 - `Jwt__Issuer`
 - `Jwt__Audience`
 - `ClientEnv__frontendUrl` (public SPA origin used in emails, OAuth redirects, and CORS)
+- `ClientEnv__env` (Sentry/client environment advertised at `/clientEnv.json`. Set **`uat`** on UAT and **`production`** on production. If this is unset or still `development` outside Development/Testing, the host infers `uat` when `ClientEnv__frontendUrl` is `https://uat.v4.tallyj.com`, otherwise `production`. Local Development/Testing keep `development`.)
 
 Common optional settings:
 

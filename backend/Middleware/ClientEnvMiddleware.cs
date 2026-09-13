@@ -1,16 +1,21 @@
 using System.Text.Json;
+using Backend.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Backend.Middleware;
 
 /// <summary>
 /// Middleware that intercepts requests to /clientEnv.json and serves environment-specific configuration.
 /// The values served out are from appSettings in the "ClientEnv" section, which should only contain non-sensitive settings needed by client-side code.
+/// <c>env</c> is adjusted for hosted (non-Development/Testing) hosts so the SPA does not advertise
+/// the repo default <c>development</c> to Sentry. See <see cref="ClientEnvResolver"/>.
 /// </summary>
 public class ClientEnvMiddleware
 {
     private readonly string? _cachedConfig;
     private readonly RequestDelegate _next;
     private readonly IConfiguration _configuration;
+    private readonly IHostEnvironment _environment;
 
     private string MakeClientEnv()
     {
@@ -25,6 +30,8 @@ public class ClientEnvMiddleware
           pair => pair.Value
         );
 
+        camelCaseDict["env"] = ClientEnvResolver.ResolveEnv(_configuration, _environment);
+
         // serialize the dictionary to a JSON string. Use indented to make debugging easier.
         return JsonSerializer.Serialize(
           camelCaseDict,
@@ -32,14 +39,15 @@ public class ClientEnvMiddleware
         );
     }
 
-    public ClientEnvMiddleware(RequestDelegate next, IConfiguration configuration)
+    public ClientEnvMiddleware(RequestDelegate next, IConfiguration configuration, IHostEnvironment environment)
     {
         _next = next;
         _configuration = configuration;
+        _environment = environment;
 
         // serialize the dictionary to a JSON string. Use indented to make debugging easier.
         // only if not in Development
-        if (_configuration["ASPNETCORE_ENVIRONMENT"] != "Development")
+        if (!_environment.IsDevelopment())
         {
             _cachedConfig = MakeClientEnv();
         }
