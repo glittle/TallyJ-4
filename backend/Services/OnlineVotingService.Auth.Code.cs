@@ -45,6 +45,17 @@ public partial class OnlineVotingService
                         SanitizeForLog(onlineVoter.SmsStatus));
                     return BuildRequestCodeResponse("voting.auth.requestCode.invalidPhone");
                 }
+
+                // WhatsApp presence is separate from SmsStatus. Skip WhatsApp send only.
+                if (onlineVoter != null
+                    && dto.DeliveryMethod == "whatsapp"
+                    && !OnlineVoterWhatsAppStatus.AllowsSend(onlineVoter.WhatsAppStatus))
+                {
+                    _logger.LogWarning(
+                        "Login code request skipped: WhatsAppStatus blocks WhatsApp send ({WhatsAppStatus})",
+                        SanitizeForLog(onlineVoter.WhatsAppStatus));
+                    return BuildRequestCodeResponse("voting.auth.requestCode.invalidPhone");
+                }
             }
 
             // 3. Find all open elections where this voter is registered (SMS pumping prevention)

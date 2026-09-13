@@ -289,6 +289,65 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
         _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
+    [Theory]
+    [InlineData("no-wa")]
+    [InlineData("check-failed")]
+    public async Task RequestCode_WhatsAppStatusBlocked_DoesNotSendWhatsApp(string whatsAppStatus)
+    {
+        await SeedOpenElectionWithPerson(phone: ValidPhone);
+        await SeedOnlineVoter(ValidPhone, smsStatus: null, whatsAppStatus: whatsAppStatus);
+
+        var result = await _service.RequestVerificationCodeAsync(new RequestCodeDto
+        {
+            VoterId = ValidPhone,
+            VoterIdType = "P",
+            DeliveryMethod = "whatsapp"
+        });
+
+        Assert.Equal("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        Assert.Null(result.DevVerificationCode);
+        _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RequestCode_WhatsAppStatusBlocked_SmsStillSends()
+    {
+        await SeedOpenElectionWithPerson(phone: ValidPhone);
+        await SeedOnlineVoter(ValidPhone, smsStatus: null, whatsAppStatus: "no-wa");
+        _paidSender
+            .Setup(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
+
+        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        _paidSender.Verify(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()), Times.Once);
+        _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("OK")]
+    public async Task RequestCode_WhatsAppStatusNullOrOk_SendsWhatsApp(string? whatsAppStatus)
+    {
+        await SeedOpenElectionWithPerson(phone: ValidPhone);
+        await SeedOnlineVoter(ValidPhone, smsStatus: null, whatsAppStatus: whatsAppStatus);
+        _paidSender
+            .Setup(s => s.SendWhatsAppAsync(ValidPhone, It.IsAny<string>()))
+            .ReturnsAsync(true);
+
+        var result = await _service.RequestVerificationCodeAsync(new RequestCodeDto
+        {
+            VoterId = ValidPhone,
+            VoterIdType = "P",
+            DeliveryMethod = "whatsapp"
+        });
+
+        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        _paidSender.Verify(s => s.SendWhatsAppAsync(ValidPhone, It.IsAny<string>()), Times.Once);
+    }
+
     [Fact]
     public async Task RequestCode_Email_DoesNotUsePaidSender()
     {
@@ -446,13 +505,18 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
         await Context.SaveChangesAsync();
     }
 
-    private async Task SeedOnlineVoter(string voterId, string? smsStatus, string voterIdType = "P")
+    private async Task SeedOnlineVoter(
+        string voterId,
+        string? smsStatus,
+        string voterIdType = "P",
+        string? whatsAppStatus = null)
     {
         Context.OnlineVoters.Add(new OnlineVoter
         {
             VoterId = voterId,
             VoterIdType = voterIdType,
-            SmsStatus = smsStatus
+            SmsStatus = smsStatus,
+            WhatsAppStatus = whatsAppStatus
         });
         await Context.SaveChangesAsync();
     }

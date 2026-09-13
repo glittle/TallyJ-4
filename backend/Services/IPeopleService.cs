@@ -75,7 +75,7 @@ public interface IPeopleService
 
     /// <summary>
     /// Retrieves detailed information about a specific person, including registration history
-    /// and phone OnlineVoter SMS/auth status when the person has a phone.
+    /// and phone OnlineVoter SMS/WhatsApp/auth status when the person has a phone.
     /// </summary>
     /// <param name="personGuid">The unique identifier of the person.</param>
     /// <returns>Detailed person data with history, or null if not found.</returns>
@@ -100,6 +100,15 @@ public interface IPeopleService
     Task<PersonPhoneOnlineVoterDto?> SetPersonPhoneSmsStatusAsync(
         Guid personGuid,
         SetPersonPhoneSmsStatusDto dto);
+
+    /// <summary>
+    /// GreenAPI <c>checkWhatsapp</c> for this person's stored phone. Ensures a P row
+    /// (<c>VoterId == Person.Phone</c> and <c>VoterIdType == "P"</c>) and persists
+    /// <c>OnlineVoter.WhatsAppStatus</c>. Does not convert a non-P occupant.
+    /// </summary>
+    /// <param name="personGuid">The unique identifier of the person.</param>
+    /// <returns>The updated phone OnlineVoter fields, or null if the person was not found.</returns>
+    Task<PersonPhoneOnlineVoterDto?> CheckPersonPhoneWhatsAppAsync(Guid personGuid);
 }
 
 

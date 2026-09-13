@@ -7,6 +7,9 @@ export type PhoneOnlineVoterAuthState =
 
 export type PhoneOnlineVoterSmsState = "unchecked" | "ok" | "blocked";
 
+/** Same vocabulary as SMS: null / OK / other short reason. */
+export type PhoneOnlineVoterWhatsAppState = PhoneOnlineVoterSmsState;
+
 /** Compact list/Front Desk cell: SMS first, then never-seen / imported / unchecked. */
 export type PhoneSmsListHint =
   | "none"
@@ -40,6 +43,13 @@ export function phoneOnlineVoterSmsState(
     return "ok";
   }
   return "blocked";
+}
+
+/** null WhatsAppStatus → unchecked; "OK" → ok; any other stored value → reason. */
+export function phoneOnlineVoterWhatsAppState(
+  whatsAppStatus: string | null | undefined,
+): PhoneOnlineVoterWhatsAppState {
+  return phoneOnlineVoterSmsState(whatsAppStatus);
 }
 
 /**

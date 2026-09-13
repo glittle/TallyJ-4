@@ -88,11 +88,11 @@ Skip logs method + status only (no raw phone or email). Voter-facing message reu
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #254 (maintainer); this slice’s lookup rule  
-**Revisit when:** WhatsAppStatus / GreenAPI `checkWhatsapp` (#255) lands on person detail
+**Revisit when:** Front Desk should show WhatsApp status (not in #255 first slice)
 
-People Management person detail (`GetPersonDetails` / `PersonDetailDto.PhoneOnlineVoter`) shows the global phone OnlineVoter SMS/auth fields. Lookup is both `VoterId == Person.Phone` and `VoterIdType == "P"` (`OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync`). `IX_OnlineVoter_Id` is unique on `VoterId` alone, but paid-send and this UI are type-scoped to `"P"`. A non-P row occupying that `VoterId` is treated as no phone row (never seen); that row’s `SmsStatus` is not shown as the phone’s.
+People Management person detail (`GetPersonDetails` / `PersonDetailDto.PhoneOnlineVoter`) shows the global phone OnlineVoter SMS/WhatsApp/auth fields. Lookup is both `VoterId == Person.Phone` and `VoterIdType == "P"` (`OnlineVoterPhoneHelper.FindPhoneOnlineVoterAsync`). `IX_OnlineVoter_Id` is unique on `VoterId` alone, but paid-send and this UI are type-scoped to `"P"`. A non-P row occupying that `VoterId` is treated as no phone row (never seen); that row’s `SmsStatus` / `WhatsAppStatus` are not shown as the phone’s.
 
-No phone (null/whitespace) → `PhoneOnlineVoter` is null and the UI hides the block. Phone with no matching P row → `HasPhoneRow` false (never seen). P row with `WhenRegistered` null → imported-only / not yet used for auth. `WhenRegistered` and `WhenLastLogin` are the stored values from that P row. `SmsStatus` is unchecked (null) / `OK` / blocked + the reason string.
+No phone (null/whitespace) → `PhoneOnlineVoter` is null and the UI hides the block. Phone with no matching P row → `HasPhoneRow` false (never seen). P row with `WhenRegistered` null → imported-only / not yet used for auth. `WhenRegistered` and `WhenLastLogin` are the stored values from that P row. `SmsStatus` is unchecked (null) / `OK` / blocked + the reason string. `WhatsAppStatus` is unchecked (null) / `OK` / the stored reason (`no-wa`, `check-failed`, …) — first slice of #255.
 
 `VoterId` is the Person phone string as stored, not a normalized E.164. Logs still must not include raw phone/PII. Email / kiosk / Telegram UI is unchanged.
 
@@ -100,7 +100,7 @@ No phone (null/whitespace) → `PhoneOnlineVoter` is null and the UI hides the b
 
 **Rejected alternative:** Front Desk / people list columns in this slice. Optional later; person detail is the required surface.
 
-**Not in this slice:** WhatsAppStatus / GreenAPI `checkWhatsapp` (#255). Recent `SmsLog` on person detail is the sixth slice. Manual SmsStatus is the eighth slice. Delivered-callback OK is the ninth slice. Front Desk / list columns are the tenth slice.
+**Not in this slice (at the time):** Recent `SmsLog` on person detail is the sixth slice. Manual SmsStatus is the eighth slice. Delivered-callback OK is the ninth slice. Front Desk / list columns are the tenth slice. WhatsAppStatus display landed in the #255 first slice below.
 
 ## Twilio status-callback auto-learn (fifth slice)
 
@@ -271,7 +271,38 @@ Batch lookup is `FindPhoneOnlineVotersAsync` (P rows only) so Front Desk / peopl
 
 **Rejected alternative:** stack this leftover on the delivered-callback OK work (#332). The list reads status already on main after #331; #332 (ninth slice) can write OK from a delivered callback independently.
 
-**Not in this slice:** delivered-callback OK is the ninth slice (#332). WhatsApp / GreenAPI #255, SignalR #229, rate limits #192. #254 stays open.
+**Not in this slice:** delivered-callback OK is the ninth slice (#332). WhatsApp / GreenAPI #255 first slice is below (no Front Desk WhatsApp column). SignalR #229, rate limits #192. #254 stays open.
+
+## Durable `OnlineVoter.WhatsAppStatus` (first slice of #255)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #255 (maintainer); provider comment that v4 stays on GreenAPI  
+**Revisit when:** bulk check / notify / abort queue, or Front Desk WhatsApp column
+
+WhatsApp stays one voter-facing channel. Backend stays on **GreenAPI** (`checkWhatsapp` + existing `sendMessage`). Meta Cloud API and Twilio WhatsApp are out. Presence is stored on **OnlineVoter**, not Person: `WhatsAppStatus` `string?` max 50, non-unicode (`varchar(50)`).
+
+| `WhatsAppStatus` | Meaning | Send WhatsApp? |
+|------------------|---------|----------------|
+| `null` | Not yet checked | Yes |
+| `"OK"` | Has WhatsApp | Yes |
+| anything else | No / blocked / error (`no-wa`, `check-failed`, …) | **No** |
+
+Global by phone. Identifier gate is `VoterId == Person.Phone` and `VoterIdType == "P"`. A non-P occupant of that `VoterId` is not converted and that row’s `WhatsAppStatus` is not shown or written.
+
+`SmsStatus` (#254) stays a separate field: a number can be fine for SMS and not on WhatsApp, or the reverse. The existing `SmsStatus` paid-channel gate still applies to WhatsApp send too.
+
+`CheckWhatsAppAsync` (GreenAPI HTTP) is mocked in tests — CI must not depend on a live GreenAPI account. Config keys already exist: `GreenApi:IdInstance`, `ApiToken`, `BaseUrl`. When those are missing or placeholders, do not persist a lasting status (local/dev skip).
+
+Person write still uses `EnsureOnlineVoterForPhoneAsync`. On Person phone **change**, clear `WhatsAppStatus` on the **new** number’s P row (or leave null) so it is re-checked. Do not copy the old number’s status onto a different number. The old number’s row is left as-is.
+
+Person detail shows unchecked / OK / reason from the P-row lookup, same pattern as SMS status. This slice has no Front Desk column, no bulk notify, and no abort queue.
+
+**Rejected alternative:** `Person.HasWhatsApp` (v3 packed `HasWA`). Rejected — presence is global by phone, same as `SmsStatus`.
+
+**Rejected alternative:** Meta Cloud API or Twilio WhatsApp as the v4 provider. Rejected — business verification never landed; this issue stays GreenAPI-shaped.
+
+**Not in this slice:** bulk `CheckMultipleWhatsAppAsync`, head-teller notify queue, abort token, Front Desk / people-list WhatsApp column, SignalR #229, #254 SMS leftovers.
 
 ## Related
 

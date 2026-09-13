@@ -4023,6 +4023,10 @@ export const People_PersonPhoneOnlineVoterDtoSchema = {
             type: 'string',
             nullable: true
         },
+        whatsAppStatus: {
+            type: 'string',
+            nullable: true
+        },
         recentSmsLogs: {
             type: 'array',
             items: {

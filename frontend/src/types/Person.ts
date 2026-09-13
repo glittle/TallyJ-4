@@ -46,6 +46,7 @@ export interface PersonSmsLogDto {
 
 export interface PersonPhoneOnlineVoterDto extends PersonPhoneSmsHintDto {
   whenLastLogin?: string | Date | null;
+  whatsAppStatus?: string | null;
   recentSmsLogs?: PersonSmsLogDto[];
 }
 

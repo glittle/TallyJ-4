@@ -3,6 +3,7 @@ import type { PersonPhoneOnlineVoterDto } from "@/types/Person";
 import {
   phoneOnlineVoterAuthState,
   phoneOnlineVoterSmsState,
+  phoneOnlineVoterWhatsAppState,
   phoneSmsListHint,
   phoneSmsListLabel,
 } from "../phoneOnlineVoterStatus";
@@ -57,6 +58,21 @@ describe("phoneOnlineVoterSmsState", () => {
 
   it("is blocked for any other stored reason", () => {
     expect(phoneOnlineVoterSmsState("landline")).toBe("blocked");
+  });
+});
+
+describe("phoneOnlineVoterWhatsAppState", () => {
+  it("is unchecked when WhatsAppStatus is null", () => {
+    expect(phoneOnlineVoterWhatsAppState(null)).toBe("unchecked");
+  });
+
+  it("is ok when WhatsAppStatus is OK", () => {
+    expect(phoneOnlineVoterWhatsAppState("OK")).toBe("ok");
+  });
+
+  it("treats any other stored reason as not OK", () => {
+    expect(phoneOnlineVoterWhatsAppState("no-wa")).toBe("blocked");
+    expect(phoneOnlineVoterWhatsAppState("check-failed")).toBe("blocked");
   });
 });
 

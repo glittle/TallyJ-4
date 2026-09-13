@@ -6,6 +6,7 @@ using Backend.Helpers;
 using Backend.DTOs.People;
 using Backend.DTOs.SignalR;
 using Backend.Models;
+using Backend.Services.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +22,7 @@ public class PeopleService : IPeopleService
     private readonly ILogger<PeopleService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
     private readonly IHttpContextAccessor? _httpContextAccessor;
+    private readonly IGreenApiWhatsAppClient? _greenApiWhatsAppClient;
 
     /// <summary>
     /// Initializes a new instance of the PeopleService.
@@ -29,12 +31,14 @@ public class PeopleService : IPeopleService
         MainDbContext context,
         ILogger<PeopleService> logger,
         ISignalRNotificationService signalRNotificationService,
-        IHttpContextAccessor? httpContextAccessor = null)
+        IHttpContextAccessor? httpContextAccessor = null,
+        IGreenApiWhatsAppClient? greenApiWhatsAppClient = null)
     {
         _context = context;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
         _httpContextAccessor = httpContextAccessor;
+        _greenApiWhatsAppClient = greenApiWhatsAppClient;
     }
 
     /// <summary>
@@ -215,6 +219,8 @@ public class PeopleService : IPeopleService
             }
         }
 
+        var previousPhone = person.Phone;
+
         if (!string.IsNullOrWhiteSpace(updateDto.Phone) && updateDto.Phone != person.Phone)
         {
             var phoneExists = await _context.People
@@ -239,6 +245,20 @@ public class PeopleService : IPeopleService
         }
 
         await OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync(_context, person.Phone);
+
+        // New number must be re-checked. Do not copy the old number's WhatsAppStatus onto it.
+        // A non-P occupant of the new VoterId is not converted and is not written.
+        var phoneChanged = !string.Equals(previousPhone, person.Phone, StringComparison.Ordinal);
+        if (phoneChanged && !string.IsNullOrWhiteSpace(person.Phone))
+        {
+            var newPhoneRow = await OnlineVoterPhoneHelper.FindTrackedPhoneOnlineVoterAsync(
+                _context, person.Phone);
+            if (newPhoneRow != null)
+            {
+                newPhoneRow.WhatsAppStatus = null;
+            }
+        }
+
         await _context.SaveChangesAsync();
 
         _logger.LogInformation("Updated person {PersonGuid}", personGuid);
@@ -542,6 +562,49 @@ public class PeopleService : IPeopleService
         return await MapPhoneOnlineVoterAsync(person.Phone);
     }
 
+    /// <inheritdoc />
+    public async Task<PersonPhoneOnlineVoterDto?> CheckPersonPhoneWhatsAppAsync(Guid personGuid)
+    {
+        var person = await _context.People.FirstOrDefaultAsync(p => p.PersonGuid == personGuid);
+        if (person == null)
+        {
+            return null;
+        }
+
+        if (string.IsNullOrWhiteSpace(person.Phone))
+        {
+            throw new InvalidOperationException(PeopleMessageKeys.PhoneWhatsAppNoPhone);
+        }
+
+        if (_greenApiWhatsAppClient == null)
+        {
+            throw new InvalidOperationException(PeopleMessageKeys.PhoneWhatsAppNotConfigured);
+        }
+
+        await OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync(_context, person.Phone);
+        var row = await OnlineVoterPhoneHelper.FindTrackedPhoneOnlineVoterAsync(_context, person.Phone);
+        if (row == null)
+        {
+            throw new InvalidOperationException(PeopleMessageKeys.PhoneWhatsAppNoPhoneRow);
+        }
+
+        var check = await _greenApiWhatsAppClient.CheckWhatsAppAsync(person.Phone);
+        if (!check.ProviderCalled)
+        {
+            throw new InvalidOperationException(PeopleMessageKeys.PhoneWhatsAppNotConfigured);
+        }
+
+        row.WhatsAppStatus = check.Status;
+        await _context.SaveChangesAsync();
+
+        _logger.LogInformation(
+            "Set phone WhatsAppStatus for person {PersonGuid} to {WhatsAppStatus}",
+            personGuid,
+            check.Status);
+
+        return await MapPhoneOnlineVoterAsync(person.Phone);
+    }
+
     // =====================================================================
     // Explicit mapping helpers (replaces logic previously hidden in Mapster profiles).
     // =====================================================================
@@ -618,7 +681,7 @@ public class PeopleService : IPeopleService
     }
 
     /// <summary>
-    /// Phone OnlineVoter SMS/auth for person detail. Null when there is no phone (UI hides the block).
+    /// Phone OnlineVoter SMS/WhatsApp/auth for person detail. Null when there is no phone (UI hides the block).
     /// Lookup is VoterId == phone and VoterIdType == P; a non-P occupant is treated as no phone row.
     /// Recent SmsLog is by phone (+/- variant), not by P-row presence.
     /// </summary>
@@ -646,6 +709,7 @@ public class PeopleService : IPeopleService
             WhenRegistered = row.WhenRegistered,
             WhenLastLogin = row.WhenLastLogin,
             SmsStatus = row.SmsStatus,
+            WhatsAppStatus = row.WhatsAppStatus,
             RecentSmsLogs = recentSmsLogs
         };
     }

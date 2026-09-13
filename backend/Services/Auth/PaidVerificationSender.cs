@@ -153,7 +153,7 @@ public class PaidVerificationSender : IPaidVerificationSender
             return true;
         }
 
-        var normalizedPhone = NormalizePhoneForWhatsApp(phone);
+        var normalizedPhone = GreenApiWhatsAppHelper.NormalizePhone(phone);
         var chatId = $"{normalizedPhone}@c.us";
 
         var client = _httpClientFactory.CreateClient("GreenApi");
@@ -248,9 +248,4 @@ public class PaidVerificationSender : IPaidVerificationSender
 
     private static string? ReadJsonString(JsonElement root, string name) =>
         root.TryGetProperty(name, out var el) ? el.GetString() : null;
-
-    private static string NormalizePhoneForWhatsApp(string phone)
-    {
-        return new string(phone.Where(char.IsDigit).ToArray());
-    }
 }
