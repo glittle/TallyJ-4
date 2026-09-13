@@ -109,6 +109,18 @@ public interface IPeopleService
     /// <param name="personGuid">The unique identifier of the person.</param>
     /// <returns>The updated phone OnlineVoter fields, or null if the person was not found.</returns>
     Task<PersonPhoneOnlineVoterDto?> CheckPersonPhoneWhatsAppAsync(Guid personGuid);
+
+    /// <summary>
+    /// GreenAPI <c>checkWhatsapp</c> for selected people in one election.
+    /// Skips no-phone and non-P occupants (does not convert). Persists
+    /// <c>WhatsAppStatus</c> on the P row only. Spaces provider calls.
+    /// If <paramref name="cancellationToken"/> is cancelled, stops remaining
+    /// checks and returns what finished. Not a notify send queue.
+    /// </summary>
+    Task<CheckSelectedWhatsAppResultDto> CheckMultipleWhatsAppAsync(
+        Guid electionGuid,
+        IReadOnlyList<Guid> personGuids,
+        CancellationToken cancellationToken = default);
 }
 
 

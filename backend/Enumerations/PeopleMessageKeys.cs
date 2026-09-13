@@ -43,6 +43,11 @@ public static class PeopleMessageKeys
     public const string PhoneWhatsAppNotConfigured = "people.phoneOnlineVoter.whatsAppNotConfigured";
 
     /// <summary>
+    /// Check-selected list is longer than the per-request bound.
+    /// </summary>
+    public const string PhoneWhatsAppTooMany = "people.phoneOnlineVoter.whatsAppTooMany";
+
+    /// <summary>
     /// Guest teller tried to add a person while GuestTellersCanAddPeople is off (v3 GA).
     /// </summary>
     public const string GuestCannotAddPeople = "people.guestCannotAddPeople";

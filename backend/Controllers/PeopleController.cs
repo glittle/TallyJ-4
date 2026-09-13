@@ -294,6 +294,33 @@ public class PeopleController : ControllerBase
             return BadRequest(ApiResponse<PersonPhoneOnlineVoterDto>.ErrorResponse(ex.Message));
         }
     }
+
+    /// <summary>
+    /// GreenAPI <c>checkWhatsapp</c> for selected people in this election.
+    /// Same <c>[Authorize]</c> as other People writes. Election-scoped; max
+    /// <see cref="CheckSelectedWhatsAppDto.MaxSelectedPeople"/>. Does not
+    /// convert a non-P occupant. Not a notify send queue.
+    /// </summary>
+    [HttpPost("{electionGuid}/checkWhatsAppSelected")]
+    public async Task<ActionResult<ApiResponse<CheckSelectedWhatsAppResultDto>>> CheckWhatsAppSelected(
+        Guid electionGuid,
+        CheckSelectedWhatsAppDto dto,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _peopleService.CheckMultipleWhatsAppAsync(
+                electionGuid,
+                dto.PersonGuids,
+                cancellationToken);
+
+            return Ok(ApiResponse<CheckSelectedWhatsAppResultDto>.SuccessResponse(result));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<CheckSelectedWhatsAppResultDto>.ErrorResponse(ex.Message));
+        }
+    }
 }
 
 

@@ -2200,8 +2200,259 @@ public class PeopleServiceTests : ServiceTestBase
         return person;
     }
 
-    private PeopleService CreateServiceWithWhatsApp(IGreenApiWhatsAppClient client) =>
-        new(Context, _loggerMock.Object, _signalRMock.Object, greenApiWhatsAppClient: client);
+    [Theory]
+    [InlineData("OK")]
+    [InlineData("no-wa")]
+    public async Task CheckMultipleWhatsAppAsync_SelectedPeople_PersistOkAndNoWa(
+        string expectedStatus)
+    {
+        var electionGuid = Guid.NewGuid();
+        var okPerson = await SeedPersonWithPhoneRow(
+            "+14168972801", smsStatus: "OK", whatsAppStatus: null, electionGuid: electionGuid);
+        var noWaPerson = await SeedPersonWithPhoneRow(
+            "+14168972802", smsStatus: "OK", whatsAppStatus: null, electionGuid: electionGuid);
+        var persistPerson = expectedStatus == "OK" ? okPerson : noWaPerson;
+        var otherPerson = expectedStatus == "OK" ? noWaPerson : okPerson;
+
+        var client = new Mock<IGreenApiWhatsAppClient>();
+        client.Setup(c => c.CheckWhatsAppAsync(okPerson.Phone!, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(GreenApiWhatsAppCheckResult.FromProvider(OnlineVoterWhatsAppStatus.Ok));
+        client.Setup(c => c.CheckWhatsAppAsync(noWaPerson.Phone!, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(GreenApiWhatsAppCheckResult.FromProvider(OnlineVoterWhatsAppStatus.NoWa));
+        var service = CreateServiceWithWhatsApp(client.Object);
+
+        var result = await service.CheckMultipleWhatsAppAsync(
+            electionGuid,
+            [okPerson.PersonGuid, noWaPerson.PersonGuid]);
+
+        Assert.False(result.Cancelled);
+        Assert.Equal(2, result.Checked);
+        Assert.Equal(1, result.Ok);
+        Assert.Equal(1, result.NoWa);
+        Assert.Equal(0, result.Skipped);
+        Assert.Equal(expectedStatus == "OK" ? WhatsAppCheckOutcome.Ok : WhatsAppCheckOutcome.NoWa,
+            result.Results.Single(r => r.PersonGuid == persistPerson.PersonGuid).Outcome);
+        Assert.Equal("OK", (await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == okPerson.Phone)).WhatsAppStatus);
+        Assert.Equal("no-wa", (await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == noWaPerson.Phone)).WhatsAppStatus);
+        Assert.Equal("OK", (await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == otherPerson.Phone)).SmsStatus);
+        client.Verify(c => c.CheckWhatsAppAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+    }
+
+    [Theory]
+    [InlineData("E")]
+    [InlineData("C")]
+    [InlineData("T")]
+    public async Task CheckMultipleWhatsAppAsync_NonPOccupant_SkippedNotConverted(string existingType)
+    {
+        var electionGuid = Guid.NewGuid();
+        const string phone = "+14168972803";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = existingType,
+            WhatsAppStatus = null,
+            SmsStatus = "OK"
+        });
+        await Context.SaveChangesAsync();
+        var client = new Mock<IGreenApiWhatsAppClient>(MockBehavior.Strict);
+        var service = CreateServiceWithWhatsApp(client.Object);
+
+        var result = await service.CheckMultipleWhatsAppAsync(electionGuid, [person.PersonGuid]);
+
+        Assert.Equal(1, result.Skipped);
+        Assert.Equal(0, result.Checked);
+        Assert.Equal(WhatsAppCheckOutcome.SkippedNonP, result.Results[0].Outcome);
+        var occupant = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == phone);
+        Assert.Equal(existingType, occupant.VoterIdType);
+        Assert.Null(occupant.WhatsAppStatus);
+        Assert.Equal("OK", occupant.SmsStatus);
+        client.Verify(c => c.CheckWhatsAppAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CheckMultipleWhatsAppAsync_NoPhone_Skipped()
+    {
+        var electionGuid = Guid.NewGuid();
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid,
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = null,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        await Context.SaveChangesAsync();
+        var client = new Mock<IGreenApiWhatsAppClient>(MockBehavior.Strict);
+        var service = CreateServiceWithWhatsApp(client.Object);
+
+        var result = await service.CheckMultipleWhatsAppAsync(electionGuid, [person.PersonGuid]);
+
+        Assert.Equal(1, result.Skipped);
+        Assert.Equal(WhatsAppCheckOutcome.SkippedNoPhone, result.Results[0].Outcome);
+        client.Verify(c => c.CheckWhatsAppAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CheckMultipleWhatsAppAsync_NotConfigured_DoesNotPersist()
+    {
+        var electionGuid = Guid.NewGuid();
+        var person = await SeedPersonWithPhoneRow(
+            "+14168972804", smsStatus: "OK", whatsAppStatus: null, electionGuid: electionGuid);
+        var client = MockWhatsAppClient(GreenApiWhatsAppCheckResult.NotConfigured());
+        var service = CreateServiceWithWhatsApp(client.Object);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.CheckMultipleWhatsAppAsync(electionGuid, [person.PersonGuid]));
+
+        Assert.Equal(PeopleMessageKeys.PhoneWhatsAppNotConfigured, ex.Message);
+        var row = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == person.Phone);
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Null(row.WhatsAppStatus);
+        Assert.Equal("OK", row.SmsStatus);
+    }
+
+    [Fact]
+    public async Task CheckMultipleWhatsAppAsync_OverMax_DoesNotCallProvider()
+    {
+        var tooMany = Enumerable.Range(0, CheckSelectedWhatsAppDto.MaxSelectedPeople + 1)
+            .Select(_ => Guid.NewGuid())
+            .ToList();
+        var client = new Mock<IGreenApiWhatsAppClient>(MockBehavior.Strict);
+        var service = CreateServiceWithWhatsApp(client.Object);
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            service.CheckMultipleWhatsAppAsync(Guid.NewGuid(), tooMany));
+
+        Assert.Equal(PeopleMessageKeys.PhoneWhatsAppTooMany, ex.Message);
+        client.Verify(c => c.CheckWhatsAppAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CheckMultipleWhatsAppAsync_OtherElectionPerson_Ignored()
+    {
+        var electionGuid = Guid.NewGuid();
+        var inElection = await SeedPersonWithPhoneRow(
+            "+14168972805", smsStatus: null, whatsAppStatus: null, electionGuid: electionGuid);
+        var otherElection = await SeedPersonWithPhoneRow(
+            "+14168972806", smsStatus: null, whatsAppStatus: null, electionGuid: Guid.NewGuid());
+        var client = MockWhatsAppClient(
+            GreenApiWhatsAppCheckResult.FromProvider(OnlineVoterWhatsAppStatus.Ok));
+        var service = CreateServiceWithWhatsApp(client.Object);
+
+        var result = await service.CheckMultipleWhatsAppAsync(
+            electionGuid,
+            [inElection.PersonGuid, otherElection.PersonGuid]);
+
+        Assert.Equal(1, result.Checked);
+        Assert.Equal(1, result.Skipped);
+        Assert.Equal(WhatsAppCheckOutcome.Ok, result.Results[0].Outcome);
+        Assert.Equal(WhatsAppCheckOutcome.SkippedOtherElection, result.Results[1].Outcome);
+        Assert.Equal(OnlineVoterWhatsAppStatus.Ok,
+            (await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == inElection.Phone)).WhatsAppStatus);
+        Assert.Null((await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == otherElection.Phone)).WhatsAppStatus);
+        client.Verify(c => c.CheckWhatsAppAsync(inElection.Phone!, It.IsAny<CancellationToken>()), Times.Once);
+        client.Verify(c => c.CheckWhatsAppAsync(otherElection.Phone!, It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CheckMultipleWhatsAppAsync_Cancel_StopsRemainingCalls()
+    {
+        var electionGuid = Guid.NewGuid();
+        var first = await SeedPersonWithPhoneRow(
+            "+14168972807", smsStatus: null, whatsAppStatus: null, electionGuid: electionGuid);
+        var second = await SeedPersonWithPhoneRow(
+            "+14168972808", smsStatus: null, whatsAppStatus: null, electionGuid: electionGuid);
+        var cts = new CancellationTokenSource();
+        var client = new Mock<IGreenApiWhatsAppClient>();
+        client
+            .Setup(c => c.CheckWhatsAppAsync(first.Phone!, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(GreenApiWhatsAppCheckResult.FromProvider(OnlineVoterWhatsAppStatus.Ok))
+            .Callback(() => cts.Cancel());
+        client
+            .Setup(c => c.CheckWhatsAppAsync(second.Phone!, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(GreenApiWhatsAppCheckResult.FromProvider(OnlineVoterWhatsAppStatus.NoWa));
+        var service = CreateServiceWithWhatsApp(client.Object);
+
+        var result = await service.CheckMultipleWhatsAppAsync(
+            electionGuid,
+            [first.PersonGuid, second.PersonGuid],
+            cts.Token);
+
+        Assert.True(result.Cancelled);
+        Assert.Equal(1, result.Checked);
+        Assert.Equal(WhatsAppCheckOutcome.Ok, result.Results[0].Outcome);
+        Assert.Equal(WhatsAppCheckOutcome.Cancelled, result.Results[1].Outcome);
+        Assert.Equal(OnlineVoterWhatsAppStatus.Ok,
+            (await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == first.Phone)).WhatsAppStatus);
+        Assert.Null((await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == second.Phone)).WhatsAppStatus);
+        client.Verify(c => c.CheckWhatsAppAsync(first.Phone!, It.IsAny<CancellationToken>()), Times.Once);
+        client.Verify(c => c.CheckWhatsAppAsync(second.Phone!, It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CheckMultipleWhatsAppAsync_SpacesProviderCalls()
+    {
+        var electionGuid = Guid.NewGuid();
+        var first = await SeedPersonWithPhoneRow(
+            "+14168972809", smsStatus: null, whatsAppStatus: null, electionGuid: electionGuid);
+        var second = await SeedPersonWithPhoneRow(
+            "+14168972810", smsStatus: null, whatsAppStatus: null, electionGuid: electionGuid);
+        var delays = 0;
+        var client = MockWhatsAppClient(
+            GreenApiWhatsAppCheckResult.FromProvider(OnlineVoterWhatsAppStatus.Ok));
+        var service = CreateServiceWithWhatsApp(client.Object, _ =>
+        {
+            delays++;
+            return Task.CompletedTask;
+        });
+
+        await service.CheckMultipleWhatsAppAsync(
+            electionGuid,
+            [first.PersonGuid, second.PersonGuid]);
+
+        Assert.Equal(1, delays);
+    }
+
+    [Fact]
+    public async Task CheckMultipleWhatsAppAsync_PersistedNoWa_DoesNotClearSmsStatus()
+    {
+        var electionGuid = Guid.NewGuid();
+        var person = await SeedPersonWithPhoneRow(
+            "+14168972811", smsStatus: "OK", whatsAppStatus: null, electionGuid: electionGuid);
+        var client = MockWhatsAppClient(
+            GreenApiWhatsAppCheckResult.FromProvider(OnlineVoterWhatsAppStatus.NoWa));
+        var service = CreateServiceWithWhatsApp(client.Object);
+
+        var result = await service.CheckMultipleWhatsAppAsync(electionGuid, [person.PersonGuid]);
+
+        Assert.Equal(WhatsAppCheckOutcome.NoWa, result.Results[0].Outcome);
+        var row = await Context.OnlineVoters.SingleAsync(ov => ov.VoterId == person.Phone);
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Equal(OnlineVoterWhatsAppStatus.NoWa, row.WhatsAppStatus);
+        Assert.Equal("OK", row.SmsStatus);
+    }
+
+    private PeopleService CreateServiceWithWhatsApp(
+        IGreenApiWhatsAppClient client,
+        Func<CancellationToken, Task>? delayBetweenProviderCalls = null) =>
+        new(
+            Context,
+            _loggerMock.Object,
+            _signalRMock.Object,
+            greenApiWhatsAppClient: client,
+            delayBetweenProviderCalls: delayBetweenProviderCalls ?? (_ => Task.CompletedTask));
 
     private static Mock<IGreenApiWhatsAppClient> MockWhatsAppClient(GreenApiWhatsAppCheckResult result)
     {
@@ -2216,12 +2467,13 @@ public class PeopleServiceTests : ServiceTestBase
         string phone,
         string? smsStatus,
         DateTimeOffset? whenRegistered = null,
-        string? whatsAppStatus = null)
+        string? whatsAppStatus = null,
+        Guid? electionGuid = null)
     {
         var person = new Person
         {
             PersonGuid = Guid.NewGuid(),
-            ElectionGuid = Guid.NewGuid(),
+            ElectionGuid = electionGuid ?? Guid.NewGuid(),
             LastName = "Smith",
             FirstName = "Pat",
             Phone = phone,

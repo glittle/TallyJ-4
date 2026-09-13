@@ -70,9 +70,10 @@ describe("PeopleTable", () => {
         people: [samplePerson],
         loading: false,
         tableHeight: 400,
+        selectedGuids: [],
       },
       global: {
-        components: { ElButton },
+        components: { ElButton, ElCheckbox: { template: "<span class='cb' />" } },
         directives: { loading: () => undefined },
         stubs: {
           ElAutoResizer: AutoResizerStub,
@@ -101,9 +102,14 @@ describe("PeopleTable", () => {
         people: [withPhone],
         loading: false,
         tableHeight: 400,
+        selectedGuids: [],
       },
       global: {
-        components: { ElButton, ElTag: { template: "<span><slot /></span>" } },
+        components: {
+          ElButton,
+          ElCheckbox: { template: "<span class='cb' />" },
+          ElTag: { template: "<span><slot /></span>" },
+        },
         directives: { loading: () => undefined },
         stubs: {
           ElAutoResizer: AutoResizerStub,
@@ -131,9 +137,10 @@ describe("PeopleTable", () => {
         people: [noPhone],
         loading: false,
         tableHeight: 400,
+        selectedGuids: [],
       },
       global: {
-        components: { ElButton },
+        components: { ElButton, ElCheckbox: { template: "<span class='cb' />" } },
         directives: { loading: () => undefined },
         stubs: {
           ElAutoResizer: AutoResizerStub,
@@ -145,5 +152,38 @@ describe("PeopleTable", () => {
 
     expect(wrapper.text()).not.toContain("people.phoneOnlineVoter.neverSeen");
     expect(wrapper.text()).not.toContain("people.phoneOnlineVoter.smsOk");
+  });
+
+  it("emits selected person guids from the existing people table", async () => {
+    const wrapper = mount(PeopleTable, {
+      props: {
+        people: [samplePerson],
+        loading: false,
+        tableHeight: 400,
+        selectedGuids: [],
+      },
+      global: {
+        components: {
+          ElButton,
+          ElCheckbox: {
+            props: ["modelValue"],
+            emits: ["change"],
+            template:
+              '<button class="select-stub" @click="$emit(\'change\', true)" />',
+          },
+        },
+        directives: { loading: () => undefined },
+        stubs: {
+          ElAutoResizer: AutoResizerStub,
+          ElTableV2: TableStub,
+          ElIcon: { template: "<span />" },
+        },
+      },
+    });
+
+    await wrapper.find(".select-stub").trigger("click");
+    expect(wrapper.emitted("update:selectedGuids")?.[0]).toEqual([
+      [samplePerson.personGuid],
+    ]);
   });
 });

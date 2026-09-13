@@ -4248,6 +4248,65 @@
         }
       }
     },
+    "/api/People/{electionGuid}/checkWhatsAppSelected": {
+      "post": {
+        "tags": [
+          "People"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_CheckSelectedWhatsAppDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_CheckSelectedWhatsAppDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_CheckSelectedWhatsAppDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_CheckSelectedWhatsAppResultDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_CheckSelectedWhatsAppResultDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_CheckSelectedWhatsAppResultDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/PeopleImport/{electionGuid}/upload": {
       "post": {
         "tags": [
@@ -8374,6 +8433,29 @@
         },
         "additionalProperties": false
       },
+      "ApiResponsePeople_CheckSelectedWhatsAppResultDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/People_CheckSelectedWhatsAppResultDto"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApiResponsePeople_PersonDetailDto": {
         "type": "object",
         "properties": {
@@ -11342,6 +11424,70 @@
           "hasNextPage": {
             "type": "boolean",
             "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "People_CheckSelectedWhatsAppDto": {
+        "type": "object",
+        "properties": {
+          "personGuids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "People_CheckSelectedWhatsAppPersonResultDto": {
+        "type": "object",
+        "properties": {
+          "personGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "outcome": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "People_CheckSelectedWhatsAppResultDto": {
+        "type": "object",
+        "properties": {
+          "cancelled": {
+            "type": "boolean"
+          },
+          "checked": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ok": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "noWa": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skipped": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/People_CheckSelectedWhatsAppPersonResultDto"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false

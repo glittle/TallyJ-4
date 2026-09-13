@@ -49,7 +49,62 @@ public class PersonPhoneWhatsAppCheckTests : IntegrationTestBase
         Assert.Null(row.WhatsAppStatus);
     }
 
+    [Fact]
+    public async Task CheckWhatsAppSelected_Anonymous_Unauthorized()
+    {
+        var response = await PostJsonAsync(
+            $"/api/People/{Guid.NewGuid()}/checkWhatsAppSelected",
+            new CheckSelectedWhatsAppDto { PersonGuids = [Guid.NewGuid()] });
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task CheckWhatsAppSelected_OverMax_BadRequest()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var dto = new CheckSelectedWhatsAppDto
+        {
+            PersonGuids = Enumerable.Range(0, CheckSelectedWhatsAppDto.MaxSelectedPeople + 1)
+                .Select(_ => Guid.NewGuid())
+                .ToList()
+        };
+        var response = await PostJsonAsync($"/api/People/{Guid.NewGuid()}/checkWhatsAppSelected", dto);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task CheckWhatsAppSelected_NotConfigured_DoesNotPersist()
+    {
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        const string phone = "+14168972721";
+        var (electionGuid, personGuid) = await SeedElectionPersonWithPhoneAsync(phone);
+
+        var response = await PostJsonAsync(
+            $"/api/People/{electionGuid}/checkWhatsAppSelected",
+            new CheckSelectedWhatsAppDto { PersonGuids = [personGuid] });
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var body = await DeserializeResponseAsync<ApiResponse<CheckSelectedWhatsAppResultDto>>(response);
+        Assert.Equal(PeopleMessageKeys.PhoneWhatsAppNotConfigured, body!.Message);
+
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var row = await db.OnlineVoters.SingleAsync(ov => ov.VoterId == phone);
+        Assert.Equal("P", row.VoterIdType);
+        Assert.Null(row.WhatsAppStatus);
+    }
+
     private async Task<Guid> SeedPersonWithPhoneAsync(string phone)
+    {
+        var (_, personGuid) = await SeedElectionPersonWithPhoneAsync(phone);
+        return personGuid;
+    }
+
+    private async Task<(Guid ElectionGuid, Guid PersonGuid)> SeedElectionPersonWithPhoneAsync(string phone)
     {
         var createElection = await PostJsonAsync("/api/elections/createElection", new CreateElectionDto
         {
@@ -70,6 +125,6 @@ public class PersonPhoneWhatsAppCheckTests : IntegrationTestBase
         });
         createPerson.EnsureSuccessStatusCode();
         var person = await DeserializeResponseAsync<ApiResponse<PersonDto>>(createPerson);
-        return person!.Data!.PersonGuid;
+        return (election.Data.ElectionGuid, person!.Data!.PersonGuid);
     }
 }
