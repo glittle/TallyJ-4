@@ -6,7 +6,8 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [auth.md](auth.md) — JWT identity claims (`sub` / `NameIdentifier`); teller vs online-voter cookie transport
 - [realtime.md](realtime.md) — SignalR hub group naming (not a single `election-{guid}` pattern)
 - [api-contracts.md](api-contracts.md) — dual API response wrappers and OpenAPI client regeneration
-- [election-analysis.md](election-analysis.md) — core analysis engine; risk-first correctness vs v3; Analyze SaveManual persists M without re-running Analyze
+- [election-analysis.md](election-analysis.md) — core analysis engine; risk-first correctness vs v3
+- [reports.md](reports.md) — VotersByArea 18+/18–21 (V01), download-all zip of the existing report list, Front Desk vs analysis voted rule; Analyze SaveManual persists M without re-running Analyze
 - [ballot-validation.md](ballot-validation.md) — pre-finalization integrity; count-reconciliation report before Analyze/Finalize
 - [election-state.md](election-state.md) — teller coordination and high-consequence state transitions
 - [online-ballots.md](online-ballots.md) - Draft autosave vs Submitted, online acceptance (pending until Accept-all), reserved Online/Imported locations, monitor close countdown, anonymous ballot-page sessions, and random name resolution

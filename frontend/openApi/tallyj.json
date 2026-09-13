@@ -5834,6 +5834,29 @@
         }
       }
     },
+    "/api/Reports/{electionGuid}/DownloadAll": {
+      "get": {
+        "tags": [
+          "Reports"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Results/election/{electionGuid}/calculate": {
       "post": {
         "tags": [
@@ -11844,6 +11867,14 @@
             "type": "integer",
             "format": "int32"
           },
+          "eligible18Plus": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "eligible18To21": {
+            "type": "integer",
+            "format": "int32"
+          },
           "voted": {
             "type": "integer",
             "format": "int32"
@@ -12763,6 +12794,9 @@
           "custom3Name": {
             "type": "string",
             "nullable": true
+          },
+          "showImported": {
+            "type": "boolean"
           },
           "areas": {
             "type": "array",

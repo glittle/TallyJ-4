@@ -48,6 +48,22 @@ v3 Roll Call and Sort Envelopes existed only for the Roll ballot process. Count 
 
 **Rejected alternative:** rebuild the v3 projector and envelope pages for #171. Rejected — they depended on a process v4 does not have; the remaining API is covered by tests, not a new UI.
 
+## Front Desk checked-in count matches analysis voted
+
+**Status:** active  
+**Evidence:** inferred (issue #185 count-match leftover)  
+**Source:** issue #185; [reports.md](reports.md)
+
+Header stats and `IsCheckedIn` used `RegistrationTime` only. Accept-all does not set that field, so processed online voters were missing from Front Desk while analysis and reconciliation counted them.
+
+**Chosen:** checked-in = `HasVotedForCounts` (recorded method or Processed online). Same rule as analysis `NumVoters` and VotersByArea `Voted`.
+
+**Rejected alternative:** leave Front Desk on `RegistrationTime` and only document the difference. Rejected — #185 asked the three surfaces to match.
+
+Unregister (and other desk-registration undo) stays on `RegistrationTime`. Accept-all does not create a Front Desk registration, so the overlay must not offer Unregister for Processed-only rows.
+
+**Rejected alternative:** let Unregister clear Processed online. Rejected — `UnregisterVoterAsync` still requires `RegistrationTime`; online acceptance is not a desk check-in.
+
 ## Front Desk SMS column is the phone P-row hint
 
 **Status:** active  

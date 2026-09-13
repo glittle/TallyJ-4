@@ -1273,6 +1273,8 @@ export type ReportsAreaCountDto = {
 export type ReportsAreaRowDto = {
     areaName?: string | null;
     totalEligible?: number;
+    eligible18Plus?: number;
+    eligible18To21?: number;
     voted?: number;
     inPerson?: number;
     mailedIn?: number;
@@ -1534,6 +1536,7 @@ export type ReportsVotersByAreaReportDto = {
     custom1Name?: string | null;
     custom2Name?: string | null;
     custom3Name?: string | null;
+    showImported?: boolean;
     areas?: Array<ReportsAreaRowDto> | null;
     total?: ReportsAreaRowDto;
 };
@@ -4621,6 +4624,22 @@ export type GetApiReportsByElectionGuidVoterEmailsResponses = {
 };
 
 export type GetApiReportsByElectionGuidVoterEmailsResponse = GetApiReportsByElectionGuidVoterEmailsResponses[keyof GetApiReportsByElectionGuidVoterEmailsResponses];
+
+export type GetApiReportsByElectionGuidDownloadAllData = {
+    body?: never;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/Reports/{electionGuid}/DownloadAll';
+};
+
+export type GetApiReportsByElectionGuidDownloadAllResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
 
 export type PostApiResultsElectionByElectionGuidCalculateData = {
     body?: never;

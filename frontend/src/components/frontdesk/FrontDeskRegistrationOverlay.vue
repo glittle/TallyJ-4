@@ -3,6 +3,7 @@ import type {
   FrontDeskVoterDto,
   RegistrationHistoryEntryDto,
 } from "@/types/FrontDesk";
+import { hasDeskRegistration } from "@/composables/useFrontDeskRegistration";
 import {
   isAcceptedOnlineBallotStatus,
   isPendingOnlineBallotStatus,
@@ -114,7 +115,7 @@ defineExpose({
         </div>
         <div class="registration-header-actions">
           <el-button
-            v-if="voter.isCheckedIn"
+            v-if="hasDeskRegistration(voter)"
             type="default"
             size="large"
             data-dialog-button="__unregister__"

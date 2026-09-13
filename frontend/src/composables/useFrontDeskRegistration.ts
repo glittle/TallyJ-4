@@ -64,6 +64,13 @@ export type UseFrontDeskRegistrationOptions = {
   showErrorMessage: (msg: string) => void;
 };
 
+/** Front Desk Unregister undoes a desk check-in (`RegistrationTime`), not Accept-all. */
+export function hasDeskRegistration(
+  voter: FrontDeskVoterDto | null | undefined,
+): boolean {
+  return Boolean(voter?.registrationTime);
+}
+
 /**
  * Front-desk registration overlay: dialog buttons, keyboard focus, check-in/flags/unregister.
  */
@@ -78,8 +85,9 @@ export function useFrontDeskRegistration(
 
   const dialogButtons = computed((): FrontDeskDialogButton[] => {
     const buttons: FrontDeskDialogButton[] = [];
+    const voter = options.selectedVoter.value;
 
-    if (!options.selectedVoter.value?.isCheckedIn) {
+    if (!voter?.isCheckedIn) {
       options.registrationTypes.value.forEach((type) => {
         buttons.push({
           value: type.value,
@@ -103,7 +111,9 @@ export function useFrontDeskRegistration(
       });
     });
 
-    if (options.selectedVoter.value?.isCheckedIn) {
+    // Desk Unregister needs RegistrationTime. Processed online is
+    // isCheckedIn for counts but has no Front Desk registration to undo.
+    if (hasDeskRegistration(voter)) {
       buttons.push({
         value: "__unregister__",
         label: options.t("frontDesk.dialog.unregister"),
@@ -504,7 +514,11 @@ export function useFrontDeskRegistration(
   }
 
   async function handleUnregisterSelected() {
-    if (!options.selectedVoter.value || !options.hasActiveTeller.value) {
+    if (
+      !options.selectedVoter.value ||
+      !options.hasActiveTeller.value ||
+      !hasDeskRegistration(options.selectedVoter.value)
+    ) {
       return;
     }
 

@@ -1,4 +1,5 @@
 ﻿using Backend.DTOs.People;
+using Backend.Helpers;
 
 namespace Backend.DTOs.FrontDesk;
 
@@ -70,9 +71,14 @@ public class FrontDeskVoterDto
     public string? Teller2 { get; set; }
 
     /// <summary>
-    /// Indicates whether the voter has checked in.
+    /// Front Desk “registered / voted” — same rule as analysis and
+    /// VotersByArea: a recorded method, or an accepted (Processed) online ballot.
+    /// Accept-all does not set <see cref="RegistrationTime"/> or <see cref="VotingMethod"/>.
     /// </summary>
-    public bool IsCheckedIn => RegistrationTime.HasValue;
+    public bool IsCheckedIn =>
+        VotingMethodCodes.HasVotedForCounts(
+            VotingMethod,
+            string.Equals(OnlineBallotStatus, "Processed", StringComparison.OrdinalIgnoreCase));
 
     /// <summary>
     /// Flags/labels assigned to this voter (comma-separated).

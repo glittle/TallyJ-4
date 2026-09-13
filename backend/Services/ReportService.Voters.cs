@@ -1,5 +1,6 @@
 using Backend.DTOs.Reports;
 using Backend.Entities;
+using Backend.Enumerations;
 using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
@@ -134,6 +135,10 @@ public partial class ReportService
             .Select(g => BuildAreaRow(g.Key, g.ToList(), processedOnline))
             .ToList();
 
+        var total = BuildAreaRow("Total", people, processedOnline);
+        var importedEnabled = VotingMethodCodes.ParseElectionVotingMethods(election.VotingMethods)
+            .Contains(VotingMethodCodes.Imported);
+
         return new VotersByAreaReportDto
         {
             ElectionName = election.Name,
@@ -141,8 +146,9 @@ public partial class ReportService
             Custom1Name = ParseCustomMethodName(election.CustomMethods, 0),
             Custom2Name = ParseCustomMethodName(election.CustomMethods, 1),
             Custom3Name = ParseCustomMethodName(election.CustomMethods, 2),
+            ShowImported = importedEnabled || total.Imported > 0,
             Areas = areas,
-            Total = BuildAreaRow("Total", people, processedOnline)
+            Total = total
         };
     }
 
@@ -153,10 +159,13 @@ public partial class ReportService
     {
         var breakdown = VotingMethodCodes.Count(people.Select(p =>
             (p.VotingMethod, processedOnline.Contains(p.PersonGuid))));
+        var eligible18To21 = people.Count(IsYouth18To21);
         return new AreaRowDto
         {
             AreaName = name,
             TotalEligible = people.Count,
+            Eligible18Plus = people.Count,
+            Eligible18To21 = eligible18To21,
             Voted = people.Count(p =>
                 VotingMethodCodes.HasVotedForCounts(
                     p.VotingMethod,
@@ -173,6 +182,15 @@ public partial class ReportService
             Imported = breakdown.Imported
         };
     }
+
+    /// <summary>
+    /// V01 is the only stored signal for the 18–21 band after AgeGroup was removed.
+    /// </summary>
+    private static bool IsYouth18To21(Person person) =>
+        string.Equals(
+            person.IneligibleReasonCode,
+            IneligibleReasonEnum.V01_YouthAged181920.Code,
+            StringComparison.Ordinal);
 
     public async Task<VotersByLocationReportDto> GetVotersByLocationAsync(Guid electionGuid)
     {

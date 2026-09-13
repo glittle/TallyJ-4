@@ -57,9 +57,10 @@ const selectedReportName = computed(() => props.selectedReportName);
 </script>
 
 <template>
-  <div class="reporting-voter-reports">
+  <div
     v-if="selectedReport === 'AllCanReceive' && allCanReceiveData"
-    class="report-generic" >
+    class="report-generic"
+  >
     <h2>{{ selectedReportName }}</h2>
     <div class="report-meta">
       <div>{{ allCanReceiveData.electionName }}</div>
@@ -209,7 +210,8 @@ const selectedReportName = computed(() => props.selectedReportName);
       <thead>
         <tr>
           <th>{{ $t("reporting.area") }}</th>
-          <th>{{ $t("reporting.totalEligible") }}</th>
+          <th>{{ $t("reporting.age18Plus") }}</th>
+          <th>{{ $t("reporting.age18To21") }}</th>
           <th>{{ $t("reporting.voted") }}</th>
           <th>{{ $t("reporting.inPerson") }}</th>
           <th>{{ $t("reporting.mailedIn") }}</th>
@@ -226,13 +228,16 @@ const selectedReportName = computed(() => props.selectedReportName);
           </th>
           <th>{{ $t("reporting.online") }}</th>
           <th>{{ $t("reporting.kiosk") }}</th>
-          <th>{{ $t("reporting.imported") }}</th>
+          <th v-if="votersByAreaData.showImported">
+            {{ $t("reporting.imported") }}
+          </th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="a in votersByAreaData.areas" :key="a.areaName">
           <td>{{ a.areaName }}</td>
-          <td class="num">{{ a.totalEligible }}</td>
+          <td class="num">{{ a.eligible18Plus }}</td>
+          <td class="num">{{ a.eligible18To21 }}</td>
           <td class="num">{{ a.voted }}</td>
           <td class="num">{{ a.inPerson }}</td>
           <td class="num">{{ a.mailedIn }}</td>
@@ -249,13 +254,16 @@ const selectedReportName = computed(() => props.selectedReportName);
           </td>
           <td class="num">{{ a.online }}</td>
           <td class="num">{{ a.onlineKiosk }}</td>
-          <td class="num">{{ a.imported }}</td>
+          <td v-if="votersByAreaData.showImported" class="num">
+            {{ a.imported }}
+          </td>
         </tr>
       </tbody>
       <tfoot>
         <tr class="total-row">
           <td>{{ $t("reporting.total") }}</td>
-          <td class="num">{{ votersByAreaData.total.totalEligible }}</td>
+          <td class="num">{{ votersByAreaData.total.eligible18Plus }}</td>
+          <td class="num">{{ votersByAreaData.total.eligible18To21 }}</td>
           <td class="num">{{ votersByAreaData.total.voted }}</td>
           <td class="num">{{ votersByAreaData.total.inPerson }}</td>
           <td class="num">{{ votersByAreaData.total.mailedIn }}</td>
@@ -272,7 +280,9 @@ const selectedReportName = computed(() => props.selectedReportName);
           </td>
           <td class="num">{{ votersByAreaData.total.online }}</td>
           <td class="num">{{ votersByAreaData.total.onlineKiosk }}</td>
-          <td class="num">{{ votersByAreaData.total.imported }}</td>
+          <td v-if="votersByAreaData.showImported" class="num">
+            {{ votersByAreaData.total.imported }}
+          </td>
         </tr>
       </tfoot>
     </table>

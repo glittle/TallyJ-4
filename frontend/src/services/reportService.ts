@@ -21,6 +21,7 @@ import {
   getApiReportsByElectionGuidChangedPeople,
   getApiReportsByElectionGuidAllNonEligible,
   getApiReportsByElectionGuidVoterEmails,
+  getApiReportsByElectionGuidDownloadAll,
 } from "@/api/gen/configService";
 import type {
   ReportListItem,
@@ -252,5 +253,13 @@ export const reportService = {
       path: { electionGuid },
     });
     return response.data as VoterEmailsReport;
+  },
+
+  async downloadAllReports(electionGuid: string): Promise<Blob> {
+    const response = await getApiReportsByElectionGuidDownloadAll({
+      path: { electionGuid },
+      parseAs: "blob",
+    });
+    return response.data as Blob;
   },
 };

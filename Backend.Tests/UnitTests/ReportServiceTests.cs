@@ -823,4 +823,49 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
         Assert.Equal("Special3", report.Custom3Name);
         Assert.Equal(1, report.Areas[0].Custom1);
     }
+
+    [Fact]
+    public async Task GetVotersByArea_V01Youth_CountsIn18PlusAnd18To21()
+    {
+        await AddPerson("Adult", "A", canVote: true, canReceiveVotes: true, area: "North", votingMethod: "P");
+        await AddPerson("Youth", "Y", canVote: true, canReceiveVotes: false, area: "North",
+            votingMethod: "P", ineligibleReasonCode: IneligibleReasonEnum.V01_YouthAged181920.Code);
+        await AddPerson("Under18", "U", canVote: false, canReceiveVotes: false, area: "North",
+            ineligibleReasonCode: IneligibleReasonEnum.X05_Under18YearsOld.Code);
+
+        var report = await _service.GetVotersByAreaAsync(_electionGuid);
+
+        var north = Assert.Single(report.Areas);
+        Assert.Equal(2, north.TotalEligible);
+        Assert.Equal(2, north.Eligible18Plus);
+        Assert.Equal(1, north.Eligible18To21);
+        Assert.Equal(2, report.Total.Eligible18Plus);
+        Assert.Equal(1, report.Total.Eligible18To21);
+        Assert.False(report.ShowImported);
+    }
+
+    [Fact]
+    public async Task GetVotersByArea_ImportedMethod_SetsShowImportedFlag()
+    {
+        await SeedElection(votingMethods: "P,IM");
+        await AddPerson("Imported", "I", canVote: true, area: "North", votingMethod: "I");
+        await AddPerson("Paper", "P", canVote: true, area: "North", votingMethod: "P");
+
+        var report = await _service.GetVotersByAreaAsync(_electionGuid);
+
+        Assert.True(report.ShowImported);
+        Assert.Equal(1, report.Total.Imported);
+        Assert.Equal(1, report.Total.InPerson);
+    }
+
+    [Fact]
+    public async Task GetVotersByArea_ImportedCountWithoutSetup_SetsShowImported()
+    {
+        await AddPerson("Imported", "I", canVote: true, area: "North", votingMethod: "I");
+
+        var report = await _service.GetVotersByAreaAsync(_electionGuid);
+
+        Assert.True(report.ShowImported);
+        Assert.Equal(1, report.Total.Imported);
+    }
 }

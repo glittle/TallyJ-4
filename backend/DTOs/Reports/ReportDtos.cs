@@ -247,6 +247,11 @@ public class VotersByAreaReportDto
     public string? Custom1Name { get; set; }
     public string? Custom2Name { get; set; }
     public string? Custom3Name { get; set; }
+    /// <summary>
+    /// Show the Imported column when the election lists imported as a method
+    /// or any area has imported votes. v3 hid the column at count 0.
+    /// </summary>
+    public bool ShowImported { get; set; }
     public List<AreaRowDto> Areas { get; set; } = new();
     public AreaRowDto Total { get; set; } = new();
 }
@@ -254,7 +259,12 @@ public class VotersByAreaReportDto
 public class AreaRowDto
 {
     public string AreaName { get; set; } = "";
+    /// <summary>Eligible to vote (18+). Same as v3 “Adults” / CanVote.</summary>
     public int TotalEligible { get; set; }
+    /// <summary>Same as <see cref="TotalEligible"/> — the named 18+ column.</summary>
+    public int Eligible18Plus { get; set; }
+    /// <summary>V01 subset — youth aged 18/19/20 (the 18–21 band).</summary>
+    public int Eligible18To21 { get; set; }
     public int Voted { get; set; }
     public int InPerson { get; set; }
     public int MailedIn { get; set; }

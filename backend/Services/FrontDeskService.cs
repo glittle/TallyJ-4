@@ -146,11 +146,24 @@ public class FrontDeskService : IFrontDeskService
     /// <inheritdoc />
     public async Task<FrontDeskStatsDto> GetStatsAsync(Guid electionGuid)
     {
-        var totalEligible = await _context.People
-            .CountAsync(p => p.ElectionGuid == electionGuid && p.CanVote == true);
+        var people = await _context.People
+            .AsNoTracking()
+            .Where(p => p.ElectionGuid == electionGuid && p.CanVote == true)
+            .Select(p => new { p.PersonGuid, p.VotingMethod })
+            .ToListAsync();
 
-        var checkedIn = await _context.People
-            .CountAsync(p => p.ElectionGuid == electionGuid && p.CanVote == true && p.RegistrationTime.HasValue);
+        var processedOnline = await _context.OnlineVotingInfos
+            .AsNoTracking()
+            .Where(o => o.ElectionGuid == electionGuid && o.Status == OnlineBallotStatus.Processed)
+            .Select(o => o.PersonGuid)
+            .ToListAsync();
+        var processedSet = processedOnline.ToHashSet();
+
+        var totalEligible = people.Count;
+        var checkedIn = people.Count(p =>
+            VotingMethodCodes.HasVotedForCounts(
+                p.VotingMethod,
+                processedSet.Contains(p.PersonGuid)));
 
         return new FrontDeskStatsDto
         {
