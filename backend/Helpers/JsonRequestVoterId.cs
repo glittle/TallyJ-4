@@ -1,0 +1,132 @@
+using System.Text.Json;
+
+namespace Backend.Helpers;
+
+/// <summary>
+/// Reads <c>voterId</c> from a JSON request body without consuming it for later model binding.
+/// Used by auth rate limits that key on the identifier in the body.
+/// </summary>
+public static class JsonRequestVoterId
+{
+    internal const int MaxBodyBytes = 16 * 1024;
+
+    /// <summary>
+    /// Enables buffering, parses <c>voterId</c> / <c>VoterId</c> from JSON, then rewinds the body.
+    /// Returns null when the body is missing, too large, not JSON, or has no non-empty voterId.
+    /// The read is capped at <see cref="MaxBodyBytes"/> even when ContentLength is unset (chunked).
+    /// </summary>
+    public static async Task<string?> TryReadAsync(HttpRequest request, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (request.ContentLength is 0)
+        {
+            return null;
+        }
+
+        if (request.ContentLength is > MaxBodyBytes)
+        {
+            return null;
+        }
+
+        request.EnableBuffering();
+        var body = request.Body;
+        var originalPosition = body.CanSeek ? body.Position : 0;
+
+        try
+        {
+            var capped = await ReadAtMostAsync(body, MaxBodyBytes, cancellationToken);
+            if (capped == null)
+            {
+                return null;
+            }
+
+            if (capped.Length == 0)
+            {
+                return null;
+            }
+
+            using var document = JsonDocument.Parse(capped);
+            return FindVoterId(document.RootElement);
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+        finally
+        {
+            if (body.CanSeek)
+            {
+                body.Position = originalPosition;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Reads at most <paramref name="maxBytes"/> from <paramref name="body"/>.
+    /// Returns null if the stream has more than that (overflow); otherwise the bytes read.
+    /// </summary>
+    internal static async Task<byte[]?> ReadAtMostAsync(Stream body, int maxBytes, CancellationToken cancellationToken)
+    {
+        var buffer = new byte[maxBytes + 1];
+        var total = 0;
+        while (total < buffer.Length)
+        {
+            var read = await body.ReadAsync(buffer.AsMemory(total, buffer.Length - total), cancellationToken);
+            if (read == 0)
+            {
+                break;
+            }
+
+            total += read;
+        }
+
+        if (total > maxBytes)
+        {
+            return null;
+        }
+
+        if (total == 0)
+        {
+            return [];
+        }
+
+        return buffer.AsSpan(0, total).ToArray();
+    }
+
+    internal static string? FindVoterId(JsonElement root)
+    {
+        if (root.ValueKind != JsonValueKind.Object)
+        {
+            return null;
+        }
+
+        foreach (var property in root.EnumerateObject())
+        {
+            if (!property.Name.Equals("voterId", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (property.Value.ValueKind != JsonValueKind.String)
+            {
+                return null;
+            }
+
+            var value = property.Value.GetString();
+            return string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Normalizes a voterId for rate-limit keys (trim + case-fold).
+    /// Does not rewrite phone shapes — auth still matches <c>Person.Phone == dto.VoterId</c>.
+    /// </summary>
+    public static string NormalizeForRateLimit(string voterId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(voterId);
+        return voterId.Trim().ToLowerInvariant();
+    }
+}
