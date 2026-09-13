@@ -196,6 +196,26 @@ public class TwilioSmsStatusServiceTests : ServiceTestBase
         Assert.Equal("twilio-30003", row.SmsStatus);
     }
 
+    [Fact]
+    public async Task CallSidExistingSmsLog_Updated_DoesNotInsert()
+    {
+        Context.SmsLogs.Add(new SmsLog
+        {
+            SmsSid = "CAexisting",
+            Phone = StoredPhone,
+            SentDate = DateTimeOffset.Parse("2026-08-01T00:00:00Z"),
+            LastStatus = "queued"
+        });
+        await Context.SaveChangesAsync();
+
+        await _service.ProcessCallbackAsync("CAexisting", "completed", TwilioTo, errorCode: null);
+
+        var log = Assert.Single(await Context.SmsLogs.ToListAsync());
+        Assert.Equal("completed", log.LastStatus);
+        Assert.Equal(TwilioTo, log.Phone);
+        Assert.NotNull(log.LastDate);
+    }
+
     private async Task SeedPhoneVoter(string voterId, string? smsStatus)
     {
         Context.OnlineVoters.Add(new OnlineVoter

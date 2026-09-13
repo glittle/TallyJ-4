@@ -10,7 +10,7 @@ public interface ITwilioSmsStatusService
     /// Processes one Twilio status callback. Updates SmsLog when a row exists for
     /// <paramref name="smsSid"/>. For terminal failures with a selected error code,
     /// stamps <c>twilio-{code}</c> on a matching phone OnlineVoter row when allowed.
-    /// Never inserts an OnlineVoter row. Never writes SmsStatus to OK.
+    /// Never inserts an SmsLog or OnlineVoter row. Never writes SmsStatus to OK.
     /// </summary>
     Task ProcessCallbackAsync(
         string? smsSid,

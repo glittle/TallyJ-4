@@ -71,8 +71,9 @@ public class PublicController(
     /// <summary>
     /// Twilio message status callback (v3 <c>Public/SmsStatus</c>). Requires a valid
     /// <c>X-Twilio-Signature</c> for <c>Twilio:AuthToken</c>. Updates SmsLog when a
-    /// row exists for the SID and auto-learns <c>OnlineVoter.SmsStatus</c> on selected
-    /// terminal failures. Invalid signature is 403. Success is 204. Neither leaks
+    /// row exists for the SID (MessageSid / SmsSid / CallSid) and auto-learns
+    /// <c>OnlineVoter.SmsStatus</c> on selected terminal failures. Does not insert
+    /// a log row. Invalid signature is 403. Success is 204. Neither leaks
     /// whether a voter row exists.
     /// </summary>
     [HttpPost("smsStatus")]
