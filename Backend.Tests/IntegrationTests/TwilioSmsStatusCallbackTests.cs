@@ -101,7 +101,7 @@ public class TwilioSmsStatusCallbackTests : IntegrationTestBase
         Assert.Equal(sid, log.SmsSid);
         Assert.Equal("delivered", log.LastStatus);
         Assert.NotNull(log.LastDate);
-        Assert.Null(await ReadSmsStatus(phone));
+        Assert.Equal("OK", await ReadSmsStatus(phone));
     }
 
     [Fact]
@@ -123,6 +123,7 @@ public class TwilioSmsStatusCallbackTests : IntegrationTestBase
         using var verify = Factory.Services.CreateScope();
         var db = verify.ServiceProvider.GetRequiredService<MainDbContext>();
         Assert.Empty(await db.SmsLogs.Where(sl => sl.SmsSid == "SMnever-sent").ToListAsync());
+        Assert.Null(await ReadSmsStatus(phone));
     }
 
     [Fact]

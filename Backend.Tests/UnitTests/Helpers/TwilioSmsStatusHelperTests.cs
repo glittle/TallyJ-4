@@ -33,6 +33,31 @@ public class TwilioSmsStatusHelperTests
         Assert.Null(TwilioSmsStatusHelper.TryLearnReason(status, errorCode));
     }
 
+    [Theory]
+    [InlineData("delivered")]
+    [InlineData("DELIVERED")]
+    [InlineData("completed")]
+    [InlineData("Completed")]
+    public void IsDeliveredSuccess_SmsDeliveredOrVoiceCompleted(string status)
+    {
+        Assert.True(TwilioSmsStatusHelper.IsDeliveredSuccess(status));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("sent")]
+    [InlineData("queued")]
+    [InlineData("sending")]
+    [InlineData("undelivered")]
+    [InlineData("failed")]
+    [InlineData("busy")]
+    [InlineData("no-answer")]
+    public void IsDeliveredSuccess_NonSuccess_False(string? status)
+    {
+        Assert.False(TwilioSmsStatusHelper.IsDeliveredSuccess(status));
+    }
+
     [Fact]
     public void VoterIdLookupKeys_WithPlus_IncludesDigitsOnlyVariant()
     {
