@@ -42,5 +42,20 @@
   "tally.reconciliation.kind.DuplicateEnvelope": "Duplicate envelope number",
   "tally.reconciliation.kind.DuplicateVotingPath": "Paper check-in and online vote",
   "tally.reconciliation.loadError": "Failed to load the reconciliation report",
-  "tally.reconciliation.finalizeBlocked": "Counts do not reconcile. Resolve the mismatches below (or on Calculate Tally) before finalizing."
+  "tally.reconciliation.finalizeBlocked": "Counts do not reconcile. Resolve the mismatches below (or on Calculate Tally) before finalizing.",
+  "tally.manualCounts.title": "Voter counts",
+  "tally.manualCounts.hint": "Leave a field empty to use the calculated value. Saving does not re-run Analyze.",
+  "tally.manualCounts.counts": "Counts",
+  "tally.manualCounts.calculated": "Calculated",
+  "tally.manualCounts.override": "Override",
+  "tally.manualCounts.final": "Final",
+  "tally.manualCounts.saveValues": "Save Values",
+  "tally.manualCounts.saveSuccess": "Manual counts saved. Run Analyze to apply them to the final results.",
+  "tally.manualCounts.useCalculated": "Use calculated",
+  "tally.manualCounts.eligibleVoters": "Eligible Voters",
+  "tally.manualCounts.inPerson": "In Person",
+  "tally.manualCounts.droppedOff": "Dropped Off",
+  "tally.manualCounts.mailedIn": "Mailed In",
+  "tally.manualCounts.calledIn": "Called In",
+  "tally.manualCounts.spoiledManual": "Additional spoiled ballots"
 }

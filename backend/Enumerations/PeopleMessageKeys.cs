@@ -26,4 +26,9 @@ public static class PeopleMessageKeys
     /// Manual SmsStatus was empty, whitespace, or longer than 50 after trim.
     /// </summary>
     public const string PhoneSmsStatusInvalid = "people.phoneOnlineVoter.invalidStatus";
+
+    /// <summary>
+    /// Guest teller tried to add a person while GuestTellersCanAddPeople is off (v3 GA).
+    /// </summary>
+    public const string GuestCannotAddPeople = "people.guestCannotAddPeople";
 }

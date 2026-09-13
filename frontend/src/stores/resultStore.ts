@@ -9,6 +9,8 @@ import type {
   PresentationDto,
   ReportDataResponseDto,
   CountReconciliationReportDto,
+  AnalyzeCountSummariesDto,
+  AnalyzeCountRowDto,
   TallyResultDto,
   TallyStatisticsDto,
   TieDetailsDto,
@@ -31,6 +33,7 @@ export const useResultStore = defineStore("result", () => {
   const tallyProgress = ref<TallyProgressEvent | null>(null);
   const currentElectionGuid = ref<string>("");
   const reconciliation = ref<CountReconciliationReportDto | null>(null);
+  const analyzeCounts = ref<AnalyzeCountSummariesDto | null>(null);
 
   async function calculateTally(
     electionGuid: string,
@@ -98,6 +101,7 @@ export const useResultStore = defineStore("result", () => {
     monitorInfo.value = null;
     detailedStatistics.value = null;
     reconciliation.value = null;
+    analyzeCounts.value = null;
   }
 
   async function fetchReconciliation(electionGuid: string) {
@@ -176,6 +180,42 @@ export const useResultStore = defineStore("result", () => {
       return details;
     } catch (e: any) {
       error.value = e.message || "Failed to fetch tie details";
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function fetchManualCounts(electionGuid: string) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const counts = await resultService.getManualCounts(electionGuid);
+      analyzeCounts.value = counts;
+      return counts;
+    } catch (e: any) {
+      error.value = e.message || "Failed to fetch manual counts";
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  async function saveManualCounts(
+    electionGuid: string,
+    request: AnalyzeCountRowDto,
+  ) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const counts = await resultService.saveManualCounts(
+        electionGuid,
+        request,
+      );
+      analyzeCounts.value = counts;
+      return counts;
+    } catch (e: any) {
+      error.value = e.message || "Failed to save manual counts";
       throw e;
     } finally {
       loading.value = false;
@@ -335,6 +375,7 @@ export const useResultStore = defineStore("result", () => {
     monitorInfo,
     detailedStatistics,
     reconciliation,
+    analyzeCounts,
     loading,
     calculating,
     error,
@@ -349,6 +390,8 @@ export const useResultStore = defineStore("result", () => {
     fetchElectionReport,
     fetchReportData,
     fetchTieDetails,
+    fetchManualCounts,
+    saveManualCounts,
     saveTieCounts,
     fetchPresentationData,
     fetchDetailedStatistics,

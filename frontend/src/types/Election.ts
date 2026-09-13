@@ -22,6 +22,7 @@ export interface ElectionDto {
   useCallInButton?: boolean;
   hidePreBallotPages?: boolean;
   maskVotingMethod?: boolean;
+  guestTellersCanAddPeople?: boolean;
   onlineCloseIsEstimate?: boolean;
   onlineSelectionProcess?: string;
   emailFromAddress?: string;
@@ -57,6 +58,7 @@ export interface CreateElectionDto {
   useCallInButton?: boolean;
   hidePreBallotPages?: boolean;
   maskVotingMethod?: boolean;
+  guestTellersCanAddPeople?: boolean;
   useOnlineVoting?: boolean;
   onlineWhenOpen?: string;
   onlineWhenClose?: string;
@@ -93,6 +95,7 @@ export interface UpdateElectionDto {
   useCallInButton?: boolean;
   hidePreBallotPages?: boolean;
   maskVotingMethod?: boolean;
+  guestTellersCanAddPeople?: boolean;
   onlineCloseIsEstimate?: boolean;
   onlineSelectionProcess?: string;
   emailFromAddress?: string;

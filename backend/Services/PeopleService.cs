@@ -6,6 +6,7 @@ using Backend.Helpers;
 using Backend.DTOs.People;
 using Backend.DTOs.SignalR;
 using Backend.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -19,15 +20,21 @@ public class PeopleService : IPeopleService
     private readonly MainDbContext _context;
     private readonly ILogger<PeopleService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
+    private readonly IHttpContextAccessor? _httpContextAccessor;
 
     /// <summary>
     /// Initializes a new instance of the PeopleService.
     /// </summary>
-    public PeopleService(MainDbContext context, ILogger<PeopleService> logger, ISignalRNotificationService signalRNotificationService)
+    public PeopleService(
+        MainDbContext context,
+        ILogger<PeopleService> logger,
+        ISignalRNotificationService signalRNotificationService,
+        IHttpContextAccessor? httpContextAccessor = null)
     {
         _context = context;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     /// <summary>
@@ -122,6 +129,7 @@ public class PeopleService : IPeopleService
     public async Task<PersonDto> CreatePersonAsync(CreatePersonDto createDto)
     {
         await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, createDto.ElectionGuid);
+        await ThrowIfGuestCannotAddPeopleAsync(createDto.ElectionGuid);
 
         var existingPerson = await _context.People
             .FirstOrDefaultAsync(p => p.ElectionGuid == createDto.ElectionGuid &&
@@ -342,9 +350,32 @@ public class PeopleService : IPeopleService
     }
 
     /// <summary>
-    /// Synchronizes the CanVote and CanReceiveVotes properties based on the IneligibleReasonCode.
+    /// v3 PeopleModel.SavePerson: guests may add a person only when
+    /// <see cref="Election.GuestTellersCanAddPeople"/> is on. No HttpContext
+    /// (unit tests) is treated as a full teller.
     /// </summary>
-    /// <param name="person">The person entity to update.</param>
+    private async Task ThrowIfGuestCannotAddPeopleAsync(Guid electionGuid)
+    {
+        if (!GuestTellerClaims.IsGuestTeller(_httpContextAccessor?.HttpContext?.User))
+        {
+            return;
+        }
+
+        var allowed = await _context.Elections
+            .AsNoTracking()
+            .Where(e => e.ElectionGuid == electionGuid)
+            .Select(e => e.GuestTellersCanAddPeople)
+            .FirstOrDefaultAsync();
+
+        if (!allowed)
+        {
+            throw new InvalidOperationException(PeopleMessageKeys.GuestCannotAddPeople);
+        }
+    }
+
+    /// <summary>
+    /// Synchronizes CanVote and CanReceiveVotes from IneligibleReasonCode.
+    /// </summary>
     private void SyncEligibility(Person person)
     {
         if (!string.IsNullOrWhiteSpace(person.IneligibleReasonCode))

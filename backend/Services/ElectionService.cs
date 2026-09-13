@@ -814,6 +814,7 @@ public class ElectionService : IElectionService
             UseCallInButton = source.UseCallInButton,
             HidePreBallotPages = source.HidePreBallotPages,
             MaskVotingMethod = source.MaskVotingMethod,
+            GuestTellersCanAddPeople = source.GuestTellersCanAddPeople,
             OnlineCloseIsEstimate = source.OnlineCloseIsEstimate,
             OnlineSelectionProcess = source.OnlineSelectionProcess,
             EmailFromAddress = source.EmailFromAddress,

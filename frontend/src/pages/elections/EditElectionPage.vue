@@ -91,6 +91,7 @@ let form = reactive<UpdateElectionDto>({
   useCallInButton: undefined,
   hidePreBallotPages: undefined,
   maskVotingMethod: undefined,
+  guestTellersCanAddPeople: undefined,
   onlineSelectionProcess: undefined,
   emailFromAddress: undefined,
   emailFromName: undefined,
@@ -166,6 +167,8 @@ onMounted(async () => {
         useCallInButton: election.value.useCallInButton,
         hidePreBallotPages: election.value.hidePreBallotPages,
         maskVotingMethod: election.value.maskVotingMethod,
+        guestTellersCanAddPeople:
+          election.value.guestTellersCanAddPeople ?? false,
         onlineSelectionProcess: election.value.onlineSelectionProcess ?? "A",
         emailFromAddress: election.value.emailFromAddress,
         emailFromName: election.value.emailFromName,

@@ -42,4 +42,21 @@ describe("ElectionFormTabs kiosk toggle", () => {
     expect(model.votingMethods).toBe("IP,OL,K");
     expect(model.useOnlineVoting).toBe(true);
   });
+
+  it("exposes Can Add People on the advanced tab for guest Name not in the List", async () => {
+    const { wrapper, model } = mountTabs("IP");
+
+    const advancedTab = wrapper
+      .findAll(".el-tabs__item")
+      .find((tab) => tab.text().includes("Advanced"));
+    expect(advancedTab).toBeTruthy();
+    await advancedTab!.trigger("click");
+
+    expect(wrapper.text()).toContain("Can Add People?");
+    const switchEl = wrapper.get(
+      '[data-testid="guest-tellers-can-add-people"]',
+    );
+    await switchEl.trigger("click");
+    expect(model.guestTellersCanAddPeople).toBe(true);
+  });
 });

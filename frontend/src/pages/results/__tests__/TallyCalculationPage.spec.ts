@@ -69,6 +69,13 @@ const storeState = {
   leaveTallySession: vi.fn().mockResolvedValue(undefined),
   fetchResults: vi.fn().mockResolvedValue(undefined),
   fetchReconciliation: mockFetchReconciliation,
+  fetchManualCounts: vi.fn().mockResolvedValue({
+    calculated: {},
+    manual: {},
+    final: {},
+  }),
+  saveManualCounts: vi.fn(),
+  analyzeCounts: null,
   calculateTally: mockCalculateTally,
   clearError: vi.fn(),
 };
@@ -85,6 +92,9 @@ vi.mock("@/stores/electionStore", () => ({
 }));
 
 const stubs = {
+  AnalyzeManualCountsPanel: {
+    template: "<div class='manual-counts-stub' />",
+  },
   ReconciliationReportPanel: {
     props: ["report"],
     template:
@@ -129,7 +139,9 @@ describe("TallyCalculationPage reconciliation gate", () => {
 
     expect(mockFetchReconciliation).toHaveBeenCalledWith("election-1");
     expect(wrapper.find(".recon-panel").text()).toBe("blocked");
-    expect(wrapper.find("button").attributes("disabled")).toBeDefined();
+    expect(
+      wrapper.find('[data-testid="analyze-calculate"]').attributes("disabled"),
+    ).toBeDefined();
   });
 
   it("does not call calculate when Analyze is clicked while blocked", async () => {
@@ -138,8 +150,10 @@ describe("TallyCalculationPage reconciliation gate", () => {
     });
     await flushPromises();
 
-    await wrapper.find("button").trigger("click");
-    expect(wrapper.find("button").attributes("disabled")).toBeDefined();
+    await wrapper.find('[data-testid="analyze-calculate"]').trigger("click");
+    expect(
+      wrapper.find('[data-testid="analyze-calculate"]').attributes("disabled"),
+    ).toBeDefined();
     expect(mockCalculateTally).not.toHaveBeenCalled();
   });
 
@@ -152,7 +166,9 @@ describe("TallyCalculationPage reconciliation gate", () => {
     });
     await flushPromises();
 
-    expect(wrapper.find("button").attributes("disabled")).toBeUndefined();
+    expect(
+      wrapper.find('[data-testid="analyze-calculate"]').attributes("disabled"),
+    ).toBeUndefined();
   });
 
   it("translates hey-api stage-change errors when Calculate fails", async () => {
@@ -167,7 +183,7 @@ describe("TallyCalculationPage reconciliation gate", () => {
     });
     await flushPromises();
 
-    await wrapper.find("button").trigger("click");
+    await wrapper.find('[data-testid="analyze-calculate"]').trigger("click");
     await flushPromises();
 
     expect(mockShowError).toHaveBeenCalledWith(

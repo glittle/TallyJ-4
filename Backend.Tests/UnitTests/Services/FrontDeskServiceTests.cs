@@ -128,6 +128,61 @@ public class FrontDeskServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task CheckInVoterAsync_DraftOnline_WithdrawsPendingAndRecordsMethod()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedEligiblePerson();
+        person.HasOnlineBallot = true;
+        Context.OnlineVotingInfos.Add(new OnlineVotingInfo
+        {
+            ElectionGuid = _electionGuid,
+            PersonGuid = person.PersonGuid,
+            Status = OnlineBallotStatus.Draft,
+            WhenStatus = DateTimeOffset.UtcNow,
+            ListPool = """{"votes":[{"voteName":"Ada"}],"pool":[]}"""
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.CheckInVoterAsync(_electionGuid, new CheckInVoterDto
+        {
+            PersonGuid = person.PersonGuid,
+            VotingMethod = "P",
+            Teller1 = "Ada"
+        });
+
+        Assert.Equal("P", result.VotingMethod);
+        Assert.Null(result.OnlineBallotStatus);
+        Assert.False(Context.People.Single().HasOnlineBallot);
+        Assert.Empty(Context.OnlineVotingInfos);
+    }
+
+    [Fact]
+    public async Task CheckInVoterAsync_ProcessingOnline_Throws()
+    {
+        SeedElection(ElectionStage.GatheringBallots);
+        var person = SeedEligiblePerson();
+        Context.OnlineVotingInfos.Add(new OnlineVotingInfo
+        {
+            ElectionGuid = _electionGuid,
+            PersonGuid = person.PersonGuid,
+            Status = OnlineBallotStatus.Processing,
+            WhenStatus = DateTimeOffset.UtcNow
+        });
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CheckInVoterAsync(_electionGuid, new CheckInVoterDto
+            {
+                PersonGuid = person.PersonGuid,
+                VotingMethod = "P",
+                Teller1 = "Ada"
+            }));
+
+        Assert.Equal(FrontDeskMessageKeys.AlreadyProcessingOnline, ex.Message);
+        Assert.Null(Context.People.Single().RegistrationTime);
+    }
+
+    [Fact]
     public async Task CheckInVoterAsync_SubmittedOnline_WithdrawsPendingAndRecordsMethod()
     {
         SeedElection(ElectionStage.GatheringBallots);

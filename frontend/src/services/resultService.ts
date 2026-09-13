@@ -10,6 +10,8 @@ import {
   getApiResultsElectionByElectionGuidPresentation,
   getApiResultsElectionByElectionGuidDetailedStatistics,
   getApiResultsElectionByElectionGuidReconciliation,
+  getApiResultsElectionByElectionGuidManualCounts,
+  postApiResultsElectionByElectionGuidManualCounts,
 } from "@/api/gen/configService";
 import type {
   TallyResultDto,
@@ -23,6 +25,8 @@ import type {
   MonitorInfoDto,
   DetailedStatisticsDto,
   CountReconciliationReportDto,
+  AnalyzeCountSummariesDto,
+  AnalyzeCountRowDto,
 } from "../types";
 
 export const resultService = {
@@ -146,5 +150,25 @@ export const resultService = {
       path: { electionGuid },
     });
     return response.data as CountReconciliationReportDto;
+  },
+
+  async getManualCounts(
+    electionGuid: string,
+  ): Promise<AnalyzeCountSummariesDto> {
+    const response = await getApiResultsElectionByElectionGuidManualCounts({
+      path: { electionGuid },
+    });
+    return response.data as AnalyzeCountSummariesDto;
+  },
+
+  async saveManualCounts(
+    electionGuid: string,
+    request: AnalyzeCountRowDto,
+  ): Promise<AnalyzeCountSummariesDto> {
+    const response = await postApiResultsElectionByElectionGuidManualCounts({
+      path: { electionGuid },
+      body: request,
+    });
+    return response.data as AnalyzeCountSummariesDto;
   },
 };

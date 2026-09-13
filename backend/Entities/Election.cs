@@ -78,6 +78,12 @@ public partial class Election
     public bool? MaskVotingMethod { get; set; }
 
     /// <summary>
+    /// v3 ExtraSetting GA. When false (default), guest tellers cannot add people
+    /// from ballot entry. Known/full tellers always can. Used for “Name not in the List”.
+    /// </summary>
+    public bool GuestTellersCanAddPeople { get; set; }
+
+    /// <summary>
     /// When false, this election does not use online voting at all (window dates are ignored).
     /// </summary>
     public bool UseOnlineVoting { get; set; }

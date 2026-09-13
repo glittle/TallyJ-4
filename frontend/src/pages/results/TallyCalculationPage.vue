@@ -8,6 +8,7 @@ import { useRoute, useRouter } from "vue-router";
 import { extractApiErrorMessage } from "@/utils/errorHandler";
 import { translateElectionStageChangeError } from "@/utils/electionStageErrorMessages";
 import { translateTallyProgressMessage } from "@/utils/tallyProgressMessages";
+import AnalyzeManualCountsPanel from "../../components/results/AnalyzeManualCountsPanel.vue";
 import ReconciliationReportPanel from "../../components/results/ReconciliationReportPanel.vue";
 import { useResultStore } from "../../stores/resultStore";
 import { useElectionStore } from "../../stores/electionStore";
@@ -31,6 +32,16 @@ const reconciliationLoading = computed(
   () => resultStore.loading && !resultStore.reconciliation,
 );
 const canAnalyze = computed(() => reconciliation.value?.isReconciled === true);
+const isFinalized = computed(
+  () => election.value?.electionStage === "Finalized",
+);
+const showCalledIn = computed(() => election.value?.useCallInButton === true);
+
+function customMethodName(index: number): string | undefined {
+  const parts = (election.value?.customMethods ?? "").split("|");
+  const name = parts[index]?.trim();
+  return name || undefined;
+}
 
 const electionType = computed<"normal" | "singlename">(() =>
   election.value?.numberToElect === 1 ? "singlename" : "normal",
@@ -126,6 +137,15 @@ function getSectionLabel(section: string) {
         :loading="reconciliationLoading"
       />
 
+      <AnalyzeManualCountsPanel
+        :election-guid="electionGuid"
+        :finalized="isFinalized"
+        :show-called-in="showCalledIn"
+        :custom1-name="customMethodName(0)"
+        :custom2-name="customMethodName(1)"
+        :custom3-name="customMethodName(2)"
+      />
+
       <el-alert
         :title="$t('tally.warning')"
         type="warning"
@@ -138,6 +158,7 @@ function getSectionLabel(section: string) {
       <el-form label-width="150px" label-position="left">
         <el-form-item>
           <el-button
+            data-testid="analyze-calculate"
             type="primary"
             size="large"
             :loading="calculating"

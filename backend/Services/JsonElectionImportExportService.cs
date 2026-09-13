@@ -99,7 +99,8 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 election.EmailSubject,
                 election.CustomMethods,
                 election.VotingMethods,
-                election.Flags
+                election.Flags,
+                election.GuestTellersCanAddPeople
             },
             locations = election.Locations.Select(l => new
             {
@@ -304,6 +305,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 CustomMethods = importData.election.CustomMethods,
                 VotingMethods = importData.election.VotingMethods,
                 Flags = importData.election.Flags,
+                GuestTellersCanAddPeople = importData.election.GuestTellersCanAddPeople,
                 RowVersion = new byte[8]
             };
 

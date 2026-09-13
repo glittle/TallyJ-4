@@ -31,6 +31,8 @@ Online ballots stay voter-initiated. Tellers do not create ballots at the Online
 
 **Reason:** mixed-method elections need the same letters everywhere, and a switch of method must not count two ballots.
 
+#186 names this as “online then votes in person.” Draft or Submitted is withdrawn and the Front Desk method is recorded. Processing refuses (`frontDesk.errors.alreadyProcessingOnline`). Processed refuses (`frontDesk.errors.alreadyAcceptedOnline`). Covered in `Issue186OnlineThenInPersonTests`.
+
 **Rejected alternative:** treat the Not registered radio as enough and skip the named checkbox. Rejected — #171 names the control, and operators combine it with flags on the full list.
 
 ## Roll Call and envelope pages are not v4 product pages

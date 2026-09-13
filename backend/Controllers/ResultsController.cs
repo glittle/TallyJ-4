@@ -287,6 +287,47 @@ public class ResultsController : ControllerBase
     }
 
     /// <summary>
+    /// v3 Analyze count table: calculated, manual override, and final voter counts.
+    /// </summary>
+    [HttpGet("election/{electionGuid:guid}/manual-counts")]
+    public async Task<ActionResult<AnalyzeCountSummariesDto>> GetManualCounts(Guid electionGuid)
+    {
+        try
+        {
+            return Ok(await _tallyService.GetAnalyzeCountSummariesAsync(electionGuid));
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Election {ElectionGuid} not found", electionGuid);
+            return NotFound(new { message = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// v3 SaveManual: persist ResultType M overrides (Eligible Voters / method counts).
+    /// </summary>
+    [HttpPost("election/{electionGuid:guid}/manual-counts")]
+    public async Task<ActionResult<AnalyzeCountSummariesDto>> SaveManualCounts(
+        Guid electionGuid,
+        [FromBody] AnalyzeCountRowDto request)
+    {
+        try
+        {
+            return Ok(await _tallyService.SaveManualCountsAsync(electionGuid, request));
+        }
+        catch (ArgumentException ex)
+        {
+            _logger.LogWarning(ex, "Election {ElectionGuid} not found", electionGuid);
+            return NotFound(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            _logger.LogWarning(ex, "Manual counts refused for election {ElectionGuid}", electionGuid);
+            return BadRequest(new { message = ex.Message });
+        }
+    }
+
+    /// <summary>
     /// Saves tie-breaking vote counts for an election.
     /// </summary>
     /// <param name="electionGuid">The GUID of the election.</param>
