@@ -1080,6 +1080,7 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Null(details.PhoneOnlineVoter.WhenRegistered);
         Assert.Null(details.PhoneOnlineVoter.WhenLastLogin);
         Assert.Null(details.PhoneOnlineVoter.SmsStatus);
+        Assert.Empty(details.PhoneOnlineVoter.RecentSmsLogs);
     }
 
     [Fact]
@@ -1114,6 +1115,7 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Null(details.PhoneOnlineVoter.WhenRegistered);
         Assert.Null(details.PhoneOnlineVoter.WhenLastLogin);
         Assert.Null(details.PhoneOnlineVoter.SmsStatus);
+        Assert.Empty(details.PhoneOnlineVoter.RecentSmsLogs);
     }
 
     [Fact]
@@ -1218,6 +1220,101 @@ public class PeopleServiceTests : ServiceTestBase
         Assert.Null(details.PhoneOnlineVoter.WhenRegistered);
         Assert.Null(details.PhoneOnlineVoter.WhenLastLogin);
         Assert.Null(details.PhoneOnlineVoter.SmsStatus);
+        Assert.Empty(details.PhoneOnlineVoter.RecentSmsLogs);
+    }
+
+    [Fact]
+    public async Task GetPersonDetailsAsync_RecentSmsLogs_ByPhonePlusMinus_NotElectionScoped()
+    {
+        const string storedPhone = "+14168972685";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = storedPhone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = storedPhone,
+            VoterIdType = "P",
+            SmsStatus = "OK"
+        });
+        Context.SmsLogs.AddRange(
+            new SmsLog
+            {
+                SmsSid = "SM-other-phone",
+                Phone = "+14165550100",
+                SentDate = DateTimeOffset.Parse("2026-05-01T12:00:00Z"),
+                LastStatus = "delivered"
+            },
+            new SmsLog
+            {
+                SmsSid = "SM-variant",
+                Phone = "14168972685",
+                SentDate = DateTimeOffset.Parse("2026-05-03T08:00:00Z"),
+                LastDate = DateTimeOffset.Parse("2026-05-03T08:02:00Z"),
+                LastStatus = "undelivered",
+                ErrorCode = 30003,
+                ElectionGuid = Guid.NewGuid(),
+                PersonGuid = Guid.NewGuid()
+            },
+            new SmsLog
+            {
+                SmsSid = "SM-older",
+                Phone = storedPhone,
+                SentDate = DateTimeOffset.Parse("2026-05-02T08:00:00Z"),
+                LastStatus = "sent"
+            });
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.NotNull(details.PhoneOnlineVoter);
+        Assert.Equal(2, details.PhoneOnlineVoter.RecentSmsLogs.Count);
+        Assert.Equal(
+            DateTimeOffset.Parse("2026-05-03T08:00:00Z"),
+            details.PhoneOnlineVoter.RecentSmsLogs[0].SentDate);
+        Assert.Equal("undelivered", details.PhoneOnlineVoter.RecentSmsLogs[0].LastStatus);
+        Assert.Equal(30003, details.PhoneOnlineVoter.RecentSmsLogs[0].ErrorCode);
+        Assert.Equal("sent", details.PhoneOnlineVoter.RecentSmsLogs[1].LastStatus);
+    }
+
+    [Fact]
+    public async Task GetPersonDetailsAsync_RecentSmsLogs_WithoutPRow()
+    {
+        const string phone = "+14168972686";
+        var person = new Person
+        {
+            PersonGuid = Guid.NewGuid(),
+            ElectionGuid = Guid.NewGuid(),
+            LastName = "Smith",
+            FirstName = "Pat",
+            Phone = phone,
+            RowVersion = new byte[8]
+        };
+        Context.People.Add(person);
+        Context.SmsLogs.Add(new SmsLog
+        {
+            SmsSid = "SM-no-prow",
+            Phone = phone,
+            SentDate = DateTimeOffset.Parse("2026-05-04T10:00:00Z"),
+            LastStatus = "queued"
+        });
+        await Context.SaveChangesAsync();
+
+        var details = await _service.GetPersonDetailsAsync(person.PersonGuid);
+
+        Assert.NotNull(details);
+        Assert.NotNull(details.PhoneOnlineVoter);
+        Assert.False(details.PhoneOnlineVoter.HasPhoneRow);
+        var log = Assert.Single(details.PhoneOnlineVoter.RecentSmsLogs);
+        Assert.Equal("queued", log.LastStatus);
+        Assert.Equal(DateTimeOffset.Parse("2026-05-04T10:00:00Z"), log.SentDate);
     }
 
     [Fact]

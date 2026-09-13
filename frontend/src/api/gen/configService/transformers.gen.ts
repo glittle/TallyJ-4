@@ -377,12 +377,25 @@ export const getApiOnlineVotingByElectionGuidByVoterIdVoteStatusResponseTransfor
     return data;
 };
 
+const peoplePersonSmsLogDtoSchemaResponseTransformer = (data: any) => {
+    if (data.sentDate) {
+        data.sentDate = new Date(data.sentDate);
+    }
+    if (data.lastDate) {
+        data.lastDate = new Date(data.lastDate);
+    }
+    return data;
+};
+
 const peoplePersonPhoneOnlineVoterDtoSchemaResponseTransformer = (data: any) => {
     if (data.whenRegistered) {
         data.whenRegistered = new Date(data.whenRegistered);
     }
     if (data.whenLastLogin) {
         data.whenLastLogin = new Date(data.whenLastLogin);
+    }
+    if (data.recentSmsLogs) {
+        data.recentSmsLogs = data.recentSmsLogs.map((item: any) => peoplePersonSmsLogDtoSchemaResponseTransformer(item));
     }
     return data;
 };

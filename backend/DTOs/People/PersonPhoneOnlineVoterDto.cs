@@ -30,4 +30,11 @@ public class PersonPhoneOnlineVoterDto
     /// Null when there is no matching P row.
     /// </summary>
     public string? SmsStatus { get; set; }
+
+    /// <summary>
+    /// Newest <c>SmsLog</c> rows for this Person phone (exact stored string, then
+    /// the +/- variant). Empty when there are no logs. Not election-scoped.
+    /// Shown even when <see cref="HasPhoneRow"/> is false.
+    /// </summary>
+    public List<PersonSmsLogDto> RecentSmsLogs { get; set; } = [];
 }

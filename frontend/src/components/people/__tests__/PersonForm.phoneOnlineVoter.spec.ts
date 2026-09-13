@@ -180,4 +180,55 @@ describe("PersonForm phone OnlineVoter status", () => {
       true,
     );
   });
+
+  it("hides recent SMS when there are no log rows", async () => {
+    mockGetDetails.mockResolvedValue(
+      details({
+        phoneOnlineVoter: {
+          hasPhoneRow: true,
+          whenRegistered: null,
+          whenLastLogin: null,
+          smsStatus: null,
+          recentSmsLogs: [],
+        },
+      }),
+    );
+
+    const wrapper = await mountEditForm();
+
+    expect(wrapper.find(".phone-online-voter__logs").exists()).toBe(false);
+  });
+
+  it("shows recent SMS status, time, and error code", async () => {
+    mockGetDetails.mockResolvedValue(
+      details({
+        phoneOnlineVoter: {
+          hasPhoneRow: false,
+          whenRegistered: null,
+          whenLastLogin: null,
+          smsStatus: null,
+          recentSmsLogs: [
+            {
+              sentDate: "2026-05-03T08:00:00Z",
+              lastDate: "2026-05-03T08:02:00Z",
+              lastStatus: "undelivered",
+              errorCode: 30003,
+            },
+            {
+              sentDate: "2026-05-02T08:00:00Z",
+              lastStatus: null,
+            },
+          ],
+        },
+      }),
+    );
+
+    const wrapper = await mountEditForm();
+    const text = wrapper.find(".phone-online-voter__logs").text();
+
+    expect(text).toContain("Recent SMS");
+    expect(text).toContain("undelivered");
+    expect(text).toContain("Error 30003");
+    expect(text).toContain("Sent");
+  });
 });
