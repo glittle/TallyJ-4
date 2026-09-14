@@ -12,7 +12,9 @@ public class CheckSelectedWhatsAppDto
     public const int MaxSelectedPeople = 100;
 
     /// <summary>
-    /// People to check. Election-scoped on the URL. Duplicates are ignored.
+    /// People to check. Election-scoped on the URL.
+    /// <see cref="MaxSelectedPeople"/> is this list's Count as sent
+    /// (before Distinct). Duplicates are ignored after that bound.
     /// </summary>
     public List<Guid> PersonGuids { get; set; } = [];
 }
