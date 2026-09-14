@@ -44,6 +44,7 @@ Why flat:
 
 - C# deserializes each file as `Dictionary<string, string>` and looks up `"auth.errors.invalidCredentials"` as-is.
 - Vue-i18n wants nested objects, so the frontend runs a `flatToNested()` split-on-`.` before `createI18n`.
+- A key cannot be both a leaf string and a parent prefix. `people.notifyWhatsApp` as a button label plus `people.notifyWhatsApp.textNotSet` as an error makes `flatToNested` throw (`Cannot create property 'textNotSet' on string`). Use a sibling leaf (`people.notifyWhatsAppSend`) or a different parent.
 
 If you store nested JSON (`{ "auth": { "errors": { ... } } }`), the C# localizer will not find keys. If you store only nested Vue files, you have two catalogs again.
 

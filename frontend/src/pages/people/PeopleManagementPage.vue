@@ -30,6 +30,12 @@ import {
   notifyCancelledCount,
   whatsAppNotifyOutcomeLabel,
 } from "@/utils/whatsAppNotify";
+import {
+  filterPeopleList,
+  PEOPLE_LIST_WHATSAPP_FILTER_ALL,
+  PEOPLE_LIST_WHATSAPP_FILTERS,
+  type PeopleListWhatsAppFilter,
+} from "@/utils/peopleListWhatsAppFilter";
 
 const router = useRouter();
 const route = useRoute();
@@ -41,6 +47,9 @@ const deletingAll = ref(false);
 
 const electionGuid = route.params.id as string;
 const searchQuery = ref("");
+const whatsAppFilter = ref<PeopleListWhatsAppFilter>(
+  PEOPLE_LIST_WHATSAPP_FILTER_ALL,
+);
 const showPersonDrawer = ref(false);
 const drawerMode = ref<"add" | "edit">("edit");
 const editingPerson = ref<PersonListDto | null>(null);
@@ -65,17 +74,9 @@ const showNotifyWhatsAppResults = ref(false);
 let notifyWhatsAppToken: string | null = null;
 let notifyPollTimer: number | null = null;
 
-const filteredPeople = computed(() => {
-  if (!searchQuery.value) {
-    return allPeople.value;
-  }
-  const query = searchQuery.value.toLowerCase();
-  return allPeople.value.filter(
-    (p) =>
-      p.fullName?.toLowerCase().includes(query) ||
-      p.email?.toLowerCase().includes(query),
-  );
-});
+const filteredPeople = computed(() =>
+  filterPeopleList(allPeople.value, searchQuery.value, whatsAppFilter.value),
+);
 
 const selectedWithPhone = computed(() =>
   selectedPeopleWithPhone(allPeople.value, selectedGuids.value),
@@ -355,6 +356,19 @@ async function handleDeleteAllPeople() {
                   </el-icon>
                 </template>
               </el-input>
+              <el-select
+                v-model="whatsAppFilter"
+                class="whatsapp-filter"
+                data-testid="people-whatsapp-filter"
+                :aria-label="$t('people.filterWhatsApp')"
+              >
+                <el-option
+                  v-for="option in PEOPLE_LIST_WHATSAPP_FILTERS"
+                  :key="option"
+                  :label="$t(`people.filterWhatsAppOption.${option}`)"
+                  :value="option"
+                />
+              </el-select>
               <el-button type="primary" @click="handleAdd">
                 <el-icon>
                   <Plus />
@@ -392,7 +406,7 @@ async function handleDeleteAllPeople() {
                 @click="handleNotifyWhatsApp"
               >
                 {{
-                  $t("people.notifyWhatsApp", {
+                  $t("people.notifyWhatsAppSend", {
                     count: selectedWithPhone.length,
                   })
                 }}
@@ -564,6 +578,10 @@ async function handleDeleteAllPeople() {
   .header-actions {
     display: flex;
     align-items: center;
+  }
+
+  .whatsapp-filter {
+    width: 180px;
   }
 
   .selected-count {

@@ -33,13 +33,24 @@ function flatToNested(flat: any): any {
 
     for (let i = 0; i < keys.length - 1; i++) {
       const k = keys[i]!;
-      if (!current[k]) {
+      if (current[k] == null) {
         current[k] = {};
+      } else if (typeof current[k] !== "object") {
+        const parent = keys.slice(0, i + 1).join(".");
+        throw new Error(
+          `i18n key conflict: "${parent}" is a string and cannot have child "${key}"`,
+        );
       }
       current = current[k];
     }
 
-    current[keys.at(-1)!] = flat[key];
+    const last = keys.at(-1)!;
+    if (current[last] && typeof current[last] === "object") {
+      throw new Error(
+        `i18n key conflict: "${key}" is a string but already has nested keys`,
+      );
+    }
+    current[last] = flat[key];
   }
 
   return result;
