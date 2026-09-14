@@ -177,7 +177,9 @@ describe("phoneWhatsAppListHint", () => {
 
   it("is imported when a P row exists and has not been used for auth", () => {
     expect(
-      phoneWhatsAppListHint(status({ hasPhoneRow: true, whenRegistered: null })),
+      phoneWhatsAppListHint(
+        status({ hasPhoneRow: true, whenRegistered: null }),
+      ),
     ).toBe("imported");
   });
 

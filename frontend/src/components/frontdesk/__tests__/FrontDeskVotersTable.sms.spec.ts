@@ -191,7 +191,9 @@ describe("FrontDeskVotersTable SMS column", () => {
         },
       }),
     );
-    expect(wrapper.find(".cell-sms").text()).toBe("people.phoneOnlineVoter.smsOk");
+    expect(wrapper.find(".cell-sms").text()).toBe(
+      "people.phoneOnlineVoter.smsOk",
+    );
   });
 });
 
