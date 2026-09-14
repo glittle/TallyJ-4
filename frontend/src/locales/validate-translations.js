@@ -81,6 +81,27 @@ function getValue(obj, path) {
   return path.split(".").reduce((current, key) => current?.[key], obj);
 }
 
+function checkPrefixCollisions(keys, filePath) {
+  const errors = [];
+  const sorted = [...new Set(keys)].sort();
+
+  for (let i = 0; i < sorted.length; i++) {
+    const prefix = `${sorted[i]}.`;
+    for (let j = i + 1; j < sorted.length && sorted[j].startsWith(prefix); j++) {
+      errors.push(
+        new ValidationError(
+          "PREFIX_COLLISION",
+          `Key "${sorted[i]}" in ${filePath} is both a leaf string and a parent of "${sorted[j]}". Rename one of them — flatToNested cannot nest a child under a string.`,
+          { filePath, key: sorted[i], child: sorted[j] },
+        ),
+      );
+      break;
+    }
+  }
+
+  return errors;
+}
+
 function checkDuplicateKeys(keys, filePath) {
   const errors = [];
   const seen = new Map();
@@ -193,6 +214,39 @@ function checkDuplicateKeysInLocale(localeFiles) {
   return errors;
 }
 
+function checkPrefixCollisionsInLocale(localeFiles) {
+  const errors = [];
+
+  for (const [locale, _fileList] of localeFiles.entries()) {
+    if (locale === "bundled") {
+      continue;
+    }
+    const keyMap = getAllKeysInLocale(localeFiles, locale);
+    const keys = [...keyMap.keys()];
+    const sorted = [...new Set(keys)].sort();
+
+    for (let i = 0; i < sorted.length; i++) {
+      const prefix = `${sorted[i]}.`;
+      for (
+        let j = i + 1;
+        j < sorted.length && sorted[j].startsWith(prefix);
+        j++
+      ) {
+        errors.push(
+          new ValidationError(
+            "PREFIX_COLLISION",
+            `Key "${sorted[i]}" in locale "${locale}" is both a leaf string and a parent of "${sorted[j]}". Rename one of them — flatToNested cannot nest a child under a string.`,
+            { locale, key: sorted[i], child: sorted[j] },
+          ),
+        );
+        break;
+      }
+    }
+  }
+
+  return errors;
+}
+
 function checkKeyConsistency(localeFiles) {
   const errors = [];
   const locales = Array.from(localeFiles.keys());
@@ -250,6 +304,7 @@ function validateRootFiles(rootFiles) {
     const isConfigFile = file === "common.json" || file === "shared.json";
 
     errors.push(...checkDuplicateKeys(keys, file));
+    errors.push(...checkPrefixCollisions(keys, file));
     errors.push(...checkEmptyValues(data, file, !isConfigFile));
   }
 
@@ -270,6 +325,7 @@ function validateLocaleFiles(localeFiles) {
   }
 
   errors.push(...checkDuplicateKeysInLocale(localeFiles));
+  errors.push(...checkPrefixCollisionsInLocale(localeFiles));
   errors.push(...checkKeyConsistency(localeFiles));
 
   return errors;

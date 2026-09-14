@@ -406,7 +406,7 @@ async function handleDeleteAllPeople() {
                 @click="handleNotifyWhatsApp"
               >
                 {{
-                  $t("people.notifyWhatsApp", {
+                  $t("people.notifyWhatsAppSend", {
                     count: selectedWithPhone.length,
                   })
                 }}

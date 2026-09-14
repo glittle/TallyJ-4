@@ -235,7 +235,7 @@
   "people.checkWhatsAppSelectedOutcome.skipped-non-p": "Skipped (not a phone row)",
   "people.checkWhatsAppSelectedOutcome.skipped-other-election": "Skipped (not in this election)",
   "people.checkWhatsAppSelectedOutcome.cancelled": "Cancelled",
-  "people.notifyWhatsApp": "Send WhatsApp ({count})",
+  "people.notifyWhatsAppSend": "Send WhatsApp ({count})",
   "people.notifyWhatsAppNone": "Select people to send WhatsApp to known-OK numbers.",
   "people.notifyWhatsAppAbort": "Stop sending",
   "people.notifyWhatsAppResults": "WhatsApp notify results",

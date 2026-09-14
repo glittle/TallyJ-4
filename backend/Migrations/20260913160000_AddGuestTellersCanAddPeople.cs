@@ -1,9 +1,13 @@
+using Backend.Context;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Backend.Migrations
 {
+    [DbContext(typeof(MainDbContext))]
+    [Migration("20260913160000_AddGuestTellersCanAddPeople")]
     /// <inheritdoc />
     public partial class AddGuestTellersCanAddPeople : Migration
     {

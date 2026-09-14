@@ -19,13 +19,24 @@ function flatToNested(flat: Record<string, string>): Record<string, unknown> {
 
     for (let i = 0; i < parts.length - 1; i++) {
       const part = parts[i]!;
-      if (!current[part] || typeof current[part] !== "object") {
+      if (current[part] == null) {
         current[part] = {};
+      } else if (typeof current[part] !== "object") {
+        const parent = parts.slice(0, i + 1).join(".");
+        throw new Error(
+          `i18n key conflict: "${parent}" is a string and cannot have child "${key}"`,
+        );
       }
       current = current[part] as Record<string, unknown>;
     }
 
-    current[parts.at(-1)!] = value;
+    const last = parts.at(-1)!;
+    if (current[last] && typeof current[last] === "object") {
+      throw new Error(
+        `i18n key conflict: "${key}" is a string but already has nested keys`,
+      );
+    }
+    current[last] = value;
   }
 
   return result;
