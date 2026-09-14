@@ -278,7 +278,7 @@ Batch lookup is `FindPhoneOnlineVotersAsync` (P rows only) so Front Desk / peopl
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #255 (maintainer); provider comment that v4 stays on GreenAPI  
-**Revisit when:** notify “Has WhatsApp” filter
+**Revisit when:** optional rename of `PersonPhoneSmsHintDto`, or SignalR #229
 
 WhatsApp stays one voter-facing channel. Backend stays on **GreenAPI** (`checkWhatsapp` + existing `sendMessage`). Meta Cloud API and Twilio WhatsApp are out. Presence is stored on **OnlineVoter**, not Person: `WhatsAppStatus` `string?` max 50, non-unicode (`varchar(50)`).
 
@@ -309,13 +309,13 @@ Person detail shows unchecked / OK / reason from the P-row lookup, same pattern 
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #255 leftover after #339; this slice’s check-selected contract  
-**Revisit when:** notify “Has WhatsApp” filter
+**Revisit when:** optional rename of `PersonPhoneSmsHintDto`, or SignalR #229
 
 `CheckMultipleWhatsAppAsync` checks a **selected** list of person GUIDs in **one election**. Same teller `[Authorize]` as other People writes. Same P-row gate as one-phone check: persist only when `VoterId == Person.Phone` and `VoterIdType == "P"`. A non-P occupant is skipped, not converted. No phone is skipped. A GUID that is not in that election is ignored (`skipped-other-election`). GreenAPI is still `IGreenApiWhatsAppClient.CheckWhatsAppAsync` (production POSTs; tests mock). When GreenAPI is not configured, nothing is persisted.
 
 The request is bounded (`MaxSelectedPeople` = 100) on the **raw** person-GUID list as sent (before Distinct) so one call cannot check an entire imported roll. Provider calls are sequential with a 200–400 ms pause between them so a selected list of ~20 does not burst GreenAPI. If the request abort token fires, the service stops remaining checks and can return what finished plus `cancelled` for the rest — when the HTTP response is still read. This is **not** the head-teller notify send queue.
 
-The People list (same `PeopleTable`, not a second grid) has row selection and **Check WhatsApp** for the current selection. Per-row / summary outcomes: OK / no-wa / failed / skipped. **Cancel** aborts the fetch; the client gets AbortError and never reads `result.cancelled`. That AbortError path is toast + refresh + clear selection (same clear as success). Notify send/abort is a separate People list action (third slice). List / Front Desk WhatsApp columns landed in the fourth slice. No notify “Has WhatsApp” filter.
+The People list (same `PeopleTable`, not a second grid) has row selection and **Check WhatsApp** for the current selection. Per-row / summary outcomes: OK / no-wa / failed / skipped. **Cancel** aborts the fetch; the client gets AbortError and never reads `result.cancelled`. That AbortError path is toast + refresh + clear selection (same clear as success). Notify send/abort is a separate People list action (third slice). List / Front Desk WhatsApp columns landed in the fourth slice. The notify “Has WhatsApp” filter is the fifth slice.
 
 Selected people are checked even if they already have a status — the teller chose this set. v3 skipped already-checked numbers; that is left for a later filter if notify needs “unchecked only.”
 
@@ -325,14 +325,14 @@ Selected people are checked even if they already have a status — the teller ch
 
 **Rejected alternative:** a dedicated abort-queue endpoint (v3 notify abort). Rejected for this slice — cancel is the HTTP request token only. The People list Cancel button therefore completes as fetch AbortError, not by reading the cancelled DTO.
 
-**Not in this slice (at the time):** head-teller notify send + jitter + abort queue (now landed; see below), Front Desk / people-list WhatsApp column (now landed; see fourth slice), notify “Has WhatsApp” filter, SignalR #229, #254 SMS leftovers. #255 stays open.
+**Not in this slice (at the time):** head-teller notify send + jitter + abort queue (now landed; see below), Front Desk / people-list WhatsApp column (now landed; see fourth slice), notify “Has WhatsApp” filter (now landed; see fifth slice), SignalR #229, #254 SMS leftovers.
 
 ## Head-teller WhatsApp notify queue (third slice of #255)
 
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #255 leftover after #340; v3 `SendHeadTellerMessage` / `AbortQueue`; this slice’s send rule  
-**Revisit when:** notify “Has WhatsApp” filter
+**Revisit when:** optional rename of `PersonPhoneSmsHintDto`, or SignalR #229
 
 v4 has no Setup/Notify page and no email/SMS head-teller blast. The existing People list (same `PeopleTable` as check-selected) is the notify surface — do not invent a second notify page. Message body is the election’s existing `SmsText` (edited on Configure this Election), with v3 placeholders `{PersonName}`, `{FirstName}`, `{VoterContact}`, `{hostSite}`.
 
@@ -348,28 +348,53 @@ No live SignalR progress (#229). The UI polls a per-run summary (sent / skipped 
 
 **Rejected alternative:** treat `SmsStatus` as the WhatsApp allow rule. Rejected — the fields stay independent.
 
-**Not in this slice (at the time):** Front Desk / people-list WhatsApp column (now landed; see below), notify “Has WhatsApp” filter, email/SMS blast, SignalR #229, #254 SMS leftovers. #255 stays open.
+**Not in this slice (at the time):** Front Desk / people-list WhatsApp column (now landed; see below), notify “Has WhatsApp” filter (now landed; see fifth slice), email/SMS blast, SignalR #229, #254 SMS leftovers.
 
 ## Front Desk / people list WhatsApp hint (fourth slice of #255)
 
 **Status:** active  
 **Evidence:** confirmed (P-row contract and batch lookup from the SMS list hint); inferred (compact WhatsApp vocabulary matches person detail)  
 **Source:** issue #255 leftover after #341; SMS list-hint contract from the tenth #254 slice  
-**Revisit when:** notify UI “Has WhatsApp” filter
+**Revisit when:** optional rename of `PersonPhoneSmsHintDto`, or SignalR #229
 
 People list (`PersonListDto.PhoneOnlineVoter`) and Front Desk (`FrontDeskVoterDto.PhoneOnlineVoter`) show a compact WhatsApp column on the **same** `PeopleTable` / Front Desk voters table as the SMS column. Same P-row contract: `VoterId == Person.Phone` and `VoterIdType == "P"`. A non-P occupant of that `VoterId` is never seen (`HasPhoneRow` false; that row’s `WhatsAppStatus` is not shown). No phone → `PhoneOnlineVoter` is null and the cell is empty / a dash. Front Desk still does not expose the raw phone.
 
 `PersonPhoneSmsHintDto.WhatsAppStatus` rides the existing `FindPhoneOnlineVotersAsync` / `ToListHint` batch so SMS and WhatsApp do not N+1. The fields stay independent: a number can be SMS `OK` and WhatsApp `no-wa`.
 
-Compact WhatsApp cell: reason (`no-wa`, `check-failed`, other short code) / OK / never-seen / imported / unchecked (registered, `WhatsAppStatus` still null). Check WhatsApp / Send WhatsApp stay on People (already shipped). No notify “Has WhatsApp” filter in this slice.
+Compact WhatsApp cell: reason (`no-wa`, `check-failed`, other short code) / OK / never-seen / imported / unchecked (registered, `WhatsAppStatus` still null). Check WhatsApp / Send WhatsApp stay on People (already shipped). The notify “Has WhatsApp” filter is the fifth slice.
 
 **Rejected alternative:** a second people or Front Desk grid for WhatsApp. Rejected — the leftover is a column on the existing tables.
 
 **Rejected alternative:** look up by `VoterId` only. Same reason as SMS / person detail.
 
-**Rejected alternative:** a Has WhatsApp notify filter in this slice. Rejected — that is the next leftover after the column.
+**Rejected alternative:** a Has WhatsApp notify filter in this slice. Rejected — that is the next leftover after the column (fifth slice).
 
-**Not in this slice:** notify “Has WhatsApp” filter, SignalR #229, #254 SMS leftovers. #342 Cancel/AbortError is on main. #255 stays open.
+**Not in this slice:** notify “Has WhatsApp” filter (now landed; see fifth slice), SignalR #229, #254 SMS leftovers. #342 Cancel/AbortError is on main.
+
+## Notify People list “Has WhatsApp” filter (fifth slice of #255)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #255 leftover after #343; v3 Notify “Has WhatsApp” filter; this slice’s list-hint rule  
+**Revisit when:** optional rename of `PersonPhoneSmsHintDto`, or SignalR #229
+
+v4 still has no Setup/Notify page. The leftover filter lives on the existing People list (`PeopleManagementPage` + `PeopleTable`) next to the name search — an `el-select` like Dashboard status/type, not a second notify grid and not a Front Desk filter.
+
+Has WhatsApp is the required option: P-row `WhatsAppStatus == "OK"`, same compact list hint as the WhatsApp column (`phoneWhatsAppListHint === "ok"`). Unchecked (P-row, null status — imported or registered-unchecked hints) and No WhatsApp (`no-wa`) fit that same select. Other reasons (`check-failed`, …) stay visible on All. Default selected value is All so opening People Management still shows the roll.
+
+Identifier gate is unchanged: `VoterId == Person.Phone` and `VoterIdType == "P"`. Non-P (`hasPhoneRow` false) and no-phone are not Has WhatsApp. `SmsStatus` and the SMS column are unused by this filter.
+
+Selection, Check WhatsApp, and Send WhatsApp still use the current `selectedGuids`. The filter only changes which rows are visible. Send still only queues `WhatsAppStatus == "OK"` P-row phones.
+
+**Rejected alternative:** a second notify grid or v3 `Notify.cshtml` page. Rejected — #340–#343 already put check/send/column on this list.
+
+**Rejected alternative:** default the list to Has WhatsApp. Rejected — People Management is also the roll editor; hiding everyone without a known-OK number on first open would surprise tellers. The leftover needed the Has WhatsApp option, not that default.
+
+**Rejected alternative:** a Front Desk Has WhatsApp filter. Rejected — this leftover is the notify / People list filter.
+
+**Rejected alternative:** change send rules so the filter selects who can be sent. Rejected — send already skips non-OK; the filter is only for finding known-yes numbers.
+
+**Not in this slice:** SignalR #229, optional rename of `PersonPhoneSmsHintDto`, live GreenAPI, Front Desk filter, email/SMS blast.
 
 ## Related
 
