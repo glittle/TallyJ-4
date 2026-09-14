@@ -177,9 +177,11 @@ public static class OnlineVoterPhoneHelper
     }
 
     /// <summary>
-    /// Compact list/Front Desk hint. Null when there is no phone (UI hides the cell).
-    /// A missing or non-P <paramref name="phoneRow"/> is never seen
-    /// (<see cref="PersonPhoneSmsHintDto.HasPhoneRow"/> false; status/dates unset).
+    /// Compact list/Front Desk hint (SMS + WhatsApp). Null when there is no phone
+    /// (UI hides both cells). A missing or non-P <paramref name="phoneRow"/> is
+    /// never seen (<see cref="PersonPhoneSmsHintDto.HasPhoneRow"/> false;
+    /// <see cref="PersonPhoneSmsHintDto.SmsStatus"/> and
+    /// <see cref="PersonPhoneSmsHintDto.WhatsAppStatus"/> unset).
     /// </summary>
     public static PersonPhoneSmsHintDto? ToListHint(string? phone, OnlineVoter? phoneRow)
     {
@@ -197,7 +199,8 @@ public static class OnlineVoterPhoneHelper
         {
             HasPhoneRow = true,
             WhenRegistered = phoneRow.WhenRegistered,
-            SmsStatus = phoneRow.SmsStatus
+            SmsStatus = phoneRow.SmsStatus,
+            WhatsAppStatus = phoneRow.WhatsAppStatus
         };
     }
 

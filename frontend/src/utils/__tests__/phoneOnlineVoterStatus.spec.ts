@@ -6,6 +6,8 @@ import {
   phoneOnlineVoterWhatsAppState,
   phoneSmsListHint,
   phoneSmsListLabel,
+  phoneWhatsAppListHint,
+  phoneWhatsAppListLabel,
 } from "../phoneOnlineVoterStatus";
 
 function status(
@@ -134,5 +136,124 @@ describe("phoneSmsListHint", () => {
         (key) => key,
       ),
     ).toBe("people.phoneOnlineVoter.neverSeen");
+  });
+
+  it("stays on SmsStatus when WhatsAppStatus is a different reason", () => {
+    expect(
+      phoneSmsListHint(
+        status({
+          hasPhoneRow: true,
+          whenRegistered: null,
+          smsStatus: "OK",
+          whatsAppStatus: "no-wa",
+        }),
+      ),
+    ).toBe("ok");
+    expect(
+      phoneSmsListLabel(
+        status({
+          hasPhoneRow: true,
+          whenRegistered: null,
+          smsStatus: "landline",
+          whatsAppStatus: "OK",
+        }),
+        (key) => key,
+      ),
+    ).toBe("people.phoneOnlineVoter.smsBlocked");
+  });
+});
+
+describe("phoneWhatsAppListHint", () => {
+  it("is none when there is no phone block", () => {
+    expect(phoneWhatsAppListHint(null)).toBe("none");
+    expect(phoneWhatsAppListHint(undefined)).toBe("none");
+  });
+
+  it("is neverSeen when a phone has no matching P row", () => {
+    expect(phoneWhatsAppListHint(status({ hasPhoneRow: false }))).toBe(
+      "neverSeen",
+    );
+  });
+
+  it("is imported when a P row exists and has not been used for auth", () => {
+    expect(
+      phoneWhatsAppListHint(
+        status({ hasPhoneRow: true, whenRegistered: null }),
+      ),
+    ).toBe("imported");
+  });
+
+  it("is unchecked when registered but WhatsAppStatus is still null", () => {
+    expect(
+      phoneWhatsAppListHint(
+        status({
+          hasPhoneRow: true,
+          whenRegistered: "2026-04-01T12:00:00Z",
+          whatsAppStatus: null,
+        }),
+      ),
+    ).toBe("unchecked");
+  });
+
+  it("is ok or reason from WhatsAppStatus even when the row is imported-only", () => {
+    expect(
+      phoneWhatsAppListHint(
+        status({
+          hasPhoneRow: true,
+          whenRegistered: null,
+          whatsAppStatus: "OK",
+        }),
+      ),
+    ).toBe("ok");
+    expect(
+      phoneWhatsAppListHint(
+        status({
+          hasPhoneRow: true,
+          whenRegistered: null,
+          whatsAppStatus: "no-wa",
+        }),
+      ),
+    ).toBe("blocked");
+    expect(
+      phoneWhatsAppListLabel(
+        status({
+          hasPhoneRow: true,
+          whenRegistered: null,
+          whatsAppStatus: "check-failed",
+        }),
+        (key, params) => `${key}:${params?.reason ?? ""}`,
+      ),
+    ).toBe("people.phoneOnlineVoter.whatsAppReason:check-failed");
+  });
+
+  it("does not treat a missing P row as the occupant's WhatsApp status", () => {
+    expect(
+      phoneWhatsAppListHint(
+        status({
+          hasPhoneRow: false,
+          whatsAppStatus: null,
+          whenRegistered: null,
+        }),
+      ),
+    ).toBe("neverSeen");
+    expect(
+      phoneWhatsAppListLabel(
+        status({ hasPhoneRow: false, whatsAppStatus: null }),
+        (key) => key,
+      ),
+    ).toBe("people.phoneOnlineVoter.neverSeen");
+  });
+
+  it("does not follow SmsStatus when WhatsAppStatus is unset", () => {
+    expect(
+      phoneWhatsAppListHint(
+        status({
+          hasPhoneRow: true,
+          whenRegistered: null,
+          smsStatus: "OK",
+          whatsAppStatus: null,
+        }),
+      ),
+    ).toBe("imported");
   });
 });

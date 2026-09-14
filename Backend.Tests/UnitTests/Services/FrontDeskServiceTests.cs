@@ -67,7 +67,8 @@ public class FrontDeskServiceTests : ServiceTestBase
         {
             VoterId = person.Phone!,
             VoterIdType = "P",
-            SmsStatus = "OK"
+            SmsStatus = "OK",
+            WhatsAppStatus = "no-wa"
         });
         await Context.SaveChangesAsync();
 
@@ -81,6 +82,7 @@ public class FrontDeskServiceTests : ServiceTestBase
         Assert.NotNull(result.PhoneOnlineVoter);
         Assert.True(result.PhoneOnlineVoter.HasPhoneRow);
         Assert.Equal("OK", result.PhoneOnlineVoter.SmsStatus);
+        Assert.Equal("no-wa", result.PhoneOnlineVoter.WhatsAppStatus);
     }
 
     [Fact]
@@ -243,9 +245,27 @@ public class FrontDeskServiceTests : ServiceTestBase
 
         Context.OnlineVoters.AddRange(
             new OnlineVoter { VoterId = imported.Phone!, VoterIdType = "P", SmsStatus = null },
-            new OnlineVoter { VoterId = ok.Phone!, VoterIdType = "P", SmsStatus = "OK" },
-            new OnlineVoter { VoterId = blocked.Phone!, VoterIdType = "P", SmsStatus = "undeliverable" },
-            new OnlineVoter { VoterId = nonP.Phone!, VoterIdType = "E", SmsStatus = "admin" });
+            new OnlineVoter
+            {
+                VoterId = ok.Phone!,
+                VoterIdType = "P",
+                SmsStatus = "OK",
+                WhatsAppStatus = "OK"
+            },
+            new OnlineVoter
+            {
+                VoterId = blocked.Phone!,
+                VoterIdType = "P",
+                SmsStatus = "undeliverable",
+                WhatsAppStatus = "check-failed"
+            },
+            new OnlineVoter
+            {
+                VoterId = nonP.Phone!,
+                VoterIdType = "E",
+                SmsStatus = "admin",
+                WhatsAppStatus = "OK"
+            });
         await Context.SaveChangesAsync();
 
         var voters = await _service.GetEligibleVotersAsync(_electionGuid);
@@ -256,22 +276,30 @@ public class FrontDeskServiceTests : ServiceTestBase
         Assert.NotNull(neverSeenHint);
         Assert.False(neverSeenHint.HasPhoneRow);
         Assert.Null(neverSeenHint.SmsStatus);
+        Assert.Null(neverSeenHint.WhatsAppStatus);
 
         var importedHint = voters.Single(v => v.PersonGuid == imported.PersonGuid).PhoneOnlineVoter;
         Assert.NotNull(importedHint);
         Assert.True(importedHint.HasPhoneRow);
         Assert.Null(importedHint.WhenRegistered);
         Assert.Null(importedHint.SmsStatus);
+        Assert.Null(importedHint.WhatsAppStatus);
 
-        Assert.Equal("OK", voters.Single(v => v.PersonGuid == ok.PersonGuid).PhoneOnlineVoter?.SmsStatus);
+        var okHint = voters.Single(v => v.PersonGuid == ok.PersonGuid).PhoneOnlineVoter;
+        Assert.Equal("OK", okHint?.SmsStatus);
+        Assert.Equal("OK", okHint?.WhatsAppStatus);
         Assert.Equal(
             "undeliverable",
             voters.Single(v => v.PersonGuid == blocked.PersonGuid).PhoneOnlineVoter?.SmsStatus);
+        Assert.Equal(
+            "check-failed",
+            voters.Single(v => v.PersonGuid == blocked.PersonGuid).PhoneOnlineVoter?.WhatsAppStatus);
 
         var nonPHint = voters.Single(v => v.PersonGuid == nonP.PersonGuid).PhoneOnlineVoter;
         Assert.NotNull(nonPHint);
         Assert.False(nonPHint.HasPhoneRow);
         Assert.Null(nonPHint.SmsStatus);
+        Assert.Null(nonPHint.WhatsAppStatus);
     }
 
     [Fact]

@@ -158,6 +158,47 @@ describe("PeopleTable", () => {
 
     expect(wrapper.text()).not.toContain("people.phoneOnlineVoter.neverSeen");
     expect(wrapper.text()).not.toContain("people.phoneOnlineVoter.smsOk");
+    expect(wrapper.text()).not.toContain("people.phoneOnlineVoter.whatsAppOk");
+  });
+
+  it("renders a compact WhatsApp hint independently of SMS", () => {
+    const withPhone: PersonListDto = {
+      ...samplePerson,
+      phoneOnlineVoter: {
+        hasPhoneRow: true,
+        whenRegistered: null,
+        smsStatus: "OK",
+        whatsAppStatus: "no-wa",
+      },
+    };
+    const wrapper = mount(PeopleTable, {
+      props: {
+        people: [withPhone],
+        loading: false,
+        tableHeight: 400,
+        selectedGuids: [],
+      },
+      global: {
+        components: {
+          ElButton,
+          ElCheckbox: { template: "<span class='cb' />" },
+          ElTag: { template: "<span><slot /></span>" },
+        },
+        directives: { loading: () => undefined },
+        stubs: {
+          ElAutoResizer: AutoResizerStub,
+          ElTableV2: TableStub,
+          ElIcon: { template: "<span />" },
+          ElTag: {
+            props: ["type", "size"],
+            template: '<span class="hint-tag"><slot /></span>',
+          },
+        },
+      },
+    });
+
+    expect(wrapper.text()).toContain("people.phoneOnlineVoter.smsOk");
+    expect(wrapper.text()).toContain("people.phoneOnlineVoter.whatsAppReason");
   });
 
   it("emits selected person guids from the existing people table", async () => {

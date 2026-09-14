@@ -10,6 +10,9 @@ import {
   phoneSmsListHint,
   phoneSmsListLabel,
   phoneSmsListTagType,
+  phoneWhatsAppListHint,
+  phoneWhatsAppListLabel,
+  phoneWhatsAppListTagType,
 } from "@/utils/phoneOnlineVoterStatus";
 import {
   ElAutoResizer,
@@ -36,6 +39,7 @@ const props = defineProps<{
     fullName: number;
     method: number;
     sms: number;
+    whatsApp: number;
     bahaiId: number;
     area: number;
     flags: number;
@@ -197,6 +201,26 @@ const columns = computed<Column<FrontDeskVoterDto>[]>(() => {
             class: `front-desk-sms-tag front-desk-sms-tag--${hint}`,
           },
           () => phoneSmsListLabel(rowData.phoneOnlineVoter, t),
+        );
+      },
+    },
+    {
+      key: "whatsApp",
+      title: t("frontDesk.table.whatsApp"),
+      width: widths.whatsApp,
+      cellRenderer: ({ rowData }) => {
+        const hint = phoneWhatsAppListHint(rowData.phoneOnlineVoter);
+        if (hint === "none") {
+          return h("span", t("frontDesk.common.dash"));
+        }
+        return h(
+          ElTag,
+          {
+            size: "small",
+            type: phoneWhatsAppListTagType(hint),
+            class: `front-desk-whatsapp-tag front-desk-whatsapp-tag--${hint}`,
+          },
+          () => phoneWhatsAppListLabel(rowData.phoneOnlineVoter, t),
         );
       },
     },

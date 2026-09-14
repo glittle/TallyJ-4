@@ -16,6 +16,9 @@ import {
   phoneSmsListHint,
   phoneSmsListLabel,
   phoneSmsListTagType,
+  phoneWhatsAppListHint,
+  phoneWhatsAppListLabel,
+  phoneWhatsAppListTagType,
 } from "@/utils/phoneOnlineVoterStatus";
 
 const { t } = useI18n();
@@ -156,6 +159,26 @@ const columns = computed<Column<any>[]>(() => [
           class: `people-table__sms people-table__sms--${hint}`,
         },
         { default: () => phoneSmsListLabel(rowData.phoneOnlineVoter, t) },
+      );
+    },
+  },
+  {
+    key: "whatsApp",
+    title: t("people.phoneOnlineVoter.whatsAppColumn"),
+    width: 140,
+    cellRenderer: ({ rowData }: { rowData: PersonListDto }) => {
+      const hint = phoneWhatsAppListHint(rowData.phoneOnlineVoter);
+      if (hint === "none") {
+        return h("span", {}, "");
+      }
+      return h(
+        ElTag,
+        {
+          size: "small",
+          type: phoneWhatsAppListTagType(hint),
+          class: `people-table__whatsapp people-table__whatsapp--${hint}`,
+        },
+        { default: () => phoneWhatsAppListLabel(rowData.phoneOnlineVoter, t) },
       );
     },
   },

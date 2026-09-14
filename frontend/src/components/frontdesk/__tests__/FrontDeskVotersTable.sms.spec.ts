@@ -70,6 +70,7 @@ const columnWidths = {
   fullName: 220,
   method: 150,
   sms: 88,
+  whatsApp: 88,
   bahaiId: 110,
   area: 160,
   flags: 0,
@@ -177,5 +178,101 @@ describe("FrontDeskVotersTable SMS column", () => {
   it("shows a dash when the person has no phone", () => {
     const wrapper = mountTable(voter({ phoneOnlineVoter: null }));
     expect(wrapper.find(".cell-sms").text()).toBe("frontDesk.common.dash");
+  });
+
+  it("does not change the SMS cell when WhatsAppStatus is a different reason", () => {
+    const wrapper = mountTable(
+      voter({
+        phoneOnlineVoter: {
+          hasPhoneRow: true,
+          whenRegistered: null,
+          smsStatus: "OK",
+          whatsAppStatus: "no-wa",
+        },
+      }),
+    );
+    expect(wrapper.find(".cell-sms").text()).toBe(
+      "people.phoneOnlineVoter.smsOk",
+    );
+  });
+});
+
+describe("FrontDeskVotersTable WhatsApp column", () => {
+  it("shows never-seen / imported / OK / reason for people with a phone", () => {
+    const noWa = mountTable(
+      voter({
+        phoneOnlineVoter: {
+          hasPhoneRow: true,
+          whenRegistered: null,
+          smsStatus: "OK",
+          whatsAppStatus: "no-wa",
+        },
+      }),
+    );
+    expect(noWa.find(".cell-whatsApp").text()).toBe(
+      "people.phoneOnlineVoter.whatsAppReason",
+    );
+    expect(noWa.find(".cell-sms").text()).toBe("people.phoneOnlineVoter.smsOk");
+
+    const ok = mountTable(
+      voter({
+        phoneOnlineVoter: {
+          hasPhoneRow: true,
+          whenRegistered: "2026-04-01T12:00:00Z",
+          whatsAppStatus: "OK",
+        },
+      }),
+    );
+    expect(ok.find(".cell-whatsApp").text()).toBe(
+      "people.phoneOnlineVoter.whatsAppOk",
+    );
+
+    const imported = mountTable(
+      voter({
+        phoneOnlineVoter: {
+          hasPhoneRow: true,
+          whenRegistered: null,
+          whatsAppStatus: null,
+        },
+      }),
+    );
+    expect(imported.find(".cell-whatsApp").text()).toBe(
+      "people.phoneOnlineVoter.imported",
+    );
+
+    const neverSeen = mountTable(
+      voter({
+        phoneOnlineVoter: {
+          hasPhoneRow: false,
+          whatsAppStatus: null,
+        },
+      }),
+    );
+    expect(neverSeen.find(".cell-whatsApp").text()).toBe(
+      "people.phoneOnlineVoter.neverSeen",
+    );
+  });
+
+  it("does not show another identifier's WhatsApp status when the backend reports no P row", () => {
+    const wrapper = mountTable(
+      voter({
+        phoneOnlineVoter: {
+          hasPhoneRow: false,
+          whenRegistered: null,
+          whatsAppStatus: null,
+        },
+      }),
+    );
+
+    expect(wrapper.find(".cell-whatsApp").text()).toBe(
+      "people.phoneOnlineVoter.neverSeen",
+    );
+    expect(wrapper.find(".cell-whatsApp").text()).not.toContain("OK");
+    expect(wrapper.text()).not.toMatch(/\+\d/);
+  });
+
+  it("shows a dash when the person has no phone", () => {
+    const wrapper = mountTable(voter({ phoneOnlineVoter: null }));
+    expect(wrapper.find(".cell-whatsApp").text()).toBe("frontDesk.common.dash");
   });
 });

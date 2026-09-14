@@ -12040,6 +12040,10 @@
           "smsStatus": {
             "type": "string",
             "nullable": true
+          },
+          "whatsAppStatus": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

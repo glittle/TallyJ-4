@@ -10,7 +10,7 @@ export type PhoneOnlineVoterSmsState = "unchecked" | "ok" | "blocked";
 /** Same vocabulary as SMS: null / OK / other short reason. */
 export type PhoneOnlineVoterWhatsAppState = PhoneOnlineVoterSmsState;
 
-/** Compact list/Front Desk cell: SMS first, then never-seen / imported / unchecked. */
+/** Compact list/Front Desk cell: channel status first, then never-seen / imported / unchecked. */
 export type PhoneSmsListHint =
   | "none"
   | "neverSeen"
@@ -18,6 +18,9 @@ export type PhoneSmsListHint =
   | "unchecked"
   | "ok"
   | "blocked";
+
+/** Same compact states as SMS; reason codes use the stored WhatsAppStatus string. */
+export type PhoneWhatsAppListHint = PhoneSmsListHint;
 
 /** P row missing → never seen; P row with null WhenRegistered → not yet used for auth. */
 export function phoneOnlineVoterAuthState(
@@ -53,20 +56,21 @@ export function phoneOnlineVoterWhatsAppState(
 }
 
 /**
- * Compact people-list / Front Desk hint.
- * Blocked / OK win over imported vs never-seen. No phone → none (caller hides the cell).
+ * Compact people-list / Front Desk hint for one stored channel status.
+ * OK / reason win over imported vs never-seen. No phone → none (caller hides the cell).
  */
-export function phoneSmsListHint(
+function phoneChannelListHint(
   status: PersonPhoneSmsHintDto | null | undefined,
+  channelStatus: string | null | undefined,
 ): PhoneSmsListHint {
   if (!status) {
     return "none";
   }
-  const sms = phoneOnlineVoterSmsState(status.smsStatus);
-  if (sms === "ok") {
+  const channel = phoneOnlineVoterSmsState(channelStatus);
+  if (channel === "ok") {
     return "ok";
   }
-  if (sms === "blocked") {
+  if (channel === "blocked") {
     return "blocked";
   }
   if (!status.hasPhoneRow) {
@@ -76,6 +80,26 @@ export function phoneSmsListHint(
     return "imported";
   }
   return "unchecked";
+}
+
+/**
+ * Compact people-list / Front Desk SMS hint.
+ * Blocked / OK win over imported vs never-seen. No phone → none (caller hides the cell).
+ */
+export function phoneSmsListHint(
+  status: PersonPhoneSmsHintDto | null | undefined,
+): PhoneSmsListHint {
+  return phoneChannelListHint(status, status?.smsStatus);
+}
+
+/**
+ * Compact people-list / Front Desk WhatsApp hint. Independent of SmsStatus.
+ * OK / reason (no-wa, check-failed, …) win over imported vs never-seen.
+ */
+export function phoneWhatsAppListHint(
+  status: PersonPhoneSmsHintDto | null | undefined,
+): PhoneWhatsAppListHint {
+  return phoneChannelListHint(status, status?.whatsAppStatus);
 }
 
 export function phoneSmsListTagType(
@@ -115,5 +139,36 @@ export function phoneSmsListLabel(
   }
   return t("people.phoneOnlineVoter.smsBlocked", {
     reason: status?.smsStatus,
+  });
+}
+
+export function phoneWhatsAppListTagType(
+  hint: PhoneWhatsAppListHint,
+): "info" | "success" | "danger" | undefined {
+  return phoneSmsListTagType(hint);
+}
+
+export function phoneWhatsAppListLabel(
+  status: PersonPhoneSmsHintDto | null | undefined,
+  t: (key: string, params?: Record<string, unknown>) => string,
+): string {
+  const hint = phoneWhatsAppListHint(status);
+  if (hint === "none") {
+    return "";
+  }
+  if (hint === "neverSeen") {
+    return t("people.phoneOnlineVoter.neverSeen");
+  }
+  if (hint === "imported") {
+    return t("people.phoneOnlineVoter.imported");
+  }
+  if (hint === "unchecked") {
+    return t("people.phoneOnlineVoter.whatsAppUnchecked");
+  }
+  if (hint === "ok") {
+    return t("people.phoneOnlineVoter.whatsAppOk");
+  }
+  return t("people.phoneOnlineVoter.whatsAppReason", {
+    reason: status?.whatsAppStatus,
   });
 }

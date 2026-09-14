@@ -237,9 +237,27 @@ public class OnlineVoterPhoneHelperTests : ServiceTestBase
         const string blockedPhone = "+14168972691";
         const string emailOccupant = "+14168972692";
         Context.OnlineVoters.AddRange(
-            new OnlineVoter { VoterId = okPhone, VoterIdType = "P", SmsStatus = "OK" },
-            new OnlineVoter { VoterId = blockedPhone, VoterIdType = "P", SmsStatus = "landline" },
-            new OnlineVoter { VoterId = emailOccupant, VoterIdType = "E", SmsStatus = "admin" });
+            new OnlineVoter
+            {
+                VoterId = okPhone,
+                VoterIdType = "P",
+                SmsStatus = "OK",
+                WhatsAppStatus = "OK"
+            },
+            new OnlineVoter
+            {
+                VoterId = blockedPhone,
+                VoterIdType = "P",
+                SmsStatus = "landline",
+                WhatsAppStatus = "no-wa"
+            },
+            new OnlineVoter
+            {
+                VoterId = emailOccupant,
+                VoterIdType = "E",
+                SmsStatus = "admin",
+                WhatsAppStatus = "OK"
+            });
         await Context.SaveChangesAsync();
 
         var rows = await OnlineVoterPhoneHelper.FindPhoneOnlineVotersAsync(
@@ -248,7 +266,9 @@ public class OnlineVoterPhoneHelperTests : ServiceTestBase
 
         Assert.Equal(2, rows.Count);
         Assert.Equal("OK", rows[okPhone].SmsStatus);
+        Assert.Equal("OK", rows[okPhone].WhatsAppStatus);
         Assert.Equal("landline", rows[blockedPhone].SmsStatus);
+        Assert.Equal("no-wa", rows[blockedPhone].WhatsAppStatus);
         Assert.False(rows.ContainsKey(emailOccupant));
     }
 
@@ -267,12 +287,14 @@ public class OnlineVoterPhoneHelperTests : ServiceTestBase
         Assert.False(neverSeen.HasPhoneRow);
         Assert.Null(neverSeen.WhenRegistered);
         Assert.Null(neverSeen.SmsStatus);
+        Assert.Null(neverSeen.WhatsAppStatus);
 
         var occupant = new OnlineVoter
         {
             VoterId = "+14168972693",
             VoterIdType = "E",
             SmsStatus = "admin",
+            WhatsAppStatus = "OK",
             WhenRegistered = DateTimeOffset.Parse("2026-01-01T00:00:00Z")
         };
         var ignored = OnlineVoterPhoneHelper.ToListHint(occupant.VoterId, occupant);
@@ -280,10 +302,11 @@ public class OnlineVoterPhoneHelperTests : ServiceTestBase
         Assert.False(ignored.HasPhoneRow);
         Assert.Null(ignored.WhenRegistered);
         Assert.Null(ignored.SmsStatus);
+        Assert.Null(ignored.WhatsAppStatus);
     }
 
     [Fact]
-    public void ToListHint_PRow_CopiesWhenRegisteredAndSmsStatus()
+    public void ToListHint_PRow_CopiesWhenRegisteredSmsAndWhatsAppStatus()
     {
         var registered = DateTimeOffset.Parse("2026-04-01T12:00:00Z");
         var row = new OnlineVoter
@@ -291,6 +314,7 @@ public class OnlineVoterPhoneHelperTests : ServiceTestBase
             VoterId = "+14168972694",
             VoterIdType = "P",
             SmsStatus = "OK",
+            WhatsAppStatus = "no-wa",
             WhenRegistered = registered
         };
 
@@ -300,5 +324,6 @@ public class OnlineVoterPhoneHelperTests : ServiceTestBase
         Assert.True(hint.HasPhoneRow);
         Assert.Equal(registered, hint.WhenRegistered);
         Assert.Equal("OK", hint.SmsStatus);
+        Assert.Equal("no-wa", hint.WhatsAppStatus);
     }
 }

@@ -1245,6 +1245,7 @@ export type PeoplePersonPhoneSmsHintDto = {
     hasPhoneRow?: boolean;
     whenRegistered?: Date | null;
     smsStatus?: string | null;
+    whatsAppStatus?: string | null;
 };
 
 export type PeoplePersonSmsLogDto = {
