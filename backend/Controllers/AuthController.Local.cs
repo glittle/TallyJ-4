@@ -44,13 +44,13 @@ public partial class AuthController
 
         await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
-            EventType = SecurityEventType.AccountCreated,
+            EventType = SecurityEventType.LoginAttemptBlocked,
             Email = request.Email,
             IpAddress = clientIp,
             UserAgent = userAgent,
             Details = "Open self-serve registration rejected (IdP-first; Google create path)",
-            IsSuspicious = false,
-            Severity = Backend.SecurityEventSeverity.Info
+            IsSuspicious = true,
+            Severity = Backend.SecurityEventSeverity.Warning
         });
 
         return BadRequest(new { error = OpenRegisterDisabledKey });

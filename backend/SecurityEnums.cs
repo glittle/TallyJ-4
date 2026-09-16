@@ -9,7 +9,7 @@ public enum SecurityEventType
     LoginSuccess,
     LoginFailure,
     Logout,
-    LoginAttemptBlocked, // Rate limiting or account lockout
+    LoginAttemptBlocked, // Rate limiting, account lockout, or rejected open register
 
     // Authorization Events
     AuthorizationFailure,

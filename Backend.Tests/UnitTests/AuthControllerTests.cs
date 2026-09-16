@@ -8,7 +8,9 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using Backend;
 using Backend.DTOs.Auth;
+using Backend.DTOs.Security;
 using Backend.Services.Auth;
 using Backend.Controllers;
 using Backend.Context;
@@ -435,6 +437,18 @@ public class AuthControllerTests : ServiceTestBase
         Assert.NotNull(errorProperty);
         Assert.Equal(AuthController.OpenRegisterDisabledKey, errorProperty.GetValue(errorResponse));
         _localAuthServiceMock.Verify(x => x.RegisterAsync(It.IsAny<RegisterRequest>()), Times.Never);
+        _securityAuditServiceMock.Verify(
+            x => x.LogSecurityEventAsync(It.Is<CreateSecurityAuditLogDto>(dto =>
+                dto.EventType == SecurityEventType.LoginAttemptBlocked
+                && dto.IsSuspicious
+                && dto.Email == request.Email
+                && dto.Details != null
+                && dto.Details.Contains("rejected", StringComparison.OrdinalIgnoreCase))),
+            Times.Once);
+        _securityAuditServiceMock.Verify(
+            x => x.LogSecurityEventAsync(It.Is<CreateSecurityAuditLogDto>(dto =>
+                dto.EventType == SecurityEventType.AccountCreated)),
+            Times.Never);
     }
 
     [Fact]
