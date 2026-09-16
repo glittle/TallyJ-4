@@ -28,9 +28,10 @@ using Microsoft.Extensions.Options;
 namespace Backend.Controllers;
 
 /// <summary>
-/// Controller for handling authentication and authorization operations including user registration,
+/// Controller for handling authentication and authorization operations including
 /// login, password management, two-factor authentication, and role management.
-/// Implementation is split across partial files by concern.
+/// Open self-serve email/password registration is disabled; new teller accounts
+/// are created via Google. Implementation is split across partial files by concern.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
@@ -54,6 +55,12 @@ public partial class AuthController : ControllerBase
     private readonly IRemoteLogService _remoteLogService;
     private readonly IComputerAssignmentService _assignmentService;
     private readonly IAccountService _accountService;
+
+    /// <summary>
+    /// i18n key returned when anonymous callers POST <c>/api/auth/registerAccount</c>.
+    /// Open self-serve email/password signup is disabled; use Google to create a teller account.
+    /// </summary>
+    public const string OpenRegisterDisabledKey = "auth.errors.openRegisterDisabled";
 
     /// <summary>
     /// Initializes a new instance of the AuthController.

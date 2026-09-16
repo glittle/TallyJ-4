@@ -30,50 +30,30 @@ namespace Backend.Controllers;
 public partial class AuthController
 {
     /// <summary>
-    /// Registers a new user account.
+    /// Open self-serve email/password registration is disabled (issue #347).
+    /// New teller accounts are created via Google. Existing local password login remains.
+    /// Invite-only email signup is leftover, not implemented in this slice.
     /// </summary>
-    /// <param name="request">The registration request containing user details.</param>
-    /// <returns>The authentication response if successful, or an error if registration fails.</returns>
+    /// <param name="request">Ignored. The body is accepted so leftover clients get a clear i18n error.</param>
+    /// <returns>400 with <c>auth.errors.openRegisterDisabled</c>.</returns>
     [HttpPost("registerAccount")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
-        var (success, error, response) = await _localAuthService.RegisterAsync(request);
-
-        if (!success)
-        {
-            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
-            {
-                EventType = SecurityEventType.AccountCreated,
-                Email = request.Email,
-                IpAddress = clientIp,
-                UserAgent = userAgent,
-                Details = $"Registration failed: {error}",
-                IsSuspicious = false,
-                Severity = Backend.SecurityEventSeverity.Info
-            });
-            return BadRequest(new { error });
-        }
-
-        // Get the user ID for logging
-        var user = await _userManager.FindByEmailAsync(request.Email);
-        var userId = user?.Id;
-
         await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
             EventType = SecurityEventType.AccountCreated,
-            UserId = userId,
             Email = request.Email,
             IpAddress = clientIp,
             UserAgent = userAgent,
-            Details = "User account created successfully",
+            Details = "Open self-serve registration rejected (IdP-first; Google create path)",
             IsSuspicious = false,
-            Severity = SecurityEventSeverity.Info
+            Severity = Backend.SecurityEventSeverity.Info
         });
 
-        return Ok(response);
+        return BadRequest(new { error = OpenRegisterDisabledKey });
     }
 
     /// <summary>

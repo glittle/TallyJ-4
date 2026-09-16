@@ -14,12 +14,18 @@ describe("LoginPage", () => {
     expect(wrapper.text()).toContain("Login");
   });
 
-  it("renders properly", () => {
+  it("keeps password login and steers new tellers to Google", () => {
     const wrapper = mount(LoginPage, {
       global: {
         plugins: [pinia, router, i18n, ElementPlus],
       },
     });
-    expect(wrapper.exists()).toBe(true);
+
+    expect(wrapper.find('input[type="password"]').exists()).toBe(true);
+    expect(wrapper.text()).toContain(
+      "New teller? Sign in with Google to create an account",
+    );
+    expect(wrapper.text()).not.toContain("Don't have an account? Register");
+    expect(wrapper.find('a[href="/register"]').exists()).toBe(false);
   });
 });

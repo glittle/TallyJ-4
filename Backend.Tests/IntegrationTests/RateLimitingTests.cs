@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Backend.Controllers;
 using Backend.DTOs.Auth;
 using Backend.DTOs.OnlineVoting;
 using Backend.Helpers;
@@ -300,13 +301,14 @@ public class RateLimitingTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task Register_WithinRateLimit_Succeeds()
+    public async Task Register_WithinRateLimit_IsRejectedNotRateLimited()
     {
         // Arrange
         var registerRequest = new RegisterRequest
         {
             Email = $"test{Guid.NewGuid()}@example.com",
             Password = "TestPass123!",
+            ConfirmPassword = "TestPass123!",
             DisplayName = "Test User"
         };
 
@@ -318,8 +320,10 @@ public class RateLimitingTests : IntegrationTestBase
         // Act
         var response = await Client.PostAsync("/api/auth/registerAccount", content);
 
-        // Assert - Should succeed (even if user already exists, rate limiting should allow the request)
-        response.StatusCode.Should().BeOneOf(HttpStatusCode.OK, HttpStatusCode.BadRequest);
+        // Open register is disabled (400 + i18n key). Rate limiting must not 429 the first call.
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var body = await response.Content.ReadAsStringAsync();
+        body.Should().Contain(AuthController.OpenRegisterDisabledKey);
     }
 
     [Fact]

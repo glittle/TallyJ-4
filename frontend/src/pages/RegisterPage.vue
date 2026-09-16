@@ -1,145 +1,28 @@
 <script setup lang="ts">
-import { ref, reactive } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
-import { useAuthStore } from "../stores/authStore";
-import { useNotifications } from "@/composables/useNotifications";
-import type { FormInstance, FormRules } from "element-plus";
+import { useRoute, useRouter } from "vue-router";
+import { getAppConfig } from "@/config/appConfig";
 
 const { t } = useI18n();
 const router = useRouter();
-const authStore = useAuthStore();
-const { showSuccessMessage } = useNotifications();
+const route = useRoute();
+const appConfig = getAppConfig();
 
-const registerFormRef = ref<FormInstance>();
-const loading = ref(false);
-
-const registerForm = reactive({
-  email: "",
-  displayName: "",
-  password: "",
-  confirmPassword: "",
-});
-
-const validatePassword = (_rule: any, value: any, callback: any) => {
-  if (value === "") {
-    callback(new Error(t("auth.passwordRequired")));
-    return;
-  }
-
-  const errors = [];
-
-  if (value.length < 12) {
-    errors.push(t("auth.passwordMinLength12"));
-  }
-
-  if (!/(?=.*[a-z])/.test(value)) {
-    errors.push(t("auth.passwordRequireLowercase"));
-  }
-
-  if (!/(?=.*[A-Z])/.test(value)) {
-    errors.push(t("auth.passwordRequireUppercase"));
-  }
-
-  if (!/(?=.*\d)/.test(value)) {
-    errors.push(t("auth.passwordRequireDigit"));
-  }
-
-  if (!/(?=.*[^a-zA-Z\d])/.test(value)) {
-    errors.push(t("auth.passwordRequireSpecial"));
-  }
-
-  if (errors.length > 0) {
-    callback(new Error(errors.join(" ")));
-  } else {
-    callback();
-  }
+const goToLogin = () => {
+  router.push({ path: "/login", query: route.query });
 };
 
-const validatePass2 = (_rule: any, value: any, callback: any) => {
-  if (value === "") {
-    callback(new Error(t("auth.confirmPasswordRequired")));
-  } else if (value !== registerForm.password) {
-    callback(new Error(t("auth.passwordMismatch")));
-  } else {
-    callback();
-  }
+const handleGoogleLogin = () => {
+  const apiUrl = appConfig.apiUrl;
+  const redirectParam = route.query.redirect
+    ? `?redirect=${encodeURIComponent(route.query.redirect as string)}`
+    : "";
+  const returnUrl = encodeURIComponent(
+    globalThis.location.origin + "/auth/google/callback" + redirectParam,
+  );
+
+  globalThis.location.href = `${apiUrl}/api/auth/google/login?returnUrl=${returnUrl}`;
 };
-
-const rules = reactive<FormRules>({
-  email: [
-    {
-      required: true,
-      validator: (_rule: any, value: any, callback: any) => {
-        if (!value) {
-          callback(new Error(t("auth.emailRequired")));
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-          callback(new Error(t("auth.emailInvalid")));
-        } else {
-          callback();
-        }
-      },
-      trigger: "blur",
-    },
-  ],
-  displayName: [
-    {
-      required: true,
-      validator: (_rule: any, value: any, callback: any) => {
-        if (!value || !String(value).trim()) {
-          callback(new Error(t("auth.displayNameRequired")));
-        } else if (String(value).trim().length > 200) {
-          callback(new Error(t("auth.displayNameMaxLength")));
-        } else {
-          callback();
-        }
-      },
-      trigger: "blur",
-    },
-  ],
-  password: [{ validator: validatePassword, trigger: "blur" }],
-  confirmPassword: [{ validator: validatePass2, trigger: "blur" }],
-});
-
-const handleRegister = async () => {
-  if (!registerFormRef.value) {
-    return;
-  }
-
-  await registerFormRef.value.validate(async (valid) => {
-    if (valid) {
-      loading.value = true;
-      try {
-        const response = await authStore.register({
-          email: registerForm.email,
-          displayName: registerForm.displayName.trim(),
-          password: registerForm.password,
-          confirmPassword: registerForm.confirmPassword,
-        });
-        if (response?.requiresEmailVerification) {
-          showSuccessMessage(t("auth.registerCheckEmail"));
-          router.push("/login");
-        } else {
-          showSuccessMessage(t("auth.registerSuccess"));
-          router.push("/dashboard");
-        }
-      } catch (error) {
-        console.error("Registration failed:", error);
-        // authStore already shows the API error via handleApiError
-      } finally {
-        loading.value = false;
-      }
-    }
-  });
-};
-
-defineExpose({
-  validatePassword,
-  validatePass2,
-  registerForm,
-  registerFormRef,
-  handleRegister,
-});
 </script>
 
 <template>
@@ -147,67 +30,22 @@ defineExpose({
     <el-card class="register-card">
       <template #header>
         <div class="register-header">
-          <h2>{{ t("auth.register") }}</h2>
+          <h2>{{ t("auth.registerClosedTitle") }}</h2>
         </div>
       </template>
 
-      <el-form
-        ref="registerFormRef"
-        :model="registerForm"
-        :rules="rules"
-        label-position="top"
-        @keyup.enter="handleRegister"
-      >
-        <el-form-item :label="t('auth.email')" prop="email">
-          <el-input
-            v-model="registerForm.email"
-            :placeholder="t('auth.emailPlaceholder')"
-          />
-        </el-form-item>
+      <p class="register-closed-body">
+        {{ t("auth.registerClosedBody") }}
+      </p>
 
-        <el-form-item :label="t('auth.displayName')" prop="displayName">
-          <el-input
-            v-model="registerForm.displayName"
-            :placeholder="t('auth.displayNamePlaceholder')"
-            maxlength="200"
-          />
-        </el-form-item>
-
-        <el-form-item :label="t('auth.password')" prop="password">
-          <el-input
-            v-model="registerForm.password"
-            type="password"
-            :placeholder="t('auth.passwordPlaceholder')"
-            show-password
-          />
-        </el-form-item>
-
-        <el-form-item :label="t('auth.confirmPassword')" prop="confirmPassword">
-          <el-input
-            v-model="registerForm.confirmPassword"
-            type="password"
-            :placeholder="t('auth.confirmPasswordPlaceholder')"
-            show-password
-          />
-        </el-form-item>
-
-        <div class="register-actions">
-          <el-button
-            type="primary"
-            :loading="loading"
-            class="submit-btn"
-            @click="handleRegister"
-          >
-            {{ t("auth.registerButton") }}
-          </el-button>
-        </div>
-
-        <div class="auth-links">
-          <router-link to="/login">
-            {{ t("auth.hasAccount") }}
-          </router-link>
-        </div>
-      </el-form>
+      <div class="register-actions">
+        <el-button type="primary" class="submit-btn" @click="handleGoogleLogin">
+          {{ t("auth.googleLogin") }}
+        </el-button>
+        <el-button class="submit-btn" @click="goToLogin">
+          {{ t("auth.hasAccount") }}
+        </el-button>
+      </div>
     </el-card>
   </div>
 </template>
@@ -234,27 +72,21 @@ defineExpose({
     color: #b0caff;
   }
 
+  .register-closed-body {
+    margin: 0 0 24px;
+    color: var(--color-text-secondary);
+    text-align: center;
+    line-height: 1.5;
+  }
+
   .register-actions {
-    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 
   .submit-btn {
     width: 100%;
-  }
-
-  .auth-links {
-    margin-top: 20px;
-    text-align: center;
-  }
-
-  .auth-links a {
-    color: #b0caff;
-    text-decoration: none;
-    font-size: 0.9rem;
-  }
-
-  .auth-links a:hover {
-    text-decoration: underline;
   }
 }
 </style>

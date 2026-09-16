@@ -44,6 +44,25 @@ Online voters use the same JWT claims as before (`voterType=online`, `voterId`, 
 
 **Rejected alternative:** encrypt the JWT in `localStorage`. Not a fix under XSS (issue #250 / #249).
 
+## IdP-first teller signup (issue #347)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #347; product decision 2026-09-16 (Glen)  
+**Revisit when:** invite-only email signup is implemented, or another teller IdP is added
+
+New teller/admin accounts are created through Google (teller external auth: `google/login`, `google/one-tap`). Open anonymous `POST /api/auth/registerAccount` is disabled and returns the i18n key `auth.errors.openRegisterDisabled`. Existing local email/password **login** is unchanged.
+
+The SPA has no email/password create-account form. `/register` explains Google-first signup and sends the user to Google or `/login`. Login copy steers new tellers to Google.
+
+**Rejected alternative:** keep v3-style open email/password register and add captcha. Live v3 already sees spam Admin Registered accounts; captcha is not the strategy.
+
+**Rejected alternative:** build invite-only email signup in this slice. Needed later for communities without Google; leftover, not this shippable slice.
+
+**Rejected alternative:** remove `POST /api/auth/registerAccount` entirely. Leftover clients still get a clear i18n error instead of a silent 404. The endpoint is still rate-limited.
+
+Testing/Development accept the same `dev-google:{email}` credential as voter Google tests so teller create/login can be mocked without calling Google.
+
 ## Proxy-aware auth rate limits (issue #192 leftover)
 
 **Status:** active  
@@ -62,7 +81,7 @@ Auth rate-limit keys use the IP the **trusted ingress** saw, not a client-suppli
 
 `UseForwardedHeaders` is proto-only (`X-Forwarded-Proto`) with KnownProxies / KnownIPNetworks / KnownNetworks cleared so Azure TLS termination still sets `Request.IsHttps`. It does **not** apply `X-Forwarded-For`: trust-all + ForwardLimit would rewrite `RemoteIpAddress` from the client-controlled chain and make spoofing easier. Rate-limit keying reads the headers itself under the infrastructure-peer check above.
 
-The same in-memory middleware still owns the limits. Teller `/api/auth/login` (and register / 2FA / password / teller OAuth) stay **tight per trusted-ingress IP** (5/min login). Anonymous voter `requestCode` / `verifyCode` do **not** use that 5/min IP bucket: elections often share one venue WiFi / community NAT, so a public `RemoteIp` is the whole hall. Those routes use a **5/min per VoterId** bucket (JSON body peek capped at 16 KiB even when ContentLength is missing / chunked; a fitting body is replaced with a MemoryStream at position 0 so model binding still works) plus a **60/min per trusted-ingress IP** venue ceiling. Oversized / peek-overflow bodies are **413** (`error.payloadTooLarge`) and do not continue to model binding — they must not be demoted to `missing:{ip}`, or a padded body with a real voterId would opt out of the cross-IP identifier ceiling. `missing:{ip}` is only for a genuinely empty, malformed, or absent `voterId`. Voter OAuth (`/api/online-voting/*Auth`) has no VoterId in the body — venue IP ceiling only. Teller OAuth stays on the tight IP table.
+The same in-memory middleware still owns the limits. Teller `/api/auth/login` (and the disabled register endpoint / 2FA / password / teller OAuth) stay **tight per trusted-ingress IP** (5/min login). Anonymous voter `requestCode` / `verifyCode` do **not** use that 5/min IP bucket: elections often share one venue WiFi / community NAT, so a public `RemoteIp` is the whole hall. Those routes use a **5/min per VoterId** bucket (JSON body peek capped at 16 KiB even when ContentLength is missing / chunked; a fitting body is replaced with a MemoryStream at position 0 so model binding still works) plus a **60/min per trusted-ingress IP** venue ceiling. Oversized / peek-overflow bodies are **413** (`error.payloadTooLarge`) and do not continue to model binding — they must not be demoted to `missing:{ip}`, or a padded body with a real voterId would opt out of the cross-IP identifier ceiling. `missing:{ip}` is only for a genuinely empty, malformed, or absent `voterId`. Voter OAuth (`/api/online-voting/*Auth`) has no VoterId in the body — venue IP ceiling only. Teller OAuth stays on the tight IP table.
 
 429 bodies return the i18n key `error.tooManyRequests` (same pattern as voter verify keys). That string lives only in `frontend/src/locales/en/errors.json`; other locales are not given English placeholders (missing keys fall back to English). Verify failures keep `codeExpired`, `tooManyAttempts`, and `noCodeFound` (used-or-missing after the code is cleared). The SPA resolves those keys instead of a single generic verify message. `VerifyAttempts` on `OnlineVoter` still locks five failed codes for that row; the middleware 429 is a cheap pre-service cap.
 

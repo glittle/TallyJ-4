@@ -391,12 +391,7 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
 
 3. **Recreate User Accounts**
 
-   ```bash
-   # Use API to create users
-   curl -X POST http://localhost:5016/auth/register \
-     -H "Content-Type: application/json" \
-     -d '{"email":"user@example.com","password":"TempPass123!"}'
-   ```
+   Have each teller sign in with Google (creates the account). Open `POST /api/auth/registerAccount` is disabled. Existing local password accounts can still log in. Invite-only email signup is leftover / not shipped.
 
 4. **Assign Roles**
    - Administrator

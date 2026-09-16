@@ -3,11 +3,7 @@ import { computed, ref } from "vue";
 import { getApiAuthMe } from "../api/gen/configService/sdk.gen";
 import { useApiErrorHandler } from "../composables/useApiErrorHandler";
 import { TOKEN_REFRESH_CONFIG } from "../config/tokenRefreshConfig";
-import {
-  authService,
-  type LoginRequest,
-  type RegisterRequest,
-} from "../services/authService";
+import { authService, type LoginRequest } from "../services/authService";
 import { secureTokenService } from "../services/secureTokenService";
 import { tokenRefreshService } from "../services/tokenRefreshService";
 import type { TelegramLoginRequest } from "../types";
@@ -101,40 +97,6 @@ export const useAuthStore = defineStore("auth", () => {
       await fetchUserInfo();
     }
     return isSuperAdmin.value;
-  }
-
-  async function register(data: RegisterRequest) {
-    clearClientSessionSelections();
-    try {
-      const response = await authService.register(data);
-
-      if (response.requiresEmailVerification) {
-        // No session until email is verified — do not start token refresh.
-        requires2FA.value = false;
-        pending2FAEmail.value = null;
-        return response;
-      }
-
-      if (response.requires2FA) {
-        requires2FA.value = true;
-        pending2FAEmail.value = response.email;
-      } else {
-        const cookieData = secureTokenService.refreshAuthData();
-        email.value = cookieData.email || response.email;
-        name.value = cookieData.name || response.name || null;
-        authMethod.value =
-          cookieData.authMethod || response.authMethod || "Local";
-
-        await fetchUserInfo();
-        tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
-      }
-
-      return response;
-    } catch (error) {
-      const { handleApiError } = useApiErrorHandler();
-      handleApiError(error as any);
-      throw error;
-    }
   }
 
   async function login(data: LoginRequest) {
@@ -456,7 +418,6 @@ export const useAuthStore = defineStore("auth", () => {
     isAuthenticated,
     fetchUserInfo,
     ensureUserInfoLoaded,
-    register,
     login,
     googleOneTapLogin,
     telegramLogin,

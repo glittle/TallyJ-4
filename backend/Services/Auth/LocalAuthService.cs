@@ -31,6 +31,11 @@ public class LocalAuthService : ILocalAuthService
         _twoFactorService = twoFactorService;
     }
 
+    /// <summary>
+    /// Creates a local email/password user. Not used by open HTTP register
+    /// (<c>POST /api/auth/registerAccount</c> is disabled). Leftover invite-only
+    /// email signup may call this later.
+    /// </summary>
     public async Task<(bool Success, string? Error, AuthResponse? Response)> RegisterAsync(RegisterRequest request)
     {
         var existingUser = await _userManager.FindByEmailAsync(request.Email);

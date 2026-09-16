@@ -58,17 +58,7 @@ As a TallyJ administrator, you are responsible for:
    VALUES (NEWID(), 'user@example.com', 'user@example.com', 1, NEWID());
    ```
 
-2. **Via API:**
-   ```bash
-   curl -X POST http://localhost:5016/auth/register \
-     -H "Content-Type: application/json" \
-     -d '{
-       "email": "user@example.com",
-       "password": "SecurePassword123!",
-       "firstName": "John",
-       "lastName": "Doe"
-     }'
-   ```
+2. **Via Google (normal path):** sign in with Google on the teller login page. Open email/password registration is disabled. Existing local accounts can still log in with a password. Invite-only email signup is leftover / not shipped.
 
 ### Assigning Roles
 

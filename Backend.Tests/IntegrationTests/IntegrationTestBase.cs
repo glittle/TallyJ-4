@@ -354,7 +354,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         Factory.Services.GetRequiredService<RateLimitStore>().Reset();
     }
 
-    private async Task CreateTestUserAsync(string email, string password)
+    protected async Task CreateTestUserAsync(string email, string password, string? displayName = null)
     {
         using var scope = Factory.Services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
@@ -375,7 +375,9 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         {
             UserName = email,
             Email = email,
-            EmailConfirmed = true
+            DisplayName = displayName,
+            EmailConfirmed = true,
+            AuthMethod = "Local"
         };
 
         var result = await userManager.CreateAsync(user, password);
