@@ -156,7 +156,9 @@ describe("Auth Store", () => {
       });
 
       authStore = useAuthStore();
-      const result = await authStore.googleOneTapLogin("dev-google:google@example.com");
+      const result = await authStore.googleOneTapLogin(
+        "dev-google:google@example.com",
+      );
 
       expect(authService.googleOneTap).toHaveBeenCalledWith(
         "dev-google:google@example.com",
