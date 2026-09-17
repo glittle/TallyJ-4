@@ -367,6 +367,58 @@
         }
       }
     },
+    "/api/Auth/account-invite": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Auth/registerWithInvite": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Auth_RegisterWithInviteRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Auth_RegisterWithInviteRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Auth_RegisterWithInviteRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Auth/login": {
       "post": {
         "tags": [
@@ -7406,6 +7458,35 @@
         }
       }
     },
+    "/api/superadmin/account-invites": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseAuth_AccountInviteCreatedDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseAuth_AccountInviteCreatedDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseAuth_AccountInviteCreatedDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/{electionGuid}/tellers": {
       "get": {
         "tags": [
@@ -8114,6 +8195,29 @@
           },
           "data": {
             "$ref": "#/components/schemas/Account_UserProfileDto"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiResponseAuth_AccountInviteCreatedDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Auth_AccountInviteCreatedDto"
           },
           "message": {
             "type": "string",
@@ -8990,6 +9094,24 @@
         },
         "additionalProperties": false
       },
+      "Auth_AccountInviteCreatedDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
+          "inviteUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "Auth_AssignRoleRequest": {
         "required": [
           "roleName"
@@ -9150,6 +9272,26 @@
           }
         },
         "additionalProperties": false
+      },
+      "Auth_RegisterWithInviteRequest": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Auth_RegisterRequest"
+          },
+          {
+            "required": [
+              "token"
+            ],
+            "type": "object",
+            "properties": {
+              "token": {
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
       },
       "Auth_ResetPasswordRequest": {
         "required": [

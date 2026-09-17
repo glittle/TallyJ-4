@@ -48,6 +48,7 @@ public class ProgramStartupTests : IntegrationTestBase
         Assert.NotNull(services.GetService<Backend.Services.Auth.IJwtTokenService>());
         Assert.NotNull(services.GetService<Backend.Services.Auth.EmailService>());
         Assert.NotNull(services.GetService<Backend.Services.Auth.ILocalAuthService>());
+        Assert.NotNull(services.GetService<Backend.Services.Auth.IAccountInviteService>());
         Assert.NotNull(services.GetService<Backend.Services.Auth.IPasswordResetService>());
         Assert.NotNull(services.GetService<Backend.Services.Auth.ITwoFactorService>());
         Assert.NotNull(services.GetService<Backend.Services.Auth.ITwilioSmsStatusService>());

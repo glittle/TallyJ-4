@@ -128,6 +128,30 @@ export const ApiResponseAccount_UserProfileDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ApiResponseAuth_AccountInviteCreatedDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            $ref: '#/components/schemas/Auth_AccountInviteCreatedDto'
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ApiResponseBallots_BallotDtoSchema = {
     type: 'object',
     properties: {
@@ -1025,6 +1049,25 @@ export const ApiResponseVotes_VoteWithBallotStatusDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const Auth_AccountInviteCreatedDtoSchema = {
+    type: 'object',
+    properties: {
+        token: {
+            type: 'string',
+            nullable: true
+        },
+        inviteUrl: {
+            type: 'string',
+            nullable: true
+        },
+        expiresAt: {
+            type: 'string',
+            format: 'date-time'
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const Auth_AssignRoleRequestSchema = {
     required: [
         'roleName'
@@ -1194,6 +1237,27 @@ export const Auth_RegisterRequestSchema = {
         }
     },
     additionalProperties: false
+} as const;
+
+export const Auth_RegisterWithInviteRequestSchema = {
+    allOf: [
+        {
+            $ref: '#/components/schemas/Auth_RegisterRequest'
+        },
+        {
+            required: [
+                'token'
+            ],
+            type: 'object',
+            properties: {
+                token: {
+                    minLength: 1,
+                    type: 'string'
+                }
+            },
+            additionalProperties: false
+        }
+    ]
 } as const;
 
 export const Auth_ResetPasswordRequestSchema = {

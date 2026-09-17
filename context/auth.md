@@ -49,19 +49,40 @@ Online voters use the same JWT claims as before (`voterType=online`, `voterId`, 
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** issue #347; product decision 2026-09-16 (Glen)  
-**Revisit when:** invite-only email signup is implemented, or another teller IdP is added
+**Revisit when:** another teller IdP is added, or open register is reconsidered
 
 New teller/admin accounts are created through Google (teller external auth: `google/login`, `google/one-tap`). Open anonymous `POST /api/auth/registerAccount` is disabled and returns the i18n key `auth.errors.openRegisterDisabled`. Existing local email/password **login** is unchanged.
 
-The SPA has no email/password create-account form. `/register` explains Google-first signup and sends the user to Google or `/login`. Login copy steers new tellers to Google.
+The SPA `/register` page without an invite query explains Google-first signup and sends the user to Google or `/login`. Login copy steers new tellers to Google.
 
 **Rejected alternative:** keep v3-style open email/password register and add captcha. Live v3 already sees spam Admin Registered accounts; captcha is not the strategy.
 
-**Rejected alternative:** build invite-only email signup in this slice. Needed later for communities without Google; leftover, not this shippable slice.
+> Superseded 2026-09: “build invite-only email signup later.” That leftover is now the SuperAdmin one-time invite path below.
 
 **Rejected alternative:** remove `POST /api/auth/registerAccount` entirely. Leftover clients still get a clear i18n error instead of a silent 404. The endpoint is still rate-limited.
 
 Testing/Development accept the same `dev-google:{email}` credential as voter Google tests so teller create/login can be mocked without calling Google.
+
+## SuperAdmin one-time invite for local email/password signup (issue #347 leftover)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #347 leftover after #348; product rule for communities that cannot use Google  
+**Revisit when:** invites should be bound to a pre-filled email, Head Teller should issue them, or captcha is added on this path only
+
+Communities that cannot use Google get a **one-time invite link**, not open register. SuperAdmin (`POST /api/superadmin/account-invites`) issues the link. The raw token is returned once and stored only as SHA-256. Anonymous `GET /api/auth/account-invite` peeks it; `POST /api/auth/registerWithInvite` consumes it and calls existing `LocalAuthService.RegisterAsync` (same Identity `AppUser` store, same verification email). After use or expiry (7 days) the invite is dead. Open `registerAccount` stays disabled.
+
+`/register?invite=` shows the email/password form only when peek says the token is still usable. SuperAdmin Users has “Issue email/password invite.”
+
+**Rejected alternative:** let Head Teller issue invites. `HeadTellerAccess` is election-route-scoped (user + election GUID). Creating a site-wide login account is not an election privilege, so SuperAdmin is the issuer.
+
+**Rejected alternative:** a second user table or a parallel register service. Invite redeem must go through `RegisterAsync` so password rules, unique email, and verification stay one path.
+
+**Rejected alternative:** bind the invite to a SuperAdmin-chosen email in this slice. The product asked for a one-time link that creates one account; the invitee picks the address. Binding can be added later if leaked-link squat becomes a problem.
+
+**Rejected alternative:** captcha on this path. Optional later hardening only; not the strategy and not in this slice.
+
+**Rejected alternative:** skip email verification on invite create so login works immediately. Invite only authorizes *creating* the row; proving inbox ownership stays the existing local-account pattern. Tests confirm the email, then password login succeeds.
 
 ## Proxy-aware auth rate limits (issue #192 leftover)
 

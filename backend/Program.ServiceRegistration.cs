@@ -61,6 +61,7 @@ public static class ProgramServiceRegistration
         services.AddScoped<IJwtTokenService, JwtTokenService>();
         services.AddScoped<EmailService>();
         services.AddScoped<ILocalAuthService, LocalAuthService>();
+        services.AddScoped<IAccountInviteService, AccountInviteService>();
         services.AddScoped<IPasswordResetService, PasswordResetService>();
         services.AddScoped<ITwoFactorService, TwoFactorService>();
         services.AddScoped<EncryptionService>();

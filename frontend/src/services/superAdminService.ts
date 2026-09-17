@@ -5,6 +5,7 @@ import {
   getApiSuperadminUsers,
   getApiSuperadminUsersByUserId,
   putApiSuperadminUsersByUserId,
+  postApiSuperadminAccountInvites,
 } from "@/api/gen/configService";
 import type { PaginatedResponse } from "@/types/ApiResponse";
 
@@ -121,6 +122,13 @@ export const superAdminService = {
     return response.data?.data as SuperAdminUserDetail;
   },
 
+  async createAccountInvite(): Promise<AccountInviteCreated> {
+    const response = await postApiSuperadminAccountInvites({
+      throwOnError: true,
+    });
+    return response.data?.data as AccountInviteCreated;
+  },
+
   async updateUser(
     userId: string,
     body: { displayName?: string; email?: string },
@@ -154,4 +162,10 @@ export interface SuperAdminEmailChangeEntry {
 
 export interface SuperAdminUserDetail extends SuperAdminUser {
   emailHistory: SuperAdminEmailChangeEntry[];
+}
+
+export interface AccountInviteCreated {
+  token: string;
+  inviteUrl: string;
+  expiresAt: string;
 }

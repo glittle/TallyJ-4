@@ -76,6 +76,19 @@ public class SuperAdminAuthorizationTests : IntegrationTestBase
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 
+    [Fact]
+    public async Task CreateAccountInvite_ReturnsForbidden_ForAuthenticatedNonSuperAdmin()
+    {
+        var cookies = await LoginAndGetCookiesAsync("test@tallyj.com", "Tester1234!X");
+
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/superadmin/account-invites");
+        AttachCookies(request, cookies);
+
+        var response = await Client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
     private async Task<Dictionary<string, string>> LoginAndGetCookiesAsync(string email, string password)
     {
         var loginRequest = new LoginRequest { Email = email, Password = password };

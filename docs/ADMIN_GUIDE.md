@@ -58,7 +58,8 @@ As a TallyJ administrator, you are responsible for:
    VALUES (NEWID(), 'user@example.com', 'user@example.com', 1, NEWID());
    ```
 
-2. **Via Google (normal path):** sign in with Google on the teller login page. Open email/password registration is disabled. Existing local accounts can still log in with a password. Invite-only email signup is leftover / not shipped.
+2. **Via Google (normal path):** sign in with Google on the teller login page. Open email/password registration is disabled. Existing local accounts can still log in with a password.
+3. **Via SuperAdmin invite (communities without Google):** SuperAdmin → Login Accounts → Issue email/password invite. The one-time link creates a single local account, then dies (used or expired).
 
 ### Assigning Roles
 

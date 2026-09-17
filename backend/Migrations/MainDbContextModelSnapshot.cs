@@ -1269,6 +1269,46 @@ namespace Backend.Migrations
                     b.ToTable("UserEmailChangeLogs");
                 });
 
+            modelBuilder.Entity("Backend.Entities.AccountInvite", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.Property<string>("CreatedByUserId")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("CreatedUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTimeOffset>("ExpiresAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<DateTimeOffset?>("UsedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "TokenHash" }, "IX_AccountInvites_TokenHash")
+                        .IsUnique();
+
+                    b.ToTable("AccountInvites");
+                });
+
             modelBuilder.Entity("Backend.Entities.Vote", b =>
                 {
                     b.Property<int>("RowId")

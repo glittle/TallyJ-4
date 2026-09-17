@@ -33,8 +33,8 @@ public class LocalAuthService : ILocalAuthService
 
     /// <summary>
     /// Creates a local email/password user. Not used by open HTTP register
-    /// (<c>POST /api/auth/registerAccount</c> is disabled). Leftover invite-only
-    /// email signup may call this later.
+    /// (<c>POST /api/auth/registerAccount</c> is disabled). Called by
+    /// <see cref="AccountInviteService"/> after a one-time invite is consumed.
     /// </summary>
     public async Task<(bool Success, string? Error, AuthResponse? Response)> RegisterAsync(RegisterRequest request)
     {
