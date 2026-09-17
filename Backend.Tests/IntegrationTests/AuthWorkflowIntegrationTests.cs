@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Backend.Controllers;
 using Backend.DTOs.Auth;
 using Backend.Middleware;
 using Xunit;
@@ -125,25 +126,7 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
         var testEmail = $"2fa-test-{Guid.NewGuid()}@tallyj.test";
         var testPassword = "TestPass123!";
 
-        // Register user
-        var registerRequest = new RegisterRequest
-        {
-            Email = testEmail,
-            Password = testPassword,
-            ConfirmPassword = testPassword,
-            DisplayName = "2FA Test User"
-        };
-
-        var registerContent = new StringContent(
-            JsonSerializer.Serialize(registerRequest),
-            Encoding.UTF8,
-            "application/json");
-
-        var registerResponse = await Client.PostAsync("/api/auth/registerAccount", registerContent);
-        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        // Confirm email so login can proceed
-        await ConfirmEmailAsync(testEmail);
+        await CreateTestUserAsync(testEmail, testPassword, "2FA Test User");
 
         // Login first to get authenticated
         var loginRequest = new LoginRequest
@@ -231,17 +214,14 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RegistrationWithEmailVerification_CompleteFlow_Succeeds()
+    public async Task OpenRegisterAccount_IsRejected_WithI18nKey()
     {
-        // Arrange
         var testEmail = $"verify-test-{Guid.NewGuid()}@tallyj.test";
-        var testPassword = "TestPass123!";
-
         var registerRequest = new RegisterRequest
         {
             Email = testEmail,
-            Password = testPassword,
-            ConfirmPassword = testPassword,
+            Password = "TestPass123!",
+            ConfirmPassword = "TestPass123!",
             DisplayName = "Verification Test User"
         };
 
@@ -250,37 +230,11 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
             Encoding.UTF8,
             "application/json");
 
-        // Act - Register user
         var registerResponse = await Client.PostAsync("/api/auth/registerAccount", registerContent);
 
-        // Assert - Registration successful
-        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        // Act - Try to login before email verification (should fail)
-        var loginRequest = new LoginRequest
-        {
-            Email = testEmail,
-            Password = testPassword
-        };
-
-        var loginContent = new StringContent(
-            JsonSerializer.Serialize(loginRequest),
-            Encoding.UTF8,
-            "application/json");
-
-        var preVerifyLoginResponse = await Client.PostAsync("/api/auth/login", loginContent);
-
-        // Assert - Login fails due to unverified email
-        preVerifyLoginResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-
-        var preVerifyContent = await preVerifyLoginResponse.Content.ReadAsStringAsync();
-        preVerifyContent.ToLower().Should().Contain("email").And.Contain("verif");
-
-        // Note: In a real integration test, we would need to:
-        // 1. Mock the email service to capture the verification token
-        // 2. Call the verify email endpoint with the captured token
-        // 3. Then verify login works
-        // For this test, we verify the registration and pre-verification behavior
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var registerBody = await registerResponse.Content.ReadAsStringAsync();
+        registerBody.Should().Contain(AuthController.OpenRegisterDisabledKey);
     }
 
     [Fact]
@@ -291,25 +245,7 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
         var correctPassword = "TestPass123!";
         var wrongPassword = "WrongPassword123!";
 
-        // Register user
-        var registerRequest = new RegisterRequest
-        {
-            Email = testEmail,
-            Password = correctPassword,
-            ConfirmPassword = correctPassword,
-            DisplayName = "Lockout Recovery User"
-        };
-
-        var registerContent = new StringContent(
-            JsonSerializer.Serialize(registerRequest),
-            Encoding.UTF8,
-            "application/json");
-
-        var registerResponse = await Client.PostAsync("/api/auth/registerAccount", registerContent);
-        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        // Confirm email so lockout tracking is active
-        await ConfirmEmailAsync(testEmail);
+        await CreateTestUserAsync(testEmail, correctPassword, "Lockout Recovery User");
 
         // Act - Attempt multiple failed logins to trigger lockout
         for (int i = 0; i < 5; i++)

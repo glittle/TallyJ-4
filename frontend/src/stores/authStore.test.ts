@@ -18,9 +18,9 @@ vi.mock("../services/secureTokenService", () => ({
 // Mock the auth service
 vi.mock("../services/authService", () => ({
   authService: {
-    register: vi.fn(),
     login: vi.fn(),
     logout: vi.fn(),
+    googleOneTap: vi.fn(),
   },
 }));
 
@@ -122,52 +122,26 @@ describe("Auth Store", () => {
   });
 
   describe("register", () => {
-    it("should register user successfully without 2FA", async () => {
+    it("does not expose open email/password registration", async () => {
+      authStore = useAuthStore();
+      expect(authStore).not.toHaveProperty("register");
+    });
+  });
+
+  describe("googleOneTapLogin", () => {
+    it("creates or logs in a teller via Google", async () => {
       const { authService } = await import("../services/authService");
       const { secureTokenService } =
         await import("../services/secureTokenService");
 
       const mockResponse = {
-        email: "test@example.com",
-        name: "Test User",
-        authMethod: "Local",
+        email: "google@example.com",
+        name: "Google User",
+        authMethod: "Google",
         requires2FA: false,
       };
 
-      authService.register.mockResolvedValue(mockResponse);
-      secureTokenService.refreshAuthData.mockReturnValue({
-        email: "test@example.com",
-        name: "Test User",
-        authMethod: "Local",
-      });
-
-      authStore = useAuthStore();
-
-      const registerData = {
-        username: "testuser",
-        email: "test@example.com",
-        password: "password123",
-        confirmPassword: "password123",
-      };
-
-      const result = await authStore.register(registerData);
-
-      expect(authService.register).toHaveBeenCalledWith(registerData);
-      expect(authStore.email).toBe("test@example.com");
-      expect(authStore.name).toBe("Test User");
-      expect(authStore.authMethod).toBe("Local");
-      expect(authStore.requires2FA).toBe(false);
-      expect(authStore.pending2FAEmail).toBeNull();
-      expect(secureTokenService.refreshAuthData).toHaveBeenCalled();
-      expect(result).toEqual(mockResponse);
-    });
-
-    it("should handle 2FA registration", async () => {
-      const { authService } = await import("../services/authService");
-      const { secureTokenService } =
-        await import("../services/secureTokenService");
-
-      // Reset to null values for this test
+      authService.googleOneTap.mockResolvedValue(mockResponse);
       secureTokenService.getAuthData.mockReturnValue({
         token: null,
         refreshToken: null,
@@ -175,46 +149,23 @@ describe("Auth Store", () => {
         name: null,
         authMethod: null,
       });
+      secureTokenService.refreshAuthData.mockReturnValue({
+        email: "google@example.com",
+        name: "Google User",
+        authMethod: "Google",
+      });
 
-      const mockResponse = {
-        email: "test@example.com",
-        requires2FA: true,
-      };
-
-      authService.register.mockResolvedValue(mockResponse);
       authStore = useAuthStore();
-
-      const registerData = {
-        username: "testuser",
-        email: "test@example.com",
-        password: "password123",
-        confirmPassword: "password123",
-      };
-
-      const result = await authStore.register(registerData);
-
-      expect(authStore.email).toBeNull();
-      expect(authStore.requires2FA).toBe(true);
-      expect(authStore.pending2FAEmail).toBe("test@example.com");
-      expect(result).toEqual(mockResponse);
-    });
-
-    it("should handle registration errors", async () => {
-      const { authService } = await import("../services/authService");
-      const mockError = new Error("Registration failed");
-      authService.register.mockRejectedValue(mockError);
-      authStore = useAuthStore();
-
-      const registerData = {
-        username: "testuser",
-        email: "test@example.com",
-        password: "password123",
-        confirmPassword: "password123",
-      };
-
-      await expect(authStore.register(registerData)).rejects.toThrow(
-        "Registration failed",
+      const result = await authStore.googleOneTapLogin(
+        "dev-google:google@example.com",
       );
+
+      expect(authService.googleOneTap).toHaveBeenCalledWith(
+        "dev-google:google@example.com",
+      );
+      expect(authStore.email).toBe("google@example.com");
+      expect(authStore.authMethod).toBe("Google");
+      expect(result).toEqual(mockResponse);
     });
   });
 

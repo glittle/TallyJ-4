@@ -8,7 +8,9 @@ using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using Backend;
 using Backend.DTOs.Auth;
+using Backend.DTOs.Security;
 using Backend.Services.Auth;
 using Backend.Controllers;
 using Backend.Context;
@@ -416,63 +418,37 @@ public class AuthControllerTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task Register_ValidRequest_ReturnsOk()
+    public async Task Register_OpenSelfServe_ReturnsBadRequestWithI18nKey()
     {
-        // Arrange
         var request = new RegisterRequest
         {
             Email = "test@example.com",
             Password = "TestPass123!",
+            ConfirmPassword = "TestPass123!",
             DisplayName = "Test User"
         };
 
-        var expectedResponse = new AuthResponse
-        {
-            Token = "jwt-token",
-            RefreshToken = "refresh-token",
-            Email = "test@example.com",
-            Name = "Test User",
-            AuthMethod = "Local",
-            Requires2FA = false
-        };
-
-        _localAuthServiceMock.Setup(x => x.RegisterAsync(request))
-            .ReturnsAsync((true, null, expectedResponse));
-
-        // Act
         var result = await _controller.Register(request);
 
-        // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result);
-        var response = Assert.IsType<AuthResponse>(okResult.Value);
-        Assert.Equal(expectedResponse.Token, response.Token);
-        Assert.Equal(expectedResponse.Email, response.Email);
-    }
-
-    [Fact]
-    public async Task Register_InvalidRequest_ReturnsBadRequest()
-    {
-        // Arrange
-        var request = new RegisterRequest
-        {
-            Email = "invalid-email",
-            Password = "weak",
-            DisplayName = "Test User"
-        };
-
-        _localAuthServiceMock.Setup(x => x.RegisterAsync(request))
-            .ReturnsAsync((false, "Registration failed", null));
-
-        // Act
-        var result = await _controller.Register(request);
-
-        // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         var errorResponse = badRequestResult.Value;
         Assert.NotNull(errorResponse);
         var errorProperty = errorResponse.GetType().GetProperty("error");
         Assert.NotNull(errorProperty);
-        Assert.Equal("Registration failed", errorProperty.GetValue(errorResponse));
+        Assert.Equal(AuthController.OpenRegisterDisabledKey, errorProperty.GetValue(errorResponse));
+        _localAuthServiceMock.Verify(x => x.RegisterAsync(It.IsAny<RegisterRequest>()), Times.Never);
+        _securityAuditServiceMock.Verify(
+            x => x.LogSecurityEventAsync(It.Is<CreateSecurityAuditLogDto>(dto =>
+                dto.EventType == SecurityEventType.LoginAttemptBlocked
+                && dto.IsSuspicious
+                && dto.Email == request.Email
+                && dto.Details != null
+                && dto.Details.Contains("rejected", StringComparison.OrdinalIgnoreCase))),
+            Times.Once);
+        _securityAuditServiceMock.Verify(
+            x => x.LogSecurityEventAsync(It.Is<CreateSecurityAuditLogDto>(dto =>
+                dto.EventType == SecurityEventType.AccountCreated)),
+            Times.Never);
     }
 
     [Fact]

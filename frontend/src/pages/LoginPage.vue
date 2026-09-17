@@ -638,15 +638,9 @@ onBeforeUnmount(() => {
             </el-button>
           </div>
 
-          <div class="auth-links">
-            <router-link
-              v-if="mode === 'officer'"
-              to="/register"
-              class="register"
-            >
-              {{ t("auth.noAccount") }}
-            </router-link>
-          </div>
+          <p v-if="mode === 'officer'" class="new-account-hint">
+            {{ t("auth.newAccountUseGoogle") }}
+          </p>
         </el-form>
       </el-card>
     </div>
@@ -708,26 +702,12 @@ onBeforeUnmount(() => {
     font-size: 0.85rem;
   }
 
-  .auth-links {
+  .new-account-hint {
     margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-
-  .auth-links a {
-    color: var(--color-primary-500);
-    text-decoration: none;
-    font-size: 0.85rem;
-
-    &.register {
-      font-size: 1rem;
-    }
-  }
-
-  .auth-links a:hover {
-    text-decoration: underline;
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.4;
   }
 
   .social-login {

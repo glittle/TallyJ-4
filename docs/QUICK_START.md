@@ -46,24 +46,16 @@ npm run dev
 
 ### 2. Initial Setup (3 minutes)
 
-1. **Create Admin Account**
+1. **Create a teller / admin account**
+   - Sign in with Google from https://localhost:8095/login (or `/register`, which steers to Google).
+   - Open email/password registration is disabled. Existing local accounts can still log in with email and password.
+   - Development seeding (`SeedOnStartup`) also creates sample users.
 
-   ```bash
-   curl -X POST http://localhost:5016/api/Auth/registerAccount \
-     -H "Content-Type: application/json" \
-     -d '{
-       "email": "admin@example.com",
-       "password": "SecurePassword123!",
-       "firstName": "Admin",
-       "lastName": "User"
-     }'
-   ```
-
-2. **Assign Admin Role** (via database or admin panel)
+2. **Assign Admin Role** (via database or admin panel) if the Google account is not already a super-admin
 
 3. **Log In**
    - Navigate to https://localhost:8095
-   - Enter credentials
+   - Use Google for a new account, or email/password for an existing local account
 
 ### 3. Test with Sample Data (2 minutes)
 

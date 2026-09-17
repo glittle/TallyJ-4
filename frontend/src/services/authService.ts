@@ -1,5 +1,4 @@
 import {
-  postApiAuthRegisterAccount,
   postApiAuthLogin,
   postApiAuthForgotPassword,
   postApiAuthResetPassword,
@@ -20,7 +19,6 @@ import {
   postApiAuthConfirmEmailChange,
 } from "@/api/gen/configService";
 import type {
-  RegisterRequest,
   LoginRequest,
   GoogleOneTapRequest,
   AccountUserProfileDto,
@@ -62,14 +60,6 @@ function unwrapProfile(response: {
 }
 
 export const authService = {
-  async register(data: RegisterRequest): Promise<AuthResponse> {
-    const response = await postApiAuthRegisterAccount({
-      body: data,
-      throwOnError: true,
-    });
-    return response.data as AuthResponse;
-  },
-
   async login(data: LoginRequest): Promise<AuthResponse> {
     const response = await postApiAuthLogin({
       body: data,
@@ -225,7 +215,4 @@ export const authService = {
   },
 };
 
-export {
-  type RegisterRequest,
-  type LoginRequest,
-} from "@/api/gen/configService/types.gen";
+export { type LoginRequest } from "@/api/gen/configService/types.gen";

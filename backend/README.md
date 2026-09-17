@@ -142,7 +142,7 @@ Use the reset scripts under `backend/scripts/` when you need a clean local datab
 The backend uses controller-based routes. A few examples from the current codebase:
 
 - `POST /api/Auth/login`
-- `POST /api/Auth/registerAccount`
+- `POST /api/Auth/registerAccount` (disabled; returns `auth.errors.openRegisterDisabled` — new teller accounts are created via Google)
 - `GET /api/Elections/getElections`
 - `POST /api/online-voting/requestCode`
 

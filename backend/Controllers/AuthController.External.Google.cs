@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -174,47 +175,61 @@ public partial class AuthController
         var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
-        var googleClientId = _configuration["ClientEnv:googleClientId"];
-        if (string.IsNullOrWhiteSpace(googleClientId) || googleClientId.StartsWith("<"))
-        {
-            _logger.LogWarning("Google One Tap attempted but Google Client ID is not configured");
-            return BadRequest(new { error = "Google authentication is not configured on this server." });
-        }
+        string email;
+        string googleId;
+        string? displayName;
 
-        GoogleJsonWebSignature.Payload payload;
-        try
+        // Same Testing/Development mock as voter Google auth (`dev-google:{email}`).
+        if (TryParseDevGoogleCredential(request.Credential, out var devEmail))
         {
-            var settings = new GoogleJsonWebSignature.ValidationSettings
+            email = devEmail;
+            googleId = $"dev-google:{devEmail}";
+            displayName = devEmail;
+        }
+        else
+        {
+            var googleClientId = _configuration["ClientEnv:googleClientId"];
+            if (string.IsNullOrWhiteSpace(googleClientId) || googleClientId.StartsWith("<"))
             {
-                Audience = new[] { googleClientId }
-            };
-            payload = await GoogleJsonWebSignature.ValidateAsync(request.Credential, settings);
-        }
-        catch (InvalidJwtException ex)
-        {
-            _logger.LogWarning(ex, "Google One Tap: Invalid Google ID token");
+                _logger.LogWarning("Google One Tap attempted but Google Client ID is not configured");
+                return BadRequest(new { error = "Google authentication is not configured on this server." });
+            }
 
-            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            GoogleJsonWebSignature.Payload payload;
+            try
             {
-                EventType = SecurityEventType.OAuthLoginFailure,
-                IpAddress = clientIp,
-                UserAgent = userAgent,
-                Details = "Google One Tap: Invalid ID token",
-                IsSuspicious = true,
-                Severity = SecurityEventSeverity.Warning
-            });
+                var settings = new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[] { googleClientId }
+                };
+                payload = await GoogleJsonWebSignature.ValidateAsync(request.Credential, settings);
+            }
+            catch (InvalidJwtException ex)
+            {
+                _logger.LogWarning(ex, "Google One Tap: Invalid Google ID token");
 
-            return BadRequest(new { error = "Invalid Google credential." });
+                await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+                {
+                    EventType = SecurityEventType.OAuthLoginFailure,
+                    IpAddress = clientIp,
+                    UserAgent = userAgent,
+                    Details = "Google One Tap: Invalid ID token",
+                    IsSuspicious = true,
+                    Severity = SecurityEventSeverity.Warning
+                });
+
+                return BadRequest(new { error = "Invalid Google credential." });
+            }
+
+            email = payload.Email;
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest(new { error = "Email not provided by Google." });
+            }
+
+            googleId = payload.Subject;
+            displayName = payload.Name ?? payload.GivenName;
         }
-
-        var email = payload.Email;
-        if (string.IsNullOrEmpty(email))
-        {
-            return BadRequest(new { error = "Email not provided by Google." });
-        }
-
-        var googleId = payload.Subject;
-        var displayName = payload.Name ?? payload.GivenName;
 
         try
         {
@@ -443,6 +458,29 @@ public partial class AuthController
         await _remoteLogService.SendLogAsync($"FullTeller login via Google" + (isNewUser ? " (new user)" : ""), user.DisplayName ?? user.Email, null);
 
         return (user, isNewUser);
+    }
+
+    /// <summary>
+    /// Accepts the same <c>dev-google:{email}</c> credential used by voter Google tests
+    /// (<see cref="DevelopmentGoogleIdTokenValidator"/>). Production is unchanged.
+    /// </summary>
+    private bool TryParseDevGoogleCredential(string? credential, out string email)
+    {
+        email = "";
+        if (!_hostEnvironment.IsDevelopment() && !_hostEnvironment.IsEnvironment("Testing"))
+        {
+            return false;
+        }
+
+        const string prefix = "dev-google:";
+        if (string.IsNullOrEmpty(credential) ||
+            !credential.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        email = credential[prefix.Length..].Trim();
+        return !string.IsNullOrWhiteSpace(email);
     }
 
 

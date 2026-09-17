@@ -5,8 +5,11 @@ using System.Text.Json;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
+using Backend.Controllers;
 using Backend.DTOs.Auth;
+using Backend.Identity;
 using Backend.Middleware;
+using Microsoft.AspNetCore.Identity;
 using Xunit;
 
 namespace Backend.Tests.IntegrationTests;
@@ -190,25 +193,7 @@ public class AuthControllerTests : IntegrationTestBase
         var testEmail = "lockout-test@tallyj.test";
         var wrongPassword = "WrongPassword123!";
 
-        // First register a test user
-        var registerRequest = new RegisterRequest
-        {
-            Email = testEmail,
-            Password = "TestPass123!",
-            ConfirmPassword = "TestPass123!",
-            DisplayName = "Lockout Test User"
-        };
-
-        var registerContent = new StringContent(
-            JsonSerializer.Serialize(registerRequest),
-            Encoding.UTF8,
-            "application/json");
-
-        var registerResponse = await Client.PostAsync("/api/auth/registerAccount", registerContent);
-        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        // Confirm email so lockout tracking is active
-        await ConfirmEmailAsync(testEmail);
+        await CreateTestUserAsync(testEmail, "TestPass123!", "Lockout Test User");
 
         // Act - Attempt 5 failed logins (the lockout threshold)
         for (int i = 0; i < 5; i++)
@@ -266,25 +251,7 @@ public class AuthControllerTests : IntegrationTestBase
         var testEmail = "2fa-test@tallyj.test";
         var testPassword = "TestPass123!";
 
-        // Register user
-        var registerRequest = new RegisterRequest
-        {
-            Email = testEmail,
-            Password = testPassword,
-            ConfirmPassword = testPassword,
-            DisplayName = "2FA Test User"
-        };
-
-        var registerContent = new StringContent(
-            JsonSerializer.Serialize(registerRequest),
-            Encoding.UTF8,
-            "application/json");
-
-        var registerResponse = await Client.PostAsync("/api/auth/registerAccount", registerContent);
-        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        // Confirm email so login works
-        await ConfirmEmailAsync(testEmail);
+        await CreateTestUserAsync(testEmail, testPassword, "2FA Test User");
 
         // Login first to authenticate before setting up 2FA
         var loginRequest2FA = new LoginRequest { Email = testEmail, Password = testPassword };
@@ -358,6 +325,111 @@ public class AuthControllerTests : IntegrationTestBase
 
         var responseContent = await response.Content.ReadAsStringAsync();
         responseContent.Should().Contain("Password"); // Should mention password validation error
+    }
+
+    [Fact]
+    public async Task RegisterAccount_OpenSelfServe_ReturnsBadRequestWithI18nKey_AndDoesNotCreateUser()
+    {
+        var testEmail = $"open-register-{Guid.NewGuid()}@tallyj.test";
+        var registerRequest = new RegisterRequest
+        {
+            Email = testEmail,
+            Password = "TestPass123!",
+            ConfirmPassword = "TestPass123!",
+            DisplayName = "Should Not Be Created"
+        };
+
+        var content = new StringContent(
+            JsonSerializer.Serialize(registerRequest),
+            Encoding.UTF8,
+            "application/json");
+
+        var response = await Client.PostAsync("/api/auth/registerAccount", content);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        responseContent.Should().Contain(AuthController.OpenRegisterDisabledKey);
+
+        using var scope = Factory.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var user = await userManager.FindByEmailAsync(testEmail);
+        user.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task GoogleOneTap_DevCredential_CreatesNewTellerAndSetsCookies()
+    {
+        var testEmail = $"google-create-{Guid.NewGuid()}@tallyj.test";
+        var request = new GoogleOneTapRequest
+        {
+            Credential = $"dev-google:{testEmail}"
+        };
+
+        var content = new StringContent(
+            JsonSerializer.Serialize(request),
+            Encoding.UTF8,
+            "application/json");
+
+        var response = await Client.PostAsync("/api/auth/google/one-tap", content);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        var authResponse = JsonSerializer.Deserialize<AuthResponse>(responseContent, JsonOptions);
+        authResponse.Should().NotBeNull();
+        authResponse!.Email.Should().Be(testEmail);
+        authResponse.AuthMethod.Should().Be("Google");
+
+        var cookies = GetCookiesFromResponse(response);
+        cookies.Should().ContainKey(SecureCookieMiddleware.AccessTokenCookieName);
+        cookies.Should().ContainKey(SecureCookieMiddleware.AuthMethodCookieName);
+
+        using var scope = Factory.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var user = await userManager.FindByEmailAsync(testEmail);
+        user.Should().NotBeNull();
+        user!.EmailConfirmed.Should().BeTrue();
+        user.AuthMethod.Should().Be("Google");
+        user.GoogleId.Should().Be($"dev-google:{testEmail}");
+    }
+
+    [Fact]
+    public async Task GoogleOneTap_DevCredential_LogsInExistingGoogleUser()
+    {
+        var testEmail = $"google-login-{Guid.NewGuid()}@tallyj.test";
+        var firstRequest = new GoogleOneTapRequest
+        {
+            Credential = $"dev-google:{testEmail}"
+        };
+        var firstContent = new StringContent(
+            JsonSerializer.Serialize(firstRequest),
+            Encoding.UTF8,
+            "application/json");
+        var firstResponse = await Client.PostAsync("/api/auth/google/one-tap", firstContent);
+        firstResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        string userId;
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+            var created = await userManager.FindByEmailAsync(testEmail);
+            created.Should().NotBeNull();
+            userId = created!.Id;
+        }
+
+        var secondContent = new StringContent(
+            JsonSerializer.Serialize(firstRequest),
+            Encoding.UTF8,
+            "application/json");
+        var secondResponse = await Client.PostAsync("/api/auth/google/one-tap", secondContent);
+        secondResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+            var users = userManager.Users.Where(u => u.Email == testEmail).ToList();
+            users.Should().HaveCount(1);
+            users[0].Id.Should().Be(userId);
+        }
     }
 
     [Fact]

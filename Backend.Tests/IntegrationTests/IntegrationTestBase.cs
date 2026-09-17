@@ -251,8 +251,16 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         using var scope = Factory.Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<MainDbContext>();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-
+        // Google teller create assigns Officer; keep that role present for IdP tests.
+        foreach (var roleName in new[] { "Admin", "Teller", "Guest", "Officer" })
+        {
+            if (!await roleManager.RoleExistsAsync(roleName))
+            {
+                await roleManager.CreateAsync(new IdentityRole(roleName));
+            }
+        }
 
         // Only seed if database doesn't have our test data
         if (await dbContext.Users.AnyAsync(u => u.Email == "admin@tallyj.com"))
@@ -354,7 +362,7 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         Factory.Services.GetRequiredService<RateLimitStore>().Reset();
     }
 
-    private async Task CreateTestUserAsync(string email, string password)
+    protected async Task CreateTestUserAsync(string email, string password, string? displayName = null)
     {
         using var scope = Factory.Services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
@@ -375,7 +383,9 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         {
             UserName = email,
             Email = email,
-            EmailConfirmed = true
+            DisplayName = displayName,
+            EmailConfirmed = true,
+            AuthMethod = "Local"
         };
 
         var result = await userManager.CreateAsync(user, password);

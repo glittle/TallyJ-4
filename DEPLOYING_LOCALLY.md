@@ -120,17 +120,7 @@ Ensure the web server:
 ## Verification
 
 1. Access the application at your configured URL
-2. Use Swagger at `/swagger` to create an initial admin account:
-
-   POST `/api/Auth/register`
-   ```json
-   {
-     "email": "admin@yourdomain.com",
-     "password": "SecurePassword123!",
-     "firstName": "Admin",
-     "lastName": "User"
-   }
-   ```
+2. Create the first teller/admin by signing in with Google (open email/password register is disabled). Development seeding can also create sample users. Existing local accounts can still log in with a password.
 
 3. Log in and create a test election
 4. Verify ballot entry and tallying work
