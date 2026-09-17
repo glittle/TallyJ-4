@@ -222,7 +222,7 @@ public class Issue191ConcurrentTellerTests
         ballots
             .Where(b => b.ComputerCode == computerCode)
             .OrderBy(b => b.BallotNumAtComputer)
-            .Select(b => b.BallotCode)
+            .Select(b => b.BallotCode ?? string.Empty)
             .ToList();
 
     private static async Task AssertAtMostOneCountedVoteAsync(
