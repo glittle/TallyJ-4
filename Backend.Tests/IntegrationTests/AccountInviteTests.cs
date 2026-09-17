@@ -51,11 +51,8 @@ public class AccountInviteTests : IntegrationTestBase
         created.InviteUrl.Should().Contain("/register");
         created.InviteUrl.Should().Contain("invite=");
 
-        var peek = await Client.GetAsync($"/api/auth/account-invite?token={Uri.EscapeDataString(created.Token)}");
-        peek.StatusCode.Should().Be(HttpStatusCode.OK);
-        var peekDto = JsonSerializer.Deserialize<AccountInviteStatusDto>(
-            await peek.Content.ReadAsStringAsync(), JsonOptions);
-        peekDto!.Valid.Should().BeTrue();
+        var peekDto = await PeekInviteAsync(created.Token);
+        peekDto.Valid.Should().BeTrue();
 
         var email = $"invite-create-{Guid.NewGuid()}@tallyj.test";
         var register = await PostJsonAsync("/api/auth/registerWithInvite", new RegisterWithInviteRequest
@@ -91,6 +88,61 @@ public class AccountInviteTests : IntegrationTestBase
             Password = "TestPass123!"
         });
         login.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task RegisterWithInvite_FailedRegister_UnconsumesInvite_SoInviteeCanRetry()
+    {
+        var created = await IssueInviteAsSuperAdminAsync();
+        var email = $"invite-retry-{Guid.NewGuid()}@tallyj.test";
+
+        var weak = await PostJsonAsync("/api/auth/registerWithInvite", new RegisterWithInviteRequest
+        {
+            Token = created.Token,
+            Email = email,
+            Password = "Weak1!",
+            ConfirmPassword = "Weak1!",
+            DisplayName = "Retry User"
+        });
+
+        weak.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        var weakBody = await weak.Content.ReadAsStringAsync();
+        weakBody.Should().NotContain(AccountInviteService.InvalidInviteKey);
+        weakBody.Should().Contain("Password", "Identity should reject the weak password, not the invite");
+
+        var peekAfterFail = await PeekInviteAsync(created.Token);
+        peekAfterFail.Valid.Should().BeTrue();
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+            (await userManager.FindByEmailAsync(email)).Should().BeNull();
+        }
+
+        var retry = await PostJsonAsync("/api/auth/registerWithInvite", new RegisterWithInviteRequest
+        {
+            Token = created.Token,
+            Email = email,
+            Password = "TestPass123!",
+            ConfirmPassword = "TestPass123!",
+            DisplayName = "Retry User"
+        });
+
+        retry.StatusCode.Should().Be(HttpStatusCode.OK);
+        var auth = JsonSerializer.Deserialize<AuthResponse>(
+            await retry.Content.ReadAsStringAsync(), JsonOptions);
+        auth!.Email.Should().Be(email);
+
+        var peekAfterSuccess = await PeekInviteAsync(created.Token);
+        peekAfterSuccess.Valid.Should().BeFalse();
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+            var matches = userManager.Users.Where(u => u.Email == email).ToList();
+            matches.Should().HaveCount(1);
+            matches[0].AuthMethod.Should().Be("Local");
+        }
     }
 
     [Fact]
@@ -141,10 +193,8 @@ public class AccountInviteTests : IntegrationTestBase
             await db.SaveChangesAsync();
         }
 
-        var peek = await Client.GetAsync($"/api/auth/account-invite?token={Uri.EscapeDataString(created.Token)}");
-        var peekDto = JsonSerializer.Deserialize<AccountInviteStatusDto>(
-            await peek.Content.ReadAsStringAsync(), JsonOptions);
-        peekDto!.Valid.Should().BeFalse();
+        var peekDto = await PeekInviteAsync(created.Token);
+        peekDto.Valid.Should().BeFalse();
 
         var email = $"invite-expired-{Guid.NewGuid()}@tallyj.test";
         var register = await PostJsonAsync("/api/auth/registerWithInvite", new RegisterWithInviteRequest
@@ -192,6 +242,16 @@ public class AccountInviteTests : IntegrationTestBase
     {
         var response = await Client.PostAsync("/api/superadmin/account-invites", null);
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    private async Task<AccountInviteStatusDto> PeekInviteAsync(string token)
+    {
+        var peek = await Client.GetAsync($"/api/auth/account-invite?token={Uri.EscapeDataString(token)}");
+        peek.StatusCode.Should().Be(HttpStatusCode.OK);
+        var peekDto = JsonSerializer.Deserialize<AccountInviteStatusDto>(
+            await peek.Content.ReadAsStringAsync(), JsonOptions);
+        peekDto.Should().NotBeNull();
+        return peekDto!;
     }
 
     private async Task<AccountInviteCreatedDto> IssueInviteAsSuperAdminAsync()
