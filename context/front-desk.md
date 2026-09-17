@@ -116,6 +116,8 @@ The leftover hole was a Front Desk `DbContext` that had already tracked **Submit
 
 **Reason:** one counted vote per person. The desk method wins only while the online row is still Draft or Submitted.
 
+True same-moment `Task.WhenAll` of Accept-all + check-in (plus paper entry overlapping Accept-all / Unregister) is `Issue191ConcurrentTellerTests`. That file does not replace the ordered interleavings above.
+
 ## Front Desk SMS column is the phone P-row hint
 
 **Status:** active  

@@ -105,3 +105,24 @@ Location stays read-only on the open ballot in this slice. Adding a name to the 
 Implementation:
 - `useActiveTellers` — shared reactive session state over `activeTellerStorage`
 - `ActiveTellerSelector` on the listing and as the Teller 1/2 cells in `BallotEntryPanel`
+
+## Concurrent tellers: automated coverage is SQLite, not a browser driver
+
+**Status:** active  
+**Evidence:** inferred (issue #191 leftover; tests named under #191)  
+**Source:** issue #191; same SQLite two-context approach as #336 / Accept-all CAS  
+**Revisit when:** a Playwright (or other browser) path is adopted as standard, or paper numbering grows a unique/CAS constraint
+
+Two tellers on two computers is the normal election, not an edge case. Multi-teller SignalR visibility is already shipped. #191 leftover is proving that concurrent **writes** stay consistent: paper ballot rows, Accept-all, and Front Desk.
+
+**Chosen:** SQLite file + two `MainDbContext` instances (`Issue191ConcurrentTellerTests`). In-memory EF cannot prove row locks or `ExecuteUpdate` claims. HTTP coverage on the shared `CustomWebApplicationFactory` is an extra slice (`Issue191ConcurrentTellerHttpTests`) when two authenticated clients are enough. Playwright is not in this repo’s standard path (`E2E_TESTING_GUIDE.md` is smoke/manual).
+
+Paper numbering is `Max(BallotNumAtComputer)+1` per `(location, computer code)`. Product-normal concurrent entry is **two computer codes** (A and B), so the sequences do not share a max. There is no unique index on `(LocationGuid, ComputerCode, BallotNumAtComputer)` and no CAS on teller create — this slice does not invent one. Same-computer concurrent create is not the product-normal path and is not asserted here.
+
+Accept-all vs Front Desk **same person** is still one counted vote (desk method **or** accepted online). Ordered interleavings and stale-context CAS stay in `Issue336AcceptAllFrontDeskRaceTests`. Two overlapping Accept-alls stay in `OnlineVotingServiceAcceptAllConcurrencyTests`. #191 adds a true `Task.WhenAll` of Accept-all + check-in, plus paper entry overlapping Accept-all on a **different** pending voter, plus Unregister + re-check-in overlapping paper entry on another computer (the supported method-change path).
+
+**Rejected alternative:** Playwright two-browser E2E as the first #191 slice. Rejected — frontend tests stay Vitest + jsdom; the leftover is an automated concurrent write proof, not a UI rewrite.
+
+**Rejected alternative:** treat two browsers on the same computer code as the numbering invariant. Rejected — each teller workstation has its own code; colliding Max+1 on one code would be a different product change.
+
+**Reason:** lock the already-shipped multi-teller write contract locally, without Azure SQL and without inventing a new lock.

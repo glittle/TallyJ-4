@@ -9,7 +9,7 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [election-analysis.md](election-analysis.md) — core analysis engine; risk-first correctness vs v3
 - [reports.md](reports.md) — VotersByArea 18+/18–21 (V01), download-all zip of the existing report list, Front Desk vs analysis voted rule; Analyze SaveManual persists M without re-running Analyze
 - [ballot-validation.md](ballot-validation.md) — pre-finalization integrity; count-reconciliation report before Analyze/Finalize
-- [election-state.md](election-state.md) — teller coordination and high-consequence state transitions
+- [election-state.md](election-state.md) — teller coordination, Finalized write lock, and #191 concurrent-teller SQLite coverage
 - [online-ballots.md](online-ballots.md) - Draft autosave vs Submitted, online acceptance (pending until Accept-all), reserved Online/Imported locations, monitor close countdown, anonymous ballot-page sessions, and random name resolution
 - [kiosk.md](kiosk.md) — kiosk as teller-minted 15-minute codes on a shared browser; not mint-on-read
 - [people.md](people.md) - person fields; AgeGroup removed (eligibility is V01/X05); cannot-vote lock after accepted ballot; guest Can Add People / Name not in the List; Confidential X is a named ordinary person
