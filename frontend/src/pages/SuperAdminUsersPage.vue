@@ -25,6 +25,10 @@ const selected = ref<SuperAdminUserDetail | null>(null);
 const editForm = ref({ displayName: "", email: "" });
 const saving = ref(false);
 
+const inviteDialogVisible = ref(false);
+const issuingInvite = ref(false);
+const issuedInvite = ref<{ inviteUrl: string; expiresAt: string } | null>(null);
+
 async function fetchUsers() {
   loading.value = true;
   try {
@@ -89,6 +93,32 @@ function formatWhen(value?: string) {
   return new Date(value).toLocaleString();
 }
 
+async function issueInvite() {
+  issuingInvite.value = true;
+  try {
+    issuedInvite.value = await superAdminService.createAccountInvite();
+    inviteDialogVisible.value = true;
+  } catch (err) {
+    showErrorMessage(
+      extractApiErrorMessage(err) || t("superAdmin.users.issueInviteFailed"),
+    );
+  } finally {
+    issuingInvite.value = false;
+  }
+}
+
+async function copyInviteLink() {
+  if (!issuedInvite.value?.inviteUrl) {
+    return;
+  }
+  try {
+    await navigator.clipboard.writeText(issuedInvite.value.inviteUrl);
+    showSuccessMessage(t("superAdmin.users.issueInviteCopied"));
+  } catch (err) {
+    showErrorMessage(extractApiErrorMessage(err));
+  }
+}
+
 onMounted(fetchUsers);
 </script>
 
@@ -109,6 +139,13 @@ onMounted(fetchUsers);
           :placeholder="$t('superAdmin.users.search')"
           @input="debouncedSearch"
         />
+        <el-button
+          type="primary"
+          :loading="issuingInvite"
+          @click="issueInvite"
+        >
+          {{ $t("superAdmin.users.issueInvite") }}
+        </el-button>
       </div>
 
       <el-table v-loading="loading" :data="users" stripe @row-click="openUser">
@@ -203,6 +240,31 @@ onMounted(fetchUsers);
         <p v-else class="empty">{{ $t("superAdmin.users.historyEmpty") }}</p>
       </template>
     </el-drawer>
+
+    <el-dialog
+      v-model="inviteDialogVisible"
+      :title="$t('superAdmin.users.issueInviteTitle')"
+      width="520px"
+    >
+      <p>{{ $t("superAdmin.users.issueInviteHelp") }}</p>
+      <el-input
+        v-if="issuedInvite"
+        :model-value="issuedInvite.inviteUrl"
+        readonly
+      />
+      <p v-if="issuedInvite" class="invite-expiry">
+        {{ $t("superAdmin.users.issueInviteExpires") }}:
+        {{ formatWhen(issuedInvite.expiresAt) }}
+      </p>
+      <template #footer>
+        <el-button @click="inviteDialogVisible = false">
+          {{ $t("common.close") }}
+        </el-button>
+        <el-button type="primary" @click="copyInviteLink">
+          {{ $t("superAdmin.users.issueInviteCopy") }}
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -230,7 +292,15 @@ onMounted(fetchUsers);
 
   .toolbar {
     margin-bottom: 16px;
-    max-width: 360px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    max-width: 720px;
+  }
+
+  .invite-expiry {
+    margin: 12px 0 0;
+    color: var(--el-text-color-secondary);
   }
 
   .empty {

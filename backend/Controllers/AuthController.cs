@@ -30,14 +30,16 @@ namespace Backend.Controllers;
 /// <summary>
 /// Controller for handling authentication and authorization operations including
 /// login, password management, two-factor authentication, and role management.
-/// Open self-serve email/password registration is disabled; new teller accounts
-/// are created via Google. Implementation is split across partial files by concern.
+    /// Open self-serve email/password registration is disabled; new teller accounts
+    /// are created via Google, or via a SuperAdmin one-time invite for local email/password.
+    /// Implementation is split across partial files by concern.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public partial class AuthController : ControllerBase
 {
     private readonly ILocalAuthService _localAuthService;
+    private readonly IAccountInviteService _accountInviteService;
     private readonly IPasswordResetService _passwordResetService;
     private readonly ITwoFactorService _twoFactorService;
     private readonly IJwtTokenService _jwtTokenService;
@@ -66,6 +68,7 @@ public partial class AuthController : ControllerBase
     /// Initializes a new instance of the AuthController.
     /// </summary>
     /// <param name="localAuthService">Service for local authentication operations.</param>
+    /// <param name="accountInviteService">Service for SuperAdmin one-time local-account invites.</param>
     /// <param name="passwordResetService">Service for password reset operations.</param>
     /// <param name="twoFactorService">Service for two-factor authentication operations.</param>
     /// <param name="jwtTokenService">Service for JWT token management.</param>
@@ -82,6 +85,7 @@ public partial class AuthController : ControllerBase
     /// <param name="assignmentService">Tracks active main teller connections for guest login eligibility.</param>
     public AuthController(
         ILocalAuthService localAuthService,
+        IAccountInviteService accountInviteService,
         IPasswordResetService passwordResetService,
         ITwoFactorService twoFactorService,
         IJwtTokenService jwtTokenService,
@@ -100,6 +104,7 @@ public partial class AuthController : ControllerBase
         IAccountService accountService)
     {
         _localAuthService = localAuthService;
+        _accountInviteService = accountInviteService;
         _passwordResetService = passwordResetService;
         _twoFactorService = twoFactorService;
         _jwtTokenService = jwtTokenService;

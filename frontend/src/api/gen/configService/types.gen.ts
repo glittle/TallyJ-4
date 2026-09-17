@@ -44,6 +44,13 @@ export type ApiResponseAccountUserProfileDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponseAuthAccountInviteCreatedDto = {
+    success?: boolean;
+    data?: AuthAccountInviteCreatedDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponseBallotsBallotDto = {
     success?: boolean;
     data?: BallotsBallotDto;
@@ -296,6 +303,12 @@ export type ApiResponseVotesVoteWithBallotStatusDto = {
     errors?: Array<string> | null;
 };
 
+export type AuthAccountInviteCreatedDto = {
+    token?: string | null;
+    inviteUrl?: string | null;
+    expiresAt?: Date;
+};
+
 export type AuthAssignRoleRequest = {
     roleName: string;
 };
@@ -340,6 +353,10 @@ export type AuthRegisterRequest = {
     displayName: string;
     password: string;
     confirmPassword: string;
+};
+
+export type AuthRegisterWithInviteRequest = AuthRegisterRequest & {
+    token: string;
 };
 
 export type AuthResetPasswordRequest = {
@@ -2445,6 +2462,36 @@ export type PostApiAuthRegisterAccountData = {
 };
 
 export type PostApiAuthRegisterAccountResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type GetApiAuthAccountInviteData = {
+    body?: never;
+    path?: never;
+    query?: {
+        token?: string;
+    };
+    url: '/api/Auth/account-invite';
+};
+
+export type GetApiAuthAccountInviteResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
+
+export type PostApiAuthRegisterWithInviteData = {
+    body?: AuthRegisterWithInviteRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/registerWithInvite';
+};
+
+export type PostApiAuthRegisterWithInviteResponses = {
     /**
      * OK
      */
@@ -5281,6 +5328,22 @@ export type PutApiSuperadminUsersByUserIdResponses = {
 };
 
 export type PutApiSuperadminUsersByUserIdResponse = PutApiSuperadminUsersByUserIdResponses[keyof PutApiSuperadminUsersByUserIdResponses];
+
+export type PostApiSuperadminAccountInvitesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/superadmin/account-invites';
+};
+
+export type PostApiSuperadminAccountInvitesResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseAuthAccountInviteCreatedDto;
+};
+
+export type PostApiSuperadminAccountInvitesResponse = PostApiSuperadminAccountInvitesResponses[keyof PostApiSuperadminAccountInvitesResponses];
 
 export type GetApiByElectionGuidTellersData = {
     body?: never;

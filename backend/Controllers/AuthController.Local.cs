@@ -31,8 +31,8 @@ public partial class AuthController
 {
     /// <summary>
     /// Open self-serve email/password registration is disabled (issue #347).
-    /// New teller accounts are created via Google. Existing local password login remains.
-    /// Invite-only email signup is leftover, not implemented in this slice.
+    /// New teller accounts are created via Google, or via a SuperAdmin one-time invite.
+    /// Existing local password login remains.
     /// </summary>
     /// <param name="request">Ignored. The body is accepted so leftover clients get a clear i18n error.</param>
     /// <returns>400 with <c>auth.errors.openRegisterDisabled</c>.</returns>
@@ -54,6 +54,62 @@ public partial class AuthController
         });
 
         return BadRequest(new { error = OpenRegisterDisabledKey });
+    }
+
+    /// <summary>
+    /// Peeks a SuperAdmin one-time invite. Invalid, used, and expired tokens return
+    /// <c>valid: false</c> (same shape) so the SPA can show the form or an error.
+    /// </summary>
+    [AllowAnonymous]
+    [HttpGet("account-invite")]
+    public async Task<IActionResult> PeekAccountInvite([FromQuery] string? token)
+    {
+        var status = await _accountInviteService.PeekAsync(token);
+        return Ok(status);
+    }
+
+    /// <summary>
+    /// Creates one local email/password account using a SuperAdmin one-time invite.
+    /// Open <c>registerAccount</c> stays disabled; this is the only anonymous local create path.
+    /// </summary>
+    [AllowAnonymous]
+    [HttpPost("registerWithInvite")]
+    public async Task<IActionResult> RegisterWithInvite([FromBody] RegisterWithInviteRequest request)
+    {
+        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
+
+        var (success, error, response) = await _accountInviteService.RedeemAsync(request);
+
+        if (!success)
+        {
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.LoginAttemptBlocked,
+                Email = request.Email,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = $"Invite register rejected: {error}",
+                IsSuspicious = string.Equals(error, AccountInviteService.InvalidInviteKey, StringComparison.Ordinal),
+                Severity = SecurityEventSeverity.Warning
+            });
+            return BadRequest(new { error });
+        }
+
+        var user = await _userManager.FindByEmailAsync(request.Email);
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.AccountCreated,
+            UserId = user?.Id,
+            Email = request.Email,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = "Local account created via SuperAdmin invite",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
+
+        return Ok(response);
     }
 
     /// <summary>

@@ -43,5 +43,12 @@
   "superAdmin.users.historyWhen": "When",
   "superAdmin.users.historySource": "Source",
   "superAdmin.users.updateSuccess": "Account updated",
-  "superAdmin.users.manageAccounts": "Manage login accounts"
+  "superAdmin.users.manageAccounts": "Manage login accounts",
+  "superAdmin.users.issueInvite": "Issue email/password invite",
+  "superAdmin.users.issueInviteTitle": "One-time account invite",
+  "superAdmin.users.issueInviteHelp": "Share this link once. It creates a single local email and password account, then expires or becomes unusable.",
+  "superAdmin.users.issueInviteCopy": "Copy link",
+  "superAdmin.users.issueInviteCopied": "Invite link copied",
+  "superAdmin.users.issueInviteExpires": "Expires",
+  "superAdmin.users.issueInviteFailed": "Could not issue invite"
 }

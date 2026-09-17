@@ -1,7 +1,9 @@
 ﻿using System.Security.Claims;
+using Backend.DTOs.Auth;
 using Backend.DTOs.SuperAdmin;
 using Backend.Models;
 using Backend.Services;
+using Backend.Services.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +18,7 @@ namespace Backend.Controllers;
 public class SuperAdminController : ControllerBase
 {
     private readonly ISuperAdminService _superAdminService;
+    private readonly IAccountInviteService _accountInviteService;
     private readonly ILogger<SuperAdminController> _logger;
 
     /// <summary>
@@ -25,9 +28,11 @@ public class SuperAdminController : ControllerBase
     /// <param name="logger">The logger for diagnostic output.</param>
     public SuperAdminController(
         ISuperAdminService superAdminService,
+        IAccountInviteService accountInviteService,
         ILogger<SuperAdminController> logger)
     {
         _superAdminService = superAdminService;
+        _accountInviteService = accountInviteService;
         _logger = logger;
     }
 
@@ -127,6 +132,24 @@ public class SuperAdminController : ControllerBase
         {
             return BadRequest(ApiResponse<SuperAdminUserDetailDto>.ErrorResponse(ex.Message));
         }
+    }
+
+    /// <summary>
+    /// Issues a one-time invite URL that allows creating a single local email/password account.
+    /// Head Teller is election-scoped and cannot issue site-wide account invites.
+    /// </summary>
+    [HttpPost("account-invites")]
+    [Authorize(Policy = "SuperAdmin")]
+    public async Task<ActionResult<ApiResponse<AccountInviteCreatedDto>>> CreateAccountInvite()
+    {
+        var adminId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirst("sub")?.Value;
+        if (string.IsNullOrEmpty(adminId))
+        {
+            return Unauthorized(ApiResponse<AccountInviteCreatedDto>.ErrorResponse("Not authenticated"));
+        }
+
+        var created = await _accountInviteService.CreateAsync(adminId);
+        return Ok(ApiResponse<AccountInviteCreatedDto>.SuccessResponse(created));
     }
 }
 

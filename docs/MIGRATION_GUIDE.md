@@ -391,7 +391,7 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
 
 3. **Recreate User Accounts**
 
-   Have each teller sign in with Google (creates the account). Open `POST /api/auth/registerAccount` is disabled. Existing local password accounts can still log in. Invite-only email signup is leftover / not shipped.
+   Have each teller sign in with Google (creates the account), or have a SuperAdmin issue a one-time invite link for a local email/password account. Open `POST /api/auth/registerAccount` is disabled. Existing local password accounts can still log in.
 
 4. **Assign Roles**
    - Administrator

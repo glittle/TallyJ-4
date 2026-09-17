@@ -29,6 +29,7 @@ public class AuthControllerTests : ServiceTestBase
 {
     private readonly AuthController _controller;
     private readonly Mock<ILocalAuthService> _localAuthServiceMock;
+    private readonly Mock<IAccountInviteService> _accountInviteServiceMock;
     private readonly Mock<IPasswordResetService> _passwordResetServiceMock;
     private readonly Mock<ITwoFactorService> _twoFactorServiceMock;
     private readonly Mock<IJwtTokenService> _jwtTokenServiceMock;
@@ -76,9 +77,11 @@ public class AuthControllerTests : ServiceTestBase
             .Returns(true);
 
         var accountServiceMock = new Mock<IAccountService>();
+        _accountInviteServiceMock = new Mock<IAccountInviteService>();
 
         _controller = new AuthController(
             _localAuthServiceMock.Object,
+            _accountInviteServiceMock.Object,
             _passwordResetServiceMock.Object,
             _twoFactorServiceMock.Object,
             _jwtTokenServiceMock.Object,
@@ -444,6 +447,69 @@ public class AuthControllerTests : ServiceTestBase
                 && dto.Email == request.Email
                 && dto.Details != null
                 && dto.Details.Contains("rejected", StringComparison.OrdinalIgnoreCase))),
+            Times.Once);
+        _securityAuditServiceMock.Verify(
+            x => x.LogSecurityEventAsync(It.Is<CreateSecurityAuditLogDto>(dto =>
+                dto.EventType == SecurityEventType.AccountCreated)),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task RegisterWithInvite_ValidToken_CreatesAccountAndAudits()
+    {
+        var request = new RegisterWithInviteRequest
+        {
+            Token = "invite-token",
+            Email = "invited@example.com",
+            Password = "TestPass123!",
+            ConfirmPassword = "TestPass123!",
+            DisplayName = "Invited"
+        };
+        _accountInviteServiceMock.Setup(x => x.RedeemAsync(request))
+            .ReturnsAsync((true, null, new AuthResponse
+            {
+                Email = request.Email,
+                AuthMethod = "Local",
+                RequiresEmailVerification = true
+            }));
+        _userManagerMock.Setup(x => x.FindByEmailAsync(request.Email))
+            .ReturnsAsync(new AppUser { Id = "new-user", Email = request.Email });
+
+        var result = await _controller.RegisterWithInvite(request);
+
+        Assert.IsType<OkObjectResult>(result);
+        _localAuthServiceMock.Verify(x => x.RegisterAsync(It.IsAny<RegisterRequest>()), Times.Never);
+        _securityAuditServiceMock.Verify(
+            x => x.LogSecurityEventAsync(It.Is<CreateSecurityAuditLogDto>(dto =>
+                dto.EventType == SecurityEventType.AccountCreated
+                && dto.Email == request.Email
+                && dto.Details != null
+                && dto.Details.Contains("invite", StringComparison.OrdinalIgnoreCase))),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task RegisterWithInvite_InvalidToken_ReturnsBadRequest()
+    {
+        var request = new RegisterWithInviteRequest
+        {
+            Token = "dead",
+            Email = "invited@example.com",
+            Password = "TestPass123!",
+            ConfirmPassword = "TestPass123!",
+            DisplayName = "Invited"
+        };
+        _accountInviteServiceMock.Setup(x => x.RedeemAsync(request))
+            .ReturnsAsync((false, AccountInviteService.InvalidInviteKey, null));
+
+        var result = await _controller.RegisterWithInvite(request);
+
+        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        var errorProperty = badRequest.Value!.GetType().GetProperty("error");
+        Assert.Equal(AccountInviteService.InvalidInviteKey, errorProperty!.GetValue(badRequest.Value));
+        _securityAuditServiceMock.Verify(
+            x => x.LogSecurityEventAsync(It.Is<CreateSecurityAuditLogDto>(dto =>
+                dto.EventType == SecurityEventType.LoginAttemptBlocked)),
             Times.Once);
         _securityAuditServiceMock.Verify(
             x => x.LogSecurityEventAsync(It.Is<CreateSecurityAuditLogDto>(dto =>

@@ -36,6 +36,8 @@ public class RateLimitingMiddleware
             { "/api/auth/login", (5, TimeSpan.FromMinutes(1)) },
             // Endpoint is disabled (400 + i18n key); keep a tight bucket for leftover callers.
             { "/api/auth/registerAccount", (3, TimeSpan.FromHours(1)) },
+            { "/api/auth/registerWithInvite", (3, TimeSpan.FromHours(1)) },
+            { "/api/auth/account-invite", (10, TimeSpan.FromMinutes(1)) },
             { "/api/auth/verify2fa", (10, TimeSpan.FromMinutes(1)) },
             { "/api/auth/forgotPassword", (3, TimeSpan.FromHours(1)) },
             { "/api/auth/resetPassword", (3, TimeSpan.FromHours(1)) },

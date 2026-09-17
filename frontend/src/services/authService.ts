@@ -17,6 +17,8 @@ import {
   getApiAccountGetMyProfile,
   postApiAccountRequestEmailChange,
   postApiAuthConfirmEmailChange,
+  getApiAuthAccountInvite,
+  postApiAuthRegisterWithInvite,
 } from "@/api/gen/configService";
 import type {
   LoginRequest,
@@ -60,6 +62,28 @@ function unwrapProfile(response: {
 }
 
 export const authService = {
+  async peekAccountInvite(token: string): Promise<{ valid: boolean }> {
+    const response = await getApiAuthAccountInvite({
+      query: { token },
+      throwOnError: true,
+    });
+    return response.data as { valid: boolean };
+  },
+
+  async registerWithInvite(data: {
+    token: string;
+    email: string;
+    displayName: string;
+    password: string;
+    confirmPassword: string;
+  }): Promise<AuthResponse> {
+    const response = await postApiAuthRegisterWithInvite({
+      body: data,
+      throwOnError: true,
+    });
+    return response.data as AuthResponse;
+  },
+
   async login(data: LoginRequest): Promise<AuthResponse> {
     const response = await postApiAuthLogin({
       body: data,
