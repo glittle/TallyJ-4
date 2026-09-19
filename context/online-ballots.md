@@ -84,6 +84,8 @@ Issue #169 is the test script for this process, not a second product build. Cove
 
 **Reason:** lock the already-shipped Accept-all contract (including anonymity: counts only) without a browser driver and without a production database.
 
+Two tellers at once (paper create + Accept-all + Front Desk) is issue #191, not a second Accept-all product. Coverage is SQLite multi-context in `Issue191ConcurrentTellerTests` (and a small HTTP two-client slice). Ordered Accept-all vs check-in stays #336; two Accept-alls stay `OnlineVotingServiceAcceptAllConcurrencyTests`. See [election-state.md](election-state.md).
+
 ## Pending vs accepted on the monitor (counts only)
 
 **Status:** active  
