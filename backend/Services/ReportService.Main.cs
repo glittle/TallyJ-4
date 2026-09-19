@@ -1,5 +1,6 @@
 using Backend.DTOs.Reports;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -30,8 +31,10 @@ public partial class ReportService
                 : r.Rank.ToString(),
             Name = r.Person?.FullName ?? "",
             BahaiId = r.Person?.BahaiId,
-            VoteCountDisplay = (r.VoteCount ?? 0).ToString("N0") +
-                               (r.TieBreakRequired == true ? " / " + r.TieBreakCount : ""),
+            VoteCountDisplay = TieBreakDisplayHelper.FormatVoteCountDisplay(
+                r.VoteCount ?? 0,
+                r.TieBreakRequired == true,
+                r.TieBreakCount),
             Section = r.Section
         }).ToList();
 
@@ -124,7 +127,7 @@ public partial class ReportService
             SpoiledBallotReasons = spoiledBallotReasons,
             SpoiledVoteReasons = spoiledVoteReasons,
             Elected = elected,
-            HasTies = elected.Any(e => e.VoteCountDisplay.Contains('/'))
+            HasTies = results.Any(r => r.TieBreakRequired == true)
         };
     }
 }

@@ -50,12 +50,15 @@ v3 always re-ran analysis after saving tie-break counts (the Analyze button is �
 - All-0 is valid input. Ranking treats every 0 as equal, so the tie stays unresolved and `UseOnReports` stays false.
 - Persist null for “not entered” and 0 for an explicit runoff result. Required ties no longer coerce null to 0. Sort and still-tied checks still treat null as 0.
 - The tie-management page sends explicit 0 when a field is cleared (otherwise a previous count would stay on the server) and refreshes stored results after save.
+- Reports show `/ {count}` only when a count was entered (including 0). Unset omits the suffix. Main `HasTies` is `TieBreakRequired` on the elected/extra rows, not a slash in the display string.
 
 **Rejected alternative:** re-analyze only when every group member `HasValue`. Rejected — that is not v3 behavior, and it would skip re-rank after a partial save once required ties stop filling 0.
 
 **Rejected alternative:** reject all-0 as invalid. Rejected — v3 accepted those values; they simply do not resolve the tie.
 
 **Rejected alternative:** keep filling required ties with 0 (`??= 0`). Rejected — that is what made default and explicit 0 indistinguishable, which #198 asked to separate.
+
+**Rejected alternative:** concatenate `TieBreakCount` whenever the tie is required. Rejected — that printed `" / "` (C#) or `" / null"` (Vue) for unset, and made `HasTies` false until a count was typed.
 
 ## Analyze manual voter counts persist M without re-running Analyze
 
