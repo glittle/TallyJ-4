@@ -59,7 +59,7 @@ export interface VotesByNumReport {
 export interface VotePerson {
   personName: string;
   voteCount: number;
-  tieBreakCount?: number;
+  tieBreakCount?: number | null;
   tieBreakRequired: boolean;
   section: string;
   showBreak: boolean;
