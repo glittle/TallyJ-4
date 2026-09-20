@@ -294,7 +294,40 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
         var report = await _service.GetMainReportAsync(_electionGuid);
 
         Assert.True(report.HasTies);
-        Assert.Contains("/", report.Elected[0].VoteCountDisplay);
+        Assert.Equal("50 / 3", report.Elected[0].VoteCountDisplay);
+    }
+
+    [Fact]
+    public async Task GetMainReport_RequiredTieWithoutCount_OmitsSlashAndSetsHasTies()
+    {
+        await AddLocation("Hall");
+        await AddResultSummary();
+        var p1 = await AddPerson("Alpha", "A");
+        var p2 = await AddPerson("Beta", "B");
+        await AddResult(p1.PersonGuid, 1, 50, "T", tieBreakRequired: true, tieBreakCount: null);
+        await AddResult(p2.PersonGuid, 2, 40, "T");
+
+        var report = await _service.GetMainReportAsync(_electionGuid);
+
+        Assert.True(report.HasTies);
+        Assert.Equal("50", report.Elected[0].VoteCountDisplay);
+        Assert.DoesNotContain("/", report.Elected[0].VoteCountDisplay);
+    }
+
+    [Fact]
+    public async Task GetMainReport_ExplicitZeroTieBreak_ShowsZero()
+    {
+        await AddLocation("Hall");
+        await AddResultSummary();
+        var p1 = await AddPerson("Alpha", "A");
+        var p2 = await AddPerson("Beta", "B");
+        await AddResult(p1.PersonGuid, 1, 50, "T", tieBreakRequired: true, tieBreakCount: 0);
+        await AddResult(p2.PersonGuid, 2, 40, "T");
+
+        var report = await _service.GetMainReportAsync(_electionGuid);
+
+        Assert.True(report.HasTies);
+        Assert.Equal("50 / 0", report.Elected[0].VoteCountDisplay);
     }
 
     [Fact]

@@ -4,6 +4,7 @@ import {
   clearedTieBreakCount,
   collectTieBreakCounts,
   electedTieMissingCounts,
+  formatVoteCountWithTieBreak,
   isTieBreakCountUnset,
   setClearedTieBreakCount,
 } from "../tieBreakCounts";
@@ -64,6 +65,14 @@ describe("tieBreakCounts", () => {
     expect(
       electedTieMissingCounts(tie("X", [person("a", null), person("b", null)])),
     ).toBe(false);
+  });
+
+  it("formats vote counts without a suffix when the tie-break is unset", () => {
+    expect(formatVoteCountWithTieBreak(50, false, 3)).toBe("50");
+    expect(formatVoteCountWithTieBreak(50, true, null)).toBe("50");
+    expect(formatVoteCountWithTieBreak(50, true, undefined)).toBe("50");
+    expect(formatVoteCountWithTieBreak(50, true, 0)).toBe("50 / 0");
+    expect(formatVoteCountWithTieBreak(50, true, 3)).toBe("50 / 3");
   });
 
   it("clears to an explicit 0 so the server overwrites a previous count", () => {

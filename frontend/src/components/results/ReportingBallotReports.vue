@@ -15,6 +15,7 @@ import {
   formatReportDate,
   formatReportPercent,
 } from "@/utils/reportFormatters";
+import { formatVoteCountWithTieBreak } from "@/utils/tieBreakCounts";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
@@ -280,8 +281,14 @@ const selectedReportName = computed(() => props.selectedReportName);
           <div v-if="p.showBreak" class="section-break"></div>
           <div class="vote-person" :class="{ elected: p.section === 'E' }">
             <span class="vote-count"
-              >{{ p.voteCount
-              }}{{ p.tieBreakRequired ? " / " + p.tieBreakCount : "" }} -
+              >{{
+                formatVoteCountWithTieBreak(
+                  p.voteCount,
+                  p.tieBreakRequired,
+                  p.tieBreakCount,
+                )
+              }}
+              -
             </span>
             <span class="vote-name">{{ p.personName }}</span>
           </div>
@@ -305,8 +312,14 @@ const selectedReportName = computed(() => props.selectedReportName);
           <div class="vote-person" :class="{ elected: p.section === 'E' }">
             <span class="vote-name">{{ p.personName }}</span>
             <span class="vote-count">
-              - {{ p.voteCount
-              }}{{ p.tieBreakRequired ? " / " + p.tieBreakCount : "" }}</span
+              -
+              {{
+                formatVoteCountWithTieBreak(
+                  p.voteCount,
+                  p.tieBreakRequired,
+                  p.tieBreakCount,
+                )
+              }}</span
             >
           </div>
         </template>

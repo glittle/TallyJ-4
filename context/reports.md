@@ -30,6 +30,18 @@ v3 had no “download all”. v4 already had print and a separate advanced expor
 
 **Rejected alternative:** a new report family or the advanced PDF/Excel export. Rejected — #185 asked to test download-all if missing, not invent another catalog.
 
+## Vote counts show `/ tie-break` only when a count was entered
+
+**Status:** active  
+**Evidence:** inferred (follows #198 unset vs explicit 0; #322 persist/analyze already shipped)  
+**Source:** issue #198; [election-analysis.md](election-analysis.md)
+
+Main and Votes-by-* reports used to append `" / " + TieBreakCount` whenever `TieBreakRequired` was true. After required ties stopped filling 0, unset became a dangling slash (C#) or the literal `"null"` (Vue). Download-all CSV already used empty for null and `"0"` for 0.
+
+**Chosen:** format the suffix only when a count is present, including explicit 0. `HasTies` on the main report is `TieBreakRequired` on the elected/extra rows, not whether the display string contains `/`.
+
+**Rejected alternative:** keep string-concatenating the nullable count. Rejected — it hid the unset vs 0 distinction that #198 asked for.
+
 ## Front Desk / ballots / analysis share one voted rule
 
 **Status:** active  
