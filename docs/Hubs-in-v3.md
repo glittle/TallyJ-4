@@ -503,9 +503,9 @@ Live status during **voter code login** (email/SMS/voice): “code sent”, Twil
 
 ### Rewrite checklist
 
-- [ ] Real-time code-delivery status for email/SMS/voice login  
-- [ ] Stronger channel id than 5-digit random  
-- [ ] Keep one-time codes off the wire where possible  
+- [x] Real-time code-delivery status for email/SMS/voice login  
+- [x] Stronger channel id than 5-digit random  
+- [x] Keep one-time codes off the wire where possible  
 
 ---
 

@@ -22,6 +22,7 @@ public partial class OnlineVotingService : IOnlineVotingService
     private readonly IGoogleIdTokenValidator _googleIdTokenValidator;
     private readonly ISignalRNotificationService _signalRNotificationService;
     private readonly IOnlineBallotAcceptLock _acceptLock;
+    private readonly IVoterCodeDeliveryChannelService? _voterCodeChannels;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OnlineVotingService"/> class.
@@ -36,6 +37,7 @@ public partial class OnlineVotingService : IOnlineVotingService
     /// <param name="googleIdTokenValidator">The Google ID token validator.</param>
     /// <param name="signalRNotificationService">Realtime notifications for connected voter sessions.</param>
     /// <param name="acceptLock">Process-wide election-scoped lock for overlapping Accept-all (409).</param>
+    /// <param name="voterCodeChannels">Pre-auth delivery-status channels (optional in unit tests).</param>
     public OnlineVotingService(
         MainDbContext context,
         IConfiguration configuration,
@@ -46,7 +48,8 @@ public partial class OnlineVotingService : IOnlineVotingService
         IPaidVerificationSender paidVerificationSender,
         IGoogleIdTokenValidator googleIdTokenValidator,
         ISignalRNotificationService signalRNotificationService,
-        IOnlineBallotAcceptLock acceptLock)
+        IOnlineBallotAcceptLock acceptLock,
+        IVoterCodeDeliveryChannelService? voterCodeChannels = null)
     {
         _context = context;
         _configuration = configuration;
@@ -58,5 +61,6 @@ public partial class OnlineVotingService : IOnlineVotingService
         _googleIdTokenValidator = googleIdTokenValidator;
         _signalRNotificationService = signalRNotificationService;
         _acceptLock = acceptLock;
+        _voterCodeChannels = voterCodeChannels;
     }
 }

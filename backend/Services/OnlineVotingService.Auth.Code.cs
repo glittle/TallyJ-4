@@ -1,5 +1,6 @@
 using Backend.Entities;
 using Backend.DTOs.OnlineVoting;
+using Backend.DTOs.SignalR;
 using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -136,7 +137,22 @@ public partial class OnlineVotingService
 
             await _context.SaveChangesAsync();
 
+            var channel = TryIssueDeliveryChannel();
+            if (channel != null)
+            {
+                await PushDeliveryStatusAsync(channel.ChannelId, VoterCodeDeliveryStatusDto.Sending());
+            }
+
             var sent = await SendVerificationCodeAsync(dto.VoterId, dto.DeliveryMethod, verifyCode);
+
+            if (channel != null)
+            {
+                await CompleteSendPathStatusAsync(
+                    channel.ChannelId,
+                    dto.VoterId,
+                    dto.DeliveryMethod,
+                    sent);
+            }
 
             var messageKey = sent
                 ? "voting.auth.requestCode.sent"
@@ -145,7 +161,7 @@ public partial class OnlineVotingService
             _logger.LogInformation("Verification code sent via {Method} (registered in {Count} open election(s))",
                 KnownDeliveryMethod(dto.DeliveryMethod), openElections.Count);
 
-            return BuildRequestCodeResponse(messageKey, verifyCode);
+            return BuildRequestCodeResponse(messageKey, verifyCode, channel?.RawToken);
         }
         catch (Exception ex)
         {
@@ -372,7 +388,10 @@ public partial class OnlineVotingService
         return (true, null, response);
     }
 
-    private RequestCodeResponseDto BuildRequestCodeResponse(string messageKey, string? verifyCode = null)
+    private RequestCodeResponseDto BuildRequestCodeResponse(
+        string messageKey,
+        string? verifyCode = null,
+        string? channelToken = null)
     {
         var echoDevCode = (_hostEnvironment.IsDevelopment() || _hostEnvironment.IsEnvironment("Testing"))
                           && !string.IsNullOrEmpty(verifyCode);
@@ -380,8 +399,75 @@ public partial class OnlineVotingService
         return new RequestCodeResponseDto
         {
             MessageKey = messageKey,
-            DevVerificationCode = echoDevCode ? verifyCode : null
+            DevVerificationCode = echoDevCode ? verifyCode : null,
+            ChannelToken = channelToken
         };
+    }
+
+    private VoterCodeChannelIssue? TryIssueDeliveryChannel()
+    {
+        if (_voterCodeChannels == null)
+        {
+            return null;
+        }
+
+        var issued = _voterCodeChannels.Issue();
+        _logger.LogInformation("Issued voter-code delivery channel {ChannelId}", issued.ChannelId);
+        return issued;
+    }
+
+    private async Task CompleteSendPathStatusAsync(
+        string channelId,
+        string voterId,
+        string deliveryMethod,
+        bool sent)
+    {
+        var awaitsProviderCallback = sent
+            && (deliveryMethod is "sms" or "voice")
+            && await TryBindLatestSmsSidAsync(channelId, voterId);
+
+        if (sent)
+        {
+            await PushDeliveryStatusAsync(channelId, VoterCodeDeliveryStatusDto.Sent());
+            if (!awaitsProviderCallback)
+            {
+                await PushDeliveryStatusAsync(channelId, VoterCodeDeliveryStatusDto.Final(true));
+            }
+
+            return;
+        }
+
+        await PushDeliveryStatusAsync(channelId, VoterCodeDeliveryStatusDto.Failed());
+        await PushDeliveryStatusAsync(channelId, VoterCodeDeliveryStatusDto.Final(false));
+    }
+
+    private async Task<bool> TryBindLatestSmsSidAsync(string channelId, string phone)
+    {
+        if (_voterCodeChannels == null)
+        {
+            return false;
+        }
+
+        var sid = await _context.SmsLogs
+            .AsNoTracking()
+            .Where(l => l.Phone == phone)
+            .OrderByDescending(l => l.RowId)
+            .Select(l => l.SmsSid)
+            .FirstOrDefaultAsync();
+
+        if (string.IsNullOrWhiteSpace(sid))
+        {
+            return false;
+        }
+
+        _voterCodeChannels.BindProviderSid(channelId, sid);
+        return true;
+    }
+
+    private async Task PushDeliveryStatusAsync(string channelId, VoterCodeDeliveryStatusDto status)
+    {
+        _voterCodeChannels?.RecordStatus(channelId, status);
+        await _signalRNotificationService.SendVoterCodeDeliveryStatusAsync(channelId, status);
     }
 
     private static string NormalizeVoterCode(string code)

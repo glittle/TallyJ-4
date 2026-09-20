@@ -18,6 +18,8 @@ export class SignalRConnectionCore {
   /** Election whose ballot page this AllVoters connection is counted on. */
   protected allVotersElectionGuid: string | null = null;
   protected voterPersonalJoined = false;
+  /** Pre-auth voter-code delivery channel token (memory only; never persisted). */
+  protected voterCodeChannelToken: string | null = null;
 
   protected get baseUrl(): string {
     return getAppConfig().apiUrl;
@@ -158,6 +160,18 @@ export class SignalRConnectionCore {
         } catch (error) {
           console.error(
             "Failed to rejoin VoterPersonal group after reconnect:",
+            error,
+          );
+        }
+      }
+
+      if (hubPath === "/hubs/voter-code" && this.voterCodeChannelToken) {
+        try {
+          await connection.invoke("Join", this.voterCodeChannelToken);
+          console.log("Rejoined voter-code delivery channel after reconnect");
+        } catch (error) {
+          console.error(
+            "Failed to rejoin voter-code delivery channel after reconnect:",
             error,
           );
         }

@@ -24,10 +24,10 @@ Companion to [Hubs-in-v3.md](./Hubs-in-v3.md). Summarizes how TallyJ 4’s realt
 | RollCallHub | — | Deferred |
 | AllVotersHub | `AllVotersHub` (`/hubs/all-voters`) | Global `AllVoters`; thin `updateVoters` (#233); `JoinElection` ballot-page session count (#184) |
 | VoterPersonalHub | `VoterPersonalHub` (`/hubs/voter-personal`) | `Voter{voterId}` from JWT; thin `updateVoter` (#233) |
-| VoterCodeHub | — | Not implemented |
+| VoterCodeHub | `VoterCodeHub` (`/hubs/voter-code`) | Server-issued channel token; `codeDeliveryStatus` (#229) |
 | *(scaffold)* OnlineVotingHub | — | Removed on purpose; see `context/realtime.md` |
 
-Mapped in `backend/Program.AppPipeline.cs` as `/hubs/main`, `/hubs/analyze`, `/hubs/ballot-import`, `/hubs/people-import`, `/hubs/election-package-import`, `/hubs/front-desk`, `/hubs/public`, `/hubs/all-voters`, `/hubs/voter-personal`.
+Mapped in `backend/Program.AppPipeline.cs` as `/hubs/main`, `/hubs/analyze`, `/hubs/ballot-import`, `/hubs/people-import`, `/hubs/election-package-import`, `/hubs/front-desk`, `/hubs/public`, `/hubs/all-voters`, `/hubs/voter-personal`, `/hubs/voter-code`.
 
 ---
 
@@ -166,7 +166,7 @@ Catalog: `context/realtime.md` § Import hub event catalog.
 |-----|----|----|-------|
 | All voters online window / process | AllVotersHub | **Fixed** — `/hubs/all-voters` + `updateVoters` | [#233](https://github.com/glittle/TallyJ-4/issues/233) |
 | Personal registration / multi-login | VoterPersonalHub | **Fixed** — `/hubs/voter-personal` + `updateVoter` | [#233](https://github.com/glittle/TallyJ-4/issues/233) |
-| Code delivery live status | VoterCodeHub | `requestCode` / `verifyCode` only | [#229](https://github.com/glittle/TallyJ-4/issues/229) |
+| Code delivery live status | VoterCodeHub | **Fixed** — `/hubs/voter-code` + `channelToken` from `requestCode` | [#229](https://github.com/glittle/TallyJ-4/issues/229) |
 
 If restored: prefer server-derived groups, high-entropy channel tokens for code status (not short client keys), and thin refetch signals — see `context/realtime.md`.
 
@@ -190,7 +190,7 @@ If restored: prefer server-derived groups, high-entropy channel tokens for code 
 | Monitor online window | FrontDeskHub | **No** (no producer/listener) |
 | Voters online open/close | AllVotersHub | **Yes** — thin `updateVoters` → refetch |
 | Voter personal / multi-login | VoterPersonalHub | **Yes** — thin `updateVoter` → refetch / notice |
-| Voter code delivery status | VoterCodeHub | **No** |
+| Voter code delivery status | VoterCodeHub | **Yes** — status-only channel; server-issued token |
 | CSV import progress | ImportHub | **Yes** (PeopleImportHub) |
 | Election-load progress | ImportHub | **Yes** (ElectionPackageImportHub, user-scoped) |
 | Ballot import progress + FD reload | BallotImportHub + FrontDesk | Progress **yes**; FD reload **no** |

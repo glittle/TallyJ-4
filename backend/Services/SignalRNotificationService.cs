@@ -21,6 +21,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     private readonly IHubContext<PublicHub> _publicHubContext;
     private readonly IHubContext<AllVotersHub> _allVotersHubContext;
     private readonly IHubContext<VoterPersonalHub> _voterPersonalHubContext;
+    private readonly IHubContext<VoterCodeHub> _voterCodeHubContext;
     private readonly ILogger<SignalRNotificationService> _logger;
 
     /// <summary>
@@ -35,6 +36,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     /// <param name="publicHubContext">Hub context for PublicHub (guest-teller join list).</param>
     /// <param name="allVotersHubContext">Hub context for online voters (global list refresh).</param>
     /// <param name="voterPersonalHubContext">Hub context for per-voter personal updates.</param>
+    /// <param name="voterCodeHubContext">Hub context for pre-auth code-delivery status.</param>
     /// <param name="logger">Logger for recording notification service operations.</param>
     public SignalRNotificationService(
         IHubContext<MainHub> mainHubContext,
@@ -46,6 +48,7 @@ public class SignalRNotificationService : ISignalRNotificationService
         IHubContext<PublicHub> publicHubContext,
         IHubContext<AllVotersHub> allVotersHubContext,
         IHubContext<VoterPersonalHub> voterPersonalHubContext,
+        IHubContext<VoterCodeHub> voterCodeHubContext,
         ILogger<SignalRNotificationService> logger)
     {
         _mainHubContext = mainHubContext;
@@ -57,6 +60,7 @@ public class SignalRNotificationService : ISignalRNotificationService
         _publicHubContext = publicHubContext;
         _allVotersHubContext = allVotersHubContext;
         _voterPersonalHubContext = voterPersonalHubContext;
+        _voterCodeHubContext = voterCodeHubContext;
         _logger = logger;
     }
 
@@ -530,6 +534,29 @@ public class SignalRNotificationService : ISignalRNotificationService
                 ex,
                 "Error sending tellersChanged notification for election {ElectionGuid}",
                 update.ElectionGuid);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task SendVoterCodeDeliveryStatusAsync(string channelId, VoterCodeDeliveryStatusDto status)
+    {
+        if (string.IsNullOrWhiteSpace(channelId) || status == null)
+        {
+            return;
+        }
+
+        try
+        {
+            var groupName = VoterCodeHub.GetGroupName(channelId);
+            await _voterCodeHubContext.Clients.Group(groupName).SendAsync("codeDeliveryStatus", status);
+            _logger.LogInformation(
+                "Sent codeDeliveryStatus ({Status}) to group {GroupName}",
+                status.Status,
+                groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error sending codeDeliveryStatus for a voter-code channel");
         }
     }
 

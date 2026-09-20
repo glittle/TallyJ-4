@@ -1,7 +1,9 @@
 using Backend.Context;
+using Backend.DTOs.SignalR;
 using Backend.Entities;
 using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Backend.Services;
 
 namespace Backend.Services.Auth;
 
@@ -14,11 +16,19 @@ public class TwilioSmsStatusService : ITwilioSmsStatusService
 {
     private readonly MainDbContext _context;
     private readonly ILogger<TwilioSmsStatusService> _logger;
+    private readonly IVoterCodeDeliveryChannelService? _voterCodeChannels;
+    private readonly ISignalRNotificationService? _signalRNotificationService;
 
-    public TwilioSmsStatusService(MainDbContext context, ILogger<TwilioSmsStatusService> logger)
+    public TwilioSmsStatusService(
+        MainDbContext context,
+        ILogger<TwilioSmsStatusService> logger,
+        IVoterCodeDeliveryChannelService? voterCodeChannels = null,
+        ISignalRNotificationService? signalRNotificationService = null)
     {
         _context = context;
         _logger = logger;
+        _voterCodeChannels = voterCodeChannels;
+        _signalRNotificationService = signalRNotificationService;
     }
 
     /// <inheritdoc/>
@@ -37,6 +47,7 @@ public class TwilioSmsStatusService : ITwilioSmsStatusService
         }
 
         await _context.SaveChangesAsync(cancellationToken);
+        await TryPushDeliveryChannelAsync(smsSid, messageStatus);
     }
 
     /// <summary>
@@ -173,6 +184,45 @@ public class TwilioSmsStatusService : ITwilioSmsStatusService
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// When this SID belongs to a live requestCode channel, push provider progress
+    /// (and final on terminal delivered/failed). Status-only — no OTP or phone.
+    /// </summary>
+    private async Task TryPushDeliveryChannelAsync(string? smsSid, string? messageStatus)
+    {
+        if (_voterCodeChannels == null
+            || _signalRNotificationService == null
+            || string.IsNullOrWhiteSpace(smsSid)
+            || !_voterCodeChannels.TryGetChannelIdByProviderSid(smsSid, out var channelId))
+        {
+            return;
+        }
+
+        var progress = VoterCodeDeliveryStatuses.FromProviderStatus(messageStatus);
+        var sanitized = VoterCodeDeliveryStatuses.SanitizeProviderStatus(messageStatus);
+        var dto = progress switch
+        {
+            VoterCodeDeliveryStatuses.Delivered => VoterCodeDeliveryStatusDto.Delivered(sanitized),
+            VoterCodeDeliveryStatuses.Failed => VoterCodeDeliveryStatusDto.Failed(sanitized),
+            VoterCodeDeliveryStatuses.Sent => VoterCodeDeliveryStatusDto.Sent(sanitized),
+            _ => VoterCodeDeliveryStatusDto.Sending(sanitized)
+        };
+
+        _voterCodeChannels.RecordStatus(channelId, dto);
+        await _signalRNotificationService.SendVoterCodeDeliveryStatusAsync(channelId, dto);
+
+        if (!VoterCodeDeliveryStatuses.IsTerminalProgress(progress))
+        {
+            return;
+        }
+
+        var final = VoterCodeDeliveryStatusDto.Final(
+            progress == VoterCodeDeliveryStatuses.Delivered,
+            sanitized);
+        _voterCodeChannels.RecordStatus(channelId, final);
+        await _signalRNotificationService.SendVoterCodeDeliveryStatusAsync(channelId, final);
     }
 
     private static string KnownMessageStatus(string? messageStatus) =>

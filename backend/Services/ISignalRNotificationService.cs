@@ -164,6 +164,13 @@ public interface ISignalRNotificationService
     /// </summary>
     /// <param name="update">The teller add/update/delete payload.</param>
     Task SendTellerUpdateAsync(TellerUpdateDto update);
+
+    /// <summary>
+    /// Pushes voter login-code delivery status to VoterCodeHub
+    /// (event <c>codeDeliveryStatus</c>, group <c>VoterCode{channelId}</c>).
+    /// Payload is status-only — never the one-time code.
+    /// </summary>
+    Task SendVoterCodeDeliveryStatusAsync(string channelId, VoterCodeDeliveryStatusDto status);
 }
 
 

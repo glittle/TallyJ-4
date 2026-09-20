@@ -103,6 +103,17 @@ export interface PeopleImportCompleteEvent {
  * `(message: string, isTemporary: boolean)`.
  * Client UI log lines after processing those args:
  */
+/**
+ * VoterCodeHub codeDeliveryStatus — login-code delivery progress.
+ * Status messages only; never the one-time code.
+ */
+export interface VoterCodeDeliveryStatusEvent {
+  status: "sending" | "sent" | "delivered" | "failed" | "final" | string;
+  messageKey?: string | null;
+  okay?: boolean | null;
+  providerStatus?: string | null;
+}
+
 export interface ElectionPackageLoaderLogLine {
   id: number;
   message: string;

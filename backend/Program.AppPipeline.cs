@@ -149,6 +149,7 @@ public static class ProgramAppPipeline
         app.MapHub<Backend.Hubs.PublicHub>("/hubs/public");
         app.MapHub<Backend.Hubs.AllVotersHub>("/hubs/all-voters");
         app.MapHub<Backend.Hubs.VoterPersonalHub>("/hubs/voter-personal");
+        app.MapHub<Backend.Hubs.VoterCodeHub>("/hubs/voter-code");
 
         app.MapGet("/protected", () => "This is protected!").RequireAuthorization();
 
