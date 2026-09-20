@@ -103,7 +103,7 @@ Do not assume every backend response uses the same wrapper.
 
 ### SignalR group naming and hubs
 
-There are 9 hubs under `backend/Hubs/`. **Do not assume a single `election-{guid}` convention** (the previous short recommendation is not present in code).
+There are 10 hubs under `backend/Hubs/`. **Do not assume a single `election-{guid}` convention** (the previous short recommendation is not present in code).
 
 Group name patterns (constructed via `GetGroupName` statics in each hub + used for broadcasts in `SignalRNotificationService.cs`):
 
@@ -116,6 +116,7 @@ Group name patterns (constructed via `GetGroupName` statics in each hub + used f
 - `Public` (static group) — PublicHub for guest-teller joinable elections list updates.
 - `AllVoters` (global) — AllVotersHub (`/hubs/all-voters`): thin `updateVoters` for online window/process; `JoinElection` / `LeaveElection` record an anonymous ballot-page session count for Monitor Progress (connection id only). OnlineVoter JWT.
 - `Voter{voterId}` — VoterPersonalHub (`/hubs/voter-personal`): thin `updateVoter` (registration / login-elsewhere); group from JWT only.
+- `VoterCode{channelId}` — VoterCodeHub (`/hubs/voter-code`): anonymous pre-auth login-code delivery status (`codeDeliveryStatus`). Join with the server-issued `channelToken` from `requestCode` (not a client key, not the OTP).
 
 **Frontend side**: `src/services/signalrService.ts` provides `connectToMainHub()`, `connectToAnalyzeHub()`, `connectToFrontDeskHub()`, `connectVoterHubs()`, etc. + `joinElection(guid)`, `joinDashboardElections(guids)` (known-teller multi-listen), `joinTallySession(guid)`, etc. Stores (electionStore, ballotStore, peopleStore, onlineVotingStore, etc.) call these and wire `connection.on("eventName", handler)`. Voter hubs authenticate with the httpOnly `voter_token` cookie (`withCredentials`); do not add a client `accessTokenFactory` for voters.
 

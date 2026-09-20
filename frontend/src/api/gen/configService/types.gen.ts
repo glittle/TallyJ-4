@@ -1034,6 +1034,7 @@ export type OnlineVotingRequestCodeDto = {
 export type OnlineVotingRequestCodeResponseDto = {
     messageKey?: string | null;
     devVerificationCode?: string | null;
+    channelToken?: string | null;
 };
 
 export type OnlineVotingSubmitBallotResponseDto = {

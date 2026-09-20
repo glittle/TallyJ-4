@@ -39,8 +39,11 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var content = await response.Content.ReadAsStringAsync();
-        Assert.Contains("voting.auth.requestCode.", content);
+        var body = await response.Content.ReadFromJsonAsync<RequestCodeResponseDto>(JsonOptions);
+        Assert.NotNull(body);
+        Assert.StartsWith("voting.auth.requestCode.", body!.MessageKey);
+        Assert.False(string.IsNullOrWhiteSpace(body.ChannelToken));
+        Assert.True(body.ChannelToken!.Length >= 64);
     }
 
     [Fact]
@@ -62,8 +65,10 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var content = await response.Content.ReadAsStringAsync();
-        Assert.Contains("voting.auth.requestCode.notRegistered", content);
+        var body = await response.Content.ReadFromJsonAsync<RequestCodeResponseDto>(JsonOptions);
+        Assert.NotNull(body);
+        Assert.Contains("voting.auth.requestCode.notRegistered", body!.MessageKey);
+        Assert.True(string.IsNullOrEmpty(body.ChannelToken));
     }
 
     [Fact]

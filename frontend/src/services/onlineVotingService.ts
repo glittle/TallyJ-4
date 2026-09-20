@@ -37,10 +37,16 @@ function requireData<T>(data: T | undefined, context: string): T {
 export const onlineVotingService = {
   async requestCode(
     data: OnlineVotingRequestCodeDto,
-  ): Promise<{ messageKey: string }> {
+  ): Promise<{ messageKey: string; channelToken?: string | null }> {
     const response = await postApiOnlineVotingRequestCode({ body: data });
-    const payload = requireData(response.data, "requestCode");
-    return { messageKey: payload.messageKey ?? "" };
+    const payload = requireData(response.data, "requestCode") as {
+      messageKey?: string | null;
+      channelToken?: string | null;
+    };
+    return {
+      messageKey: payload.messageKey ?? "",
+      channelToken: payload.channelToken,
+    };
   },
 
   async verifyCode(

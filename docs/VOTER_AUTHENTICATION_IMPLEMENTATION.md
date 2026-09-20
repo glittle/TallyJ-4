@@ -70,11 +70,14 @@ Content-Type: application/json
 
 ```json
 {
-  "messageKey": "some.key.for.i18n"
+  "messageKey": "some.key.for.i18n",
+  "channelToken": "optional-server-issued-status-channel-token"
 }
 ```
 
-(The exact shape can vary; the controller intentionally does not reveal success/failure details to prevent enumeration.)
+`channelToken` is present only when a send was actually attempted. The voter UI uses it to join `/hubs/voter-code` for live delivery status. It is not the one-time code. Rejected requests omit it (no enumeration via a joinable channel).
+
+(The controller still does not reveal whether the address exists outside open elections.)
 
 **Security:** Only sends codes if voter is registered in at least one open election. The service validates before sending.
 

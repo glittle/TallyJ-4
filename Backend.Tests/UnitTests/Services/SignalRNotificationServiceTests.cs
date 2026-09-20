@@ -38,6 +38,7 @@ public class SignalRNotificationServiceTests
         var publicHub = new Mock<IHubContext<PublicHub>>();
         var allVotersHub = new Mock<IHubContext<AllVotersHub>>();
         var voterPersonalHub = new Mock<IHubContext<VoterPersonalHub>>();
+        var voterCodeHub = new Mock<IHubContext<VoterCodeHub>>();
         var mainClients = new Mock<IHubClients>();
         var frontDeskClients = new Mock<IHubClients>();
         var ballotImportClients = new Mock<IHubClients>();
@@ -45,6 +46,7 @@ public class SignalRNotificationServiceTests
         var electionPackageImportClients = new Mock<IHubClients>();
         var allVotersClients = new Mock<IHubClients>();
         var voterPersonalClients = new Mock<IHubClients>();
+        var voterCodeClients = new Mock<IHubClients>();
         var groupProxies = new Dictionary<string, Mock<IClientProxy>>();
 
         Mock<IClientProxy> GetOrCreateProxy(string groupName)
@@ -71,6 +73,7 @@ public class SignalRNotificationServiceTests
         electionPackageImportHub.Setup(h => h.Clients).Returns(electionPackageImportClients.Object);
         allVotersHub.Setup(h => h.Clients).Returns(allVotersClients.Object);
         voterPersonalHub.Setup(h => h.Clients).Returns(voterPersonalClients.Object);
+        voterCodeHub.Setup(h => h.Clients).Returns(voterCodeClients.Object);
         mainClients
             .Setup(c => c.Group(It.IsAny<string>()))
             .Returns((string groupName) => GetOrCreateProxy(groupName).Object);
@@ -92,6 +95,9 @@ public class SignalRNotificationServiceTests
         voterPersonalClients
             .Setup(c => c.Group(It.IsAny<string>()))
             .Returns((string groupName) => GetOrCreateProxy(groupName).Object);
+        voterCodeClients
+            .Setup(c => c.Group(It.IsAny<string>()))
+            .Returns((string groupName) => GetOrCreateProxy(groupName).Object);
 
         var service = new SignalRNotificationService(
             mainHub.Object,
@@ -103,6 +109,7 @@ public class SignalRNotificationServiceTests
             publicHub.Object,
             allVotersHub.Object,
             voterPersonalHub.Object,
+            voterCodeHub.Object,
             NullLogger<SignalRNotificationService>.Instance);
 
         return (
@@ -603,5 +610,33 @@ public class SignalRNotificationServiceTests
         Assert.Equal(2, capturedArgs.Length);
         Assert.Equal("Importing people…", capturedArgs[0]);
         Assert.Equal(true, capturedArgs[1]);
+    }
+
+    [Fact]
+    public async Task SendVoterCodeDeliveryStatusAsync_sends_codeDeliveryStatus_without_otp_properties()
+    {
+        var (service, _, _, _, _, _, _, _, groupProxies) = CreateService();
+        var channelId = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+        var expectedGroup = VoterCodeHub.GetGroupName(channelId);
+        var status = VoterCodeDeliveryStatusDto.Sent("queued");
+
+        await service.SendVoterCodeDeliveryStatusAsync(channelId, status);
+
+        Assert.True(groupProxies.TryGetValue(expectedGroup, out var proxy));
+        var invocation = proxy!.Invocations.Single(i =>
+            i.Method.Name == nameof(IClientProxy.SendCoreAsync)
+            && Equals(i.Arguments[0], "codeDeliveryStatus"));
+        var capturedArgs = Assert.IsType<object?[]>(invocation.Arguments[1]);
+        var payload = Assert.IsType<VoterCodeDeliveryStatusDto>(capturedArgs[0]);
+        Assert.Equal(VoterCodeDeliveryStatuses.Sent, payload.Status);
+        Assert.DoesNotContain(
+            "VerifyCode",
+            payload.GetType().GetProperties().Select(p => p.Name));
+        Assert.DoesNotContain(
+            "Code",
+            payload.GetType().GetProperties().Select(p => p.Name));
+        Assert.DoesNotContain(
+            "Otp",
+            payload.GetType().GetProperties().Select(p => p.Name));
     }
 }

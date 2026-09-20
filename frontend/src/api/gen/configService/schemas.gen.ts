@@ -3390,6 +3390,10 @@ export const OnlineVoting_RequestCodeResponseDtoSchema = {
         devVerificationCode: {
             type: 'string',
             nullable: true
+        },
+        channelToken: {
+            type: 'string',
+            nullable: true
         }
     },
     additionalProperties: false

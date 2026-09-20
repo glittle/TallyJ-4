@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Message } from "@element-plus/icons-vue";
 import { ElButton, ElForm, ElFormItem, ElIcon, ElInput } from "element-plus";
+import VoterCodeDeliveryStatus from "@/components/voting/VoterCodeDeliveryStatus.vue";
+import type { VoterCodeDeliveryStatusEvent } from "@/types/SignalREvents";
 
 const verificationForm = defineModel<{
   voterId: string;
@@ -9,6 +11,7 @@ const verificationForm = defineModel<{
 
 defineProps<{
   loading: boolean;
+  deliveryStatus?: VoterCodeDeliveryStatusEvent | null;
 }>();
 
 const emit = defineEmits<{
@@ -32,6 +35,7 @@ const emit = defineEmits<{
       </h3>
       <p>{{ $t("voting.auth.verify.detail") }}</p>
     </div>
+    <VoterCodeDeliveryStatus :status="deliveryStatus ?? null" />
     <ElForm :model="verificationForm" @submit.prevent="emit('verify')">
       <ElFormItem :label="$t('voting.auth.verify.label')">
         <ElInput

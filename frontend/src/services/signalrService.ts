@@ -105,6 +105,42 @@ export class SignalRService extends SignalRTellerHubs {
       }
     }
   }
+
+  /**
+   * Anonymous pre-auth hub for login-code delivery status.
+   * Join uses the server-issued channel token from requestCode — not a voter JWT.
+   */
+  async connectToVoterCodeHub(): Promise<signalR.HubConnection> {
+    return this.connect("/hubs/voter-code");
+  }
+
+  async joinVoterCodeChannel(channelToken: string): Promise<void> {
+    this.voterCodeChannelToken = channelToken;
+    const connection = await this.connectToVoterCodeHub();
+    if (connection.state !== signalR.HubConnectionState.Connected) {
+      throw new Error(
+        `VoterCode hub is not ready (state: ${connection.state})`,
+      );
+    }
+    await connection.invoke("Join", channelToken);
+  }
+
+  async leaveVoterCodeChannel(): Promise<void> {
+    this.voterCodeChannelToken = null;
+    const connection = this.getConnection("/hubs/voter-code");
+    if (connection?.state === signalR.HubConnectionState.Connected) {
+      try {
+        await connection.invoke("Leave");
+      } catch (error) {
+        console.warn("Failed to leave voter-code delivery channel:", error);
+      }
+    }
+  }
+
+  async disconnectVoterCodeHub(): Promise<void> {
+    await this.leaveVoterCodeChannel();
+    await this.disconnect("/hubs/voter-code");
+  }
 }
 
 export const signalrService = new SignalRService();

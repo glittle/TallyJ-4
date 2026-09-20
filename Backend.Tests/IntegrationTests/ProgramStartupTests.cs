@@ -63,6 +63,7 @@ public class ProgramStartupTests : IntegrationTestBase
 
         // Act & Assert: Verify SignalR services are registered
         Assert.NotNull(services.GetService<ISignalRNotificationService>());
+        Assert.NotNull(services.GetService<IVoterCodeDeliveryChannelService>());
     }
 
     [Fact]

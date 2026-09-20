@@ -16,6 +16,7 @@ public static class ProgramServiceRegistration
         services.AddScoped<IComputerService, ComputerService>();
         services.AddSingleton<IComputerAssignmentService, ComputerAssignmentService>();
         services.AddSingleton<IOnlineVoterPresenceService, OnlineVoterPresenceService>();
+        services.AddSingleton<IVoterCodeDeliveryChannelService, VoterCodeDeliveryChannelService>();
         services.AddScoped<ITellerService, TellerService>();
         services.AddScoped<IPeopleService, PeopleService>();
         services.AddSingleton<IWhatsAppNotifyQueue, WhatsAppNotifyQueue>();

@@ -19,6 +19,7 @@ Do **not** assume a single `election-{guid}` convention for all realtime traffic
 | `Public`                                                    | PublicHub — guest-teller joinable elections list        |
 | `AllVoters` (global)                                        | AllVotersHub — online voter list/window refresh         |
 | `Voter{voterId}`                                            | VoterPersonalHub — registration + multi-device login     |
+| `VoterCode{channelId}`                                      | VoterCodeHub — pre-auth login-code delivery status       |
 
 Frontend: `frontend/src/services/signalrService.ts` (`connectTo*Hub`, `joinElection`, `joinDashboardElections`, `connectVoterHubs`, etc.) and store subscriptions.
 
@@ -129,6 +130,36 @@ Online voters use two authenticated hubs (policy `OnlineVoter` — JWT claims `v
 **Rejected alternative:** use `VoterPersonalHub` for election presence. Rejected — group is `Voter{voterId}` (identifying) and the voter JWT has no election claim.
 
 **Security:** personal join never accepts a client-supplied voter id (server uses JWT `voterId`). Personal updates target only groups for that person's contact identifiers; voter A does not receive voter B events.
+
+## VoterCodeHub — live login-code delivery status (issue #229)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #229; product decision 2026-09-20 (live status for SMS/voice and email; do not skip); v3 `VoterCodeHub` (`setStatus` / `final`); owner comment that the channel is downstream of SMS-pumping gates  
+**Revisit when:** multi-instance hosts need a shared channel store, WhatsApp gains async delivery callbacks, or join must be strictly single-use with no reconnect
+
+v4 request/verify stays HTTP. After a send is **actually attempted**, `requestCode` also returns `channelToken`. The browser that requested the code joins anonymous `/hubs/voter-code` and receives `codeDeliveryStatus` (sending / sent / delivered / failed / final) without polling.
+
+- **Token:** 32 cryptographically random bytes, hex-encoded (64 chars). Only the SHA-256 hash is stored. Lifetime **10 minutes** (shorter than the 15-minute OTP).
+- **Join:** one live connection per token. A second concurrent joiner is rejected. After disconnect/leave, the same token may rejoin until TTL so SignalR reconnect still works. This is stricter than v3’s client `Math.random().slice(-5)` key and still usable after a drop.
+- **When issued:** only after pumping / eligibility gates pass and a send is attempted (email, SMS, voice, WhatsApp). Rejected `requestCode` (invalid phone, blocked SmsStatus, not registered, no open elections, kiosk no-send) returns no token.
+- **Replay:** statuses are buffered on the channel and replayed to the joiner. `requestCode` often finishes send (especially email) before the browser can connect; without replay the UI would miss sent/failed/final.
+- **Wire:** `VoterCodeDeliveryStatusDto` only (`status`, `messageKey`, `okay`, allow-listed `providerStatus`). Never the OTP, voter id, phone, or email. Dev OTP echo stays on the HTTP response in Development/Testing only.
+- **Producers:** `OnlineVotingService` send-path outcomes; Twilio `POST /api/Public/smsStatus` when the SID was bound to the channel (SMS/voice). Email and WhatsApp have no async provider callback — send success/fail is `sent`/`failed` plus `final`. When Twilio accepts SMS/voice and writes an `SmsLog` SID, `sent` waits for delivered/failed/completed before `final`. When Twilio is not configured (dev skip, no SID), send success is treated as terminal `final`.
+- **Hub:** join/leave only; server push via `ISignalRNotificationService.SendVoterCodeDeliveryStatusAsync`. Group `VoterCode{channelId}` (server GUID, not the raw token).
+- **Store:** process-wide in-memory (`VoterCodeDeliveryChannelService`). Same-host only, like online-voter presence.
+
+**Rejected alternative:** v3-style client-generated ~5-digit key. Rejected — guessable; knowing another user’s key joined their status channel.
+
+**Rejected alternative:** skip live status for email because SMTP is “fast enough.” Rejected by product: email may complete quickly but the same channel must still report sent/failed.
+
+**Rejected alternative:** polling `requestCode` as the primary design. Rejected — the product is the channel.
+
+**Rejected alternative:** put the OTP on the hub “for convenience.” Rejected — codes stay off the wire.
+
+**Rejected alternative:** issue a joinable channel for rejected `requestCode` attempts. Rejected — owner: the channel is UX for legitimate sends and must stay downstream of the pumping gate.
+
+**Rejected alternative:** a second realtime stack. Rejected — extend the existing SignalR + `ISignalRNotificationService` pattern.
 
 ## No anonymous public results display
 

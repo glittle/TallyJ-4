@@ -106,7 +106,10 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     try {
       loading.value = true;
       const response = await onlineVotingService.requestCode(data);
-      return response.messageKey;
+      return {
+        messageKey: response.messageKey,
+        channelToken: response.channelToken ?? null,
+      };
     } finally {
       loading.value = false;
     }

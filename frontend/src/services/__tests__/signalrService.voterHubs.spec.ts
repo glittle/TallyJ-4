@@ -153,4 +153,30 @@ describe("signalrService voter hubs", () => {
     const rejoinCalls = invoke.mock.calls.filter((c) => c[0] === "Join");
     expect(rejoinCalls.length).toBeGreaterThanOrEqual(2);
   });
+
+  it("joins the anonymous voter-code hub with the server token and rejoins after reconnect", async () => {
+    const { signalrService } = await import("../signalrService");
+    const token = "a".repeat(64);
+
+    await signalrService.joinVoterCodeChannel(token);
+
+    expect(withUrl).toHaveBeenCalledWith(
+      "http://localhost:5016/hubs/voter-code",
+      expect.objectContaining({
+        withCredentials: true,
+      }),
+    );
+    expect(invoke).toHaveBeenCalledWith("Join", token);
+
+    invoke.mockClear();
+    const reconnectHandlers = onreconnected.mock.calls.map((c) => c[0]);
+    for (const handler of reconnectHandlers) {
+      await handler("new-connection-id");
+    }
+    expect(invoke).toHaveBeenCalledWith("Join", token);
+
+    invoke.mockClear();
+    await signalrService.disconnectVoterCodeHub();
+    expect(invoke).toHaveBeenCalledWith("Leave");
+  });
 });

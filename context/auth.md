@@ -123,3 +123,26 @@ The same in-memory middleware still owns the limits. Teller `/api/auth/login` (a
 **Rejected alternative:** endpoint filter or service-level identifier limit as the primary mechanism. An endpoint filter sees the bound DTO but would split IP vs identifier across two pipeline stages. Service-level already has `VerifyAttempts`; it runs after routing/DB work and still needs an IP ceiling in middleware. Reading a capped body prefix in the existing middleware keeps both buckets in one place.
 
 **Rejected alternative:** rebuild on ASP.NET `RateLimiter` or add a new auth flow. #192 said do not rebuild auth; this slice only fixes keying, coverage, and i18n bodies.
+
+## Pre-auth voter-code delivery channel (issue #229)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #229 security notes; v3 VoterCodeHub used a short client key; 2026-09-20 product decision to ship live status  
+**Revisit when:** channel tokens must survive a multi-instance farm, or join should be one-shot with no reconnect
+
+Live delivery status for SMS/voice/email login uses an **anonymous** SignalR hub (`/hubs/voter-code`). Isolation is the unguessability of a **server-issued** token, not JWT (the voter is not authenticated yet).
+
+- Token is 256 bits of CSPRNG, returned once on `requestCode`, stored only as SHA-256, TTL 10 minutes.
+- One live joiner; reconnect after disconnect is allowed until TTL.
+- Hub payloads are status + i18n key only. The one-time code is never sent on the hub (dev echo remains HTTP-only in Development/Testing).
+- No extra PII: the verify step already shows the contact the voter typed; status strings do not repeat phone/email.
+- Rate limits and SMS-pumping gates are unchanged and run **before** a channel exists.
+
+**Rejected alternative:** reuse AllVoters / VoterPersonal (need an online-voter JWT). Rejected — this is the login request, before verify.
+
+**Rejected alternative:** client-generated channel key (v3). Rejected as too weak.
+
+**Why 10 minutes, not 15:** the OTP window is 15 minutes; the status channel only needs to cover send + Twilio callbacks + a reconnect. A leaked token should die before the code does.
+
+See `context/realtime.md` for hub groups, replay-on-join, and provider wiring.

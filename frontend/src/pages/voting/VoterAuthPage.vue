@@ -12,6 +12,7 @@ import VoterAuthFaq from "@/components/voting/VoterAuthFaq.vue";
 import VoterAuthRequestTabs from "@/components/voting/VoterAuthRequestTabs.vue";
 import VoterAuthVerifyStep from "@/components/voting/VoterAuthVerifyStep.vue";
 import { useNotifications } from "../../composables/useNotifications";
+import { useVoterCodeDelivery } from "../../composables/useVoterCodeDelivery";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 import { resolveUserFacingApiError } from "../../utils/errorHandler";
 
@@ -20,6 +21,7 @@ const route = useRoute();
 const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { deliveryStatus, watchChannel, stopWatching } = useVoterCodeDelivery();
 
 const activeTab = useLocalStorage("voterLoginTab", "google");
 const step = ref<"request" | "verify">("request");
@@ -102,14 +104,20 @@ const handleKeydown = (event: KeyboardEvent) => {
 async function handleRequestEmailCode() {
   try {
     loading.value = true;
-    const messageKey = await onlineVotingStore.requestVerificationCode({
-      voterId: emailForm.value.email,
-      voterIdType: "E",
-      deliveryMethod: "email",
-    });
+    const { messageKey, channelToken } =
+      await onlineVotingStore.requestVerificationCode({
+        voterId: emailForm.value.email,
+        voterIdType: "E",
+        deliveryMethod: "email",
+      });
     verificationForm.value.voterId = emailForm.value.email;
     step.value = "verify";
     showSuccessMessage(t(messageKey));
+    try {
+      await watchChannel(channelToken);
+    } catch {
+      // requestCode already succeeded; live status is best-effort.
+    }
   } catch (error) {
     showErrorMessage(
       resolveUserFacingApiError(error, t("voting.auth.email.sendFailed")),
@@ -122,14 +130,20 @@ async function handleRequestEmailCode() {
 async function handleRequestPhoneCode() {
   try {
     loading.value = true;
-    const messageKey = await onlineVotingStore.requestVerificationCode({
-      voterId: phoneForm.value.phone,
-      voterIdType: "P",
-      deliveryMethod: phoneForm.value.deliveryMethod,
-    });
+    const { messageKey, channelToken } =
+      await onlineVotingStore.requestVerificationCode({
+        voterId: phoneForm.value.phone,
+        voterIdType: "P",
+        deliveryMethod: phoneForm.value.deliveryMethod,
+      });
     verificationForm.value.voterId = phoneForm.value.phone;
     step.value = "verify";
     showSuccessMessage(t(messageKey));
+    try {
+      await watchChannel(channelToken);
+    } catch {
+      // requestCode already succeeded; live status is best-effort.
+    }
   } catch (error) {
     showErrorMessage(
       resolveUserFacingApiError(error, t("voting.auth.phone.sendFailed")),
@@ -171,6 +185,7 @@ async function handleVerifyCode() {
 }
 
 function backToRequest() {
+  void stopWatching();
   step.value = "request";
   verificationForm.value.verifyCode = "";
 }
@@ -306,6 +321,7 @@ onBeforeUnmount(() => {
           v-else-if="step === 'verify'"
           v-model:verification-form="verificationForm"
           :loading="loading"
+          :delivery-status="deliveryStatus"
           @verify="handleVerifyCode"
           @back="backToRequest"
         />
