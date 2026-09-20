@@ -342,6 +342,9 @@ describe("StageControl", () => {
       expect(source).toContain(
         "html.dark .stage-control__seg:not(.is-selected)",
       );
+      expect(source).toMatch(
+        /html\.dark \.stage-control__seg:not\(\.is-selected\)[\s\S]*background:\s*var\(--el-fill-color-blank\)/,
+      );
       expect(source).not.toMatch(/background:\s*#fff\b/);
       expect(source).not.toMatch(/background:\s*#ffffff\b/i);
     });

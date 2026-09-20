@@ -91,6 +91,19 @@ describe("PeopleTable", () => {
     expect(nameButton.text()).toBe(samplePerson.fullName);
   });
 
+  it("paints name links with --color-text-link, not --el-color-primary", async () => {
+    const { default: fs } = await import("node:fs");
+    const { default: path } = await import("node:path");
+    const { fileURLToPath } = await import("node:url");
+    const dir = path.dirname(fileURLToPath(import.meta.url));
+    const source = fs.readFileSync(
+      path.resolve(dir, "../PeopleTable.vue"),
+      "utf8",
+    );
+    expect(source).toContain("color: var(--color-text-link)");
+    expect(source).toContain("--el-button-text-color: var(--color-text-link)");
+  });
+
   it("renders a compact SMS hint for people who have a phone", () => {
     const withPhone: PersonListDto = {
       ...samplePerson,

@@ -1,7 +1,8 @@
 /* Design tokens — dark theme overrides */
 
-/* Dark theme */
-.dark {
+/* html.dark beats later :root remaps in element-plus.less (same 0,1,0 specificity
+   as .dark, so source order used to let gray-300/200/100 win in dark). */
+html.dark {
   color-scheme: dark;
 
   /* Override colors for dark theme */
@@ -101,7 +102,11 @@
   --el-border-color-light: var(--color-border-subtle);
   --el-border-color-lighter: var(--color-border-subtle);
   --el-border-color-extra-light: rgba(168, 191, 225, 0.05);
+  --el-border-color-dark: var(--color-border);
+  --el-border-color-darker: var(--color-border);
   --el-table-border-color: var(--color-border-subtle);
+  --el-table-header-bg-color: var(--el-fill-color-light);
+  --el-table-tr-bg-color: var(--el-bg-color);
 
   --el-fill-color-blank: var(--color-gray-900);
   --el-fill-color-light: var(--color-gray-800);

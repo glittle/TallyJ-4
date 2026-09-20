@@ -198,5 +198,6 @@ async function selectStage(newStage: ElectionStage) {
 
 html.dark .stage-control__seg:not(.is-selected) {
   color: var(--color-sidebar-text);
+  background: var(--el-fill-color-blank);
 }
 </style>

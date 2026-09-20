@@ -2,11 +2,11 @@
 
 a {
   font-weight: 500;
-  color: #2563a8;
+  color: var(--color-text-link);
   text-decoration: inherit;
 
   &:hover {
-    color: #1e4f8c;
+    color: var(--color-text-link-hover);
   }
 }
 
@@ -46,12 +46,13 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--el-fill-color-blank);
+  color: var(--el-text-color-regular);
   cursor: pointer;
   transition: border-color 0.25s;
 
   &:hover {
-    border-color: #1e4f8c;
+    border-color: var(--color-primary-600);
   }
 
   &:focus,

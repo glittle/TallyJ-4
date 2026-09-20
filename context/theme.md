@@ -1,5 +1,20 @@
 # Theme tokens
 
+## Dark hairlines must win over later `:root` remaps
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #285 leftover after PR #293; `style.less` import order is `tokens.less` → `tokens-dark.less` → `element-plus.less`  
+**Revisit when:** Element Plus official `dark/css-vars.css` is adopted, or another `:root` block is added after the dark tokens
+
+PR #293 set dark `--el-border-color*` on `.dark`, but `element-plus.less` then redeclared the same names on `:root` (`gray-300` / `gray-200` / `gray-100`). `:root` and `.dark` are both specificity 0,1,0, so source order won and the later gray remaps painted light hairlines on navy. Cards, table-v2 row rules, inputs, and stage-chip outlines all read those Element Plus variables.
+
+Dark tokens now live on `html.dark` (0,1,1). The later `:root` block no longer restates `--el-border-color*`; light values stay in `tokens.less` (`--el-border-color` remains `gray-300`). Utility `.border*` classes and TipsPanel use `--color-border` instead of a frozen gray or a `#e4e7ed` fallback.
+
+**Rejected alternative:** remap the later `:root` block to `--color-border`. That would also change light `--el-border-color` from gray-300 to gray-200. Light mode is the #285 reference; dropping the duplicate keeps that hairline.
+
+**Rejected alternative:** import Element Plus `theme-chalk/dark/css-vars.css`. It would fight the custom navy sidebar and restyle the whole app, which is out of scope for this contrast pass.
+
 ## Dark theme hairlines follow the light-mode scale
 
 **Status:** active  
@@ -44,6 +59,6 @@ Unselected stage buttons are `<button class="stage-control__seg">` with CSS fill
 **Source:** issue #285 names-list contrast; People table uses `el-button type="primary" link`  
 **Revisit when:** primary solid buttons also need a lighter dark fill
 
-`--el-color-primary` is `#2563a8` in both themes. That hue pops on white and goes muddy on `#0e2040` / `#111827`. Brightening `--el-color-primary` in dark would also recolor solid primary actions (Add Person). `--color-text-link` is primary-500 in light (same as today) and primary-200 in dark. `PeopleTable` name buttons set `--el-button-text-color` from that token.
+`--el-color-primary` is `#2563a8` in both themes. That hue pops on white and goes muddy on `#0e2040` / `#111827`. Brightening `--el-color-primary` in dark would also recolor solid primary actions (Add Person). `--color-text-link` is primary-500 in light (same as today) and primary-200 in dark. `PeopleTable` name buttons set `--el-button-text-color` and `color` from that token. Global `a` uses the same pair so other lists do not stay on the muted primary.
 
 **Rejected alternative:** change dark `--el-color-primary`. Out of scope for this dashboard slice and would shift every primary fill.
