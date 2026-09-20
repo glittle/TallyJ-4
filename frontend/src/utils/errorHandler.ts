@@ -146,9 +146,7 @@ export function translateIfPhraseKey(
 
   const attempts = named?.attempts ?? parsed.attempts;
   return String(
-    attempts === undefined
-      ? t(parsed.key)
-      : t(parsed.key, { attempts }),
+    attempts === undefined ? t(parsed.key) : t(parsed.key, { attempts }),
   );
 }
 

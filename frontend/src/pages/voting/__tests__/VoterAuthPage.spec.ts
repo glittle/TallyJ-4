@@ -69,7 +69,8 @@ const stubs = {
   ElIcon: { template: "<span />" },
   VoterAuthFaq: { template: "<div />" },
   VoterAuthRequestTabs: {
-    template: "<button class='request-email' @click=\"$emit('request-email')\" />",
+    template:
+      "<button class='request-email' @click=\"$emit('request-email')\" />",
   },
   VoterAuthVerifyStep: {
     template: "<button class='verify-code' @click=\"$emit('verify')\" />",
@@ -116,18 +117,21 @@ describe("VoterAuthPage verify failures", () => {
       "No verification code found. Please request a new code.",
     ],
     ["error.tooManyRequests", "Too many requests. Please try again later."],
-  ])("shows %s instead of the generic verify fallback", async (key, expected) => {
-    verifyCode.mockRejectedValue({ error: key });
-    const wrapper = await mountOnVerifyStep();
+  ])(
+    "shows %s instead of the generic verify fallback",
+    async (key, expected) => {
+      verifyCode.mockRejectedValue({ error: key });
+      const wrapper = await mountOnVerifyStep();
 
-    await wrapper.get(".verify-code").trigger("click");
-    await flushPromises();
+      await wrapper.get(".verify-code").trigger("click");
+      await flushPromises();
 
-    expect(showErrorMessage).toHaveBeenCalledWith(expected);
-    expect(showErrorMessage).not.toHaveBeenCalledWith(
-      "Could not verify that code. Please check it and try again.",
-    );
-  });
+      expect(showErrorMessage).toHaveBeenCalledWith(expected);
+      expect(showErrorMessage).not.toHaveBeenCalledWith(
+        "Could not verify that code. Please check it and try again.",
+      );
+    },
+  );
 
   it("shows remaining attempts for a mismatch instead of the generic fallback", async () => {
     verifyCode.mockRejectedValue({
