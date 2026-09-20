@@ -91,9 +91,9 @@ describe("OnlineVotingMonitorPanel", () => {
   it("keeps pending, submitted, processing, accepted, sessions, and voted-another-way counts", () => {
     const wrapper = mountPanel({ pendingOnlineVotedAnotherWay: 2 });
 
-    expect(wrapper.find("[data-testid='pending-online-ballots-count']").text()).toBe(
-      "3",
-    );
+    expect(
+      wrapper.find("[data-testid='pending-online-ballots-count']").text(),
+    ).toBe("3");
     expect(
       wrapper.find("[data-testid='submitted-online-ballots-count']").text(),
     ).toBe("2");
@@ -104,10 +104,14 @@ describe("OnlineVotingMonitorPanel", () => {
       wrapper.find("[data-testid='accepted-online-ballots-count']").text(),
     ).toBe("1");
     expect(
-      wrapper.find("[data-testid='connected-online-voter-sessions-count']").text(),
+      wrapper
+        .find("[data-testid='connected-online-voter-sessions-count']")
+        .text(),
     ).toBe("2");
     expect(
-      wrapper.find("[data-testid='pending-online-voted-another-way-count']").text(),
+      wrapper
+        .find("[data-testid='pending-online-voted-another-way-count']")
+        .text(),
     ).toBe("2");
     expect(wrapper.text()).toContain("Online ballots");
     expect(wrapper.text()).toContain("4");
@@ -116,11 +120,15 @@ describe("OnlineVotingMonitorPanel", () => {
   it("emits the same window and accept-all actions as before", async () => {
     const wrapper = mountPanel();
 
-    await wrapper.find("[data-testid='accept-all-online-ballots']").trigger("click");
+    await wrapper
+      .find("[data-testid='accept-all-online-ballots']")
+      .trigger("click");
     await wrapper
       .find("[data-testid='schedule-close-online-5-minutes']")
       .trigger("click");
-    await wrapper.find("[data-testid='close-online-voting-now']").trigger("click");
+    await wrapper
+      .find("[data-testid='close-online-voting-now']")
+      .trigger("click");
 
     expect(wrapper.emitted("acceptAll")).toHaveLength(1);
     expect(wrapper.emitted("scheduleClose")).toHaveLength(1);

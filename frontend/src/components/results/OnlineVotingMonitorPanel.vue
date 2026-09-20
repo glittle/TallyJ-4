@@ -357,7 +357,11 @@ function acceptAllWho(run: AcceptAllOnlineBallotsRunDto) {
     border-radius: var(--el-border-radius-base);
     border: 1px solid transparent;
     border-inline-start-width: 4px;
-    background: color-mix(in srgb, var(--el-fill-color-light) 80%, var(--el-bg-color));
+    background: color-mix(
+      in srgb,
+      var(--el-fill-color-light) 80%,
+      var(--el-bg-color)
+    );
 
     &.is-open {
       border-inline-start-color: var(--el-color-success);
