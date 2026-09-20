@@ -51,27 +51,57 @@ describe("finalized write refusal messages", () => {
 });
 
 describe("voter auth verify and rate-limit keys", () => {
-  it("surfaces expired, used-or-missing, and too-many verify keys", () => {
+  const verifyFallback =
+    "Could not verify that code. Please check it and try again.";
+
+  it("surfaces expired, already-used, never-issued, and too-many verify keys", () => {
     expect(
       resolveUserFacingApiError(
         { error: "voting.auth.verify.codeExpired" },
-        "Could not verify that code. Please check it and try again.",
+        verifyFallback,
       ),
     ).toBe("Verification code has expired. Please request a new code.");
 
     expect(
       resolveUserFacingApiError(
+        { error: "voting.auth.verify.alreadyUsed" },
+        verifyFallback,
+      ),
+    ).toBe(
+      "This verification code has already been used. Please request a new code.",
+    );
+
+    expect(
+      resolveUserFacingApiError(
         { error: "voting.auth.verify.noCodeFound" },
-        "Could not verify that code. Please check it and try again.",
+        verifyFallback,
       ),
     ).toBe("No verification code found. Please request a new code.");
 
     expect(
       resolveUserFacingApiError(
         { error: "voting.auth.verify.tooManyAttempts" },
-        "Could not verify that code. Please check it and try again.",
+        verifyFallback,
       ),
     ).toBe("Too many failed attempts. Please request a new code.");
+  });
+
+  it("interpolates remaining attempts for a stable invalidCode key", () => {
+    expect(
+      resolveUserFacingApiError(
+        { error: "voting.auth.verify.invalidCode", attempts: 4 },
+        verifyFallback,
+      ),
+    ).toBe("Invalid verification code. 4 attempts remaining.");
+  });
+
+  it("interpolates remaining attempts from a legacy invalidCode:N payload", () => {
+    expect(
+      resolveUserFacingApiError(
+        { error: "voting.auth.verify.invalidCode:3" },
+        verifyFallback,
+      ),
+    ).toBe("Invalid verification code. 3 attempts remaining.");
   });
 
   it("surfaces the 429 i18n key instead of raw English", () => {
