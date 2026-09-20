@@ -181,6 +181,7 @@ describe("MonitoringDashboardPage Accept all", () => {
     mockFetchMonitor.mockReset();
     mockFetchMonitor.mockResolvedValue(mockMonitor);
     mockElection.onlineCloseIsEstimate = true;
+    mockMonitor.onlineVotingInfo.onlineVotingEnabled = true;
     mockMonitor.onlineVotingInfo.pendingOnlineBallots = 3;
     mockMonitor.onlineVotingInfo.submittedOnlineBallots = 2;
     mockMonitor.onlineVotingInfo.processingOnlineBallots = 1;
@@ -344,7 +345,6 @@ describe("MonitoringDashboardPage Accept all", () => {
         .find("[data-testid='connected-online-voter-sessions-count']")
         .text(),
     ).toBe("4");
-    expect(wrapper.text()).toContain("Connected online voters");
     expect(wrapper.text()).toContain("Ballot-page sessions");
     expect(wrapper.text()).toContain("composing is not stored until submit");
     expect(wrapper.text()).not.toContain("Ada");
@@ -500,6 +500,7 @@ describe("MonitoringDashboardPage close countdown", () => {
     mockFetchMonitor.mockReset();
     mockFetchMonitor.mockResolvedValue(mockMonitor);
     mockElection.onlineCloseIsEstimate = true;
+    mockMonitor.onlineVotingInfo.onlineVotingEnabled = true;
     mockMonitor.onlineVotingInfo.onlineVotingStart = new Date(
       Date.now() - 60 * 60 * 1000,
     ).toISOString();
@@ -529,7 +530,7 @@ describe("MonitoringDashboardPage close countdown", () => {
       wrapper.find("[data-testid='online-close-countdown']").exists(),
     ).toBe(true);
     expect(wrapper.find("[data-testid='online-close-status']").text()).toBe(
-      "Online voting is Open",
+      "Open",
     );
     expect(wrapper.find("[data-testid='online-close-line']").text()).toMatch(
       /Expected to close/i,
@@ -564,9 +565,35 @@ describe("MonitoringDashboardPage close countdown", () => {
     const clock = wrapper.find("[data-testid='online-close-clock']");
     expect(clock.exists()).toBe(true);
     expect(clock.text()).toMatch(/4:\d{2} remaining/);
+    expect(wrapper.find("[data-testid='online-close-status']").text()).toBe(
+      "Closing soon",
+    );
     expect(
       wrapper.find("[data-testid='online-close-countdown']").classes(),
     ).toContain("is-closing-soon");
+  });
+
+  it("does not repeat setup-enabled wording when the window is already open", async () => {
+    const wrapper = await mountPage();
+    expect(wrapper.text()).not.toContain("Online voting is enabled");
+    expect(wrapper.text()).not.toContain("Online voting is Open");
+    expect(
+      wrapper.find("[data-testid='online-voting-enabled-tag']").exists(),
+    ).toBe(false);
+  });
+
+  it("shows disabled setup state without hiding window controls", async () => {
+    mockMonitor.onlineVotingInfo.onlineVotingEnabled = false;
+    mockMonitor.onlineVotingInfo.onlineVotingEnd = new Date(
+      Date.now() - 60 * 1000,
+    ).toISOString();
+    const wrapper = await mountPage();
+    expect(
+      wrapper.find("[data-testid='online-voting-enabled-tag']").text(),
+    ).toBe("Online voting is disabled");
+    expect(
+      wrapper.find("[data-testid='open-online-voting-5-minutes']").exists(),
+    ).toBe(true);
   });
 
   it("shows Open for 5 minutes when the window is already closed", async () => {
@@ -575,7 +602,7 @@ describe("MonitoringDashboardPage close countdown", () => {
     ).toISOString();
     const wrapper = await mountPage();
     expect(wrapper.find("[data-testid='online-close-status']").text()).toBe(
-      "Online voting is Closed",
+      "Closed",
     );
     expect(
       wrapper.find("[data-testid='open-online-voting-5-minutes']").exists(),
