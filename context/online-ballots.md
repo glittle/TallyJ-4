@@ -135,7 +135,7 @@ Kiosk on Front Desk is a recorded method (`K`), counted separately from Online. 
 **Status:** active  
 **Evidence:** confirmed (issue #184 remaining slice; v3 `Monitor.cshtml` / `closeOnline`)
 
-The Monitor Progress online card shows whether the voting window is open or closed, a relative close line, and a `m:ss` clock in the last five minutes. Full tellers can **Schedule close in 5 minutes** (firm — `OnlineCloseIsEstimate = false`), **Close now** (one second ago, estimate unchanged), or **Open for 5 minutes** when already closed (estimate unchanged). Those buttons call the existing online-window API; they do not invent a second close path.
+The Monitor Progress Online Voting panel leads with **Open** / **Closing soon** / **Closed**, a relative close line, and a `m:ss` clock in the last five minutes. Full tellers can **Schedule close in 5 minutes** (firm — `OnlineCloseIsEstimate = false`), **Close now** (one second ago, estimate unchanged), or **Open for 5 minutes** when already closed (estimate unchanged). Those buttons call the existing online-window API; they do not invent a second close path.
 
 v3 used “Expected to close” when the close was an estimate and “Will close” when firm. The last-five-minute highlight is `minutes <= 5` (same as v3 `onlineSoon`).
 
@@ -154,7 +154,7 @@ v3 Monitor (this repo’s hub docs) pushed online window changes via FrontDeskHu
 
 v4 Draft is silent autosave only (not Accept-all pending). The monitor still does not list who is composing. “Building a ballot” is not shown as names.
 
-The monitor shows **Connected online voters → Ballot-page sessions**: an anonymous count of AllVotersHub connections that called `JoinElection` for this election (the voter ballot page). One person with two tabs counts as two. The API and UI return that integer only — no person name, email, phone, kiosk, voter id, row id, or WhenStatus. `IOnlineVoterPresenceService` stores connection id → election GUID only.
+The monitor count strip includes **Ballot-page sessions**: an anonymous count of AllVotersHub connections that called `JoinElection` for this election (the voter ballot page). One person with two tabs counts as two. The API and UI return that integer only — no person name, email, phone, kiosk, voter id, row id, or WhenStatus. `IOnlineVoterPresenceService` stores connection id → election GUID only.
 
 The count is same-host in-memory. Two app servers do not share it. Auto-refresh (30s) is how tellers see a new number.
 
@@ -169,6 +169,32 @@ The count is same-host in-memory. Two app servers do not share it. Auto-refresh 
 **Rejected alternative:** count unique voter ids (hashed) instead of sessions. Rejected for this slice — the product ask is sessions, and storing voter ids next to an election (even hashed) is extra identity surface for no teller gain.
 
 **Reason:** tellers need a live anonymous signal that this election’s voting UI is in use, without a secret-ballot leak and without calling it “building a ballot.”
+
+## Monitor Online Voting layout (status, then action, then counts)
+
+**Status:** active  
+**Evidence:** confirmed (issue #345; monitor UAT screenshot of stacked boxes)  
+**Source:** issue #345
+
+The Online Voting block used a header Accept-all, a bordered descriptions row (total / pending / accepted / “enabled”), a separate colored **Closing** box that repeated “Online voting is Open/Closed”, then two more bordered tables (sessions; pending vs accepted) and two anonymity notes. Head tellers could not see window state and the next action at a glance.
+
+The panel is now one card:
+
+1. **Status row** — Open / Closing soon / Closed, the close line, last-five-minute clock, and the existing window buttons.
+2. **Count strip** — Pending, Still changeable, Processing, Accepted, Ballot-page sessions, Pending-voted-another-way, and total Online ballots. No second descriptions table.
+3. **One counts-only note** and the Accept-all history.
+
+Setup **enabled** is not the operational status. It is shown only when online voting is disabled. Accept-all stays in the header as **Accept pending**; the confirm dialog still uses the longer irreversible wording.
+
+**Rejected alternative:** keep the bordered `el-descriptions` blocks and only tighten copy. The competing boxes were the scan problem.
+
+**Rejected alternative:** drop Accept-all history, sessions, voted-another-way, or total from the monitor. Those are live capabilities, not dead UI.
+
+**Rejected alternative:** change the monitor API so the UI can invent a single “next action” field. Layout was enough; the payload already has window times and the counts.
+
+**Rejected alternative:** restyle the whole Election Monitor page in the same pass. Out of scope for #345.
+
+**Reason:** during an election the teller needs window state and the pending/accept action first; counts and history are secondary and should not each get their own boxed section.
 
 ## Accept-all audit record
 

@@ -255,255 +255,19 @@
           </el-table>
         </el-card>
 
-        <!-- Online Voting Info -->
-        <el-card>
-          <template #header>
-            <div class="online-voting-header">
-              <span>{{ $t("monitoring.onlineVoting") }}</span>
-              <el-button
-                v-if="canAcceptOnlineBallots"
-                type="primary"
-                data-testid="accept-all-online-ballots"
-                :loading="accepting"
-                :disabled="pendingOnlineCount === 0"
-                @click="confirmAcceptAll"
-              >
-                {{ $t("monitoring.acceptAll.button") }}
-              </el-button>
-            </div>
-          </template>
-          <el-descriptions :column="4" border>
-            <el-descriptions-item :label="$t('monitoring.totalOnlineBallots')">
-              {{ monitorInfo.onlineVotingInfo.totalOnlineBallots }}
-            </el-descriptions-item>
-            <el-descriptions-item
-              :label="$t('monitoring.pendingOnlineBallots')"
-            >
-              {{ monitorInfo.onlineVotingInfo.pendingOnlineBallots }}
-            </el-descriptions-item>
-            <el-descriptions-item
-              :label="$t('monitoring.processedOnlineBallots')"
-            >
-              {{ monitorInfo.onlineVotingInfo.processedOnlineBallots }}
-            </el-descriptions-item>
-            <el-descriptions-item :label="$t('monitoring.status')">
-              <el-tag
-                :type="
-                  monitorInfo.onlineVotingInfo.onlineVotingEnabled
-                    ? 'success'
-                    : 'info'
-                "
-              >
-                {{
-                  monitorInfo.onlineVotingInfo.onlineVotingEnabled
-                    ? $t("elections.onlineVotingEnabled")
-                    : $t("elections.onlineVotingDisabled")
-                }}
-              </el-tag>
-            </el-descriptions-item>
-          </el-descriptions>
-          <div
-            class="online-close-countdown"
-            data-testid="online-close-countdown"
-            :class="closeCountdownClass"
-          >
-            <h3>{{ $t("monitoring.onlineWindow.title") }}</h3>
-            <p class="online-close-status" data-testid="online-close-status">
-              {{
-                closeCountdown.isWindowOpen
-                  ? $t("elections.onlineWindow.statusOpen")
-                  : $t("elections.onlineWindow.statusClosed")
-              }}
-            </p>
-            <p
-              v-if="closeSummary.closeLine"
-              class="online-close-line"
-              data-testid="online-close-line"
-            >
-              {{ closeSummary.closeLine }}
-            </p>
-            <p v-else class="online-close-line" data-testid="online-close-line">
-              {{ $t("monitoring.onlineWindow.noCloseTime") }}
-            </p>
-            <p
-              v-if="closeCountdown.isClosingSoon"
-              class="online-close-clock"
-              data-testid="online-close-clock"
-            >
-              {{
-                $t("monitoring.onlineWindow.remainingClock", {
-                  clock: closeRemainingClock,
-                })
-              }}
-            </p>
-            <div v-if="canAcceptOnlineBallots" class="online-close-actions">
-              <el-button
-                v-if="!closeCountdown.isWindowOpen"
-                data-testid="open-online-voting-5-minutes"
-                :loading="updatingWindow"
-                @click="openOnlineForMinutes(5)"
-              >
-                {{ $t("monitoring.onlineWindow.openFor5Minutes") }}
-              </el-button>
-              <el-button
-                v-if="closeCountdown.isWindowOpen"
-                data-testid="schedule-close-online-5-minutes"
-                :loading="updatingWindow"
-                @click="scheduleCloseInMinutes(5)"
-              >
-                {{ $t("monitoring.onlineWindow.scheduleCloseIn5Minutes") }}
-              </el-button>
-              <el-button
-                v-if="closeCountdown.isWindowOpen"
-                data-testid="close-online-voting-now"
-                :loading="updatingWindow"
-                @click="closeOnlineNow"
-              >
-                {{ $t("monitoring.onlineWindow.closeNow") }}
-              </el-button>
-            </div>
-          </div>
-          <div
-            class="connected-online-voters"
-            data-testid="connected-online-voter-sessions"
-          >
-            <h3>{{ $t("monitoring.connectedOnlineVoters.title") }}</h3>
-            <p class="online-ballot-breakdown-note">
-              {{ $t("monitoring.connectedOnlineVoters.note") }}
-            </p>
-            <el-descriptions :column="1" border>
-              <el-descriptions-item
-                :label="$t('monitoring.connectedOnlineVoters.sessions')"
-              >
-                <el-tag data-testid="connected-online-voter-sessions-count">
-                  {{ connectedOnlineVoterSessions }}
-                </el-tag>
-              </el-descriptions-item>
-            </el-descriptions>
-          </div>
-          <div
-            class="online-ballot-breakdown"
-            data-testid="online-ballot-status-breakdown"
-          >
-            <h3>{{ $t("monitoring.onlineBallots.breakdownTitle") }}</h3>
-            <p class="online-ballot-breakdown-note">
-              {{ $t("monitoring.onlineBallots.countsOnly") }}
-            </p>
-            <el-descriptions :column="4" border>
-              <!-- Submitted only. Summary "Pending" is Submitted + Processing. -->
-              <el-descriptions-item
-                :label="$t('monitoring.onlineBallots.status.Submitted')"
-              >
-                <el-tag
-                  :type="onlineBallotStatusView('Submitted').tagType"
-                  data-testid="submitted-online-ballots-count"
-                >
-                  {{ submittedOnlineCount }}
-                </el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item
-                :label="$t('monitoring.onlineBallots.status.Processing')"
-              >
-                <el-tag
-                  :type="onlineBallotStatusView('Processing').tagType"
-                  data-testid="processing-online-ballots-count"
-                >
-                  {{ processingOnlineCount }}
-                </el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item
-                :label="$t('monitoring.onlineBallots.status.Processed')"
-              >
-                <el-tag
-                  :type="onlineBallotStatusView('Processed').tagType"
-                  data-testid="accepted-online-ballots-count"
-                >
-                  {{ acceptedOnlineCount }}
-                </el-tag>
-              </el-descriptions-item>
-              <el-descriptions-item
-                :label="$t('monitoring.onlineBallots.votedAnotherWay')"
-              >
-                <el-tag
-                  type="info"
-                  data-testid="pending-online-voted-another-way-count"
-                >
-                  {{ pendingOnlineVotedAnotherWay }}
-                </el-tag>
-              </el-descriptions-item>
-            </el-descriptions>
-          </div>
-          <div class="accept-all-history">
-            <h3>{{ $t("monitoring.acceptAll.history") }}</h3>
-            <el-table
-              v-if="acceptAllRuns.length > 0"
-              :data="acceptAllRuns"
-              stripe
-              data-testid="accept-all-history"
-              style="width: 100%"
-            >
-              <el-table-column
-                :label="$t('monitoring.acceptAll.when')"
-                min-width="180"
-              >
-                <template #default="scope">
-                  {{ formatDateTime(scope.row.when) }}
-                </template>
-              </el-table-column>
-              <el-table-column
-                :label="$t('monitoring.acceptAll.who')"
-                min-width="160"
-              >
-                <template #default="scope">
-                  {{ acceptAllWho(scope.row) }}
-                </template>
-              </el-table-column>
-              <el-table-column
-                :label="$t('monitoring.acceptAll.pendingBefore')"
-                width="140"
-                align="center"
-              >
-                <template #default="scope">
-                  {{ scope.row.pendingBefore }}
-                </template>
-              </el-table-column>
-              <el-table-column
-                :label="$t('monitoring.acceptAll.pendingAfter')"
-                width="140"
-                align="center"
-              >
-                <template #default="scope">
-                  {{ scope.row.pendingAfter }}
-                </template>
-              </el-table-column>
-              <el-table-column
-                :label="$t('monitoring.acceptAll.acceptedBefore')"
-                width="150"
-                align="center"
-              >
-                <template #default="scope">
-                  {{ scope.row.acceptedBefore }}
-                </template>
-              </el-table-column>
-              <el-table-column
-                :label="$t('monitoring.acceptAll.acceptedAfter')"
-                width="150"
-                align="center"
-              >
-                <template #default="scope">
-                  {{ scope.row.acceptedAfter }}
-                </template>
-              </el-table-column>
-            </el-table>
-            <p
-              v-else
-              class="accept-all-history-empty"
-              data-testid="accept-all-history-empty"
-            >
-              {{ $t("monitoring.acceptAll.noHistory") }}
-            </p>
-          </div>
-        </el-card>
+        <OnlineVotingMonitorPanel
+          :info="monitorInfo.onlineVotingInfo"
+          :close-countdown="closeCountdown"
+          :close-line="closeSummary.closeLine"
+          :close-remaining-clock="closeRemainingClock"
+          :can-manage="canAcceptOnlineBallots"
+          :accepting="accepting"
+          :updating-window="updatingWindow"
+          @accept-all="confirmAcceptAll"
+          @schedule-close="scheduleCloseInMinutes(5)"
+          @close-now="closeOnlineNow"
+          @open-for-minutes="openOnlineForMinutes(5)"
+        />
       </div>
 
       <el-empty v-else :description="$t('monitoring.noData')" />
@@ -512,6 +276,7 @@
 </template>
 
 <script setup lang="ts">
+import OnlineVotingMonitorPanel from "@/components/results/OnlineVotingMonitorPanel.vue";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useNotifications } from "@/composables/useNotifications";
 import { isFullTeller } from "@/domain/guestTellerAccess";
@@ -538,8 +303,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { signalrService } from "../../services/signalrService";
 import { useResultStore } from "../../stores/resultStore";
-import { onlineBallotMonitorStatus } from "../../utils/onlineBallotMonitorStatus";
-import type { AcceptAllOnlineBallotsRunDto, MonitorInfoDto } from "../../types";
+import type { MonitorInfoDto } from "../../types";
 
 const route = useRoute();
 const resultStore = useResultStore();
@@ -553,28 +317,6 @@ const monitorInfo = ref<MonitorInfoDto | null>(null);
 const loading = ref(false);
 const accepting = ref(false);
 const canAcceptOnlineBallots = computed(() => isFullTeller());
-const pendingOnlineCount = computed(
-  () => monitorInfo.value?.onlineVotingInfo.pendingOnlineBallots ?? 0,
-);
-const acceptAllRuns = computed(
-  () => monitorInfo.value?.onlineVotingInfo.acceptAllRuns ?? [],
-);
-const submittedOnlineCount = computed(
-  () => monitorInfo.value?.onlineVotingInfo.submittedOnlineBallots ?? 0,
-);
-const processingOnlineCount = computed(
-  () => monitorInfo.value?.onlineVotingInfo.processingOnlineBallots ?? 0,
-);
-const acceptedOnlineCount = computed(
-  () => monitorInfo.value?.onlineVotingInfo.processedOnlineBallots ?? 0,
-);
-const connectedOnlineVoterSessions = computed(
-  () => monitorInfo.value?.onlineVotingInfo.connectedOnlineVoterSessions ?? 0,
-);
-const pendingOnlineVotedAnotherWay = computed(
-  () => monitorInfo.value?.onlineVotingInfo.pendingOnlineVotedAnotherWay ?? 0,
-);
-const onlineBallotStatusView = onlineBallotMonitorStatus;
 const refreshInterval = ref<number | null>(null);
 const updatingWindow = ref(false);
 const nowTick = ref(DateTime.now());
@@ -614,13 +356,6 @@ const closeSummary = computed(() =>
 const closeRemainingClock = computed(() =>
   formatCloseRemainingClock(closeCountdown.value.remainingMs),
 );
-
-const closeCountdownClass = computed(() => {
-  if (closeCountdown.value.isClosingSoon) {
-    return "is-closing-soon";
-  }
-  return closeCountdown.value.isWindowOpen ? "is-open" : "is-closed";
-});
 
 onMounted(async () => {
   await ensureElectionLoaded();
@@ -828,10 +563,6 @@ function formatDateTime(date?: string | Date | null) {
   return new Date(date).toLocaleString();
 }
 
-function acceptAllWho(run: AcceptAllOnlineBallotsRunDto) {
-  return run.acceptedBy || run.acceptedByUserId || "-";
-}
-
 function getStatusType(status: string) {
   const statusMap: Record<string, string> = {
     Online: "success",
@@ -868,76 +599,9 @@ function calculateTurnout(registered: number, ballots: number) {
   gap: 10px;
 }
 
-.online-voting-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.online-ballot-breakdown,
-.connected-online-voters,
-.accept-all-history,
-.online-close-countdown {
-  margin-top: 20px;
-
-  h3 {
-    margin: 0 0 12px;
-    font-size: 16px;
-    font-weight: 600;
-  }
-}
-
-.online-close-countdown {
-  padding: 12px 14px;
-  border-radius: var(--el-border-radius-base);
-  border: 1px solid var(--el-border-color);
-  background: var(--el-fill-color-light);
-
-  &.is-open {
-    border-color: var(--el-color-success);
-    background: var(--el-color-success-light-9);
-  }
-
-  &.is-closing-soon {
-    border-color: var(--el-color-warning);
-    background: var(--el-color-warning-light-9);
-  }
-
-  &.is-closed {
-    border-color: var(--el-color-danger);
-    background: var(--el-color-danger-light-9);
-  }
-
-  .online-close-status {
-    margin: 0 0 4px;
-    font-weight: 600;
-  }
-
-  .online-close-line,
-  .online-close-clock {
-    margin: 0;
-  }
-
-  .online-close-clock {
-    margin-top: 4px;
-    font-size: 20px;
-    font-weight: 700;
-    font-variant-numeric: tabular-nums;
-  }
-}
-
-.online-close-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.online-ballot-breakdown-note,
-.accept-all-history-empty {
+.online-ballot-breakdown-note {
   margin: 0 0 12px;
-  color: #909399;
+  color: var(--el-text-color-secondary);
 }
 
 .summary-row {
