@@ -39,12 +39,12 @@ function dismiss() {
 
 <style lang="less">
 .tips-panel {
-  background: var(--color-bg-secondary, #f5f7fa);
-  border: 1px solid var(--color-border-light, #e4e7ed);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   padding: 12px 14px;
   font-size: 12px;
-  color: var(--color-text-secondary, #909399);
+  color: var(--color-text-secondary);
 
   &__header {
     display: flex;

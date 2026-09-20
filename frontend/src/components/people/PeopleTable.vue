@@ -218,6 +218,7 @@ const columns = computed<Column<any>[]>(() => [
     --el-button-text-color: var(--color-text-link);
     --el-button-hover-text-color: var(--color-text-link-hover);
     --el-button-hover-link-text-color: var(--color-text-link-hover);
+    color: var(--color-text-link);
     font-weight: var(--font-weight-medium);
   }
 }

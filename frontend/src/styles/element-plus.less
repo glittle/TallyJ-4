@@ -43,12 +43,8 @@
   --el-bg-color-page: var(--color-bg-primary);
   --el-bg-color-overlay: var(--color-bg-overlay);
 
-  /* Element Plus Border Colors */
-  --el-border-color: var(--color-gray-300);
-  --el-border-color-light: var(--color-gray-200);
-  --el-border-color-lighter: var(--color-gray-100);
-  --el-border-color-dark: var(--color-gray-400);
-  --el-border-color-darker: var(--color-gray-500);
+  /* Do not redeclare --el-border-color* here. tokens.less / tokens-dark.less
+     own those so dark hairlines are not overwritten by this later :root block. */
 
   /* Element Plus Font */
   --el-font-family: var(--font-family-primary);
@@ -139,14 +135,14 @@
   overflow: hidden;
 
   th {
-    background-color: var(--color-gray-50);
+    background-color: var(--el-fill-color-light);
     font-weight: var(--font-weight-semibold);
-    color: var(--color-text-primary);
+    color: var(--el-text-color-primary);
   }
 }
 
 .el-loading-mask {
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: color-mix(in srgb, var(--el-bg-color) 80%, transparent);
   backdrop-filter: blur(4px);
 }
 

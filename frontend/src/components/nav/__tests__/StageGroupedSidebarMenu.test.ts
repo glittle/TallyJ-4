@@ -343,6 +343,23 @@ describe("StageGroupedSidebarMenu", () => {
       expect(active).toHaveLength(1);
       expect(active[0]!.text()).toContain(peoplePage!.i18nKey);
     });
+
+    it("uses the sidebar active chip tokens, not a one-off hex", async () => {
+      const { default: fs } = await import("node:fs");
+      const { default: path } = await import("node:path");
+      const { fileURLToPath } = await import("node:url");
+      const dir = path.dirname(fileURLToPath(import.meta.url));
+      const source = fs.readFileSync(
+        path.resolve(dir, "../StageGroupedSidebarMenu.vue"),
+        "utf8",
+      );
+      expect(source).toContain(
+        "background-color: var(--color-sidebar-active) !important",
+      );
+      expect(source).toContain(
+        "color: var(--color-sidebar-text-active) !important",
+      );
+    });
   });
 
   describe("page navigation", () => {

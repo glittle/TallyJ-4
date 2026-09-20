@@ -94,12 +94,8 @@ const bodyStyle = computed<CSSProperties | undefined>(() => {
   }
 
   &--outlined {
-    border: 2px solid var(--color-gray-300);
+    border: 2px solid var(--color-border);
     box-shadow: none;
-
-    .dark & {
-      border-color: var(--color-gray-700);
-    }
   }
 
   &--flat {

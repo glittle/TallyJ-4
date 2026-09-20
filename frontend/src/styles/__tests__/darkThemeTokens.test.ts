@@ -91,4 +91,16 @@ describe("dark theme tokens (dashboard/setup polish)", () => {
       "var(--color-primary-200)",
     );
   });
+
+  it("scopes dark tokens to html.dark so they beat later :root remaps", () => {
+    expect(dark).toMatch(/html\.dark\s*\{/);
+    expect(dark).not.toMatch(/^\.dark\s*\{/m);
+    expect(elementPlus).not.toMatch(
+      /--el-border-color:\s*var\(--color-gray-300\)/,
+    );
+    expect(elementPlus).not.toMatch(
+      /--el-border-color-lighter:\s*var\(--color-gray-100\)/,
+    );
+    expect(tokenValue(light, "--el-border-color")).toBe("var(--color-gray-300)");
+  });
 });
