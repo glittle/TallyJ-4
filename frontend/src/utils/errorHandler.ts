@@ -4,6 +4,7 @@ export interface ApiError {
   title?: string;
   error?: string;
   message?: string;
+  attempts?: number;
   errors?: Record<string, string[]>;
   status?: number;
   response?: {
@@ -12,6 +13,7 @@ export interface ApiError {
       title?: string;
       error?: string;
       message?: string;
+      attempts?: number;
       errors?: Record<string, string[]>;
     };
   };
@@ -79,16 +81,73 @@ export function extractApiErrorMessage(error: any): string {
   return "An unknown error occurred";
 }
 
+const namedNumberSuffix = /^(.*):(\d+)$/;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function readAttemptsField(value: unknown): number | undefined {
+  if (!isRecord(value) || typeof value.attempts !== "number") {
+    return undefined;
+  }
+  return value.attempts;
+}
+
+/// Remaining OTP attempts from a hey-api 400 body or an axios-shaped wrapper.
+export function extractApiErrorAttempts(error: unknown): number | undefined {
+  if (!isRecord(error)) {
+    return undefined;
+  }
+  const fromBody = readAttemptsField(error);
+  if (fromBody !== undefined) {
+    return fromBody;
+  }
+
+  const response = error.response;
+  return isRecord(response) ? readAttemptsField(response.data) : undefined;
+}
+
+/// Split a stable key from an optional `:N` suffix (legacy invalidCode payload).
+export function parsePhraseKey(message: string): {
+  key: string;
+  attempts?: number;
+} {
+  const key = message?.trim() ?? "";
+  const match = namedNumberSuffix.exec(key);
+  if (!match) {
+    return { key };
+  }
+
+  const { te } = i18n.global;
+  const prefix = match[1] ?? "";
+  if (!te(prefix)) {
+    return { key };
+  }
+
+  return { key: prefix, attempts: Number(match[2]) };
+}
+
 /// When the API returns an i18n phrase key (e.g. elections.finalizedWriteBlocked),
 /// translate it. Leave ordinary English exception text unchanged.
-export function translateIfPhraseKey(message: string): string {
-  const key = message?.trim();
-  if (!key) {
+export function translateIfPhraseKey(
+  message: string,
+  named?: Record<string, unknown>,
+): string {
+  const parsed = parsePhraseKey(message);
+  if (!parsed.key) {
     return message;
   }
 
   const { t, te } = i18n.global;
-  return te(key) ? String(t(key)) : message;
+  if (!te(parsed.key)) {
+    return message;
+  }
+
+  const attempts = named?.attempts ?? parsed.attempts;
+  return String(
+    attempts === undefined ? t(parsed.key) : t(parsed.key, { attempts }),
+  );
 }
 
 export function resolveUserFacingApiError(
@@ -100,5 +159,9 @@ export function resolveUserFacingApiError(
     return fallback;
   }
 
-  return translateIfPhraseKey(raw);
+  const attempts = extractApiErrorAttempts(error);
+  return translateIfPhraseKey(
+    raw,
+    attempts === undefined ? undefined : { attempts },
+  );
 }

@@ -1,4 +1,5 @@
 using Backend.DTOs.OnlineVoting;
+using Backend.Helpers;
 using Backend.Middleware;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -245,7 +246,7 @@ public class OnlineVotingController : ControllerBase
     {
         if (!success || response == null)
         {
-            return BadRequest(new { error });
+            return BadRequest(VoterVerifyError.ToBadRequestBody(error));
         }
 
         if (!string.IsNullOrEmpty(response.Token))

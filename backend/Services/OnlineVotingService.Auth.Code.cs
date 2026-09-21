@@ -178,7 +178,7 @@ public partial class OnlineVotingService
             if (string.Equals(dto.VoterId, dto.VerifyCode, StringComparison.OrdinalIgnoreCase))
             {
                 var kioskResult = await TryAuthenticateWithDirectCodeAsync(dto.VoterId);
-                if (kioskResult.Success || kioskResult.Error == "voting.auth.verify.codeExpired")
+                if (kioskResult.Success || kioskResult.Error == VoterVerifyError.CodeExpired)
                 {
                     return kioskResult;
                 }
@@ -189,23 +189,23 @@ public partial class OnlineVotingService
 
             if (onlineVoter == null)
             {
-                return (false, "voting.auth.verify.voterNotFound", null);
+                return (false, VoterVerifyError.VoterNotFound, null);
             }
 
             if (string.IsNullOrEmpty(onlineVoter.VerifyCode))
             {
-                return (false, "voting.auth.verify.noCodeFound", null);
+                return (false, VoterVerifyError.MissingCodeKey(onlineVoter.VerifyCodeDate), null);
             }
 
             if (onlineVoter.VerifyCodeDate == null ||
                 onlineVoter.VerifyCodeDate.Value.AddMinutes(15) < DateTimeOffset.UtcNow)
             {
-                return (false, "voting.auth.verify.codeExpired", null);
+                return (false, VoterVerifyError.CodeExpired, null);
             }
 
-            if (onlineVoter.VerifyAttempts >= 5)
+            if (onlineVoter.VerifyAttempts >= VoterVerifyError.MaxAttempts)
             {
-                return (false, "voting.auth.verify.tooManyAttempts", null);
+                return (false, VoterVerifyError.TooManyAttempts, null);
             }
 
             if (onlineVoter.VerifyCode != dto.VerifyCode)
@@ -213,7 +213,13 @@ public partial class OnlineVotingService
                 onlineVoter.VerifyAttempts = (onlineVoter.VerifyAttempts ?? 0) + 1;
                 await _context.SaveChangesAsync();
 
-                return (false, $"voting.auth.verify.invalidCode:{5 - onlineVoter.VerifyAttempts}", null);
+                if (onlineVoter.VerifyAttempts >= VoterVerifyError.MaxAttempts)
+                {
+                    return (false, VoterVerifyError.TooManyAttempts, null);
+                }
+
+                var remaining = VoterVerifyError.MaxAttempts - onlineVoter.VerifyAttempts.Value;
+                return (false, VoterVerifyError.InvalidCodeWithAttempts(remaining), null);
             }
 
             onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;
@@ -240,7 +246,7 @@ public partial class OnlineVotingService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error verifying code");
-            return (false, "voting.auth.verify.error", null);
+            return (false, VoterVerifyError.Error, null);
         }
     }
 
@@ -329,7 +335,7 @@ public partial class OnlineVotingService
 
         if (!openElectionGuids.Any())
         {
-            return (false, "voting.auth.verify.voterNotFound", null);
+            return (false, VoterVerifyError.VoterNotFound, null);
         }
 
         var people = await _context.People
@@ -341,7 +347,7 @@ public partial class OnlineVotingService
 
         if (people.Count == 0)
         {
-            return (false, "voting.auth.verify.voterNotFound", null);
+            return (false, VoterVerifyError.VoterNotFound, null);
         }
 
         OnlineVoter? onlineVoter = null;
@@ -359,7 +365,7 @@ public partial class OnlineVotingService
 
             if (onlineVoter != null)
             {
-                return (false, "voting.auth.verify.voterNotFound", null);
+                return (false, VoterVerifyError.VoterNotFound, null);
             }
 
             onlineVoter = row;
@@ -367,7 +373,7 @@ public partial class OnlineVotingService
 
         if (onlineVoter == null)
         {
-            return (false, "voting.auth.verify.codeExpired", null);
+            return (false, VoterVerifyError.CodeExpired, null);
         }
 
         onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;

@@ -104,7 +104,7 @@ Auth rate-limit keys use the IP the **trusted ingress** saw, not a client-suppli
 
 The same in-memory middleware still owns the limits. Teller `/api/auth/login` (and the disabled register endpoint / 2FA / password / teller OAuth) stay **tight per trusted-ingress IP** (5/min login). Anonymous voter `requestCode` / `verifyCode` do **not** use that 5/min IP bucket: elections often share one venue WiFi / community NAT, so a public `RemoteIp` is the whole hall. Those routes use a **5/min per VoterId** bucket (JSON body peek capped at 16 KiB even when ContentLength is missing / chunked; a fitting body is replaced with a MemoryStream at position 0 so model binding still works) plus a **60/min per trusted-ingress IP** venue ceiling. Oversized / peek-overflow bodies are **413** (`error.payloadTooLarge`) and do not continue to model binding — they must not be demoted to `missing:{ip}`, or a padded body with a real voterId would opt out of the cross-IP identifier ceiling. `missing:{ip}` is only for a genuinely empty, malformed, or absent `voterId`. Voter OAuth (`/api/online-voting/*Auth`) has no VoterId in the body — venue IP ceiling only. Teller OAuth stays on the tight IP table.
 
-429 bodies return the i18n key `error.tooManyRequests` (same pattern as voter verify keys). That string lives only in `frontend/src/locales/en/errors.json`; other locales are not given English placeholders (missing keys fall back to English). Verify failures keep `codeExpired`, `tooManyAttempts`, and `noCodeFound` (used-or-missing after the code is cleared). The SPA resolves those keys instead of a single generic verify message. `VerifyAttempts` on `OnlineVoter` still locks five failed codes for that row; the middleware 429 is a cheap pre-service cap.
+429 bodies return the i18n key `error.tooManyRequests` (same pattern as voter verify keys). That string lives only in `frontend/src/locales/en/errors.json`; other locales are not given English placeholders (missing keys fall back to English). The SPA resolves those keys instead of a single generic verify message. `VerifyAttempts` on `OnlineVoter` still locks five failed codes for that row; the middleware 429 is a cheap pre-service cap. The fifth mismatch returns `tooManyAttempts` on that call so the row lock is reachable under the 5/min per-VoterId middleware ceiling (a sixth HTTP call would otherwise be 429 first).
 
 **Rejected alternative:** leftmost XFF as “original client.” Front Door’s own docs say an existing XFF is appended; the left side is attacker-controlled.
 
@@ -112,7 +112,7 @@ The same in-memory middleware still owns the limits. Teller `/api/auth/login` (a
 
 **Rejected alternative:** keep keying on `RemoteIpAddress` only. On Azure UAT that address is the platform hop, so one client locks everyone out or the limit never isolates a single attacker.
 
-**Rejected alternative:** add a separate `alreadyUsed` key. After a successful verify the stored code is cleared; used and never-issued are the same row state (`noCodeFound`).
+> Superseded 2026-09: treat used and never-issued as one `noCodeFound` key. A consumed OTP still leaves `VerifyCodeDate` set after `VerifyCode` is cleared, so tellers can tell “already used” from “never issued.” See the verify-error keys section below.
 
 **Rejected alternative:** split venue clients by trusting leftmost XFF. That reopens the spoof bypass. Two clients Azure actually distinguishes (two public RemoteIps, or two rightmost-public hops behind an infrastructure peer) stay two IP buckets; people behind one real public NAT share the venue ceiling and are separated by VoterId.
 
@@ -123,6 +123,30 @@ The same in-memory middleware still owns the limits. Teller `/api/auth/login` (a
 **Rejected alternative:** endpoint filter or service-level identifier limit as the primary mechanism. An endpoint filter sees the bound DTO but would split IP vs identifier across two pipeline stages. Service-level already has `VerifyAttempts`; it runs after routing/DB work and still needs an IP ceiling in middleware. Reading a capped body prefix in the existing middleware keeps both buckets in one place.
 
 **Rejected alternative:** rebuild on ASP.NET `RateLimiter` or add a new auth flow. #192 said do not rebuild auth; this slice only fixes keying, coverage, and i18n bodies.
+
+## Distinct voter verify error keys (issue #192 leftover)
+
+**Status:** active  
+**Evidence:** inferred  
+**Source:** issue #192 remaining checklist; existing `{ error }` 400 bodies and `messageKey` i18n keys; `OnlineVoter.VerifyCodeDate` is not cleared on success  
+**Revisit when:** used OTPs must be remembered across a later `requestCode`, or mismatch remaining-attempts should move off the 400 body
+
+`POST /api/online-voting/verifyCode` keeps the existing `{ error }` body. The keys are stable phrase keys, not English and not a second error protocol.
+
+- `voting.auth.verify.codeExpired` — live row, code older than 15 minutes
+- `voting.auth.verify.alreadyUsed` — `VerifyCode` empty and `VerifyCodeDate` set (consumed OTP; date is the issue time of the code that was used)
+- `voting.auth.verify.noCodeFound` — `VerifyCode` empty and `VerifyCodeDate` null (never issued)
+- `voting.auth.verify.tooManyAttempts` — five failed mismatches on that row (`VerifyAttempts`)
+- `voting.auth.verify.invalidCode` — mismatch with attempts left; 400 also includes `attempts` (remaining). The service still encodes `invalidCode:N` internally; the controller splits that into the stable key plus `attempts` so the SPA can interpolate `{attempts}`
+- `error.tooManyRequests` — middleware 429, not a verify-row lock
+
+The voter login page runs those keys through `resolveUserFacingApiError` (and understands a leftover `invalidCode:N` string). It does not collapse them into `voting.auth.verify.failed`.
+
+**Rejected alternative:** keep used and never-issued as one `noCodeFound`. The issue asked for an “already used” key. Distinguishing them does not need a new column: success clears `VerifyCode` and leaves `VerifyCodeDate`.
+
+**Rejected alternative:** keep `voting.auth.verify.invalidCode:4` as the public `error` string. That is not a stable i18n key; `te()` misses it and the UI shows the raw suffix. Remaining count stays a sibling field.
+
+**Rejected alternative:** store a used-code hash so a later `requestCode` can still say “already used” for the old code. After a new code is issued the old one is simply a mismatch; only a replay with no new request is `alreadyUsed`.
 
 ## Pre-auth voter-code delivery channel (issue #229)
 
