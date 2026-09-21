@@ -268,11 +268,11 @@ defineExpose({
 }
 
 .tie-card {
-  border: 2px solid #ebeef5;
+  border: 2px solid var(--el-border-color);
 }
 
 .tie-card.tie-break-required {
-  border-color: #f56c6c;
+  border-color: var(--el-color-danger);
 }
 
 .tie-header {

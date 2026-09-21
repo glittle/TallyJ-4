@@ -317,7 +317,7 @@ function openShareDrawer() {
         width: 180px;
         height: 180px;
         display: block;
-        background: #fff;
+        background: var(--color-qr-pad);
       }
 
       .qr-placeholder {

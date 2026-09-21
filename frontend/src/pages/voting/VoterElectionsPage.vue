@@ -324,7 +324,7 @@ async function handleLogout() {
       }
 
       tr.row-open {
-        background-color: #fffbe6;
+        background-color: var(--color-warning-50);
       }
 
       .election-info-cell {

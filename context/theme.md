@@ -62,3 +62,27 @@ Unselected stage buttons are `<button class="stage-control__seg">` with CSS fill
 `--el-color-primary` is `#2563a8` in both themes. That hue pops on white and goes muddy on `#0e2040` / `#111827`. Brightening `--el-color-primary` in dark would also recolor solid primary actions (Add Person). `--color-text-link` is primary-500 in light (same as today) and primary-200 in dark. `PeopleTable` name buttons set `--el-button-text-color` and `color` from that token. Global `a` uses the same pair so other lists do not stay on the muted primary.
 
 **Rejected alternative:** change dark `--el-color-primary`. Out of scope for this dashboard slice and would shift every primary fill.
+
+## Leftover screens use the same tokens (Front Desk / voter / profile / join)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #285 follow-up after PR #354; local hex on Front Desk filters, voter elections/ballot, Profile QR, Teller join, CardSkeleton, tie cards  
+**Revisit when:** a designer pass restyles dark chrome, or another page still shows a light-only surface
+
+#354 fixed the cascade and dashboard/setup screenshot pages. Remaining leftovers were page-local `#fff` / `#dcdfe6` / `#fffbe6` / `#ebeef5` / `background: white` that never read the shared tokens.
+
+This slice maps those surfaces onto tokens that already flip in `html.dark`:
+
+- Front Desk inactive method/flag chips use `--el-fill-color-blank` (same “unselected control” as stage chips). Active chip text uses `--color-frontdesk-filter-active-text`. The registration panel stays `--color-orange-50`; dark now sets that to `#3a2706` (same family as `--color-stage-gather-bg`) so the cream sheet does not sit on navy.
+- Voter elections open-row highlight is `--color-warning-50` (already dark `#1f1300`). Ballot filled/duplicate slots use `--color-success-50` / `--color-error-50` instead of Element Plus `*-light-9` (those generate near-white tints unless remapped). Dark also points `--el-color-success-light-9` / warning / danger at the 50 tokens so header status chips and utilities follow.
+- Teller join select border is `--el-border-color`. CardSkeleton fill is `--el-fill-color-blank`. Tie cards use `--el-border-color` / `--el-color-danger`. Presentation person cards already used the 50 tokens; the extra `.dark { rgba(...) }` overrides were dropped so one token path wins.
+- Profile 2FA and guest-teller QR pads use `--color-qr-pad` (`#ffffff` in light, not remapped in dark). A white pad is required for scanners; filling with `--el-fill-color-blank` would make the code unreadable on navy.
+
+Light `--color-orange-50` stays `#fff5eb`. Light chip inactive fill is still white via `--el-fill-color-blank` → `--color-bg-primary`.
+
+**Rejected alternative:** `color-mix` orange onto `--el-fill-color-blank` for the registration panel. Matching the existing cream (`#fff5eb`) would need a guessed mix percentage, and `--color-orange-50` already means “pale orange surface.”
+
+**Rejected alternative:** a `--color-frontdesk-registration-bg` pair. The overlay was the only `--color-orange-50` consumer; remapping that token is enough.
+
+**Still deferred:** designer’s-eye pass; AppSidebar / LandingPage / LanguageFlagsSelector `#fff4e5` warning banners; AuditLogs `#f5f7fa`; Facebook/Kakao brand button hex; teller BallotVotesPanel inverse `#fff` on a solid primary; Element Plus official `dark/css-vars.css`; #192 / #182 / #168 / #336 product work.

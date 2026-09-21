@@ -339,7 +339,7 @@ onBeforeUnmount(() => {
 
   .electionSelect {
     width: 100%;
-    border: 1px solid #dcdfe6;
+    border: 1px solid var(--el-border-color);
     border-radius: 4px;
     option {
       padding: 0.5em;

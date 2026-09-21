@@ -38,12 +38,12 @@ export function getMethodFilterStyle(method: string, isActive: boolean) {
   if (isActive) {
     return {
       backgroundColor: color,
-      color: "#ffffff",
+      color: "var(--color-frontdesk-filter-active-text)",
       borderColor: color,
     };
   }
   return {
-    backgroundColor: "#ffffff",
+    backgroundColor: "var(--el-fill-color-blank)",
     color: color,
     borderColor: color,
     borderWidth: "1.5px",
@@ -59,12 +59,12 @@ export function getFlagFilterStyle(
   if (isActive) {
     return {
       backgroundColor: color,
-      color: "#ffffff",
+      color: "var(--color-frontdesk-filter-active-text)",
       borderColor: color,
     };
   }
   return {
-    backgroundColor: "#ffffff",
+    backgroundColor: "var(--el-fill-color-blank)",
     color: color,
     borderColor: color,
     borderWidth: "1.5px",

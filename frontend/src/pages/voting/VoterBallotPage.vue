@@ -632,7 +632,7 @@ function backToElections() {
 
           h2 {
             margin: 4px 0;
-            color: var(--el-color-primary);
+            color: var(--color-text-link);
           }
 
           p {
@@ -755,13 +755,13 @@ function backToElections() {
         min-height: 40px;
 
         &.vote-filled {
-          background-color: var(--el-color-success-light-9);
-          border-color: var(--el-color-success-light-5);
+          background-color: var(--color-success-50);
+          border-color: var(--color-success-500);
         }
 
         &.vote-duplicate {
-          background-color: var(--el-color-danger-light-9);
-          border-color: var(--el-color-danger);
+          background-color: var(--color-error-50);
+          border-color: var(--color-error-500);
         }
 
         .vote-number {

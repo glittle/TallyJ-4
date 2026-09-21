@@ -64,6 +64,10 @@ html.dark {
   --color-public-text: var(--color-primary-200);
   --color-bg-overlay: var(--color-gray-700);
 
+  /* Pale orange surface (Front Desk registration panel). Same hue family as
+     --color-stage-gather-bg so the cream panel does not stay #fff5eb on navy. */
+  --color-orange-50: #3a2706;
+
   /* Semantic colors dark theme */
   --color-success-50: #0a1f0f;
   --color-success-500: #4ade80;
@@ -107,6 +111,11 @@ html.dark {
   --el-table-border-color: var(--color-border-subtle);
   --el-table-header-bg-color: var(--el-fill-color-light);
   --el-table-tr-bg-color: var(--el-bg-color);
+
+  /* EP generates *-light-9 as near-white tints; map them to the dark 50s. */
+  --el-color-success-light-9: var(--color-success-50);
+  --el-color-warning-light-9: var(--color-warning-50);
+  --el-color-danger-light-9: var(--color-error-50);
 
   --el-fill-color-blank: var(--color-gray-900);
   --el-fill-color-light: var(--color-gray-800);
