@@ -529,11 +529,11 @@ onUnmounted(() => {
     margin: 1.5rem auto;
     max-width: 920px; /* Comfortable reading width */
     text-align: center;
-    background-color: #fff4e5;
-    color: #8c4a00;
+    background-color: var(--color-warning-50);
+    color: var(--color-warning-700);
     font-size: 1.05rem;
     line-height: 1.5;
-    border: 2px solid #f5a23d;
+    border: 2px solid var(--color-warning-500);
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     font-weight: 500;
@@ -590,16 +590,6 @@ onUnmounted(() => {
 
     .cta-section p {
       font-size: 1rem;
-    }
-  }
-}
-:root.dark {
-  .landing-container {
-    .testOnlyWarning {
-      background-color: #3f2a1a;
-      color: #ffd9a8;
-      border-color: #f5a23d;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
   }
 }

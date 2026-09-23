@@ -85,4 +85,25 @@ Light `--color-orange-50` stays `#fff5eb`. Light chip inactive fill is still whi
 
 **Rejected alternative:** a `--color-frontdesk-registration-bg` pair. The overlay was the only `--color-orange-50` consumer; remapping that token is enough.
 
-**Still deferred:** designer’s-eye pass; AppSidebar / LandingPage / LanguageFlagsSelector `#fff4e5` warning banners; AuditLogs `#f5f7fa`; Facebook/Kakao brand button hex; teller BallotVotesPanel inverse `#fff` on a solid primary; Element Plus official `dark/css-vars.css`; #192 / #182 / #168 / #336 product work.
+**Follow-up:** warning banners, the audit-log filter fill, and inverse text on solid fills are in the section below.
+
+**Still deferred from this slice:** designer’s-eye pass; Facebook/Kakao brand button hex; Element Plus official `dark/css-vars.css`; #192 / #182 / #168 / #336 product work.
+
+## Warning banners and leftover fills use semantic tokens
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #285 follow-up after PR #356; AppSidebar / LandingPage had a `:root.dark` hex override that did not cover LanguageFlagsSelector or the sidebar status link  
+**Revisit when:** a designer pass restyles warning chrome, or warning-700 on warning-50 drops below WCAG AA
+
+#356 left page-local `#fff4e5` / `#8c4a00` / `#f5a23d` on the test-only banners and the language-flag group. A `:root.dark` block painted `.testOnlyWarning` as `#3f2a1a` / `#ffd9a8`, so the sidebar and landing test note did not stay cream, but the flag group and the sidebar status link did.
+
+Those surfaces now use `--color-warning-50`, `--color-warning-700`, and `--color-warning-500`. Light warning-50 is `#fffbeb` (the old cream was `#fff4e5`). Text is warning-700: warning-600 on warning-50 is about 3.1:1 in light, under AA; warning-700 is about 4.8:1 in light and 5.7:1 in dark (`#d97706` on `#1f1300`). The page-local dark hex block is gone so it cannot paint a second brown.
+
+Audit-log filters use `--el-fill-color-light` (light gray-50 `#f9fafb`, dark gray-800) instead of `#f5f7fa`. Teller inverse text on a solid fill — BallotVotesPanel Find, the selected stage chip, and the test-election banner — uses `--color-text-inverse`. That token is `#ffffff` in light and is not remapped in dark, so the label stays white on primary / stage orange. The ballot-import step divider uses `--el-border-color-extra-light` instead of `#eee` (light gray-100, so the hairline stays faint). Dark Front Desk active-chip text points at the same inverse token.
+
+**Rejected alternative:** a `--color-warning-banner-*` trio that freezes `#fff4e5` / `#8c4a00` / `#f5a23d` in light. That would keep the old pixels, but warning-50 already means this pale warning surface, and a third cream would drift from it and from `--color-orange-50`.
+
+**Rejected alternative:** keep the `:root.dark` hex override. It missed LanguageFlagsSelector and the sidebar status link, and it fought the shared warning scale.
+
+**Still deferred:** designer’s-eye pass; Facebook/Kakao brand hex (white-on-Facebook and brown-on-Kakao stay brand colors); Element Plus official `dark/css-vars.css`; the dev branch badge in `App.vue` (`#f0f0f0`, not teller chrome); AuditLogs `.text-muted` `#909399` (readable gray text, not a fill); #192 / #182 / #168 / #336 product work. QR pads stay `--color-qr-pad`.

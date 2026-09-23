@@ -395,7 +395,7 @@ function formatValue(value: unknown) {
   .filters-container {
     margin-bottom: 20px;
     padding: 20px;
-    background-color: #f5f7fa;
+    background-color: var(--el-fill-color-light);
     border-radius: 4px;
   }
 

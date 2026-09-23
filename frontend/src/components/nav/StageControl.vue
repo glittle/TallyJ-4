@@ -122,7 +122,7 @@ async function selectStage(newStage: ElectionStage) {
         s === stage
           ? {
               background: `var(${STAGE_META[s].colorVar})`,
-              color: '#fff',
+              color: 'var(--color-text-inverse)',
               borderColor: `var(${STAGE_META[s].colorVar})`,
             }
           : {}
@@ -186,7 +186,7 @@ async function selectStage(newStage: ElectionStage) {
     }
 
     &.is-selected {
-      color: #fff;
+      color: var(--color-text-inverse);
       font-weight: 600;
     }
 
