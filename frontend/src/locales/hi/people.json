@@ -1,133 +1,657 @@
 {
-  "people.addPerson": "व्यक्ति जोड़ें",
-  "people.ageGroup.adult": "वयस्क",
-  "people.ageGroup.youth": "युवा",
-  "people.ageGroupLabel": "आयु समूह",
-  "people.allPeople": "सभी लोग",
-  "people.area": "क्षेत्र",
-  "people.bahaiId": "बहाई ID",
-  "people.bulkActions": "बल्क क्रियाएँ",
-  "people.bulkDeleteError": "कुछ लोगों को हटाने में विफल",
-  "people.bulkDeleteMessage": "क्या आप वाकई {count} चयनित लोगों को हटाना चाहते हैं?",
-  "people.bulkDeleteSuccess": "{count} लोग सफलतापूर्वक हटाए गए",
-  "people.canReceiveVotes": "मत प्राप्त कर सकते हैं",
-  "people.canVote": "मतदान कर सकते हैं",
-  "people.candidates": "पात्र उम्मीदवार",
-  "people.confirmBulkDelete": "बल्क हटाने की पुष्टि करें",
-  "people.createSuccess": "व्यक्ति सफलतापूर्वक जोड़ा गया",
-  "people.deleteConfirm": "क्या आप वाकई {name} को हटाना चाहते हैं?",
-  "people.deleteError": "व्यक्ति हटाने में विफल",
-  "people.deleteSelected": "चयनित हटाएं ({count})",
-  "people.deleteSuccess": "व्यक्ति सफलतापूर्वक हटाया गया",
-  "people.dropFileHere": "फ़ाइल यहाँ खींचें या अपलोड करने के लिए क्लिक करें",
-  "people.editPerson": "व्यक्ति संपादित करें",
-  "people.email": "ईमेल",
-  "people.emailInvalid": "कृपया एक वैध ईमेल दर्ज करें",
-  "people.exportError": "लोगों को निर्यात करने में विफल",
-  "people.exportPeople": "लोगों को निर्यात करें",
-  "people.exportSuccess": "लोगों को सफलतापूर्वक निर्यात किया गया",
-  "people.fileTooLarge": "फ़ाइल बहुत बड़ी है। कृपया 10MB से छोटी फ़ाइल अपलोड करें।",
-  "people.firstName": "पहला नाम",
-  "people.fullName": "पूरा नाम",
-  "people.import.action": "क्रिया",
-  "people.import.areaDesc": "भौगोलिक क्षेत्र",
-  "people.import.bahaiIdDesc": "Baha'i ID नंबर",
-  "people.import.clickToUpload": "अपलोड करने के लिए क्लिक करें",
-  "people.import.confirmDeleteAllPeople": "सभी लोगों को हटाने की पुष्टि करें",
-  "people.import.confirmDeleteFile": "क्या आप वाकई इस फ़ाइल को हटाना चाहते हैं?",
-  "people.import.contentEncoding": "सामग्री एन्कोडिंग",
-  "people.import.currentPeopleCount": "वर्तमान लोगों की संख्या",
-  "people.import.dataRows": "डेटा पंक्तियाँ",
-  "people.import.deleteAllPeople": "सभी लोगों को हटाएं",
-  "people.import.deleteAllPeopleError": "सभी लोगों को हटाने में विफल",
-  "people.import.deleteAllPeopleMessage": "क्या आप वाकई इस चुनाव से सभी लोगों को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
-  "people.import.deleteFileError": "फ़ाइल हटाने में विफल",
-  "people.import.dropFile": "फ़ाइल यहाँ खींचें या",
-  "people.import.duplicateDesc": "व्यक्ति एक डुप्लिकेट प्रविष्टि है",
-  "people.import.eligibilityDesc": "पात्रता स्थिति",
-  "people.import.eligibilityValues": "पात्रता स्थिति मान",
-  "people.import.eligibleDesc": "व्यक्ति मतदान के लिए पात्र है",
-  "people.import.emailDesc": "ईमेल पता",
-  "people.import.fileName": "फ़ाइल नाम",
-  "people.import.filesOnServer": "सर्वर पर फ़ाइलें",
-  "people.import.firstNameDesc": "व्यक्ति का पहला नाम",
-  "people.import.firstNameLastNameRequired": "आयात के साथ आगे बढ़ने के लिए पहला नाम और अंतिम नाम फ़ील्ड मैप होने चाहिए।",
-  "people.import.headerAutoDetected": "पंक्ति {row} पर शीर्षलेख स्वचालित रूप से पता लगाए गए",
-  "people.import.headersOnLine": "पंक्ति पर शीर्षलेख",
-  "people.import.headersOnLineTooltip": "निर्दिष्ट करें कि किस पंक्ति में कॉलम शीर्षलेख हैं। Excel फ़ाइलों के लिए स्वतः पता लगाया जाता है, लेकिन यदि आवश्यक हो तो समायोजित किया जा सकता है।",
-  "people.import.ignore": "(अनदेखा करें)",
-  "people.import.importNow": "अभी आयात करें",
-  "people.import.importResults": "आयात परिणाम",
-  "people.import.importStepDesc": "आयात चरण अगले चरण में लागू किया जाएगा",
-  "people.import.importSummary": "आयात सारांश",
-  "people.import.importing": "लोगों को आयात किया जा रहा है...",
-  "people.import.ineligibleDesc": "व्यक्ति मतदान के लिए अपात्र है",
-  "people.import.lastNameDesc": "व्यक्ति का अंतिम नाम",
-  "people.import.loadFilesError": "आयात फ़ाइलें लोड करने में विफल",
-  "people.import.mapColumns": "कॉलम मैप करें",
-  "people.import.mapColumnsDesc": "अपनी फ़ाइल के कॉलम को गिनतीज फ़ील्ड पर मैप करें",
-  "people.import.mapTo": "इस पर मैप करें:",
-  "people.import.mappedFields": "मैप किए गए फ़ील्ड",
-  "people.import.mappingSaved": "कॉलम मैपिंग सफलतापूर्वक सहेजी गई",
-  "people.import.otherActions": "अन्य क्रियाएँ",
-  "people.import.otherInfoDesc": "अतिरिक्त जानकारी",
-  "people.import.otherLastNamesDesc": "अतिरिक्त अंतिम नाम",
-  "people.import.otherNamesDesc": "अतिरिक्त पहले नाम",
-  "people.import.peopleAdded": "जोड़े गए लोग",
-  "people.import.peopleSkipped": "छोड़े गए लोग",
-  "people.import.phoneDesc": "फ़ोन नंबर",
-  "people.import.preview": "पूर्वावलोकन",
-  "people.import.reparse": "पुनः पार्स करें",
-  "people.import.reviewImport": "समीक्षा करें और आयात करें",
-  "people.import.saveMapping": "मैपिंग सहेजें",
-  "people.import.select": "चुनें",
-  "people.import.selected": "चयनित",
-  "people.import.size": "आकार",
-  "people.import.status": "स्थिति",
-  "people.import.step1": "फ़ाइल अपलोड करें",
-  "people.import.step2": "कॉलम मैप करें",
-  "people.import.step3": "आयात करें",
-  "people.import.supportedFormats": "समर्थित प्रारूप: CSV, TSV, TAB, TXT, XLSX (अधिकतम 10MB)",
-  "people.import.tallyJField": "गिनतीज फ़ील्ड",
-  "people.import.tallyJFields": "गिनतीज फ़ील्ड संदर्भ",
-  "people.import.timeElapsed": "बीता समय",
-  "people.import.title": "लोगों को आयात करें",
-  "people.import.underAgeDesc": "व्यक्ति मतदान योग्य आयु से कम है",
-  "people.import.uploadError": "फ़ाइल अपलोड करने में विफल",
-  "people.import.uploadFile": "फ़ाइल अपलोड करें",
-  "people.import.uploadTime": "अपलोड समय",
-  "people.import.validationWarning": "सत्यापन चेतावनी",
-  "people.import.warnings": "चेतावनियाँ",
-  "people.importError": "आयात शुरू करने में विफल",
-  "people.importFormat": "निम्नलिखित कॉलम के साथ एक CSV या Excel फ़ाइल अपलोड करें:",
-  "people.importInstructions": "आयात निर्देश",
-  "people.importOptionalFields": "वैकल्पिक: ईमेल, फ़ोन, क्षेत्र, Baha'i ID, पात्रता",
-  "people.importPeople": "लोगों को आयात करें",
-  "people.importRequiredFields": "आवश्यक: पहला नाम, अंतिम नाम",
-  "people.importStarted": "आयात शुरू हो गया। कृपया पूर्ण होने की प्रतीक्षा करें।",
-  "people.importWarning": "मिलान करने वाले नामों वाले मौजूदा लोग अपडेट किए जाएंगे। नए लोग बनाए जाएंगे।",
-  "people.invalidFileType": "अमान्य फ़ाइल प्रकार। कृपया CSV या Excel फ़ाइल अपलोड करें।",
-  "people.kioskCode": "Kiosk Code",
-  "people.kioskCodeExpired": "This code has expired. Renew it before the voter logs in.",
-  "people.kioskCodeExpires": "Expires {time} ({minutes} min left).",
-  "people.kioskCodeGenerate": "Make a kiosk code",
-  "people.kioskCodeGenerated": "Kiosk code is ready to share.",
-  "people.kioskCodeNone": "No kiosk code yet. Generate one when the voter is at the kiosk.",
-  "people.kioskCodeNote": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
-  "people.kioskCodeRenew": "Renew kiosk code",
-  "people.lastName": "अंतिम नाम",
-  "people.lastNameRequired": "अंतिम नाम आवश्यक है",
-  "people.leaveElectionGroupError": "चुनाव समूह छोड़ने में विफल:",
-  "people.loadError": "लोगों को लोड करने में विफल",
-  "people.management": "लोग प्रबंधन",
-  "people.phone": "फ़ोन",
-  "people.phoneOnlineVoter.recentSms": "Recent SMS",
-  "people.phoneOnlineVoter.smsLogNoStatus": "Sent",
-  "people.phoneOnlineVoter.smsLogError": "Error {code}",
-  "people.saveError": "व्यक्ति सहेजने में विफल",
-  "people.search": "नाम, ईमेल या ID द्वारा खोजें",
-  "people.searchError": "लोगों को खोजने में विफल",
-  "people.supportedFormats": "समर्थित प्रारूप: CSV, XLS, XLSX (अधिकतम 10MB)",
-  "people.updateSuccess": "व्यक्ति सफलतापूर्वक अपडेट किया गया",
-  "people.voters": "मतदाता"
+  "people.addPerson": {
+    "t": "व्यक्ति जोड़ें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.adult": {
+    "t": "वयस्क",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.youth": {
+    "t": "युवा",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroupLabel": {
+    "t": "आयु समूह",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.allPeople": {
+    "t": "सभी लोग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.area": {
+    "t": "क्षेत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bahaiId": {
+    "t": "बहाई ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkActions": {
+    "t": "बल्क क्रियाएँ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteError": {
+    "t": "कुछ लोगों को हटाने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteMessage": {
+    "t": "क्या आप वाकई {count} चयनित लोगों को हटाना चाहते हैं?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteSuccess": {
+    "t": "{count} लोग सफलतापूर्वक हटाए गए",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canReceiveVotes": {
+    "t": "मत प्राप्त कर सकते हैं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canVote": {
+    "t": "मतदान कर सकते हैं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.candidates": {
+    "t": "पात्र उम्मीदवार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.confirmBulkDelete": {
+    "t": "बल्क हटाने की पुष्टि करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.createSuccess": {
+    "t": "व्यक्ति सफलतापूर्वक जोड़ा गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteConfirm": {
+    "t": "क्या आप वाकई {name} को हटाना चाहते हैं?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteError": {
+    "t": "व्यक्ति हटाने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSelected": {
+    "t": "चयनित हटाएं ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSuccess": {
+    "t": "व्यक्ति सफलतापूर्वक हटाया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.dropFileHere": {
+    "t": "फ़ाइल यहाँ खींचें या अपलोड करने के लिए क्लिक करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.editPerson": {
+    "t": "व्यक्ति संपादित करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.email": {
+    "t": "ईमेल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.emailInvalid": {
+    "t": "कृपया एक वैध ईमेल दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportError": {
+    "t": "लोगों को निर्यात करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportPeople": {
+    "t": "लोगों को निर्यात करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportSuccess": {
+    "t": "लोगों को सफलतापूर्वक निर्यात किया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fileTooLarge": {
+    "t": "फ़ाइल बहुत बड़ी है। कृपया 10MB से छोटी फ़ाइल अपलोड करें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.firstName": {
+    "t": "पहला नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fullName": {
+    "t": "पूरा नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.action": {
+    "t": "क्रिया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.areaDesc": {
+    "t": "भौगोलिक क्षेत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.bahaiIdDesc": {
+    "t": "Baha'i ID नंबर",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.clickToUpload": {
+    "t": "अपलोड करने के लिए क्लिक करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteAllPeople": {
+    "t": "सभी लोगों को हटाने की पुष्टि करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteFile": {
+    "t": "क्या आप वाकई इस फ़ाइल को हटाना चाहते हैं?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.contentEncoding": {
+    "t": "सामग्री एन्कोडिंग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.currentPeopleCount": {
+    "t": "वर्तमान लोगों की संख्या",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dataRows": {
+    "t": "डेटा पंक्तियाँ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeople": {
+    "t": "सभी लोगों को हटाएं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleError": {
+    "t": "सभी लोगों को हटाने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleMessage": {
+    "t": "क्या आप वाकई इस चुनाव से सभी लोगों को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteFileError": {
+    "t": "फ़ाइल हटाने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dropFile": {
+    "t": "फ़ाइल यहाँ खींचें या",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.duplicateDesc": {
+    "t": "व्यक्ति एक डुप्लिकेट प्रविष्टि है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityDesc": {
+    "t": "पात्रता स्थिति",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityValues": {
+    "t": "पात्रता स्थिति मान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibleDesc": {
+    "t": "व्यक्ति मतदान के लिए पात्र है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.emailDesc": {
+    "t": "ईमेल पता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileName": {
+    "t": "फ़ाइल नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.filesOnServer": {
+    "t": "सर्वर पर फ़ाइलें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameDesc": {
+    "t": "व्यक्ति का पहला नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameLastNameRequired": {
+    "t": "आयात के साथ आगे बढ़ने के लिए पहला नाम और अंतिम नाम फ़ील्ड मैप होने चाहिए।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headerAutoDetected": {
+    "t": "पंक्ति {row} पर शीर्षलेख स्वचालित रूप से पता लगाए गए",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLine": {
+    "t": "पंक्ति पर शीर्षलेख",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLineTooltip": {
+    "t": "निर्दिष्ट करें कि किस पंक्ति में कॉलम शीर्षलेख हैं। Excel फ़ाइलों के लिए स्वतः पता लगाया जाता है, लेकिन यदि आवश्यक हो तो समायोजित किया जा सकता है।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ignore": {
+    "t": "(अनदेखा करें)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importNow": {
+    "t": "अभी आयात करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importResults": {
+    "t": "आयात परिणाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importStepDesc": {
+    "t": "आयात चरण अगले चरण में लागू किया जाएगा",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importSummary": {
+    "t": "आयात सारांश",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importing": {
+    "t": "लोगों को आयात किया जा रहा है...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ineligibleDesc": {
+    "t": "व्यक्ति मतदान के लिए अपात्र है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.lastNameDesc": {
+    "t": "व्यक्ति का अंतिम नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.loadFilesError": {
+    "t": "आयात फ़ाइलें लोड करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumns": {
+    "t": "कॉलम मैप करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumnsDesc": {
+    "t": "अपनी फ़ाइल के कॉलम को गिनतीज फ़ील्ड पर मैप करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapTo": {
+    "t": "इस पर मैप करें:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappedFields": {
+    "t": "मैप किए गए फ़ील्ड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappingSaved": {
+    "t": "कॉलम मैपिंग सफलतापूर्वक सहेजी गई",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherActions": {
+    "t": "अन्य क्रियाएँ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherInfoDesc": {
+    "t": "अतिरिक्त जानकारी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherLastNamesDesc": {
+    "t": "अतिरिक्त अंतिम नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherNamesDesc": {
+    "t": "अतिरिक्त पहले नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleAdded": {
+    "t": "जोड़े गए लोग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleSkipped": {
+    "t": "छोड़े गए लोग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.phoneDesc": {
+    "t": "फ़ोन नंबर",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.preview": {
+    "t": "पूर्वावलोकन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reparse": {
+    "t": "पुनः पार्स करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reviewImport": {
+    "t": "समीक्षा करें और आयात करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.saveMapping": {
+    "t": "मैपिंग सहेजें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.select": {
+    "t": "चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.selected": {
+    "t": "चयनित",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.size": {
+    "t": "आकार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.status": {
+    "t": "स्थिति",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step1": {
+    "t": "फ़ाइल अपलोड करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step2": {
+    "t": "कॉलम मैप करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step3": {
+    "t": "आयात करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.supportedFormats": {
+    "t": "समर्थित प्रारूप: CSV, TSV, TAB, TXT, XLSX (अधिकतम 10MB)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJField": {
+    "t": "गिनतीज फ़ील्ड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJFields": {
+    "t": "गिनतीज फ़ील्ड संदर्भ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.timeElapsed": {
+    "t": "बीता समय",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.title": {
+    "t": "लोगों को आयात करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.underAgeDesc": {
+    "t": "व्यक्ति मतदान योग्य आयु से कम है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadError": {
+    "t": "फ़ाइल अपलोड करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadFile": {
+    "t": "फ़ाइल अपलोड करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadTime": {
+    "t": "अपलोड समय",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.validationWarning": {
+    "t": "सत्यापन चेतावनी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.warnings": {
+    "t": "चेतावनियाँ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importError": {
+    "t": "आयात शुरू करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importFormat": {
+    "t": "निम्नलिखित कॉलम के साथ एक CSV या Excel फ़ाइल अपलोड करें:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importInstructions": {
+    "t": "आयात निर्देश",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importOptionalFields": {
+    "t": "वैकल्पिक: ईमेल, फ़ोन, क्षेत्र, Baha'i ID, पात्रता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importPeople": {
+    "t": "लोगों को आयात करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importRequiredFields": {
+    "t": "आवश्यक: पहला नाम, अंतिम नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importStarted": {
+    "t": "आयात शुरू हो गया। कृपया पूर्ण होने की प्रतीक्षा करें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importWarning": {
+    "t": "मिलान करने वाले नामों वाले मौजूदा लोग अपडेट किए जाएंगे। नए लोग बनाए जाएंगे।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.invalidFileType": {
+    "t": "अमान्य फ़ाइल प्रकार। कृपया CSV या Excel फ़ाइल अपलोड करें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCode": {
+    "t": "Kiosk Code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpired": {
+    "t": "This code has expired. Renew it before the voter logs in.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpires": {
+    "t": "Expires {time} ({minutes} min left).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerate": {
+    "t": "Make a kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerated": {
+    "t": "Kiosk code is ready to share.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNone": {
+    "t": "No kiosk code yet. Generate one when the voter is at the kiosk.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNote": {
+    "t": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeRenew": {
+    "t": "Renew kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastName": {
+    "t": "अंतिम नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastNameRequired": {
+    "t": "अंतिम नाम आवश्यक है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.leaveElectionGroupError": {
+    "t": "चुनाव समूह छोड़ने में विफल:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.loadError": {
+    "t": "लोगों को लोड करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.management": {
+    "t": "लोग प्रबंधन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phone": {
+    "t": "फ़ोन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.recentSms": {
+    "t": "Recent SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogNoStatus": {
+    "t": "Sent",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogError": {
+    "t": "Error {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.saveError": {
+    "t": "व्यक्ति सहेजने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.search": {
+    "t": "नाम, ईमेल या ID द्वारा खोजें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.searchError": {
+    "t": "लोगों को खोजने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.supportedFormats": {
+    "t": "समर्थित प्रारूप: CSV, XLS, XLSX (अधिकतम 10MB)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.updateSuccess": {
+    "t": "व्यक्ति सफलतापूर्वक अपडेट किया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.voters": {
+    "t": "मतदाता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

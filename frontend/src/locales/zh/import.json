@@ -1,25 +1,117 @@
 {
-  "import.completed": "导入成功完成",
-  "import.currentStatus": "状态: {status}",
-  "import.errorCount": "错误: {count}",
-  "import.errors.batchSaveFailed": "批量保存失败: {message}",
-  "import.errors.duplicateBahaiId": "第 {rowNumber} 行: 重复的巴哈伊 ID '{bahaiId}'",
-  "import.errors.duplicateEmail": "第 {rowNumber} 行: 重复的电子邮件 '{email}'",
-  "import.errors.duplicateName": "第 {rowNumber} 行: 重复的名字 '{firstName} {lastName}'",
-  "import.errors.duplicatePhone": "第 {rowNumber} 行: 重复的电话 '{phone}'",
-  "import.errors.fileNotFound": "导入文件未找到或没有内容",
-  "import.errors.importFailed": "导入失败: {message}",
-  "import.errors.importFailedAtLine": "导入在第 {rowNumber} 行失败: {message}",
-  "import.errors.invalidMappings": "无效的列映射",
-  "import.errors.lineError": "第 {rowNumber} 行: {message}",
-  "import.errors.missingFirstName": "第 {rowNumber} 行: 缺少名字",
-  "import.errors.missingLastName": "第 {rowNumber} 行: 缺少姓氏",
-  "import.errors.missingRequiredMappings": "需要名字和姓氏映射",
-  "import.errors.noMappings": "未配置列映射",
-  "import.errorsTitle": "导入错误",
-  "import.moreErrors": "还有 {count} 个错误...",
-  "import.processingRows": "正在处理行 {processed} / {total}",
-  "import.progressTitle": "导入进度",
-  "import.successCount": "成功: {count}",
-  "import.warnings.unrecognizedEligibility": "第 {rowNumber} 行: 无法识别的资格状态: '{eligibilityValue}' - 视为合格"
+  "import.completed": {
+    "t": "导入成功完成",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.currentStatus": {
+    "t": "状态: {status}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorCount": {
+    "t": "错误: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.batchSaveFailed": {
+    "t": "批量保存失败: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateBahaiId": {
+    "t": "第 {rowNumber} 行: 重复的巴哈伊 ID '{bahaiId}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateEmail": {
+    "t": "第 {rowNumber} 行: 重复的电子邮件 '{email}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateName": {
+    "t": "第 {rowNumber} 行: 重复的名字 '{firstName} {lastName}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicatePhone": {
+    "t": "第 {rowNumber} 行: 重复的电话 '{phone}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.fileNotFound": {
+    "t": "导入文件未找到或没有内容",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailed": {
+    "t": "导入失败: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailedAtLine": {
+    "t": "导入在第 {rowNumber} 行失败: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.invalidMappings": {
+    "t": "无效的列映射",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.lineError": {
+    "t": "第 {rowNumber} 行: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingFirstName": {
+    "t": "第 {rowNumber} 行: 缺少名字",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingLastName": {
+    "t": "第 {rowNumber} 行: 缺少姓氏",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingRequiredMappings": {
+    "t": "需要名字和姓氏映射",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.noMappings": {
+    "t": "未配置列映射",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorsTitle": {
+    "t": "导入错误",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.moreErrors": {
+    "t": "还有 {count} 个错误...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.processingRows": {
+    "t": "正在处理行 {processed} / {total}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.progressTitle": {
+    "t": "导入进度",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.successCount": {
+    "t": "成功: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.warnings.unrecognizedEligibility": {
+    "t": "第 {rowNumber} 行: 无法识别的资格状态: '{eligibilityValue}' - 视为合格",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

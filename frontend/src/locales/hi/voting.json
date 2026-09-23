@@ -1,78 +1,382 @@
 {
-  "voting.ballot.addPersonToPool": "मेरे मतपत्र में व्यक्ति जोड़ें",
-  "voting.ballot.addToPool": "अपने मतपत्र/पूल में जोड़ें",
-  "voting.ballot.addToPoolDescription": "इस चुनाव के लिए अपने पूल में एक नया व्यक्ति जोड़ें।",
-  "voting.ballot.alreadyVoted": "आप इस चुनाव में पहले से मतदान कर चुके हैं।",
-  "voting.ballot.authRequired": "कृपया पहले प्रमाणित करें",
-  "voting.ballot.backToElections": "वापस",
-  "voting.ballot.bothModeHint": "नीचे सूची से चुनें, या सूची में न होने वाले नाम को टाइप करें। टेलर सूची में न होने वाले किसी भी नाम को संसाधित करेंगे।",
-  "voting.ballot.duplicateError": "आपने एक ही उम्मीदवार को कई बार चुना है। कृपया अपने मतपत्र की समीक्षा करें।",
-  "voting.ballot.electionNotFound": "चुनाव नहीं मिला",
-  "voting.ballot.extraInfo": "अतिरिक्त पहचान जानकारी",
-  "voting.ballot.extraInfoPlaceholder": "(वैकल्पिक: यदि नाम पर्याप्त नहीं हो सकता है तो इसका उपयोग करें)",
-  "voting.ballot.firstName": "पहला नाम",
-  "voting.ballot.firstNamePlaceholder": "पहला",
-  "voting.ballot.guideline": "\"उन लोगों के पूल से जिन्हें मतदाता सेवा के लिए योग्य मानता है, चयन आयु वितरण, विविधता और लिंग जैसे अन्य कारकों को ध्यान में रखकर किया जाना चाहिए।\" — सार्वभौमिक न्याय का घर",
-  "voting.ballot.lastName": "अंतिम नाम",
-  "voting.ballot.lastNamePlaceholder": "अंतिम",
-  "voting.ballot.loading": "चुनाव की जानकारी लोड कर रहे हैं...",
-  "voting.ballot.myBallot": "मेरा मतपत्र",
-  "voting.ballot.namePlaceholder": "एक नाम टाइप करें",
-  "voting.ballot.notOpen": "इस चुनाव के लिए ऑनलाइन मतदान वर्तमान में खुला नहीं है।",
-  "voting.ballot.onceWarning": "आप केवल एक बार मतदान कर सकते हैं! कृपया जमा करने से पहले अपने मतपत्र की सावधानीपूर्वक समीक्षा करें।",
-  "voting.ballot.openNow": "अभी खोलें",
-  "voting.ballot.orderNote": "(नामों का क्रम मायने नहीं रखता)",
-  "voting.ballot.randomModeHint": "उन लोगों के नाम टाइप करें जिन्हें आप मतदान करना चाहते हैं। टेलर इन नामों को पंजीकृत मतदाताओं से मेल खाएंगे।",
-  "voting.ballot.searchPlaceholder": "एक उम्मीदवार खोजें",
-  "voting.ballot.submit": "मतपत्र जमा करें",
-  "voting.ballot.submitSuccess": "मतपत्र सफलतापूर्वक जमा किया गया!",
-  "voting.ballot.votingFor": "{count} लोगों के लिए मतदान",
-  "voting.confirmation.close": "बंद करें",
-  "voting.confirmation.election": "चुनाव:",
-  "voting.confirmation.kioskRecorded": "Your ballot has been recorded. You can leave this computer.",
-  "voting.confirmation.kioskSubtitle": "This kiosk is clear for the next voter.",
-  "voting.confirmation.nextVoter": "Ready for next voter",
-  "voting.confirmation.noChange": "कृपया ध्यान दें कि आप अपना मतपत्र बदल या पुनः जमा नहीं कर सकते।",
-  "voting.confirmation.recorded": "आपका मतपत्र सुरक्षित रूप से दर्ज किया गया है।",
-  "voting.confirmation.submitted": "जमा किया गया:",
-  "voting.confirmation.subtitle": "चुनाव में भाग लेने के लिए धन्यवाद",
-  "voting.confirmation.title": "मतपत्र सफलतापूर्वक जमा किया गया!",
-  "voting.election.instructions": "{count} उम्मीदवारों के लिए मतदान करें।",
-  "voting.elections.alreadyVoted": "मतपत्र पहले से जमा किया जा चुका है",
-  "voting.elections.col.election": "चुनाव",
-  "voting.elections.col.onlineVoting": "ऑनलाइन मतदान",
-  "voting.elections.col.yourNameAndBallot": "आपका नाम और मतपत्र",
-  "voting.elections.footerNote": "यदि कुछ गलत दिख रहा है, तो कृपया TallyJ का उपयोग बंद करें और अपने मुख्य टेलर और/या वैश्विक तकनीकी सहायता को विवरण भेजें।",
-  "voting.elections.loadError": "चुनाव लोड करने में विफल। कृपया पुनः प्रयास करें।",
-  "voting.elections.loading": "आपके चुनाव लोड कर रहे हैं...",
-  "voting.elections.logout": "लॉग आउट",
-  "voting.elections.method.online": "ऑनलाइन",
-  "voting.elections.noElections": "आपके खाते के लिए कोई चुनाव नहीं मिले।",
-  "voting.elections.prepareBallot": "मेरा मतपत्र तैयार करें",
-  "voting.elections.registered": "पंजीकृत:",
-  "voting.elections.status.closed": "बंद",
-  "voting.elections.status.closedDaysAgo": "{days} दिन पहले बंद",
-  "voting.elections.status.closedMonthsAgo": "{months} महीने पहले बंद",
-  "voting.elections.status.closedToday": "आज बंद",
-  "voting.elections.status.closedYearsAgo": "{years} साल पहले बंद",
-  "voting.elections.status.closedYesterday": "कल बंद",
-  "voting.elections.status.closingAt": "{time} पर बंद होने की उम्मीद",
-  "voting.elections.status.closingAtWithMinutes": "{hours}घ {minutes}मि में बंद होने की उम्मीद ({time} पर)",
-  "voting.elections.status.closingInMinutes": "{minutes} मिनट में बंद होने की उम्मीद",
-  "voting.elections.status.closingSoon": "बहुत जल्द बंद होने वाला",
-  "voting.elections.status.estimatedSuffix": " (अनुमानित)",
-  "voting.elections.status.noOnlineVoting": "कोई ऑनलाइन मतदान नहीं",
-  "voting.elections.status.open": "खुला",
-  "voting.elections.status.openNow": "अभी खोलें",
-  "voting.elections.title": "आपके चुनाव",
-  "voting.elections.welcome": "स्वागत है! आपकी संपर्क जानकारी ({voterId}) नीचे दिखाए गए चुनावों में पाई गई।",
-  "voting.elections.welcomeHint": "यदि आने वाला चुनाव यहाँ सूचीबद्ध नहीं है, तो यह TallyJ में मौजूद नहीं हो सकता है या आपकी जानकारी इसमें पंजीकृत नहीं है। सहायता के लिए चुनाव के मुख्य टेलर से संपर्क करें।",
-  "voting.status.alreadyVoted": "आप इस चुनाव के लिए पहले ही अपना मतपत्र जमा कर चुके हैं।",
-  "voting.status.notVoted": "आपने अभी तक इस चुनाव के लिए मतपत्र जमा नहीं किया है।",
-  "voting.status.voterNotFound": "इस चुनाव में मतदाता नहीं मिला।",
-  "voting.submit.alreadyVoted": "आप इस चुनाव के लिए पहले ही मतपत्र जमा कर चुके हैं।",
-  "voting.submit.electionNotFound": "चुनाव नहीं मिला।",
-  "voting.submit.error": "आपका मतपत्र जमा करते समय एक त्रुटि हुई। कृपया पुनः प्रयास करें।",
-  "voting.submit.notOpen": "इस चुनाव के लिए ऑनलाइन मतदान वर्तमान में खुला नहीं है।",
-  "voting.submit.voterNotFound": "मतदाता नहीं मिला। कृपया पहले प्रमाणित करें।"
+  "voting.ballot.addPersonToPool": {
+    "t": "मेरे मतपत्र में व्यक्ति जोड़ें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPool": {
+    "t": "अपने मतपत्र/पूल में जोड़ें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPoolDescription": {
+    "t": "इस चुनाव के लिए अपने पूल में एक नया व्यक्ति जोड़ें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.alreadyVoted": {
+    "t": "आप इस चुनाव में पहले से मतदान कर चुके हैं।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.authRequired": {
+    "t": "कृपया पहले प्रमाणित करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.backToElections": {
+    "t": "वापस",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.bothModeHint": {
+    "t": "नीचे सूची से चुनें, या सूची में न होने वाले नाम को टाइप करें। टेलर सूची में न होने वाले किसी भी नाम को संसाधित करेंगे।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.duplicateError": {
+    "t": "आपने एक ही उम्मीदवार को कई बार चुना है। कृपया अपने मतपत्र की समीक्षा करें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.electionNotFound": {
+    "t": "चुनाव नहीं मिला",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfo": {
+    "t": "अतिरिक्त पहचान जानकारी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfoPlaceholder": {
+    "t": "(वैकल्पिक: यदि नाम पर्याप्त नहीं हो सकता है तो इसका उपयोग करें)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstName": {
+    "t": "पहला नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstNamePlaceholder": {
+    "t": "पहला",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.guideline": {
+    "t": "\"उन लोगों के पूल से जिन्हें मतदाता सेवा के लिए योग्य मानता है, चयन आयु वितरण, विविधता और लिंग जैसे अन्य कारकों को ध्यान में रखकर किया जाना चाहिए।\" — सार्वभौमिक न्याय का घर",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastName": {
+    "t": "अंतिम नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastNamePlaceholder": {
+    "t": "अंतिम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.loading": {
+    "t": "चुनाव की जानकारी लोड कर रहे हैं...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.myBallot": {
+    "t": "मेरा मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.namePlaceholder": {
+    "t": "एक नाम टाइप करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.notOpen": {
+    "t": "इस चुनाव के लिए ऑनलाइन मतदान वर्तमान में खुला नहीं है।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.onceWarning": {
+    "t": "आप केवल एक बार मतदान कर सकते हैं! कृपया जमा करने से पहले अपने मतपत्र की सावधानीपूर्वक समीक्षा करें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.openNow": {
+    "t": "अभी खोलें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.orderNote": {
+    "t": "(नामों का क्रम मायने नहीं रखता)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.randomModeHint": {
+    "t": "उन लोगों के नाम टाइप करें जिन्हें आप मतदान करना चाहते हैं। टेलर इन नामों को पंजीकृत मतदाताओं से मेल खाएंगे।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.searchPlaceholder": {
+    "t": "एक उम्मीदवार खोजें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submit": {
+    "t": "मतपत्र जमा करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submitSuccess": {
+    "t": "मतपत्र सफलतापूर्वक जमा किया गया!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.votingFor": {
+    "t": "{count} लोगों के लिए मतदान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.close": {
+    "t": "बंद करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.election": {
+    "t": "चुनाव:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskRecorded": {
+    "t": "Your ballot has been recorded. You can leave this computer.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskSubtitle": {
+    "t": "This kiosk is clear for the next voter.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.nextVoter": {
+    "t": "Ready for next voter",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.noChange": {
+    "t": "कृपया ध्यान दें कि आप अपना मतपत्र बदल या पुनः जमा नहीं कर सकते।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.recorded": {
+    "t": "आपका मतपत्र सुरक्षित रूप से दर्ज किया गया है।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.submitted": {
+    "t": "जमा किया गया:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.subtitle": {
+    "t": "चुनाव में भाग लेने के लिए धन्यवाद",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.title": {
+    "t": "मतपत्र सफलतापूर्वक जमा किया गया!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.election.instructions": {
+    "t": "{count} उम्मीदवारों के लिए मतदान करें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.alreadyVoted": {
+    "t": "मतपत्र पहले से जमा किया जा चुका है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.election": {
+    "t": "चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.onlineVoting": {
+    "t": "ऑनलाइन मतदान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.yourNameAndBallot": {
+    "t": "आपका नाम और मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.footerNote": {
+    "t": "यदि कुछ गलत दिख रहा है, तो कृपया TallyJ का उपयोग बंद करें और अपने मुख्य टेलर और/या वैश्विक तकनीकी सहायता को विवरण भेजें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loadError": {
+    "t": "चुनाव लोड करने में विफल। कृपया पुनः प्रयास करें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loading": {
+    "t": "आपके चुनाव लोड कर रहे हैं...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.logout": {
+    "t": "लॉग आउट",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.method.online": {
+    "t": "ऑनलाइन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.noElections": {
+    "t": "आपके खाते के लिए कोई चुनाव नहीं मिले।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.prepareBallot": {
+    "t": "मेरा मतपत्र तैयार करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.registered": {
+    "t": "पंजीकृत:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closed": {
+    "t": "बंद",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedDaysAgo": {
+    "t": "{days} दिन पहले बंद",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedMonthsAgo": {
+    "t": "{months} महीने पहले बंद",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedToday": {
+    "t": "आज बंद",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYearsAgo": {
+    "t": "{years} साल पहले बंद",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYesterday": {
+    "t": "कल बंद",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAt": {
+    "t": "{time} पर बंद होने की उम्मीद",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAtWithMinutes": {
+    "t": "{hours}घ {minutes}मि में बंद होने की उम्मीद ({time} पर)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingInMinutes": {
+    "t": "{minutes} मिनट में बंद होने की उम्मीद",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingSoon": {
+    "t": "बहुत जल्द बंद होने वाला",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.estimatedSuffix": {
+    "t": " (अनुमानित)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.noOnlineVoting": {
+    "t": "कोई ऑनलाइन मतदान नहीं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.open": {
+    "t": "खुला",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.openNow": {
+    "t": "अभी खोलें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.title": {
+    "t": "आपके चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcome": {
+    "t": "स्वागत है! आपकी संपर्क जानकारी ({voterId}) नीचे दिखाए गए चुनावों में पाई गई।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcomeHint": {
+    "t": "यदि आने वाला चुनाव यहाँ सूचीबद्ध नहीं है, तो यह TallyJ में मौजूद नहीं हो सकता है या आपकी जानकारी इसमें पंजीकृत नहीं है। सहायता के लिए चुनाव के मुख्य टेलर से संपर्क करें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.alreadyVoted": {
+    "t": "आप इस चुनाव के लिए पहले ही अपना मतपत्र जमा कर चुके हैं।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.notVoted": {
+    "t": "आपने अभी तक इस चुनाव के लिए मतपत्र जमा नहीं किया है।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.voterNotFound": {
+    "t": "इस चुनाव में मतदाता नहीं मिला।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.alreadyVoted": {
+    "t": "आप इस चुनाव के लिए पहले ही मतपत्र जमा कर चुके हैं।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.electionNotFound": {
+    "t": "चुनाव नहीं मिला।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.error": {
+    "t": "आपका मतपत्र जमा करते समय एक त्रुटि हुई। कृपया पुनः प्रयास करें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.notOpen": {
+    "t": "इस चुनाव के लिए ऑनलाइन मतदान वर्तमान में खुला नहीं है।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.voterNotFound": {
+    "t": "मतदाता नहीं मिला। कृपया पहले प्रमाणित करें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

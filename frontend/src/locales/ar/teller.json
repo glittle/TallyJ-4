@@ -1,17 +1,77 @@
 {
-  "teller.form.cancel": "إلغاء",
-  "teller.form.computerCode": "رمز الكمبيوتر",
-  "teller.form.computerCodeHelp": "حرفان كبيران (AA-ZZ) أو اتركه فارغاً",
-  "teller.form.computerCodeInvalid": "يجب أن يتكون رمز الكمبيوتر من حرفين كبيرين (AA-ZZ)",
-  "teller.form.computerCodePlaceholder": "مثال: AA",
-  "teller.form.create": "إنشاء",
-  "teller.form.headTeller": "كبير العدّادين",
-  "teller.form.headTellerHelp": "لكبار العدّادين صلاحيات إضافية",
-  "teller.form.name": "اسم العدّاد",
-  "teller.form.nameMaxLength": "لا يمكن أن يتجاوز اسم العدّاد 50 حرفاً",
-  "teller.form.namePlaceholder": "أدخل اسم العدّاد",
-  "teller.form.nameRequired": "اسم العدّاد مطلوب",
-  "teller.form.save": "حفظ",
-  "teller.form.titleAdd": "إضافة عدّاد",
-  "teller.form.titleEdit": "تعديل العدّاد"
+  "teller.form.cancel": {
+    "t": "إلغاء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCode": {
+    "t": "رمز الكمبيوتر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeHelp": {
+    "t": "حرفان كبيران (AA-ZZ) أو اتركه فارغاً",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeInvalid": {
+    "t": "يجب أن يتكون رمز الكمبيوتر من حرفين كبيرين (AA-ZZ)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodePlaceholder": {
+    "t": "مثال: AA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.create": {
+    "t": "إنشاء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTeller": {
+    "t": "كبير العدّادين",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTellerHelp": {
+    "t": "لكبار العدّادين صلاحيات إضافية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.name": {
+    "t": "اسم العدّاد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "لا يمكن أن يتجاوز اسم العدّاد 50 حرفاً",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "أدخل اسم العدّاد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "اسم العدّاد مطلوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.save": {
+    "t": "حفظ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "إضافة عدّاد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "تعديل العدّاد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

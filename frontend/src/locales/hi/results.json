@@ -1,35 +1,167 @@
 {
-  "results.allResults": "सभी परिणाम",
-  "results.ballotsReceived": "प्राप्त मतपत्र",
-  "results.calculateTally": "गणना करें",
-  "results.calculatedAt": "{date} को गणना की गई",
-  "results.candidate": "उम्मीदवार",
-  "results.closeToNext": "अगले के करीब",
-  "results.elected": "निर्वाचित",
-  "results.extra": "अतिरिक्त",
-  "results.flags": "फ्लैग",
-  "results.loadError": "परिणाम लोड करने में विफल",
-  "results.monitor": "चुनाव मॉनिटर",
-  "results.noResults": "कोई परिणाम उपलब्ध नहीं। पहले गणना करें।",
-  "results.noTies": "कोई बराबरी नहीं मिली",
-  "results.numberToElect": "निर्वाचित करने की संख्या",
-  "results.other": "अन्य",
-  "results.presentation": "प्रस्तुति दृश्य",
-  "results.rank": "रैंक",
-  "results.reporting": "रिपोर्ट",
-  "results.section": "अनुभाग",
-  "results.spoiledBallots": "खराब मतपत्र",
-  "results.tieBreakAlert": "ध्यान दें: कुछ बराबरियों के लिए मैन्युअल टाई-ब्रेक आवश्यक है",
-  "results.tieBreakMessage": "इस समूह के लिए टाई-ब्रेक आवश्यक है क्योंकि यह अनुभाग सीमाओं को पार करता है",
-  "results.tieBreakRequired": "टाई-ब्रेक आवश्यक है",
-  "results.tieGroup": "बराबरी समूह #{group}",
-  "results.tieManagement": "बराबरी प्रबंधन",
-  "results.tied": "बराबरी",
-  "results.tiedCandidates": "बराबरी वाले उम्मीदवार",
-  "results.ties": "बराबरी",
-  "results.title": "चुनाव परिणाम",
-  "results.totalBallots": "कुल मतपत्र",
-  "results.totalVotes": "कुल मत",
-  "results.validVotes": "वैध मत",
-  "results.votes": "मत"
+  "results.allResults": {
+    "t": "सभी परिणाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ballotsReceived": {
+    "t": "प्राप्त मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculateTally": {
+    "t": "गणना करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculatedAt": {
+    "t": "{date} को गणना की गई",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.candidate": {
+    "t": "उम्मीदवार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.closeToNext": {
+    "t": "अगले के करीब",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.elected": {
+    "t": "निर्वाचित",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.extra": {
+    "t": "अतिरिक्त",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.flags": {
+    "t": "फ्लैग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.loadError": {
+    "t": "परिणाम लोड करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.monitor": {
+    "t": "चुनाव मॉनिटर",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noResults": {
+    "t": "कोई परिणाम उपलब्ध नहीं। पहले गणना करें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noTies": {
+    "t": "कोई बराबरी नहीं मिली",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.numberToElect": {
+    "t": "निर्वाचित करने की संख्या",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.other": {
+    "t": "अन्य",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.presentation": {
+    "t": "प्रस्तुति दृश्य",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.rank": {
+    "t": "रैंक",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.reporting": {
+    "t": "रिपोर्ट",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.section": {
+    "t": "अनुभाग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.spoiledBallots": {
+    "t": "खराब मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakAlert": {
+    "t": "ध्यान दें: कुछ बराबरियों के लिए मैन्युअल टाई-ब्रेक आवश्यक है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakMessage": {
+    "t": "इस समूह के लिए टाई-ब्रेक आवश्यक है क्योंकि यह अनुभाग सीमाओं को पार करता है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakRequired": {
+    "t": "टाई-ब्रेक आवश्यक है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieGroup": {
+    "t": "बराबरी समूह #{group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieManagement": {
+    "t": "बराबरी प्रबंधन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tied": {
+    "t": "बराबरी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tiedCandidates": {
+    "t": "बराबरी वाले उम्मीदवार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ties": {
+    "t": "बराबरी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.title": {
+    "t": "चुनाव परिणाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalBallots": {
+    "t": "कुल मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalVotes": {
+    "t": "कुल मत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.validVotes": {
+    "t": "वैध मत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.votes": {
+    "t": "मत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

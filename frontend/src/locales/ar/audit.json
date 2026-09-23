@@ -1,36 +1,172 @@
 {
-  "audit.dialog.computerCode": "رمز الحاسوب",
-  "audit.dialog.dateTime": "التاريخ/الوقت",
-  "audit.dialog.details": "التفاصيل",
-  "audit.dialog.electionGuid": "معرف الانتخابات",
-  "audit.dialog.hostAndVersion": "المضيف والإصدار",
-  "audit.dialog.locationGuid": "معرف الموقع",
-  "audit.dialog.rowId": "معرف الصف",
-  "audit.dialog.title": "تفاصيل سجل التدقيق",
-  "audit.dialog.userId": "معرف المستخدم",
-  "audit.filters.apply": "تطبيق المرشحات",
-  "audit.filters.clear": "مسح المرشحات",
-  "audit.filters.computerCode": "رمز الحاسوب",
-  "audit.filters.computerCodePlaceholder": "تصفية حسب رمز الحاسوب",
-  "audit.filters.electionGuid": "معرف الانتخابات",
-  "audit.filters.electionGuidPlaceholder": "تصفية حسب معرف الانتخابات",
-  "audit.filters.endDate": "تاريخ الانتهاء",
-  "audit.filters.endDatePlaceholder": "تاريخ الانتهاء",
-  "audit.filters.locationGuid": "معرف الموقع",
-  "audit.filters.locationGuidPlaceholder": "تصفية حسب معرف الموقع",
-  "audit.filters.search": "بحث",
-  "audit.filters.searchPlaceholder": "البحث في جميع الحقول",
-  "audit.filters.startDate": "تاريخ البدء",
-  "audit.filters.startDatePlaceholder": "تاريخ البدء",
-  "audit.filters.voterId": "معرف الناخب",
-  "audit.filters.voterIdPlaceholder": "تصفية حسب معرف الناخب",
-  "audit.table.actions": "الإجراءات",
-  "audit.table.computer": "الحاسوب",
-  "audit.table.dateTime": "التاريخ/الوقت",
-  "audit.table.details": "التفاصيل",
-  "audit.table.election": "انتخابات",
-  "audit.table.userId": "معرف المستخدم",
-  "audit.table.view": "عرض",
-  "audit.table.yes": "نعم",
-  "audit.title": "سجلات التدقيق"
+  "audit.dialog.computerCode": {
+    "t": "رمز الحاسوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.dateTime": {
+    "t": "التاريخ/الوقت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.details": {
+    "t": "التفاصيل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.electionGuid": {
+    "t": "معرف الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.hostAndVersion": {
+    "t": "المضيف والإصدار",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.locationGuid": {
+    "t": "معرف الموقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.rowId": {
+    "t": "معرف الصف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.title": {
+    "t": "تفاصيل سجل التدقيق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.userId": {
+    "t": "معرف المستخدم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.apply": {
+    "t": "تطبيق المرشحات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.clear": {
+    "t": "مسح المرشحات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCode": {
+    "t": "رمز الحاسوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCodePlaceholder": {
+    "t": "تصفية حسب رمز الحاسوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuid": {
+    "t": "معرف الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuidPlaceholder": {
+    "t": "تصفية حسب معرف الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDate": {
+    "t": "تاريخ الانتهاء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDatePlaceholder": {
+    "t": "تاريخ الانتهاء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuid": {
+    "t": "معرف الموقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuidPlaceholder": {
+    "t": "تصفية حسب معرف الموقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.search": {
+    "t": "بحث",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.searchPlaceholder": {
+    "t": "البحث في جميع الحقول",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDate": {
+    "t": "تاريخ البدء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDatePlaceholder": {
+    "t": "تاريخ البدء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterId": {
+    "t": "معرف الناخب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterIdPlaceholder": {
+    "t": "تصفية حسب معرف الناخب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.actions": {
+    "t": "الإجراءات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.computer": {
+    "t": "الحاسوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.dateTime": {
+    "t": "التاريخ/الوقت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.details": {
+    "t": "التفاصيل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.election": {
+    "t": "انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.userId": {
+    "t": "معرف المستخدم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.view": {
+    "t": "عرض",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.yes": {
+    "t": "نعم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.title": {
+    "t": "سجلات التدقيق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

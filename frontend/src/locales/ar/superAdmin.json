@@ -1,28 +1,132 @@
 {
-  "superAdmin.detail.electionMode": "وضع الانتخابات",
-  "superAdmin.detail.locations": "المواقع",
-  "superAdmin.detail.numberToElect": "العدد المراد انتخابه",
-  "superAdmin.detail.owners": "المديرون",
-  "superAdmin.detail.percentComplete": "نسبة الإكمال",
-  "superAdmin.detail.title": "تفاصيل الانتخابات",
-  "superAdmin.elections.ballots": "أوراق الاقتراع",
-  "superAdmin.elections.convenor": "المنسق",
-  "superAdmin.elections.date": "التاريخ",
-  "superAdmin.elections.filterStatus": "التصفية حسب الحالة",
-  "superAdmin.elections.filterType": "التصفية حسب النوع",
-  "superAdmin.elections.name": "اسم الانتخابات",
-  "superAdmin.elections.noResults": "لم يتم العثور على انتخابات",
-  "superAdmin.elections.owner": "المالك",
-  "superAdmin.elections.search": "البحث في الانتخابات...",
-  "superAdmin.elections.status": "الحالة",
-  "superAdmin.elections.type": "نوع",
-  "superAdmin.elections.voters": "الناخبون",
-  "superAdmin.error.accessDenied": "ليس لديك صلاحية وصول المسؤول الأعلى",
-  "superAdmin.error.loadFailed": "فشل تحميل بيانات المسؤول الفائق",
-  "superAdmin.summary.archivedElections": "مؤرشف",
-  "superAdmin.summary.completedElections": "مكتمل",
-  "superAdmin.summary.openElections": "فتح",
-  "superAdmin.summary.totalElections": "إجمالي الانتخابات",
-  "superAdmin.summary.upcomingElections": "قادم",
-  "superAdmin.title": "لوحة معلومات المسؤول الفائق"
+  "superAdmin.detail.electionMode": {
+    "t": "وضع الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.locations": {
+    "t": "المواقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.numberToElect": {
+    "t": "العدد المراد انتخابه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.owners": {
+    "t": "المديرون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.percentComplete": {
+    "t": "نسبة الإكمال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.title": {
+    "t": "تفاصيل الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.ballots": {
+    "t": "أوراق الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.convenor": {
+    "t": "المنسق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.date": {
+    "t": "التاريخ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterStatus": {
+    "t": "التصفية حسب الحالة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterType": {
+    "t": "التصفية حسب النوع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.name": {
+    "t": "اسم الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.noResults": {
+    "t": "لم يتم العثور على انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.owner": {
+    "t": "المالك",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.search": {
+    "t": "البحث في الانتخابات...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.status": {
+    "t": "الحالة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.type": {
+    "t": "نوع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.voters": {
+    "t": "الناخبون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.accessDenied": {
+    "t": "ليس لديك صلاحية وصول المسؤول الأعلى",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.loadFailed": {
+    "t": "فشل تحميل بيانات المسؤول الفائق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.archivedElections": {
+    "t": "مؤرشف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.completedElections": {
+    "t": "مكتمل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.openElections": {
+    "t": "فتح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.totalElections": {
+    "t": "إجمالي الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.upcomingElections": {
+    "t": "قادم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.title": {
+    "t": "لوحة معلومات المسؤول الفائق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -56,6 +56,29 @@ public class JsonLocalizationProviderTests : IDisposable
     }
 
     [Fact]
+    public void GetString_WithRichEntry_ReturnsText()
+    {
+        var enDir = Path.Combine(_testDirectory, "en");
+        Directory.CreateDirectory(enDir);
+        File.WriteAllText(
+            Path.Combine(enDir, "auth.json"),
+            "{\"auth.login\": {\"t\": \"Login\", \"s\": \"source\", \"w\": \"2026-09-23T17:00:00Z\"}}");
+
+        var options = Options.Create(new JsonLocalizationOptions
+        {
+            ResourcesPath = _testDirectory,
+            SupportedCultures = new[] { "en", "fr" },
+            DefaultCulture = "en"
+        });
+
+        var provider = new JsonLocalizationProvider(_cache, options, _loggerMock.Object);
+
+        var result = provider.GetString("auth.login", new CultureInfo("en"));
+
+        Assert.Equal("Login", result);
+    }
+
+    [Fact]
     public void GetString_WithInvalidKey_ReturnsNull()
     {
         // Arrange

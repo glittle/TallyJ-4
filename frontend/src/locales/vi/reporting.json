@@ -1,194 +1,962 @@
 {
-  "reporting.advancedFilters": "Bộ Lọc Nâng Cao",
-  "reporting.allCanReceive": "Người có thể được bỏ phiếu",
-  "reporting.applyFilters": "Áp Dụng Bộ Lọc",
-  "reporting.area": "Khu vực",
-  "reporting.averageVotesPerBallot": "Trung Bình Phiếu Trên Mỗi Phiếu Bầu",
-  "reporting.bahaiId": "Mã Bahá'í",
-  "reporting.ballotCode": "Phiếu bầu",
-  "reporting.ballotCount": "Số Lượng Phiếu Bầu",
-  "reporting.ballotId": "ID Phiếu Bầu",
-  "reporting.ballotLengthDistribution": "Phân Bổ Độ Dài Phiếu Bầu",
-  "reporting.ballotReport": "Báo Cáo Phiếu Bầu",
-  "reporting.ballotReports": "Báo cáo phiếu bầu",
-  "reporting.ballotsByMethod": "Phiếu bầu theo phương thức bỏ phiếu",
-  "reporting.ballotsCast": "Phiếu Đã Bỏ",
-  "reporting.ballotsEntered": "Phiếu Đã Nhập",
-  "reporting.calledIn": "Qua điện thoại",
-  "reporting.canReceiveVotes": "Có thể nhận phiếu",
-  "reporting.canVote": "Có thể bỏ phiếu",
-  "reporting.candidate": "Ứng Viên",
-  "reporting.candidateName": "Tên Ứng Viên",
-  "reporting.candidatePerformance": "Hiệu Suất Ứng Viên",
-  "reporting.candidateVotes": "Phiếu Của Ứng Viên",
-  "reporting.candidates": "Ứng Viên",
-  "reporting.category": "Danh Mục",
-  "reporting.change": "Thay đổi",
-  "reporting.charts": "Biểu Đồ",
-  "reporting.clearFilters": "Xóa Bộ Lọc",
-  "reporting.comparisonSummary": "Tóm Tắt So Sánh",
-  "reporting.configureReport": "Cấu Hình Báo Cáo",
-  "reporting.contender": "Ứng Cử Viên",
-  "reporting.convenor": "Triệu tập viên",
-  "reporting.count": "Số lượng",
-  "reporting.cumulativeTurnout": "Tỷ Lệ Tham Gia Tích Lũy",
-  "reporting.customReport": "Báo Cáo Tùy Chỉnh",
-  "reporting.date": "Ngày",
-  "reporting.dateOfElection": "Ngày bầu cử",
-  "reporting.dateRange": "Khoảng Ngày",
-  "reporting.demographicBreakdown": "Phân Tích Nhân Khẩu Học",
-  "reporting.description": "Mô Tả",
-  "reporting.detailedStatistics": "Thống Kê Chi Tiết",
-  "reporting.droppedOff": "Bỏ vào hộp",
-  "reporting.earlyVoting": "Bỏ Phiếu Sớm",
-  "reporting.earlyVotingPercentage": "% Bỏ Phiếu Sớm",
-  "reporting.elected": "Được Bầu",
-  "reporting.electedCandidates": "Ứng Viên Được Bầu",
-  "reporting.electedPersons": "Đã trúng cử",
-  "reporting.election": "Cuộc Bầu Cử",
-  "reporting.electionDate": "Ngày Bầu Cử",
-  "reporting.electionDayVoting": "Bỏ Phiếu Ngày Bầu Cử",
-  "reporting.electionDetails": "Chi Tiết Bầu Cử",
-  "reporting.electionName": "Tên Cuộc Bầu Cử",
-  "reporting.electionOverview": "Tổng Quan Bầu Cử",
-  "reporting.electionSummary": "Tóm Tắt Bầu Cử",
-  "reporting.electionType": "Loại Bầu Cử",
-  "reporting.eligibilityReason": "Lý do đủ điều kiện",
-  "reporting.eliminated": "Bị Loại",
-  "reporting.email": "Email",
-  "reporting.endDate": "Ngày Kết Thúc",
-  "reporting.enterCandidateName": "Nhập Tên Ứng Viên",
-  "reporting.enterDescription": "Nhập Mô Tả",
-  "reporting.enterReportName": "Nhập Tên Báo Cáo",
-  "reporting.error": "Tải báo cáo thất bại",
-  "reporting.exportCSV": "Xuất CSV",
-  "reporting.exportExcel": "Xuất Excel",
-  "reporting.exportFormats": "Định Dạng Xuất",
-  "reporting.exportPDF": "Xuất PDF",
-  "reporting.extra": "Bổ sung",
-  "reporting.extraCandidates": "Ứng Viên Dự Phòng",
-  "reporting.firstChoice": "% Lựa Chọn Đầu Tiên",
-  "reporting.firstName": "Tên",
-  "reporting.firstTimeVoters": "Cử Tri Lần Đầu",
-  "reporting.flags": "Cờ",
-  "reporting.generateComparison": "Tạo So Sánh",
-  "reporting.generateCustomReport": "Tạo Báo Cáo Tùy Chỉnh",
-  "reporting.generateReport": "Tạo Báo Cáo",
-  "reporting.groupN": "Nhóm {n}",
-  "reporting.hasSignedInEmail": "Đã đăng nhập (Email)",
-  "reporting.hasSignedInPhone": "Đã đăng nhập (Điện thoại)",
-  "reporting.historicalComparison": "So Sánh Lịch Sử",
-  "reporting.imported": "Đã nhập",
-  "reporting.inPerson": "Trực tiếp",
-  "reporting.inPersonVoters": "Cử Tri Trực Tiếp",
-  "reporting.includeSections": "Bao Gồm Các Phần",
-  "reporting.lastName": "Họ",
-  "reporting.loading": "Đang tải báo cáo...",
-  "reporting.location": "Địa Điểm",
-  "reporting.locationReport": "Báo Cáo Địa Điểm",
-  "reporting.locationStatistics": "Thống Kê Địa Điểm",
-  "reporting.locations": "Địa Điểm",
-  "reporting.mailedIn": "Gửi qua thư",
-  "reporting.matchingNames": "Tên trùng khớp trong kết quả",
-  "reporting.maxVotesOnBallot": "Số Phiếu Tối Đa Trên Một Phiếu Bầu",
-  "reporting.metricsToCompare": "Các Chỉ Số Để So Sánh",
-  "reporting.minVotesOnBallot": "Số Phiếu Tối Thiểu Trên Một Phiếu Bầu",
-  "reporting.name": "Tên",
-  "reporting.no": "Không",
-  "reporting.noBallots": "Không tìm thấy phiếu bầu cho bộ lọc này.",
-  "reporting.noChanges": "Không tìm thấy bản ghi người đã thay đổi.",
-  "reporting.noDuplicates": "Không tìm thấy phiếu bầu trùng lặp.",
-  "reporting.noEmails": "Không tìm thấy bản ghi email/điện thoại.",
-  "reporting.noFlags": "Chưa định nghĩa cờ điểm danh.",
-  "reporting.noNonEligible": "Không tìm thấy người có trạng thái đủ điều kiện.",
-  "reporting.noSpoiledVotes": "Không tìm thấy phiếu hỏng.",
-  "reporting.numBallots": "Số lượng phiếu bầu",
-  "reporting.numEligibleToVote": "Số người đủ điều kiện bỏ phiếu",
-  "reporting.online": "Trực tuyến",
-  "reporting.onlineKiosk": "Trực tuyến/Ki-ốt",
-  "reporting.onlineStatus": "Trạng thái",
-  "reporting.onlineVoters": "Cử Tri Trực Tuyến",
-  "reporting.other": "Khác",
-  "reporting.otherInfo": "Thông tin khác",
-  "reporting.otherLastNames": "Họ khác",
-  "reporting.otherNames": "Tên khác",
-  "reporting.overallTurnout": "Tỷ Lệ Tham Gia Tổng Thể",
-  "reporting.overallTurnoutSummary": "Tóm Tắt Tỷ Lệ Tham Gia Tổng Thể",
-  "reporting.participationRates": "Tỷ Lệ Tham Gia",
-  "reporting.percentParticipation": "Tỷ lệ tham gia",
-  "reporting.percentage": "Tỷ Lệ Phần Trăm",
-  "reporting.performance": "Hiệu Suất",
-  "reporting.phone": "Điện thoại",
-  "reporting.positionsToElect": "Vị Trí Cần Bầu",
-  "reporting.print": "In",
-  "reporting.printHint": "Một số trình duyệt, chẳng hạn như Chrome, có thể tạo bản sao PDF của báo cáo khi in.",
-  "reporting.rank": "Hạng",
-  "reporting.reason": "Lý do",
-  "reporting.registeredVoters": "Cử Tri Đã Đăng Ký",
-  "reporting.registrationLog": "Nhật ký đăng ký",
-  "reporting.registrationTime": "Thời gian đăng ký",
-  "reporting.reportGenerated": "Đã tạo báo cáo thành công",
-  "reporting.reportGenerationError": "Không thể tạo báo cáo",
-  "reporting.reportName": "Tên Báo Cáo",
-  "reporting.returningVoters": "Cử Tri Quay Lại",
-  "reporting.section": "Phân khu",
-  "reporting.selectElections": "Chọn Cuộc Bầu Cử",
-  "reporting.selectElectionsToCompare": "Chọn Cuộc Bầu Cử Để So Sánh",
-  "reporting.selectLocations": "Chọn Địa Điểm",
-  "reporting.selectMultipleElections": "Chọn Nhiều Cuộc Bầu Cử",
-  "reporting.selectReport": "Chọn Loại Báo Cáo",
-  "reporting.selectReportType": "Chọn báo cáo để tạo",
-  "reporting.selectSortBy": "Chọn Cách Sắp Xếp",
-  "reporting.sortBy": "Sắp Xếp Theo",
-  "reporting.spoiledBallots": "Phiếu Hỏng",
-  "reporting.spoiledVotes": "Phiếu hỏng",
-  "reporting.startDate": "Ngày Bắt Đầu",
-  "reporting.statistics": "Thống Kê",
-  "reporting.status": "Trạng Thái",
-  "reporting.sumOfEnvelopesCollected": "Tổng số phiếu đã bỏ (bao gồm đếm thủ công)",
-  "reporting.summary": "Tóm Tắt",
-  "reporting.summaryReport": "Tóm Tắt Bầu Cử",
-  "reporting.summaryStats": "Thống Kê Tóm Tắt",
-  "reporting.teller1": "Người đếm 1",
-  "reporting.teller2": "Người đếm 2",
-  "reporting.tieGroup": "Nhóm Hòa {group}",
-  "reporting.tieNote": "* Số phiếu phá hòa hiển thị sau /",
-  "reporting.ties": "Hòa Phiếu",
-  "reporting.timeBasedTurnout": "Tỷ Lệ Tham Gia Theo Thời Gian",
-  "reporting.timePeriod": "Khoảng Thời Gian",
-  "reporting.title": "Báo Cáo Bầu Cử",
-  "reporting.to": "đến",
-  "reporting.topCandidates": "Ứng Viên Hàng Đầu",
-  "reporting.total": "Tổng",
-  "reporting.totalBallots": "Tổng Phiếu Bầu",
-  "reporting.totalBallotsCast": "Tổng Phiếu Bầu Đã Bỏ",
-  "reporting.totalEligible": "Đủ điều kiện",
-  "reporting.totalVoters": "Tổng Số Cử Tri",
-  "reporting.totalVotersHeader": "Tổng số cử tri",
-  "reporting.totalVotes": "Tổng Số Phiếu",
-  "reporting.turnout": "Tỷ Lệ Tham Gia",
-  "reporting.turnoutAnalysis": "Phân Tích Tỷ Lệ Tham Gia",
-  "reporting.turnoutByLocation": "Tỷ Lệ Tham Gia Theo Địa Điểm",
-  "reporting.turnoutOverTime": "Tỷ Lệ Tham Gia Theo Thời Gian",
-  "reporting.turnoutPercentage": "% Tỷ Lệ Tham Gia",
-  "reporting.turnoutRange": "Khoảng Tỷ Lệ Tham Gia",
-  "reporting.validBallots": "Phiếu Hợp Lệ",
-  "reporting.value": "Giá Trị",
-  "reporting.voteDistribution": "Phân Bổ Phiếu",
-  "reporting.votePercentage": "% Phiếu",
-  "reporting.voteRange": "Khoảng Phiếu",
-  "reporting.voteTime": "Thời Gian Bỏ Phiếu",
-  "reporting.voted": "Đã Bỏ Phiếu",
-  "reporting.voterName": "Tên Cử Tri",
-  "reporting.voterReport": "Báo Cáo Cử Tri",
-  "reporting.voterReports": "Báo cáo cử tri",
-  "reporting.voterTurnout": "Tỷ Lệ Tham Gia Cử Tri",
-  "reporting.votes": "Phiếu",
-  "reporting.votesOnBallot": "Phiếu trên lá phiếu này",
-  "reporting.votesPerBallot": "Phiếu Trên Mỗi Phiếu Bầu",
-  "reporting.votingMethod": "Phương thức bỏ phiếu",
-  "reporting.whenEmail": "Email đã gửi",
-  "reporting.whenPhone": "Điện thoại đã gửi",
-  "reporting.whenStatus": "Khi nào",
-  "reporting.yes": "Có"
+  "reporting.advancedFilters": {
+    "t": "Bộ Lọc Nâng Cao",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.allCanReceive": {
+    "t": "Người có thể được bỏ phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.applyFilters": {
+    "t": "Áp Dụng Bộ Lọc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.area": {
+    "t": "Khu vực",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.averageVotesPerBallot": {
+    "t": "Trung Bình Phiếu Trên Mỗi Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.bahaiId": {
+    "t": "Mã Bahá'í",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCode": {
+    "t": "Phiếu bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCount": {
+    "t": "Số Lượng Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotId": {
+    "t": "ID Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotLengthDistribution": {
+    "t": "Phân Bổ Độ Dài Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReport": {
+    "t": "Báo Cáo Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReports": {
+    "t": "Báo cáo phiếu bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsByMethod": {
+    "t": "Phiếu bầu theo phương thức bỏ phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsCast": {
+    "t": "Phiếu Đã Bỏ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsEntered": {
+    "t": "Phiếu Đã Nhập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.calledIn": {
+    "t": "Qua điện thoại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canReceiveVotes": {
+    "t": "Có thể nhận phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canVote": {
+    "t": "Có thể bỏ phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidate": {
+    "t": "Ứng Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateName": {
+    "t": "Tên Ứng Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidatePerformance": {
+    "t": "Hiệu Suất Ứng Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateVotes": {
+    "t": "Phiếu Của Ứng Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidates": {
+    "t": "Ứng Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.category": {
+    "t": "Danh Mục",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.change": {
+    "t": "Thay đổi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.charts": {
+    "t": "Biểu Đồ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.clearFilters": {
+    "t": "Xóa Bộ Lọc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.comparisonSummary": {
+    "t": "Tóm Tắt So Sánh",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.configureReport": {
+    "t": "Cấu Hình Báo Cáo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.contender": {
+    "t": "Ứng Cử Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.convenor": {
+    "t": "Triệu tập viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.count": {
+    "t": "Số lượng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.cumulativeTurnout": {
+    "t": "Tỷ Lệ Tham Gia Tích Lũy",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.customReport": {
+    "t": "Báo Cáo Tùy Chỉnh",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.date": {
+    "t": "Ngày",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateOfElection": {
+    "t": "Ngày bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateRange": {
+    "t": "Khoảng Ngày",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.demographicBreakdown": {
+    "t": "Phân Tích Nhân Khẩu Học",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.description": {
+    "t": "Mô Tả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.detailedStatistics": {
+    "t": "Thống Kê Chi Tiết",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.droppedOff": {
+    "t": "Bỏ vào hộp",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVoting": {
+    "t": "Bỏ Phiếu Sớm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVotingPercentage": {
+    "t": "% Bỏ Phiếu Sớm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.elected": {
+    "t": "Được Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedCandidates": {
+    "t": "Ứng Viên Được Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedPersons": {
+    "t": "Đã trúng cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.election": {
+    "t": "Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDate": {
+    "t": "Ngày Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDayVoting": {
+    "t": "Bỏ Phiếu Ngày Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDetails": {
+    "t": "Chi Tiết Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionName": {
+    "t": "Tên Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionOverview": {
+    "t": "Tổng Quan Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionSummary": {
+    "t": "Tóm Tắt Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionType": {
+    "t": "Loại Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eligibilityReason": {
+    "t": "Lý do đủ điều kiện",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eliminated": {
+    "t": "Bị Loại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.email": {
+    "t": "Email",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.endDate": {
+    "t": "Ngày Kết Thúc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterCandidateName": {
+    "t": "Nhập Tên Ứng Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterDescription": {
+    "t": "Nhập Mô Tả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterReportName": {
+    "t": "Nhập Tên Báo Cáo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.error": {
+    "t": "Tải báo cáo thất bại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportCSV": {
+    "t": "Xuất CSV",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportExcel": {
+    "t": "Xuất Excel",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportFormats": {
+    "t": "Định Dạng Xuất",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportPDF": {
+    "t": "Xuất PDF",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extra": {
+    "t": "Bổ sung",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extraCandidates": {
+    "t": "Ứng Viên Dự Phòng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstChoice": {
+    "t": "% Lựa Chọn Đầu Tiên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstName": {
+    "t": "Tên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstTimeVoters": {
+    "t": "Cử Tri Lần Đầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.flags": {
+    "t": "Cờ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateComparison": {
+    "t": "Tạo So Sánh",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateCustomReport": {
+    "t": "Tạo Báo Cáo Tùy Chỉnh",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateReport": {
+    "t": "Tạo Báo Cáo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.groupN": {
+    "t": "Nhóm {n}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInEmail": {
+    "t": "Đã đăng nhập (Email)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInPhone": {
+    "t": "Đã đăng nhập (Điện thoại)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.historicalComparison": {
+    "t": "So Sánh Lịch Sử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.imported": {
+    "t": "Đã nhập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPerson": {
+    "t": "Trực tiếp",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPersonVoters": {
+    "t": "Cử Tri Trực Tiếp",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.includeSections": {
+    "t": "Bao Gồm Các Phần",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.lastName": {
+    "t": "Họ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.loading": {
+    "t": "Đang tải báo cáo...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.location": {
+    "t": "Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationReport": {
+    "t": "Báo Cáo Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationStatistics": {
+    "t": "Thống Kê Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locations": {
+    "t": "Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.mailedIn": {
+    "t": "Gửi qua thư",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.matchingNames": {
+    "t": "Tên trùng khớp trong kết quả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.maxVotesOnBallot": {
+    "t": "Số Phiếu Tối Đa Trên Một Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.metricsToCompare": {
+    "t": "Các Chỉ Số Để So Sánh",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.minVotesOnBallot": {
+    "t": "Số Phiếu Tối Thiểu Trên Một Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.name": {
+    "t": "Tên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.no": {
+    "t": "Không",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noBallots": {
+    "t": "Không tìm thấy phiếu bầu cho bộ lọc này.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noChanges": {
+    "t": "Không tìm thấy bản ghi người đã thay đổi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noDuplicates": {
+    "t": "Không tìm thấy phiếu bầu trùng lặp.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noEmails": {
+    "t": "Không tìm thấy bản ghi email/điện thoại.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noFlags": {
+    "t": "Chưa định nghĩa cờ điểm danh.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noNonEligible": {
+    "t": "Không tìm thấy người có trạng thái đủ điều kiện.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noSpoiledVotes": {
+    "t": "Không tìm thấy phiếu hỏng.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numBallots": {
+    "t": "Số lượng phiếu bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numEligibleToVote": {
+    "t": "Số người đủ điều kiện bỏ phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.online": {
+    "t": "Trực tuyến",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineKiosk": {
+    "t": "Trực tuyến/Ki-ốt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineStatus": {
+    "t": "Trạng thái",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineVoters": {
+    "t": "Cử Tri Trực Tuyến",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.other": {
+    "t": "Khác",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherInfo": {
+    "t": "Thông tin khác",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherLastNames": {
+    "t": "Họ khác",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherNames": {
+    "t": "Tên khác",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnout": {
+    "t": "Tỷ Lệ Tham Gia Tổng Thể",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnoutSummary": {
+    "t": "Tóm Tắt Tỷ Lệ Tham Gia Tổng Thể",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.participationRates": {
+    "t": "Tỷ Lệ Tham Gia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentParticipation": {
+    "t": "Tỷ lệ tham gia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentage": {
+    "t": "Tỷ Lệ Phần Trăm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.performance": {
+    "t": "Hiệu Suất",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.phone": {
+    "t": "Điện thoại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.positionsToElect": {
+    "t": "Vị Trí Cần Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.print": {
+    "t": "In",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.printHint": {
+    "t": "Một số trình duyệt, chẳng hạn như Chrome, có thể tạo bản sao PDF của báo cáo khi in.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.rank": {
+    "t": "Hạng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reason": {
+    "t": "Lý do",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registeredVoters": {
+    "t": "Cử Tri Đã Đăng Ký",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationLog": {
+    "t": "Nhật ký đăng ký",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationTime": {
+    "t": "Thời gian đăng ký",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerated": {
+    "t": "Đã tạo báo cáo thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerationError": {
+    "t": "Không thể tạo báo cáo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportName": {
+    "t": "Tên Báo Cáo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.returningVoters": {
+    "t": "Cử Tri Quay Lại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.section": {
+    "t": "Phân khu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElections": {
+    "t": "Chọn Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElectionsToCompare": {
+    "t": "Chọn Cuộc Bầu Cử Để So Sánh",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectLocations": {
+    "t": "Chọn Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectMultipleElections": {
+    "t": "Chọn Nhiều Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReport": {
+    "t": "Chọn Loại Báo Cáo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReportType": {
+    "t": "Chọn báo cáo để tạo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectSortBy": {
+    "t": "Chọn Cách Sắp Xếp",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sortBy": {
+    "t": "Sắp Xếp Theo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledBallots": {
+    "t": "Phiếu Hỏng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledVotes": {
+    "t": "Phiếu hỏng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.startDate": {
+    "t": "Ngày Bắt Đầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.statistics": {
+    "t": "Thống Kê",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.status": {
+    "t": "Trạng Thái",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sumOfEnvelopesCollected": {
+    "t": "Tổng số phiếu đã bỏ (bao gồm đếm thủ công)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summary": {
+    "t": "Tóm Tắt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryReport": {
+    "t": "Tóm Tắt Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryStats": {
+    "t": "Thống Kê Tóm Tắt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller1": {
+    "t": "Người đếm 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller2": {
+    "t": "Người đếm 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieGroup": {
+    "t": "Nhóm Hòa {group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieNote": {
+    "t": "* Số phiếu phá hòa hiển thị sau /",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ties": {
+    "t": "Hòa Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timeBasedTurnout": {
+    "t": "Tỷ Lệ Tham Gia Theo Thời Gian",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timePeriod": {
+    "t": "Khoảng Thời Gian",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.title": {
+    "t": "Báo Cáo Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.to": {
+    "t": "đến",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.topCandidates": {
+    "t": "Ứng Viên Hàng Đầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.total": {
+    "t": "Tổng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallots": {
+    "t": "Tổng Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallotsCast": {
+    "t": "Tổng Phiếu Bầu Đã Bỏ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalEligible": {
+    "t": "Đủ điều kiện",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVoters": {
+    "t": "Tổng Số Cử Tri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotersHeader": {
+    "t": "Tổng số cử tri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotes": {
+    "t": "Tổng Số Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnout": {
+    "t": "Tỷ Lệ Tham Gia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutAnalysis": {
+    "t": "Phân Tích Tỷ Lệ Tham Gia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutByLocation": {
+    "t": "Tỷ Lệ Tham Gia Theo Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutOverTime": {
+    "t": "Tỷ Lệ Tham Gia Theo Thời Gian",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutPercentage": {
+    "t": "% Tỷ Lệ Tham Gia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutRange": {
+    "t": "Khoảng Tỷ Lệ Tham Gia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.validBallots": {
+    "t": "Phiếu Hợp Lệ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.value": {
+    "t": "Giá Trị",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteDistribution": {
+    "t": "Phân Bổ Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votePercentage": {
+    "t": "% Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteRange": {
+    "t": "Khoảng Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteTime": {
+    "t": "Thời Gian Bỏ Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voted": {
+    "t": "Đã Bỏ Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterName": {
+    "t": "Tên Cử Tri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReport": {
+    "t": "Báo Cáo Cử Tri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReports": {
+    "t": "Báo cáo cử tri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterTurnout": {
+    "t": "Tỷ Lệ Tham Gia Cử Tri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votes": {
+    "t": "Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesOnBallot": {
+    "t": "Phiếu trên lá phiếu này",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesPerBallot": {
+    "t": "Phiếu Trên Mỗi Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votingMethod": {
+    "t": "Phương thức bỏ phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenEmail": {
+    "t": "Email đã gửi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenPhone": {
+    "t": "Điện thoại đã gửi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenStatus": {
+    "t": "Khi nào",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.yes": {
+    "t": "Có",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,35 +1,167 @@
 {
-  "results.allResults": "همه نتایج",
-  "results.ballotsReceived": "برگه‌های رای دریافت شده",
-  "results.calculateTally": "محاسبه نتایج",
-  "results.calculatedAt": "محاسبه شده در {date}",
-  "results.candidate": "کاندیدا",
-  "results.closeToNext": "نزدیک به بعدی",
-  "results.elected": "انتخاب شده",
-  "results.extra": "اضافی",
-  "results.flags": "پرچم‌ها",
-  "results.loadError": "بارگذاری نتایج شکست خورد",
-  "results.monitor": "نظارت انتخابات",
-  "results.noResults": "هیچ نتیجه‌ای در دسترس نیست. ابتدا نتایج را محاسبه کنید.",
-  "results.noTies": "هیچ تساوی‌ای شناسایی نشده",
-  "results.numberToElect": "تعداد برای انتخاب",
-  "results.other": "دیگر",
-  "results.presentation": "نمای ارائه",
-  "results.rank": "رتبه",
-  "results.reporting": "گزارش‌ها",
-  "results.section": "بخش",
-  "results.spoiledBallots": "برگه‌های رای خراب",
-  "results.tieBreakAlert": "توجه: برخی تساوی‌ها نیاز به شکستن دستی دارند",
-  "results.tieBreakMessage": "شکستن تساوی برای این گروه لازم است زیرا از مرزهای بخش عبور می‌کند",
-  "results.tieBreakRequired": "شکستن تساوی لازم است",
-  "results.tieGroup": "گروه تساوی #{group}",
-  "results.tieManagement": "مدیریت تساوی",
-  "results.tied": "تساوی",
-  "results.tiedCandidates": "کاندیداهای تساوی",
-  "results.ties": "تساوی‌ها",
-  "results.title": "نتایج انتخابات",
-  "results.totalBallots": "کل برگه‌های رای",
-  "results.totalVotes": "کل آراء",
-  "results.validVotes": "آراء معتبر",
-  "results.votes": "آراء"
+  "results.allResults": {
+    "t": "همه نتایج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ballotsReceived": {
+    "t": "برگه‌های رای دریافت شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculateTally": {
+    "t": "محاسبه نتایج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculatedAt": {
+    "t": "محاسبه شده در {date}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.candidate": {
+    "t": "کاندیدا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.closeToNext": {
+    "t": "نزدیک به بعدی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.elected": {
+    "t": "انتخاب شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.extra": {
+    "t": "اضافی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.flags": {
+    "t": "پرچم‌ها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.loadError": {
+    "t": "بارگذاری نتایج شکست خورد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.monitor": {
+    "t": "نظارت انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noResults": {
+    "t": "هیچ نتیجه‌ای در دسترس نیست. ابتدا نتایج را محاسبه کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noTies": {
+    "t": "هیچ تساوی‌ای شناسایی نشده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.numberToElect": {
+    "t": "تعداد برای انتخاب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.other": {
+    "t": "دیگر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.presentation": {
+    "t": "نمای ارائه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.rank": {
+    "t": "رتبه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.reporting": {
+    "t": "گزارش‌ها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.section": {
+    "t": "بخش",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.spoiledBallots": {
+    "t": "برگه‌های رای خراب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakAlert": {
+    "t": "توجه: برخی تساوی‌ها نیاز به شکستن دستی دارند",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakMessage": {
+    "t": "شکستن تساوی برای این گروه لازم است زیرا از مرزهای بخش عبور می‌کند",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakRequired": {
+    "t": "شکستن تساوی لازم است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieGroup": {
+    "t": "گروه تساوی #{group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieManagement": {
+    "t": "مدیریت تساوی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tied": {
+    "t": "تساوی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tiedCandidates": {
+    "t": "کاندیداهای تساوی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ties": {
+    "t": "تساوی‌ها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.title": {
+    "t": "نتایج انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalBallots": {
+    "t": "کل برگه‌های رای",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalVotes": {
+    "t": "کل آراء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.validVotes": {
+    "t": "آراء معتبر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.votes": {
+    "t": "آراء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

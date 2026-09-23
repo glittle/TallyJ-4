@@ -1,160 +1,792 @@
 {
-  "elections.advanceStage": "Napreduj na sljedeću fazu",
-  "elections.advanceTo": "Napreduj na {stage}",
-  "elections.ballots": "Glasački listići",
-  "elections.bulkDeleteError": "Brisanje nekih izbora nije uspjelo",
-  "elections.bulkDeleteMessage": "Jeste li sigurni da želite izbrisati {count} odabranih izbora?",
-  "elections.bulkDeleteSuccess": "{count} izbora uspješno obrisano",
-  "elections.calculateTally": "Izračunaj rezultate",
-  "elections.clearFilters": "Očisti filtre",
-  "elections.confirmAdvance": "Jeste li sigurni da želite ove izbore napredovati na {stage}?",
-  "elections.confirmBulkDelete": "Potvrdi masovno brisanje",
-  "elections.confirmRevert": "Jeste li sigurni da želite ove izbore vratiti na {stage}?",
-  "elections.copyUrl": "Kopiraj URL",
-  "elections.createError": "Stvaranje izbora nije uspjelo",
-  "elections.createFirst": "Stvorite svoje prve izbore",
-  "elections.createNew": "Stvori izbore",
-  "elections.createSuccess": "Izbori uspješno stvoreni",
-  "elections.date": "Datum izbora",
-  "elections.deleteConfirm": "Jeste li sigurni da želite izbrisati ove izbore? Ova se radnja ne može poništiti.",
-  "elections.deleteError": "Brisanje izbora nije uspjelo",
-  "elections.deleteSelected": "Izbriši odabrano ({count})",
-  "elections.deleteSuccess": "Izbori uspješno obrisani",
-  "elections.details": "Detalji izbora",
-  "elections.edit": "Uredi izbore",
-  "elections.electionModes.B": "Dopunski izbori",
-  "elections.electionModes.N": "Redovni izbori",
-  "elections.electionModes.T": "Razrješavanje izjednačenja",
-  "elections.electionTypes.Con": "Konvencija jedinice",
-  "elections.electionTypes.LSA": "Lokalna duhovna skupština",
-  "elections.electionTypes.LSA1": "Lokalna duhovna skupština (dvostupanjska) lokalna jedinica",
-  "elections.electionTypes.LSA2": "Lokalna duhovna skupština (dvostupanjska) završni krug",
-  "elections.electionTypes.NSA": "Nacionalna duhovna skupština",
-  "elections.electionTypes.Oth": "Ostalo",
-  "elections.electionTypes.Reg": "Regionalno vijeće",
-  "elections.exportElection": "Izvezi izbore",
-  "elections.exportElectionError": "Izvoz izbora nije uspio",
-  "elections.exportElectionSuccess": "Izbori uspješno izvezeni",
-  "elections.filterByStatus": "Filtriraj po statusu",
-  "elections.filterByType": "Filtriraj po vrsti",
-  "elections.form.convenor": "Sazivač",
-  "elections.form.convenorPlaceholder": "Unesite ime sazivača",
-  "elections.form.customMethods": "Prilagođene metode",
-  "elections.form.customMethodsHelp": "Navedite sve prilagođene ili nestandardne metode glasanja korištene na ovim izborima.",
-  "elections.form.customMethodsPlaceholder": "Opišite sve prilagođene metode glasanja",
-  "elections.form.date": "Datum izbora",
-  "elections.form.datePlaceholder": "Odaberite datum izbora",
-  "elections.form.dateRequired": "Datum izbora je obavezan",
-  "elections.form.electionMode": "Način izbora",
-  "elections.form.electionPasscode": "Zaporka izbora",
-  "elections.form.electionPasscodeHelp": "Zaporka je potrebna za prijavu brojača glasova.",
-  "elections.form.electionPasscodePlaceholder": "Unesite zaporku",
-  "elections.form.emailFromAddress": "Adresa pošiljatelja e-pošte",
-  "elections.form.emailFromAddressPlaceholder": "Unesite e-poštu pošiljatelja",
-  "elections.form.emailFromName": "Ime pošiljatelja e-pošte",
-  "elections.form.emailFromNamePlaceholder": "Unesite ime pošiljatelja",
-  "elections.form.emailInvalid": "Nevažeća e-pošta",
-  "elections.form.emailSubject": "Predmet e-pošte",
-  "elections.form.emailSubjectPlaceholder": "Unesite predmet e-pošte",
-  "elections.form.emailText": "Tekst e-pošte",
-  "elections.form.emailTextPlaceholder": "Unesite tekst poruke e-pošte",
-  "elections.form.flags": "Oznake",
-  "elections.form.flagsHelp": "Oznake se koriste za posebne uvjete izbora.",
-  "elections.form.flagsPlaceholder": "Unesite sve oznake",
-  "elections.form.hidePreBallotPages": "Sakrij stranice prije glasačkog listića",
-  "elections.form.linkedElection": "Povezani izbori",
-  "elections.form.linkedElectionCount": "Dostupni {count} povezani izbori",
-  "elections.form.linkedElectionCount_plural": "Dostupno {count} povezanih izbora",
-  "elections.form.linkedElectionHelp": "Odaberite izbore za povezivanje radi razrješavanja izjednačenja ili ponovnog glasanja.",
-  "elections.form.linkedElectionKind": "Vrsta povezanih izbora",
-  "elections.form.linkedElectionKindPlaceholder": "Odaberite vrstu",
-  "elections.form.linkedElectionPlaceholder": "Odaberite povezane izbore",
-  "elections.form.listForPublic": "Prikaži javnosti",
-  "elections.form.lockedByBallots": "Zaključano — uneseni su glasački listići",
-  "elections.form.maskVotingMethod": "Sakrij metodu glasanja",
-  "elections.form.modePlaceholder": "Odaberite način izbora",
-  "elections.form.name": "Naziv izbora",
-  "elections.form.namePlaceholder": "Unesite naziv izbora",
-  "elections.form.nameRequired": "Naziv izbora je obavezan",
-  "elections.form.numberExtra": "Broj dodatnih",
-  "elections.form.numberToElect": "Broj za izabrati",
-  "elections.form.numberToElectRequired": "Broj za izabrati je obavezan",
-  "elections.form.onlineAnnounced": "Online rezultati objavljeni",
-  "elections.form.onlineAnnouncedPlaceholder": "Odaberite vrijeme objave",
-  "elections.form.onlineCloseIsEstimate": "Vrijeme zatvaranja je procjena",
-  "elections.form.onlineSelectionProcess": "Online proces odabira",
-  "elections.form.onlineSelectionProcessPlaceholder": "Odaberite proces",
-  "elections.form.onlineWhenClose": "Online glasanje se zatvara",
-  "elections.form.onlineWhenClosePlaceholder": "Odaberite vrijeme zatvaranja",
-  "elections.form.onlineWhenOpen": "Online glasanje se otvara",
-  "elections.form.onlineWhenOpenPlaceholder": "Odaberite vrijeme otvaranja",
-  "elections.form.showAsTest": "Prikaži kao test",
-  "elections.form.showFullReport": "Prikaži potpuno izvješće",
-  "elections.form.smsText": "SMS tekst",
-  "elections.form.smsTextPlaceholder": "Unesite tekst SMS poruke",
-  "elections.form.type": "Vrsta izbora",
-  "elections.form.typePlaceholder": "Odaberite vrstu izbora",
-  "elections.form.typeRequired": "Vrsta izbora je obavezna",
-  "elections.form.useCallInButton": "Omogući glasanje pozivom",
-  "elections.form.useKiosk": "Enable kiosk mode",
-  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
-  "elections.form.votingMethods": "Metode glasanja",
-  "elections.form.votingMethodsHelp": "Odaberite metode kojima će se glasati.",
-  "elections.form.votingMethodsPlaceholder": "Odaberite metode glasanja",
-  "elections.importCdnBallots": "Uvezi CDN glasačke listiće",
-  "elections.importCdnBallotsError": "Uvoz CDN glasačkih listića nije uspio",
-  "elections.importCdnBallotsSuccess": "CDN glasački listići uspješno uvezeni",
-  "elections.importElection": "Uvezi izbore",
-  "elections.importElectionError": "Uvoz izbora nije uspio",
-  "elections.importElectionSuccess": "Izbori uspješno uvezeni",
-  "elections.list": "Izbori",
-  "elections.loadError": "Učitavanje izbora nije uspjelo",
-  "elections.locations": "Lokacije",
-  "elections.manageBallots": "Upravljaj glasačkim listićima",
-  "elections.manageLocations": "Upravljaj lokacijama",
-  "elections.managePeople": "Upravljaj osobama",
-  "elections.name": "Naziv izbora",
-  "elections.notFound": "Izbori nisu pronađeni",
-  "elections.onlineVotingDisabled": "Online glasanje je onemogućeno",
-  "elections.onlineVotingEnabled": "Online glasanje je omogućeno",
-  "elections.people": "Osobe",
-  "elections.quickActions": "Brze radnje",
-  "elections.revertTo": "Vrati se na {stage}",
-  "elections.searchPlaceholder": "Pretraži izbore po nazivu ili sazivaču...",
-  "elections.stage.Counting": "Brojanje",
-  "elections.stage.Finalized": "Završeno",
-  "elections.stage.Setup": "Postavljanje",
-  "elections.stageAdvanced": "Izbori napredovali na {stage}",
-  "elections.stageChangeError": "Promjena faze izbora nije uspjela",
-  "elections.stageProgression": "Faza izbora",
-  "elections.stageReverted": "Izbori vraćeni na {stage}",
-  "elections.statistics": "Statistike",
-  "elections.status": "Stanje",
-  "elections.tabs.advanced": "Napredno",
-  "elections.tabs.auditLogs": "Zapisnici revizije",
-  "elections.tabs.ballots": "Glasački listići",
-  "elections.tabs.basicInfo": "Osnovne informacije",
-  "elections.tabs.communication": "Komunikacija",
-  "elections.tabs.displayPrivacy": "Prikaz i privatnost",
-  "elections.tabs.electionRules": "Pravila izbora",
-  "elections.tabs.locations": "Lokacije",
-  "elections.tabs.onlineVoting": "Online glasanje",
-  "elections.tabs.people": "Osobe",
-  "elections.tabs.results": "Rezultati",
-  "elections.tabs.tellers": "Brojači glasova",
-  "elections.tabs.votingMethods": "Metode glasanja",
-  "elections.tellerAccess": "Pristup brojačima glasova",
-  "elections.tellerAccessClosed": "Pristup brojačima glasova je zatvoren",
-  "elections.tellerAccessCode": "Pristupni kôd",
-  "elections.tellerAccessOpen": "Pristup brojačima glasova je otvoren",
-  "elections.tellerAccessQrCode": "QR kôd",
-  "elections.tellerAccessUrl": "URL za dijeljenje",
-  "elections.toElect": "Za izabrati",
-  "elections.toggleTellerAccess": "Uključi/isključi pristup brojačima glasova",
-  "elections.type": "Vrsta",
-  "elections.updateError": "Ažuriranje izbora nije uspjelo",
-  "elections.updateSuccess": "Izbori uspješno ažurirani",
-  "elections.viewReports": "Pogledaj izvješća",
-  "elections.viewResults": "Pogledaj rezultate",
-  "elections.voters": "Glasači"
+  "elections.advanceStage": {
+    "t": "Napreduj na sljedeću fazu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.advanceTo": {
+    "t": "Napreduj na {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ballots": {
+    "t": "Glasački listići",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteError": {
+    "t": "Brisanje nekih izbora nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteMessage": {
+    "t": "Jeste li sigurni da želite izbrisati {count} odabranih izbora?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteSuccess": {
+    "t": "{count} izbora uspješno obrisano",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.calculateTally": {
+    "t": "Izračunaj rezultate",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.clearFilters": {
+    "t": "Očisti filtre",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmAdvance": {
+    "t": "Jeste li sigurni da želite ove izbore napredovati na {stage}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmBulkDelete": {
+    "t": "Potvrdi masovno brisanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmRevert": {
+    "t": "Jeste li sigurni da želite ove izbore vratiti na {stage}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.copyUrl": {
+    "t": "Kopiraj URL",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createError": {
+    "t": "Stvaranje izbora nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createFirst": {
+    "t": "Stvorite svoje prve izbore",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createNew": {
+    "t": "Stvori izbore",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createSuccess": {
+    "t": "Izbori uspješno stvoreni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.date": {
+    "t": "Datum izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteConfirm": {
+    "t": "Jeste li sigurni da želite izbrisati ove izbore? Ova se radnja ne može poništiti.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteError": {
+    "t": "Brisanje izbora nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSelected": {
+    "t": "Izbriši odabrano ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSuccess": {
+    "t": "Izbori uspješno obrisani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.details": {
+    "t": "Detalji izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.edit": {
+    "t": "Uredi izbore",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.B": {
+    "t": "Dopunski izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.N": {
+    "t": "Redovni izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.T": {
+    "t": "Razrješavanje izjednačenja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Con": {
+    "t": "Konvencija jedinice",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA": {
+    "t": "Lokalna duhovna skupština",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA1": {
+    "t": "Lokalna duhovna skupština (dvostupanjska) lokalna jedinica",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA2": {
+    "t": "Lokalna duhovna skupština (dvostupanjska) završni krug",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.NSA": {
+    "t": "Nacionalna duhovna skupština",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Oth": {
+    "t": "Ostalo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Reg": {
+    "t": "Regionalno vijeće",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElection": {
+    "t": "Izvezi izbore",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionError": {
+    "t": "Izvoz izbora nije uspio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionSuccess": {
+    "t": "Izbori uspješno izvezeni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByStatus": {
+    "t": "Filtriraj po statusu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByType": {
+    "t": "Filtriraj po vrsti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenor": {
+    "t": "Sazivač",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenorPlaceholder": {
+    "t": "Unesite ime sazivača",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethods": {
+    "t": "Prilagođene metode",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsHelp": {
+    "t": "Navedite sve prilagođene ili nestandardne metode glasanja korištene na ovim izborima.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsPlaceholder": {
+    "t": "Opišite sve prilagođene metode glasanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.date": {
+    "t": "Datum izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.datePlaceholder": {
+    "t": "Odaberite datum izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.dateRequired": {
+    "t": "Datum izbora je obavezan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionMode": {
+    "t": "Način izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscode": {
+    "t": "Zaporka izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodeHelp": {
+    "t": "Zaporka je potrebna za prijavu brojača glasova.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodePlaceholder": {
+    "t": "Unesite zaporku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddress": {
+    "t": "Adresa pošiljatelja e-pošte",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddressPlaceholder": {
+    "t": "Unesite e-poštu pošiljatelja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromName": {
+    "t": "Ime pošiljatelja e-pošte",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromNamePlaceholder": {
+    "t": "Unesite ime pošiljatelja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailInvalid": {
+    "t": "Nevažeća e-pošta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubject": {
+    "t": "Predmet e-pošte",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubjectPlaceholder": {
+    "t": "Unesite predmet e-pošte",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailText": {
+    "t": "Tekst e-pošte",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailTextPlaceholder": {
+    "t": "Unesite tekst poruke e-pošte",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flags": {
+    "t": "Oznake",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsHelp": {
+    "t": "Oznake se koriste za posebne uvjete izbora.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsPlaceholder": {
+    "t": "Unesite sve oznake",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.hidePreBallotPages": {
+    "t": "Sakrij stranice prije glasačkog listića",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElection": {
+    "t": "Povezani izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount": {
+    "t": "Dostupni {count} povezani izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount_plural": {
+    "t": "Dostupno {count} povezanih izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionHelp": {
+    "t": "Odaberite izbore za povezivanje radi razrješavanja izjednačenja ili ponovnog glasanja.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKind": {
+    "t": "Vrsta povezanih izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKindPlaceholder": {
+    "t": "Odaberite vrstu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionPlaceholder": {
+    "t": "Odaberite povezane izbore",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.listForPublic": {
+    "t": "Prikaži javnosti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.lockedByBallots": {
+    "t": "Zaključano — uneseni su glasački listići",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.maskVotingMethod": {
+    "t": "Sakrij metodu glasanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.modePlaceholder": {
+    "t": "Odaberite način izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.name": {
+    "t": "Naziv izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.namePlaceholder": {
+    "t": "Unesite naziv izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.nameRequired": {
+    "t": "Naziv izbora je obavezan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberExtra": {
+    "t": "Broj dodatnih",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElect": {
+    "t": "Broj za izabrati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElectRequired": {
+    "t": "Broj za izabrati je obavezan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnounced": {
+    "t": "Online rezultati objavljeni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnouncedPlaceholder": {
+    "t": "Odaberite vrijeme objave",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineCloseIsEstimate": {
+    "t": "Vrijeme zatvaranja je procjena",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcess": {
+    "t": "Online proces odabira",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessPlaceholder": {
+    "t": "Odaberite proces",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClose": {
+    "t": "Online glasanje se zatvara",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClosePlaceholder": {
+    "t": "Odaberite vrijeme zatvaranja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpen": {
+    "t": "Online glasanje se otvara",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpenPlaceholder": {
+    "t": "Odaberite vrijeme otvaranja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showAsTest": {
+    "t": "Prikaži kao test",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showFullReport": {
+    "t": "Prikaži potpuno izvješće",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsText": {
+    "t": "SMS tekst",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsTextPlaceholder": {
+    "t": "Unesite tekst SMS poruke",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.type": {
+    "t": "Vrsta izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typePlaceholder": {
+    "t": "Odaberite vrstu izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typeRequired": {
+    "t": "Vrsta izbora je obavezna",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useCallInButton": {
+    "t": "Omogući glasanje pozivom",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKiosk": {
+    "t": "Enable kiosk mode",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKioskHelp": {
+    "t": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethods": {
+    "t": "Metode glasanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsHelp": {
+    "t": "Odaberite metode kojima će se glasati.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsPlaceholder": {
+    "t": "Odaberite metode glasanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallots": {
+    "t": "Uvezi CDN glasačke listiće",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsError": {
+    "t": "Uvoz CDN glasačkih listića nije uspio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsSuccess": {
+    "t": "CDN glasački listići uspješno uvezeni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElection": {
+    "t": "Uvezi izbore",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionError": {
+    "t": "Uvoz izbora nije uspio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionSuccess": {
+    "t": "Izbori uspješno uvezeni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.list": {
+    "t": "Izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.loadError": {
+    "t": "Učitavanje izbora nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.locations": {
+    "t": "Lokacije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageBallots": {
+    "t": "Upravljaj glasačkim listićima",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageLocations": {
+    "t": "Upravljaj lokacijama",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.managePeople": {
+    "t": "Upravljaj osobama",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.name": {
+    "t": "Naziv izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.notFound": {
+    "t": "Izbori nisu pronađeni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingDisabled": {
+    "t": "Online glasanje je onemogućeno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingEnabled": {
+    "t": "Online glasanje je omogućeno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.people": {
+    "t": "Osobe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.quickActions": {
+    "t": "Brze radnje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.revertTo": {
+    "t": "Vrati se na {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.searchPlaceholder": {
+    "t": "Pretraži izbore po nazivu ili sazivaču...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Counting": {
+    "t": "Brojanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Finalized": {
+    "t": "Završeno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Setup": {
+    "t": "Postavljanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageAdvanced": {
+    "t": "Izbori napredovali na {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError": {
+    "t": "Promjena faze izbora nije uspjela",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageProgression": {
+    "t": "Faza izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageReverted": {
+    "t": "Izbori vraćeni na {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.statistics": {
+    "t": "Statistike",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.status": {
+    "t": "Stanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.advanced": {
+    "t": "Napredno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.auditLogs": {
+    "t": "Zapisnici revizije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.ballots": {
+    "t": "Glasački listići",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.basicInfo": {
+    "t": "Osnovne informacije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.communication": {
+    "t": "Komunikacija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.displayPrivacy": {
+    "t": "Prikaz i privatnost",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.electionRules": {
+    "t": "Pravila izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.locations": {
+    "t": "Lokacije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.onlineVoting": {
+    "t": "Online glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.people": {
+    "t": "Osobe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.results": {
+    "t": "Rezultati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.tellers": {
+    "t": "Brojači glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.votingMethods": {
+    "t": "Metode glasanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccess": {
+    "t": "Pristup brojačima glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessClosed": {
+    "t": "Pristup brojačima glasova je zatvoren",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessCode": {
+    "t": "Pristupni kôd",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessOpen": {
+    "t": "Pristup brojačima glasova je otvoren",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessQrCode": {
+    "t": "QR kôd",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessUrl": {
+    "t": "URL za dijeljenje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toElect": {
+    "t": "Za izabrati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toggleTellerAccess": {
+    "t": "Uključi/isključi pristup brojačima glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.type": {
+    "t": "Vrsta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateError": {
+    "t": "Ažuriranje izbora nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateSuccess": {
+    "t": "Izbori uspješno ažurirani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewReports": {
+    "t": "Pogledaj izvješća",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewResults": {
+    "t": "Pogledaj rezultate",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.voters": {
+    "t": "Glasači",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

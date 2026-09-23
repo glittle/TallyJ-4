@@ -1,29 +1,137 @@
 {
-  "profile.changePassword": "Изменить пароль",
-  "profile.confirmPassword": "Подтвердите пароль",
-  "profile.createdAt": "Участник с",
-  "profile.currentPassword": "Текущий пароль",
-  "profile.loginMethod": "Метод входа",
-  "profile.name": "Имя",
-  "profile.newPassword": "Новый пароль",
-  "profile.passwordsDoNotMatch": "Пароли не совпадают",
-  "profile.twoFactor.confirmCode": "Введите 6-значный код из вашего приложения для подтверждения настройки:",
-  "profile.twoFactor.confirmPlaceholder": "6-значный код",
-  "profile.twoFactor.confirmSetup": "Подтвердить и включить 2FA",
-  "profile.twoFactor.disable": "Отключить 2FA",
-  "profile.twoFactor.disableConfirm": "Введите 6-значный код из приложения-аутентификатора, чтобы отключить 2FA:",
-  "profile.twoFactor.disableSuccess": "Двухфакторная аутентификация отключена.",
-  "profile.twoFactor.disableTitle": "Отключить двухфакторную аутентификацию",
-  "profile.twoFactor.disabled": "Не включена",
-  "profile.twoFactor.enabled": "Включена",
-  "profile.twoFactor.loading": "Загрузка статуса 2FA...",
-  "profile.twoFactor.method": "Метод",
-  "profile.twoFactor.methodTotp": "Приложение-аутентификатор (TOTP)",
-  "profile.twoFactor.scanQr": "Отсканируйте этот QR-код с помощью приложения-аутентификатора (Google Authenticator, Microsoft Authenticator или Authy).",
-  "profile.twoFactor.secretKey": "Или введите этот ключ вручную:",
-  "profile.twoFactor.setup": "Настроить 2FA",
-  "profile.twoFactor.setupSuccess": "Двухфакторная аутентификация включена.",
-  "profile.twoFactor.setupTitle": "Настроить двухфакторную аутентификацию",
-  "profile.twoFactor.status": "Статус",
-  "profile.twoFactor.title": "Двухфакторная аутентификация"
+  "profile.changePassword": {
+    "t": "Изменить пароль",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.confirmPassword": {
+    "t": "Подтвердите пароль",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.createdAt": {
+    "t": "Участник с",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.currentPassword": {
+    "t": "Текущий пароль",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.loginMethod": {
+    "t": "Метод входа",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.name": {
+    "t": "Имя",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.newPassword": {
+    "t": "Новый пароль",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.passwordsDoNotMatch": {
+    "t": "Пароли не совпадают",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmCode": {
+    "t": "Введите 6-значный код из вашего приложения для подтверждения настройки:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmPlaceholder": {
+    "t": "6-значный код",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmSetup": {
+    "t": "Подтвердить и включить 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disable": {
+    "t": "Отключить 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableConfirm": {
+    "t": "Введите 6-значный код из приложения-аутентификатора, чтобы отключить 2FA:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableSuccess": {
+    "t": "Двухфакторная аутентификация отключена.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableTitle": {
+    "t": "Отключить двухфакторную аутентификацию",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disabled": {
+    "t": "Не включена",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.enabled": {
+    "t": "Включена",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.loading": {
+    "t": "Загрузка статуса 2FA...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.method": {
+    "t": "Метод",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.methodTotp": {
+    "t": "Приложение-аутентификатор (TOTP)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.scanQr": {
+    "t": "Отсканируйте этот QR-код с помощью приложения-аутентификатора (Google Authenticator, Microsoft Authenticator или Authy).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.secretKey": {
+    "t": "Или введите этот ключ вручную:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setup": {
+    "t": "Настроить 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupSuccess": {
+    "t": "Двухфакторная аутентификация включена.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupTitle": {
+    "t": "Настроить двухфакторную аутентификацию",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.status": {
+    "t": "Статус",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.title": {
+    "t": "Двухфакторная аутентификация",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

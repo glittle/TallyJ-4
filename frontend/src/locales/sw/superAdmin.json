@@ -1,28 +1,132 @@
 {
-  "superAdmin.detail.electionMode": "Hali ya Uchaguzi",
-  "superAdmin.detail.locations": "Maeneo",
-  "superAdmin.detail.numberToElect": "Idadi ya Kuchagua",
-  "superAdmin.detail.owners": "Wasimamizi",
-  "superAdmin.detail.percentComplete": "Asilimia Iliyokamilika",
-  "superAdmin.detail.title": "Maelezo ya Uchaguzi",
-  "superAdmin.elections.ballots": "Kura",
-  "superAdmin.elections.convenor": "Mwamuzi",
-  "superAdmin.elections.date": "Tarehe",
-  "superAdmin.elections.filterStatus": "Chuja kwa hali",
-  "superAdmin.elections.filterType": "Chuja kwa aina",
-  "superAdmin.elections.name": "Jina la Uchaguzi",
-  "superAdmin.elections.noResults": "Hakuna uchaguzi uliopatikana",
-  "superAdmin.elections.owner": "Mmiliki",
-  "superAdmin.elections.search": "Tafuta chaguzi...",
-  "superAdmin.elections.status": "Hali",
-  "superAdmin.elections.type": "Aina",
-  "superAdmin.elections.voters": "Wapiga Kura",
-  "superAdmin.error.accessDenied": "Huna ufikiaji wa msimamizi mkuu",
-  "superAdmin.error.loadFailed": "Imeshindwa kupakia data ya msimamizi mkuu",
-  "superAdmin.summary.archivedElections": "Iliyohifadhiwa",
-  "superAdmin.summary.completedElections": "Zilizokamilika",
-  "superAdmin.summary.openElections": "Fungua",
-  "superAdmin.summary.totalElections": "Jumla ya Uchaguzi",
-  "superAdmin.summary.upcomingElections": "Zijazo",
-  "superAdmin.title": "Dashibodi ya Msimamizi Mkuu"
+  "superAdmin.detail.electionMode": {
+    "t": "Hali ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.locations": {
+    "t": "Maeneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.numberToElect": {
+    "t": "Idadi ya Kuchagua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.owners": {
+    "t": "Wasimamizi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.percentComplete": {
+    "t": "Asilimia Iliyokamilika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.title": {
+    "t": "Maelezo ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.ballots": {
+    "t": "Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.convenor": {
+    "t": "Mwamuzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.date": {
+    "t": "Tarehe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterStatus": {
+    "t": "Chuja kwa hali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterType": {
+    "t": "Chuja kwa aina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.name": {
+    "t": "Jina la Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.noResults": {
+    "t": "Hakuna uchaguzi uliopatikana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.owner": {
+    "t": "Mmiliki",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.search": {
+    "t": "Tafuta chaguzi...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.status": {
+    "t": "Hali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.type": {
+    "t": "Aina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.voters": {
+    "t": "Wapiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.accessDenied": {
+    "t": "Huna ufikiaji wa msimamizi mkuu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.loadFailed": {
+    "t": "Imeshindwa kupakia data ya msimamizi mkuu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.archivedElections": {
+    "t": "Iliyohifadhiwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.completedElections": {
+    "t": "Zilizokamilika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.openElections": {
+    "t": "Fungua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.totalElections": {
+    "t": "Jumla ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.upcomingElections": {
+    "t": "Zijazo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.title": {
+    "t": "Dashibodi ya Msimamizi Mkuu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

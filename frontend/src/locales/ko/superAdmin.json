@@ -1,28 +1,132 @@
 {
-  "superAdmin.detail.electionMode": "선거 모드",
-  "superAdmin.detail.locations": "위치",
-  "superAdmin.detail.numberToElect": "선출 인원 수",
-  "superAdmin.detail.owners": "관리자",
-  "superAdmin.detail.percentComplete": "완료 비율",
-  "superAdmin.detail.title": "선거 세부 정보",
-  "superAdmin.elections.ballots": "투표 용지",
-  "superAdmin.elections.convenor": "진행자",
-  "superAdmin.elections.date": "날짜",
-  "superAdmin.elections.filterStatus": "상태로 필터링",
-  "superAdmin.elections.filterType": "유형으로 필터링",
-  "superAdmin.elections.name": "선거 이름",
-  "superAdmin.elections.noResults": "선거를 찾을 수 없습니다",
-  "superAdmin.elections.owner": "소유자",
-  "superAdmin.elections.search": "선거 검색...",
-  "superAdmin.elections.status": "상태",
-  "superAdmin.elections.type": "유형",
-  "superAdmin.elections.voters": "투표자",
-  "superAdmin.error.accessDenied": "슈퍼 관리자 권한이 없습니다",
-  "superAdmin.error.loadFailed": "슈퍼 관리자 데이터 로드에 실패했습니다",
-  "superAdmin.summary.archivedElections": "보관됨",
-  "superAdmin.summary.completedElections": "완료",
-  "superAdmin.summary.openElections": "열림",
-  "superAdmin.summary.totalElections": "전체 선거",
-  "superAdmin.summary.upcomingElections": "예정",
-  "superAdmin.title": "슈퍼 관리자 대시보드"
+  "superAdmin.detail.electionMode": {
+    "t": "선거 모드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.locations": {
+    "t": "위치",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.numberToElect": {
+    "t": "선출 인원 수",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.owners": {
+    "t": "관리자",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.percentComplete": {
+    "t": "완료 비율",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.title": {
+    "t": "선거 세부 정보",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.ballots": {
+    "t": "투표 용지",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.convenor": {
+    "t": "진행자",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.date": {
+    "t": "날짜",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterStatus": {
+    "t": "상태로 필터링",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterType": {
+    "t": "유형으로 필터링",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.name": {
+    "t": "선거 이름",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.noResults": {
+    "t": "선거를 찾을 수 없습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.owner": {
+    "t": "소유자",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.search": {
+    "t": "선거 검색...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.status": {
+    "t": "상태",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.type": {
+    "t": "유형",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.voters": {
+    "t": "투표자",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.accessDenied": {
+    "t": "슈퍼 관리자 권한이 없습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.loadFailed": {
+    "t": "슈퍼 관리자 데이터 로드에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.archivedElections": {
+    "t": "보관됨",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.completedElections": {
+    "t": "완료",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.openElections": {
+    "t": "열림",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.totalElections": {
+    "t": "전체 선거",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.upcomingElections": {
+    "t": "예정",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.title": {
+    "t": "슈퍼 관리자 대시보드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

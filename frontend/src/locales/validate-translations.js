@@ -3,6 +3,11 @@
 import { readFileSync, readdirSync, statSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
+import { isRichEntry } from "./richEntries.js";
+
+const SOURCE_STATUS = "source";
+const TRANSLATION_STATUSES = new Set(["ai", "human", "approved"]);
+const ISO_UTC_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -27,6 +32,9 @@ function getAllJsonFiles(dir, baseDir = dir) {
     const stat = statSync(fullPath);
 
     if (stat.isDirectory()) {
+      if (entry === "bundled" || entry === "node_modules") {
+        continue;
+      }
       files.push(...getAllJsonFiles(fullPath, baseDir));
     } else if (entry.endsWith(".json") && entry !== "package.json") {
       const relativePath = fullPath
@@ -62,6 +70,7 @@ function getAllKeys(obj, prefix = "") {
       value &&
       typeof value === "object" &&
       !Array.isArray(value) &&
+      !isRichEntry(value) &&
       Object.keys(value).length > 0
     ) {
       const nestedKeys = getAllKeys(value, fullKey);
@@ -74,24 +83,21 @@ function getAllKeys(obj, prefix = "") {
   return keys;
 }
 
-function getValue(obj, path) {
-  if (Object.hasOwn(obj, path)) {
-    return obj[path];
-  }
-  return path.split(".").reduce((current, key) => current?.[key], obj);
-}
-
 function checkPrefixCollisions(keys, filePath) {
   const errors = [];
   const sorted = [...new Set(keys)].sort();
 
   for (let i = 0; i < sorted.length; i++) {
     const prefix = `${sorted[i]}.`;
-    for (let j = i + 1; j < sorted.length && sorted[j].startsWith(prefix); j++) {
+    for (
+      let j = i + 1;
+      j < sorted.length && sorted[j].startsWith(prefix);
+      j++
+    ) {
       errors.push(
         new ValidationError(
           "PREFIX_COLLISION",
-          `Key "${sorted[i]}" in ${filePath} is both a leaf string and a parent of "${sorted[j]}". Rename one of them — flatToNested cannot nest a child under a string.`,
+          `Key "${sorted[i]}" in ${filePath} is both a leaf and a parent of "${sorted[j]}". Rename one of them — flatToNested cannot nest a child under a leaf.`,
           { filePath, key: sorted[i], child: sorted[j] },
         ),
       );
@@ -122,32 +128,140 @@ function checkDuplicateKeys(keys, filePath) {
   return errors;
 }
 
-function checkEmptyValues(data, filePath, isTranslationFile = true) {
+function isIsoUtcTimestamp(value) {
+  return (
+    typeof value === "string" &&
+    ISO_UTC_TIMESTAMP.test(value) &&
+    !Number.isNaN(Date.parse(value))
+  );
+}
+
+function allowedStatuses(locale) {
+  if (locale === null || locale === "en") {
+    return new Set([SOURCE_STATUS]);
+  }
+  return TRANSLATION_STATUSES;
+}
+
+function statusExpectation(locale) {
+  if (locale === null || locale === "en") {
+    return "source";
+  }
+  return "ai, human, or approved";
+}
+
+function checkMessageLeaf(value, key, filePath, locale) {
   const errors = [];
-  const keys = getAllKeys(data);
 
-  for (const key of keys) {
-    const value = getValue(data, key);
+  if (typeof value === "string") {
+    errors.push(
+      new ValidationError(
+        "BARE_STRING",
+        `Key "${key}" in ${filePath} is a bare string. Locale leaves must be { t, s, w }.`,
+        { filePath, key },
+      ),
+    );
+    return errors;
+  }
 
-    if (isTranslationFile && typeof value !== "string") {
+  if (!isRichEntry(value)) {
+    errors.push(
+      new ValidationError(
+        "INVALID_VALUE_TYPE",
+        `Key "${key}" in ${filePath} must be a { t, s, w } object`,
+        { filePath, key, valueType: value === null ? "null" : typeof value },
+      ),
+    );
+    return errors;
+  }
+
+  if (value.t.trim() === "") {
+    errors.push(
+      new ValidationError(
+        "EMPTY_VALUE",
+        `Key "${key}" in ${filePath} has empty text`,
+        { filePath, key },
+      ),
+    );
+  }
+
+  if (typeof value.s !== "string" || !allowedStatuses(locale).has(value.s)) {
+    errors.push(
+      new ValidationError(
+        "INVALID_STATUS",
+        `Key "${key}" in ${filePath} has status "${value.s}"; expected ${statusExpectation(locale)}.`,
+        { filePath, key, status: value.s },
+      ),
+    );
+  }
+
+  if (!isIsoUtcTimestamp(value.w)) {
+    errors.push(
+      new ValidationError(
+        "INVALID_TIMESTAMP",
+        `Key "${key}" in ${filePath} has w "${value.w}" which is not an ISO-8601 UTC timestamp.`,
+        { filePath, key, w: value.w },
+      ),
+    );
+  }
+
+  return errors;
+}
+
+function isConfigValue(value) {
+  return (
+    Array.isArray(value) ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  );
+}
+
+function checkMessageLeaves(data, filePath, locale, allowConfigValues) {
+  const errors = [];
+
+  function walk(obj, prefix) {
+    for (const [key, value] of Object.entries(obj)) {
+      const fullKey = prefix ? `${prefix}.${key}` : key;
+
+      if (isRichEntry(value) || typeof value === "string") {
+        errors.push(...checkMessageLeaf(value, fullKey, filePath, locale));
+        continue;
+      }
+
+      if (
+        value &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        Object.keys(value).length > 0
+      ) {
+        walk(value, fullKey);
+        continue;
+      }
+
+      if (allowConfigValues && isConfigValue(value)) {
+        continue;
+      }
+
       errors.push(
         new ValidationError(
           "INVALID_VALUE_TYPE",
-          `Key "${key}" in ${filePath} has non-string value: ${typeof value}`,
-          { filePath, key, valueType: typeof value },
-        ),
-      );
-    } else if (typeof value === "string" && value.trim() === "") {
-      errors.push(
-        new ValidationError(
-          "EMPTY_VALUE",
-          `Key "${key}" in ${filePath} has empty value`,
-          { filePath, key },
+          `Key "${fullKey}" in ${filePath} must be a { t, s, w } object`,
+          {
+            filePath,
+            key: fullKey,
+            valueType:
+              value === null
+                ? "null"
+                : Array.isArray(value)
+                  ? "array"
+                  : typeof value,
+          },
         ),
       );
     }
   }
 
+  walk(data, "");
   return errors;
 }
 
@@ -235,7 +349,7 @@ function checkPrefixCollisionsInLocale(localeFiles) {
         errors.push(
           new ValidationError(
             "PREFIX_COLLISION",
-            `Key "${sorted[i]}" in locale "${locale}" is both a leaf string and a parent of "${sorted[j]}". Rename one of them — flatToNested cannot nest a child under a string.`,
+            `Key "${sorted[i]}" in locale "${locale}" is both a leaf and a parent of "${sorted[j]}". Rename one of them — flatToNested cannot nest a child under a leaf.`,
             { locale, key: sorted[i], child: sorted[j] },
           ),
         );
@@ -305,7 +419,7 @@ function validateRootFiles(rootFiles) {
 
     errors.push(...checkDuplicateKeys(keys, file));
     errors.push(...checkPrefixCollisions(keys, file));
-    errors.push(...checkEmptyValues(data, file, !isConfigFile));
+    errors.push(...checkMessageLeaves(data, file, null, isConfigFile));
   }
 
   return errors;
@@ -320,7 +434,7 @@ function validateLocaleFiles(localeFiles) {
       const keys = getAllKeys(data);
 
       errors.push(...checkDuplicateKeys(keys, original));
-      errors.push(...checkEmptyValues(data, original));
+      errors.push(...checkMessageLeaves(data, original, _locale, false));
     }
   }
 

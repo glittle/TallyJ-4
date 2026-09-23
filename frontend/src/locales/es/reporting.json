@@ -1,194 +1,962 @@
 {
-  "reporting.advancedFilters": "Filtros Avanzados",
-  "reporting.allCanReceive": "Personas que pueden recibir votos",
-  "reporting.applyFilters": "Aplicar Filtros",
-  "reporting.area": "Área",
-  "reporting.averageVotesPerBallot": "Promedio de Votos por Boleta",
-  "reporting.bahaiId": "ID Bahá'í",
-  "reporting.ballotCode": "Boleta",
-  "reporting.ballotCount": "Cantidad de Boletas",
-  "reporting.ballotId": "ID de Boleta",
-  "reporting.ballotLengthDistribution": "Distribución de Longitud de Boletas",
-  "reporting.ballotReport": "Informe de Boletas",
-  "reporting.ballotReports": "Informes de Boletas",
-  "reporting.ballotsByMethod": "Boletas por Método de Votación",
-  "reporting.ballotsCast": "Boletas Emitidas",
-  "reporting.ballotsEntered": "Boletas Ingresadas",
-  "reporting.calledIn": "Llamadas",
-  "reporting.canReceiveVotes": "Puede Recibir Votos",
-  "reporting.canVote": "Puede Votar",
-  "reporting.candidate": "Candidato",
-  "reporting.candidateName": "Nombre del Candidato",
-  "reporting.candidatePerformance": "Desempeño de Candidatos",
-  "reporting.candidateVotes": "Votos por Candidato",
-  "reporting.candidates": "Candidatos",
-  "reporting.category": "Categoría",
-  "reporting.change": "Cambiar",
-  "reporting.charts": "Gráficos",
-  "reporting.clearFilters": "Limpiar Filtros",
-  "reporting.comparisonSummary": "Resumen de Comparación",
-  "reporting.configureReport": "Configurar Informe",
-  "reporting.contender": "Contendiente",
-  "reporting.convenor": "Convocante",
-  "reporting.count": "Conteo",
-  "reporting.cumulativeTurnout": "Participación Acumulada",
-  "reporting.customReport": "Informe Personalizado",
-  "reporting.date": "Fecha",
-  "reporting.dateOfElection": "Fecha de la Elección",
-  "reporting.dateRange": "Rango de Fechas",
-  "reporting.demographicBreakdown": "Desglose Demográfico",
-  "reporting.description": "Descripción",
-  "reporting.detailedStatistics": "Estadísticas Detalladas",
-  "reporting.droppedOff": "Entregadas",
-  "reporting.earlyVoting": "Votación Anticipada",
-  "reporting.earlyVotingPercentage": "% Votación Anticipada",
-  "reporting.elected": "Elegido",
-  "reporting.electedCandidates": "Candidatos Elegidos",
-  "reporting.electedPersons": "Elegidos",
-  "reporting.election": "Elección",
-  "reporting.electionDate": "Fecha de la Elección",
-  "reporting.electionDayVoting": "Votación el Día de la Elección",
-  "reporting.electionDetails": "Detalles de la Elección",
-  "reporting.electionName": "Nombre de la Elección",
-  "reporting.electionOverview": "Resumen de la Elección",
-  "reporting.electionSummary": "Resumen de la Elección",
-  "reporting.electionType": "Tipo de Elección",
-  "reporting.eligibilityReason": "Razón de Elegibilidad",
-  "reporting.eliminated": "Eliminado",
-  "reporting.email": "Correo Electrónico",
-  "reporting.endDate": "Fecha de Fin",
-  "reporting.enterCandidateName": "Ingrese el Nombre del Candidato",
-  "reporting.enterDescription": "Ingrese la Descripción",
-  "reporting.enterReportName": "Ingrese el Nombre del Informe",
-  "reporting.error": "Error al cargar el informe",
-  "reporting.exportCSV": "Exportar CSV",
-  "reporting.exportExcel": "Exportar Excel",
-  "reporting.exportFormats": "Formatos de Exportación",
-  "reporting.exportPDF": "Exportar PDF",
-  "reporting.extra": "Extra",
-  "reporting.extraCandidates": "Candidatos Adicionales",
-  "reporting.firstChoice": "% Primera Opción",
-  "reporting.firstName": "Nombre",
-  "reporting.firstTimeVoters": "Votantes Primerizos",
-  "reporting.flags": "Banderas",
-  "reporting.generateComparison": "Generar Comparación",
-  "reporting.generateCustomReport": "Generar Informe Personalizado",
-  "reporting.generateReport": "Generar Informe",
-  "reporting.groupN": "Grupo {n}",
-  "reporting.hasSignedInEmail": "Registrado (Correo)",
-  "reporting.hasSignedInPhone": "Registrado (Teléfono)",
-  "reporting.historicalComparison": "Comparación Histórica",
-  "reporting.imported": "Importadas",
-  "reporting.inPerson": "En Persona",
-  "reporting.inPersonVoters": "Votantes Presenciales",
-  "reporting.includeSections": "Incluir Secciones",
-  "reporting.lastName": "Apellido",
-  "reporting.loading": "Cargando informe...",
-  "reporting.location": "Ubicación",
-  "reporting.locationReport": "Informe por Ubicación",
-  "reporting.locationStatistics": "Estadísticas por Ubicación",
-  "reporting.locations": "Ubicaciones",
-  "reporting.mailedIn": "Enviadas por Correo",
-  "reporting.matchingNames": "Nombres Coincidentes en Resultados",
-  "reporting.maxVotesOnBallot": "Máximo de Votos en Boleta",
-  "reporting.metricsToCompare": "Métricas a Comparar",
-  "reporting.minVotesOnBallot": "Mínimo de Votos en Boleta",
-  "reporting.name": "Nombre",
-  "reporting.no": "No",
-  "reporting.noBallots": "No se encontraron boletas para este filtro.",
-  "reporting.noChanges": "No se encontraron registros de personas cambiadas.",
-  "reporting.noDuplicates": "No se encontraron boletas duplicadas.",
-  "reporting.noEmails": "No se encontraron registros de correo/teléfono.",
-  "reporting.noFlags": "No hay banderas de asistencia definidas.",
-  "reporting.noNonEligible": "No se encontraron personas con estado de elegibilidad.",
-  "reporting.noSpoiledVotes": "No se encontraron votos anulados.",
-  "reporting.numBallots": "Número de Boletas",
-  "reporting.numEligibleToVote": "Número Elegible para Votar",
-  "reporting.online": "En Línea",
-  "reporting.onlineKiosk": "En Línea/Kiosco",
-  "reporting.onlineStatus": "Estado",
-  "reporting.onlineVoters": "Votantes en Línea",
-  "reporting.other": "Otro",
-  "reporting.otherInfo": "Otra Información",
-  "reporting.otherLastNames": "Otros Apellidos",
-  "reporting.otherNames": "Otros Nombres",
-  "reporting.overallTurnout": "Participación General",
-  "reporting.overallTurnoutSummary": "Resumen de Participación General",
-  "reporting.participationRates": "Tasas de Participación",
-  "reporting.percentParticipation": "Participación",
-  "reporting.percentage": "Porcentaje",
-  "reporting.performance": "Desempeño",
-  "reporting.phone": "Teléfono",
-  "reporting.positionsToElect": "Posiciones a Elegir",
-  "reporting.print": "Imprimir",
-  "reporting.printHint": "Algunos navegadores, como Chrome, pueden crear una copia PDF del informe al imprimir.",
-  "reporting.rank": "Clasificación",
-  "reporting.reason": "Razón",
-  "reporting.registeredVoters": "Votantes Registrados",
-  "reporting.registrationLog": "Registro de Registro",
-  "reporting.registrationTime": "Hora de Registro",
-  "reporting.reportGenerated": "Informe generado exitosamente",
-  "reporting.reportGenerationError": "Error al generar el informe",
-  "reporting.reportName": "Nombre del Informe",
-  "reporting.returningVoters": "Votantes Recurrentes",
-  "reporting.section": "Sección",
-  "reporting.selectElections": "Seleccionar Elecciones",
-  "reporting.selectElectionsToCompare": "Seleccionar Elecciones para Comparar",
-  "reporting.selectLocations": "Seleccionar Ubicaciones",
-  "reporting.selectMultipleElections": "Seleccionar Múltiples Elecciones",
-  "reporting.selectReport": "Seleccionar Tipo de Informe",
-  "reporting.selectReportType": "Elija un informe para generar",
-  "reporting.selectSortBy": "Seleccionar Orden",
-  "reporting.sortBy": "Ordenar Por",
-  "reporting.spoiledBallots": "Boletas Anuladas",
-  "reporting.spoiledVotes": "Votos Anulados",
-  "reporting.startDate": "Fecha de Inicio",
-  "reporting.statistics": "Estadísticas",
-  "reporting.status": "Estado",
-  "reporting.sumOfEnvelopesCollected": "Total de Boletas Recogidas (incl. recuento manual)",
-  "reporting.summary": "Resumen",
-  "reporting.summaryReport": "Resumen de la Elección",
-  "reporting.summaryStats": "Estadísticas Resumidas",
-  "reporting.teller1": "Contador 1",
-  "reporting.teller2": "Contador 2",
-  "reporting.tieGroup": "Grupo de Empate {group}",
-  "reporting.tieNote": "* Conteo de desempate mostrado después de /",
-  "reporting.ties": "Empates",
-  "reporting.timeBasedTurnout": "Participación por Tiempo",
-  "reporting.timePeriod": "Período de Tiempo",
-  "reporting.title": "Informes Electorales",
-  "reporting.to": "a",
-  "reporting.topCandidates": "Principales Candidatos",
-  "reporting.total": "Total",
-  "reporting.totalBallots": "Total de Boletas",
-  "reporting.totalBallotsCast": "Total de Boletas Emitidas",
-  "reporting.totalEligible": "Elegibles",
-  "reporting.totalVoters": "Total de Votantes",
-  "reporting.totalVotersHeader": "Total de Votantes",
-  "reporting.totalVotes": "Total de Votos",
-  "reporting.turnout": "Participación",
-  "reporting.turnoutAnalysis": "Análisis de Participación",
-  "reporting.turnoutByLocation": "Participación por Ubicación",
-  "reporting.turnoutOverTime": "Participación a lo Largo del Tiempo",
-  "reporting.turnoutPercentage": "% Participación",
-  "reporting.turnoutRange": "Rango de Participación",
-  "reporting.validBallots": "Boletas Válidas",
-  "reporting.value": "Valor",
-  "reporting.voteDistribution": "Distribución de Votos",
-  "reporting.votePercentage": "% de Votos",
-  "reporting.voteRange": "Rango de Votos",
-  "reporting.voteTime": "Hora del Voto",
-  "reporting.voted": "Votó",
-  "reporting.voterName": "Nombre del Votante",
-  "reporting.voterReport": "Informe de Votantes",
-  "reporting.voterReports": "Informes de Votantes",
-  "reporting.voterTurnout": "Participación de Votantes",
-  "reporting.votes": "Votos",
-  "reporting.votesOnBallot": "Votos en esta boleta",
-  "reporting.votesPerBallot": "Votos por Boleta",
-  "reporting.votingMethod": "Método de Votación",
-  "reporting.whenEmail": "Correo Enviado",
-  "reporting.whenPhone": "Teléfono Enviado",
-  "reporting.whenStatus": "Cuándo",
-  "reporting.yes": "Sí"
+  "reporting.advancedFilters": {
+    "t": "Filtros Avanzados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.allCanReceive": {
+    "t": "Personas que pueden recibir votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.applyFilters": {
+    "t": "Aplicar Filtros",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.area": {
+    "t": "Área",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.averageVotesPerBallot": {
+    "t": "Promedio de Votos por Boleta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.bahaiId": {
+    "t": "ID Bahá'í",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCode": {
+    "t": "Boleta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCount": {
+    "t": "Cantidad de Boletas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotId": {
+    "t": "ID de Boleta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotLengthDistribution": {
+    "t": "Distribución de Longitud de Boletas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReport": {
+    "t": "Informe de Boletas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReports": {
+    "t": "Informes de Boletas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsByMethod": {
+    "t": "Boletas por Método de Votación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsCast": {
+    "t": "Boletas Emitidas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsEntered": {
+    "t": "Boletas Ingresadas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.calledIn": {
+    "t": "Llamadas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canReceiveVotes": {
+    "t": "Puede Recibir Votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canVote": {
+    "t": "Puede Votar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidate": {
+    "t": "Candidato",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateName": {
+    "t": "Nombre del Candidato",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidatePerformance": {
+    "t": "Desempeño de Candidatos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateVotes": {
+    "t": "Votos por Candidato",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidates": {
+    "t": "Candidatos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.category": {
+    "t": "Categoría",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.change": {
+    "t": "Cambiar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.charts": {
+    "t": "Gráficos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.clearFilters": {
+    "t": "Limpiar Filtros",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.comparisonSummary": {
+    "t": "Resumen de Comparación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.configureReport": {
+    "t": "Configurar Informe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.contender": {
+    "t": "Contendiente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.convenor": {
+    "t": "Convocante",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.count": {
+    "t": "Conteo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.cumulativeTurnout": {
+    "t": "Participación Acumulada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.customReport": {
+    "t": "Informe Personalizado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.date": {
+    "t": "Fecha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateOfElection": {
+    "t": "Fecha de la Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateRange": {
+    "t": "Rango de Fechas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.demographicBreakdown": {
+    "t": "Desglose Demográfico",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.description": {
+    "t": "Descripción",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.detailedStatistics": {
+    "t": "Estadísticas Detalladas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.droppedOff": {
+    "t": "Entregadas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVoting": {
+    "t": "Votación Anticipada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVotingPercentage": {
+    "t": "% Votación Anticipada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.elected": {
+    "t": "Elegido",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedCandidates": {
+    "t": "Candidatos Elegidos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedPersons": {
+    "t": "Elegidos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.election": {
+    "t": "Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDate": {
+    "t": "Fecha de la Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDayVoting": {
+    "t": "Votación el Día de la Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDetails": {
+    "t": "Detalles de la Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionName": {
+    "t": "Nombre de la Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionOverview": {
+    "t": "Resumen de la Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionSummary": {
+    "t": "Resumen de la Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionType": {
+    "t": "Tipo de Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eligibilityReason": {
+    "t": "Razón de Elegibilidad",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eliminated": {
+    "t": "Eliminado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.email": {
+    "t": "Correo Electrónico",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.endDate": {
+    "t": "Fecha de Fin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterCandidateName": {
+    "t": "Ingrese el Nombre del Candidato",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterDescription": {
+    "t": "Ingrese la Descripción",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterReportName": {
+    "t": "Ingrese el Nombre del Informe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.error": {
+    "t": "Error al cargar el informe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportCSV": {
+    "t": "Exportar CSV",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportExcel": {
+    "t": "Exportar Excel",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportFormats": {
+    "t": "Formatos de Exportación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportPDF": {
+    "t": "Exportar PDF",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extra": {
+    "t": "Extra",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extraCandidates": {
+    "t": "Candidatos Adicionales",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstChoice": {
+    "t": "% Primera Opción",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstName": {
+    "t": "Nombre",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstTimeVoters": {
+    "t": "Votantes Primerizos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.flags": {
+    "t": "Banderas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateComparison": {
+    "t": "Generar Comparación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateCustomReport": {
+    "t": "Generar Informe Personalizado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateReport": {
+    "t": "Generar Informe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.groupN": {
+    "t": "Grupo {n}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInEmail": {
+    "t": "Registrado (Correo)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInPhone": {
+    "t": "Registrado (Teléfono)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.historicalComparison": {
+    "t": "Comparación Histórica",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.imported": {
+    "t": "Importadas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPerson": {
+    "t": "En Persona",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPersonVoters": {
+    "t": "Votantes Presenciales",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.includeSections": {
+    "t": "Incluir Secciones",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.lastName": {
+    "t": "Apellido",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.loading": {
+    "t": "Cargando informe...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.location": {
+    "t": "Ubicación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationReport": {
+    "t": "Informe por Ubicación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationStatistics": {
+    "t": "Estadísticas por Ubicación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locations": {
+    "t": "Ubicaciones",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.mailedIn": {
+    "t": "Enviadas por Correo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.matchingNames": {
+    "t": "Nombres Coincidentes en Resultados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.maxVotesOnBallot": {
+    "t": "Máximo de Votos en Boleta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.metricsToCompare": {
+    "t": "Métricas a Comparar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.minVotesOnBallot": {
+    "t": "Mínimo de Votos en Boleta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.name": {
+    "t": "Nombre",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.no": {
+    "t": "No",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noBallots": {
+    "t": "No se encontraron boletas para este filtro.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noChanges": {
+    "t": "No se encontraron registros de personas cambiadas.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noDuplicates": {
+    "t": "No se encontraron boletas duplicadas.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noEmails": {
+    "t": "No se encontraron registros de correo/teléfono.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noFlags": {
+    "t": "No hay banderas de asistencia definidas.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noNonEligible": {
+    "t": "No se encontraron personas con estado de elegibilidad.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noSpoiledVotes": {
+    "t": "No se encontraron votos anulados.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numBallots": {
+    "t": "Número de Boletas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numEligibleToVote": {
+    "t": "Número Elegible para Votar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.online": {
+    "t": "En Línea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineKiosk": {
+    "t": "En Línea/Kiosco",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineStatus": {
+    "t": "Estado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineVoters": {
+    "t": "Votantes en Línea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.other": {
+    "t": "Otro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherInfo": {
+    "t": "Otra Información",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherLastNames": {
+    "t": "Otros Apellidos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherNames": {
+    "t": "Otros Nombres",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnout": {
+    "t": "Participación General",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnoutSummary": {
+    "t": "Resumen de Participación General",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.participationRates": {
+    "t": "Tasas de Participación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentParticipation": {
+    "t": "Participación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentage": {
+    "t": "Porcentaje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.performance": {
+    "t": "Desempeño",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.phone": {
+    "t": "Teléfono",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.positionsToElect": {
+    "t": "Posiciones a Elegir",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.print": {
+    "t": "Imprimir",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.printHint": {
+    "t": "Algunos navegadores, como Chrome, pueden crear una copia PDF del informe al imprimir.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.rank": {
+    "t": "Clasificación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reason": {
+    "t": "Razón",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registeredVoters": {
+    "t": "Votantes Registrados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationLog": {
+    "t": "Registro de Registro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationTime": {
+    "t": "Hora de Registro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerated": {
+    "t": "Informe generado exitosamente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerationError": {
+    "t": "Error al generar el informe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportName": {
+    "t": "Nombre del Informe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.returningVoters": {
+    "t": "Votantes Recurrentes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.section": {
+    "t": "Sección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElections": {
+    "t": "Seleccionar Elecciones",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElectionsToCompare": {
+    "t": "Seleccionar Elecciones para Comparar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectLocations": {
+    "t": "Seleccionar Ubicaciones",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectMultipleElections": {
+    "t": "Seleccionar Múltiples Elecciones",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReport": {
+    "t": "Seleccionar Tipo de Informe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReportType": {
+    "t": "Elija un informe para generar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectSortBy": {
+    "t": "Seleccionar Orden",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sortBy": {
+    "t": "Ordenar Por",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledBallots": {
+    "t": "Boletas Anuladas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledVotes": {
+    "t": "Votos Anulados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.startDate": {
+    "t": "Fecha de Inicio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.statistics": {
+    "t": "Estadísticas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.status": {
+    "t": "Estado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sumOfEnvelopesCollected": {
+    "t": "Total de Boletas Recogidas (incl. recuento manual)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summary": {
+    "t": "Resumen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryReport": {
+    "t": "Resumen de la Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryStats": {
+    "t": "Estadísticas Resumidas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller1": {
+    "t": "Contador 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller2": {
+    "t": "Contador 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieGroup": {
+    "t": "Grupo de Empate {group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieNote": {
+    "t": "* Conteo de desempate mostrado después de /",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ties": {
+    "t": "Empates",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timeBasedTurnout": {
+    "t": "Participación por Tiempo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timePeriod": {
+    "t": "Período de Tiempo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.title": {
+    "t": "Informes Electorales",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.to": {
+    "t": "a",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.topCandidates": {
+    "t": "Principales Candidatos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.total": {
+    "t": "Total",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallots": {
+    "t": "Total de Boletas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallotsCast": {
+    "t": "Total de Boletas Emitidas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalEligible": {
+    "t": "Elegibles",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVoters": {
+    "t": "Total de Votantes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotersHeader": {
+    "t": "Total de Votantes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotes": {
+    "t": "Total de Votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnout": {
+    "t": "Participación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutAnalysis": {
+    "t": "Análisis de Participación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutByLocation": {
+    "t": "Participación por Ubicación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutOverTime": {
+    "t": "Participación a lo Largo del Tiempo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutPercentage": {
+    "t": "% Participación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutRange": {
+    "t": "Rango de Participación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.validBallots": {
+    "t": "Boletas Válidas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.value": {
+    "t": "Valor",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteDistribution": {
+    "t": "Distribución de Votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votePercentage": {
+    "t": "% de Votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteRange": {
+    "t": "Rango de Votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteTime": {
+    "t": "Hora del Voto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voted": {
+    "t": "Votó",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterName": {
+    "t": "Nombre del Votante",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReport": {
+    "t": "Informe de Votantes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReports": {
+    "t": "Informes de Votantes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterTurnout": {
+    "t": "Participación de Votantes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votes": {
+    "t": "Votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesOnBallot": {
+    "t": "Votos en esta boleta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesPerBallot": {
+    "t": "Votos por Boleta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votingMethod": {
+    "t": "Método de Votación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenEmail": {
+    "t": "Correo Enviado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenPhone": {
+    "t": "Teléfono Enviado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenStatus": {
+    "t": "Cuándo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.yes": {
+    "t": "Sí",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

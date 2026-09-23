@@ -1,74 +1,362 @@
 {
-  "ballots.addBallot": "Ajouter un bulletin",
-  "ballots.addNewPerson": "Ajouter une nouvelle personne",
-  "ballots.addVote": "Ajouter une voix",
-  "ballots.cacheLoadError": "Échec du chargement des candidats",
-  "ballots.cacheLoading": "Chargement des candidats...",
-  "ballots.candidate": "Candidat",
-  "ballots.candidateRequired": "Le candidat est requis",
-  "ballots.cdnImport.ballotsCreated": "Bulletins créés",
-  "ballots.cdnImport.button": "Importer les bulletins du CDN",
-  "ballots.cdnImport.description": "Téléchargez un fichier XML exporté du CDN (Canadian National Database) pour importer les bulletins et leurs votes correspondants dans cette élection. Le fichier sera analysé et des bulletins seront créés pour chaque entrée valide, accompagnés de tous les enregistrements de vote associés.",
-  "ballots.cdnImport.errors": "Erreurs",
-  "ballots.cdnImport.failed": "L'importation a échoué",
-  "ballots.cdnImport.importing": "Importation en cours...",
-  "ballots.cdnImport.skippedRows": "Lignes ignorées",
-  "ballots.cdnImport.success": "L'importation a été complétée avec succès",
-  "ballots.cdnImport.title": "Importer les bulletins du CDN",
-  "ballots.cdnImport.totalRows": "Nombre total de lignes traitées",
-  "ballots.cdnImport.uploadPrompt": "Cliquez ou glissez un fichier XML ici pour le télécharger",
-  "ballots.cdnImport.votesCreated": "Votes créés",
-  "ballots.cdnImport.warnings": "Avertissements",
-  "ballots.cdnImport.xmlOnly": "Seuls les fichiers XML sont acceptés",
-  "ballots.checkSpelling": "Vérifiez l'orthographe ou essayez un nom différent",
-  "ballots.clearAll": "Tout effacer",
-  "ballots.code": "Code du bulletin",
-  "ballots.computer": "Ordinateur",
-  "ballots.computerRequired": "Le code de l'ordinateur est requis",
-  "ballots.createSuccess": "Bulletin créé avec succès",
-  "ballots.deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce bulletin ?",
-  "ballots.deleteError": "Échec de la suppression du bulletin",
-  "ballots.deleteSuccess": "Bulletin supprimé avec succès",
-  "ballots.deleteVoteConfirm": "Êtes-vous sûr de vouloir supprimer cette voix ?",
-  "ballots.deleteVoteError": "Échec de la suppression de la voix",
-  "ballots.deleteVoteSuccess": "Voix supprimée avec succès",
-  "ballots.duplicateWarning": "Doublon : Cette personne est déjà sélectionnée",
-  "ballots.enterVotes": "Saisir les voix",
-  "ballots.entry": "Saisie du bulletin - {code}",
-  "ballots.entryPage": "Saisie du bulletin",
-  "ballots.ineligible": "Inéligible",
-  "ballots.loadError": "Échec du chargement des bulletins",
-  "ballots.location": "Lieu",
-  "ballots.locationRequired": "Le lieu est requis",
-  "ballots.management": "Gestion des bulletins",
-  "ballots.noMatchesFound": "Aucun résultat trouvé",
-  "ballots.personUpdated": "{name} a été mis à jour",
-  "ballots.position": "Position",
-  "ballots.positionRequired": "La position est requise",
-  "ballots.saveBallot": "Enregistrer le bulletin",
-  "ballots.saveError": "Échec de l'enregistrement du bulletin",
-  "ballots.status": "Statut",
-  "ballots.statusValue.Dup": "Dupliqué",
-  "ballots.statusValue.Empty": "Vide",
-  "ballots.statusValue.New": "Nouveau",
-  "ballots.statusValue.Ok": "OK",
-  "ballots.statusValue.Raw": "Brut",
-  "ballots.statusValue.Review": "Réviser",
-  "ballots.statusValue.TooFew": "Trop peu",
-  "ballots.statusValue.TooMany": "Trop",
-  "ballots.statusValue.Verify": "Vérifier",
-  "ballots.teller1": "Scrutateur 1",
-  "ballots.teller2": "Scrutateur 2",
-  "ballots.viewVotes": "Voir les voix",
-  "ballots.voteAddedError": "Échec de l'ajout de la voix",
-  "ballots.voteAddedSuccess": "Voix ajoutée avec succès",
-  "ballots.voteCount": "Voix",
-  "ballots.voteCreateSuccess": "Voix ajoutée avec succès",
-  "ballots.voteRemovedError": "Échec de la suppression de la voix",
-  "ballots.voteRemovedSuccess": "Voix supprimée avec succès",
-  "ballots.voteSaveError": "Échec de l'enregistrement de la voix",
-  "ballots.voteSpoiledSuccess": "Vote ajouté comme nul ({code} – personne inéligible)",
-  "ballots.votes": "Voix - {code}",
-  "ballots.votesEntered": "{count} sur {max} voix saisies",
-  "ballots.votesList": "Liste des voix"
+  "ballots.addBallot": {
+    "t": "Ajouter un bulletin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addNewPerson": {
+    "t": "Ajouter une nouvelle personne",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addVote": {
+    "t": "Ajouter une voix",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoadError": {
+    "t": "Échec du chargement des candidats",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoading": {
+    "t": "Chargement des candidats...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidate": {
+    "t": "Candidat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidateRequired": {
+    "t": "Le candidat est requis",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.ballotsCreated": {
+    "t": "Bulletins créés",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.button": {
+    "t": "Importer les bulletins du CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.description": {
+    "t": "Téléchargez un fichier XML exporté du CDN (Canadian National Database) pour importer les bulletins et leurs votes correspondants dans cette élection. Le fichier sera analysé et des bulletins seront créés pour chaque entrée valide, accompagnés de tous les enregistrements de vote associés.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.errors": {
+    "t": "Erreurs",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.failed": {
+    "t": "L'importation a échoué",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.importing": {
+    "t": "Importation en cours...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.skippedRows": {
+    "t": "Lignes ignorées",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.success": {
+    "t": "L'importation a été complétée avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.title": {
+    "t": "Importer les bulletins du CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.totalRows": {
+    "t": "Nombre total de lignes traitées",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.uploadPrompt": {
+    "t": "Cliquez ou glissez un fichier XML ici pour le télécharger",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.votesCreated": {
+    "t": "Votes créés",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.warnings": {
+    "t": "Avertissements",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.xmlOnly": {
+    "t": "Seuls les fichiers XML sont acceptés",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.checkSpelling": {
+    "t": "Vérifiez l'orthographe ou essayez un nom différent",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.clearAll": {
+    "t": "Tout effacer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.code": {
+    "t": "Code du bulletin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computer": {
+    "t": "Ordinateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computerRequired": {
+    "t": "Le code de l'ordinateur est requis",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.createSuccess": {
+    "t": "Bulletin créé avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteConfirm": {
+    "t": "Êtes-vous sûr de vouloir supprimer ce bulletin ?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteError": {
+    "t": "Échec de la suppression du bulletin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteSuccess": {
+    "t": "Bulletin supprimé avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteConfirm": {
+    "t": "Êtes-vous sûr de vouloir supprimer cette voix ?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteError": {
+    "t": "Échec de la suppression de la voix",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteSuccess": {
+    "t": "Voix supprimée avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.duplicateWarning": {
+    "t": "Doublon : Cette personne est déjà sélectionnée",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.enterVotes": {
+    "t": "Saisir les voix",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entry": {
+    "t": "Saisie du bulletin - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entryPage": {
+    "t": "Saisie du bulletin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.ineligible": {
+    "t": "Inéligible",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.loadError": {
+    "t": "Échec du chargement des bulletins",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.location": {
+    "t": "Lieu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.locationRequired": {
+    "t": "Le lieu est requis",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.management": {
+    "t": "Gestion des bulletins",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.noMatchesFound": {
+    "t": "Aucun résultat trouvé",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.personUpdated": {
+    "t": "{name} a été mis à jour",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.position": {
+    "t": "Position",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.positionRequired": {
+    "t": "La position est requise",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveBallot": {
+    "t": "Enregistrer le bulletin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveError": {
+    "t": "Échec de l'enregistrement du bulletin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.status": {
+    "t": "Statut",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Dup": {
+    "t": "Dupliqué",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Empty": {
+    "t": "Vide",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.New": {
+    "t": "Nouveau",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Ok": {
+    "t": "OK",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Raw": {
+    "t": "Brut",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Review": {
+    "t": "Réviser",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooFew": {
+    "t": "Trop peu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooMany": {
+    "t": "Trop",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Verify": {
+    "t": "Vérifier",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller1": {
+    "t": "Scrutateur 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller2": {
+    "t": "Scrutateur 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.viewVotes": {
+    "t": "Voir les voix",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedError": {
+    "t": "Échec de l'ajout de la voix",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedSuccess": {
+    "t": "Voix ajoutée avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCount": {
+    "t": "Voix",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCreateSuccess": {
+    "t": "Voix ajoutée avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedError": {
+    "t": "Échec de la suppression de la voix",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedSuccess": {
+    "t": "Voix supprimée avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSaveError": {
+    "t": "Échec de l'enregistrement de la voix",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSpoiledSuccess": {
+    "t": "Vote ajouté comme nul ({code} – personne inéligible)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votes": {
+    "t": "Voix - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesEntered": {
+    "t": "{count} sur {max} voix saisies",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesList": {
+    "t": "Liste des voix",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

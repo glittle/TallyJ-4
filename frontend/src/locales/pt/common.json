@@ -1,53 +1,257 @@
 {
-  "common.actionIrreversible": "Esta ação não pode ser desfeita.",
-  "common.actions": "Ações",
-  "common.appName": "ApuraJ",
-  "common.appTitle": "ApuraJ Versão 4",
-  "common.back": "Voltar",
-  "common.badi.monthNames": "Dias Intercalares,Esplendor,Glória,Beleza,Grandeza,Luz,Misericórdia,Palavras,Perfeição,Nomes,Força,Vontade,Conhecimento,Poder,Discurso,Perguntas,Honra,Soberania,Dominio,Sublimidade",
-  "common.cancel": "Cancelar",
-  "common.clear": "Limpar",
-  "common.clearFilters": "Limpar Filtros",
-  "common.close": "Fechar",
-  "common.confirm": "Confirmar",
-  "common.confirmAction": "Tem certeza de que deseja {action}?",
-  "common.confirmActionWithItem": "Tem certeza de que deseja {action} {item}?",
-  "common.confirmDelete": "Tem certeza de que deseja excluir {item}?",
-  "common.copied": "Copiado para a área de transferência",
-  "common.create": "Criar",
-  "common.dangerZone": "Zona de Perigo",
-  "common.dark": "Escuro",
-  "common.delete": "Excluir",
-  "common.deleteSelected": "Excluir Selecionados",
-  "common.edit": "Editar",
-  "common.election": "Eleição",
-  "common.endDate": "Data de Fim",
-  "common.enter": "Inserir",
-  "common.error": "Ocorreu um erro",
-  "common.language": "Idioma",
-  "common.light": "Claro",
-  "common.loading": "Carregando...",
-  "common.logoAlt": "Logo do ApuraJ",
-  "common.next": "Próximo",
-  "common.no": "Não",
-  "common.open": "Abrir",
-  "common.or": "ou",
-  "common.previous": "Anterior",
-  "common.profile": "Perfil",
-  "common.refresh": "Atualizar",
-  "common.save": "Salvar",
-  "common.settings": "Configurações",
-  "common.startDate": "Data de Início",
-  "common.testOnlyLong": "{note} Esta prévia do ApuraJ Versão 4 ainda está em desenvolvimento.{br}Você pode fazer login e experimentar os recursos, mas não deve ser usada para eleições bahá'ís neste momento.{br}Agradecemos seu feedback sobre o novo design enquanto continuamos a melhorar o sistema.",
-  "common.testOnlyLongNote": "Por favor, note:",
-  "common.testOnlyShort": "Esta prévia do ApuraJ Versão 4 ainda está em desenvolvimento. Não deve ser usada para eleições reais neste momento.",
-  "common.theme": "Tema",
-  "common.to": "até",
-  "common.toggleTheme": "Alternar tema",
-  "common.userMenu": "Menu da conta do usuário",
-  "common.versionDisplay": "Versão 4 Beta",
-  "common.view": "Ver",
-  "common.warning": "Aviso",
-  "common.yes": "Sim",
-  "common.goHome": "Início"
+  "common.actionIrreversible": {
+    "t": "Esta ação não pode ser desfeita.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.actions": {
+    "t": "Ações",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appName": {
+    "t": "ApuraJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appTitle": {
+    "t": "ApuraJ Versão 4",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.back": {
+    "t": "Voltar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.badi.monthNames": {
+    "t": "Dias Intercalares,Esplendor,Glória,Beleza,Grandeza,Luz,Misericórdia,Palavras,Perfeição,Nomes,Força,Vontade,Conhecimento,Poder,Discurso,Perguntas,Honra,Soberania,Dominio,Sublimidade",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.cancel": {
+    "t": "Cancelar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clear": {
+    "t": "Limpar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clearFilters": {
+    "t": "Limpar Filtros",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.close": {
+    "t": "Fechar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirm": {
+    "t": "Confirmar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmAction": {
+    "t": "Tem certeza de que deseja {action}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmActionWithItem": {
+    "t": "Tem certeza de que deseja {action} {item}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmDelete": {
+    "t": "Tem certeza de que deseja excluir {item}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.copied": {
+    "t": "Copiado para a área de transferência",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.create": {
+    "t": "Criar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dangerZone": {
+    "t": "Zona de Perigo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dark": {
+    "t": "Escuro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.delete": {
+    "t": "Excluir",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.deleteSelected": {
+    "t": "Excluir Selecionados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.edit": {
+    "t": "Editar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.election": {
+    "t": "Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.endDate": {
+    "t": "Data de Fim",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.enter": {
+    "t": "Inserir",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.error": {
+    "t": "Ocorreu um erro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.language": {
+    "t": "Idioma",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.light": {
+    "t": "Claro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.loading": {
+    "t": "Carregando...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.logoAlt": {
+    "t": "Logo do ApuraJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.next": {
+    "t": "Próximo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.no": {
+    "t": "Não",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.open": {
+    "t": "Abrir",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.or": {
+    "t": "ou",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.previous": {
+    "t": "Anterior",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.profile": {
+    "t": "Perfil",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.refresh": {
+    "t": "Atualizar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.save": {
+    "t": "Salvar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.settings": {
+    "t": "Configurações",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.startDate": {
+    "t": "Data de Início",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLong": {
+    "t": "{note} Esta prévia do ApuraJ Versão 4 ainda está em desenvolvimento.{br}Você pode fazer login e experimentar os recursos, mas não deve ser usada para eleições bahá'ís neste momento.{br}Agradecemos seu feedback sobre o novo design enquanto continuamos a melhorar o sistema.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLongNote": {
+    "t": "Por favor, note:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyShort": {
+    "t": "Esta prévia do ApuraJ Versão 4 ainda está em desenvolvimento. Não deve ser usada para eleições reais neste momento.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.theme": {
+    "t": "Tema",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.to": {
+    "t": "até",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.toggleTheme": {
+    "t": "Alternar tema",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.userMenu": {
+    "t": "Menu da conta do usuário",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.versionDisplay": {
+    "t": "Versão 4 Beta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.view": {
+    "t": "Ver",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.warning": {
+    "t": "Aviso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.yes": {
+    "t": "Sim",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.goHome": {
+    "t": "Início",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

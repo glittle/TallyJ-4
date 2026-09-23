@@ -1,35 +1,167 @@
 {
-  "results.allResults": "Matokeo Yote",
-  "results.ballotsReceived": "Kura Zilizopokelewa",
-  "results.calculateTally": "Hesabu Matokeo",
-  "results.calculatedAt": "Ilihesabiwa {date}",
-  "results.candidate": "Mgombea",
-  "results.closeToNext": "Karibu na Ifuatayo",
-  "results.elected": "Mteule",
-  "results.extra": "Ziada",
-  "results.flags": "Bendera",
-  "results.loadError": "Imeshindwa kupakia matokeo",
-  "results.monitor": "Mfuatiliaji wa Uchaguzi",
-  "results.noResults": "Hakuna matokeo yanayopatikana. Hesabu matokeo kwanza.",
-  "results.noTies": "Hakuna sare zilizogunduliwa",
-  "results.numberToElect": "Idadi ya Kuchagua",
-  "results.other": "Nyingine",
-  "results.presentation": "Mtazamo wa Uwasilishaji",
-  "results.rank": "Cheo",
-  "results.reporting": "Ripoti",
-  "results.section": "Sehemu",
-  "results.spoiledBallots": "Kura Zilizoharibika",
-  "results.tieBreakAlert": "Tahadhari: Baadhi ya sare zinahitaji kuvunjwa sare kwa mkono",
-  "results.tieBreakMessage": "Kuvunja sare kunahitajika kwa kundi hili kwani linapanua mipaka ya sehemu",
-  "results.tieBreakRequired": "Kuvunja Sare Kunahitajika",
-  "results.tieGroup": "Kundi la Sare #{group}",
-  "results.tieManagement": "Usimamizi wa Sare",
-  "results.tied": "Sare",
-  "results.tiedCandidates": "Wagombea wa Sare",
-  "results.ties": "Sare",
-  "results.title": "Matokeo ya Uchaguzi",
-  "results.totalBallots": "Jumla ya Kura",
-  "results.totalVotes": "Jumla ya Kura",
-  "results.validVotes": "Kura Sahihi",
-  "results.votes": "Kura"
+  "results.allResults": {
+    "t": "Matokeo Yote",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ballotsReceived": {
+    "t": "Kura Zilizopokelewa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculateTally": {
+    "t": "Hesabu Matokeo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculatedAt": {
+    "t": "Ilihesabiwa {date}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.candidate": {
+    "t": "Mgombea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.closeToNext": {
+    "t": "Karibu na Ifuatayo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.elected": {
+    "t": "Mteule",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.extra": {
+    "t": "Ziada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.flags": {
+    "t": "Bendera",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.loadError": {
+    "t": "Imeshindwa kupakia matokeo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.monitor": {
+    "t": "Mfuatiliaji wa Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noResults": {
+    "t": "Hakuna matokeo yanayopatikana. Hesabu matokeo kwanza.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noTies": {
+    "t": "Hakuna sare zilizogunduliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.numberToElect": {
+    "t": "Idadi ya Kuchagua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.other": {
+    "t": "Nyingine",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.presentation": {
+    "t": "Mtazamo wa Uwasilishaji",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.rank": {
+    "t": "Cheo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.reporting": {
+    "t": "Ripoti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.section": {
+    "t": "Sehemu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.spoiledBallots": {
+    "t": "Kura Zilizoharibika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakAlert": {
+    "t": "Tahadhari: Baadhi ya sare zinahitaji kuvunjwa sare kwa mkono",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakMessage": {
+    "t": "Kuvunja sare kunahitajika kwa kundi hili kwani linapanua mipaka ya sehemu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakRequired": {
+    "t": "Kuvunja Sare Kunahitajika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieGroup": {
+    "t": "Kundi la Sare #{group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieManagement": {
+    "t": "Usimamizi wa Sare",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tied": {
+    "t": "Sare",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tiedCandidates": {
+    "t": "Wagombea wa Sare",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ties": {
+    "t": "Sare",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.title": {
+    "t": "Matokeo ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalBallots": {
+    "t": "Jumla ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalVotes": {
+    "t": "Jumla ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.validVotes": {
+    "t": "Kura Sahihi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.votes": {
+    "t": "Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

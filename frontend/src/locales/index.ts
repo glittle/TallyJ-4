@@ -2,14 +2,19 @@ import { nextTick } from "vue";
 import { createI18n } from "vue-i18n";
 import commonRaw from "./common.json";
 import { applyDocumentLocale } from "./localeDirection";
-const common = flatToNested(commonRaw);
+import { isRichEntry, unwrapMessages } from "./richEntries.js";
 
-// Utility function to deep merge objects
+const common = flatToNested(unwrapMessages(commonRaw));
+
+// Utility function to deep merge objects.
+// A rich `{ t, s, w }` leaf is one value, not a nested catalog.
 function deepMerge(target: any, source: any): any {
   const result = { ...target };
 
   for (const key in source) {
-    if (
+    if (isRichEntry(source[key])) {
+      result[key] = source[key];
+    } else if (
       source[key] &&
       typeof source[key] === "object" &&
       !Array.isArray(source[key])
@@ -114,7 +119,7 @@ function getEnglishContent(): any {
     const content = extractJsonModule(moduleEntry);
 
     if (content) {
-      return flatToNested(content);
+      return flatToNested(unwrapMessages(content));
     }
     // Fall through to individual files
   }
@@ -122,7 +127,7 @@ function getEnglishContent(): any {
   // Merge individual English files (dev or bundled-missing fallback)
   let merged = {};
   for (const path in enModules) {
-    const content = extractJsonModule(enModules[path]);
+    const content = unwrapMessages(extractJsonModule(enModules[path]));
     merged = deepMerge(merged, content);
   }
   return flatToNested(merged);
@@ -150,7 +155,7 @@ async function loadBundledLocale(locale: string): Promise<any> {
       if (import.meta.env.DEV) {
         console.log(`Loaded bundled content for ${locale}`);
       }
-      return flatToNested(content);
+      return flatToNested(unwrapMessages(content));
     }
   } catch (error) {
     console.warn(`Failed to load bundled locale ${locale}:`, error);
@@ -182,7 +187,7 @@ async function loadIndividualLocaleFiles(locale: string): Promise<any> {
 
     try {
       const mod = await loadFn();
-      const content = extractJsonModule(mod);
+      const content = unwrapMessages(extractJsonModule(mod));
       if (content) {
         merged = deepMerge(merged, content);
       }

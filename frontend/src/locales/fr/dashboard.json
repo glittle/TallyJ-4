@@ -1,24 +1,112 @@
 {
-  "dashboard.active": "Actif",
-  "dashboard.activeElections": "Élections actives",
-  "dashboard.ballotsEntered": "Bulletins saisis",
-  "dashboard.canVote": "Peut voter",
-  "dashboard.closed": "Fermé",
-  "dashboard.closes": "Ferme",
-  "dashboard.electionDetails": "Détails de l'élection",
-  "dashboard.noElections": "Aucune élection trouvée",
-  "dashboard.noTellers": "Aucun scrutateur assigné",
-  "dashboard.onlineVoting": "Vote en ligne",
-  "dashboard.open": "Ouvert",
-  "dashboard.opens": "Ouvre",
-  "dashboard.otherActions": "Autres actions...",
-  "dashboard.recentElections": "Élections récentes",
-  "dashboard.registered": "Enregistré",
-  "dashboard.statistics": "Statistiques",
-  "dashboard.tellerCount": "Nombre de scrutateurs",
-  "dashboard.tellers": "Scrutateurs",
-  "dashboard.tellersStatus": "Scrutateurs",
-  "dashboard.totalBallots": "Total des bulletins",
-  "dashboard.totalElections": "Total des élections",
-  "dashboard.totalVoters": "Total des électeurs"
+  "dashboard.active": {
+    "t": "Actif",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.activeElections": {
+    "t": "Élections actives",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "Bulletins saisis",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.canVote": {
+    "t": "Peut voter",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closed": {
+    "t": "Fermé",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closes": {
+    "t": "Ferme",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "Détails de l'élection",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noElections": {
+    "t": "Aucune élection trouvée",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noTellers": {
+    "t": "Aucun scrutateur assigné",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "Vote en ligne",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.open": {
+    "t": "Ouvert",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.opens": {
+    "t": "Ouvre",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.otherActions": {
+    "t": "Autres actions...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.recentElections": {
+    "t": "Élections récentes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.registered": {
+    "t": "Enregistré",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.statistics": {
+    "t": "Statistiques",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "Nombre de scrutateurs",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellers": {
+    "t": "Scrutateurs",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "Scrutateurs",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "Total des bulletins",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalElections": {
+    "t": "Total des élections",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "Total des électeurs",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

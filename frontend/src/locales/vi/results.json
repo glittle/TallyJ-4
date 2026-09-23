@@ -1,35 +1,167 @@
 {
-  "results.allResults": "Tất Cả Kết Quả",
-  "results.ballotsReceived": "Phiếu Đã Nhận",
-  "results.calculateTally": "Tính Toán Kết Quả",
-  "results.calculatedAt": "Được tính lúc {date}",
-  "results.candidate": "Ứng Viên",
-  "results.closeToNext": "Gần Vị Trí Tiếp Theo",
-  "results.elected": "Được Bầu",
-  "results.extra": "Dự Phòng",
-  "results.flags": "Cờ",
-  "results.loadError": "Không thể tải kết quả",
-  "results.monitor": "Giám Sát Bầu Cử",
-  "results.noResults": "Chưa có kết quả. Hãy tính toán kết quả trước.",
-  "results.noTies": "Không phát hiện hòa phiếu",
-  "results.numberToElect": "Số Lượng Cần Bầu",
-  "results.other": "Khác",
-  "results.presentation": "Chế Độ Trình Bày",
-  "results.rank": "Hạng",
-  "results.reporting": "Báo Cáo",
-  "results.section": "Phần",
-  "results.spoiledBallots": "Phiếu Hỏng",
-  "results.tieBreakAlert": "Lưu ý: Một số trường hợp hòa cần được giải quyết thủ công",
-  "results.tieBreakMessage": "Cần phá vỡ hòa cho nhóm này vì nó vượt qua ranh giới phần",
-  "results.tieBreakRequired": "Cần Phá Vỡ Hòa",
-  "results.tieGroup": "Nhóm Hòa #{group}",
-  "results.tieManagement": "Quản Lý Hòa Phiếu",
-  "results.tied": "Hòa",
-  "results.tiedCandidates": "Ứng Viên Hòa",
-  "results.ties": "Hòa Phiếu",
-  "results.title": "Kết Quả Bầu Cử",
-  "results.totalBallots": "Tổng Phiếu Bầu",
-  "results.totalVotes": "Tổng Số Phiếu",
-  "results.validVotes": "Phiếu Hợp Lệ",
-  "results.votes": "Phiếu"
+  "results.allResults": {
+    "t": "Tất Cả Kết Quả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ballotsReceived": {
+    "t": "Phiếu Đã Nhận",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculateTally": {
+    "t": "Tính Toán Kết Quả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculatedAt": {
+    "t": "Được tính lúc {date}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.candidate": {
+    "t": "Ứng Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.closeToNext": {
+    "t": "Gần Vị Trí Tiếp Theo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.elected": {
+    "t": "Được Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.extra": {
+    "t": "Dự Phòng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.flags": {
+    "t": "Cờ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.loadError": {
+    "t": "Không thể tải kết quả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.monitor": {
+    "t": "Giám Sát Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noResults": {
+    "t": "Chưa có kết quả. Hãy tính toán kết quả trước.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noTies": {
+    "t": "Không phát hiện hòa phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.numberToElect": {
+    "t": "Số Lượng Cần Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.other": {
+    "t": "Khác",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.presentation": {
+    "t": "Chế Độ Trình Bày",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.rank": {
+    "t": "Hạng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.reporting": {
+    "t": "Báo Cáo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.section": {
+    "t": "Phần",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.spoiledBallots": {
+    "t": "Phiếu Hỏng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakAlert": {
+    "t": "Lưu ý: Một số trường hợp hòa cần được giải quyết thủ công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakMessage": {
+    "t": "Cần phá vỡ hòa cho nhóm này vì nó vượt qua ranh giới phần",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakRequired": {
+    "t": "Cần Phá Vỡ Hòa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieGroup": {
+    "t": "Nhóm Hòa #{group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieManagement": {
+    "t": "Quản Lý Hòa Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tied": {
+    "t": "Hòa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tiedCandidates": {
+    "t": "Ứng Viên Hòa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ties": {
+    "t": "Hòa Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.title": {
+    "t": "Kết Quả Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalBallots": {
+    "t": "Tổng Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalVotes": {
+    "t": "Tổng Số Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.validVotes": {
+    "t": "Phiếu Hợp Lệ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.votes": {
+    "t": "Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,54 +1,262 @@
 {
-  "superAdmin.detail.electionMode": "Election Mode",
-  "superAdmin.detail.locations": "Locations",
-  "superAdmin.detail.numberToElect": "Number to Elect",
-  "superAdmin.detail.owners": "Managers",
-  "superAdmin.detail.percentComplete": "Percent Complete",
-  "superAdmin.detail.title": "Election Details",
-  "superAdmin.elections.ballots": "Ballots",
-  "superAdmin.elections.convenor": "Convenor",
-  "superAdmin.elections.date": "Date",
-  "superAdmin.elections.filterStatus": "Filter by status",
-  "superAdmin.elections.filterType": "Filter by type",
-  "superAdmin.elections.name": "Election Name",
-  "superAdmin.elections.noResults": "No elections found",
-  "superAdmin.elections.owner": "Owner",
-  "superAdmin.elections.search": "Search elections...",
-  "superAdmin.elections.status": "Status",
-  "superAdmin.elections.type": "Type",
-  "superAdmin.elections.voters": "Voters",
-  "superAdmin.error.accessDenied": "You do not have super admin access",
-  "superAdmin.error.loadFailed": "Failed to load super admin data",
-  "superAdmin.summary.archivedElections": "Archived",
-  "superAdmin.summary.completedElections": "Completed",
-  "superAdmin.summary.openElections": "Open",
-  "superAdmin.summary.totalElections": "Elections",
-  "superAdmin.summary.upcomingElections": "Upcoming",
-  "superAdmin.title": "Super Admin Dashboard",
-  "superAdmin.users.title": "Login Accounts",
-  "superAdmin.users.search": "Search by email or name…",
-  "superAdmin.users.email": "Email",
-  "superAdmin.users.name": "Name",
-  "superAdmin.users.authMethod": "Login method",
-  "superAdmin.users.emailConfirmed": "Email confirmed",
-  "superAdmin.users.pendingEmail": "Pending email",
-  "superAdmin.users.noResults": "No users found",
-  "superAdmin.users.edit": "Edit",
-  "superAdmin.users.editTitle": "Edit login account",
-  "superAdmin.users.save": "Save",
-  "superAdmin.users.emailHistory": "Email change history",
-  "superAdmin.users.historyEmpty": "No email changes recorded",
-  "superAdmin.users.historyFrom": "From",
-  "superAdmin.users.historyTo": "To",
-  "superAdmin.users.historyWhen": "When",
-  "superAdmin.users.historySource": "Source",
-  "superAdmin.users.updateSuccess": "Account updated",
-  "superAdmin.users.manageAccounts": "Manage login accounts",
-  "superAdmin.users.issueInvite": "Issue email/password invite",
-  "superAdmin.users.issueInviteTitle": "One-time account invite",
-  "superAdmin.users.issueInviteHelp": "Share this link once. It creates a single local email and password account, then expires or becomes unusable.",
-  "superAdmin.users.issueInviteCopy": "Copy link",
-  "superAdmin.users.issueInviteCopied": "Invite link copied",
-  "superAdmin.users.issueInviteExpires": "Expires",
-  "superAdmin.users.issueInviteFailed": "Could not issue invite"
+  "superAdmin.detail.electionMode": {
+    "t": "Election Mode",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.locations": {
+    "t": "Locations",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.numberToElect": {
+    "t": "Number to Elect",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.owners": {
+    "t": "Managers",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.percentComplete": {
+    "t": "Percent Complete",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.title": {
+    "t": "Election Details",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.ballots": {
+    "t": "Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.convenor": {
+    "t": "Convenor",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.date": {
+    "t": "Date",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterStatus": {
+    "t": "Filter by status",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterType": {
+    "t": "Filter by type",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.name": {
+    "t": "Election Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.noResults": {
+    "t": "No elections found",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.owner": {
+    "t": "Owner",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.search": {
+    "t": "Search elections...",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.status": {
+    "t": "Status",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.type": {
+    "t": "Type",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.voters": {
+    "t": "Voters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.accessDenied": {
+    "t": "You do not have super admin access",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.loadFailed": {
+    "t": "Failed to load super admin data",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.archivedElections": {
+    "t": "Archived",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.completedElections": {
+    "t": "Completed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.openElections": {
+    "t": "Open",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.totalElections": {
+    "t": "Elections",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.upcomingElections": {
+    "t": "Upcoming",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.title": {
+    "t": "Super Admin Dashboard",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.title": {
+    "t": "Login Accounts",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.search": {
+    "t": "Search by email or name…",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.email": {
+    "t": "Email",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.name": {
+    "t": "Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.authMethod": {
+    "t": "Login method",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.emailConfirmed": {
+    "t": "Email confirmed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.pendingEmail": {
+    "t": "Pending email",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.noResults": {
+    "t": "No users found",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.edit": {
+    "t": "Edit",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.editTitle": {
+    "t": "Edit login account",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.save": {
+    "t": "Save",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.emailHistory": {
+    "t": "Email change history",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.historyEmpty": {
+    "t": "No email changes recorded",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.historyFrom": {
+    "t": "From",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.historyTo": {
+    "t": "To",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.historyWhen": {
+    "t": "When",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.historySource": {
+    "t": "Source",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.updateSuccess": {
+    "t": "Account updated",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.manageAccounts": {
+    "t": "Manage login accounts",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.issueInvite": {
+    "t": "Issue email/password invite",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.issueInviteTitle": {
+    "t": "One-time account invite",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.issueInviteHelp": {
+    "t": "Share this link once. It creates a single local email and password account, then expires or becomes unusable.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.issueInviteCopy": {
+    "t": "Copy link",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.issueInviteCopied": {
+    "t": "Invite link copied",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.issueInviteExpires": {
+    "t": "Expires",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.users.issueInviteFailed": {
+    "t": "Could not issue invite",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

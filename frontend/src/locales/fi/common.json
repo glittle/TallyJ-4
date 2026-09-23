@@ -1,53 +1,257 @@
 {
-  "common.actionIrreversible": "Tätä toimintoa ei voi peruuttaa.",
-  "common.actions": "Toiminnot",
-  "common.appName": "LaskiJ",
-  "common.appTitle": "LaskiJ Versio 4",
-  "common.back": "Takaisin",
-  "common.badi.monthNames": "Hán päivät,Kirkkaus,Loisto,Kauneus,Suurus,Valo,Armo,Sanat,Täydellisyys,Nimet,Mahti,Tahto,Tieto,Voima,Puhe,Kysymykset,Kunnia,Yliherruus,Valta,Ylevyys",
-  "common.cancel": "Peruuta",
-  "common.clear": "Tyhjennä",
-  "common.clearFilters": "Tyhjennä suodattimet",
-  "common.close": "Sulje",
-  "common.confirm": "Vahvista",
-  "common.confirmAction": "Oletko varma, että haluat {action}?",
-  "common.confirmActionWithItem": "Oletko varma, että haluat {action} {item}?",
-  "common.confirmDelete": "Oletko varma, että haluat poistaa {item}?",
-  "common.copied": "Kopioitu leikepöydälle",
-  "common.create": "Luo",
-  "common.dangerZone": "Vaara-alue",
-  "common.dark": "Tumma",
-  "common.delete": "Poista",
-  "common.deleteSelected": "Poista valitut",
-  "common.edit": "Muokkaa",
-  "common.election": "Vaalit",
-  "common.endDate": "Päättymispäivä",
-  "common.enter": "Syötä",
-  "common.error": "Tapahtui virhe",
-  "common.language": "Kieli",
-  "common.light": "Vaalea",
-  "common.loading": "Ladataan...",
-  "common.logoAlt": "LaskiJ-logo",
-  "common.next": "Seuraava",
-  "common.no": "Ei",
-  "common.open": "Avaa",
-  "common.or": "tai",
-  "common.previous": "Edellinen",
-  "common.profile": "Profiili",
-  "common.refresh": "Päivitä",
-  "common.save": "Tallenna",
-  "common.settings": "Asetukset",
-  "common.startDate": "Aloituspäivä",
-  "common.testOnlyLong": "{note} LaskiJ Versio 4:n tämä esikatselu on vielä kehityksessä.{br}Voit kirjautua sisään ja kokeilla ominaisuuksia, mutta sitä ei saa käyttää bahá'í-vaaleihin tällä hetkellä.{br}Toivotamme tervetulleeksi palautteesi uudesta suunnittelusta, kun jatkamme järjestelmän parantamista.",
-  "common.testOnlyLongNote": "Huomaa:",
-  "common.testOnlyShort": "LaskiJ Versio 4:n tämä esikatselu on vielä kehityksessä. Ei saa käyttää todellisiin vaaleihin tällä hetkellä.",
-  "common.theme": "Teema",
-  "common.to": "asti",
-  "common.toggleTheme": "Vaihda teemaa",
-  "common.userMenu": "Käyttäjätilin valikko",
-  "common.versionDisplay": "Versio 4 Beta",
-  "common.view": "Näytä",
-  "common.warning": "Varoitus",
-  "common.yes": "Kyllä",
-  "common.goHome": "Koti"
+  "common.actionIrreversible": {
+    "t": "Tätä toimintoa ei voi peruuttaa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.actions": {
+    "t": "Toiminnot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appName": {
+    "t": "LaskiJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appTitle": {
+    "t": "LaskiJ Versio 4",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.back": {
+    "t": "Takaisin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.badi.monthNames": {
+    "t": "Hán päivät,Kirkkaus,Loisto,Kauneus,Suurus,Valo,Armo,Sanat,Täydellisyys,Nimet,Mahti,Tahto,Tieto,Voima,Puhe,Kysymykset,Kunnia,Yliherruus,Valta,Ylevyys",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.cancel": {
+    "t": "Peruuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clear": {
+    "t": "Tyhjennä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clearFilters": {
+    "t": "Tyhjennä suodattimet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.close": {
+    "t": "Sulje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirm": {
+    "t": "Vahvista",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmAction": {
+    "t": "Oletko varma, että haluat {action}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmActionWithItem": {
+    "t": "Oletko varma, että haluat {action} {item}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmDelete": {
+    "t": "Oletko varma, että haluat poistaa {item}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.copied": {
+    "t": "Kopioitu leikepöydälle",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.create": {
+    "t": "Luo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dangerZone": {
+    "t": "Vaara-alue",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dark": {
+    "t": "Tumma",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.delete": {
+    "t": "Poista",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.deleteSelected": {
+    "t": "Poista valitut",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.edit": {
+    "t": "Muokkaa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.election": {
+    "t": "Vaalit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.endDate": {
+    "t": "Päättymispäivä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.enter": {
+    "t": "Syötä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.error": {
+    "t": "Tapahtui virhe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.language": {
+    "t": "Kieli",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.light": {
+    "t": "Vaalea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.loading": {
+    "t": "Ladataan...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.logoAlt": {
+    "t": "LaskiJ-logo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.next": {
+    "t": "Seuraava",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.no": {
+    "t": "Ei",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.open": {
+    "t": "Avaa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.or": {
+    "t": "tai",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.previous": {
+    "t": "Edellinen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.profile": {
+    "t": "Profiili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.refresh": {
+    "t": "Päivitä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.save": {
+    "t": "Tallenna",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.settings": {
+    "t": "Asetukset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.startDate": {
+    "t": "Aloituspäivä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLong": {
+    "t": "{note} LaskiJ Versio 4:n tämä esikatselu on vielä kehityksessä.{br}Voit kirjautua sisään ja kokeilla ominaisuuksia, mutta sitä ei saa käyttää bahá'í-vaaleihin tällä hetkellä.{br}Toivotamme tervetulleeksi palautteesi uudesta suunnittelusta, kun jatkamme järjestelmän parantamista.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLongNote": {
+    "t": "Huomaa:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyShort": {
+    "t": "LaskiJ Versio 4:n tämä esikatselu on vielä kehityksessä. Ei saa käyttää todellisiin vaaleihin tällä hetkellä.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.theme": {
+    "t": "Teema",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.to": {
+    "t": "asti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.toggleTheme": {
+    "t": "Vaihda teemaa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.userMenu": {
+    "t": "Käyttäjätilin valikko",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.versionDisplay": {
+    "t": "Versio 4 Beta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.view": {
+    "t": "Näytä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.warning": {
+    "t": "Varoitus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.yes": {
+    "t": "Kyllä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.goHome": {
+    "t": "Koti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

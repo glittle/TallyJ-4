@@ -1,53 +1,257 @@
 {
-  "common.actionIrreversible": "Esta acción no se puede deshacer.",
-  "common.actions": "Acciones",
-  "common.appName": "EscrutiJ",
-  "common.appTitle": "EscrutiJ Versión 4",
-  "common.back": "Volver",
-  "common.badi.monthNames": "Días Intercalares,Esplendor,Gloria,Belleza,Grandeza,Luz,Misericordia,Palabras,Perfección,Nombres,Fuerza,Voluntad,Conocimiento,Poder,Discurso,Preguntas,Honor,Soberanía,Dominio,Sublimidad",
-  "common.cancel": "Cancelar",
-  "common.clear": "Limpiar",
-  "common.clearFilters": "Limpiar Filtros",
-  "common.close": "Cerrar",
-  "common.confirm": "Confirmar",
-  "common.confirmAction": "¿Está seguro de que desea {action}?",
-  "common.confirmActionWithItem": "¿Está seguro de que desea {action} {item}?",
-  "common.confirmDelete": "¿Está seguro de que desea eliminar {item}?",
-  "common.copied": "Copiado al portapapeles",
-  "common.create": "Crear",
-  "common.dangerZone": "Zona de Peligro",
-  "common.dark": "Oscuro",
-  "common.delete": "Eliminar",
-  "common.deleteSelected": "Eliminar Seleccionados",
-  "common.edit": "Editar",
-  "common.election": "Elección",
-  "common.endDate": "Fecha de Fin",
-  "common.enter": "Ingresar",
-  "common.error": "Ocurrió un error",
-  "common.language": "Idioma",
-  "common.light": "Claro",
-  "common.loading": "Cargando...",
-  "common.logoAlt": "Logo de EscrutiJ",
-  "common.next": "Siguiente",
-  "common.no": "No",
-  "common.open": "Abrir",
-  "common.or": "o",
-  "common.previous": "Anterior",
-  "common.profile": "Perfil",
-  "common.refresh": "Actualizar",
-  "common.save": "Guardar",
-  "common.settings": "Configuración",
-  "common.startDate": "Fecha de Inicio",
-  "common.testOnlyLong": "{note} Esta vista previa de EscrutiJ Versión 4 aún está en desarrollo.{br}Puedes iniciar sesión y probar las funciones, pero no debe usarse para elecciones bahá'ís en este momento.{br}Agradecemos tus comentarios sobre el nuevo diseño mientras continuamos mejorando el sistema.",
-  "common.testOnlyLongNote": "Por favor, nota:",
-  "common.testOnlyShort": "Esta vista previa de EscrutiJ Versión 4 aún está en desarrollo. No debe usarse para elecciones reales en este momento.",
-  "common.theme": "Tema",
-  "common.to": "a",
-  "common.toggleTheme": "Cambiar tema",
-  "common.userMenu": "Menú de cuenta de usuario",
-  "common.versionDisplay": "Versión 4 Beta",
-  "common.view": "Ver",
-  "common.warning": "Advertencia",
-  "common.yes": "Sí",
-  "common.goHome": "Inicio"
+  "common.actionIrreversible": {
+    "t": "Esta acción no se puede deshacer.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.actions": {
+    "t": "Acciones",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appName": {
+    "t": "EscrutiJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appTitle": {
+    "t": "EscrutiJ Versión 4",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.back": {
+    "t": "Volver",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.badi.monthNames": {
+    "t": "Días Intercalares,Esplendor,Gloria,Belleza,Grandeza,Luz,Misericordia,Palabras,Perfección,Nombres,Fuerza,Voluntad,Conocimiento,Poder,Discurso,Preguntas,Honor,Soberanía,Dominio,Sublimidad",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.cancel": {
+    "t": "Cancelar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clear": {
+    "t": "Limpiar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clearFilters": {
+    "t": "Limpiar Filtros",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.close": {
+    "t": "Cerrar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirm": {
+    "t": "Confirmar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmAction": {
+    "t": "¿Está seguro de que desea {action}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmActionWithItem": {
+    "t": "¿Está seguro de que desea {action} {item}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmDelete": {
+    "t": "¿Está seguro de que desea eliminar {item}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.copied": {
+    "t": "Copiado al portapapeles",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.create": {
+    "t": "Crear",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dangerZone": {
+    "t": "Zona de Peligro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dark": {
+    "t": "Oscuro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.delete": {
+    "t": "Eliminar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.deleteSelected": {
+    "t": "Eliminar Seleccionados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.edit": {
+    "t": "Editar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.election": {
+    "t": "Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.endDate": {
+    "t": "Fecha de Fin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.enter": {
+    "t": "Ingresar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.error": {
+    "t": "Ocurrió un error",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.language": {
+    "t": "Idioma",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.light": {
+    "t": "Claro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.loading": {
+    "t": "Cargando...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.logoAlt": {
+    "t": "Logo de EscrutiJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.next": {
+    "t": "Siguiente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.no": {
+    "t": "No",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.open": {
+    "t": "Abrir",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.or": {
+    "t": "o",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.previous": {
+    "t": "Anterior",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.profile": {
+    "t": "Perfil",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.refresh": {
+    "t": "Actualizar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.save": {
+    "t": "Guardar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.settings": {
+    "t": "Configuración",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.startDate": {
+    "t": "Fecha de Inicio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLong": {
+    "t": "{note} Esta vista previa de EscrutiJ Versión 4 aún está en desarrollo.{br}Puedes iniciar sesión y probar las funciones, pero no debe usarse para elecciones bahá'ís en este momento.{br}Agradecemos tus comentarios sobre el nuevo diseño mientras continuamos mejorando el sistema.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLongNote": {
+    "t": "Por favor, nota:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyShort": {
+    "t": "Esta vista previa de EscrutiJ Versión 4 aún está en desarrollo. No debe usarse para elecciones reales en este momento.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.theme": {
+    "t": "Tema",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.to": {
+    "t": "a",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.toggleTheme": {
+    "t": "Cambiar tema",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.userMenu": {
+    "t": "Menú de cuenta de usuario",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.versionDisplay": {
+    "t": "Versión 4 Beta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.view": {
+    "t": "Ver",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.warning": {
+    "t": "Advertencia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.yes": {
+    "t": "Sí",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.goHome": {
+    "t": "Inicio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

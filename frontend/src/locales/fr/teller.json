@@ -1,17 +1,77 @@
 {
-  "teller.form.cancel": "Annuler",
-  "teller.form.computerCode": "Code d'ordinateur",
-  "teller.form.computerCodeHelp": "Deux lettres majuscules (AA-ZZ) ou laisser vide",
-  "teller.form.computerCodeInvalid": "Le code d'ordinateur doit être 2 lettres majuscules (AA-ZZ)",
-  "teller.form.computerCodePlaceholder": "par ex., AA",
-  "teller.form.create": "Créer",
-  "teller.form.headTeller": "Scrutateur en chef",
-  "teller.form.headTellerHelp": "Les scrutateurs en chef ont des permissions supplémentaires",
-  "teller.form.name": "Nom du scrutateur",
-  "teller.form.nameMaxLength": "Le nom du scrutateur ne peut pas dépasser 50 caractères",
-  "teller.form.namePlaceholder": "Entrer le nom du scrutateur",
-  "teller.form.nameRequired": "Le nom du scrutateur est requis",
-  "teller.form.save": "Sauvegarder",
-  "teller.form.titleAdd": "Ajouter un scrutateur",
-  "teller.form.titleEdit": "Modifier le scrutateur"
+  "teller.form.cancel": {
+    "t": "Annuler",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCode": {
+    "t": "Code d'ordinateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeHelp": {
+    "t": "Deux lettres majuscules (AA-ZZ) ou laisser vide",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeInvalid": {
+    "t": "Le code d'ordinateur doit être 2 lettres majuscules (AA-ZZ)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodePlaceholder": {
+    "t": "par ex., AA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.create": {
+    "t": "Créer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTeller": {
+    "t": "Scrutateur en chef",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTellerHelp": {
+    "t": "Les scrutateurs en chef ont des permissions supplémentaires",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.name": {
+    "t": "Nom du scrutateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "Le nom du scrutateur ne peut pas dépasser 50 caractères",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "Entrer le nom du scrutateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "Le nom du scrutateur est requis",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.save": {
+    "t": "Sauvegarder",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "Ajouter un scrutateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "Modifier le scrutateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

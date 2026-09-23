@@ -1,78 +1,382 @@
 {
-  "voting.ballot.addPersonToPool": "Dodaj osobu na moj glasački listić",
-  "voting.ballot.addToPool": "Dodaj u glasački listić/skupinu",
-  "voting.ballot.addToPoolDescription": "Dodajte novu osobu u svoju skupinu za ove izbore.",
-  "voting.ballot.alreadyVoted": "Već ste glasali na ovim izborima.",
-  "voting.ballot.authRequired": "Molimo prvo se autentificirajte",
-  "voting.ballot.backToElections": "Povratak",
-  "voting.ballot.bothModeHint": "Odaberite s popisa u nastavku ili unesite ime koje nije na popisu. Brojači glasova će obraditi sva imena koja nisu na popisu.",
-  "voting.ballot.duplicateError": "Odabrali ste istog kandidata više puta. Molimo pregledajte glasački listić.",
-  "voting.ballot.electionNotFound": "Izbori nisu pronađeni",
-  "voting.ballot.extraInfo": "Dodatne informacije za identifikaciju",
-  "voting.ballot.extraInfoPlaceholder": "(Neobavezno: Koristite ako ime možda nije dovoljno)",
-  "voting.ballot.firstName": "Ime",
-  "voting.ballot.firstNamePlaceholder": "Ime",
-  "voting.ballot.guideline": "\"Iz skupa onih koje birač smatra kvalificiranima za službu, odabir treba napraviti s dužnom pažnjom prema čimbenicima kao što su dobna raspodjela, raznolikost i spol.\" — Univerzalna kuća pravde",
-  "voting.ballot.lastName": "Prezime",
-  "voting.ballot.lastNamePlaceholder": "Prezime",
-  "voting.ballot.loading": "Učitavanje informacija o izborima...",
-  "voting.ballot.myBallot": "Moj glasački listić",
-  "voting.ballot.namePlaceholder": "Unesite ime",
-  "voting.ballot.notOpen": "Online glasanje trenutno nije otvoreno za ove izbore.",
-  "voting.ballot.onceWarning": "Možete glasati samo jednom! Molimo pažljivo pregledajte glasački listić prije predaje.",
-  "voting.ballot.openNow": "Otvoreno sada",
-  "voting.ballot.orderNote": "(Redoslijed imena nije bitan)",
-  "voting.ballot.randomModeHint": "Unesite imena osoba za koje želite glasati. Brojači glasova će usklopiti ova imena s registriranim glasačima.",
-  "voting.ballot.searchPlaceholder": "Pretraži kandidata",
-  "voting.ballot.submit": "Predaj glasački listić",
-  "voting.ballot.submitSuccess": "Glasački listić uspješno predan!",
-  "voting.ballot.votingFor": "Glasanje za {count} osoba",
-  "voting.confirmation.close": "Zatvori",
-  "voting.confirmation.election": "Izbori:",
-  "voting.confirmation.kioskRecorded": "Your ballot has been recorded. You can leave this computer.",
-  "voting.confirmation.kioskSubtitle": "This kiosk is clear for the next voter.",
-  "voting.confirmation.nextVoter": "Ready for next voter",
-  "voting.confirmation.noChange": "Napominjemo da ne možete promijeniti ni ponovo predati glasački listić.",
-  "voting.confirmation.recorded": "Vaš glasački listić je sigurno zabilježen.",
-  "voting.confirmation.submitted": "Predano:",
-  "voting.confirmation.subtitle": "Hvala na sudjelovanju na izborima",
-  "voting.confirmation.title": "Glasački listić uspješno predan!",
-  "voting.election.instructions": "Molimo glasajte za {count} kandidata.",
-  "voting.elections.alreadyVoted": "Glasački listić već predan",
-  "voting.elections.col.election": "Izbori",
-  "voting.elections.col.onlineVoting": "Online glasanje",
-  "voting.elections.col.yourNameAndBallot": "Vaše ime i glasački listić",
-  "voting.elections.footerNote": "Ako nešto izgleda pogrešno, molimo prestanite koristiti TallyJ i pošaljite detalje svom glavnom brojaču glasova i/ili globalnoj tehničkoj podršci.",
-  "voting.elections.loadError": "Učitavanje izbora nije uspjelo. Molimo pokušajte ponovo.",
-  "voting.elections.loading": "Učitavanje vaših izbora...",
-  "voting.elections.logout": "Odjava",
-  "voting.elections.method.online": "Online",
-  "voting.elections.noElections": "Nisu pronađeni izbori za vaš račun.",
-  "voting.elections.prepareBallot": "Pripremite moj glasački listić",
-  "voting.elections.registered": "Registrirani:",
-  "voting.elections.status.closed": "Zatvoreno",
-  "voting.elections.status.closedDaysAgo": "Zatvoreno prije {days} dana",
-  "voting.elections.status.closedMonthsAgo": "Zatvoreno prije {months} mjeseci",
-  "voting.elections.status.closedToday": "Zatvoreno danas",
-  "voting.elections.status.closedYearsAgo": "Zatvoreno prije {years} godina",
-  "voting.elections.status.closedYesterday": "Zatvoreno jučer",
-  "voting.elections.status.closingAt": "Očekuje se zatvaranje u {time}",
-  "voting.elections.status.closingAtWithMinutes": "Očekuje se zatvaranje za {hours}h {minutes}m (u {time})",
-  "voting.elections.status.closingInMinutes": "Očekuje se zatvaranje za {minutes} minuta",
-  "voting.elections.status.closingSoon": "Zatvara se uskoro",
-  "voting.elections.status.estimatedSuffix": " (procjena)",
-  "voting.elections.status.noOnlineVoting": "Nema online glasanja",
-  "voting.elections.status.open": "Otvoreno",
-  "voting.elections.status.openNow": "Otvoreno sada",
-  "voting.elections.title": "Vaši izbori",
-  "voting.elections.welcome": "Dobrodošli! Vaše kontakt informacije ({voterId}) pronađene su na izborima prikazanim u nastavku.",
-  "voting.elections.welcomeHint": "Ako nadolazeći izbori nisu navedeni ovdje, možda ne postoje u TallyJu ili vaše informacije nisu registrirane na njima. Molimo kontaktirajte glavnog brojača glasova izbora za pomoć.",
-  "voting.status.alreadyVoted": "Već ste predali glasački listić za ove izbore.",
-  "voting.status.notVoted": "Još niste predali glasački listić za ove izbore.",
-  "voting.status.voterNotFound": "Glasač nije pronađen na ovim izborima.",
-  "voting.submit.alreadyVoted": "Već ste predali glasački listić za ove izbore.",
-  "voting.submit.electionNotFound": "Izbori nisu pronađeni.",
-  "voting.submit.error": "Došlo je do pogreške pri predaji glasačkog listića. Molimo pokušajte ponovo.",
-  "voting.submit.notOpen": "Online glasanje trenutno nije otvoreno za ove izbore.",
-  "voting.submit.voterNotFound": "Glasač nije pronađen. Molimo prvo se autentificirajte."
+  "voting.ballot.addPersonToPool": {
+    "t": "Dodaj osobu na moj glasački listić",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPool": {
+    "t": "Dodaj u glasački listić/skupinu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPoolDescription": {
+    "t": "Dodajte novu osobu u svoju skupinu za ove izbore.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.alreadyVoted": {
+    "t": "Već ste glasali na ovim izborima.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.authRequired": {
+    "t": "Molimo prvo se autentificirajte",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.backToElections": {
+    "t": "Povratak",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.bothModeHint": {
+    "t": "Odaberite s popisa u nastavku ili unesite ime koje nije na popisu. Brojači glasova će obraditi sva imena koja nisu na popisu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.duplicateError": {
+    "t": "Odabrali ste istog kandidata više puta. Molimo pregledajte glasački listić.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.electionNotFound": {
+    "t": "Izbori nisu pronađeni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfo": {
+    "t": "Dodatne informacije za identifikaciju",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfoPlaceholder": {
+    "t": "(Neobavezno: Koristite ako ime možda nije dovoljno)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstName": {
+    "t": "Ime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstNamePlaceholder": {
+    "t": "Ime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.guideline": {
+    "t": "\"Iz skupa onih koje birač smatra kvalificiranima za službu, odabir treba napraviti s dužnom pažnjom prema čimbenicima kao što su dobna raspodjela, raznolikost i spol.\" — Univerzalna kuća pravde",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastName": {
+    "t": "Prezime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastNamePlaceholder": {
+    "t": "Prezime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.loading": {
+    "t": "Učitavanje informacija o izborima...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.myBallot": {
+    "t": "Moj glasački listić",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.namePlaceholder": {
+    "t": "Unesite ime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.notOpen": {
+    "t": "Online glasanje trenutno nije otvoreno za ove izbore.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.onceWarning": {
+    "t": "Možete glasati samo jednom! Molimo pažljivo pregledajte glasački listić prije predaje.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.openNow": {
+    "t": "Otvoreno sada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.orderNote": {
+    "t": "(Redoslijed imena nije bitan)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.randomModeHint": {
+    "t": "Unesite imena osoba za koje želite glasati. Brojači glasova će usklopiti ova imena s registriranim glasačima.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.searchPlaceholder": {
+    "t": "Pretraži kandidata",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submit": {
+    "t": "Predaj glasački listić",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submitSuccess": {
+    "t": "Glasački listić uspješno predan!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.votingFor": {
+    "t": "Glasanje za {count} osoba",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.close": {
+    "t": "Zatvori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.election": {
+    "t": "Izbori:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskRecorded": {
+    "t": "Your ballot has been recorded. You can leave this computer.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskSubtitle": {
+    "t": "This kiosk is clear for the next voter.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.nextVoter": {
+    "t": "Ready for next voter",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.noChange": {
+    "t": "Napominjemo da ne možete promijeniti ni ponovo predati glasački listić.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.recorded": {
+    "t": "Vaš glasački listić je sigurno zabilježen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.submitted": {
+    "t": "Predano:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.subtitle": {
+    "t": "Hvala na sudjelovanju na izborima",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.title": {
+    "t": "Glasački listić uspješno predan!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.election.instructions": {
+    "t": "Molimo glasajte za {count} kandidata.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.alreadyVoted": {
+    "t": "Glasački listić već predan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.election": {
+    "t": "Izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.onlineVoting": {
+    "t": "Online glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.yourNameAndBallot": {
+    "t": "Vaše ime i glasački listić",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.footerNote": {
+    "t": "Ako nešto izgleda pogrešno, molimo prestanite koristiti TallyJ i pošaljite detalje svom glavnom brojaču glasova i/ili globalnoj tehničkoj podršci.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loadError": {
+    "t": "Učitavanje izbora nije uspjelo. Molimo pokušajte ponovo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loading": {
+    "t": "Učitavanje vaših izbora...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.logout": {
+    "t": "Odjava",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.method.online": {
+    "t": "Online",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.noElections": {
+    "t": "Nisu pronađeni izbori za vaš račun.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.prepareBallot": {
+    "t": "Pripremite moj glasački listić",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.registered": {
+    "t": "Registrirani:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closed": {
+    "t": "Zatvoreno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedDaysAgo": {
+    "t": "Zatvoreno prije {days} dana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedMonthsAgo": {
+    "t": "Zatvoreno prije {months} mjeseci",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedToday": {
+    "t": "Zatvoreno danas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYearsAgo": {
+    "t": "Zatvoreno prije {years} godina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYesterday": {
+    "t": "Zatvoreno jučer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAt": {
+    "t": "Očekuje se zatvaranje u {time}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAtWithMinutes": {
+    "t": "Očekuje se zatvaranje za {hours}h {minutes}m (u {time})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingInMinutes": {
+    "t": "Očekuje se zatvaranje za {minutes} minuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingSoon": {
+    "t": "Zatvara se uskoro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.estimatedSuffix": {
+    "t": " (procjena)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.noOnlineVoting": {
+    "t": "Nema online glasanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.open": {
+    "t": "Otvoreno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.openNow": {
+    "t": "Otvoreno sada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.title": {
+    "t": "Vaši izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcome": {
+    "t": "Dobrodošli! Vaše kontakt informacije ({voterId}) pronađene su na izborima prikazanim u nastavku.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcomeHint": {
+    "t": "Ako nadolazeći izbori nisu navedeni ovdje, možda ne postoje u TallyJu ili vaše informacije nisu registrirane na njima. Molimo kontaktirajte glavnog brojača glasova izbora za pomoć.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.alreadyVoted": {
+    "t": "Već ste predali glasački listić za ove izbore.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.notVoted": {
+    "t": "Još niste predali glasački listić za ove izbore.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.voterNotFound": {
+    "t": "Glasač nije pronađen na ovim izborima.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.alreadyVoted": {
+    "t": "Već ste predali glasački listić za ove izbore.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.electionNotFound": {
+    "t": "Izbori nisu pronađeni.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.error": {
+    "t": "Došlo je do pogreške pri predaji glasačkog listića. Molimo pokušajte ponovo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.notOpen": {
+    "t": "Online glasanje trenutno nije otvoreno za ove izbore.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.voterNotFound": {
+    "t": "Glasač nije pronađen. Molimo prvo se autentificirajte.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

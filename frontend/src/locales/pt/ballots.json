@@ -1,74 +1,362 @@
 {
-  "ballots.addBallot": "Adicionar Cédula",
-  "ballots.addNewPerson": "Adicionar Nova Pessoa",
-  "ballots.addVote": "Adicionar Voto",
-  "ballots.cacheLoadError": "Falha ao carregar candidatos",
-  "ballots.cacheLoading": "Carregando candidatos...",
-  "ballots.candidate": "Candidato",
-  "ballots.candidateRequired": "O candidato é obrigatório",
-  "ballots.cdnImport.ballotsCreated": "Cédulas criadas",
-  "ballots.cdnImport.button": "Importar Cédulas CDN",
-  "ballots.cdnImport.description": "Envie um arquivo XML exportado do CDN (Banco de Dados Nacional Canadense) para importar cédulas e seus votos correspondentes nesta eleição. O arquivo será analisado e cédulas serão criadas para cada entrada válida, juntamente com todos os registros de voto associados.",
-  "ballots.cdnImport.errors": "Erros",
-  "ballots.cdnImport.failed": "Importação falhou",
-  "ballots.cdnImport.importing": "Importando...",
-  "ballots.cdnImport.skippedRows": "Linhas ignoradas",
-  "ballots.cdnImport.success": "Importação concluída com sucesso",
-  "ballots.cdnImport.title": "Importar Cédulas CDN",
-  "ballots.cdnImport.totalRows": "Total de linhas processadas",
-  "ballots.cdnImport.uploadPrompt": "Clique ou arraste um arquivo XML aqui para enviar",
-  "ballots.cdnImport.votesCreated": "Votos criados",
-  "ballots.cdnImport.warnings": "Avisos",
-  "ballots.cdnImport.xmlOnly": "Apenas arquivos XML são suportados",
-  "ballots.checkSpelling": "Verifique a ortografia ou tente um nome diferente",
-  "ballots.clearAll": "Limpar Tudo",
-  "ballots.code": "Código da Cédula",
-  "ballots.computer": "Computador",
-  "ballots.computerRequired": "O código do computador é obrigatório",
-  "ballots.createSuccess": "Cédula criada com sucesso",
-  "ballots.deleteConfirm": "Tem certeza de que deseja excluir esta cédula?",
-  "ballots.deleteError": "Falha ao excluir a cédula",
-  "ballots.deleteSuccess": "Cédula excluída com sucesso",
-  "ballots.deleteVoteConfirm": "Tem certeza de que deseja excluir este voto?",
-  "ballots.deleteVoteError": "Falha ao excluir o voto",
-  "ballots.deleteVoteSuccess": "Voto excluído com sucesso",
-  "ballots.duplicateWarning": "Duplicado: Esta pessoa já está selecionada",
-  "ballots.enterVotes": "Inserir Votos",
-  "ballots.entry": "Inserção de Cédula - {code}",
-  "ballots.entryPage": "Inserção de Cédula",
-  "ballots.ineligible": "Inelegível",
-  "ballots.loadError": "Falha ao carregar as cédulas",
-  "ballots.location": "Local",
-  "ballots.locationRequired": "O local é obrigatório",
-  "ballots.management": "Gestão de Cédulas",
-  "ballots.noMatchesFound": "Nenhum resultado encontrado",
-  "ballots.personUpdated": "{name} foi atualizado",
-  "ballots.position": "Posição",
-  "ballots.positionRequired": "A posição é obrigatória",
-  "ballots.saveBallot": "Salvar Cédula",
-  "ballots.saveError": "Falha ao salvar a cédula",
-  "ballots.status": "Estado",
-  "ballots.statusValue.Dup": "Duplicado",
-  "ballots.statusValue.Empty": "Vazio",
-  "ballots.statusValue.New": "Novo",
-  "ballots.statusValue.Ok": "OK",
-  "ballots.statusValue.Raw": "Bruto",
-  "ballots.statusValue.Review": "Revisar",
-  "ballots.statusValue.TooFew": "Poucos",
-  "ballots.statusValue.TooMany": "Muitos",
-  "ballots.statusValue.Verify": "Verificar",
-  "ballots.teller1": "Escrutinador 1",
-  "ballots.teller2": "Escrutinador 2",
-  "ballots.viewVotes": "Ver Votos",
-  "ballots.voteAddedError": "Falha ao adicionar o voto",
-  "ballots.voteAddedSuccess": "Voto adicionado com sucesso",
-  "ballots.voteCount": "Votos",
-  "ballots.voteCreateSuccess": "Voto adicionado com sucesso",
-  "ballots.voteRemovedError": "Falha ao remover o voto",
-  "ballots.voteRemovedSuccess": "Voto removido com sucesso",
-  "ballots.voteSaveError": "Falha ao salvar o voto",
-  "ballots.voteSpoiledSuccess": "Voto adicionado como nulo ({code} – a pessoa é inelegível)",
-  "ballots.votes": "Votos - {code}",
-  "ballots.votesEntered": "{count} de {max} votos inseridos",
-  "ballots.votesList": "Lista de Votos"
+  "ballots.addBallot": {
+    "t": "Adicionar Cédula",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addNewPerson": {
+    "t": "Adicionar Nova Pessoa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addVote": {
+    "t": "Adicionar Voto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoadError": {
+    "t": "Falha ao carregar candidatos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoading": {
+    "t": "Carregando candidatos...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidate": {
+    "t": "Candidato",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidateRequired": {
+    "t": "O candidato é obrigatório",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.ballotsCreated": {
+    "t": "Cédulas criadas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.button": {
+    "t": "Importar Cédulas CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.description": {
+    "t": "Envie um arquivo XML exportado do CDN (Banco de Dados Nacional Canadense) para importar cédulas e seus votos correspondentes nesta eleição. O arquivo será analisado e cédulas serão criadas para cada entrada válida, juntamente com todos os registros de voto associados.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.errors": {
+    "t": "Erros",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.failed": {
+    "t": "Importação falhou",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.importing": {
+    "t": "Importando...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.skippedRows": {
+    "t": "Linhas ignoradas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.success": {
+    "t": "Importação concluída com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.title": {
+    "t": "Importar Cédulas CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.totalRows": {
+    "t": "Total de linhas processadas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.uploadPrompt": {
+    "t": "Clique ou arraste um arquivo XML aqui para enviar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.votesCreated": {
+    "t": "Votos criados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.warnings": {
+    "t": "Avisos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.xmlOnly": {
+    "t": "Apenas arquivos XML são suportados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.checkSpelling": {
+    "t": "Verifique a ortografia ou tente um nome diferente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.clearAll": {
+    "t": "Limpar Tudo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.code": {
+    "t": "Código da Cédula",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computer": {
+    "t": "Computador",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computerRequired": {
+    "t": "O código do computador é obrigatório",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.createSuccess": {
+    "t": "Cédula criada com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteConfirm": {
+    "t": "Tem certeza de que deseja excluir esta cédula?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteError": {
+    "t": "Falha ao excluir a cédula",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteSuccess": {
+    "t": "Cédula excluída com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteConfirm": {
+    "t": "Tem certeza de que deseja excluir este voto?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteError": {
+    "t": "Falha ao excluir o voto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteSuccess": {
+    "t": "Voto excluído com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.duplicateWarning": {
+    "t": "Duplicado: Esta pessoa já está selecionada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.enterVotes": {
+    "t": "Inserir Votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entry": {
+    "t": "Inserção de Cédula - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entryPage": {
+    "t": "Inserção de Cédula",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.ineligible": {
+    "t": "Inelegível",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.loadError": {
+    "t": "Falha ao carregar as cédulas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.location": {
+    "t": "Local",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.locationRequired": {
+    "t": "O local é obrigatório",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.management": {
+    "t": "Gestão de Cédulas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.noMatchesFound": {
+    "t": "Nenhum resultado encontrado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.personUpdated": {
+    "t": "{name} foi atualizado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.position": {
+    "t": "Posição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.positionRequired": {
+    "t": "A posição é obrigatória",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveBallot": {
+    "t": "Salvar Cédula",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveError": {
+    "t": "Falha ao salvar a cédula",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.status": {
+    "t": "Estado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Dup": {
+    "t": "Duplicado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Empty": {
+    "t": "Vazio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.New": {
+    "t": "Novo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Ok": {
+    "t": "OK",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Raw": {
+    "t": "Bruto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Review": {
+    "t": "Revisar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooFew": {
+    "t": "Poucos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooMany": {
+    "t": "Muitos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Verify": {
+    "t": "Verificar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller1": {
+    "t": "Escrutinador 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller2": {
+    "t": "Escrutinador 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.viewVotes": {
+    "t": "Ver Votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedError": {
+    "t": "Falha ao adicionar o voto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedSuccess": {
+    "t": "Voto adicionado com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCount": {
+    "t": "Votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCreateSuccess": {
+    "t": "Voto adicionado com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedError": {
+    "t": "Falha ao remover o voto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedSuccess": {
+    "t": "Voto removido com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSaveError": {
+    "t": "Falha ao salvar o voto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSpoiledSuccess": {
+    "t": "Voto adicionado como nulo ({code} – a pessoa é inelegível)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votes": {
+    "t": "Votos - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesEntered": {
+    "t": "{count} de {max} votos inseridos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesList": {
+    "t": "Lista de Votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

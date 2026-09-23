@@ -1,47 +1,227 @@
 {
-  "locations.computer.browserInfo": "브라우저 정보",
-  "locations.computer.browserInfoHelp": "브라우저에서 자동으로 감지됩니다",
-  "locations.computer.browserInfoMaxLength": "브라우저 정보는 250자를 초과할 수 없습니다",
-  "locations.computer.browserInfoPlaceholder": "자동으로 감지된 브라우저 정보",
-  "locations.computer.cancel": "취소",
-  "locations.computer.code": "컴퓨터 코드",
-  "locations.computer.codeHelp": "2자리 코드 (예: AA, AB, A1). 자동 생성하려면 비워두세요.",
-  "locations.computer.codeInvalid": "컴퓨터 코드는 대문자 2자 또는 숫자여야 합니다",
-  "locations.computer.codeLength": "컴퓨터 코드는 정확히 2자여야 합니다",
-  "locations.computer.codePlaceholder": "AA (자동 생성하려면 비워두세요)",
-  "locations.computer.ipAddress": "IP 주소",
-  "locations.computer.ipAddressHelp": "선택 사항: 컴퓨터의 IP 주소",
-  "locations.computer.ipAddressMaxLength": "IP 주소는 50자를 초과할 수 없습니다",
-  "locations.computer.ipAddressPlaceholder": "선택 사항: IP 주소 입력",
-  "locations.computer.register": "등록",
-  "locations.computer.success": "컴퓨터가 성공적으로 등록되었습니다",
-  "locations.computer.title": "컴퓨터 등록",
-  "locations.currentLocation": "현재 위치",
-  "locations.form.cancel": "취소",
-  "locations.form.contactInfo": "연락처 정보",
-  "locations.form.contactInfoMaxLength": "연락처 정보는 250자를 초과할 수 없습니다",
-  "locations.form.contactInfoPlaceholder": "연락처 정보 입력",
-  "locations.form.create": "만들기",
-  "locations.form.created": "위치가 성공적으로 생성되었습니다",
-  "locations.form.latitude": "위도",
-  "locations.form.latitudeHelp": "범위: -90 ~ 90",
-  "locations.form.latitudeInvalid": "위도는 -90에서 90 사이의 유효한 좌표여야 합니다",
-  "locations.form.latitudePlaceholder": "예: 37.7749",
-  "locations.form.longitude": "경도",
-  "locations.form.longitudeHelp": "범위: -180 ~ 180",
-  "locations.form.longitudeInvalid": "경도는 -180에서 180 사이의 유효한 좌표여야 합니다",
-  "locations.form.longitudePlaceholder": "예: -122.4194",
-  "locations.form.name": "위치 이름",
-  "locations.form.nameMaxLength": "위치 이름은 50자를 초과할 수 없습니다",
-  "locations.form.namePlaceholder": "위치 이름 입력",
-  "locations.form.nameRequired": "위치 이름이 필요합니다",
-  "locations.form.save": "저장",
-  "locations.form.sortOrder": "정렬 순서",
-  "locations.form.sortOrderHelp": "목록에서 위치 순서를 지정하는 데 사용됩니다",
-  "locations.form.sortOrderInvalid": "정렬 순서는 숫자여야 합니다",
-  "locations.form.titleAdd": "위치 추가",
-  "locations.form.titleEdit": "위치 편집",
-  "locations.form.updated": "위치가 성공적으로 업데이트되었습니다",
-  "locations.locationSelected": "위치가 성공적으로 선택되었습니다",
-  "locations.selectLocation": "위치 선택"
+  "locations.computer.browserInfo": {
+    "t": "브라우저 정보",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoHelp": {
+    "t": "브라우저에서 자동으로 감지됩니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoMaxLength": {
+    "t": "브라우저 정보는 250자를 초과할 수 없습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoPlaceholder": {
+    "t": "자동으로 감지된 브라우저 정보",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.cancel": {
+    "t": "취소",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.code": {
+    "t": "컴퓨터 코드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeHelp": {
+    "t": "2자리 코드 (예: AA, AB, A1). 자동 생성하려면 비워두세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeInvalid": {
+    "t": "컴퓨터 코드는 대문자 2자 또는 숫자여야 합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeLength": {
+    "t": "컴퓨터 코드는 정확히 2자여야 합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codePlaceholder": {
+    "t": "AA (자동 생성하려면 비워두세요)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddress": {
+    "t": "IP 주소",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressHelp": {
+    "t": "선택 사항: 컴퓨터의 IP 주소",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressMaxLength": {
+    "t": "IP 주소는 50자를 초과할 수 없습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressPlaceholder": {
+    "t": "선택 사항: IP 주소 입력",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.register": {
+    "t": "등록",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.success": {
+    "t": "컴퓨터가 성공적으로 등록되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.title": {
+    "t": "컴퓨터 등록",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.currentLocation": {
+    "t": "현재 위치",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.cancel": {
+    "t": "취소",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfo": {
+    "t": "연락처 정보",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoMaxLength": {
+    "t": "연락처 정보는 250자를 초과할 수 없습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoPlaceholder": {
+    "t": "연락처 정보 입력",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.create": {
+    "t": "만들기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.created": {
+    "t": "위치가 성공적으로 생성되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitude": {
+    "t": "위도",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeHelp": {
+    "t": "범위: -90 ~ 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeInvalid": {
+    "t": "위도는 -90에서 90 사이의 유효한 좌표여야 합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudePlaceholder": {
+    "t": "예: 37.7749",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitude": {
+    "t": "경도",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeHelp": {
+    "t": "범위: -180 ~ 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeInvalid": {
+    "t": "경도는 -180에서 180 사이의 유효한 좌표여야 합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudePlaceholder": {
+    "t": "예: -122.4194",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.name": {
+    "t": "위치 이름",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameMaxLength": {
+    "t": "위치 이름은 50자를 초과할 수 없습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.namePlaceholder": {
+    "t": "위치 이름 입력",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameRequired": {
+    "t": "위치 이름이 필요합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.save": {
+    "t": "저장",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrder": {
+    "t": "정렬 순서",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderHelp": {
+    "t": "목록에서 위치 순서를 지정하는 데 사용됩니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderInvalid": {
+    "t": "정렬 순서는 숫자여야 합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleAdd": {
+    "t": "위치 추가",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleEdit": {
+    "t": "위치 편집",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.updated": {
+    "t": "위치가 성공적으로 업데이트되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.locationSelected": {
+    "t": "위치가 성공적으로 선택되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.selectLocation": {
+    "t": "위치 선택",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

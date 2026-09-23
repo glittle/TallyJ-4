@@ -1,10 +1,42 @@
 {
-  "nav.auditLogs": "Journaux d'audit",
-  "nav.dashboard": "Tableau de bord",
-  "nav.elections": "Élections",
-  "nav.frontDesk": "Accueil",
-  "nav.profile": "Profil",
-  "nav.superAdmin": "Super Administrateur",
-  "nav.tellers": "Scrutateurs",
-  "nav.votingLocations": "Lieux de vote"
+  "nav.auditLogs": {
+    "t": "Journaux d'audit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.dashboard": {
+    "t": "Tableau de bord",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.elections": {
+    "t": "Élections",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.frontDesk": {
+    "t": "Accueil",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.profile": {
+    "t": "Profil",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.superAdmin": {
+    "t": "Super Administrateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.tellers": {
+    "t": "Scrutateurs",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.votingLocations": {
+    "t": "Lieux de vote",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

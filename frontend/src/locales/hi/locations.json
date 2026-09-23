@@ -1,47 +1,227 @@
 {
-  "locations.computer.browserInfo": "ब्राउज़र जानकारी",
-  "locations.computer.browserInfoHelp": "आपके ब्राउज़र से स्वचालित रूप से पता लगाया गया",
-  "locations.computer.browserInfoMaxLength": "ब्राउज़र जानकारी 250 वर्णों से अधिक नहीं हो सकती",
-  "locations.computer.browserInfoPlaceholder": "स्वतः-पता लगाई गई ब्राउज़र जानकारी",
-  "locations.computer.cancel": "रद्द करें",
-  "locations.computer.code": "कंप्यूटर कोड",
-  "locations.computer.codeHelp": "2-वर्ण कोड (जैसे, AA, AB, A1)। स्वतः उत्पन्न करने के लिए खाली छोड़ें।",
-  "locations.computer.codeInvalid": "कंप्यूटर कोड 2 अपरकेस अक्षर या अंक होने चाहिए",
-  "locations.computer.codeLength": "कंप्यूटर कोड ठीक 2 वर्णों का होना चाहिए",
-  "locations.computer.codePlaceholder": "AA (स्वतः उत्पन्न करने के लिए खाली छोड़ें)",
-  "locations.computer.ipAddress": "IP पता",
-  "locations.computer.ipAddressHelp": "वैकल्पिक: कंप्यूटर का IP पता",
-  "locations.computer.ipAddressMaxLength": "IP पता 50 वर्णों से अधिक नहीं हो सकता",
-  "locations.computer.ipAddressPlaceholder": "वैकल्पिक: IP पता दर्ज करें",
-  "locations.computer.register": "पंजीकृत करें",
-  "locations.computer.success": "कंप्यूटर सफलतापूर्वक पंजीकृत किया गया",
-  "locations.computer.title": "कंप्यूटर पंजीकृत करें",
-  "locations.currentLocation": "वर्तमान स्थान",
-  "locations.form.cancel": "रद्द करें",
-  "locations.form.contactInfo": "संपर्क जानकारी",
-  "locations.form.contactInfoMaxLength": "संपर्क जानकारी 250 वर्णों से अधिक नहीं हो सकती",
-  "locations.form.contactInfoPlaceholder": "संपर्क जानकारी दर्ज करें",
-  "locations.form.create": "बनाएं",
-  "locations.form.created": "स्थान सफलतापूर्वक बनाया गया",
-  "locations.form.latitude": "अक्षांश",
-  "locations.form.latitudeHelp": "सीमा: -90 से 90",
-  "locations.form.latitudeInvalid": "अक्षांश -90 से 90 के बीच एक वैध निर्देशांक होना चाहिए",
-  "locations.form.latitudePlaceholder": "जैसे, 37.7749",
-  "locations.form.longitude": "देशांतर",
-  "locations.form.longitudeHelp": "सीमा: -180 से 180",
-  "locations.form.longitudeInvalid": "देशांतर -180 से 180 के बीच एक वैध निर्देशांक होना चाहिए",
-  "locations.form.longitudePlaceholder": "जैसे, -122.4194",
-  "locations.form.name": "स्थान का नाम",
-  "locations.form.nameMaxLength": "स्थान का नाम 50 वर्णों से अधिक नहीं हो सकता",
-  "locations.form.namePlaceholder": "स्थान का नाम दर्ज करें",
-  "locations.form.nameRequired": "स्थान का नाम आवश्यक है",
-  "locations.form.save": "सहेजें",
-  "locations.form.sortOrder": "क्रम संख्या",
-  "locations.form.sortOrderHelp": "सूचियों में स्थानों को क्रमबद्ध करने के लिए उपयोग किया जाता है",
-  "locations.form.sortOrderInvalid": "क्रम संख्या एक संख्या होनी चाहिए",
-  "locations.form.titleAdd": "स्थान जोड़ें",
-  "locations.form.titleEdit": "स्थान संपादित करें",
-  "locations.form.updated": "स्थान सफलतापूर्वक अपडेट किया गया",
-  "locations.locationSelected": "स्थान सफलतापूर्वक चुना गया",
-  "locations.selectLocation": "स्थान चुनें"
+  "locations.computer.browserInfo": {
+    "t": "ब्राउज़र जानकारी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoHelp": {
+    "t": "आपके ब्राउज़र से स्वचालित रूप से पता लगाया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoMaxLength": {
+    "t": "ब्राउज़र जानकारी 250 वर्णों से अधिक नहीं हो सकती",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoPlaceholder": {
+    "t": "स्वतः-पता लगाई गई ब्राउज़र जानकारी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.cancel": {
+    "t": "रद्द करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.code": {
+    "t": "कंप्यूटर कोड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeHelp": {
+    "t": "2-वर्ण कोड (जैसे, AA, AB, A1)। स्वतः उत्पन्न करने के लिए खाली छोड़ें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeInvalid": {
+    "t": "कंप्यूटर कोड 2 अपरकेस अक्षर या अंक होने चाहिए",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeLength": {
+    "t": "कंप्यूटर कोड ठीक 2 वर्णों का होना चाहिए",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codePlaceholder": {
+    "t": "AA (स्वतः उत्पन्न करने के लिए खाली छोड़ें)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddress": {
+    "t": "IP पता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressHelp": {
+    "t": "वैकल्पिक: कंप्यूटर का IP पता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressMaxLength": {
+    "t": "IP पता 50 वर्णों से अधिक नहीं हो सकता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressPlaceholder": {
+    "t": "वैकल्पिक: IP पता दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.register": {
+    "t": "पंजीकृत करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.success": {
+    "t": "कंप्यूटर सफलतापूर्वक पंजीकृत किया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.title": {
+    "t": "कंप्यूटर पंजीकृत करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.currentLocation": {
+    "t": "वर्तमान स्थान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.cancel": {
+    "t": "रद्द करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfo": {
+    "t": "संपर्क जानकारी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoMaxLength": {
+    "t": "संपर्क जानकारी 250 वर्णों से अधिक नहीं हो सकती",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoPlaceholder": {
+    "t": "संपर्क जानकारी दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.create": {
+    "t": "बनाएं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.created": {
+    "t": "स्थान सफलतापूर्वक बनाया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitude": {
+    "t": "अक्षांश",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeHelp": {
+    "t": "सीमा: -90 से 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeInvalid": {
+    "t": "अक्षांश -90 से 90 के बीच एक वैध निर्देशांक होना चाहिए",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudePlaceholder": {
+    "t": "जैसे, 37.7749",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitude": {
+    "t": "देशांतर",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeHelp": {
+    "t": "सीमा: -180 से 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeInvalid": {
+    "t": "देशांतर -180 से 180 के बीच एक वैध निर्देशांक होना चाहिए",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudePlaceholder": {
+    "t": "जैसे, -122.4194",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.name": {
+    "t": "स्थान का नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameMaxLength": {
+    "t": "स्थान का नाम 50 वर्णों से अधिक नहीं हो सकता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.namePlaceholder": {
+    "t": "स्थान का नाम दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameRequired": {
+    "t": "स्थान का नाम आवश्यक है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.save": {
+    "t": "सहेजें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrder": {
+    "t": "क्रम संख्या",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderHelp": {
+    "t": "सूचियों में स्थानों को क्रमबद्ध करने के लिए उपयोग किया जाता है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderInvalid": {
+    "t": "क्रम संख्या एक संख्या होनी चाहिए",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleAdd": {
+    "t": "स्थान जोड़ें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleEdit": {
+    "t": "स्थान संपादित करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.updated": {
+    "t": "स्थान सफलतापूर्वक अपडेट किया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.locationSelected": {
+    "t": "स्थान सफलतापूर्वक चुना गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.selectLocation": {
+    "t": "स्थान चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

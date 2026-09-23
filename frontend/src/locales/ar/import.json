@@ -1,25 +1,117 @@
 {
-  "import.completed": "تم الاستيراد بنجاح",
-  "import.currentStatus": "الحالة: {status}",
-  "import.errorCount": "أخطاء: {count}",
-  "import.errors.batchSaveFailed": "فشل حفظ الدفعة: {message}",
-  "import.errors.duplicateBahaiId": "السطر {rowNumber}: معرف بهائي مكرر '{bahaiId}'",
-  "import.errors.duplicateEmail": "السطر {rowNumber}: بريد إلكتروني مكرر '{email}'",
-  "import.errors.duplicateName": "السطر {rowNumber}: اسم مكرر '{firstName} {lastName}'",
-  "import.errors.duplicatePhone": "السطر {rowNumber}: هاتف مكرر '{phone}'",
-  "import.errors.fileNotFound": "ملف الاستيراد غير موجود أو لا يحتوي على محتوى",
-  "import.errors.importFailed": "فشل الاستيراد: {message}",
-  "import.errors.importFailedAtLine": "فشل الاستيراد في السطر {rowNumber}: {message}",
-  "import.errors.invalidMappings": "تعيينات الأعمدة غير صالحة",
-  "import.errors.lineError": "السطر {rowNumber}: {message}",
-  "import.errors.missingFirstName": "السطر {rowNumber}: الاسم الأول مفقود",
-  "import.errors.missingLastName": "السطر {rowNumber}: الاسم الأخير مفقود",
-  "import.errors.missingRequiredMappings": "تعيينات الاسم الأول والاسم الأخير مطلوبة",
-  "import.errors.noMappings": "لم يتم تكوين تعيينات الأعمدة",
-  "import.errorsTitle": "أخطاء الاستيراد",
-  "import.moreErrors": "و {count} أخطاء أخرى...",
-  "import.processingRows": "معالجة الصفوف {processed} من {total}",
-  "import.progressTitle": "تقدم الاستيراد",
-  "import.successCount": "ناجح: {count}",
-  "import.warnings.unrecognizedEligibility": "السطر {rowNumber}: حالة الأهلية غير معروفة: '{eligibilityValue}' - تم معاملتها كمؤهل"
+  "import.completed": {
+    "t": "تم الاستيراد بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.currentStatus": {
+    "t": "الحالة: {status}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorCount": {
+    "t": "أخطاء: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.batchSaveFailed": {
+    "t": "فشل حفظ الدفعة: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateBahaiId": {
+    "t": "السطر {rowNumber}: معرف بهائي مكرر '{bahaiId}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateEmail": {
+    "t": "السطر {rowNumber}: بريد إلكتروني مكرر '{email}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateName": {
+    "t": "السطر {rowNumber}: اسم مكرر '{firstName} {lastName}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicatePhone": {
+    "t": "السطر {rowNumber}: هاتف مكرر '{phone}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.fileNotFound": {
+    "t": "ملف الاستيراد غير موجود أو لا يحتوي على محتوى",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailed": {
+    "t": "فشل الاستيراد: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailedAtLine": {
+    "t": "فشل الاستيراد في السطر {rowNumber}: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.invalidMappings": {
+    "t": "تعيينات الأعمدة غير صالحة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.lineError": {
+    "t": "السطر {rowNumber}: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingFirstName": {
+    "t": "السطر {rowNumber}: الاسم الأول مفقود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingLastName": {
+    "t": "السطر {rowNumber}: الاسم الأخير مفقود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingRequiredMappings": {
+    "t": "تعيينات الاسم الأول والاسم الأخير مطلوبة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.noMappings": {
+    "t": "لم يتم تكوين تعيينات الأعمدة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorsTitle": {
+    "t": "أخطاء الاستيراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.moreErrors": {
+    "t": "و {count} أخطاء أخرى...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.processingRows": {
+    "t": "معالجة الصفوف {processed} من {total}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.progressTitle": {
+    "t": "تقدم الاستيراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.successCount": {
+    "t": "ناجح: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.warnings.unrecognizedEligibility": {
+    "t": "السطر {rowNumber}: حالة الأهلية غير معروفة: '{eligibilityValue}' - تم معاملتها كمؤهل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

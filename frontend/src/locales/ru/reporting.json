@@ -1,194 +1,962 @@
 {
-  "reporting.advancedFilters": "Расширенные фильтры",
-  "reporting.allCanReceive": "Люди, которые могут быть проголосованы",
-  "reporting.applyFilters": "Применить фильтры",
-  "reporting.area": "Область",
-  "reporting.averageVotesPerBallot": "Average Votes per Ballot",
-  "reporting.bahaiId": "ID Бахаи",
-  "reporting.ballotCode": "Бюллетень",
-  "reporting.ballotCount": "Количество бюллетеней",
-  "reporting.ballotId": "ID бюллетеня",
-  "reporting.ballotLengthDistribution": "Распределение длины бюллетеня",
-  "reporting.ballotReport": "Отчет о бюллетенях",
-  "reporting.ballotReports": "Отчеты о бюллетенях",
-  "reporting.ballotsByMethod": "Бюллетени по методу голосования",
-  "reporting.ballotsCast": "Бюллетени отданы",
-  "reporting.ballotsEntered": "Введено бюллетеней",
-  "reporting.calledIn": "Позвонили",
-  "reporting.canReceiveVotes": "Может получать голоса",
-  "reporting.canVote": "Может голосовать",
-  "reporting.candidate": "Кандидат",
-  "reporting.candidateName": "Имя кандидата",
-  "reporting.candidatePerformance": "Производительность кандидата",
-  "reporting.candidateVotes": "Голоса кандидата",
-  "reporting.candidates": "Кандидаты",
-  "reporting.category": "Категория",
-  "reporting.change": "Изменение",
-  "reporting.charts": "Диаграммы",
-  "reporting.clearFilters": "Очистить фильтры",
-  "reporting.comparisonSummary": "Сводка сравнения",
-  "reporting.configureReport": "Настроить отчет",
-  "reporting.contender": "Претендент",
-  "reporting.convenor": "Организатор",
-  "reporting.count": "Количество",
-  "reporting.cumulativeTurnout": "Кумулятивная явка",
-  "reporting.customReport": "Пользовательский отчет",
-  "reporting.date": "Дата",
-  "reporting.dateOfElection": "Дата выборов",
-  "reporting.dateRange": "Диапазон дат",
-  "reporting.demographicBreakdown": "Демографический анализ",
-  "reporting.description": "Описание",
-  "reporting.detailedStatistics": "Подробная статистика",
-  "reporting.droppedOff": "Сданные",
-  "reporting.earlyVoting": "Раннее голосование",
-  "reporting.earlyVotingPercentage": "Early Voting %",
-  "reporting.elected": "Избранные",
-  "reporting.electedCandidates": "Избранные кандидаты",
-  "reporting.electedPersons": "Избранные",
-  "reporting.election": "Выборы",
-  "reporting.electionDate": "Дата выборов",
-  "reporting.electionDayVoting": "Голосование в день выборов",
-  "reporting.electionDetails": "Детали выборов",
-  "reporting.electionName": "Название выборов",
-  "reporting.electionOverview": "Обзор выборов",
-  "reporting.electionSummary": "Сводка по выборам",
-  "reporting.electionType": "Тип выборов",
-  "reporting.eligibilityReason": "Причина приемлемости",
-  "reporting.eliminated": "Исключены",
-  "reporting.email": "Эл. почта",
-  "reporting.endDate": "Дата окончания",
-  "reporting.enterCandidateName": "Введите имя кандидата",
-  "reporting.enterDescription": "Введите описание",
-  "reporting.enterReportName": "Введите имя отчета",
-  "reporting.error": "Не удалось загрузить отчет",
-  "reporting.exportCSV": "Экспорт CSV",
-  "reporting.exportExcel": "Экспорт Excel",
-  "reporting.exportFormats": "Форматы экспорта",
-  "reporting.exportPDF": "Экспорт PDF",
-  "reporting.extra": "Дополнительно",
-  "reporting.extraCandidates": "Дополнительные кандидаты",
-  "reporting.firstChoice": "First Choice %",
-  "reporting.firstName": "Имя",
-  "reporting.firstTimeVoters": "Избиратели в первый раз",
-  "reporting.flags": "Флаги",
-  "reporting.generateComparison": "Создать сравнение",
-  "reporting.generateCustomReport": "Создать пользовательский отчет",
-  "reporting.generateReport": "Создать отчёт",
-  "reporting.groupN": "Группа {n}",
-  "reporting.hasSignedInEmail": "Вошли (Email)",
-  "reporting.hasSignedInPhone": "Вошли (Телефон)",
-  "reporting.historicalComparison": "Историческое сравнение",
-  "reporting.imported": "Импортированные",
-  "reporting.inPerson": "Лично",
-  "reporting.inPersonVoters": "Очные избиратели",
-  "reporting.includeSections": "Включить разделы",
-  "reporting.lastName": "Фамилия",
-  "reporting.loading": "Загрузка отчета...",
-  "reporting.location": "Место",
-  "reporting.locationReport": "Отчет о местоположении",
-  "reporting.locationStatistics": "Статистика местоположения",
-  "reporting.locations": "Места",
-  "reporting.mailedIn": "Отправленные по почте",
-  "reporting.matchingNames": "Совпадающие имена в результатах",
-  "reporting.maxVotesOnBallot": "Максимум голосов в бюллетене",
-  "reporting.metricsToCompare": "Метрики для сравнения",
-  "reporting.minVotesOnBallot": "Минимум голосов в бюллетене",
-  "reporting.name": "Имя",
-  "reporting.no": "Нет",
-  "reporting.noBallots": "Бюллетени не найдены для этого фильтра.",
-  "reporting.noChanges": "Измененные записи о людях не найдены.",
-  "reporting.noDuplicates": "Дублирующихся бюллетеней не найдено.",
-  "reporting.noEmails": "Записи электронной почты/телефона не найдены.",
-  "reporting.noFlags": "Флаги посещаемости не определены.",
-  "reporting.noNonEligible": "Люди со статусом приемлемости не найдены.",
-  "reporting.noSpoiledVotes": "Испорченные голоса не найдены.",
-  "reporting.numBallots": "Количество бюллетеней",
-  "reporting.numEligibleToVote": "Количество имеющих право голосовать",
-  "reporting.online": "Онлайн",
-  "reporting.onlineKiosk": "Онлайн/Киоск",
-  "reporting.onlineStatus": "Статус",
-  "reporting.onlineVoters": "Онлайн избиратели",
-  "reporting.other": "Другое",
-  "reporting.otherInfo": "Другая информация",
-  "reporting.otherLastNames": "Другие фамилии",
-  "reporting.otherNames": "Другие имена",
-  "reporting.overallTurnout": "Общая явка",
-  "reporting.overallTurnoutSummary": "Сводка общей явки",
-  "reporting.participationRates": "Уровни участия",
-  "reporting.percentParticipation": "Участие",
-  "reporting.percentage": "Процент",
-  "reporting.performance": "Производительность",
-  "reporting.phone": "Телефон",
-  "reporting.positionsToElect": "Должности для избрания",
-  "reporting.print": "Печать",
-  "reporting.printHint": "Некоторые браузеры, такие как Chrome, могут создать копию отчета в PDF при печати.",
-  "reporting.rank": "Ранг",
-  "reporting.reason": "Причина",
-  "reporting.registeredVoters": "Зарегистрированные избиратели",
-  "reporting.registrationLog": "Журнал регистрации",
-  "reporting.registrationTime": "Время регистрации",
-  "reporting.reportGenerated": "Отчет успешно создан",
-  "reporting.reportGenerationError": "Failed to generate report",
-  "reporting.reportName": "Имя отчета",
-  "reporting.returningVoters": "Возвращающиеся избиратели",
-  "reporting.section": "Раздел",
-  "reporting.selectElections": "Выберите выборы",
-  "reporting.selectElectionsToCompare": "Выберите выборы для сравнения",
-  "reporting.selectLocations": "Выберите местоположения",
-  "reporting.selectMultipleElections": "Выберите несколько выборов",
-  "reporting.selectReport": "Select Report Type",
-  "reporting.selectReportType": "Choose a report to generate",
-  "reporting.selectSortBy": "Select Sort By",
-  "reporting.sortBy": "Сортировать по",
-  "reporting.spoiledBallots": "Испорченные бюллетени",
-  "reporting.spoiledVotes": "Испорченные голоса",
-  "reporting.startDate": "Дата начала",
-  "reporting.statistics": "Статистика",
-  "reporting.status": "Статус",
-  "reporting.sumOfEnvelopesCollected": "Всего бюллетеней отдано (включая ручной подсчет)",
-  "reporting.summary": "Резюме",
-  "reporting.summaryReport": "Сводка по выборам",
-  "reporting.summaryStats": "Сводная статистика",
-  "reporting.teller1": "Кассир 1",
-  "reporting.teller2": "Кассир 2",
-  "reporting.tieGroup": "Группа ничьей {group}",
-  "reporting.tieNote": "* Количество разрешения ничьей показано после /",
-  "reporting.ties": "Ничьи",
-  "reporting.timeBasedTurnout": "Явка на основе времени",
-  "reporting.timePeriod": "Период времени",
-  "reporting.title": "Election Reports",
-  "reporting.to": "до",
-  "reporting.topCandidates": "Лучшие кандидаты",
-  "reporting.total": "Итого",
-  "reporting.totalBallots": "Всего бюллетеней",
-  "reporting.totalBallotsCast": "Всего бюллетеней отдано",
-  "reporting.totalEligible": "Приемлемые",
-  "reporting.totalVoters": "Total Voters",
-  "reporting.totalVotersHeader": "Всего избирателей",
-  "reporting.totalVotes": "Всего голосов",
-  "reporting.turnout": "Явка",
-  "reporting.turnoutAnalysis": "Анализ явки",
-  "reporting.turnoutByLocation": "Явка по местоположению",
-  "reporting.turnoutOverTime": "Явка во времени",
-  "reporting.turnoutPercentage": "Turnout %",
-  "reporting.turnoutRange": "Диапазон явки",
-  "reporting.validBallots": "Действительные бюллетени",
-  "reporting.value": "Значение",
-  "reporting.voteDistribution": "Распределение голосов",
-  "reporting.votePercentage": "Vote %",
-  "reporting.voteRange": "Диапазон голосов",
-  "reporting.voteTime": "Время голосования",
-  "reporting.voted": "Проголосовали",
-  "reporting.voterName": "Имя избирателя",
-  "reporting.voterReport": "Отчет об избирателях",
-  "reporting.voterReports": "Отчеты об избирателях",
-  "reporting.voterTurnout": "Явка избирателей",
-  "reporting.votes": "Голоса",
-  "reporting.votesOnBallot": "Голоса в этом бюллетене",
-  "reporting.votesPerBallot": "Votes per Ballot",
-  "reporting.votingMethod": "Метод голосования",
-  "reporting.whenEmail": "Email отправлено",
-  "reporting.whenPhone": "Телефон отправлен",
-  "reporting.whenStatus": "Когда",
-  "reporting.yes": "Да"
+  "reporting.advancedFilters": {
+    "t": "Расширенные фильтры",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.allCanReceive": {
+    "t": "Люди, которые могут быть проголосованы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.applyFilters": {
+    "t": "Применить фильтры",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.area": {
+    "t": "Область",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.averageVotesPerBallot": {
+    "t": "Average Votes per Ballot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.bahaiId": {
+    "t": "ID Бахаи",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCode": {
+    "t": "Бюллетень",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCount": {
+    "t": "Количество бюллетеней",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotId": {
+    "t": "ID бюллетеня",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotLengthDistribution": {
+    "t": "Распределение длины бюллетеня",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReport": {
+    "t": "Отчет о бюллетенях",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReports": {
+    "t": "Отчеты о бюллетенях",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsByMethod": {
+    "t": "Бюллетени по методу голосования",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsCast": {
+    "t": "Бюллетени отданы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsEntered": {
+    "t": "Введено бюллетеней",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.calledIn": {
+    "t": "Позвонили",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canReceiveVotes": {
+    "t": "Может получать голоса",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canVote": {
+    "t": "Может голосовать",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidate": {
+    "t": "Кандидат",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateName": {
+    "t": "Имя кандидата",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidatePerformance": {
+    "t": "Производительность кандидата",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateVotes": {
+    "t": "Голоса кандидата",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidates": {
+    "t": "Кандидаты",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.category": {
+    "t": "Категория",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.change": {
+    "t": "Изменение",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.charts": {
+    "t": "Диаграммы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.clearFilters": {
+    "t": "Очистить фильтры",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.comparisonSummary": {
+    "t": "Сводка сравнения",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.configureReport": {
+    "t": "Настроить отчет",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.contender": {
+    "t": "Претендент",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.convenor": {
+    "t": "Организатор",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.count": {
+    "t": "Количество",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.cumulativeTurnout": {
+    "t": "Кумулятивная явка",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.customReport": {
+    "t": "Пользовательский отчет",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.date": {
+    "t": "Дата",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateOfElection": {
+    "t": "Дата выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateRange": {
+    "t": "Диапазон дат",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.demographicBreakdown": {
+    "t": "Демографический анализ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.description": {
+    "t": "Описание",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.detailedStatistics": {
+    "t": "Подробная статистика",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.droppedOff": {
+    "t": "Сданные",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVoting": {
+    "t": "Раннее голосование",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVotingPercentage": {
+    "t": "Early Voting %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.elected": {
+    "t": "Избранные",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedCandidates": {
+    "t": "Избранные кандидаты",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedPersons": {
+    "t": "Избранные",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.election": {
+    "t": "Выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDate": {
+    "t": "Дата выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDayVoting": {
+    "t": "Голосование в день выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDetails": {
+    "t": "Детали выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionName": {
+    "t": "Название выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionOverview": {
+    "t": "Обзор выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionSummary": {
+    "t": "Сводка по выборам",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionType": {
+    "t": "Тип выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eligibilityReason": {
+    "t": "Причина приемлемости",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eliminated": {
+    "t": "Исключены",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.email": {
+    "t": "Эл. почта",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.endDate": {
+    "t": "Дата окончания",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterCandidateName": {
+    "t": "Введите имя кандидата",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterDescription": {
+    "t": "Введите описание",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterReportName": {
+    "t": "Введите имя отчета",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.error": {
+    "t": "Не удалось загрузить отчет",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportCSV": {
+    "t": "Экспорт CSV",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportExcel": {
+    "t": "Экспорт Excel",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportFormats": {
+    "t": "Форматы экспорта",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportPDF": {
+    "t": "Экспорт PDF",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extra": {
+    "t": "Дополнительно",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extraCandidates": {
+    "t": "Дополнительные кандидаты",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstChoice": {
+    "t": "First Choice %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstName": {
+    "t": "Имя",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstTimeVoters": {
+    "t": "Избиратели в первый раз",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.flags": {
+    "t": "Флаги",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateComparison": {
+    "t": "Создать сравнение",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateCustomReport": {
+    "t": "Создать пользовательский отчет",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateReport": {
+    "t": "Создать отчёт",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.groupN": {
+    "t": "Группа {n}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInEmail": {
+    "t": "Вошли (Email)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInPhone": {
+    "t": "Вошли (Телефон)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.historicalComparison": {
+    "t": "Историческое сравнение",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.imported": {
+    "t": "Импортированные",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPerson": {
+    "t": "Лично",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPersonVoters": {
+    "t": "Очные избиратели",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.includeSections": {
+    "t": "Включить разделы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.lastName": {
+    "t": "Фамилия",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.loading": {
+    "t": "Загрузка отчета...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.location": {
+    "t": "Место",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationReport": {
+    "t": "Отчет о местоположении",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationStatistics": {
+    "t": "Статистика местоположения",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locations": {
+    "t": "Места",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.mailedIn": {
+    "t": "Отправленные по почте",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.matchingNames": {
+    "t": "Совпадающие имена в результатах",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.maxVotesOnBallot": {
+    "t": "Максимум голосов в бюллетене",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.metricsToCompare": {
+    "t": "Метрики для сравнения",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.minVotesOnBallot": {
+    "t": "Минимум голосов в бюллетене",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.name": {
+    "t": "Имя",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.no": {
+    "t": "Нет",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noBallots": {
+    "t": "Бюллетени не найдены для этого фильтра.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noChanges": {
+    "t": "Измененные записи о людях не найдены.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noDuplicates": {
+    "t": "Дублирующихся бюллетеней не найдено.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noEmails": {
+    "t": "Записи электронной почты/телефона не найдены.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noFlags": {
+    "t": "Флаги посещаемости не определены.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noNonEligible": {
+    "t": "Люди со статусом приемлемости не найдены.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noSpoiledVotes": {
+    "t": "Испорченные голоса не найдены.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numBallots": {
+    "t": "Количество бюллетеней",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numEligibleToVote": {
+    "t": "Количество имеющих право голосовать",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.online": {
+    "t": "Онлайн",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineKiosk": {
+    "t": "Онлайн/Киоск",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineStatus": {
+    "t": "Статус",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineVoters": {
+    "t": "Онлайн избиратели",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.other": {
+    "t": "Другое",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherInfo": {
+    "t": "Другая информация",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherLastNames": {
+    "t": "Другие фамилии",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherNames": {
+    "t": "Другие имена",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnout": {
+    "t": "Общая явка",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnoutSummary": {
+    "t": "Сводка общей явки",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.participationRates": {
+    "t": "Уровни участия",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentParticipation": {
+    "t": "Участие",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentage": {
+    "t": "Процент",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.performance": {
+    "t": "Производительность",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.phone": {
+    "t": "Телефон",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.positionsToElect": {
+    "t": "Должности для избрания",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.print": {
+    "t": "Печать",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.printHint": {
+    "t": "Некоторые браузеры, такие как Chrome, могут создать копию отчета в PDF при печати.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.rank": {
+    "t": "Ранг",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reason": {
+    "t": "Причина",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registeredVoters": {
+    "t": "Зарегистрированные избиратели",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationLog": {
+    "t": "Журнал регистрации",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationTime": {
+    "t": "Время регистрации",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerated": {
+    "t": "Отчет успешно создан",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerationError": {
+    "t": "Failed to generate report",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportName": {
+    "t": "Имя отчета",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.returningVoters": {
+    "t": "Возвращающиеся избиратели",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.section": {
+    "t": "Раздел",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElections": {
+    "t": "Выберите выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElectionsToCompare": {
+    "t": "Выберите выборы для сравнения",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectLocations": {
+    "t": "Выберите местоположения",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectMultipleElections": {
+    "t": "Выберите несколько выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReport": {
+    "t": "Select Report Type",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReportType": {
+    "t": "Choose a report to generate",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectSortBy": {
+    "t": "Select Sort By",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sortBy": {
+    "t": "Сортировать по",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledBallots": {
+    "t": "Испорченные бюллетени",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledVotes": {
+    "t": "Испорченные голоса",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.startDate": {
+    "t": "Дата начала",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.statistics": {
+    "t": "Статистика",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.status": {
+    "t": "Статус",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sumOfEnvelopesCollected": {
+    "t": "Всего бюллетеней отдано (включая ручной подсчет)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summary": {
+    "t": "Резюме",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryReport": {
+    "t": "Сводка по выборам",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryStats": {
+    "t": "Сводная статистика",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller1": {
+    "t": "Кассир 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller2": {
+    "t": "Кассир 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieGroup": {
+    "t": "Группа ничьей {group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieNote": {
+    "t": "* Количество разрешения ничьей показано после /",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ties": {
+    "t": "Ничьи",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timeBasedTurnout": {
+    "t": "Явка на основе времени",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timePeriod": {
+    "t": "Период времени",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.title": {
+    "t": "Election Reports",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.to": {
+    "t": "до",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.topCandidates": {
+    "t": "Лучшие кандидаты",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.total": {
+    "t": "Итого",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallots": {
+    "t": "Всего бюллетеней",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallotsCast": {
+    "t": "Всего бюллетеней отдано",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalEligible": {
+    "t": "Приемлемые",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVoters": {
+    "t": "Total Voters",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotersHeader": {
+    "t": "Всего избирателей",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotes": {
+    "t": "Всего голосов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnout": {
+    "t": "Явка",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutAnalysis": {
+    "t": "Анализ явки",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutByLocation": {
+    "t": "Явка по местоположению",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutOverTime": {
+    "t": "Явка во времени",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutPercentage": {
+    "t": "Turnout %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutRange": {
+    "t": "Диапазон явки",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.validBallots": {
+    "t": "Действительные бюллетени",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.value": {
+    "t": "Значение",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteDistribution": {
+    "t": "Распределение голосов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votePercentage": {
+    "t": "Vote %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteRange": {
+    "t": "Диапазон голосов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteTime": {
+    "t": "Время голосования",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voted": {
+    "t": "Проголосовали",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterName": {
+    "t": "Имя избирателя",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReport": {
+    "t": "Отчет об избирателях",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReports": {
+    "t": "Отчеты об избирателях",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterTurnout": {
+    "t": "Явка избирателей",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votes": {
+    "t": "Голоса",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesOnBallot": {
+    "t": "Голоса в этом бюллетене",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesPerBallot": {
+    "t": "Votes per Ballot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votingMethod": {
+    "t": "Метод голосования",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenEmail": {
+    "t": "Email отправлено",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenPhone": {
+    "t": "Телефон отправлен",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenStatus": {
+    "t": "Когда",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.yes": {
+    "t": "Да",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

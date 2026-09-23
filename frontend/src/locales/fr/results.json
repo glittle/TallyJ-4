@@ -1,35 +1,167 @@
 {
-  "results.allResults": "Tous les résultats",
-  "results.ballotsReceived": "Bulletins reçus",
-  "results.calculateTally": "Calculer le dépouillement",
-  "results.calculatedAt": "Calculé à {date}",
-  "results.candidate": "Candidat",
-  "results.closeToNext": "Proche du suivant",
-  "results.elected": "Élu",
-  "results.extra": "Suppléant",
-  "results.flags": "Drapeaux",
-  "results.loadError": "Échec du chargement des résultats",
-  "results.monitor": "Moniteur d'élection",
-  "results.noResults": "Aucun résultat disponible. Calculez d'abord le dépouillement.",
-  "results.noTies": "Aucune égalité détectée",
-  "results.numberToElect": "Nombre à élire",
-  "results.other": "Autre",
-  "results.presentation": "Vue de présentation",
-  "results.rank": "Rang",
-  "results.reporting": "Rapports",
-  "results.section": "Section",
-  "results.spoiledBallots": "Bulletins nuls",
-  "results.tieBreakAlert": "Attention : Certaines égalités nécessitent un départage manuel",
-  "results.tieBreakMessage": "Un départage est requis pour ce groupe car il chevauche les limites des sections",
-  "results.tieBreakRequired": "Départage requis",
-  "results.tieGroup": "Groupe d'égalité #{group}",
-  "results.tieManagement": "Gestion des égalités",
-  "results.tied": "Ex æquo",
-  "results.tiedCandidates": "Candidats ex æquo",
-  "results.ties": "Égalités",
-  "results.title": "Résultats de l'élection",
-  "results.totalBallots": "Total des bulletins",
-  "results.totalVotes": "Total des voix",
-  "results.validVotes": "Voix valides",
-  "results.votes": "Voix"
+  "results.allResults": {
+    "t": "Tous les résultats",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ballotsReceived": {
+    "t": "Bulletins reçus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculateTally": {
+    "t": "Calculer le dépouillement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculatedAt": {
+    "t": "Calculé à {date}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.candidate": {
+    "t": "Candidat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.closeToNext": {
+    "t": "Proche du suivant",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.elected": {
+    "t": "Élu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.extra": {
+    "t": "Suppléant",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.flags": {
+    "t": "Drapeaux",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.loadError": {
+    "t": "Échec du chargement des résultats",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.monitor": {
+    "t": "Moniteur d'élection",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noResults": {
+    "t": "Aucun résultat disponible. Calculez d'abord le dépouillement.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noTies": {
+    "t": "Aucune égalité détectée",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.numberToElect": {
+    "t": "Nombre à élire",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.other": {
+    "t": "Autre",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.presentation": {
+    "t": "Vue de présentation",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.rank": {
+    "t": "Rang",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.reporting": {
+    "t": "Rapports",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.section": {
+    "t": "Section",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.spoiledBallots": {
+    "t": "Bulletins nuls",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakAlert": {
+    "t": "Attention : Certaines égalités nécessitent un départage manuel",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakMessage": {
+    "t": "Un départage est requis pour ce groupe car il chevauche les limites des sections",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakRequired": {
+    "t": "Départage requis",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieGroup": {
+    "t": "Groupe d'égalité #{group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieManagement": {
+    "t": "Gestion des égalités",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tied": {
+    "t": "Ex æquo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tiedCandidates": {
+    "t": "Candidats ex æquo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ties": {
+    "t": "Égalités",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.title": {
+    "t": "Résultats de l'élection",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalBallots": {
+    "t": "Total des bulletins",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalVotes": {
+    "t": "Total des voix",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.validVotes": {
+    "t": "Voix valides",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.votes": {
+    "t": "Voix",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

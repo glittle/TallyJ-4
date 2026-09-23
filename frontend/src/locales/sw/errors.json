@@ -1,18 +1,82 @@
 {
-  "error.errorDetails": "Maelezo ya Kosa",
-  "error.forbidden": "Ufikiaji umekataliwa.",
-  "error.goHome": "Nenda Nyumbani",
-  "error.networkError": "Kosa la mtandao. Tafadhali angalia muunganisho wako na jaribu tena.",
-  "error.notFound": "Rasilimali iliyoombwa haikupatikana.",
-  "error.pageError": "Kosa limetokea wakati wa kupakia ukurasa huu. Tafadhali jaribu tena.",
-  "error.serverError": "Kosa la seva. Tafadhali jaribu tena baadaye.",
-  "error.sessionExpired": "Kipindi chako kimeisha. Tafadhali ingia tena.",
-  "error.somethingWentWrong": "Kitu kimeenda vibaya",
-  "error.tryAgain": "Jaribu Tena",
-  "error.unauthorized": "Huna ruhusa ya kufanya kitendo hiki.",
-  "error.validationError": "Tafadhali angalia ingizo lako na jaribu tena.",
-  "notification.error": "Kosa",
-  "notification.info": "Habari",
-  "notification.success": "Mafanikio",
-  "notification.warning": "Onyo"
+  "error.errorDetails": {
+    "t": "Maelezo ya Kosa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.forbidden": {
+    "t": "Ufikiaji umekataliwa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.goHome": {
+    "t": "Nenda Nyumbani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.networkError": {
+    "t": "Kosa la mtandao. Tafadhali angalia muunganisho wako na jaribu tena.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.notFound": {
+    "t": "Rasilimali iliyoombwa haikupatikana.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.pageError": {
+    "t": "Kosa limetokea wakati wa kupakia ukurasa huu. Tafadhali jaribu tena.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.serverError": {
+    "t": "Kosa la seva. Tafadhali jaribu tena baadaye.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.sessionExpired": {
+    "t": "Kipindi chako kimeisha. Tafadhali ingia tena.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.somethingWentWrong": {
+    "t": "Kitu kimeenda vibaya",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.tryAgain": {
+    "t": "Jaribu Tena",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.unauthorized": {
+    "t": "Huna ruhusa ya kufanya kitendo hiki.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.validationError": {
+    "t": "Tafadhali angalia ingizo lako na jaribu tena.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.error": {
+    "t": "Kosa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.info": {
+    "t": "Habari",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.success": {
+    "t": "Mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.warning": {
+    "t": "Onyo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,20 +1,92 @@
 {
-  "tally.calculate": "Izračunaj rezultate",
-  "tally.calculateError": "Izračunavanje rezultata nije uspjelo",
-  "tally.calculateSuccess": "Rezultati uspješno izračunati",
-  "tally.calculatingProgress": "Napredak izračunavanja",
-  "tally.normalElection": "Redovni izbori",
-  "tally.processedBallots": "Obrađeni glasački listići",
-  "tally.resultsPreview": "Pregled rezultata (prvih 10)",
-  "tally.section.elected": "Izabrani",
-  "tally.section.extra": "Dodatni",
-  "tally.section.other": "Ostali",
-  "tally.singleNameElection": "Izbori s jednim imenom",
-  "tally.title": "Izračunaj rezultate",
-  "tally.viewFullResults": "Pogledaj sve rezultate",
-  "tally.warning": "Upozorenje",
-  "tally.warningMessage": "Izračunavanje rezultata prepisat će sve postojeće rezultate. Ova se radnja ne može poništiti.",
-  "tally.section.E": "Izabrani",
-  "tally.section.X": "Dodatni",
-  "tally.section.O": "Ostali"
+  "tally.calculate": {
+    "t": "Izračunaj rezultate",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateError": {
+    "t": "Izračunavanje rezultata nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "Rezultati uspješno izračunati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "Napredak izračunavanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.normalElection": {
+    "t": "Redovni izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.processedBallots": {
+    "t": "Obrađeni glasački listići",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.resultsPreview": {
+    "t": "Pregled rezultata (prvih 10)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.elected": {
+    "t": "Izabrani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.extra": {
+    "t": "Dodatni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.other": {
+    "t": "Ostali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.singleNameElection": {
+    "t": "Izbori s jednim imenom",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.title": {
+    "t": "Izračunaj rezultate",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.viewFullResults": {
+    "t": "Pogledaj sve rezultate",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warning": {
+    "t": "Upozorenje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warningMessage": {
+    "t": "Izračunavanje rezultata prepisat će sve postojeće rezultate. Ova se radnja ne može poništiti.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.E": {
+    "t": "Izabrani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.X": {
+    "t": "Dodatni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.O": {
+    "t": "Ostali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

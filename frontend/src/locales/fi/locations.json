@@ -1,47 +1,227 @@
 {
-  "locations.computer.browserInfo": "Selaintiedot",
-  "locations.computer.browserInfoHelp": "Automaattisesti havaittu selaimestasi",
-  "locations.computer.browserInfoMaxLength": "Selaintiedot eivät voi ylittää 250 merkkiä",
-  "locations.computer.browserInfoPlaceholder": "Automaattisesti havaitut selaintiedot",
-  "locations.computer.cancel": "Peruuta",
-  "locations.computer.code": "Tietokoneen koodi",
-  "locations.computer.codeHelp": "2-merkkinen koodi (esim. AA, AB, A1). Jätä tyhjäksi automaattista luomista varten.",
-  "locations.computer.codeInvalid": "Tietokoneen koodin on oltava 2 isoa kirjainta tai numeroa",
-  "locations.computer.codeLength": "Tietokoneen koodin on oltava tasan 2 merkkiä",
-  "locations.computer.codePlaceholder": "AA (jätä tyhjäksi automaattista luomista varten)",
-  "locations.computer.ipAddress": "IP-osoite",
-  "locations.computer.ipAddressHelp": "Valinnainen: Tietokoneen IP-osoite",
-  "locations.computer.ipAddressMaxLength": "IP-osoite ei voi ylittää 50 merkkiä",
-  "locations.computer.ipAddressPlaceholder": "Valinnainen: Syötä IP-osoite",
-  "locations.computer.register": "Rekisteröi",
-  "locations.computer.success": "Tietokone rekisteröity onnistuneesti",
-  "locations.computer.title": "Rekisteröi tietokone",
-  "locations.currentLocation": "Nykyinen sijainti",
-  "locations.form.cancel": "Peruuta",
-  "locations.form.contactInfo": "Yhteystiedot",
-  "locations.form.contactInfoMaxLength": "Yhteystiedot eivät voi ylittää 250 merkkiä",
-  "locations.form.contactInfoPlaceholder": "Syötä yhteystiedot",
-  "locations.form.create": "Luo",
-  "locations.form.created": "Sijainti luotu onnistuneesti",
-  "locations.form.latitude": "Leveysaste",
-  "locations.form.latitudeHelp": "Alue: -90 - 90",
-  "locations.form.latitudeInvalid": "Leveysasteen on oltava kelvollinen koordinaatti välillä -90 ja 90",
-  "locations.form.latitudePlaceholder": "esim. 37.7749",
-  "locations.form.longitude": "Pituusaste",
-  "locations.form.longitudeHelp": "Alue: -180 - 180",
-  "locations.form.longitudeInvalid": "Pituusasteen on oltava kelvollinen koordinaatti välillä -180 ja 180",
-  "locations.form.longitudePlaceholder": "esim. -122.4194",
-  "locations.form.name": "Sijainnin nimi",
-  "locations.form.nameMaxLength": "Sijainnin nimi ei voi ylittää 50 merkkiä",
-  "locations.form.namePlaceholder": "Syötä sijainnin nimi",
-  "locations.form.nameRequired": "Sijainnin nimi vaaditaan",
-  "locations.form.save": "Tallenna",
-  "locations.form.sortOrder": "Lajittelujärjestys",
-  "locations.form.sortOrderHelp": "Käytetään sijaintien järjestämiseen listoissa",
-  "locations.form.sortOrderInvalid": "Lajittelujärjestyksen on oltava numero",
-  "locations.form.titleAdd": "Lisää sijainti",
-  "locations.form.titleEdit": "Muokkaa sijaintia",
-  "locations.form.updated": "Sijainti päivitetty onnistuneesti",
-  "locations.locationSelected": "Sijainti valittu onnistuneesti",
-  "locations.selectLocation": "Valitse sijainti"
+  "locations.computer.browserInfo": {
+    "t": "Selaintiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoHelp": {
+    "t": "Automaattisesti havaittu selaimestasi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoMaxLength": {
+    "t": "Selaintiedot eivät voi ylittää 250 merkkiä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoPlaceholder": {
+    "t": "Automaattisesti havaitut selaintiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.cancel": {
+    "t": "Peruuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.code": {
+    "t": "Tietokoneen koodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeHelp": {
+    "t": "2-merkkinen koodi (esim. AA, AB, A1). Jätä tyhjäksi automaattista luomista varten.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeInvalid": {
+    "t": "Tietokoneen koodin on oltava 2 isoa kirjainta tai numeroa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeLength": {
+    "t": "Tietokoneen koodin on oltava tasan 2 merkkiä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codePlaceholder": {
+    "t": "AA (jätä tyhjäksi automaattista luomista varten)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddress": {
+    "t": "IP-osoite",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressHelp": {
+    "t": "Valinnainen: Tietokoneen IP-osoite",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressMaxLength": {
+    "t": "IP-osoite ei voi ylittää 50 merkkiä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressPlaceholder": {
+    "t": "Valinnainen: Syötä IP-osoite",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.register": {
+    "t": "Rekisteröi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.success": {
+    "t": "Tietokone rekisteröity onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.title": {
+    "t": "Rekisteröi tietokone",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.currentLocation": {
+    "t": "Nykyinen sijainti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.cancel": {
+    "t": "Peruuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfo": {
+    "t": "Yhteystiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoMaxLength": {
+    "t": "Yhteystiedot eivät voi ylittää 250 merkkiä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoPlaceholder": {
+    "t": "Syötä yhteystiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.create": {
+    "t": "Luo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.created": {
+    "t": "Sijainti luotu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitude": {
+    "t": "Leveysaste",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeHelp": {
+    "t": "Alue: -90 - 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeInvalid": {
+    "t": "Leveysasteen on oltava kelvollinen koordinaatti välillä -90 ja 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudePlaceholder": {
+    "t": "esim. 37.7749",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitude": {
+    "t": "Pituusaste",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeHelp": {
+    "t": "Alue: -180 - 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeInvalid": {
+    "t": "Pituusasteen on oltava kelvollinen koordinaatti välillä -180 ja 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudePlaceholder": {
+    "t": "esim. -122.4194",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.name": {
+    "t": "Sijainnin nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameMaxLength": {
+    "t": "Sijainnin nimi ei voi ylittää 50 merkkiä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.namePlaceholder": {
+    "t": "Syötä sijainnin nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameRequired": {
+    "t": "Sijainnin nimi vaaditaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.save": {
+    "t": "Tallenna",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrder": {
+    "t": "Lajittelujärjestys",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderHelp": {
+    "t": "Käytetään sijaintien järjestämiseen listoissa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderInvalid": {
+    "t": "Lajittelujärjestyksen on oltava numero",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleAdd": {
+    "t": "Lisää sijainti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleEdit": {
+    "t": "Muokkaa sijaintia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.updated": {
+    "t": "Sijainti päivitetty onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.locationSelected": {
+    "t": "Sijainti valittu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.selectLocation": {
+    "t": "Valitse sijainti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

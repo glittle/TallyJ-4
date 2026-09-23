@@ -1,24 +1,112 @@
 {
-  "dashboard.active": "活跃",
-  "dashboard.activeElections": "进行中的选举",
-  "dashboard.ballotsEntered": "已输入选票",
-  "dashboard.canVote": "可以投票",
-  "dashboard.closed": "已关闭",
-  "dashboard.closes": "关闭",
-  "dashboard.electionDetails": "选举详情",
-  "dashboard.noElections": "未找到选举",
-  "dashboard.noTellers": "未分配计票员",
-  "dashboard.onlineVoting": "在线投票",
-  "dashboard.open": "打开",
-  "dashboard.opens": "开放",
-  "dashboard.otherActions": "其他操作...",
-  "dashboard.recentElections": "最近选举",
-  "dashboard.registered": "已注册",
-  "dashboard.statistics": "统计",
-  "dashboard.tellerCount": "计票员数量",
-  "dashboard.tellers": "计票员",
-  "dashboard.tellersStatus": "计票员",
-  "dashboard.totalBallots": "选票总数",
-  "dashboard.totalElections": "选举总数",
-  "dashboard.totalVoters": "选民总数"
+  "dashboard.active": {
+    "t": "活跃",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.activeElections": {
+    "t": "进行中的选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "已输入选票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.canVote": {
+    "t": "可以投票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closed": {
+    "t": "已关闭",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closes": {
+    "t": "关闭",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "选举详情",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noElections": {
+    "t": "未找到选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noTellers": {
+    "t": "未分配计票员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "在线投票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.open": {
+    "t": "打开",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.opens": {
+    "t": "开放",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.otherActions": {
+    "t": "其他操作...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.recentElections": {
+    "t": "最近选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.registered": {
+    "t": "已注册",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.statistics": {
+    "t": "统计",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "计票员数量",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellers": {
+    "t": "计票员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "计票员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "选票总数",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalElections": {
+    "t": "选举总数",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "选民总数",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,28 +1,132 @@
 {
-  "superAdmin.detail.electionMode": "Vaalitila",
-  "superAdmin.detail.locations": "Sijainnit",
-  "superAdmin.detail.numberToElect": "Valittavien määrä",
-  "superAdmin.detail.owners": "Hallinnoijat",
-  "superAdmin.detail.percentComplete": "Valmistumisprosentti",
-  "superAdmin.detail.title": "Vaalien tiedot",
-  "superAdmin.elections.ballots": "Äänestysliput",
-  "superAdmin.elections.convenor": "Kokoonkutsuja",
-  "superAdmin.elections.date": "Päivämäärä",
-  "superAdmin.elections.filterStatus": "Suodata tilan mukaan",
-  "superAdmin.elections.filterType": "Suodata tyypin mukaan",
-  "superAdmin.elections.name": "Vaalien nimi",
-  "superAdmin.elections.noResults": "Vaalteja ei löytynyt",
-  "superAdmin.elections.owner": "Omistaja",
-  "superAdmin.elections.search": "Hae vaaleja...",
-  "superAdmin.elections.status": "Tila",
-  "superAdmin.elections.type": "Tyyppi",
-  "superAdmin.elections.voters": "Äänestäjät",
-  "superAdmin.error.accessDenied": "Sinulla ei ole super admin -oikeuksia",
-  "superAdmin.error.loadFailed": "Super admin -tietojen lataaminen epäonnistui",
-  "superAdmin.summary.archivedElections": "Arkistoidut",
-  "superAdmin.summary.completedElections": "Valmiit",
-  "superAdmin.summary.openElections": "Avoinna",
-  "superAdmin.summary.totalElections": "Vaalit yhteensä",
-  "superAdmin.summary.upcomingElections": "Tulossa",
-  "superAdmin.title": "Super Admin -kojelauta"
+  "superAdmin.detail.electionMode": {
+    "t": "Vaalitila",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.locations": {
+    "t": "Sijainnit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.numberToElect": {
+    "t": "Valittavien määrä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.owners": {
+    "t": "Hallinnoijat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.percentComplete": {
+    "t": "Valmistumisprosentti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.title": {
+    "t": "Vaalien tiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.ballots": {
+    "t": "Äänestysliput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.convenor": {
+    "t": "Kokoonkutsuja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.date": {
+    "t": "Päivämäärä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterStatus": {
+    "t": "Suodata tilan mukaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterType": {
+    "t": "Suodata tyypin mukaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.name": {
+    "t": "Vaalien nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.noResults": {
+    "t": "Vaalteja ei löytynyt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.owner": {
+    "t": "Omistaja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.search": {
+    "t": "Hae vaaleja...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.status": {
+    "t": "Tila",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.type": {
+    "t": "Tyyppi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.voters": {
+    "t": "Äänestäjät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.accessDenied": {
+    "t": "Sinulla ei ole super admin -oikeuksia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.loadFailed": {
+    "t": "Super admin -tietojen lataaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.archivedElections": {
+    "t": "Arkistoidut",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.completedElections": {
+    "t": "Valmiit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.openElections": {
+    "t": "Avoinna",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.totalElections": {
+    "t": "Vaalit yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.upcomingElections": {
+    "t": "Tulossa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.title": {
+    "t": "Super Admin -kojelauta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

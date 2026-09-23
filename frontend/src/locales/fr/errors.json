@@ -1,18 +1,82 @@
 {
-  "error.errorDetails": "Détails de l'erreur",
-  "error.forbidden": "Accès refusé.",
-  "error.goHome": "Accueil",
-  "error.networkError": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
-  "error.notFound": "La ressource demandée est introuvable.",
-  "error.pageError": "Une erreur est survenue lors du chargement de cette page. Veuillez réessayer.",
-  "error.serverError": "Erreur serveur. Veuillez réessayer plus tard.",
-  "error.sessionExpired": "Votre session a expiré. Veuillez vous reconnecter.",
-  "error.somethingWentWrong": "Une erreur est survenue",
-  "error.tryAgain": "Réessayer",
-  "error.unauthorized": "Vous n'êtes pas autorisé à effectuer cette action.",
-  "error.validationError": "Veuillez vérifier vos informations et réessayer.",
-  "notification.error": "Erreur",
-  "notification.info": "Information",
-  "notification.success": "Succès",
-  "notification.warning": "Avertissement"
+  "error.errorDetails": {
+    "t": "Détails de l'erreur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.forbidden": {
+    "t": "Accès refusé.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.goHome": {
+    "t": "Accueil",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.networkError": {
+    "t": "Erreur réseau. Veuillez vérifier votre connexion et réessayer.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.notFound": {
+    "t": "La ressource demandée est introuvable.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.pageError": {
+    "t": "Une erreur est survenue lors du chargement de cette page. Veuillez réessayer.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.serverError": {
+    "t": "Erreur serveur. Veuillez réessayer plus tard.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.sessionExpired": {
+    "t": "Votre session a expiré. Veuillez vous reconnecter.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.somethingWentWrong": {
+    "t": "Une erreur est survenue",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.tryAgain": {
+    "t": "Réessayer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.unauthorized": {
+    "t": "Vous n'êtes pas autorisé à effectuer cette action.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.validationError": {
+    "t": "Veuillez vérifier vos informations et réessayer.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.error": {
+    "t": "Erreur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.info": {
+    "t": "Information",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.success": {
+    "t": "Succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.warning": {
+    "t": "Avertissement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

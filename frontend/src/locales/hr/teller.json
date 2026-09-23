@@ -1,17 +1,77 @@
 {
-  "teller.form.cancel": "Odustani",
-  "teller.form.computerCode": "Kôd računala",
-  "teller.form.computerCodeHelp": "Dva velika slova (AA-ZZ) ili ostavite prazno",
-  "teller.form.computerCodeInvalid": "Kôd računala mora biti 2 velika slova (AA-ZZ)",
-  "teller.form.computerCodePlaceholder": "npr. AA",
-  "teller.form.create": "Stvori",
-  "teller.form.headTeller": "Glavni brojač glasova",
-  "teller.form.headTellerHelp": "Glavni brojači glasova imaju dodatne ovlasti",
-  "teller.form.name": "Ime brojača glasova",
-  "teller.form.nameMaxLength": "Ime brojača glasova ne smije premašiti 50 znakova",
-  "teller.form.namePlaceholder": "Unesite ime brojača glasova",
-  "teller.form.nameRequired": "Ime brojača glasova je obavezno",
-  "teller.form.save": "Spremi",
-  "teller.form.titleAdd": "Dodaj brojača glasova",
-  "teller.form.titleEdit": "Uredi brojača glasova"
+  "teller.form.cancel": {
+    "t": "Odustani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCode": {
+    "t": "Kôd računala",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeHelp": {
+    "t": "Dva velika slova (AA-ZZ) ili ostavite prazno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeInvalid": {
+    "t": "Kôd računala mora biti 2 velika slova (AA-ZZ)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodePlaceholder": {
+    "t": "npr. AA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.create": {
+    "t": "Stvori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTeller": {
+    "t": "Glavni brojač glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTellerHelp": {
+    "t": "Glavni brojači glasova imaju dodatne ovlasti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.name": {
+    "t": "Ime brojača glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "Ime brojača glasova ne smije premašiti 50 znakova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "Unesite ime brojača glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "Ime brojača glasova je obavezno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.save": {
+    "t": "Spremi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "Dodaj brojača glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "Uredi brojača glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

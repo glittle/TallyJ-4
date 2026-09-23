@@ -1,26 +1,122 @@
 {
-  "eligibility.R01": "Ei edustaja tässä vaalissa",
-  "eligibility.R02": "Oikeudet poistettu (ei voi äänestää)",
-  "eligibility.R03": "Muu (ei voi äänestää mutta voi olla äänestettävä)",
-  "eligibility.V01": "Nuori 18/19/20-vuotias",
-  "eligibility.V02": "Välierävaali: Jo instituutiossa",
-  "eligibility.V03": "Toisessa instituutiossa (esim. neuvonantaja)",
-  "eligibility.V04": "Oikeudet poistettu (ei voi olla äänestettävä)",
-  "eligibility.V05": "Tasapelin ratkaiseminen: Ei tasapeli",
-  "eligibility.V06": "Muu (voi äänestää mutta ei olla äänestettävä)",
-  "eligibility.X01": "Kuollut",
-  "eligibility.X02": "Muuttanut muualle äskettäin",
-  "eligibility.X03": "Ei tässä paikallisessa yksikössä",
-  "eligibility.X04": "Ei rekisteröitynyt Bahá’í",
-  "eligibility.X05": "Alle 18-vuotias",
-  "eligibility.X06": "Asuu muualla",
-  "eligibility.X07": "Oikeudet poistettu (kokonaan)",
-  "eligibility.X08": "Ei edustaja ja toisessa instituutiossa",
-  "eligibility.X09": "Muu (ei voi äänestää tai olla äänestettävä)",
-  "eligibility.eligible": "Kelpoinen",
-  "eligibility.groupR": "Voi vain saada ääniä (ei voi äänestää)",
-  "eligibility.groupV": "Voi vain äänestää (ei voi saada ääniä)",
-  "eligibility.groupX": "Ei voi äänestää, ei voi saada ääniä",
-  "eligibility.label": "Kelpoisuus",
-  "eligibility.selectReason": "Valitse kelpoisuuden syy"
+  "eligibility.R01": {
+    "t": "Ei edustaja tässä vaalissa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.R02": {
+    "t": "Oikeudet poistettu (ei voi äänestää)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.R03": {
+    "t": "Muu (ei voi äänestää mutta voi olla äänestettävä)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V01": {
+    "t": "Nuori 18/19/20-vuotias",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V02": {
+    "t": "Välierävaali: Jo instituutiossa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V03": {
+    "t": "Toisessa instituutiossa (esim. neuvonantaja)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V04": {
+    "t": "Oikeudet poistettu (ei voi olla äänestettävä)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V05": {
+    "t": "Tasapelin ratkaiseminen: Ei tasapeli",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V06": {
+    "t": "Muu (voi äänestää mutta ei olla äänestettävä)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X01": {
+    "t": "Kuollut",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X02": {
+    "t": "Muuttanut muualle äskettäin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X03": {
+    "t": "Ei tässä paikallisessa yksikössä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X04": {
+    "t": "Ei rekisteröitynyt Bahá’í",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X05": {
+    "t": "Alle 18-vuotias",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X06": {
+    "t": "Asuu muualla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X07": {
+    "t": "Oikeudet poistettu (kokonaan)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X08": {
+    "t": "Ei edustaja ja toisessa instituutiossa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X09": {
+    "t": "Muu (ei voi äänestää tai olla äänestettävä)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.eligible": {
+    "t": "Kelpoinen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupR": {
+    "t": "Voi vain saada ääniä (ei voi äänestää)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupV": {
+    "t": "Voi vain äänestää (ei voi saada ääniä)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupX": {
+    "t": "Ei voi äänestää, ei voi saada ääniä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.label": {
+    "t": "Kelpoisuus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.selectReason": {
+    "t": "Valitse kelpoisuuden syy",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

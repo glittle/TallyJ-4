@@ -1,232 +1,1152 @@
 {
-  "elections.advanceStage": "Advance to Next Stage",
-  "elections.advanceTo": "Advance to {stage}",
-  "elections.ballots": "Ballots",
-  "elections.bulkDeleteError": "Failed to delete some elections",
-  "elections.bulkDeleteMessage": "Are you sure you want to delete {count} selected elections?",
-  "elections.bulkDeleteSuccess": "{count} elections deleted successfully",
-  "elections.calculateTally": "Calculate Tally",
-  "elections.clearFilters": "Clear Filters",
-  "elections.confirmAdvance": "Are you sure you want to advance this election to {stage}?",
-  "elections.confirmBulkDelete": "Confirm Bulk Delete",
-  "elections.confirmRevert": "Are you sure you want to revert this election to {stage}?",
-  "elections.leaveFinalized.title": "Leave Finalized?",
-  "elections.leaveFinalized.message": "Leaving Finalized unlocks this election. People and ballot data can be changed again. Continue to {stage}?",
-  "elections.leaveFinalized.confirm": "Leave Finalized",
-  "elections.copyAccessCode": "Copy access code",
-  "elections.copyUrl": "Copy URL",
-  "elections.shareTellerAccess": "Share teller access",
-  "elections.shareTellerAccessHint": "Show this QR code so other tellers can join easily.",
-  "elections.showShareLink": "Share",
-  "elections.duplicate.action": "Duplicate as test copy",
-  "elections.duplicate.confirm": "Duplicate",
-  "elections.duplicate.defaultName": "Copy of {name}",
-  "elections.duplicate.error": "Failed to duplicate election",
-  "elections.duplicate.prompt": "Name for the test copy",
-  "elections.duplicate.success": "Test copy created",
-  "elections.duplicate.title": "Duplicate election",
-  "elections.reset.action": "Reset test election data",
-  "elections.reset.confirm": "Reset",
-  "elections.reset.confirmMessage": "This will remove ballots, check-ins, results, and other runtime data so you can run this test election again. People, locations, and settings will stay. This cannot be undone.",
-  "elections.reset.error": "Failed to reset election",
-  "elections.reset.success": "Test election data reset",
-  "elections.reset.title": "Reset test election",
-  "elections.createError": "Failed to create election",
-  "elections.createFirst": "Create Your First Election",
-  "elections.createNew": "Create Election",
-  "elections.createSuccess": "Election created successfully",
-  "elections.date": "Election Date",
-  "elections.deleteConfirm": "Are you sure you want to delete this election? This action cannot be undone.",
-  "elections.deleteError": "Failed to delete election",
-  "elections.deleteSelected": "Delete Selected ({count})",
-  "elections.deleteSuccess": "Election deleted successfully",
-  "elections.details": "Election Details",
-  "elections.edit": "Edit Election",
-  "elections.electionModes.B": "By-election",
-  "elections.electionModes.N": "Normal Election",
-  "elections.electionModes.T": "Tie-Break",
-  "elections.electionTypes.Con": "Unit Convention",
-  "elections.electionTypes.LSA": "Local Spiritual Assembly",
-  "elections.electionTypes.LSA1": "Local Spiritual Assembly (Two-Stage) Local Unit",
-  "elections.electionTypes.LSA2": "Local Spiritual Assembly (Two-Stage) Final",
-  "elections.electionTypes.NSA": "National Spiritual Assembly",
-  "elections.electionTypes.Oth": "Other",
-  "elections.electionTypes.Reg": "Regional Council",
-  "elections.exportElection": "Export Election",
-  "elections.exportElectionError": "Failed to export election",
-  "elections.exportElectionSuccess": "Election exported successfully",
-  "elections.filterByStatus": "Filter by Status",
-  "elections.filterByType": "Filter by Type",
-  "elections.form.convenor": "Convenor",
-  "elections.form.convenorPlaceholder": "Enter convenor name",
-  "elections.form.customMethods": "Custom Methods",
-  "elections.form.customMethodsHelp": "Specify any custom or non-standard voting methods used in this election.",
-  "elections.form.customMethodsPlaceholder": "Describe any custom voting methods",
-  "elections.form.date": "Election Date",
-  "elections.form.datePlaceholder": "Select election date",
-  "elections.form.dateRequired": "Election Date is required",
-  "elections.form.electionMode": "Election Mode",
-  "elections.form.electionPasscode": "Election Passcode",
-  "elections.form.electionPasscodeHelp": "A passcode is required for teller login.",
-  "elections.form.guestTellersCanAddPeople": "Can Add People?",
-  "elections.form.guestTellersCanAddPeopleHelp": "When a guest teller needs to record a name that is not in the list (including spoiled), can they add that person? If not, a logged-in teller must add new names.",
-  "elections.form.electionPasscodePlaceholder": "Enter passcode",
-  "elections.form.emailFromAddress": "Email From Address",
-  "elections.form.emailFromAddressPlaceholder": "Enter sender email address",
-  "elections.form.emailFromName": "Email From Name",
-  "elections.form.emailFromNamePlaceholder": "Enter sender name",
-  "elections.form.emailInvalid": "Invalid email address",
-  "elections.form.emailSubject": "Email Subject",
-  "elections.form.emailSubjectPlaceholder": "Enter email subject",
-  "elections.form.emailText": "Email Text",
-  "elections.form.emailTextPlaceholder": "Enter email body text",
-  "elections.form.flags": "Flags",
-  "elections.form.flagsHelp": "Flags are used for special election conditions.",
-  "elections.form.flagsPlaceholder": "Enter any flags",
-  "elections.form.hidePreBallotPages": "Hide Pre-Ballot Pages",
-  "elections.form.linkedElection": "Linked Election",
-  "elections.form.linkedElectionCount": "{count} linked election available",
-  "elections.form.linkedElectionCount_plural": "{count} linked elections available",
-  "elections.form.linkedElectionHelp": "Select an election to link for tie-break or run-off.",
-  "elections.form.linkedElectionKind": "Linked Election Kind",
-  "elections.form.linkedElectionKindPlaceholder": "Select kind",
-  "elections.form.linkedElectionPlaceholder": "Select linked election",
-  "elections.form.listForPublic": "List for Public",
-  "elections.form.lockedByBallots": "Locked — ballots have been entered",
-  "elections.form.maskVotingMethod": "Mask Voting Method",
-  "elections.form.modePlaceholder": "Select election mode",
-  "elections.form.name": "Election Name",
-  "elections.form.namePlaceholder": "Enter election name",
-  "elections.form.nameRequired": "Election name is required",
-  "elections.form.numberExtra": "Number of Extra",
-  "elections.form.numberToElect": "Number to Elect",
-  "elections.form.numberToElectRequired": "Number to elect is required",
-  "elections.form.onlineCloseIsEstimate": "Closing Time is approximate",
-  "elections.form.onlineSelectionProcess": "Name Selection",
-  "elections.form.onlineSelectionProcessPlaceholder": "Select how voters choose names",
-  "elections.form.onlineSelectionProcessList": "List — voters pick from the election list",
-  "elections.form.onlineSelectionProcessListHelp": "Use when the list of people who can be voted for is complete, or is limited (for example a tie-break). Voters cannot add names, and tellers do not need to process each online ballot.",
-  "elections.form.onlineSelectionProcessRandom": "Random — voters type names",
-  "elections.form.onlineSelectionProcessRandomHelp": "Use when there is no list, or voters should not see it. Tellers finish each ballot by finding the people named by the voter, as they do for paper ballots. Invalid names are likely to become spoiled votes.",
-  "elections.form.onlineSelectionProcessBoth": "Both — list plus optional typed names",
-  "elections.form.onlineSelectionProcessBothHelp": "Use when you have a list but are not sure it includes everyone. If a voter types a name that is not on the list, tellers must find and enter the matching person.",
-  "elections.form.onlineWhenClose": "Online Voting Closes",
-  "elections.form.onlineWhenClosePlaceholder": "Select closing time",
-  "elections.form.onlineWhenOpen": "Online Voting Opens",
-  "elections.form.onlineWhenOpenPlaceholder": "Select opening time",
-  "elections.form.showAsTest": "Show as Test",
-  "elections.form.showFullReport": "Show Full Report",
-  "elections.form.smsText": "SMS Text",
-  "elections.form.smsTextPlaceholder": "Enter SMS message text",
-  "elections.form.type": "Election Type",
-  "elections.form.typePlaceholder": "Select election type",
-  "elections.form.typeRequired": "Election type is required",
-  "elections.form.useCallInButton": "Enable Call-In Voting",
-  "elections.form.useKiosk": "Enable kiosk mode",
-  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
-  "elections.form.votingMethods": "Voting Methods",
-  "elections.form.votingMethodsHelp": "Choose the methods by which votes will be cast.",
-  "elections.form.votingMethodsPlaceholder": "Select voting methods",
-  "elections.importCdnBallots": "Import CDN Ballots",
-  "elections.importCdnBallotsError": "Failed to import CDN ballots",
-  "elections.importCdnBallotsSuccess": "CDN ballots imported successfully",
-  "elections.importElection": "Import Election",
-  "elections.importElectionError": "Failed to import election",
-  "elections.importElectionSuccess": "Election imported successfully",
-  "elections.importLoaderTitle": "Loading election package",
-  "elections.importLoaderStarting": "Starting import…",
-  "elections.importLoaderWorking": "Importing…",
-  "elections.list": "Elections",
-  "elections.loadError": "Failed to load election",
-  "elections.locations": "Locations",
-  "elections.manageBallots": "Manage Ballots",
-  "elections.manageLocations": "Manage Locations",
-  "elections.managePeople": "Manage People",
-  "elections.name": "Election Name",
-  "elections.notFound": "Election not found",
-  "elections.onlineVoting": "Online voting",
-  "elections.onlineVotingDisabled": "Online voting is disabled",
-  "elections.onlineVotingEnabled": "Online voting is enabled",
-  "elections.onlineVotingWindow": "Online voting times",
-  "elections.onlineVotingWindowSaved": "Online voting times saved",
-  "elections.onlineWindow.willOpen": "Will open {relative}.",
-  "elections.onlineWindow.opened": "Opened {relative}.",
-  "elections.onlineWindow.willClose": "Will close {relative}.",
-  "elections.onlineWindow.expectedToClose": "Expected to close {relative}.",
-  "elections.onlineWindow.closed": "Closed {relative}.",
-  "elections.onlineWindow.duration": "Open for {duration}.",
-  "elections.onlineWindow.openBeforeClose": "Online voting open time must be before close time",
-  "elections.onlineWindow.statusOpen": "Online voting is Open",
-  "elections.onlineWindow.statusClosed": "Online voting is Closed",
-  "elections.setOnlineVotingWindow": "Show",
-  "elections.form.useOnlineVoting": "Use online voting",
-  "elections.form.useOnlineVotingHelp": "Enable if voters will cast ballots online. Open/close times and whether closing is an estimate are set from the Online Voting control in the header.",
-  "elections.participation": "Participation",
-  "elections.people": "People",
-  "elections.quickActions": "Quick Actions",
-  "elections.revertTo": "Revert to {stage}",
-  "elections.searchPlaceholder": "Search elections by name or convenor...",
-  "elections.stage.Counting": "Counting",
-  "elections.stage.Finalized": "Finalized",
-  "elections.stage.Finalized_short": "Final",
-  "elections.stage.GatheringBallots": "Gathering Ballots",
-  "elections.stage.GatheringBallots_short": "Collecting",
-  "elections.stage.ProcessingBallots": "Processing Ballots",
-  "elections.stage.ProcessingBallots_short": "Processing",
-  "elections.stage.Setup": "Setup",
-  "elections.stage.SettingUp": "Setting Up",
-  "elections.stage.SettingUp_short": "Setup",
-  "elections.stage.advanceShort": "Advance",
-  "elections.stage.jumpTo": "Jump to mode…",
-  "elections.stage.modeLabel": "Election mode",
-  "elections.stage.revertShort": "Revert",
-  "elections.stageNav.group.GatheringBallots": "Gathering Ballots",
-  "elections.stageNav.group.ProcessingBallots": "Processing Ballots",
-  "elections.stageNav.group.Finalized": "Finalized",
-  "elections.stageNav.group.SettingUp": "Setting Up",
-  "elections.goToStagePage": "Go there",
-  "elections.stageAdvanced": "Election changed to {stage}",
-  "elections.stageChangeError.generic": "Failed to change election stage",
-  "elections.stageChangeError.alreadyInStage": "Election is already in the requested stage",
-  "elections.stageChangeError.analysisNotCompleted": "Election analysis has not been completed",
-  "elections.stageChangeError.analysisNotReady": "Election analysis is not complete or ready for finalization",
-  "elections.stageChangeError.ballotsNeedReview": "{count} ballot(s) still need review",
-  "elections.stageChangeError.ballotsOutstanding": "{count} ballot(s) have outstanding issues",
-  "elections.stageChangeError.confirmLeaveFinalized": "Reverting from Finalized requires confirmation",
-  "elections.finalizedWriteBlocked": "This election is finalized. People and ballot data cannot be changed.",
-  "elections.stageChangeError.invalidStage": "Invalid election stage",
-  "elections.stageChangeError.notFound": "Election not found",
-  "elections.stageChangeError.unresolvedTies": "Unresolved ties must be broken before finalizing",
-  "elections.stageChangeError.countsDoNotReconcile": "{count} count-reconciliation mismatch(es) must be resolved before analyzing or finalizing",
-  "elections.stageChangeError.onlineVotingStillOpen": "Close the online voting window before finalizing this election.",
-  "elections.stageProgression": "Election Stage",
-  "elections.statistics": "Statistics",
-  "elections.status": "Status",
-  "elections.tabs.advanced": "Advanced",
-  "elections.tabs.auditLogs": "Audit Logs",
-  "elections.tabs.ballots": "Ballots",
-  "elections.tabs.basicInfo": "Basic Info",
-  "elections.tabs.communication": "Communication",
-  "elections.tabs.displayPrivacy": "Display & Privacy",
-  "elections.tabs.electionRules": "Election Rules",
-  "elections.tabs.locations": "Locations",
-  "elections.tabs.onlineVoting": "Online Voting",
-  "elections.tabs.people": "People",
-  "elections.tabs.results": "Results",
-  "elections.tabs.tellers": "Tellers",
-  "elections.tabs.votingMethods": "Voting Methods",
-  "elections.guestTellerAccess": "Guest tellers",
-  "elections.testElectionBanner": "Test Election",
-  "elections.tellerAccess": "Teller Access",
-  "elections.tellerAccessCode": "Access Code",
-  "elections.tellerAccessQrCode": "QR Code of Shareable URL",
-  "elections.tellerAccessUrl": "Shareable URL",
-  "elections.toElect": "To Elect",
-  "elections.toggleTellerAccess": "Toggle Teller Access",
-  "elections.type": "Type",
-  "elections.updateError": "Failed to update election",
-  "elections.updateSuccess": "Election updated successfully",
-  "elections.viewReports": "View Reports",
-  "elections.viewResults": "View Results",
-  "elections.voters": "Voters"
+  "elections.advanceStage": {
+    "t": "Advance to Next Stage",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.advanceTo": {
+    "t": "Advance to {stage}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ballots": {
+    "t": "Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteError": {
+    "t": "Failed to delete some elections",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteMessage": {
+    "t": "Are you sure you want to delete {count} selected elections?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteSuccess": {
+    "t": "{count} elections deleted successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.calculateTally": {
+    "t": "Calculate Tally",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.clearFilters": {
+    "t": "Clear Filters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmAdvance": {
+    "t": "Are you sure you want to advance this election to {stage}?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmBulkDelete": {
+    "t": "Confirm Bulk Delete",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmRevert": {
+    "t": "Are you sure you want to revert this election to {stage}?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.leaveFinalized.title": {
+    "t": "Leave Finalized?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.leaveFinalized.message": {
+    "t": "Leaving Finalized unlocks this election. People and ballot data can be changed again. Continue to {stage}?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.leaveFinalized.confirm": {
+    "t": "Leave Finalized",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.copyAccessCode": {
+    "t": "Copy access code",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.copyUrl": {
+    "t": "Copy URL",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.shareTellerAccess": {
+    "t": "Share teller access",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.shareTellerAccessHint": {
+    "t": "Show this QR code so other tellers can join easily.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.showShareLink": {
+    "t": "Share",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.duplicate.action": {
+    "t": "Duplicate as test copy",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.duplicate.confirm": {
+    "t": "Duplicate",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.duplicate.defaultName": {
+    "t": "Copy of {name}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.duplicate.error": {
+    "t": "Failed to duplicate election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.duplicate.prompt": {
+    "t": "Name for the test copy",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.duplicate.success": {
+    "t": "Test copy created",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.duplicate.title": {
+    "t": "Duplicate election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.reset.action": {
+    "t": "Reset test election data",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.reset.confirm": {
+    "t": "Reset",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.reset.confirmMessage": {
+    "t": "This will remove ballots, check-ins, results, and other runtime data so you can run this test election again. People, locations, and settings will stay. This cannot be undone.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.reset.error": {
+    "t": "Failed to reset election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.reset.success": {
+    "t": "Test election data reset",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.reset.title": {
+    "t": "Reset test election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createError": {
+    "t": "Failed to create election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createFirst": {
+    "t": "Create Your First Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createNew": {
+    "t": "Create Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createSuccess": {
+    "t": "Election created successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.date": {
+    "t": "Election Date",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteConfirm": {
+    "t": "Are you sure you want to delete this election? This action cannot be undone.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteError": {
+    "t": "Failed to delete election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSelected": {
+    "t": "Delete Selected ({count})",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSuccess": {
+    "t": "Election deleted successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.details": {
+    "t": "Election Details",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.edit": {
+    "t": "Edit Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.B": {
+    "t": "By-election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.N": {
+    "t": "Normal Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.T": {
+    "t": "Tie-Break",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Con": {
+    "t": "Unit Convention",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA": {
+    "t": "Local Spiritual Assembly",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA1": {
+    "t": "Local Spiritual Assembly (Two-Stage) Local Unit",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA2": {
+    "t": "Local Spiritual Assembly (Two-Stage) Final",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.NSA": {
+    "t": "National Spiritual Assembly",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Oth": {
+    "t": "Other",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Reg": {
+    "t": "Regional Council",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElection": {
+    "t": "Export Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionError": {
+    "t": "Failed to export election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionSuccess": {
+    "t": "Election exported successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByStatus": {
+    "t": "Filter by Status",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByType": {
+    "t": "Filter by Type",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenor": {
+    "t": "Convenor",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenorPlaceholder": {
+    "t": "Enter convenor name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethods": {
+    "t": "Custom Methods",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsHelp": {
+    "t": "Specify any custom or non-standard voting methods used in this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsPlaceholder": {
+    "t": "Describe any custom voting methods",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.date": {
+    "t": "Election Date",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.datePlaceholder": {
+    "t": "Select election date",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.dateRequired": {
+    "t": "Election Date is required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionMode": {
+    "t": "Election Mode",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscode": {
+    "t": "Election Passcode",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodeHelp": {
+    "t": "A passcode is required for teller login.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.guestTellersCanAddPeople": {
+    "t": "Can Add People?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.guestTellersCanAddPeopleHelp": {
+    "t": "When a guest teller needs to record a name that is not in the list (including spoiled), can they add that person? If not, a logged-in teller must add new names.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodePlaceholder": {
+    "t": "Enter passcode",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddress": {
+    "t": "Email From Address",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddressPlaceholder": {
+    "t": "Enter sender email address",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromName": {
+    "t": "Email From Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromNamePlaceholder": {
+    "t": "Enter sender name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailInvalid": {
+    "t": "Invalid email address",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubject": {
+    "t": "Email Subject",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubjectPlaceholder": {
+    "t": "Enter email subject",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailText": {
+    "t": "Email Text",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailTextPlaceholder": {
+    "t": "Enter email body text",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flags": {
+    "t": "Flags",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsHelp": {
+    "t": "Flags are used for special election conditions.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsPlaceholder": {
+    "t": "Enter any flags",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.hidePreBallotPages": {
+    "t": "Hide Pre-Ballot Pages",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElection": {
+    "t": "Linked Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount": {
+    "t": "{count} linked election available",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount_plural": {
+    "t": "{count} linked elections available",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionHelp": {
+    "t": "Select an election to link for tie-break or run-off.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKind": {
+    "t": "Linked Election Kind",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKindPlaceholder": {
+    "t": "Select kind",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionPlaceholder": {
+    "t": "Select linked election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.listForPublic": {
+    "t": "List for Public",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.lockedByBallots": {
+    "t": "Locked — ballots have been entered",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.maskVotingMethod": {
+    "t": "Mask Voting Method",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.modePlaceholder": {
+    "t": "Select election mode",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.name": {
+    "t": "Election Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.namePlaceholder": {
+    "t": "Enter election name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.nameRequired": {
+    "t": "Election name is required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberExtra": {
+    "t": "Number of Extra",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElect": {
+    "t": "Number to Elect",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElectRequired": {
+    "t": "Number to elect is required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineCloseIsEstimate": {
+    "t": "Closing Time is approximate",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcess": {
+    "t": "Name Selection",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessPlaceholder": {
+    "t": "Select how voters choose names",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessList": {
+    "t": "List — voters pick from the election list",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessListHelp": {
+    "t": "Use when the list of people who can be voted for is complete, or is limited (for example a tie-break). Voters cannot add names, and tellers do not need to process each online ballot.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessRandom": {
+    "t": "Random — voters type names",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessRandomHelp": {
+    "t": "Use when there is no list, or voters should not see it. Tellers finish each ballot by finding the people named by the voter, as they do for paper ballots. Invalid names are likely to become spoiled votes.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessBoth": {
+    "t": "Both — list plus optional typed names",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessBothHelp": {
+    "t": "Use when you have a list but are not sure it includes everyone. If a voter types a name that is not on the list, tellers must find and enter the matching person.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClose": {
+    "t": "Online Voting Closes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClosePlaceholder": {
+    "t": "Select closing time",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpen": {
+    "t": "Online Voting Opens",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpenPlaceholder": {
+    "t": "Select opening time",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showAsTest": {
+    "t": "Show as Test",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showFullReport": {
+    "t": "Show Full Report",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsText": {
+    "t": "SMS Text",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsTextPlaceholder": {
+    "t": "Enter SMS message text",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.type": {
+    "t": "Election Type",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typePlaceholder": {
+    "t": "Select election type",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typeRequired": {
+    "t": "Election type is required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useCallInButton": {
+    "t": "Enable Call-In Voting",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKiosk": {
+    "t": "Enable kiosk mode",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKioskHelp": {
+    "t": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethods": {
+    "t": "Voting Methods",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsHelp": {
+    "t": "Choose the methods by which votes will be cast.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsPlaceholder": {
+    "t": "Select voting methods",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallots": {
+    "t": "Import CDN Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsError": {
+    "t": "Failed to import CDN ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsSuccess": {
+    "t": "CDN ballots imported successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElection": {
+    "t": "Import Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionError": {
+    "t": "Failed to import election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionSuccess": {
+    "t": "Election imported successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importLoaderTitle": {
+    "t": "Loading election package",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importLoaderStarting": {
+    "t": "Starting import…",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importLoaderWorking": {
+    "t": "Importing…",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.list": {
+    "t": "Elections",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.loadError": {
+    "t": "Failed to load election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.locations": {
+    "t": "Locations",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageBallots": {
+    "t": "Manage Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageLocations": {
+    "t": "Manage Locations",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.managePeople": {
+    "t": "Manage People",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.name": {
+    "t": "Election Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.notFound": {
+    "t": "Election not found",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVoting": {
+    "t": "Online voting",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingDisabled": {
+    "t": "Online voting is disabled",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingEnabled": {
+    "t": "Online voting is enabled",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingWindow": {
+    "t": "Online voting times",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingWindowSaved": {
+    "t": "Online voting times saved",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineWindow.willOpen": {
+    "t": "Will open {relative}.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineWindow.opened": {
+    "t": "Opened {relative}.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineWindow.willClose": {
+    "t": "Will close {relative}.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineWindow.expectedToClose": {
+    "t": "Expected to close {relative}.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineWindow.closed": {
+    "t": "Closed {relative}.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineWindow.duration": {
+    "t": "Open for {duration}.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineWindow.openBeforeClose": {
+    "t": "Online voting open time must be before close time",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineWindow.statusOpen": {
+    "t": "Online voting is Open",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineWindow.statusClosed": {
+    "t": "Online voting is Closed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.setOnlineVotingWindow": {
+    "t": "Show",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useOnlineVoting": {
+    "t": "Use online voting",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useOnlineVotingHelp": {
+    "t": "Enable if voters will cast ballots online. Open/close times and whether closing is an estimate are set from the Online Voting control in the header.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.participation": {
+    "t": "Participation",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.people": {
+    "t": "People",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.quickActions": {
+    "t": "Quick Actions",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.revertTo": {
+    "t": "Revert to {stage}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.searchPlaceholder": {
+    "t": "Search elections by name or convenor...",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Counting": {
+    "t": "Counting",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Finalized": {
+    "t": "Finalized",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Finalized_short": {
+    "t": "Final",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.GatheringBallots": {
+    "t": "Gathering Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.GatheringBallots_short": {
+    "t": "Collecting",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.ProcessingBallots": {
+    "t": "Processing Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.ProcessingBallots_short": {
+    "t": "Processing",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Setup": {
+    "t": "Setup",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.SettingUp": {
+    "t": "Setting Up",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.SettingUp_short": {
+    "t": "Setup",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.advanceShort": {
+    "t": "Advance",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.jumpTo": {
+    "t": "Jump to mode…",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.modeLabel": {
+    "t": "Election mode",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.revertShort": {
+    "t": "Revert",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageNav.group.GatheringBallots": {
+    "t": "Gathering Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageNav.group.ProcessingBallots": {
+    "t": "Processing Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageNav.group.Finalized": {
+    "t": "Finalized",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageNav.group.SettingUp": {
+    "t": "Setting Up",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.goToStagePage": {
+    "t": "Go there",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageAdvanced": {
+    "t": "Election changed to {stage}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError.generic": {
+    "t": "Failed to change election stage",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError.alreadyInStage": {
+    "t": "Election is already in the requested stage",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError.analysisNotCompleted": {
+    "t": "Election analysis has not been completed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError.analysisNotReady": {
+    "t": "Election analysis is not complete or ready for finalization",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError.ballotsNeedReview": {
+    "t": "{count} ballot(s) still need review",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError.ballotsOutstanding": {
+    "t": "{count} ballot(s) have outstanding issues",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError.confirmLeaveFinalized": {
+    "t": "Reverting from Finalized requires confirmation",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.finalizedWriteBlocked": {
+    "t": "This election is finalized. People and ballot data cannot be changed.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError.invalidStage": {
+    "t": "Invalid election stage",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError.notFound": {
+    "t": "Election not found",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError.unresolvedTies": {
+    "t": "Unresolved ties must be broken before finalizing",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError.countsDoNotReconcile": {
+    "t": "{count} count-reconciliation mismatch(es) must be resolved before analyzing or finalizing",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError.onlineVotingStillOpen": {
+    "t": "Close the online voting window before finalizing this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageProgression": {
+    "t": "Election Stage",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.statistics": {
+    "t": "Statistics",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.status": {
+    "t": "Status",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.advanced": {
+    "t": "Advanced",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.auditLogs": {
+    "t": "Audit Logs",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.ballots": {
+    "t": "Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.basicInfo": {
+    "t": "Basic Info",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.communication": {
+    "t": "Communication",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.displayPrivacy": {
+    "t": "Display & Privacy",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.electionRules": {
+    "t": "Election Rules",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.locations": {
+    "t": "Locations",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.onlineVoting": {
+    "t": "Online Voting",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.people": {
+    "t": "People",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.results": {
+    "t": "Results",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.tellers": {
+    "t": "Tellers",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.votingMethods": {
+    "t": "Voting Methods",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.guestTellerAccess": {
+    "t": "Guest tellers",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.testElectionBanner": {
+    "t": "Test Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccess": {
+    "t": "Teller Access",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessCode": {
+    "t": "Access Code",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessQrCode": {
+    "t": "QR Code of Shareable URL",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessUrl": {
+    "t": "Shareable URL",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toElect": {
+    "t": "To Elect",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toggleTellerAccess": {
+    "t": "Toggle Teller Access",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.type": {
+    "t": "Type",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateError": {
+    "t": "Failed to update election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateSuccess": {
+    "t": "Election updated successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewReports": {
+    "t": "View Reports",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewResults": {
+    "t": "View Results",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.voters": {
+    "t": "Voters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

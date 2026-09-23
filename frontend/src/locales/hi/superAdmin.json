@@ -1,28 +1,132 @@
 {
-  "superAdmin.detail.electionMode": "चुनाव मोड",
-  "superAdmin.detail.locations": "स्थान",
-  "superAdmin.detail.numberToElect": "निर्वाचित करने की संख्या",
-  "superAdmin.detail.owners": "प्रबंधक",
-  "superAdmin.detail.percentComplete": "प्रतिशत पूर्ण",
-  "superAdmin.detail.title": "चुनाव विवरण",
-  "superAdmin.elections.ballots": "मतपत्र",
-  "superAdmin.elections.convenor": "संयोजक",
-  "superAdmin.elections.date": "तिथि",
-  "superAdmin.elections.filterStatus": "स्थिति द्वारा फ़िल्टर करें",
-  "superAdmin.elections.filterType": "प्रकार द्वारा फ़िल्टर करें",
-  "superAdmin.elections.name": "चुनाव का नाम",
-  "superAdmin.elections.noResults": "कोई चुनाव नहीं मिला",
-  "superAdmin.elections.owner": "स्वामी",
-  "superAdmin.elections.search": "चुनाव खोजें...",
-  "superAdmin.elections.status": "स्थिति",
-  "superAdmin.elections.type": "प्रकार",
-  "superAdmin.elections.voters": "मतदाता",
-  "superAdmin.error.accessDenied": "आपके पास सुपर एडमिन पहुँच नहीं है",
-  "superAdmin.error.loadFailed": "सुपर एडमिन डेटा लोड करने में विफल",
-  "superAdmin.summary.archivedElections": "संग्रहीत",
-  "superAdmin.summary.completedElections": "पूर्ण",
-  "superAdmin.summary.openElections": "खुले",
-  "superAdmin.summary.totalElections": "कुल चुनाव",
-  "superAdmin.summary.upcomingElections": "आगामी",
-  "superAdmin.title": "सुपर एडमिन डैशबोर्ड"
+  "superAdmin.detail.electionMode": {
+    "t": "चुनाव मोड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.locations": {
+    "t": "स्थान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.numberToElect": {
+    "t": "निर्वाचित करने की संख्या",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.owners": {
+    "t": "प्रबंधक",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.percentComplete": {
+    "t": "प्रतिशत पूर्ण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.title": {
+    "t": "चुनाव विवरण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.ballots": {
+    "t": "मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.convenor": {
+    "t": "संयोजक",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.date": {
+    "t": "तिथि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterStatus": {
+    "t": "स्थिति द्वारा फ़िल्टर करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterType": {
+    "t": "प्रकार द्वारा फ़िल्टर करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.name": {
+    "t": "चुनाव का नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.noResults": {
+    "t": "कोई चुनाव नहीं मिला",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.owner": {
+    "t": "स्वामी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.search": {
+    "t": "चुनाव खोजें...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.status": {
+    "t": "स्थिति",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.type": {
+    "t": "प्रकार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.voters": {
+    "t": "मतदाता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.accessDenied": {
+    "t": "आपके पास सुपर एडमिन पहुँच नहीं है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.loadFailed": {
+    "t": "सुपर एडमिन डेटा लोड करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.archivedElections": {
+    "t": "संग्रहीत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.completedElections": {
+    "t": "पूर्ण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.openElections": {
+    "t": "खुले",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.totalElections": {
+    "t": "कुल चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.upcomingElections": {
+    "t": "आगामी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.title": {
+    "t": "सुपर एडमिन डैशबोर्ड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

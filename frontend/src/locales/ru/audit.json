@@ -1,36 +1,172 @@
 {
-  "audit.dialog.computerCode": "Код компьютера",
-  "audit.dialog.dateTime": "Дата/Время",
-  "audit.dialog.details": "Детали",
-  "audit.dialog.electionGuid": "GUID выборов",
-  "audit.dialog.hostAndVersion": "Хост и версия",
-  "audit.dialog.locationGuid": "GUID места",
-  "audit.dialog.rowId": "ID строки",
-  "audit.dialog.title": "Детали журнала аудита",
-  "audit.dialog.userId": "ID пользователя",
-  "audit.filters.apply": "Применить фильтры",
-  "audit.filters.clear": "Очистить фильтры",
-  "audit.filters.computerCode": "Код компьютера",
-  "audit.filters.computerCodePlaceholder": "Фильтр по коду компьютера",
-  "audit.filters.electionGuid": "GUID выборов",
-  "audit.filters.electionGuidPlaceholder": "Фильтр по GUID выборов",
-  "audit.filters.endDate": "Дата окончания",
-  "audit.filters.endDatePlaceholder": "Дата окончания",
-  "audit.filters.locationGuid": "GUID места",
-  "audit.filters.locationGuidPlaceholder": "Фильтр по GUID места",
-  "audit.filters.search": "Поиск",
-  "audit.filters.searchPlaceholder": "Поиск по всем полям",
-  "audit.filters.startDate": "Дата начала",
-  "audit.filters.startDatePlaceholder": "Дата начала",
-  "audit.filters.voterId": "ID избирателя",
-  "audit.filters.voterIdPlaceholder": "Фильтр по ID избирателя",
-  "audit.table.actions": "Действия",
-  "audit.table.computer": "Компьютер",
-  "audit.table.dateTime": "Дата/Время",
-  "audit.table.details": "Детали",
-  "audit.table.election": "Выборы",
-  "audit.table.userId": "ID пользователя",
-  "audit.table.view": "Просмотр",
-  "audit.table.yes": "Да",
-  "audit.title": "Журнал аудита"
+  "audit.dialog.computerCode": {
+    "t": "Код компьютера",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.dateTime": {
+    "t": "Дата/Время",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.details": {
+    "t": "Детали",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.electionGuid": {
+    "t": "GUID выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.hostAndVersion": {
+    "t": "Хост и версия",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.locationGuid": {
+    "t": "GUID места",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.rowId": {
+    "t": "ID строки",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.title": {
+    "t": "Детали журнала аудита",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.userId": {
+    "t": "ID пользователя",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.apply": {
+    "t": "Применить фильтры",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.clear": {
+    "t": "Очистить фильтры",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCode": {
+    "t": "Код компьютера",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCodePlaceholder": {
+    "t": "Фильтр по коду компьютера",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuid": {
+    "t": "GUID выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuidPlaceholder": {
+    "t": "Фильтр по GUID выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDate": {
+    "t": "Дата окончания",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDatePlaceholder": {
+    "t": "Дата окончания",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuid": {
+    "t": "GUID места",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuidPlaceholder": {
+    "t": "Фильтр по GUID места",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.search": {
+    "t": "Поиск",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.searchPlaceholder": {
+    "t": "Поиск по всем полям",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDate": {
+    "t": "Дата начала",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDatePlaceholder": {
+    "t": "Дата начала",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterId": {
+    "t": "ID избирателя",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterIdPlaceholder": {
+    "t": "Фильтр по ID избирателя",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.actions": {
+    "t": "Действия",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.computer": {
+    "t": "Компьютер",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.dateTime": {
+    "t": "Дата/Время",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.details": {
+    "t": "Детали",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.election": {
+    "t": "Выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.userId": {
+    "t": "ID пользователя",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.view": {
+    "t": "Просмотр",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.yes": {
+    "t": "Да",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.title": {
+    "t": "Журнал аудита",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

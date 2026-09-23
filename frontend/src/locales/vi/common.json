@@ -1,53 +1,257 @@
 {
-  "common.actionIrreversible": "Hành động này không thể hoàn tác.",
-  "common.actions": "Hành Động",
-  "common.appName": "KiểmJ",
-  "common.appTitle": "KiểmJ Phiên bản 4",
-  "common.back": "Quay lại",
-  "common.badi.monthNames": "Ngày xen kẽ,Rực rỡ,Vinh quang,Vẻ đẹp,Vĩ đại,Ánh sáng,Lòng thương xót,Lời nói,Sự hoàn hảo,Tên,Sức mạnh,Ý chí,Kiến thức,Quyền lực,Lời nói,Câu hỏi,Danh dự,Chủ quyền,Lãnh thổ,Cao quý",
-  "common.cancel": "Hủy",
-  "common.clear": "Xóa",
-  "common.clearFilters": "Xóa Bộ Lọc",
-  "common.close": "Đóng",
-  "common.confirm": "Xác Nhận",
-  "common.confirmAction": "Bạn có chắc chắn muốn {action} không?",
-  "common.confirmActionWithItem": "Bạn có chắc chắn muốn {action} {item} không?",
-  "common.confirmDelete": "Bạn có chắc chắn muốn xóa {item} không?",
-  "common.copied": "Đã sao chép vào clipboard",
-  "common.create": "Tạo Mới",
-  "common.dangerZone": "Khu Vực Nguy Hiểm",
-  "common.dark": "Tối",
-  "common.delete": "Xóa",
-  "common.deleteSelected": "Xóa Đã Chọn",
-  "common.edit": "Chỉnh Sửa",
-  "common.election": "Bầu Cử",
-  "common.endDate": "Ngày Kết Thúc",
-  "common.enter": "Nhập",
-  "common.error": "Đã xảy ra lỗi",
-  "common.language": "Ngôn Ngữ",
-  "common.light": "Sáng",
-  "common.loading": "Đang tải...",
-  "common.logoAlt": "Logo KiểmJ",
-  "common.next": "Tiếp Theo",
-  "common.no": "Không",
-  "common.open": "Mở",
-  "common.or": "hoặc",
-  "common.previous": "Trước",
-  "common.profile": "Hồ Sơ",
-  "common.refresh": "Làm Mới",
-  "common.save": "Lưu",
-  "common.settings": "Cài Đặt",
-  "common.startDate": "Ngày Bắt Đầu",
-  "common.testOnlyLong": "{note} Bản xem trước KiểmJ Phiên bản 4 này vẫn đang được phát triển.{br}Bạn có thể đăng nhập và thử các tính năng, nhưng không nên sử dụng cho các cuộc bầu cử Bahá'í vào lúc này.{br}Chúng tôi hoan nghênh phản hồi của bạn về thiết kế mới khi chúng tôi tiếp tục cải thiện hệ thống.",
-  "common.testOnlyLongNote": "Vui lòng lưu ý:",
-  "common.testOnlyShort": "Bản xem trước KiểmJ Phiên bản 4 này vẫn đang được phát triển. Không được sử dụng cho các cuộc bầu cử thực tế vào lúc này.",
-  "common.theme": "Giao Diện",
-  "common.to": "đến",
-  "common.toggleTheme": "Chuyển đổi giao diện",
-  "common.userMenu": "Menu tài khoản người dùng",
-  "common.versionDisplay": "Phiên bản 4 Beta",
-  "common.view": "Xem",
-  "common.warning": "Cảnh Báo",
-  "common.yes": "Có",
-  "common.goHome": "Trang chủ"
+  "common.actionIrreversible": {
+    "t": "Hành động này không thể hoàn tác.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.actions": {
+    "t": "Hành Động",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appName": {
+    "t": "KiểmJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appTitle": {
+    "t": "KiểmJ Phiên bản 4",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.back": {
+    "t": "Quay lại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.badi.monthNames": {
+    "t": "Ngày xen kẽ,Rực rỡ,Vinh quang,Vẻ đẹp,Vĩ đại,Ánh sáng,Lòng thương xót,Lời nói,Sự hoàn hảo,Tên,Sức mạnh,Ý chí,Kiến thức,Quyền lực,Lời nói,Câu hỏi,Danh dự,Chủ quyền,Lãnh thổ,Cao quý",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.cancel": {
+    "t": "Hủy",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clear": {
+    "t": "Xóa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clearFilters": {
+    "t": "Xóa Bộ Lọc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.close": {
+    "t": "Đóng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirm": {
+    "t": "Xác Nhận",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmAction": {
+    "t": "Bạn có chắc chắn muốn {action} không?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmActionWithItem": {
+    "t": "Bạn có chắc chắn muốn {action} {item} không?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmDelete": {
+    "t": "Bạn có chắc chắn muốn xóa {item} không?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.copied": {
+    "t": "Đã sao chép vào clipboard",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.create": {
+    "t": "Tạo Mới",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dangerZone": {
+    "t": "Khu Vực Nguy Hiểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dark": {
+    "t": "Tối",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.delete": {
+    "t": "Xóa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.deleteSelected": {
+    "t": "Xóa Đã Chọn",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.edit": {
+    "t": "Chỉnh Sửa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.election": {
+    "t": "Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.endDate": {
+    "t": "Ngày Kết Thúc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.enter": {
+    "t": "Nhập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.error": {
+    "t": "Đã xảy ra lỗi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.language": {
+    "t": "Ngôn Ngữ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.light": {
+    "t": "Sáng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.loading": {
+    "t": "Đang tải...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.logoAlt": {
+    "t": "Logo KiểmJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.next": {
+    "t": "Tiếp Theo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.no": {
+    "t": "Không",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.open": {
+    "t": "Mở",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.or": {
+    "t": "hoặc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.previous": {
+    "t": "Trước",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.profile": {
+    "t": "Hồ Sơ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.refresh": {
+    "t": "Làm Mới",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.save": {
+    "t": "Lưu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.settings": {
+    "t": "Cài Đặt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.startDate": {
+    "t": "Ngày Bắt Đầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLong": {
+    "t": "{note} Bản xem trước KiểmJ Phiên bản 4 này vẫn đang được phát triển.{br}Bạn có thể đăng nhập và thử các tính năng, nhưng không nên sử dụng cho các cuộc bầu cử Bahá'í vào lúc này.{br}Chúng tôi hoan nghênh phản hồi của bạn về thiết kế mới khi chúng tôi tiếp tục cải thiện hệ thống.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLongNote": {
+    "t": "Vui lòng lưu ý:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyShort": {
+    "t": "Bản xem trước KiểmJ Phiên bản 4 này vẫn đang được phát triển. Không được sử dụng cho các cuộc bầu cử thực tế vào lúc này.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.theme": {
+    "t": "Giao Diện",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.to": {
+    "t": "đến",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.toggleTheme": {
+    "t": "Chuyển đổi giao diện",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.userMenu": {
+    "t": "Menu tài khoản người dùng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.versionDisplay": {
+    "t": "Phiên bản 4 Beta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.view": {
+    "t": "Xem",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.warning": {
+    "t": "Cảnh Báo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.yes": {
+    "t": "Có",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.goHome": {
+    "t": "Trang chủ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

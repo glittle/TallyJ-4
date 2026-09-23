@@ -1,29 +1,137 @@
 {
-  "profile.changePassword": "修改密码",
-  "profile.confirmPassword": "确认密码",
-  "profile.createdAt": "注册时间",
-  "profile.currentPassword": "当前密码",
-  "profile.loginMethod": "登录方式",
-  "profile.name": "姓名",
-  "profile.newPassword": "新密码",
-  "profile.passwordsDoNotMatch": "两次密码不匹配",
-  "profile.twoFactor.confirmCode": "输入应用中的6位代码以确认设置：",
-  "profile.twoFactor.confirmPlaceholder": "6位代码",
-  "profile.twoFactor.confirmSetup": "确认并启用 2FA",
-  "profile.twoFactor.disable": "禁用 2FA",
-  "profile.twoFactor.disableConfirm": "输入认证应用中的6位代码以禁用 2FA：",
-  "profile.twoFactor.disableSuccess": "双因素认证已禁用。",
-  "profile.twoFactor.disableTitle": "禁用双因素认证",
-  "profile.twoFactor.disabled": "未启用",
-  "profile.twoFactor.enabled": "已启用",
-  "profile.twoFactor.loading": "正在加载 2FA 状态...",
-  "profile.twoFactor.method": "方法",
-  "profile.twoFactor.methodTotp": "认证应用 (TOTP)",
-  "profile.twoFactor.scanQr": "使用您的认证应用扫描此二维码（Google Authenticator、Microsoft Authenticator 或 Authy）。",
-  "profile.twoFactor.secretKey": "或手动输入此密钥：",
-  "profile.twoFactor.setup": "设置 2FA",
-  "profile.twoFactor.setupSuccess": "双因素认证已启用。",
-  "profile.twoFactor.setupTitle": "设置双因素认证",
-  "profile.twoFactor.status": "状态",
-  "profile.twoFactor.title": "双因素认证"
+  "profile.changePassword": {
+    "t": "修改密码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.confirmPassword": {
+    "t": "确认密码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.createdAt": {
+    "t": "注册时间",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.currentPassword": {
+    "t": "当前密码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.loginMethod": {
+    "t": "登录方式",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.name": {
+    "t": "姓名",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.newPassword": {
+    "t": "新密码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.passwordsDoNotMatch": {
+    "t": "两次密码不匹配",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmCode": {
+    "t": "输入应用中的6位代码以确认设置：",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmPlaceholder": {
+    "t": "6位代码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmSetup": {
+    "t": "确认并启用 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disable": {
+    "t": "禁用 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableConfirm": {
+    "t": "输入认证应用中的6位代码以禁用 2FA：",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableSuccess": {
+    "t": "双因素认证已禁用。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableTitle": {
+    "t": "禁用双因素认证",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disabled": {
+    "t": "未启用",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.enabled": {
+    "t": "已启用",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.loading": {
+    "t": "正在加载 2FA 状态...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.method": {
+    "t": "方法",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.methodTotp": {
+    "t": "认证应用 (TOTP)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.scanQr": {
+    "t": "使用您的认证应用扫描此二维码（Google Authenticator、Microsoft Authenticator 或 Authy）。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.secretKey": {
+    "t": "或手动输入此密钥：",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setup": {
+    "t": "设置 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupSuccess": {
+    "t": "双因素认证已启用。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupTitle": {
+    "t": "设置双因素认证",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.status": {
+    "t": "状态",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.title": {
+    "t": "双因素认证",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

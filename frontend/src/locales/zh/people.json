@@ -1,133 +1,657 @@
 {
-  "people.addPerson": "添加人员",
-  "people.ageGroup.adult": "成人",
-  "people.ageGroup.youth": "青少年",
-  "people.ageGroupLabel": "年龄组",
-  "people.allPeople": "所有人员",
-  "people.area": "地区",
-  "people.bahaiId": "巴哈伊编号",
-  "people.bulkActions": "批量操作",
-  "people.bulkDeleteError": "部分人员删除失败",
-  "people.bulkDeleteMessage": "确定要删除所选的 {count} 位人员吗？",
-  "people.bulkDeleteSuccess": "已成功删除 {count} 位人员",
-  "people.canReceiveVotes": "可接受投票",
-  "people.canVote": "可投票",
-  "people.candidates": "合格候选人",
-  "people.confirmBulkDelete": "确认批量删除",
-  "people.createSuccess": "人员添加成功",
-  "people.deleteConfirm": "确定要删除 {name} 吗？",
-  "people.deleteError": "删除人员失败",
-  "people.deleteSelected": "删除所选 ({count})",
-  "people.deleteSuccess": "人员删除成功",
-  "people.dropFileHere": "拖放文件到此处或点击上传",
-  "people.editPerson": "编辑人员",
-  "people.email": "电子邮件",
-  "people.emailInvalid": "请输入有效的电子邮件",
-  "people.exportError": "导出人员失败",
-  "people.exportPeople": "导出人员",
-  "people.exportSuccess": "人员导出成功",
-  "people.fileTooLarge": "文件过大。请上传小于 10MB 的文件。",
-  "people.firstName": "名",
-  "people.fullName": "全名",
-  "people.import.action": "操作",
-  "people.import.areaDesc": "地理区域",
-  "people.import.bahaiIdDesc": "巴哈伊编号",
-  "people.import.clickToUpload": "点击上传",
-  "people.import.confirmDeleteAllPeople": "确认删除所有人员",
-  "people.import.confirmDeleteFile": "确定要删除此文件吗？",
-  "people.import.contentEncoding": "内容编码",
-  "people.import.currentPeopleCount": "当前人员数量",
-  "people.import.dataRows": "数据行",
-  "people.import.deleteAllPeople": "删除所有人员",
-  "people.import.deleteAllPeopleError": "删除所有人员失败",
-  "people.import.deleteAllPeopleMessage": "确定要从此次选举中删除所有人员吗？此操作无法撤消。",
-  "people.import.deleteFileError": "删除文件失败",
-  "people.import.dropFile": "将文件拖到此处或",
-  "people.import.duplicateDesc": "此人为重复条目",
-  "people.import.eligibilityDesc": "资格状态描述",
-  "people.import.eligibilityValues": "资格状态值",
-  "people.import.eligibleDesc": "此人有投票资格",
-  "people.import.emailDesc": "电子邮件地址",
-  "people.import.fileName": "文件名",
-  "people.import.filesOnServer": "服务器上的文件",
-  "people.import.firstNameDesc": "人员的名字",
-  "people.import.firstNameLastNameRequired": "必须映射名字和姓氏字段才能继续导入。",
-  "people.import.headerAutoDetected": "已在第 {row} 行自动检测到标题",
-  "people.import.headersOnLine": "标题所在行",
-  "people.import.headersOnLineTooltip": "指定包含列标题的行。Excel 文件可自动检测，但可根据需要调整。",
-  "people.import.ignore": "（忽略）",
-  "people.import.importNow": "立即导入",
-  "people.import.importResults": "导入结果",
-  "people.import.importStepDesc": "导入步骤将在下一阶段实现",
-  "people.import.importSummary": "导入摘要",
-  "people.import.importing": "正在导入人员...",
-  "people.import.ineligibleDesc": "此人没有投票资格",
-  "people.import.lastNameDesc": "人员的姓氏",
-  "people.import.loadFilesError": "加载导入文件失败",
-  "people.import.mapColumns": "映射列",
-  "people.import.mapColumnsDesc": "将文件中的列映射到计票J字段",
-  "people.import.mapTo": "映射到：",
-  "people.import.mappedFields": "已映射字段",
-  "people.import.mappingSaved": "列映射已成功保存",
-  "people.import.otherActions": "其他操作",
-  "people.import.otherInfoDesc": "其他信息",
-  "people.import.otherLastNamesDesc": "其他姓氏",
-  "people.import.otherNamesDesc": "其他名字",
-  "people.import.peopleAdded": "已添加人员",
-  "people.import.peopleSkipped": "已跳过人员",
-  "people.import.phoneDesc": "电话号码",
-  "people.import.preview": "预览",
-  "people.import.reparse": "重新解析",
-  "people.import.reviewImport": "审核并导入",
-  "people.import.saveMapping": "保存映射",
-  "people.import.select": "选择",
-  "people.import.selected": "已选择",
-  "people.import.size": "大小",
-  "people.import.status": "状态",
-  "people.import.step1": "上传文件",
-  "people.import.step2": "映射列",
-  "people.import.step3": "导入",
-  "people.import.supportedFormats": "支持的格式：CSV、TSV、TAB、TXT、XLSX（最大 10MB）",
-  "people.import.tallyJField": "计票J 字段",
-  "people.import.tallyJFields": "计票J 字段参考",
-  "people.import.timeElapsed": "已用时间",
-  "people.import.title": "导入人员",
-  "people.import.underAgeDesc": "此人未达到投票年龄",
-  "people.import.uploadError": "上传文件失败",
-  "people.import.uploadFile": "上传文件",
-  "people.import.uploadTime": "上传时间",
-  "people.import.validationWarning": "验证警告",
-  "people.import.warnings": "警告",
-  "people.importError": "启动导入失败",
-  "people.importFormat": "上传包含以下列的 CSV 或 Excel 文件：",
-  "people.importInstructions": "导入说明",
-  "people.importOptionalFields": "可选项：邮箱、电话、地区、巴哈伊编号、资格状态",
-  "people.importPeople": "导入人员",
-  "people.importRequiredFields": "必填项：名字、姓氏",
-  "people.importStarted": "导入已开始。请等待完成。",
-  "people.importWarning": "姓名匹配的现有人员将被更新。新人员将被创建。",
-  "people.invalidFileType": "无效的文件类型。请上传 CSV 或 Excel 文件。",
-  "people.kioskCode": "Kiosk Code",
-  "people.kioskCodeExpired": "This code has expired. Renew it before the voter logs in.",
-  "people.kioskCodeExpires": "Expires {time} ({minutes} min left).",
-  "people.kioskCodeGenerate": "Make a kiosk code",
-  "people.kioskCodeGenerated": "Kiosk code is ready to share.",
-  "people.kioskCodeNone": "No kiosk code yet. Generate one when the voter is at the kiosk.",
-  "people.kioskCodeNote": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
-  "people.kioskCodeRenew": "Renew kiosk code",
-  "people.lastName": "姓",
-  "people.lastNameRequired": "姓氏为必填项",
-  "people.leaveElectionGroupError": "离开选举组失败：",
-  "people.loadError": "加载人员失败",
-  "people.management": "人员管理",
-  "people.phone": "电话",
-  "people.phoneOnlineVoter.recentSms": "Recent SMS",
-  "people.phoneOnlineVoter.smsLogNoStatus": "Sent",
-  "people.phoneOnlineVoter.smsLogError": "Error {code}",
-  "people.saveError": "保存人员失败",
-  "people.search": "按姓名、邮箱或编号搜索",
-  "people.searchError": "搜索人员失败",
-  "people.supportedFormats": "支持的格式：CSV、XLS、XLSX（最大 10MB）",
-  "people.updateSuccess": "人员更新成功",
-  "people.voters": "选民"
+  "people.addPerson": {
+    "t": "添加人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.adult": {
+    "t": "成人",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.youth": {
+    "t": "青少年",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroupLabel": {
+    "t": "年龄组",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.allPeople": {
+    "t": "所有人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.area": {
+    "t": "地区",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bahaiId": {
+    "t": "巴哈伊编号",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkActions": {
+    "t": "批量操作",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteError": {
+    "t": "部分人员删除失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteMessage": {
+    "t": "确定要删除所选的 {count} 位人员吗？",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteSuccess": {
+    "t": "已成功删除 {count} 位人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canReceiveVotes": {
+    "t": "可接受投票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canVote": {
+    "t": "可投票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.candidates": {
+    "t": "合格候选人",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.confirmBulkDelete": {
+    "t": "确认批量删除",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.createSuccess": {
+    "t": "人员添加成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteConfirm": {
+    "t": "确定要删除 {name} 吗？",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteError": {
+    "t": "删除人员失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSelected": {
+    "t": "删除所选 ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSuccess": {
+    "t": "人员删除成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.dropFileHere": {
+    "t": "拖放文件到此处或点击上传",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.editPerson": {
+    "t": "编辑人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.email": {
+    "t": "电子邮件",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.emailInvalid": {
+    "t": "请输入有效的电子邮件",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportError": {
+    "t": "导出人员失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportPeople": {
+    "t": "导出人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportSuccess": {
+    "t": "人员导出成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fileTooLarge": {
+    "t": "文件过大。请上传小于 10MB 的文件。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.firstName": {
+    "t": "名",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fullName": {
+    "t": "全名",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.action": {
+    "t": "操作",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.areaDesc": {
+    "t": "地理区域",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.bahaiIdDesc": {
+    "t": "巴哈伊编号",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.clickToUpload": {
+    "t": "点击上传",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteAllPeople": {
+    "t": "确认删除所有人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteFile": {
+    "t": "确定要删除此文件吗？",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.contentEncoding": {
+    "t": "内容编码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.currentPeopleCount": {
+    "t": "当前人员数量",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dataRows": {
+    "t": "数据行",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeople": {
+    "t": "删除所有人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleError": {
+    "t": "删除所有人员失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleMessage": {
+    "t": "确定要从此次选举中删除所有人员吗？此操作无法撤消。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteFileError": {
+    "t": "删除文件失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dropFile": {
+    "t": "将文件拖到此处或",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.duplicateDesc": {
+    "t": "此人为重复条目",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityDesc": {
+    "t": "资格状态描述",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityValues": {
+    "t": "资格状态值",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibleDesc": {
+    "t": "此人有投票资格",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.emailDesc": {
+    "t": "电子邮件地址",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileName": {
+    "t": "文件名",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.filesOnServer": {
+    "t": "服务器上的文件",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameDesc": {
+    "t": "人员的名字",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameLastNameRequired": {
+    "t": "必须映射名字和姓氏字段才能继续导入。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headerAutoDetected": {
+    "t": "已在第 {row} 行自动检测到标题",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLine": {
+    "t": "标题所在行",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLineTooltip": {
+    "t": "指定包含列标题的行。Excel 文件可自动检测，但可根据需要调整。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ignore": {
+    "t": "（忽略）",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importNow": {
+    "t": "立即导入",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importResults": {
+    "t": "导入结果",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importStepDesc": {
+    "t": "导入步骤将在下一阶段实现",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importSummary": {
+    "t": "导入摘要",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importing": {
+    "t": "正在导入人员...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ineligibleDesc": {
+    "t": "此人没有投票资格",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.lastNameDesc": {
+    "t": "人员的姓氏",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.loadFilesError": {
+    "t": "加载导入文件失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumns": {
+    "t": "映射列",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumnsDesc": {
+    "t": "将文件中的列映射到计票J字段",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapTo": {
+    "t": "映射到：",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappedFields": {
+    "t": "已映射字段",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappingSaved": {
+    "t": "列映射已成功保存",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherActions": {
+    "t": "其他操作",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherInfoDesc": {
+    "t": "其他信息",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherLastNamesDesc": {
+    "t": "其他姓氏",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherNamesDesc": {
+    "t": "其他名字",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleAdded": {
+    "t": "已添加人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleSkipped": {
+    "t": "已跳过人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.phoneDesc": {
+    "t": "电话号码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.preview": {
+    "t": "预览",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reparse": {
+    "t": "重新解析",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reviewImport": {
+    "t": "审核并导入",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.saveMapping": {
+    "t": "保存映射",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.select": {
+    "t": "选择",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.selected": {
+    "t": "已选择",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.size": {
+    "t": "大小",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.status": {
+    "t": "状态",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step1": {
+    "t": "上传文件",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step2": {
+    "t": "映射列",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step3": {
+    "t": "导入",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.supportedFormats": {
+    "t": "支持的格式：CSV、TSV、TAB、TXT、XLSX（最大 10MB）",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJField": {
+    "t": "计票J 字段",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJFields": {
+    "t": "计票J 字段参考",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.timeElapsed": {
+    "t": "已用时间",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.title": {
+    "t": "导入人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.underAgeDesc": {
+    "t": "此人未达到投票年龄",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadError": {
+    "t": "上传文件失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadFile": {
+    "t": "上传文件",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadTime": {
+    "t": "上传时间",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.validationWarning": {
+    "t": "验证警告",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.warnings": {
+    "t": "警告",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importError": {
+    "t": "启动导入失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importFormat": {
+    "t": "上传包含以下列的 CSV 或 Excel 文件：",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importInstructions": {
+    "t": "导入说明",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importOptionalFields": {
+    "t": "可选项：邮箱、电话、地区、巴哈伊编号、资格状态",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importPeople": {
+    "t": "导入人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importRequiredFields": {
+    "t": "必填项：名字、姓氏",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importStarted": {
+    "t": "导入已开始。请等待完成。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importWarning": {
+    "t": "姓名匹配的现有人员将被更新。新人员将被创建。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.invalidFileType": {
+    "t": "无效的文件类型。请上传 CSV 或 Excel 文件。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCode": {
+    "t": "Kiosk Code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpired": {
+    "t": "This code has expired. Renew it before the voter logs in.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpires": {
+    "t": "Expires {time} ({minutes} min left).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerate": {
+    "t": "Make a kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerated": {
+    "t": "Kiosk code is ready to share.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNone": {
+    "t": "No kiosk code yet. Generate one when the voter is at the kiosk.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNote": {
+    "t": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeRenew": {
+    "t": "Renew kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastName": {
+    "t": "姓",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastNameRequired": {
+    "t": "姓氏为必填项",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.leaveElectionGroupError": {
+    "t": "离开选举组失败：",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.loadError": {
+    "t": "加载人员失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.management": {
+    "t": "人员管理",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phone": {
+    "t": "电话",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.recentSms": {
+    "t": "Recent SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogNoStatus": {
+    "t": "Sent",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogError": {
+    "t": "Error {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.saveError": {
+    "t": "保存人员失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.search": {
+    "t": "按姓名、邮箱或编号搜索",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.searchError": {
+    "t": "搜索人员失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.supportedFormats": {
+    "t": "支持的格式：CSV、XLS、XLSX（最大 10MB）",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.updateSuccess": {
+    "t": "人员更新成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.voters": {
+    "t": "选民",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

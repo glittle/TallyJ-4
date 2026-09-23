@@ -1,24 +1,112 @@
 {
-  "dashboard.active": "활성",
-  "dashboard.activeElections": "진행 중인 선거",
-  "dashboard.ballotsEntered": "입력된 투표 용지",
-  "dashboard.canVote": "투표 가능",
-  "dashboard.closed": "닫힘",
-  "dashboard.closes": "닫힘",
-  "dashboard.electionDetails": "선거 세부 정보",
-  "dashboard.noElections": "선거를 찾을 수 없습니다",
-  "dashboard.noTellers": "배정된 개표원 없음",
-  "dashboard.onlineVoting": "온라인 투표",
-  "dashboard.open": "열림",
-  "dashboard.opens": "열림",
-  "dashboard.otherActions": "기타 작업...",
-  "dashboard.recentElections": "최근 선거",
-  "dashboard.registered": "등록됨",
-  "dashboard.statistics": "통계",
-  "dashboard.tellerCount": "개표원 수",
-  "dashboard.tellers": "개표원",
-  "dashboard.tellersStatus": "개표원",
-  "dashboard.totalBallots": "전체 투표 용지",
-  "dashboard.totalElections": "전체 선거",
-  "dashboard.totalVoters": "전체 투표자"
+  "dashboard.active": {
+    "t": "활성",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.activeElections": {
+    "t": "진행 중인 선거",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "입력된 투표 용지",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.canVote": {
+    "t": "투표 가능",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closed": {
+    "t": "닫힘",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closes": {
+    "t": "닫힘",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "선거 세부 정보",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noElections": {
+    "t": "선거를 찾을 수 없습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noTellers": {
+    "t": "배정된 개표원 없음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "온라인 투표",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.open": {
+    "t": "열림",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.opens": {
+    "t": "열림",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.otherActions": {
+    "t": "기타 작업...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.recentElections": {
+    "t": "최근 선거",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.registered": {
+    "t": "등록됨",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.statistics": {
+    "t": "통계",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "개표원 수",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellers": {
+    "t": "개표원",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "개표원",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "전체 투표 용지",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalElections": {
+    "t": "전체 선거",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "전체 투표자",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

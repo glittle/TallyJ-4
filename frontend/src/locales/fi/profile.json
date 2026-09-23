@@ -1,29 +1,137 @@
 {
-  "profile.changePassword": "Vaihda salasana",
-  "profile.confirmPassword": "Vahvista salasana",
-  "profile.createdAt": "Jäsen alkaen",
-  "profile.currentPassword": "Nykyinen salasana",
-  "profile.loginMethod": "Kirjautumistapa",
-  "profile.name": "Nimi",
-  "profile.newPassword": "Uusi salasana",
-  "profile.passwordsDoNotMatch": "Salasanat eivät täsmää",
-  "profile.twoFactor.confirmCode": "Syötä 6-numeroinen koodi sovelluksestasi vahvistaaksesi määrityksen:",
-  "profile.twoFactor.confirmPlaceholder": "6-numeroinen koodi",
-  "profile.twoFactor.confirmSetup": "Vahvista ja ota 2FA käyttöön",
-  "profile.twoFactor.disable": "Poista 2FA käytöstä",
-  "profile.twoFactor.disableConfirm": "Syötä 6-numeroinen koodi tunnistautumissovelluksestasi poistaaksesi 2FA käytöstä:",
-  "profile.twoFactor.disableSuccess": "Kaksivaiheinen tunnistautuminen on poistettu käytöstä.",
-  "profile.twoFactor.disableTitle": "Poista kaksivaiheinen tunnistautuminen käytöstä",
-  "profile.twoFactor.disabled": "Ei käytössä",
-  "profile.twoFactor.enabled": "Käytössä",
-  "profile.twoFactor.loading": "Ladataan 2FA-tilaa...",
-  "profile.twoFactor.method": "Menetelmä",
-  "profile.twoFactor.methodTotp": "Tunnistautumissovellus (TOTP)",
-  "profile.twoFactor.scanQr": "Skannaa tämä QR-koodi tunnistautumissovelluksellasi (Google Authenticator, Microsoft Authenticator tai Authy).",
-  "profile.twoFactor.secretKey": "Tai syötä tämä avain manuaalisesti:",
-  "profile.twoFactor.setup": "Määritä 2FA",
-  "profile.twoFactor.setupSuccess": "Kaksivaiheinen tunnistautuminen on otettu käyttöön.",
-  "profile.twoFactor.setupTitle": "Määritä kaksivaiheinen tunnistautuminen",
-  "profile.twoFactor.status": "Tila",
-  "profile.twoFactor.title": "Kaksivaiheinen tunnistautuminen"
+  "profile.changePassword": {
+    "t": "Vaihda salasana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.confirmPassword": {
+    "t": "Vahvista salasana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.createdAt": {
+    "t": "Jäsen alkaen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.currentPassword": {
+    "t": "Nykyinen salasana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.loginMethod": {
+    "t": "Kirjautumistapa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.name": {
+    "t": "Nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.newPassword": {
+    "t": "Uusi salasana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.passwordsDoNotMatch": {
+    "t": "Salasanat eivät täsmää",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmCode": {
+    "t": "Syötä 6-numeroinen koodi sovelluksestasi vahvistaaksesi määrityksen:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmPlaceholder": {
+    "t": "6-numeroinen koodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmSetup": {
+    "t": "Vahvista ja ota 2FA käyttöön",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disable": {
+    "t": "Poista 2FA käytöstä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableConfirm": {
+    "t": "Syötä 6-numeroinen koodi tunnistautumissovelluksestasi poistaaksesi 2FA käytöstä:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableSuccess": {
+    "t": "Kaksivaiheinen tunnistautuminen on poistettu käytöstä.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableTitle": {
+    "t": "Poista kaksivaiheinen tunnistautuminen käytöstä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disabled": {
+    "t": "Ei käytössä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.enabled": {
+    "t": "Käytössä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.loading": {
+    "t": "Ladataan 2FA-tilaa...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.method": {
+    "t": "Menetelmä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.methodTotp": {
+    "t": "Tunnistautumissovellus (TOTP)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.scanQr": {
+    "t": "Skannaa tämä QR-koodi tunnistautumissovelluksellasi (Google Authenticator, Microsoft Authenticator tai Authy).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.secretKey": {
+    "t": "Tai syötä tämä avain manuaalisesti:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setup": {
+    "t": "Määritä 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupSuccess": {
+    "t": "Kaksivaiheinen tunnistautuminen on otettu käyttöön.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupTitle": {
+    "t": "Määritä kaksivaiheinen tunnistautuminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.status": {
+    "t": "Tila",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.title": {
+    "t": "Kaksivaiheinen tunnistautuminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,53 +1,257 @@
 {
-  "common.actionIrreversible": "Cette action est irréversible.",
-  "common.actions": "Actions",
-  "common.appName": "ScrutinJ",
-  "common.appTitle": "ScrutinJ Version 4",
-  "common.back": "Retour",
-  "common.badi.monthNames": "Jours Intercalaires,Splendeur,Gloire,Beauté,Grandeur,Lumière,Miséricorde,Paroles,Perfection,Noms,Puissance,Volonté,Connaissance,Pouvoir,Discours,Questions,Honneur,Souveraineté,Empire,Élévation",
-  "common.cancel": "Annuler",
-  "common.clear": "Effacer",
-  "common.clearFilters": "Effacer les filtres",
-  "common.close": "Fermer",
-  "common.confirm": "Confirmer",
-  "common.confirmAction": "Êtes-vous sûr de vouloir {action} ?",
-  "common.confirmActionWithItem": "Êtes-vous sûr de vouloir {action} {item} ?",
-  "common.confirmDelete": "Êtes-vous sûr de vouloir supprimer {item} ?",
-  "common.copied": "Copié dans le presse-papiers",
-  "common.create": "Créer",
-  "common.dangerZone": "Zone de danger",
-  "common.dark": "Sombre",
-  "common.delete": "Supprimer",
-  "common.deleteSelected": "Supprimer la sélection",
-  "common.edit": "Modifier",
-  "common.election": "Élection",
-  "common.endDate": "Date de fin",
-  "common.enter": "Entrer",
-  "common.error": "Une erreur s'est produite",
-  "common.language": "Langue",
-  "common.light": "Clair",
-  "common.loading": "Chargement...",
-  "common.logoAlt": "Logo ScrutinJ",
-  "common.next": "Suivant",
-  "common.no": "Non",
-  "common.open": "Ouvrir",
-  "common.or": "ou",
-  "common.previous": "Précédent",
-  "common.profile": "Profil",
-  "common.refresh": "Actualiser",
-  "common.save": "Enregistrer",
-  "common.settings": "Paramètres",
-  "common.startDate": "Date de début",
-  "common.testOnlyLong": "{note} Cet aperçu de ScrutinJ Version 4 est encore en développement.{br}Vous pouvez vous connecter et essayer les fonctionnalités, mais il ne devrait pas être utilisé pour des élections bahá'ís en ce moment.{br}Nous accueillons vos commentaires sur le nouveau design alors que nous continuons à améliorer le système.",
-  "common.testOnlyLongNote": "Veuillez noter :",
-  "common.testOnlyShort": "Cet aperçu de ScrutinJ Version 4 est encore en développement. Ne doit pas être utilisé pour des élections réelles en ce moment.",
-  "common.theme": "Thème",
-  "common.to": "à",
-  "common.toggleTheme": "Basculer le thème",
-  "common.userMenu": "Menu du compte utilisateur",
-  "common.versionDisplay": "Version 4 Bêta",
-  "common.view": "Voir",
-  "common.warning": "Avertissement",
-  "common.yes": "Oui",
-  "common.goHome": "Accueil"
+  "common.actionIrreversible": {
+    "t": "Cette action est irréversible.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.actions": {
+    "t": "Actions",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appName": {
+    "t": "ScrutinJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appTitle": {
+    "t": "ScrutinJ Version 4",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.back": {
+    "t": "Retour",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.badi.monthNames": {
+    "t": "Jours Intercalaires,Splendeur,Gloire,Beauté,Grandeur,Lumière,Miséricorde,Paroles,Perfection,Noms,Puissance,Volonté,Connaissance,Pouvoir,Discours,Questions,Honneur,Souveraineté,Empire,Élévation",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.cancel": {
+    "t": "Annuler",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clear": {
+    "t": "Effacer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clearFilters": {
+    "t": "Effacer les filtres",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.close": {
+    "t": "Fermer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirm": {
+    "t": "Confirmer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmAction": {
+    "t": "Êtes-vous sûr de vouloir {action} ?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmActionWithItem": {
+    "t": "Êtes-vous sûr de vouloir {action} {item} ?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmDelete": {
+    "t": "Êtes-vous sûr de vouloir supprimer {item} ?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.copied": {
+    "t": "Copié dans le presse-papiers",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.create": {
+    "t": "Créer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dangerZone": {
+    "t": "Zone de danger",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dark": {
+    "t": "Sombre",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.delete": {
+    "t": "Supprimer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.deleteSelected": {
+    "t": "Supprimer la sélection",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.edit": {
+    "t": "Modifier",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.election": {
+    "t": "Élection",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.endDate": {
+    "t": "Date de fin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.enter": {
+    "t": "Entrer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.error": {
+    "t": "Une erreur s'est produite",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.language": {
+    "t": "Langue",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.light": {
+    "t": "Clair",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.loading": {
+    "t": "Chargement...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.logoAlt": {
+    "t": "Logo ScrutinJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.next": {
+    "t": "Suivant",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.no": {
+    "t": "Non",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.open": {
+    "t": "Ouvrir",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.or": {
+    "t": "ou",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.previous": {
+    "t": "Précédent",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.profile": {
+    "t": "Profil",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.refresh": {
+    "t": "Actualiser",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.save": {
+    "t": "Enregistrer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.settings": {
+    "t": "Paramètres",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.startDate": {
+    "t": "Date de début",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLong": {
+    "t": "{note} Cet aperçu de ScrutinJ Version 4 est encore en développement.{br}Vous pouvez vous connecter et essayer les fonctionnalités, mais il ne devrait pas être utilisé pour des élections bahá'ís en ce moment.{br}Nous accueillons vos commentaires sur le nouveau design alors que nous continuons à améliorer le système.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLongNote": {
+    "t": "Veuillez noter :",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyShort": {
+    "t": "Cet aperçu de ScrutinJ Version 4 est encore en développement. Ne doit pas être utilisé pour des élections réelles en ce moment.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.theme": {
+    "t": "Thème",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.to": {
+    "t": "à",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.toggleTheme": {
+    "t": "Basculer le thème",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.userMenu": {
+    "t": "Menu du compte utilisateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.versionDisplay": {
+    "t": "Version 4 Bêta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.view": {
+    "t": "Voir",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.warning": {
+    "t": "Avertissement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.yes": {
+    "t": "Oui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.goHome": {
+    "t": "Accueil",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

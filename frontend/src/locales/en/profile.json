@@ -1,53 +1,257 @@
 {
-  "profile.changeEmail": "Change Email",
-  "profile.changeName": "Change Name",
-  "profile.changePassword": "Change Password",
-  "profile.confirmEmailChange": "Confirm with code",
-  "profile.confirmPassword": "Confirm Password",
-  "profile.createdAt": "Member Since",
-  "profile.currentPassword": "Current Password",
-  "profile.currentPasswordRequired": "Current password is required",
-  "profile.emailChangeFailed": "Failed to change email",
-  "profile.emailChangeHelp": "We will send a confirmation link and a 6-digit code to the new address. Your current email stays active until you confirm.",
-  "profile.emailChangeRequested": "Check the new inbox for a confirmation link or code.",
-  "profile.emailChangeSuccess": "Email address updated. Use the new email to sign in.",
-  "profile.emailCodePlaceholder": "6-digit code",
-  "profile.emailCodeRequired": "Enter the 6-digit code from the confirmation email",
-  "profile.emailConfirmationCode": "Confirmation code",
-  "profile.emailRequired": "New email is required",
-  "profile.enterEmailCodeHelp": "Or enter the code sent to {email}:",
-  "profile.loginMethod": "Login Method",
-  "profile.name": "Name",
-  "profile.nameMaxLength": "Name cannot exceed 200 characters",
-  "profile.nameRequired": "Name is required",
-  "profile.nameUpdateFailed": "Failed to update name",
-  "profile.nameUpdateSuccess": "Name updated successfully",
-  "profile.newEmail": "New Email",
-  "profile.newName": "New Name",
-  "profile.newPassword": "New Password",
-  "profile.passwordChangeComingSoon": "Password change functionality coming soon",
-  "profile.passwordsDoNotMatch": "Passwords do not match",
-  "profile.pendingEmailNote": "Pending confirmation: {email}",
-  "profile.sendEmailVerification": "Send verification",
-  "profile.superAdminEmailWarning": "You are a Super Admin. After changing email, Super Admin access is based on the new address matching the SuperAdmin allowlist. Your access is intended to continue; update the configured list if the new email is not listed.",
-  "profile.twoFactor.confirmCode": "Enter the 6-digit code from your app to confirm setup:",
-  "profile.twoFactor.confirmPlaceholder": "6-digit code",
-  "profile.twoFactor.confirmSetup": "Confirm & Enable 2FA",
-  "profile.twoFactor.disable": "Disable 2FA",
-  "profile.twoFactor.disableConfirm": "Enter the 6-digit code from your authenticator app to disable 2FA:",
-  "profile.twoFactor.disableSuccess": "Two-factor authentication has been disabled.",
-  "profile.twoFactor.disableTitle": "Disable Two-Factor Authentication",
-  "profile.twoFactor.disabled": "Not enabled",
-  "profile.twoFactor.enabled": "Enabled",
-  "profile.twoFactor.loading": "Loading 2FA status...",
-  "profile.twoFactor.localPasswordOnlyNote": "This only applies when you sign in with your email and password. Sign-in with Google or other providers is not challenged for a 2FA code.",
-  "profile.twoFactor.method": "Method",
-  "profile.twoFactor.methodTotp": "Authenticator App (TOTP)",
-  "profile.twoFactor.scanQr": "Scan this QR code with your authenticator app (Google Authenticator, Microsoft Authenticator, or Authy).",
-  "profile.twoFactor.secretKey": "Or enter this key manually:",
-  "profile.twoFactor.setup": "Set Up 2FA",
-  "profile.twoFactor.setupSuccess": "Two-factor authentication has been enabled.",
-  "profile.twoFactor.setupTitle": "Set Up Two-Factor Authentication",
-  "profile.twoFactor.status": "Status",
-  "profile.twoFactor.title": "Two-Factor Authentication"
+  "profile.changeEmail": {
+    "t": "Change Email",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.changeName": {
+    "t": "Change Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.changePassword": {
+    "t": "Change Password",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.confirmEmailChange": {
+    "t": "Confirm with code",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.confirmPassword": {
+    "t": "Confirm Password",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.createdAt": {
+    "t": "Member Since",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.currentPassword": {
+    "t": "Current Password",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.currentPasswordRequired": {
+    "t": "Current password is required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.emailChangeFailed": {
+    "t": "Failed to change email",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.emailChangeHelp": {
+    "t": "We will send a confirmation link and a 6-digit code to the new address. Your current email stays active until you confirm.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.emailChangeRequested": {
+    "t": "Check the new inbox for a confirmation link or code.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.emailChangeSuccess": {
+    "t": "Email address updated. Use the new email to sign in.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.emailCodePlaceholder": {
+    "t": "6-digit code",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.emailCodeRequired": {
+    "t": "Enter the 6-digit code from the confirmation email",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.emailConfirmationCode": {
+    "t": "Confirmation code",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.emailRequired": {
+    "t": "New email is required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.enterEmailCodeHelp": {
+    "t": "Or enter the code sent to {email}:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.loginMethod": {
+    "t": "Login Method",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.name": {
+    "t": "Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.nameMaxLength": {
+    "t": "Name cannot exceed 200 characters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.nameRequired": {
+    "t": "Name is required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.nameUpdateFailed": {
+    "t": "Failed to update name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.nameUpdateSuccess": {
+    "t": "Name updated successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.newEmail": {
+    "t": "New Email",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.newName": {
+    "t": "New Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.newPassword": {
+    "t": "New Password",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.passwordChangeComingSoon": {
+    "t": "Password change functionality coming soon",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.passwordsDoNotMatch": {
+    "t": "Passwords do not match",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.pendingEmailNote": {
+    "t": "Pending confirmation: {email}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.sendEmailVerification": {
+    "t": "Send verification",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.superAdminEmailWarning": {
+    "t": "You are a Super Admin. After changing email, Super Admin access is based on the new address matching the SuperAdmin allowlist. Your access is intended to continue; update the configured list if the new email is not listed.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmCode": {
+    "t": "Enter the 6-digit code from your app to confirm setup:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmPlaceholder": {
+    "t": "6-digit code",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmSetup": {
+    "t": "Confirm & Enable 2FA",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disable": {
+    "t": "Disable 2FA",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableConfirm": {
+    "t": "Enter the 6-digit code from your authenticator app to disable 2FA:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableSuccess": {
+    "t": "Two-factor authentication has been disabled.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableTitle": {
+    "t": "Disable Two-Factor Authentication",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disabled": {
+    "t": "Not enabled",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.enabled": {
+    "t": "Enabled",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.loading": {
+    "t": "Loading 2FA status...",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.localPasswordOnlyNote": {
+    "t": "This only applies when you sign in with your email and password. Sign-in with Google or other providers is not challenged for a 2FA code.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.method": {
+    "t": "Method",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.methodTotp": {
+    "t": "Authenticator App (TOTP)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.scanQr": {
+    "t": "Scan this QR code with your authenticator app (Google Authenticator, Microsoft Authenticator, or Authy).",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.secretKey": {
+    "t": "Or enter this key manually:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setup": {
+    "t": "Set Up 2FA",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupSuccess": {
+    "t": "Two-factor authentication has been enabled.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupTitle": {
+    "t": "Set Up Two-Factor Authentication",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.status": {
+    "t": "Status",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.title": {
+    "t": "Two-Factor Authentication",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

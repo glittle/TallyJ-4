@@ -1,29 +1,137 @@
 {
-  "profile.changePassword": "Badilisha Nenosiri",
-  "profile.confirmPassword": "Thibitisha Nenosiri",
-  "profile.createdAt": "Mwanachama Tangu",
-  "profile.currentPassword": "Nenosiri la Sasa",
-  "profile.loginMethod": "Njia ya Kuingia",
-  "profile.name": "Jina",
-  "profile.newPassword": "Nenosiri Jipya",
-  "profile.passwordsDoNotMatch": "Manenosiri hayafanani",
-  "profile.twoFactor.confirmCode": "Ingiza msimbo wa tarakimu 6 kutoka kwa programu yako ili kuthibitisha usanidi:",
-  "profile.twoFactor.confirmPlaceholder": "Msimbo wa tarakimu 6",
-  "profile.twoFactor.confirmSetup": "Thibitisha na Washa 2FA",
-  "profile.twoFactor.disable": "Zima 2FA",
-  "profile.twoFactor.disableConfirm": "Ingiza msimbo wa tarakimu 6 kutoka kwa programu yako ya kuthibitisha ili kuzima 2FA:",
-  "profile.twoFactor.disableSuccess": "Uthibitishaji wa sababu mbili umezimwa.",
-  "profile.twoFactor.disableTitle": "Zima Uthibitishaji wa Sababu Mbili",
-  "profile.twoFactor.disabled": "Haijawashwa",
-  "profile.twoFactor.enabled": "Imewashwa",
-  "profile.twoFactor.loading": "Inapakia hali ya 2FA...",
-  "profile.twoFactor.method": "Njia",
-  "profile.twoFactor.methodTotp": "Programu ya Kuthibitisha (TOTP)",
-  "profile.twoFactor.scanQr": "Changanua msimbo huu wa QR kwa programu yako ya kuthibitisha (Google Authenticator, Microsoft Authenticator, au Authy).",
-  "profile.twoFactor.secretKey": "Au ingiza ufunguo huu kwa mkono:",
-  "profile.twoFactor.setup": "Weka 2FA",
-  "profile.twoFactor.setupSuccess": "Uthibitishaji wa sababu mbili umewashwa.",
-  "profile.twoFactor.setupTitle": "Weka Uthibitishaji wa Sababu Mbili",
-  "profile.twoFactor.status": "Hali",
-  "profile.twoFactor.title": "Uthibitishaji wa Sababu Mbili"
+  "profile.changePassword": {
+    "t": "Badilisha Nenosiri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.confirmPassword": {
+    "t": "Thibitisha Nenosiri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.createdAt": {
+    "t": "Mwanachama Tangu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.currentPassword": {
+    "t": "Nenosiri la Sasa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.loginMethod": {
+    "t": "Njia ya Kuingia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.name": {
+    "t": "Jina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.newPassword": {
+    "t": "Nenosiri Jipya",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.passwordsDoNotMatch": {
+    "t": "Manenosiri hayafanani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmCode": {
+    "t": "Ingiza msimbo wa tarakimu 6 kutoka kwa programu yako ili kuthibitisha usanidi:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmPlaceholder": {
+    "t": "Msimbo wa tarakimu 6",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmSetup": {
+    "t": "Thibitisha na Washa 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disable": {
+    "t": "Zima 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableConfirm": {
+    "t": "Ingiza msimbo wa tarakimu 6 kutoka kwa programu yako ya kuthibitisha ili kuzima 2FA:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableSuccess": {
+    "t": "Uthibitishaji wa sababu mbili umezimwa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableTitle": {
+    "t": "Zima Uthibitishaji wa Sababu Mbili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disabled": {
+    "t": "Haijawashwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.enabled": {
+    "t": "Imewashwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.loading": {
+    "t": "Inapakia hali ya 2FA...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.method": {
+    "t": "Njia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.methodTotp": {
+    "t": "Programu ya Kuthibitisha (TOTP)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.scanQr": {
+    "t": "Changanua msimbo huu wa QR kwa programu yako ya kuthibitisha (Google Authenticator, Microsoft Authenticator, au Authy).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.secretKey": {
+    "t": "Au ingiza ufunguo huu kwa mkono:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setup": {
+    "t": "Weka 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupSuccess": {
+    "t": "Uthibitishaji wa sababu mbili umewashwa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupTitle": {
+    "t": "Weka Uthibitishaji wa Sababu Mbili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.status": {
+    "t": "Hali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.title": {
+    "t": "Uthibitishaji wa Sababu Mbili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

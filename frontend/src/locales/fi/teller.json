@@ -1,17 +1,77 @@
 {
-  "teller.form.cancel": "Peruuta",
-  "teller.form.computerCode": "Tietokoneen koodi",
-  "teller.form.computerCodeHelp": "Kaksi isoa kirjainta (AA-ZZ) tai jätä tyhjäksi",
-  "teller.form.computerCodeInvalid": "Tietokoneen koodin on oltava 2 isoa kirjainta (AA-ZZ)",
-  "teller.form.computerCodePlaceholder": "esim. AA",
-  "teller.form.create": "Luo",
-  "teller.form.headTeller": "Pää-ääntenlaskija",
-  "teller.form.headTellerHelp": "Pää-ääntenlaskijoilla on lisäoikeuksia",
-  "teller.form.name": "Ääntenlaskijan nimi",
-  "teller.form.nameMaxLength": "Ääntenlaskijan nimi ei voi ylittää 50 merkkiä",
-  "teller.form.namePlaceholder": "Syötä ääntenlaskijan nimi",
-  "teller.form.nameRequired": "Ääntenlaskijan nimi vaaditaan",
-  "teller.form.save": "Tallenna",
-  "teller.form.titleAdd": "Lisää ääntenlaskija",
-  "teller.form.titleEdit": "Muokkaa ääntenlaskijaa"
+  "teller.form.cancel": {
+    "t": "Peruuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCode": {
+    "t": "Tietokoneen koodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeHelp": {
+    "t": "Kaksi isoa kirjainta (AA-ZZ) tai jätä tyhjäksi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeInvalid": {
+    "t": "Tietokoneen koodin on oltava 2 isoa kirjainta (AA-ZZ)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodePlaceholder": {
+    "t": "esim. AA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.create": {
+    "t": "Luo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTeller": {
+    "t": "Pää-ääntenlaskija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTellerHelp": {
+    "t": "Pää-ääntenlaskijoilla on lisäoikeuksia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.name": {
+    "t": "Ääntenlaskijan nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "Ääntenlaskijan nimi ei voi ylittää 50 merkkiä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "Syötä ääntenlaskijan nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "Ääntenlaskijan nimi vaaditaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.save": {
+    "t": "Tallenna",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "Lisää ääntenlaskija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "Muokkaa ääntenlaskijaa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

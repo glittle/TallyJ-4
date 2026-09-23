@@ -1,98 +1,482 @@
 {
-  "voting.ballot.addPersonToPool": "Add Person to my Ballot",
-  "voting.ballot.ballotFull": "All ballot lines are filled. Clear a name before adding another.",
-  "voting.ballot.canEdit": "You can return and edit your ballot while voting is open.",
-  "voting.ballot.editing": "Editing ballot",
-  "voting.ballot.editHint": "Your previous choices are shown below. Make any changes and submit to update your ballot.",
-  "voting.ballot.notifyWhenProcessed": "Email me when my ballot has been processed by tellers",
-  "voting.ballot.poolNameRequired": "Please enter at least a first or last name.",
-  "voting.ballot.resubmit": "Update Ballot",
-  "voting.ballot.resubmitSuccess": "Ballot updated successfully!",
-  "voting.ballot.yourPool": "Your pool",
-  "voting.ballot.addToPool": "Add to your Ballot/Pool",
-  "voting.ballot.addToPoolDescription": "Add a new person to your pool for this election.",
-  "voting.ballot.alreadyVoted": "You have already voted in this election.",
-  "voting.ballot.authRequired": "Please authenticate first",
-  "voting.ballot.backToElections": "Return",
-  "voting.ballot.bothModeHint": "In each space below, choose a name from the list. If not found, enter the first and last name in the box to the left.",
-  "voting.ballot.duplicateError": "A person has been entered multiple times.",
-  "voting.ballot.electionNotFound": "Election not found",
-  "voting.ballot.extraInfo": "Extra Identifying information",
-  "voting.ballot.extraInfoPlaceholder": "(Optional: Use this if the name may not be enough)",
-  "voting.ballot.firstName": "First name",
-  "voting.ballot.firstNamePlaceholder": "First",
-  "voting.ballot.guideline": "\"From among the pool of those whom the elector believes to be qualified to serve, selection should be made with due consideration given to such other factors as age distribution, diversity, and gender.\" — Universal House of Justice",
-  "voting.ballot.lastName": "Last name",
-  "voting.ballot.lastNamePlaceholder": "Last",
-  "voting.ballot.loading": "Loading election information...",
-  "voting.ballot.myBallot": "My Ballot",
-  "voting.ballot.namePlaceholder": "Type a name",
-  "voting.ballot.notOpen": "Online voting is not currently open for this election.",
-  "voting.ballot.onceWarning": "You can only vote once! Please review your ballot carefully before submitting.",
-  "voting.ballot.openNow": "Open Now",
-  "voting.ballot.orderNote": "(The order of names does not matter)",
-  "voting.ballot.randomModeHint": "Type the names of the people you wish to vote for. Tellers will match these names to registered voters.",
-  "voting.ballot.searchPlaceholder": "Search for a person",
-  "voting.ballot.submit": "Submit Ballot",
-  "voting.ballot.submitError": "Failed to submit ballot. Please try again.",
-  "voting.ballot.submitSuccess": "Ballot submitted successfully!",
-  "voting.ballot.votingFor": "Voting for {count} People",
-  "voting.confirmation.backToElections": "Back to My Elections",
-  "voting.confirmation.canEdit": "You can return to edit your ballot while online voting is still open, until tellers accept it.",
-  "voting.confirmation.cannotEdit": "Tellers have accepted your ballot. You cannot change it.",
-  "voting.confirmation.close": "Close",
-  "voting.confirmation.nextVoter": "Ready for next voter",
-  "voting.confirmation.kioskSubtitle": "This kiosk is clear for the next voter.",
-  "voting.confirmation.kioskRecorded": "Your ballot has been recorded. You can leave this computer.",
-  "voting.confirmation.election": "Election:",
-  "voting.confirmation.recorded": "Your ballot has been securely recorded.",
-  "voting.confirmation.submitted": "Submitted:",
-  "voting.confirmation.subtitle": "Thank you for participating in the election",
-  "voting.confirmation.title": "Ballot Submitted Successfully!",
-  "voting.election.instructions": "Please vote for {count} people.",
-  "voting.elections.alreadyVoted": "Ballot already submitted",
-  "voting.elections.editBallot": "Edit my Ballot",
-  "voting.elections.processedNoEdit": "Accepted — cannot change",
-  "voting.elections.col.election": "Election",
-  "voting.elections.col.onlineVoting": "Online Voting",
-  "voting.elections.col.yourNameAndBallot": "Your Name and Ballot",
-  "voting.elections.footerNote": "If something looks wrong, please stop using TallyJ and send details to your head teller and/or to global technical support.",
-  "voting.elections.loadError": "Failed to load elections. Please try again.",
-  "voting.elections.loading": "Loading your elections...",
-  "voting.elections.loginElsewhere": "You signed in on another browser or device. This session is still active; only one session may vote at a time depending on your election settings.",
-  "voting.elections.logout": "Log Out",
-  "voting.elections.method.online": "Online",
-  "voting.elections.noElections": "No elections found for your account.",
-  "voting.elections.prepareBallot": "Prepare my Ballot",
-  "voting.elections.registered": "Registered:",
-  "voting.elections.status.closed": "Closed",
-  "voting.elections.status.closedDaysAgo": "Closed {days} days ago",
-  "voting.elections.status.closedMonthsAgo": "Closed {months} months ago",
-  "voting.elections.status.closedToday": "Closed today",
-  "voting.elections.status.closedYearsAgo": "Closed {years} years ago",
-  "voting.elections.status.closedYesterday": "Closed yesterday",
-  "voting.elections.status.closingAt": "Expected to close at {time}",
-  "voting.elections.status.closingAtWithMinutes": "Expected to close in {hours}h {minutes}m (at {time})",
-  "voting.elections.status.closingInMinutes": "Expected to close in {minutes} minutes",
-  "voting.elections.status.closingSoon": "Closing very soon",
-  "voting.elections.status.estimatedSuffix": " (estimated)",
-  "voting.elections.status.noOnlineVoting": "No online voting",
-  "voting.elections.status.open": "Open",
-  "voting.elections.status.openNow": "Open Now",
-  "voting.elections.title": "Your Elections",
-  "voting.elections.welcome": "Welcome! Your contact information ({voterId}) was found in the elections shown below.",
-  "voting.elections.welcomeHint": "If an upcoming election is not listed here, it may not exist in TallyJ or your information is not registered in it. Please contact the head teller of the election for assistance.",
-  "voting.status.alreadyProcessed": "Tellers have accepted your ballot. You cannot change it.",
-  "voting.status.alreadyVoted": "You have already submitted your ballot for this election.",
-  "voting.status.alreadyVotedAnotherWay": "You have already voted another way in this election.",
-  "voting.status.notVoted": "You have not yet submitted a ballot for this election.",
-  "voting.status.voterNotFound": "Voter not found in this election.",
-  "voting.submit.alreadyProcessed": "Tellers have accepted your ballot. You cannot change it.",
-  "voting.submit.alreadyVoted": "You have already submitted a ballot for this election.",
-  "voting.submit.alreadyVotedAnotherWay": "You have already voted another way. You cannot submit an online ballot.",
-  "voting.submit.electionNotFound": "Election not found.",
-  "voting.submit.finalized": "This election is finalized. You cannot submit or change an online ballot.",
-  "voting.submit.error": "An error occurred while submitting your ballot. Please try again.",
-  "voting.submit.notOpen": "Online voting is not currently open for this election.",
-  "voting.submit.voterNotFound": "Voter not found. Please authenticate first."
+  "voting.ballot.addPersonToPool": {
+    "t": "Add Person to my Ballot",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.ballotFull": {
+    "t": "All ballot lines are filled. Clear a name before adding another.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.canEdit": {
+    "t": "You can return and edit your ballot while voting is open.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.editing": {
+    "t": "Editing ballot",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.editHint": {
+    "t": "Your previous choices are shown below. Make any changes and submit to update your ballot.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.notifyWhenProcessed": {
+    "t": "Email me when my ballot has been processed by tellers",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.poolNameRequired": {
+    "t": "Please enter at least a first or last name.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.resubmit": {
+    "t": "Update Ballot",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.resubmitSuccess": {
+    "t": "Ballot updated successfully!",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.yourPool": {
+    "t": "Your pool",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPool": {
+    "t": "Add to your Ballot/Pool",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPoolDescription": {
+    "t": "Add a new person to your pool for this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.alreadyVoted": {
+    "t": "You have already voted in this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.authRequired": {
+    "t": "Please authenticate first",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.backToElections": {
+    "t": "Return",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.bothModeHint": {
+    "t": "In each space below, choose a name from the list. If not found, enter the first and last name in the box to the left.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.duplicateError": {
+    "t": "A person has been entered multiple times.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.electionNotFound": {
+    "t": "Election not found",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfo": {
+    "t": "Extra Identifying information",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfoPlaceholder": {
+    "t": "(Optional: Use this if the name may not be enough)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstName": {
+    "t": "First name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstNamePlaceholder": {
+    "t": "First",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.guideline": {
+    "t": "\"From among the pool of those whom the elector believes to be qualified to serve, selection should be made with due consideration given to such other factors as age distribution, diversity, and gender.\" — Universal House of Justice",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastName": {
+    "t": "Last name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastNamePlaceholder": {
+    "t": "Last",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.loading": {
+    "t": "Loading election information...",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.myBallot": {
+    "t": "My Ballot",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.namePlaceholder": {
+    "t": "Type a name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.notOpen": {
+    "t": "Online voting is not currently open for this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.onceWarning": {
+    "t": "You can only vote once! Please review your ballot carefully before submitting.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.openNow": {
+    "t": "Open Now",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.orderNote": {
+    "t": "(The order of names does not matter)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.randomModeHint": {
+    "t": "Type the names of the people you wish to vote for. Tellers will match these names to registered voters.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.searchPlaceholder": {
+    "t": "Search for a person",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submit": {
+    "t": "Submit Ballot",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submitError": {
+    "t": "Failed to submit ballot. Please try again.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submitSuccess": {
+    "t": "Ballot submitted successfully!",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.votingFor": {
+    "t": "Voting for {count} People",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.backToElections": {
+    "t": "Back to My Elections",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.canEdit": {
+    "t": "You can return to edit your ballot while online voting is still open, until tellers accept it.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.cannotEdit": {
+    "t": "Tellers have accepted your ballot. You cannot change it.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.close": {
+    "t": "Close",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.nextVoter": {
+    "t": "Ready for next voter",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskSubtitle": {
+    "t": "This kiosk is clear for the next voter.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskRecorded": {
+    "t": "Your ballot has been recorded. You can leave this computer.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.election": {
+    "t": "Election:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.recorded": {
+    "t": "Your ballot has been securely recorded.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.submitted": {
+    "t": "Submitted:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.subtitle": {
+    "t": "Thank you for participating in the election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.title": {
+    "t": "Ballot Submitted Successfully!",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.election.instructions": {
+    "t": "Please vote for {count} people.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.alreadyVoted": {
+    "t": "Ballot already submitted",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.editBallot": {
+    "t": "Edit my Ballot",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.processedNoEdit": {
+    "t": "Accepted — cannot change",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.election": {
+    "t": "Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.onlineVoting": {
+    "t": "Online Voting",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.yourNameAndBallot": {
+    "t": "Your Name and Ballot",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.footerNote": {
+    "t": "If something looks wrong, please stop using TallyJ and send details to your head teller and/or to global technical support.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loadError": {
+    "t": "Failed to load elections. Please try again.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loading": {
+    "t": "Loading your elections...",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loginElsewhere": {
+    "t": "You signed in on another browser or device. This session is still active; only one session may vote at a time depending on your election settings.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.logout": {
+    "t": "Log Out",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.method.online": {
+    "t": "Online",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.noElections": {
+    "t": "No elections found for your account.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.prepareBallot": {
+    "t": "Prepare my Ballot",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.registered": {
+    "t": "Registered:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closed": {
+    "t": "Closed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedDaysAgo": {
+    "t": "Closed {days} days ago",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedMonthsAgo": {
+    "t": "Closed {months} months ago",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedToday": {
+    "t": "Closed today",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYearsAgo": {
+    "t": "Closed {years} years ago",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYesterday": {
+    "t": "Closed yesterday",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAt": {
+    "t": "Expected to close at {time}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAtWithMinutes": {
+    "t": "Expected to close in {hours}h {minutes}m (at {time})",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingInMinutes": {
+    "t": "Expected to close in {minutes} minutes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingSoon": {
+    "t": "Closing very soon",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.estimatedSuffix": {
+    "t": " (estimated)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.noOnlineVoting": {
+    "t": "No online voting",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.open": {
+    "t": "Open",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.openNow": {
+    "t": "Open Now",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.title": {
+    "t": "Your Elections",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcome": {
+    "t": "Welcome! Your contact information ({voterId}) was found in the elections shown below.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcomeHint": {
+    "t": "If an upcoming election is not listed here, it may not exist in TallyJ or your information is not registered in it. Please contact the head teller of the election for assistance.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.alreadyProcessed": {
+    "t": "Tellers have accepted your ballot. You cannot change it.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.alreadyVoted": {
+    "t": "You have already submitted your ballot for this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.alreadyVotedAnotherWay": {
+    "t": "You have already voted another way in this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.notVoted": {
+    "t": "You have not yet submitted a ballot for this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.voterNotFound": {
+    "t": "Voter not found in this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.alreadyProcessed": {
+    "t": "Tellers have accepted your ballot. You cannot change it.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.alreadyVoted": {
+    "t": "You have already submitted a ballot for this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.alreadyVotedAnotherWay": {
+    "t": "You have already voted another way. You cannot submit an online ballot.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.electionNotFound": {
+    "t": "Election not found.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.finalized": {
+    "t": "This election is finalized. You cannot submit or change an online ballot.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.error": {
+    "t": "An error occurred while submitting your ballot. Please try again.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.notOpen": {
+    "t": "Online voting is not currently open for this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.voterNotFound": {
+    "t": "Voter not found. Please authenticate first.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

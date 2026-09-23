@@ -1,53 +1,257 @@
 {
-  "common.actionIrreversible": "Ova se radnja ne može poništiti.",
-  "common.actions": "Radnje",
-  "common.appName": "TallyJ",
-  "common.appTitle": "TallyJ verzija 4",
-  "common.back": "Natrag",
-  "common.badi.monthNames": "Međukalski dani,Sjaj,Slava,Ljepota,Veličina,Svjetlo,Milosrđe,Riječi,Savršenost,Imena,Moć,Volja,Znanje,Snaga,Govor,Pitanja,Čast,Suverenitet,Dominacija,Uzvisanost",
-  "common.cancel": "Odustani",
-  "common.clear": "Očisti",
-  "common.clearFilters": "Očisti filtre",
-  "common.close": "Zatvori",
-  "common.confirm": "Potvrdi",
-  "common.confirmAction": "Jeste li sigurni da želite {action}?",
-  "common.confirmActionWithItem": "Jeste li sigurni da želite {action} {item}?",
-  "common.confirmDelete": "Jeste li sigurni da želite izbrisati {item}?",
-  "common.copied": "Kopirano u međuspremnik",
-  "common.create": "Stvori",
-  "common.dangerZone": "Opasna zona",
-  "common.dark": "Tamna",
-  "common.delete": "Izbriši",
-  "common.deleteSelected": "Izbriši odabrano",
-  "common.edit": "Uredi",
-  "common.election": "Izbori",
-  "common.endDate": "Datum završetka",
-  "common.enter": "Unesi",
-  "common.error": "Došlo je do pogreške",
-  "common.language": "Jezik",
-  "common.light": "Svijetla",
-  "common.loading": "Učitavanje...",
-  "common.logoAlt": "TallyJ logotip",
-  "common.next": "Sljedeće",
-  "common.no": "Ne",
-  "common.open": "Otvori",
-  "common.or": "ili",
-  "common.previous": "Prethodno",
-  "common.profile": "Profil",
-  "common.refresh": "Osvježi",
-  "common.save": "Spremi",
-  "common.settings": "Postavke",
-  "common.startDate": "Datum početka",
-  "common.testOnlyLong": "{note} Ovaj pregled TallyJ verzije 4 još je u razvoju.{br}Možete se prijaviti i isprobati funkcije, ali ne smije se koristiti za stvarne bahájske izbore u ovom trenutku.{br}Dobro nam je došla vaša povratna informacija o novom dizajnu dok nastavljamo poboljšavati sustav.",
-  "common.testOnlyLongNote": "Molimo obratite pažnju:",
-  "common.testOnlyShort": "Ovaj pregled TallyJ verzije 4 još je u razvoju. Nije namijenjen za korištenje na stvarnim izborima u ovom trenutku",
-  "common.theme": "Tema",
-  "common.to": "do",
-  "common.toggleTheme": "Promijeni temu",
-  "common.userMenu": "Izbornik korisničkog računa",
-  "common.versionDisplay": "Verzija 4 Beta",
-  "common.view": "Pregled",
-  "common.warning": "Upozorenje",
-  "common.yes": "Da",
-  "common.goHome": "Početna"
+  "common.actionIrreversible": {
+    "t": "Ova se radnja ne može poništiti.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.actions": {
+    "t": "Radnje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appName": {
+    "t": "TallyJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appTitle": {
+    "t": "TallyJ verzija 4",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.back": {
+    "t": "Natrag",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.badi.monthNames": {
+    "t": "Međukalski dani,Sjaj,Slava,Ljepota,Veličina,Svjetlo,Milosrđe,Riječi,Savršenost,Imena,Moć,Volja,Znanje,Snaga,Govor,Pitanja,Čast,Suverenitet,Dominacija,Uzvisanost",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.cancel": {
+    "t": "Odustani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clear": {
+    "t": "Očisti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clearFilters": {
+    "t": "Očisti filtre",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.close": {
+    "t": "Zatvori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirm": {
+    "t": "Potvrdi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmAction": {
+    "t": "Jeste li sigurni da želite {action}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmActionWithItem": {
+    "t": "Jeste li sigurni da želite {action} {item}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmDelete": {
+    "t": "Jeste li sigurni da želite izbrisati {item}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.copied": {
+    "t": "Kopirano u međuspremnik",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.create": {
+    "t": "Stvori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dangerZone": {
+    "t": "Opasna zona",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dark": {
+    "t": "Tamna",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.delete": {
+    "t": "Izbriši",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.deleteSelected": {
+    "t": "Izbriši odabrano",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.edit": {
+    "t": "Uredi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.election": {
+    "t": "Izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.endDate": {
+    "t": "Datum završetka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.enter": {
+    "t": "Unesi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.error": {
+    "t": "Došlo je do pogreške",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.language": {
+    "t": "Jezik",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.light": {
+    "t": "Svijetla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.loading": {
+    "t": "Učitavanje...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.logoAlt": {
+    "t": "TallyJ logotip",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.next": {
+    "t": "Sljedeće",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.no": {
+    "t": "Ne",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.open": {
+    "t": "Otvori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.or": {
+    "t": "ili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.previous": {
+    "t": "Prethodno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.profile": {
+    "t": "Profil",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.refresh": {
+    "t": "Osvježi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.save": {
+    "t": "Spremi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.settings": {
+    "t": "Postavke",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.startDate": {
+    "t": "Datum početka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLong": {
+    "t": "{note} Ovaj pregled TallyJ verzije 4 još je u razvoju.{br}Možete se prijaviti i isprobati funkcije, ali ne smije se koristiti za stvarne bahájske izbore u ovom trenutku.{br}Dobro nam je došla vaša povratna informacija o novom dizajnu dok nastavljamo poboljšavati sustav.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLongNote": {
+    "t": "Molimo obratite pažnju:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyShort": {
+    "t": "Ovaj pregled TallyJ verzije 4 još je u razvoju. Nije namijenjen za korištenje na stvarnim izborima u ovom trenutku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.theme": {
+    "t": "Tema",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.to": {
+    "t": "do",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.toggleTheme": {
+    "t": "Promijeni temu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.userMenu": {
+    "t": "Izbornik korisničkog računa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.versionDisplay": {
+    "t": "Verzija 4 Beta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.view": {
+    "t": "Pregled",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.warning": {
+    "t": "Upozorenje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.yes": {
+    "t": "Da",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.goHome": {
+    "t": "Početna",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

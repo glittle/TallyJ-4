@@ -1,36 +1,172 @@
 {
-  "audit.dialog.computerCode": "Tietokoneen koodi",
-  "audit.dialog.dateTime": "Päivämäärä/Aika",
-  "audit.dialog.details": "Tiedot",
-  "audit.dialog.electionGuid": "Vaalien GUID",
-  "audit.dialog.hostAndVersion": "Isäntä ja versio",
-  "audit.dialog.locationGuid": "Sijainnin GUID",
-  "audit.dialog.rowId": "Rivin tunnus",
-  "audit.dialog.title": "Tarkastuslokien tiedot",
-  "audit.dialog.userId": "Käyttäjän tunnus",
-  "audit.filters.apply": "Käytä suodattimia",
-  "audit.filters.clear": "Tyhjennä suodattimet",
-  "audit.filters.computerCode": "Tietokoneen koodi",
-  "audit.filters.computerCodePlaceholder": "Suodata tietokoneen koodin mukaan",
-  "audit.filters.electionGuid": "Vaalien GUID",
-  "audit.filters.electionGuidPlaceholder": "Suodata vaalien GUID:n mukaan",
-  "audit.filters.endDate": "Lopetuspäivä",
-  "audit.filters.endDatePlaceholder": "Lopetuspäivä",
-  "audit.filters.locationGuid": "Sijainnin GUID",
-  "audit.filters.locationGuidPlaceholder": "Suodata sijainnin GUID:n mukaan",
-  "audit.filters.search": "Haku",
-  "audit.filters.searchPlaceholder": "Hae kaikista kentistä",
-  "audit.filters.startDate": "Aloituspäivä",
-  "audit.filters.startDatePlaceholder": "Aloituspäivä",
-  "audit.filters.voterId": "Äänestäjän tunnus",
-  "audit.filters.voterIdPlaceholder": "Suodata äänestäjän tunnuksen mukaan",
-  "audit.table.actions": "Toiminnot",
-  "audit.table.computer": "Tietokone",
-  "audit.table.dateTime": "Päivämäärä/Aika",
-  "audit.table.details": "Tiedot",
-  "audit.table.election": "Vaalit",
-  "audit.table.userId": "Käyttäjän tunnus",
-  "audit.table.view": "Näytä",
-  "audit.table.yes": "Kyllä",
-  "audit.title": "Tarkastuslokit"
+  "audit.dialog.computerCode": {
+    "t": "Tietokoneen koodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.dateTime": {
+    "t": "Päivämäärä/Aika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.details": {
+    "t": "Tiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.electionGuid": {
+    "t": "Vaalien GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.hostAndVersion": {
+    "t": "Isäntä ja versio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.locationGuid": {
+    "t": "Sijainnin GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.rowId": {
+    "t": "Rivin tunnus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.title": {
+    "t": "Tarkastuslokien tiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.userId": {
+    "t": "Käyttäjän tunnus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.apply": {
+    "t": "Käytä suodattimia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.clear": {
+    "t": "Tyhjennä suodattimet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCode": {
+    "t": "Tietokoneen koodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCodePlaceholder": {
+    "t": "Suodata tietokoneen koodin mukaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuid": {
+    "t": "Vaalien GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuidPlaceholder": {
+    "t": "Suodata vaalien GUID:n mukaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDate": {
+    "t": "Lopetuspäivä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDatePlaceholder": {
+    "t": "Lopetuspäivä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuid": {
+    "t": "Sijainnin GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuidPlaceholder": {
+    "t": "Suodata sijainnin GUID:n mukaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.search": {
+    "t": "Haku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.searchPlaceholder": {
+    "t": "Hae kaikista kentistä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDate": {
+    "t": "Aloituspäivä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDatePlaceholder": {
+    "t": "Aloituspäivä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterId": {
+    "t": "Äänestäjän tunnus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterIdPlaceholder": {
+    "t": "Suodata äänestäjän tunnuksen mukaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.actions": {
+    "t": "Toiminnot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.computer": {
+    "t": "Tietokone",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.dateTime": {
+    "t": "Päivämäärä/Aika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.details": {
+    "t": "Tiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.election": {
+    "t": "Vaalit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.userId": {
+    "t": "Käyttäjän tunnus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.view": {
+    "t": "Näytä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.yes": {
+    "t": "Kyllä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.title": {
+    "t": "Tarkastuslokit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

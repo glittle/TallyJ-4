@@ -1,25 +1,117 @@
 {
-  "import.completed": "Nhập hoàn tất thành công",
-  "import.currentStatus": "Trạng thái: {status}",
-  "import.errorCount": "Lỗi: {count}",
-  "import.errors.batchSaveFailed": "Lưu hàng loạt thất bại: {message}",
-  "import.errors.duplicateBahaiId": "Dòng {rowNumber}: ID Bahá'í trùng lặp '{bahaiId}'",
-  "import.errors.duplicateEmail": "Dòng {rowNumber}: Email trùng lặp '{email}'",
-  "import.errors.duplicateName": "Dòng {rowNumber}: Tên trùng lặp '{firstName} {lastName}'",
-  "import.errors.duplicatePhone": "Dòng {rowNumber}: Số điện thoại trùng lặp '{phone}'",
-  "import.errors.fileNotFound": "Không tìm thấy tệp nhập hoặc tệp không có nội dung",
-  "import.errors.importFailed": "Nhập thất bại: {message}",
-  "import.errors.importFailedAtLine": "Nhập thất bại ở dòng {rowNumber}: {message}",
-  "import.errors.invalidMappings": "Ánh xạ cột không hợp lệ",
-  "import.errors.lineError": "Dòng {rowNumber}: {message}",
-  "import.errors.missingFirstName": "Dòng {rowNumber}: Thiếu tên",
-  "import.errors.missingLastName": "Dòng {rowNumber}: Thiếu họ",
-  "import.errors.missingRequiredMappings": "Cần có ánh xạ Họ và Tên",
-  "import.errors.noMappings": "Chưa cấu hình ánh xạ cột",
-  "import.errorsTitle": "Lỗi Nhập",
-  "import.moreErrors": "và {count} lỗi nữa...",
-  "import.processingRows": "Đang xử lý hàng {processed} trên {total}",
-  "import.progressTitle": "Tiến Trình Nhập",
-  "import.successCount": "Thành công: {count}",
-  "import.warnings.unrecognizedEligibility": "Dòng {rowNumber}: Trạng thái điều kiện không được nhận dạng: '{eligibilityValue}' - được coi là đủ điều kiện"
+  "import.completed": {
+    "t": "Nhập hoàn tất thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.currentStatus": {
+    "t": "Trạng thái: {status}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorCount": {
+    "t": "Lỗi: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.batchSaveFailed": {
+    "t": "Lưu hàng loạt thất bại: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateBahaiId": {
+    "t": "Dòng {rowNumber}: ID Bahá'í trùng lặp '{bahaiId}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateEmail": {
+    "t": "Dòng {rowNumber}: Email trùng lặp '{email}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateName": {
+    "t": "Dòng {rowNumber}: Tên trùng lặp '{firstName} {lastName}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicatePhone": {
+    "t": "Dòng {rowNumber}: Số điện thoại trùng lặp '{phone}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.fileNotFound": {
+    "t": "Không tìm thấy tệp nhập hoặc tệp không có nội dung",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailed": {
+    "t": "Nhập thất bại: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailedAtLine": {
+    "t": "Nhập thất bại ở dòng {rowNumber}: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.invalidMappings": {
+    "t": "Ánh xạ cột không hợp lệ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.lineError": {
+    "t": "Dòng {rowNumber}: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingFirstName": {
+    "t": "Dòng {rowNumber}: Thiếu tên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingLastName": {
+    "t": "Dòng {rowNumber}: Thiếu họ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingRequiredMappings": {
+    "t": "Cần có ánh xạ Họ và Tên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.noMappings": {
+    "t": "Chưa cấu hình ánh xạ cột",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorsTitle": {
+    "t": "Lỗi Nhập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.moreErrors": {
+    "t": "và {count} lỗi nữa...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.processingRows": {
+    "t": "Đang xử lý hàng {processed} trên {total}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.progressTitle": {
+    "t": "Tiến Trình Nhập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.successCount": {
+    "t": "Thành công: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.warnings.unrecognizedEligibility": {
+    "t": "Dòng {rowNumber}: Trạng thái điều kiện không được nhận dạng: '{eligibilityValue}' - được coi là đủ điều kiện",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

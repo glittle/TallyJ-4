@@ -1,26 +1,122 @@
 {
-  "eligibility.R01": "Sio mwakilishi katika uchaguzi huu",
-  "eligibility.R02": "Haki zimeondolewa (hawezi kupiga kura)",
-  "eligibility.R03": "Nyingine (hawezi kupiga kura lakini anaweza kuchaguliwa)",
-  "eligibility.V01": "Kijana wenye umri wa 18/19/20",
-  "eligibility.V02": "Uchaguzi wa ziada: Tayari katika Taasisi",
-  "eligibility.V03": "Katika Taasisi nyingine (mfano: Mshauri)",
-  "eligibility.V04": "Haki zimeondolewa (hawezi kuchaguliwa)",
-  "eligibility.V05": "Uchaguzi wa kufungua sare: Haijasare",
-  "eligibility.V06": "Nyingine (anaweza kupiga kura lakini hawezi kuchaguliwa)",
-  "eligibility.X01": "Amefariki",
-  "eligibility.X02": "Amehamia mahali pengine hivi karibuni",
-  "eligibility.X03": "Sio katika kitengo hiki cha mtaa",
-  "eligibility.X04": "Sio Mbaháí aliyesajiliwa",
-  "eligibility.X05": "Chini ya umri wa miaka 18",
-  "eligibility.X06": "Anaishi mahali pengine",
-  "eligibility.X07": "Haki zimeondolewa (kwa ujumla)",
-  "eligibility.X08": "Sio mwakilishi na katika Taasisi nyingine",
-  "eligibility.X09": "Nyingine (hawezi kupiga kura au kuchaguliwa)",
-  "eligibility.eligible": "Anastahili",
-  "eligibility.groupR": "Anaweza kupokea kura tu (hawezi kupiga kura)",
-  "eligibility.groupV": "Anaweza kupiga kura tu (hawezi kupokea kura)",
-  "eligibility.groupX": "Hawezi kupiga kura, hawezi kupokea kura",
-  "eligibility.label": "Ustahili",
-  "eligibility.selectReason": "Chagua sababu ya ustahili"
+  "eligibility.R01": {
+    "t": "Sio mwakilishi katika uchaguzi huu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.R02": {
+    "t": "Haki zimeondolewa (hawezi kupiga kura)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.R03": {
+    "t": "Nyingine (hawezi kupiga kura lakini anaweza kuchaguliwa)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V01": {
+    "t": "Kijana wenye umri wa 18/19/20",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V02": {
+    "t": "Uchaguzi wa ziada: Tayari katika Taasisi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V03": {
+    "t": "Katika Taasisi nyingine (mfano: Mshauri)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V04": {
+    "t": "Haki zimeondolewa (hawezi kuchaguliwa)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V05": {
+    "t": "Uchaguzi wa kufungua sare: Haijasare",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V06": {
+    "t": "Nyingine (anaweza kupiga kura lakini hawezi kuchaguliwa)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X01": {
+    "t": "Amefariki",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X02": {
+    "t": "Amehamia mahali pengine hivi karibuni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X03": {
+    "t": "Sio katika kitengo hiki cha mtaa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X04": {
+    "t": "Sio Mbaháí aliyesajiliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X05": {
+    "t": "Chini ya umri wa miaka 18",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X06": {
+    "t": "Anaishi mahali pengine",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X07": {
+    "t": "Haki zimeondolewa (kwa ujumla)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X08": {
+    "t": "Sio mwakilishi na katika Taasisi nyingine",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X09": {
+    "t": "Nyingine (hawezi kupiga kura au kuchaguliwa)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.eligible": {
+    "t": "Anastahili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupR": {
+    "t": "Anaweza kupokea kura tu (hawezi kupiga kura)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupV": {
+    "t": "Anaweza kupiga kura tu (hawezi kupokea kura)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupX": {
+    "t": "Hawezi kupiga kura, hawezi kupokea kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.label": {
+    "t": "Ustahili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.selectReason": {
+    "t": "Chagua sababu ya ustahili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

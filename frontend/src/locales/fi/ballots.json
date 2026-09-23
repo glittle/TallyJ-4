@@ -1,74 +1,362 @@
 {
-  "ballots.addBallot": "Lisää äänestyslipuke",
-  "ballots.addNewPerson": "Lisää uusi henkilö",
-  "ballots.addVote": "Lisää ääni",
-  "ballots.cacheLoadError": "Ehdokkaiden lataaminen epäonnistui",
-  "ballots.cacheLoading": "Ladataan ehdokkaita...",
-  "ballots.candidate": "Ehdokas",
-  "ballots.candidateRequired": "Ehdokas vaaditaan",
-  "ballots.cdnImport.ballotsCreated": "Äänestysliput luotu",
-  "ballots.cdnImport.button": "Tuo CDN-äänestysliput",
-  "ballots.cdnImport.description": "Lataa CDN:stä (Kanadan kansallinen tietokanta) viety XML-tiedosto tuodaksesi äänestysliput ja niitä vastaavat äänet tähän vaaliin. Tiedosto jäsennetään, ja jokaiselle kelvolliselle merkinnälle luodaan äänestyslippu sekä kaikki niihin liittyvät äänitiedot.",
-  "ballots.cdnImport.errors": "Virheet",
-  "ballots.cdnImport.failed": "Tuonti epäonnistui",
-  "ballots.cdnImport.importing": "Tuodaan...",
-  "ballots.cdnImport.skippedRows": "Ohitetut rivit",
-  "ballots.cdnImport.success": "Tuonti valmistui onnistuneesti",
-  "ballots.cdnImport.title": "Tuo CDN-äänestysliput",
-  "ballots.cdnImport.totalRows": "Käsiteltyjä rivejä yhteensä",
-  "ballots.cdnImport.uploadPrompt": "Napsauta tai vedä XML-tiedosto tähän ladataksesi",
-  "ballots.cdnImport.votesCreated": "Äänet luotu",
-  "ballots.cdnImport.warnings": "Varoitukset",
-  "ballots.cdnImport.xmlOnly": "Vain XML-tiedostoja tuetaan",
-  "ballots.checkSpelling": "Tarkista oikeinkirjoitus tai kokeile eri nimeä",
-  "ballots.clearAll": "Tyhjennä kaikki",
-  "ballots.code": "Äänestyslipukkeen koodi",
-  "ballots.computer": "Tietokone",
-  "ballots.computerRequired": "Tietokonekoodi vaaditaan",
-  "ballots.createSuccess": "Äänestyslipuke luotu onnistuneesti",
-  "ballots.deleteConfirm": "Oletko varma, että haluat poistaa tämän äänestyslipukkeen?",
-  "ballots.deleteError": "Äänestyslipukkeen poistaminen epäonnistui",
-  "ballots.deleteSuccess": "Äänestyslipuke poistettu onnistuneesti",
-  "ballots.deleteVoteConfirm": "Oletko varma, että haluat poistaa tämän äänen?",
-  "ballots.deleteVoteError": "Äänen poistaminen epäonnistui",
-  "ballots.deleteVoteSuccess": "Ääni poistettu onnistuneesti",
-  "ballots.duplicateWarning": "Kaksoiskappale: Tämä henkilö on jo valittu",
-  "ballots.enterVotes": "Syötä äänet",
-  "ballots.entry": "Äänestyslipukkeen syöttö - {code}",
-  "ballots.entryPage": "Äänestyslipukkeen syöttö",
-  "ballots.ineligible": "Ei kelpoinen",
-  "ballots.loadError": "Äänestyslipukkeiden lataaminen epäonnistui",
-  "ballots.location": "Sijainti",
-  "ballots.locationRequired": "Sijainti vaaditaan",
-  "ballots.management": "Äänestyslipukkeiden hallinta",
-  "ballots.noMatchesFound": "Vastaavuuksia ei löytynyt",
-  "ballots.personUpdated": "{name} päivitettiin",
-  "ballots.position": "Asema",
-  "ballots.positionRequired": "Asema vaaditaan",
-  "ballots.saveBallot": "Tallenna äänestyslipuke",
-  "ballots.saveError": "Äänestyslipukkeen tallentaminen epäonnistui",
-  "ballots.status": "Tila",
-  "ballots.statusValue.Dup": "Kopio",
-  "ballots.statusValue.Empty": "Tyhjä",
-  "ballots.statusValue.New": "Uusi",
-  "ballots.statusValue.Ok": "OK",
-  "ballots.statusValue.Raw": "Raaka",
-  "ballots.statusValue.Review": "Tarkista",
-  "ballots.statusValue.TooFew": "Liian vähän",
-  "ballots.statusValue.TooMany": "Liian monta",
-  "ballots.statusValue.Verify": "Vahvista",
-  "ballots.teller1": "Laskija 1",
-  "ballots.teller2": "Laskija 2",
-  "ballots.viewVotes": "Näytä äänet",
-  "ballots.voteAddedError": "Äänen lisääminen epäonnistui",
-  "ballots.voteAddedSuccess": "Ääni lisätty onnistuneesti",
-  "ballots.voteCount": "Äänet",
-  "ballots.voteCreateSuccess": "Ääni lisätty onnistuneesti",
-  "ballots.voteRemovedError": "Äänen poistaminen epäonnistui",
-  "ballots.voteRemovedSuccess": "Ääni poistettu onnistuneesti",
-  "ballots.voteSaveError": "Äänen tallentaminen epäonnistui",
-  "ballots.voteSpoiledSuccess": "Ääni lisätty mitättömänä ({code} – henkilö ei ole kelpoinen)",
-  "ballots.votes": "Äänet - {code}",
-  "ballots.votesEntered": "{count}/{max} ääntä syötetty",
-  "ballots.votesList": "Äänien lista"
+  "ballots.addBallot": {
+    "t": "Lisää äänestyslipuke",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addNewPerson": {
+    "t": "Lisää uusi henkilö",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addVote": {
+    "t": "Lisää ääni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoadError": {
+    "t": "Ehdokkaiden lataaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoading": {
+    "t": "Ladataan ehdokkaita...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidate": {
+    "t": "Ehdokas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidateRequired": {
+    "t": "Ehdokas vaaditaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.ballotsCreated": {
+    "t": "Äänestysliput luotu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.button": {
+    "t": "Tuo CDN-äänestysliput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.description": {
+    "t": "Lataa CDN:stä (Kanadan kansallinen tietokanta) viety XML-tiedosto tuodaksesi äänestysliput ja niitä vastaavat äänet tähän vaaliin. Tiedosto jäsennetään, ja jokaiselle kelvolliselle merkinnälle luodaan äänestyslippu sekä kaikki niihin liittyvät äänitiedot.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.errors": {
+    "t": "Virheet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.failed": {
+    "t": "Tuonti epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.importing": {
+    "t": "Tuodaan...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.skippedRows": {
+    "t": "Ohitetut rivit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.success": {
+    "t": "Tuonti valmistui onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.title": {
+    "t": "Tuo CDN-äänestysliput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.totalRows": {
+    "t": "Käsiteltyjä rivejä yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.uploadPrompt": {
+    "t": "Napsauta tai vedä XML-tiedosto tähän ladataksesi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.votesCreated": {
+    "t": "Äänet luotu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.warnings": {
+    "t": "Varoitukset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.xmlOnly": {
+    "t": "Vain XML-tiedostoja tuetaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.checkSpelling": {
+    "t": "Tarkista oikeinkirjoitus tai kokeile eri nimeä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.clearAll": {
+    "t": "Tyhjennä kaikki",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.code": {
+    "t": "Äänestyslipukkeen koodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computer": {
+    "t": "Tietokone",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computerRequired": {
+    "t": "Tietokonekoodi vaaditaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.createSuccess": {
+    "t": "Äänestyslipuke luotu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteConfirm": {
+    "t": "Oletko varma, että haluat poistaa tämän äänestyslipukkeen?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteError": {
+    "t": "Äänestyslipukkeen poistaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteSuccess": {
+    "t": "Äänestyslipuke poistettu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteConfirm": {
+    "t": "Oletko varma, että haluat poistaa tämän äänen?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteError": {
+    "t": "Äänen poistaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteSuccess": {
+    "t": "Ääni poistettu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.duplicateWarning": {
+    "t": "Kaksoiskappale: Tämä henkilö on jo valittu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.enterVotes": {
+    "t": "Syötä äänet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entry": {
+    "t": "Äänestyslipukkeen syöttö - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entryPage": {
+    "t": "Äänestyslipukkeen syöttö",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.ineligible": {
+    "t": "Ei kelpoinen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.loadError": {
+    "t": "Äänestyslipukkeiden lataaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.location": {
+    "t": "Sijainti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.locationRequired": {
+    "t": "Sijainti vaaditaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.management": {
+    "t": "Äänestyslipukkeiden hallinta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.noMatchesFound": {
+    "t": "Vastaavuuksia ei löytynyt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.personUpdated": {
+    "t": "{name} päivitettiin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.position": {
+    "t": "Asema",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.positionRequired": {
+    "t": "Asema vaaditaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveBallot": {
+    "t": "Tallenna äänestyslipuke",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveError": {
+    "t": "Äänestyslipukkeen tallentaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.status": {
+    "t": "Tila",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Dup": {
+    "t": "Kopio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Empty": {
+    "t": "Tyhjä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.New": {
+    "t": "Uusi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Ok": {
+    "t": "OK",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Raw": {
+    "t": "Raaka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Review": {
+    "t": "Tarkista",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooFew": {
+    "t": "Liian vähän",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooMany": {
+    "t": "Liian monta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Verify": {
+    "t": "Vahvista",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller1": {
+    "t": "Laskija 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller2": {
+    "t": "Laskija 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.viewVotes": {
+    "t": "Näytä äänet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedError": {
+    "t": "Äänen lisääminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedSuccess": {
+    "t": "Ääni lisätty onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCount": {
+    "t": "Äänet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCreateSuccess": {
+    "t": "Ääni lisätty onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedError": {
+    "t": "Äänen poistaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedSuccess": {
+    "t": "Ääni poistettu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSaveError": {
+    "t": "Äänen tallentaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSpoiledSuccess": {
+    "t": "Ääni lisätty mitättömänä ({code} – henkilö ei ole kelpoinen)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votes": {
+    "t": "Äänet - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesEntered": {
+    "t": "{count}/{max} ääntä syötetty",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesList": {
+    "t": "Äänien lista",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

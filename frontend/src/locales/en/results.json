@@ -1,52 +1,252 @@
 {
-  "results.allResults": "All Results",
-  "results.ballotsReceived": "Ballots Received",
-  "results.calculateTally": "Calculate Tally",
-  "results.calculatedAt": "Calculated at {date}",
-  "results.person": "Person",
-  "results.closeToNext": "Close to Next",
-  "results.elected": "Elected",
-  "results.extra": "Extra",
-  "results.flags": "Flags",
-  "results.loadError": "Failed to load results",
-  "results.monitor": "Election Monitor",
-  "results.noResults": "No results available. Calculate tally first.",
-  "results.noTies": "No ties detected",
-  "results.numberToElect": "Number to Elect",
-  "results.other": "Other",
-  "results.presentation": "Presentation View",
-  "results.rank": "Rank",
-  "results.reporting": "Reports",
-  "results.section": "Section",
-  "results.showFinalResults": "Show Final Results",
-  "results.spoiledBallots": "Spoiled Ballots",
-  "results.tieBreakAlert": "Attention: Some ties require manual tie-breaking",
-  "results.tieBreakMessage": "A tie-break is required for this group as it spans section boundaries",
-  "results.tieBreakRequired": "Tie-break Required",
-  "results.tieGroup": "Tie Group #{group}",
-  "results.tieManagement": "Tie Management",
-  "results.tied": "Tied",
-  "results.tiedPeople": "Tied People",
-  "tieManagement.actions": "Actions",
-  "tieManagement.confirmSave": "Save tie-break counts? The tally will be re-analyzed after save.",
-  "tieManagement.instructions": "Enter runoff counts for tied people. Leave a field empty if no count has been entered yet. An explicit 0 is a valid runoff result. Saving re-analyzes the tally even if only some people have counts.",
-  "tieManagement.loadError": "Failed to load tie details.",
-  "tieManagement.noTies": "No ties require management",
-  "tieManagement.person": "Person",
-  "tieManagement.reAnalysisTriggered": "Tie-break counts saved. Tally re-analysis has been triggered.",
-  "tieManagement.saveChanges": "Save Changes",
-  "tieManagement.saveError": "Failed to save tie-break counts.",
-  "tieManagement.saveSuccess": "Tie-break counts saved successfully.",
-  "tieManagement.section": "Section",
-  "tieManagement.tieBreakCount": "Tie-Break Count",
-  "tieManagement.tieBreakRequired": "Tie-break Required",
-  "tieManagement.tieGroup": "Tie Group #{group}",
-  "tieManagement.validationRequired": "Elected-section ties still have people with no tie-break count entered. An explicit 0 is allowed.",
-  "tieManagement.voteCount": "Vote Count",
-  "results.ties": "Ties",
-  "results.title": "Election Results",
-  "results.totalBallots": "Total Ballots",
-  "results.totalVotes": "Total Votes",
-  "results.validVotes": "Valid Votes",
-  "results.votes": "Votes"
+  "results.allResults": {
+    "t": "All Results",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ballotsReceived": {
+    "t": "Ballots Received",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculateTally": {
+    "t": "Calculate Tally",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculatedAt": {
+    "t": "Calculated at {date}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.person": {
+    "t": "Person",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.closeToNext": {
+    "t": "Close to Next",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.elected": {
+    "t": "Elected",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.extra": {
+    "t": "Extra",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.flags": {
+    "t": "Flags",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.loadError": {
+    "t": "Failed to load results",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.monitor": {
+    "t": "Election Monitor",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noResults": {
+    "t": "No results available. Calculate tally first.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noTies": {
+    "t": "No ties detected",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.numberToElect": {
+    "t": "Number to Elect",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.other": {
+    "t": "Other",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.presentation": {
+    "t": "Presentation View",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.rank": {
+    "t": "Rank",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.reporting": {
+    "t": "Reports",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.section": {
+    "t": "Section",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.showFinalResults": {
+    "t": "Show Final Results",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.spoiledBallots": {
+    "t": "Spoiled Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakAlert": {
+    "t": "Attention: Some ties require manual tie-breaking",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakMessage": {
+    "t": "A tie-break is required for this group as it spans section boundaries",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakRequired": {
+    "t": "Tie-break Required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieGroup": {
+    "t": "Tie Group #{group}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieManagement": {
+    "t": "Tie Management",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tied": {
+    "t": "Tied",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tiedPeople": {
+    "t": "Tied People",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.actions": {
+    "t": "Actions",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.confirmSave": {
+    "t": "Save tie-break counts? The tally will be re-analyzed after save.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.instructions": {
+    "t": "Enter runoff counts for tied people. Leave a field empty if no count has been entered yet. An explicit 0 is a valid runoff result. Saving re-analyzes the tally even if only some people have counts.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.loadError": {
+    "t": "Failed to load tie details.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.noTies": {
+    "t": "No ties require management",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.person": {
+    "t": "Person",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.reAnalysisTriggered": {
+    "t": "Tie-break counts saved. Tally re-analysis has been triggered.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.saveChanges": {
+    "t": "Save Changes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.saveError": {
+    "t": "Failed to save tie-break counts.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.saveSuccess": {
+    "t": "Tie-break counts saved successfully.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.section": {
+    "t": "Section",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.tieBreakCount": {
+    "t": "Tie-Break Count",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.tieBreakRequired": {
+    "t": "Tie-break Required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.tieGroup": {
+    "t": "Tie Group #{group}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.validationRequired": {
+    "t": "Elected-section ties still have people with no tie-break count entered. An explicit 0 is allowed.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tieManagement.voteCount": {
+    "t": "Vote Count",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ties": {
+    "t": "Ties",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.title": {
+    "t": "Election Results",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalBallots": {
+    "t": "Total Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalVotes": {
+    "t": "Total Votes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.validVotes": {
+    "t": "Valid Votes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.votes": {
+    "t": "Votes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

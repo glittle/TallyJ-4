@@ -1,36 +1,172 @@
 {
-  "audit.dialog.computerCode": "计算机代码",
-  "audit.dialog.dateTime": "日期/时间",
-  "audit.dialog.details": "详情",
-  "audit.dialog.electionGuid": "选举 GUID",
-  "audit.dialog.hostAndVersion": "主机和版本",
-  "audit.dialog.locationGuid": "位置 GUID",
-  "audit.dialog.rowId": "行 ID",
-  "audit.dialog.title": "审计日志详情",
-  "audit.dialog.userId": "用户 ID",
-  "audit.filters.apply": "应用筛选",
-  "audit.filters.clear": "清除筛选",
-  "audit.filters.computerCode": "计算机代码",
-  "audit.filters.computerCodePlaceholder": "按计算机代码筛选",
-  "audit.filters.electionGuid": "选举 GUID",
-  "audit.filters.electionGuidPlaceholder": "按选举 GUID 筛选",
-  "audit.filters.endDate": "结束日期",
-  "audit.filters.endDatePlaceholder": "结束日期",
-  "audit.filters.locationGuid": "位置 GUID",
-  "audit.filters.locationGuidPlaceholder": "按位置 GUID 筛选",
-  "audit.filters.search": "搜索",
-  "audit.filters.searchPlaceholder": "搜索所有字段",
-  "audit.filters.startDate": "开始日期",
-  "audit.filters.startDatePlaceholder": "开始日期",
-  "audit.filters.voterId": "选民 ID",
-  "audit.filters.voterIdPlaceholder": "按选民 ID 筛选",
-  "audit.table.actions": "操作",
-  "audit.table.computer": "计算机",
-  "audit.table.dateTime": "日期/时间",
-  "audit.table.details": "详情",
-  "audit.table.election": "选举",
-  "audit.table.userId": "用户 ID",
-  "audit.table.view": "查看",
-  "audit.table.yes": "是",
-  "audit.title": "审计日志"
+  "audit.dialog.computerCode": {
+    "t": "计算机代码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.dateTime": {
+    "t": "日期/时间",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.details": {
+    "t": "详情",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.electionGuid": {
+    "t": "选举 GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.hostAndVersion": {
+    "t": "主机和版本",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.locationGuid": {
+    "t": "位置 GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.rowId": {
+    "t": "行 ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.title": {
+    "t": "审计日志详情",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.userId": {
+    "t": "用户 ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.apply": {
+    "t": "应用筛选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.clear": {
+    "t": "清除筛选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCode": {
+    "t": "计算机代码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCodePlaceholder": {
+    "t": "按计算机代码筛选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuid": {
+    "t": "选举 GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuidPlaceholder": {
+    "t": "按选举 GUID 筛选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDate": {
+    "t": "结束日期",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDatePlaceholder": {
+    "t": "结束日期",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuid": {
+    "t": "位置 GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuidPlaceholder": {
+    "t": "按位置 GUID 筛选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.search": {
+    "t": "搜索",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.searchPlaceholder": {
+    "t": "搜索所有字段",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDate": {
+    "t": "开始日期",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDatePlaceholder": {
+    "t": "开始日期",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterId": {
+    "t": "选民 ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterIdPlaceholder": {
+    "t": "按选民 ID 筛选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.actions": {
+    "t": "操作",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.computer": {
+    "t": "计算机",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.dateTime": {
+    "t": "日期/时间",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.details": {
+    "t": "详情",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.election": {
+    "t": "选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.userId": {
+    "t": "用户 ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.view": {
+    "t": "查看",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.yes": {
+    "t": "是",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.title": {
+    "t": "审计日志",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

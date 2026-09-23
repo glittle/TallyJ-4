@@ -1,24 +1,112 @@
 {
-  "dashboard.active": "Aktivno",
-  "dashboard.activeElections": "Aktivni izbori",
-  "dashboard.ballotsEntered": "Uneseni glasački listići",
-  "dashboard.canVote": "Može glasati",
-  "dashboard.closed": "Zatvoreno",
-  "dashboard.closes": "Zatvara se",
-  "dashboard.electionDetails": "Detalji izbora",
-  "dashboard.noElections": "Nisu pronađeni izbori",
-  "dashboard.noTellers": "Nema dodijeljenih brojača glasova",
-  "dashboard.onlineVoting": "Online glasanje",
-  "dashboard.open": "Otvoreno",
-  "dashboard.opens": "Otvara se",
-  "dashboard.otherActions": "Ostale radnje...",
-  "dashboard.recentElections": "Nedavni izbori",
-  "dashboard.registered": "Registrirani",
-  "dashboard.statistics": "Statistike",
-  "dashboard.tellerCount": "Broj brojača glasova",
-  "dashboard.tellers": "Brojači glasova",
-  "dashboard.tellersStatus": "Brojači glasova",
-  "dashboard.totalBallots": "Ukupno glasačkih listića",
-  "dashboard.totalElections": "Ukupno izbora",
-  "dashboard.totalVoters": "Ukupno glasača"
+  "dashboard.active": {
+    "t": "Aktivno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.activeElections": {
+    "t": "Aktivni izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "Uneseni glasački listići",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.canVote": {
+    "t": "Može glasati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closed": {
+    "t": "Zatvoreno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closes": {
+    "t": "Zatvara se",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "Detalji izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noElections": {
+    "t": "Nisu pronađeni izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noTellers": {
+    "t": "Nema dodijeljenih brojača glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "Online glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.open": {
+    "t": "Otvoreno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.opens": {
+    "t": "Otvara se",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.otherActions": {
+    "t": "Ostale radnje...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.recentElections": {
+    "t": "Nedavni izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.registered": {
+    "t": "Registrirani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.statistics": {
+    "t": "Statistike",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "Broj brojača glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellers": {
+    "t": "Brojači glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "Brojači glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "Ukupno glasačkih listića",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalElections": {
+    "t": "Ukupno izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "Ukupno glasača",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

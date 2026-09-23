@@ -1,53 +1,257 @@
 {
-  "common.actionIrreversible": "Kitendo hiki hakiwezi kubatilishwa.",
-  "common.actions": "Vitendo",
-  "common.appName": "HesabuJ",
-  "common.appTitle": "HesabuJ Toleo 4",
-  "common.back": "Nyuma",
-  "common.badi.monthNames": "Siku za Kuingizwa,Mng'ao,Utukufu,Uzuri,Ukuu,Nuru,Rehema,Maneno,Ukamilifu,Majina,Nguvu,Utashi,Maarifa,Uwezo,Usemi,Maswali,Heshima,Utawala,Ufalme,Urefu",
-  "common.cancel": "Ghairi",
-  "common.clear": "Futa",
-  "common.clearFilters": "Futa Vichujio",
-  "common.close": "Funga",
-  "common.confirm": "Thibitisha",
-  "common.confirmAction": "Una uhakika unataka {action}?",
-  "common.confirmActionWithItem": "Una uhakika unataka {action} {item}?",
-  "common.confirmDelete": "Una uhakika unataka kufuta {item}?",
-  "common.copied": "Imenakiliwa kwenye ubao wa kunakili",
-  "common.create": "Unda",
-  "common.dangerZone": "Eneo la Hatari",
-  "common.dark": "Giza",
-  "common.delete": "Futa",
-  "common.deleteSelected": "Futa Vilivyochaguliwa",
-  "common.edit": "Hariri",
-  "common.election": "Uchaguzi",
-  "common.endDate": "Tarehe ya Mwisho",
-  "common.enter": "Ingiza",
-  "common.error": "Hitilafu imetokea",
-  "common.language": "Lugha",
-  "common.light": "Mwanga",
-  "common.loading": "Inapakia...",
-  "common.logoAlt": "Nembo ya HesabuJ",
-  "common.next": "Inayofuata",
-  "common.no": "Hapana",
-  "common.open": "Fungua",
-  "common.or": "au",
-  "common.previous": "Iliyotangulia",
-  "common.profile": "Wasifu",
-  "common.refresh": "Onyesha Upya",
-  "common.save": "Hifadhi",
-  "common.settings": "Mipangilio",
-  "common.startDate": "Tarehe ya Kuanza",
-  "common.testOnlyLong": "{note} Hakikisho hili la HesabuJ Toleo 4 bado linaendelezwa.{br}Unaweza kuingia na kujaribu vipengele, lakini halistumike kwa uchaguzi wa Kibaha'i kwa sasa.{br}Tunakaribisha maoni yako kuhusu muundo mpya tunapoendelea kuboresha mfumo.",
-  "common.testOnlyLongNote": "Tafadhali zingatia:",
-  "common.testOnlyShort": "Hakikisho hili la HesabuJ Toleo 4 bado linaendelezwa. Lisitumike kwa uchaguzi halisi kwa sasa.",
-  "common.theme": "Mandhari",
-  "common.to": "hadi",
-  "common.toggleTheme": "Badilisha mandhari",
-  "common.userMenu": "Menyu ya akaunti ya mtumiaji",
-  "common.versionDisplay": "Toleo 4 Beta",
-  "common.view": "Tazama",
-  "common.warning": "Onyo",
-  "common.yes": "Ndiyo",
-  "common.goHome": "Nyumbani"
+  "common.actionIrreversible": {
+    "t": "Kitendo hiki hakiwezi kubatilishwa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.actions": {
+    "t": "Vitendo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appName": {
+    "t": "HesabuJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appTitle": {
+    "t": "HesabuJ Toleo 4",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.back": {
+    "t": "Nyuma",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.badi.monthNames": {
+    "t": "Siku za Kuingizwa,Mng'ao,Utukufu,Uzuri,Ukuu,Nuru,Rehema,Maneno,Ukamilifu,Majina,Nguvu,Utashi,Maarifa,Uwezo,Usemi,Maswali,Heshima,Utawala,Ufalme,Urefu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.cancel": {
+    "t": "Ghairi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clear": {
+    "t": "Futa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clearFilters": {
+    "t": "Futa Vichujio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.close": {
+    "t": "Funga",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirm": {
+    "t": "Thibitisha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmAction": {
+    "t": "Una uhakika unataka {action}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmActionWithItem": {
+    "t": "Una uhakika unataka {action} {item}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmDelete": {
+    "t": "Una uhakika unataka kufuta {item}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.copied": {
+    "t": "Imenakiliwa kwenye ubao wa kunakili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.create": {
+    "t": "Unda",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dangerZone": {
+    "t": "Eneo la Hatari",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dark": {
+    "t": "Giza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.delete": {
+    "t": "Futa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.deleteSelected": {
+    "t": "Futa Vilivyochaguliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.edit": {
+    "t": "Hariri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.election": {
+    "t": "Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.endDate": {
+    "t": "Tarehe ya Mwisho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.enter": {
+    "t": "Ingiza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.error": {
+    "t": "Hitilafu imetokea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.language": {
+    "t": "Lugha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.light": {
+    "t": "Mwanga",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.loading": {
+    "t": "Inapakia...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.logoAlt": {
+    "t": "Nembo ya HesabuJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.next": {
+    "t": "Inayofuata",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.no": {
+    "t": "Hapana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.open": {
+    "t": "Fungua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.or": {
+    "t": "au",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.previous": {
+    "t": "Iliyotangulia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.profile": {
+    "t": "Wasifu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.refresh": {
+    "t": "Onyesha Upya",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.save": {
+    "t": "Hifadhi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.settings": {
+    "t": "Mipangilio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.startDate": {
+    "t": "Tarehe ya Kuanza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLong": {
+    "t": "{note} Hakikisho hili la HesabuJ Toleo 4 bado linaendelezwa.{br}Unaweza kuingia na kujaribu vipengele, lakini halistumike kwa uchaguzi wa Kibaha'i kwa sasa.{br}Tunakaribisha maoni yako kuhusu muundo mpya tunapoendelea kuboresha mfumo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLongNote": {
+    "t": "Tafadhali zingatia:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyShort": {
+    "t": "Hakikisho hili la HesabuJ Toleo 4 bado linaendelezwa. Lisitumike kwa uchaguzi halisi kwa sasa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.theme": {
+    "t": "Mandhari",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.to": {
+    "t": "hadi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.toggleTheme": {
+    "t": "Badilisha mandhari",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.userMenu": {
+    "t": "Menyu ya akaunti ya mtumiaji",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.versionDisplay": {
+    "t": "Toleo 4 Beta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.view": {
+    "t": "Tazama",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.warning": {
+    "t": "Onyo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.yes": {
+    "t": "Ndiyo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.goHome": {
+    "t": "Nyumbani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

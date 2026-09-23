@@ -1,29 +1,137 @@
 {
-  "profile.changePassword": "تغيير كلمة المرور",
-  "profile.confirmPassword": "تأكيد كلمة المرور",
-  "profile.createdAt": "عضو منذ",
-  "profile.currentPassword": "كلمة المرور الحالية",
-  "profile.loginMethod": "طريقة تسجيل الدخول",
-  "profile.name": "الاسم",
-  "profile.newPassword": "كلمة مرور جديدة",
-  "profile.passwordsDoNotMatch": "كلمتا المرور غير متطابقتين",
-  "profile.twoFactor.confirmCode": "أدخل الرمز المكون من 6 أرقام من تطبيقك لتأكيد الإعداد:",
-  "profile.twoFactor.confirmPlaceholder": "رمز 6 أرقام",
-  "profile.twoFactor.confirmSetup": "تأكيد وتفعيل 2FA",
-  "profile.twoFactor.disable": "تعطيل 2FA",
-  "profile.twoFactor.disableConfirm": "أدخل الرمز المكون من 6 أرقام من تطبيق المصادقة الخاص بك لتعطيل 2FA:",
-  "profile.twoFactor.disableSuccess": "تم تعطيل المصادقة الثنائية العامل.",
-  "profile.twoFactor.disableTitle": "تعطيل المصادقة الثنائية العامل",
-  "profile.twoFactor.disabled": "غير مفعل",
-  "profile.twoFactor.enabled": "مفعل",
-  "profile.twoFactor.loading": "جارٍ تحميل حالة 2FA...",
-  "profile.twoFactor.method": "الطريقة",
-  "profile.twoFactor.methodTotp": "تطبيق المصادقة (TOTP)",
-  "profile.twoFactor.scanQr": "امسح هذا الرمز QR بتطبيق المصادقة الخاص بك (Google Authenticator أو Microsoft Authenticator أو Authy).",
-  "profile.twoFactor.secretKey": "أو أدخل هذا المفتاح يدويًا:",
-  "profile.twoFactor.setup": "إعداد 2FA",
-  "profile.twoFactor.setupSuccess": "تم تفعيل المصادقة الثنائية العامل.",
-  "profile.twoFactor.setupTitle": "إعداد المصادقة الثنائية العامل",
-  "profile.twoFactor.status": "الحالة",
-  "profile.twoFactor.title": "المصادقة الثنائية العامل"
+  "profile.changePassword": {
+    "t": "تغيير كلمة المرور",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.confirmPassword": {
+    "t": "تأكيد كلمة المرور",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.createdAt": {
+    "t": "عضو منذ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.currentPassword": {
+    "t": "كلمة المرور الحالية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.loginMethod": {
+    "t": "طريقة تسجيل الدخول",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.name": {
+    "t": "الاسم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.newPassword": {
+    "t": "كلمة مرور جديدة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.passwordsDoNotMatch": {
+    "t": "كلمتا المرور غير متطابقتين",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmCode": {
+    "t": "أدخل الرمز المكون من 6 أرقام من تطبيقك لتأكيد الإعداد:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmPlaceholder": {
+    "t": "رمز 6 أرقام",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmSetup": {
+    "t": "تأكيد وتفعيل 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disable": {
+    "t": "تعطيل 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableConfirm": {
+    "t": "أدخل الرمز المكون من 6 أرقام من تطبيق المصادقة الخاص بك لتعطيل 2FA:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableSuccess": {
+    "t": "تم تعطيل المصادقة الثنائية العامل.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableTitle": {
+    "t": "تعطيل المصادقة الثنائية العامل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disabled": {
+    "t": "غير مفعل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.enabled": {
+    "t": "مفعل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.loading": {
+    "t": "جارٍ تحميل حالة 2FA...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.method": {
+    "t": "الطريقة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.methodTotp": {
+    "t": "تطبيق المصادقة (TOTP)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.scanQr": {
+    "t": "امسح هذا الرمز QR بتطبيق المصادقة الخاص بك (Google Authenticator أو Microsoft Authenticator أو Authy).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.secretKey": {
+    "t": "أو أدخل هذا المفتاح يدويًا:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setup": {
+    "t": "إعداد 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupSuccess": {
+    "t": "تم تفعيل المصادقة الثنائية العامل.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupTitle": {
+    "t": "إعداد المصادقة الثنائية العامل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.status": {
+    "t": "الحالة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.title": {
+    "t": "المصادقة الثنائية العامل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

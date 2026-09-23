@@ -1,10 +1,42 @@
 {
-  "nav.auditLogs": "감사 로그",
-  "nav.dashboard": "대시보드",
-  "nav.elections": "선거",
-  "nav.frontDesk": "안내 데스크",
-  "nav.profile": "프로필",
-  "nav.superAdmin": "슈퍼 관리자",
-  "nav.tellers": "개표원",
-  "nav.votingLocations": "투표 위치"
+  "nav.auditLogs": {
+    "t": "감사 로그",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.dashboard": {
+    "t": "대시보드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.elections": {
+    "t": "선거",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.frontDesk": {
+    "t": "안내 데스크",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.profile": {
+    "t": "프로필",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.superAdmin": {
+    "t": "슈퍼 관리자",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.tellers": {
+    "t": "개표원",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.votingLocations": {
+    "t": "투표 위치",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,24 +1,112 @@
 {
-  "dashboard.active": "Aktiivinen",
-  "dashboard.activeElections": "Aktiiviset vaalit",
-  "dashboard.ballotsEntered": "Syötetyt äänestyslipukkeet",
-  "dashboard.canVote": "Voi äänestää",
-  "dashboard.closed": "Suljettu",
-  "dashboard.closes": "Sulkeutuu",
-  "dashboard.electionDetails": "Vaalitiedot",
-  "dashboard.noElections": "Vaalteja ei löytynyt",
-  "dashboard.noTellers": "Laskijoita ei ole määrätty",
-  "dashboard.onlineVoting": "Online-äänestys",
-  "dashboard.open": "Avoin",
-  "dashboard.opens": "Avautuu",
-  "dashboard.otherActions": "Muut toiminnot...",
-  "dashboard.recentElections": "Viimeaikaiset vaalit",
-  "dashboard.registered": "Rekisteröitynyt",
-  "dashboard.statistics": "Tilastot",
-  "dashboard.tellerCount": "Laskijoiden määrä",
-  "dashboard.tellers": "Laskijat",
-  "dashboard.tellersStatus": "Laskijat",
-  "dashboard.totalBallots": "Äänestyslipukkeita yhteensä",
-  "dashboard.totalElections": "Vaalit yhteensä",
-  "dashboard.totalVoters": "Äänestäjiä yhteensä"
+  "dashboard.active": {
+    "t": "Aktiivinen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.activeElections": {
+    "t": "Aktiiviset vaalit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "Syötetyt äänestyslipukkeet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.canVote": {
+    "t": "Voi äänestää",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closed": {
+    "t": "Suljettu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closes": {
+    "t": "Sulkeutuu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "Vaalitiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noElections": {
+    "t": "Vaalteja ei löytynyt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noTellers": {
+    "t": "Laskijoita ei ole määrätty",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "Online-äänestys",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.open": {
+    "t": "Avoin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.opens": {
+    "t": "Avautuu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.otherActions": {
+    "t": "Muut toiminnot...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.recentElections": {
+    "t": "Viimeaikaiset vaalit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.registered": {
+    "t": "Rekisteröitynyt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.statistics": {
+    "t": "Tilastot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "Laskijoiden määrä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellers": {
+    "t": "Laskijat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "Laskijat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "Äänestyslipukkeita yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalElections": {
+    "t": "Vaalit yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "Äänestäjiä yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

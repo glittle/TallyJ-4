@@ -1,194 +1,962 @@
 {
-  "reporting.advancedFilters": "उन्नत फ़िल्टर",
-  "reporting.allCanReceive": "वे लोग जिन्हें मत दिया जा सकता है",
-  "reporting.applyFilters": "फ़िल्टर लागू करें",
-  "reporting.area": "क्षेत्र",
-  "reporting.averageVotesPerBallot": "प्रति मतपत्र औसत मत",
-  "reporting.bahaiId": "बहाई ID",
-  "reporting.ballotCode": "मतपत्र",
-  "reporting.ballotCount": "मतपत्र गणना",
-  "reporting.ballotId": "मतपत्र ID",
-  "reporting.ballotLengthDistribution": "मतपत्र लंबाई वितरण",
-  "reporting.ballotReport": "मतपत्र रिपोर्ट",
-  "reporting.ballotReports": "मतपत्र रिपोर्ट",
-  "reporting.ballotsByMethod": "मतदान विधि द्वारा मतपत्र",
-  "reporting.ballotsCast": "डाले गए मतपत्र",
-  "reporting.ballotsEntered": "दर्ज मतपत्र",
-  "reporting.calledIn": "बुलाया गया",
-  "reporting.canReceiveVotes": "मत प्राप्त कर सकता है",
-  "reporting.canVote": "मतदान कर सकता है",
-  "reporting.candidate": "उम्मीदवार",
-  "reporting.candidateName": "उम्मीदवार नाम",
-  "reporting.candidatePerformance": "उम्मीदवार प्रदर्शन",
-  "reporting.candidateVotes": "उम्मीदवार मत",
-  "reporting.candidates": "उम्मीदवार",
-  "reporting.category": "श्रेणी",
-  "reporting.change": "परिवर्तन",
-  "reporting.charts": "चार्ट",
-  "reporting.clearFilters": "फ़िल्टर साफ़ करें",
-  "reporting.comparisonSummary": "तुलना सारांश",
-  "reporting.configureReport": "रिपोर्ट कॉन्फ़िगर करें",
-  "reporting.contender": "प्रतियोगी",
-  "reporting.convenor": "आयोजक",
-  "reporting.count": "गिनती",
-  "reporting.cumulativeTurnout": "संचयी मतदान",
-  "reporting.customReport": "कस्टम रिपोर्ट",
-  "reporting.date": "तिथि",
-  "reporting.dateOfElection": "चुनाव की तारीख",
-  "reporting.dateRange": "तिथि सीमा",
-  "reporting.demographicBreakdown": "जनसांख्यिकीय विवरण",
-  "reporting.description": "विवरण",
-  "reporting.detailedStatistics": "विस्तृत आँकड़े",
-  "reporting.droppedOff": "छोड़ा गया",
-  "reporting.earlyVoting": "पूर्व मतदान",
-  "reporting.earlyVotingPercentage": "पूर्व मतदान %",
-  "reporting.elected": "निर्वाचित",
-  "reporting.electedCandidates": "निर्वाचित उम्मीदवार",
-  "reporting.electedPersons": "निर्वाचित",
-  "reporting.election": "चुनाव",
-  "reporting.electionDate": "चुनाव तिथि",
-  "reporting.electionDayVoting": "चुनाव दिवस मतदान",
-  "reporting.electionDetails": "चुनाव विवरण",
-  "reporting.electionName": "चुनाव का नाम",
-  "reporting.electionOverview": "चुनाव अवलोकन",
-  "reporting.electionSummary": "चुनाव सारांश",
-  "reporting.electionType": "चुनाव प्रकार",
-  "reporting.eligibilityReason": "पात्रता कारण",
-  "reporting.eliminated": "बाहर",
-  "reporting.email": "ईमेल",
-  "reporting.endDate": "समाप्ति तिथि",
-  "reporting.enterCandidateName": "उम्मीदवार नाम दर्ज करें",
-  "reporting.enterDescription": "विवरण दर्ज करें",
-  "reporting.enterReportName": "रिपोर्ट का नाम दर्ज करें",
-  "reporting.error": "रिपोर्ट लोड करने में विफल",
-  "reporting.exportCSV": "CSV निर्यात करें",
-  "reporting.exportExcel": "Excel निर्यात करें",
-  "reporting.exportFormats": "निर्यात प्रारूप",
-  "reporting.exportPDF": "PDF निर्यात करें",
-  "reporting.extra": "अतिरिक्त",
-  "reporting.extraCandidates": "अतिरिक्त उम्मीदवार",
-  "reporting.firstChoice": "पहली पसंद %",
-  "reporting.firstName": "पहला नाम",
-  "reporting.firstTimeVoters": "पहली बार मतदाता",
-  "reporting.flags": "झंडे",
-  "reporting.generateComparison": "तुलना उत्पन्न करें",
-  "reporting.generateCustomReport": "कस्टम रिपोर्ट उत्पन्न करें",
-  "reporting.generateReport": "रिपोर्ट उत्पन्न करें",
-  "reporting.groupN": "समूह {n}",
-  "reporting.hasSignedInEmail": "साइन इन किया (ईमेल)",
-  "reporting.hasSignedInPhone": "साइन इन किया (फोन)",
-  "reporting.historicalComparison": "ऐतिहासिक तुलना",
-  "reporting.imported": "आयात किया गया",
-  "reporting.inPerson": "व्यक्तिगत रूप से",
-  "reporting.inPersonVoters": "व्यक्तिगत मतदाता",
-  "reporting.includeSections": "अनुभाग शामिल करें",
-  "reporting.lastName": "अंतिम नाम",
-  "reporting.loading": "रिपोर्ट लोड कर रहे हैं...",
-  "reporting.location": "स्थान",
-  "reporting.locationReport": "स्थान रिपोर्ट",
-  "reporting.locationStatistics": "स्थान आँकड़े",
-  "reporting.locations": "स्थान",
-  "reporting.mailedIn": "मेल द्वारा भेजा गया",
-  "reporting.matchingNames": "परिणामों पर मिलान करने वाले नाम",
-  "reporting.maxVotesOnBallot": "मतपत्र पर अधिकतम मत",
-  "reporting.metricsToCompare": "तुलना करने के लिए मेट्रिक्स",
-  "reporting.minVotesOnBallot": "मतपत्र पर न्यूनतम मत",
-  "reporting.name": "नाम",
-  "reporting.no": "नहीं",
-  "reporting.noBallots": "इस फ़िल्टर के लिए कोई मतपत्र नहीं मिला।",
-  "reporting.noChanges": "कोई बदले गए लोगों का रिकॉर्ड नहीं मिला।",
-  "reporting.noDuplicates": "कोई डुप्लिकेट मतपत्र नहीं मिला।",
-  "reporting.noEmails": "कोई ईमेल/फोन रिकॉर्ड नहीं मिला।",
-  "reporting.noFlags": "कोई उपस्थिति झंडा परिभाषित नहीं किया गया।",
-  "reporting.noNonEligible": "पात्रता स्थिति वाले कोई लोग नहीं मिले।",
-  "reporting.noSpoiledVotes": "कोई खराब किए गए मत नहीं मिले।",
-  "reporting.numBallots": "मतपत्रों की संख्या",
-  "reporting.numEligibleToVote": "मतदान के लिए पात्र संख्या",
-  "reporting.online": "ऑनलाइन",
-  "reporting.onlineKiosk": "ऑनलाइन/कियोस्क",
-  "reporting.onlineStatus": "स्थिति",
-  "reporting.onlineVoters": "ऑनलाइन मतदाता",
-  "reporting.other": "अन्य",
-  "reporting.otherInfo": "अन्य जानकारी",
-  "reporting.otherLastNames": "अन्य अंतिम नाम",
-  "reporting.otherNames": "अन्य नाम",
-  "reporting.overallTurnout": "समग्र मतदान",
-  "reporting.overallTurnoutSummary": "समग्र मतदान सारांश",
-  "reporting.participationRates": "भागीदारी दरें",
-  "reporting.percentParticipation": "भागीदारी",
-  "reporting.percentage": "प्रतिशत",
-  "reporting.performance": "प्रदर्शन",
-  "reporting.phone": "फोन",
-  "reporting.positionsToElect": "निर्वाचित करने के पद",
-  "reporting.print": "प्रिंट करें",
-  "reporting.printHint": "कुछ ब्राउज़र, जैसे Chrome, प्रिंटिंग करते समय रिपोर्ट की PDF प्रतिलिपि बना सकते हैं।",
-  "reporting.rank": "रैंक",
-  "reporting.reason": "कारण",
-  "reporting.registeredVoters": "पंजीकृत मतदाता",
-  "reporting.registrationLog": "पंजीकरण लॉग",
-  "reporting.registrationTime": "पंजीकरण समय",
-  "reporting.reportGenerated": "रिपोर्ट सफलतापूर्वक उत्पन्न की गई",
-  "reporting.reportGenerationError": "रिपोर्ट उत्पन्न करने में विफल",
-  "reporting.reportName": "रिपोर्ट का नाम",
-  "reporting.returningVoters": "वापसी मतदाता",
-  "reporting.section": "अनुभाग",
-  "reporting.selectElections": "चुनाव चुनें",
-  "reporting.selectElectionsToCompare": "तुलना के लिए चुनाव चुनें",
-  "reporting.selectLocations": "स्थान चुनें",
-  "reporting.selectMultipleElections": "एकाधिक चुनाव चुनें",
-  "reporting.selectReport": "रिपोर्ट प्रकार चुनें",
-  "reporting.selectReportType": "उत्पन्न करने के लिए एक रिपोर्ट चुनें",
-  "reporting.selectSortBy": "क्रमबद्ध करने का तरीका चुनें",
-  "reporting.sortBy": "इसके अनुसार क्रमबद्ध करें",
-  "reporting.spoiledBallots": "खराब मतपत्र",
-  "reporting.spoiledVotes": "खराब किए गए मत",
-  "reporting.startDate": "प्रारंभ तिथि",
-  "reporting.statistics": "आँकड़े",
-  "reporting.status": "स्थिति",
-  "reporting.sumOfEnvelopesCollected": "कुल मतपत्र डाले गए (मैनुअल गिनती सहित)",
-  "reporting.summary": "सारांश",
-  "reporting.summaryReport": "चुनाव सारांश",
-  "reporting.summaryStats": "सारांश आँकड़े",
-  "reporting.teller1": "टेलर 1",
-  "reporting.teller2": "टेलर 2",
-  "reporting.tieGroup": "बराबरी समूह {group}",
-  "reporting.tieNote": "* बराबरी-तोड़ की गिनती / के बाद दिखाई गई",
-  "reporting.ties": "बराबरी",
-  "reporting.timeBasedTurnout": "समय-आधारित मतदान",
-  "reporting.timePeriod": "समय अवधि",
-  "reporting.title": "चुनाव रिपोर्ट",
-  "reporting.to": "तक",
-  "reporting.topCandidates": "शीर्ष उम्मीदवार",
-  "reporting.total": "कुल",
-  "reporting.totalBallots": "कुल मतपत्र",
-  "reporting.totalBallotsCast": "कुल डाले गए मतपत्र",
-  "reporting.totalEligible": "पात्र",
-  "reporting.totalVoters": "कुल मतदाता",
-  "reporting.totalVotersHeader": "कुल मतदाता",
-  "reporting.totalVotes": "कुल मत",
-  "reporting.turnout": "मतदान प्रतिशत",
-  "reporting.turnoutAnalysis": "मतदान विश्लेषण",
-  "reporting.turnoutByLocation": "स्थान अनुसार मतदान",
-  "reporting.turnoutOverTime": "समय के साथ मतदान",
-  "reporting.turnoutPercentage": "मतदान %",
-  "reporting.turnoutRange": "मतदान सीमा",
-  "reporting.validBallots": "वैध मतपत्र",
-  "reporting.value": "मान",
-  "reporting.voteDistribution": "मत वितरण",
-  "reporting.votePercentage": "मत %",
-  "reporting.voteRange": "मत सीमा",
-  "reporting.voteTime": "मतदान समय",
-  "reporting.voted": "मतदान किया",
-  "reporting.voterName": "मतदाता नाम",
-  "reporting.voterReport": "मतदाता रिपोर्ट",
-  "reporting.voterReports": "मतदाता रिपोर्ट",
-  "reporting.voterTurnout": "मतदाता मतदान",
-  "reporting.votes": "मत",
-  "reporting.votesOnBallot": "इस मतपत्र पर मत",
-  "reporting.votesPerBallot": "प्रति मतपत्र मत",
-  "reporting.votingMethod": "मतदान विधि",
-  "reporting.whenEmail": "ईमेल भेजा गया",
-  "reporting.whenPhone": "फोन भेजा गया",
-  "reporting.whenStatus": "कब",
-  "reporting.yes": "हाँ"
+  "reporting.advancedFilters": {
+    "t": "उन्नत फ़िल्टर",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.allCanReceive": {
+    "t": "वे लोग जिन्हें मत दिया जा सकता है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.applyFilters": {
+    "t": "फ़िल्टर लागू करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.area": {
+    "t": "क्षेत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.averageVotesPerBallot": {
+    "t": "प्रति मतपत्र औसत मत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.bahaiId": {
+    "t": "बहाई ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCode": {
+    "t": "मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCount": {
+    "t": "मतपत्र गणना",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotId": {
+    "t": "मतपत्र ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotLengthDistribution": {
+    "t": "मतपत्र लंबाई वितरण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReport": {
+    "t": "मतपत्र रिपोर्ट",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReports": {
+    "t": "मतपत्र रिपोर्ट",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsByMethod": {
+    "t": "मतदान विधि द्वारा मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsCast": {
+    "t": "डाले गए मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsEntered": {
+    "t": "दर्ज मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.calledIn": {
+    "t": "बुलाया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canReceiveVotes": {
+    "t": "मत प्राप्त कर सकता है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canVote": {
+    "t": "मतदान कर सकता है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidate": {
+    "t": "उम्मीदवार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateName": {
+    "t": "उम्मीदवार नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidatePerformance": {
+    "t": "उम्मीदवार प्रदर्शन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateVotes": {
+    "t": "उम्मीदवार मत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidates": {
+    "t": "उम्मीदवार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.category": {
+    "t": "श्रेणी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.change": {
+    "t": "परिवर्तन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.charts": {
+    "t": "चार्ट",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.clearFilters": {
+    "t": "फ़िल्टर साफ़ करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.comparisonSummary": {
+    "t": "तुलना सारांश",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.configureReport": {
+    "t": "रिपोर्ट कॉन्फ़िगर करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.contender": {
+    "t": "प्रतियोगी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.convenor": {
+    "t": "आयोजक",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.count": {
+    "t": "गिनती",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.cumulativeTurnout": {
+    "t": "संचयी मतदान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.customReport": {
+    "t": "कस्टम रिपोर्ट",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.date": {
+    "t": "तिथि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateOfElection": {
+    "t": "चुनाव की तारीख",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateRange": {
+    "t": "तिथि सीमा",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.demographicBreakdown": {
+    "t": "जनसांख्यिकीय विवरण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.description": {
+    "t": "विवरण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.detailedStatistics": {
+    "t": "विस्तृत आँकड़े",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.droppedOff": {
+    "t": "छोड़ा गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVoting": {
+    "t": "पूर्व मतदान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVotingPercentage": {
+    "t": "पूर्व मतदान %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.elected": {
+    "t": "निर्वाचित",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedCandidates": {
+    "t": "निर्वाचित उम्मीदवार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedPersons": {
+    "t": "निर्वाचित",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.election": {
+    "t": "चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDate": {
+    "t": "चुनाव तिथि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDayVoting": {
+    "t": "चुनाव दिवस मतदान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDetails": {
+    "t": "चुनाव विवरण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionName": {
+    "t": "चुनाव का नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionOverview": {
+    "t": "चुनाव अवलोकन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionSummary": {
+    "t": "चुनाव सारांश",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionType": {
+    "t": "चुनाव प्रकार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eligibilityReason": {
+    "t": "पात्रता कारण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eliminated": {
+    "t": "बाहर",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.email": {
+    "t": "ईमेल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.endDate": {
+    "t": "समाप्ति तिथि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterCandidateName": {
+    "t": "उम्मीदवार नाम दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterDescription": {
+    "t": "विवरण दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterReportName": {
+    "t": "रिपोर्ट का नाम दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.error": {
+    "t": "रिपोर्ट लोड करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportCSV": {
+    "t": "CSV निर्यात करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportExcel": {
+    "t": "Excel निर्यात करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportFormats": {
+    "t": "निर्यात प्रारूप",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportPDF": {
+    "t": "PDF निर्यात करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extra": {
+    "t": "अतिरिक्त",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extraCandidates": {
+    "t": "अतिरिक्त उम्मीदवार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstChoice": {
+    "t": "पहली पसंद %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstName": {
+    "t": "पहला नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstTimeVoters": {
+    "t": "पहली बार मतदाता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.flags": {
+    "t": "झंडे",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateComparison": {
+    "t": "तुलना उत्पन्न करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateCustomReport": {
+    "t": "कस्टम रिपोर्ट उत्पन्न करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateReport": {
+    "t": "रिपोर्ट उत्पन्न करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.groupN": {
+    "t": "समूह {n}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInEmail": {
+    "t": "साइन इन किया (ईमेल)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInPhone": {
+    "t": "साइन इन किया (फोन)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.historicalComparison": {
+    "t": "ऐतिहासिक तुलना",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.imported": {
+    "t": "आयात किया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPerson": {
+    "t": "व्यक्तिगत रूप से",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPersonVoters": {
+    "t": "व्यक्तिगत मतदाता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.includeSections": {
+    "t": "अनुभाग शामिल करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.lastName": {
+    "t": "अंतिम नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.loading": {
+    "t": "रिपोर्ट लोड कर रहे हैं...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.location": {
+    "t": "स्थान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationReport": {
+    "t": "स्थान रिपोर्ट",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationStatistics": {
+    "t": "स्थान आँकड़े",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locations": {
+    "t": "स्थान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.mailedIn": {
+    "t": "मेल द्वारा भेजा गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.matchingNames": {
+    "t": "परिणामों पर मिलान करने वाले नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.maxVotesOnBallot": {
+    "t": "मतपत्र पर अधिकतम मत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.metricsToCompare": {
+    "t": "तुलना करने के लिए मेट्रिक्स",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.minVotesOnBallot": {
+    "t": "मतपत्र पर न्यूनतम मत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.name": {
+    "t": "नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.no": {
+    "t": "नहीं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noBallots": {
+    "t": "इस फ़िल्टर के लिए कोई मतपत्र नहीं मिला।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noChanges": {
+    "t": "कोई बदले गए लोगों का रिकॉर्ड नहीं मिला।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noDuplicates": {
+    "t": "कोई डुप्लिकेट मतपत्र नहीं मिला।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noEmails": {
+    "t": "कोई ईमेल/फोन रिकॉर्ड नहीं मिला।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noFlags": {
+    "t": "कोई उपस्थिति झंडा परिभाषित नहीं किया गया।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noNonEligible": {
+    "t": "पात्रता स्थिति वाले कोई लोग नहीं मिले।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noSpoiledVotes": {
+    "t": "कोई खराब किए गए मत नहीं मिले।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numBallots": {
+    "t": "मतपत्रों की संख्या",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numEligibleToVote": {
+    "t": "मतदान के लिए पात्र संख्या",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.online": {
+    "t": "ऑनलाइन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineKiosk": {
+    "t": "ऑनलाइन/कियोस्क",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineStatus": {
+    "t": "स्थिति",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineVoters": {
+    "t": "ऑनलाइन मतदाता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.other": {
+    "t": "अन्य",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherInfo": {
+    "t": "अन्य जानकारी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherLastNames": {
+    "t": "अन्य अंतिम नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherNames": {
+    "t": "अन्य नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnout": {
+    "t": "समग्र मतदान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnoutSummary": {
+    "t": "समग्र मतदान सारांश",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.participationRates": {
+    "t": "भागीदारी दरें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentParticipation": {
+    "t": "भागीदारी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentage": {
+    "t": "प्रतिशत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.performance": {
+    "t": "प्रदर्शन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.phone": {
+    "t": "फोन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.positionsToElect": {
+    "t": "निर्वाचित करने के पद",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.print": {
+    "t": "प्रिंट करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.printHint": {
+    "t": "कुछ ब्राउज़र, जैसे Chrome, प्रिंटिंग करते समय रिपोर्ट की PDF प्रतिलिपि बना सकते हैं।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.rank": {
+    "t": "रैंक",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reason": {
+    "t": "कारण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registeredVoters": {
+    "t": "पंजीकृत मतदाता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationLog": {
+    "t": "पंजीकरण लॉग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationTime": {
+    "t": "पंजीकरण समय",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerated": {
+    "t": "रिपोर्ट सफलतापूर्वक उत्पन्न की गई",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerationError": {
+    "t": "रिपोर्ट उत्पन्न करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportName": {
+    "t": "रिपोर्ट का नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.returningVoters": {
+    "t": "वापसी मतदाता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.section": {
+    "t": "अनुभाग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElections": {
+    "t": "चुनाव चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElectionsToCompare": {
+    "t": "तुलना के लिए चुनाव चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectLocations": {
+    "t": "स्थान चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectMultipleElections": {
+    "t": "एकाधिक चुनाव चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReport": {
+    "t": "रिपोर्ट प्रकार चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReportType": {
+    "t": "उत्पन्न करने के लिए एक रिपोर्ट चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectSortBy": {
+    "t": "क्रमबद्ध करने का तरीका चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sortBy": {
+    "t": "इसके अनुसार क्रमबद्ध करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledBallots": {
+    "t": "खराब मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledVotes": {
+    "t": "खराब किए गए मत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.startDate": {
+    "t": "प्रारंभ तिथि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.statistics": {
+    "t": "आँकड़े",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.status": {
+    "t": "स्थिति",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sumOfEnvelopesCollected": {
+    "t": "कुल मतपत्र डाले गए (मैनुअल गिनती सहित)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summary": {
+    "t": "सारांश",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryReport": {
+    "t": "चुनाव सारांश",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryStats": {
+    "t": "सारांश आँकड़े",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller1": {
+    "t": "टेलर 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller2": {
+    "t": "टेलर 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieGroup": {
+    "t": "बराबरी समूह {group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieNote": {
+    "t": "* बराबरी-तोड़ की गिनती / के बाद दिखाई गई",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ties": {
+    "t": "बराबरी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timeBasedTurnout": {
+    "t": "समय-आधारित मतदान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timePeriod": {
+    "t": "समय अवधि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.title": {
+    "t": "चुनाव रिपोर्ट",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.to": {
+    "t": "तक",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.topCandidates": {
+    "t": "शीर्ष उम्मीदवार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.total": {
+    "t": "कुल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallots": {
+    "t": "कुल मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallotsCast": {
+    "t": "कुल डाले गए मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalEligible": {
+    "t": "पात्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVoters": {
+    "t": "कुल मतदाता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotersHeader": {
+    "t": "कुल मतदाता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotes": {
+    "t": "कुल मत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnout": {
+    "t": "मतदान प्रतिशत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutAnalysis": {
+    "t": "मतदान विश्लेषण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutByLocation": {
+    "t": "स्थान अनुसार मतदान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutOverTime": {
+    "t": "समय के साथ मतदान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutPercentage": {
+    "t": "मतदान %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutRange": {
+    "t": "मतदान सीमा",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.validBallots": {
+    "t": "वैध मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.value": {
+    "t": "मान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteDistribution": {
+    "t": "मत वितरण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votePercentage": {
+    "t": "मत %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteRange": {
+    "t": "मत सीमा",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteTime": {
+    "t": "मतदान समय",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voted": {
+    "t": "मतदान किया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterName": {
+    "t": "मतदाता नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReport": {
+    "t": "मतदाता रिपोर्ट",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReports": {
+    "t": "मतदाता रिपोर्ट",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterTurnout": {
+    "t": "मतदाता मतदान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votes": {
+    "t": "मत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesOnBallot": {
+    "t": "इस मतपत्र पर मत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesPerBallot": {
+    "t": "प्रति मतपत्र मत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votingMethod": {
+    "t": "मतदान विधि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenEmail": {
+    "t": "ईमेल भेजा गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenPhone": {
+    "t": "फोन भेजा गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenStatus": {
+    "t": "कब",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.yes": {
+    "t": "हाँ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

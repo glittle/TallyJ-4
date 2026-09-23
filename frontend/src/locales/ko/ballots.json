@@ -1,74 +1,362 @@
 {
-  "ballots.addBallot": "투표 용지 추가",
-  "ballots.addNewPerson": "새 사람 추가",
-  "ballots.addVote": "투표 추가",
-  "ballots.cacheLoadError": "후보자 로드에 실패했습니다",
-  "ballots.cacheLoading": "후보자 로드 중...",
-  "ballots.candidate": "후보자",
-  "ballots.candidateRequired": "후보자가 필요합니다",
-  "ballots.cdnImport.ballotsCreated": "투표용지 생성됨",
-  "ballots.cdnImport.button": "CDN 투표용지 가져오기",
-  "ballots.cdnImport.description": "CDN(캐나다 국가 데이터베이스)에서 내보낸 XML 파일을 업로드하여 투표용지와 해당 투표를 이 선거에 가져옵니다. 파일이 구문 분석되고 유효한 각 항목에 대해 투표용지가 생성되며 관련된 모든 투표 기록이 포함됩니다.",
-  "ballots.cdnImport.errors": "오류",
-  "ballots.cdnImport.failed": "가져오기 실패",
-  "ballots.cdnImport.importing": "가져오는 중...",
-  "ballots.cdnImport.skippedRows": "건너뛴 행",
-  "ballots.cdnImport.success": "가져오기가 성공적으로 완료되었습니다",
-  "ballots.cdnImport.title": "CDN 투표용지 가져오기",
-  "ballots.cdnImport.totalRows": "처리된 총 행",
-  "ballots.cdnImport.uploadPrompt": "여기를 클릭하거나 XML 파일을 드래그하여 업로드하세요",
-  "ballots.cdnImport.votesCreated": "투표 생성됨",
-  "ballots.cdnImport.warnings": "경고",
-  "ballots.cdnImport.xmlOnly": "XML 파일만 지원됩니다",
-  "ballots.checkSpelling": "철자를 확인하거나 다른 이름을 시도해 보세요",
-  "ballots.clearAll": "모두 지우기",
-  "ballots.code": "투표 용지 코드",
-  "ballots.computer": "컴퓨터",
-  "ballots.computerRequired": "컴퓨터 코드가 필요합니다",
-  "ballots.createSuccess": "투표 용지가 성공적으로 생성되었습니다",
-  "ballots.deleteConfirm": "이 투표 용지를 삭제하시겠습니까?",
-  "ballots.deleteError": "투표 용지 삭제에 실패했습니다",
-  "ballots.deleteSuccess": "투표 용지가 성공적으로 삭제되었습니다",
-  "ballots.deleteVoteConfirm": "이 투표를 삭제하시겠습니까?",
-  "ballots.deleteVoteError": "투표 삭제에 실패했습니다",
-  "ballots.deleteVoteSuccess": "투표가 성공적으로 삭제되었습니다",
-  "ballots.duplicateWarning": "중복: 이 사람은 이미 선택되어 있습니다",
-  "ballots.enterVotes": "투표 입력",
-  "ballots.entry": "투표 용지 입력 - {code}",
-  "ballots.entryPage": "투표 용지 입력",
-  "ballots.ineligible": "자격 없음",
-  "ballots.loadError": "투표 용지 로드에 실패했습니다",
-  "ballots.location": "위치",
-  "ballots.locationRequired": "위치가 필요합니다",
-  "ballots.management": "투표 용지 관리",
-  "ballots.noMatchesFound": "일치하는 결과가 없습니다",
-  "ballots.personUpdated": "{name}이(가) 업데이트되었습니다",
-  "ballots.position": "직책",
-  "ballots.positionRequired": "직책이 필요합니다",
-  "ballots.saveBallot": "투표 용지 저장",
-  "ballots.saveError": "투표 용지 저장에 실패했습니다",
-  "ballots.status": "상태",
-  "ballots.statusValue.Dup": "중복",
-  "ballots.statusValue.Empty": "비어있음",
-  "ballots.statusValue.New": "새로운",
-  "ballots.statusValue.Ok": "확인",
-  "ballots.statusValue.Raw": "원본",
-  "ballots.statusValue.Review": "검토",
-  "ballots.statusValue.TooFew": "너무 적음",
-  "ballots.statusValue.TooMany": "너무 많음",
-  "ballots.statusValue.Verify": "확인",
-  "ballots.teller1": "개표원 1",
-  "ballots.teller2": "개표원 2",
-  "ballots.viewVotes": "투표 보기",
-  "ballots.voteAddedError": "투표 추가에 실패했습니다",
-  "ballots.voteAddedSuccess": "투표가 성공적으로 추가되었습니다",
-  "ballots.voteCount": "투표 수",
-  "ballots.voteCreateSuccess": "투표가 성공적으로 추가되었습니다",
-  "ballots.voteRemovedError": "투표 제거에 실패했습니다",
-  "ballots.voteRemovedSuccess": "투표가 성공적으로 제거되었습니다",
-  "ballots.voteSaveError": "투표 저장에 실패했습니다",
-  "ballots.voteSpoiledSuccess": "무효 투표로 추가되었습니다 ({code} – 자격 없는 사람)",
-  "ballots.votes": "투표 - {code}",
-  "ballots.votesEntered": "{max}개 중 {count}개 입력됨",
-  "ballots.votesList": "투표 목록"
+  "ballots.addBallot": {
+    "t": "투표 용지 추가",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addNewPerson": {
+    "t": "새 사람 추가",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addVote": {
+    "t": "투표 추가",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoadError": {
+    "t": "후보자 로드에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoading": {
+    "t": "후보자 로드 중...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidate": {
+    "t": "후보자",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidateRequired": {
+    "t": "후보자가 필요합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.ballotsCreated": {
+    "t": "투표용지 생성됨",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.button": {
+    "t": "CDN 투표용지 가져오기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.description": {
+    "t": "CDN(캐나다 국가 데이터베이스)에서 내보낸 XML 파일을 업로드하여 투표용지와 해당 투표를 이 선거에 가져옵니다. 파일이 구문 분석되고 유효한 각 항목에 대해 투표용지가 생성되며 관련된 모든 투표 기록이 포함됩니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.errors": {
+    "t": "오류",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.failed": {
+    "t": "가져오기 실패",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.importing": {
+    "t": "가져오는 중...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.skippedRows": {
+    "t": "건너뛴 행",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.success": {
+    "t": "가져오기가 성공적으로 완료되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.title": {
+    "t": "CDN 투표용지 가져오기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.totalRows": {
+    "t": "처리된 총 행",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.uploadPrompt": {
+    "t": "여기를 클릭하거나 XML 파일을 드래그하여 업로드하세요",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.votesCreated": {
+    "t": "투표 생성됨",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.warnings": {
+    "t": "경고",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.xmlOnly": {
+    "t": "XML 파일만 지원됩니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.checkSpelling": {
+    "t": "철자를 확인하거나 다른 이름을 시도해 보세요",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.clearAll": {
+    "t": "모두 지우기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.code": {
+    "t": "투표 용지 코드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computer": {
+    "t": "컴퓨터",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computerRequired": {
+    "t": "컴퓨터 코드가 필요합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.createSuccess": {
+    "t": "투표 용지가 성공적으로 생성되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteConfirm": {
+    "t": "이 투표 용지를 삭제하시겠습니까?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteError": {
+    "t": "투표 용지 삭제에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteSuccess": {
+    "t": "투표 용지가 성공적으로 삭제되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteConfirm": {
+    "t": "이 투표를 삭제하시겠습니까?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteError": {
+    "t": "투표 삭제에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteSuccess": {
+    "t": "투표가 성공적으로 삭제되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.duplicateWarning": {
+    "t": "중복: 이 사람은 이미 선택되어 있습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.enterVotes": {
+    "t": "투표 입력",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entry": {
+    "t": "투표 용지 입력 - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entryPage": {
+    "t": "투표 용지 입력",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.ineligible": {
+    "t": "자격 없음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.loadError": {
+    "t": "투표 용지 로드에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.location": {
+    "t": "위치",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.locationRequired": {
+    "t": "위치가 필요합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.management": {
+    "t": "투표 용지 관리",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.noMatchesFound": {
+    "t": "일치하는 결과가 없습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.personUpdated": {
+    "t": "{name}이(가) 업데이트되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.position": {
+    "t": "직책",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.positionRequired": {
+    "t": "직책이 필요합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveBallot": {
+    "t": "투표 용지 저장",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveError": {
+    "t": "투표 용지 저장에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.status": {
+    "t": "상태",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Dup": {
+    "t": "중복",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Empty": {
+    "t": "비어있음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.New": {
+    "t": "새로운",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Ok": {
+    "t": "확인",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Raw": {
+    "t": "원본",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Review": {
+    "t": "검토",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooFew": {
+    "t": "너무 적음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooMany": {
+    "t": "너무 많음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Verify": {
+    "t": "확인",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller1": {
+    "t": "개표원 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller2": {
+    "t": "개표원 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.viewVotes": {
+    "t": "투표 보기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedError": {
+    "t": "투표 추가에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedSuccess": {
+    "t": "투표가 성공적으로 추가되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCount": {
+    "t": "투표 수",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCreateSuccess": {
+    "t": "투표가 성공적으로 추가되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedError": {
+    "t": "투표 제거에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedSuccess": {
+    "t": "투표가 성공적으로 제거되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSaveError": {
+    "t": "투표 저장에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSpoiledSuccess": {
+    "t": "무효 투표로 추가되었습니다 ({code} – 자격 없는 사람)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votes": {
+    "t": "투표 - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesEntered": {
+    "t": "{max}개 중 {count}개 입력됨",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesList": {
+    "t": "투표 목록",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,74 +1,362 @@
 {
-  "ballots.addBallot": "Добавить бюллетень",
-  "ballots.addNewPerson": "Добавить нового человека",
-  "ballots.addVote": "Добавить голос",
-  "ballots.cacheLoadError": "Не удалось загрузить кандидатов",
-  "ballots.cacheLoading": "Загрузка кандидатов...",
-  "ballots.candidate": "Кандидат",
-  "ballots.candidateRequired": "Кандидат обязателен",
-  "ballots.cdnImport.ballotsCreated": "Бюллетени созданы",
-  "ballots.cdnImport.button": "Импорт бюллетеней CDN",
-  "ballots.cdnImport.description": "Загрузите XML файл, экспортированный из CDN (Канадской национальной базы данных), чтобы импортировать бюллетени и соответствующие им голоса в эти выборы. Файл будет проанализирован и бюллетени будут созданы для каждой корректной записи вместе со всеми связанными записями голосов.",
-  "ballots.cdnImport.errors": "Ошибки",
-  "ballots.cdnImport.failed": "Импорт не удался",
-  "ballots.cdnImport.importing": "Импорт...",
-  "ballots.cdnImport.skippedRows": "Строк пропущено",
-  "ballots.cdnImport.success": "Импорт успешно завершен",
-  "ballots.cdnImport.title": "Импорт бюллетеней CDN",
-  "ballots.cdnImport.totalRows": "Всего строк обработано",
-  "ballots.cdnImport.uploadPrompt": "Нажмите или перетащите XML файл сюда для загрузки",
-  "ballots.cdnImport.votesCreated": "Голоса созданы",
-  "ballots.cdnImport.warnings": "Предупреждения",
-  "ballots.cdnImport.xmlOnly": "Поддерживаются только XML файлы",
-  "ballots.checkSpelling": "Проверьте орфографию или попробуйте другое имя",
-  "ballots.clearAll": "Очистить все",
-  "ballots.code": "Код бюллетеня",
-  "ballots.computer": "Компьютер",
-  "ballots.computerRequired": "Код компьютера обязателен",
-  "ballots.createSuccess": "Бюллетень успешно создан",
-  "ballots.deleteConfirm": "Вы уверены, что хотите удалить этот бюллетень?",
-  "ballots.deleteError": "Не удалось удалить бюллетень",
-  "ballots.deleteSuccess": "Бюллетень успешно удалён",
-  "ballots.deleteVoteConfirm": "Вы уверены, что хотите удалить этот голос?",
-  "ballots.deleteVoteError": "Не удалось удалить голос",
-  "ballots.deleteVoteSuccess": "Голос успешно удален",
-  "ballots.duplicateWarning": "Дубликат: этот человек уже выбран",
-  "ballots.enterVotes": "Введите голоса",
-  "ballots.entry": "Ввод бюллетеня - {code}",
-  "ballots.entryPage": "Ввод бюллетеня",
-  "ballots.ineligible": "Не имеет права",
-  "ballots.loadError": "Не удалось загрузить бюллетени",
-  "ballots.location": "Место",
-  "ballots.locationRequired": "Местоположение обязательно",
-  "ballots.management": "Управление бюллетенями",
-  "ballots.noMatchesFound": "Совпадений не найдено",
-  "ballots.personUpdated": "{name} был обновлен",
-  "ballots.position": "Должность",
-  "ballots.positionRequired": "Должность обязательна",
-  "ballots.saveBallot": "Сохранить бюллетень",
-  "ballots.saveError": "Не удалось сохранить бюллетень",
-  "ballots.status": "Статус",
-  "ballots.statusValue.Dup": "Дубликат",
-  "ballots.statusValue.Empty": "Пустой",
-  "ballots.statusValue.New": "Новый",
-  "ballots.statusValue.Ok": "OK",
-  "ballots.statusValue.Raw": "Необработанный",
-  "ballots.statusValue.Review": "Проверить",
-  "ballots.statusValue.TooFew": "Слишком мало",
-  "ballots.statusValue.TooMany": "Слишком много",
-  "ballots.statusValue.Verify": "Подтвердить",
-  "ballots.teller1": "Кассир 1",
-  "ballots.teller2": "Кассир 2",
-  "ballots.viewVotes": "Просмотр голосов",
-  "ballots.voteAddedError": "Не удалось добавить голос",
-  "ballots.voteAddedSuccess": "Голос успешно добавлен",
-  "ballots.voteCount": "Голоса",
-  "ballots.voteCreateSuccess": "Голос успешно добавлен",
-  "ballots.voteRemovedError": "Не удалось удалить голос",
-  "ballots.voteRemovedSuccess": "Голос успешно удален",
-  "ballots.voteSaveError": "Не удалось сохранить голос",
-  "ballots.voteSpoiledSuccess": "Голос добавлен как испорченный ({code} – человек не имеет права)",
-  "ballots.votes": "Голоса - {code}",
-  "ballots.votesEntered": "{count} из {max} голосов введено",
-  "ballots.votesList": "Список голосов"
+  "ballots.addBallot": {
+    "t": "Добавить бюллетень",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addNewPerson": {
+    "t": "Добавить нового человека",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addVote": {
+    "t": "Добавить голос",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoadError": {
+    "t": "Не удалось загрузить кандидатов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoading": {
+    "t": "Загрузка кандидатов...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidate": {
+    "t": "Кандидат",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidateRequired": {
+    "t": "Кандидат обязателен",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.ballotsCreated": {
+    "t": "Бюллетени созданы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.button": {
+    "t": "Импорт бюллетеней CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.description": {
+    "t": "Загрузите XML файл, экспортированный из CDN (Канадской национальной базы данных), чтобы импортировать бюллетени и соответствующие им голоса в эти выборы. Файл будет проанализирован и бюллетени будут созданы для каждой корректной записи вместе со всеми связанными записями голосов.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.errors": {
+    "t": "Ошибки",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.failed": {
+    "t": "Импорт не удался",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.importing": {
+    "t": "Импорт...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.skippedRows": {
+    "t": "Строк пропущено",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.success": {
+    "t": "Импорт успешно завершен",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.title": {
+    "t": "Импорт бюллетеней CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.totalRows": {
+    "t": "Всего строк обработано",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.uploadPrompt": {
+    "t": "Нажмите или перетащите XML файл сюда для загрузки",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.votesCreated": {
+    "t": "Голоса созданы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.warnings": {
+    "t": "Предупреждения",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.xmlOnly": {
+    "t": "Поддерживаются только XML файлы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.checkSpelling": {
+    "t": "Проверьте орфографию или попробуйте другое имя",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.clearAll": {
+    "t": "Очистить все",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.code": {
+    "t": "Код бюллетеня",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computer": {
+    "t": "Компьютер",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computerRequired": {
+    "t": "Код компьютера обязателен",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.createSuccess": {
+    "t": "Бюллетень успешно создан",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteConfirm": {
+    "t": "Вы уверены, что хотите удалить этот бюллетень?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteError": {
+    "t": "Не удалось удалить бюллетень",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteSuccess": {
+    "t": "Бюллетень успешно удалён",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteConfirm": {
+    "t": "Вы уверены, что хотите удалить этот голос?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteError": {
+    "t": "Не удалось удалить голос",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteSuccess": {
+    "t": "Голос успешно удален",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.duplicateWarning": {
+    "t": "Дубликат: этот человек уже выбран",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.enterVotes": {
+    "t": "Введите голоса",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entry": {
+    "t": "Ввод бюллетеня - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entryPage": {
+    "t": "Ввод бюллетеня",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.ineligible": {
+    "t": "Не имеет права",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.loadError": {
+    "t": "Не удалось загрузить бюллетени",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.location": {
+    "t": "Место",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.locationRequired": {
+    "t": "Местоположение обязательно",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.management": {
+    "t": "Управление бюллетенями",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.noMatchesFound": {
+    "t": "Совпадений не найдено",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.personUpdated": {
+    "t": "{name} был обновлен",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.position": {
+    "t": "Должность",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.positionRequired": {
+    "t": "Должность обязательна",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveBallot": {
+    "t": "Сохранить бюллетень",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveError": {
+    "t": "Не удалось сохранить бюллетень",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.status": {
+    "t": "Статус",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Dup": {
+    "t": "Дубликат",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Empty": {
+    "t": "Пустой",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.New": {
+    "t": "Новый",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Ok": {
+    "t": "OK",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Raw": {
+    "t": "Необработанный",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Review": {
+    "t": "Проверить",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooFew": {
+    "t": "Слишком мало",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooMany": {
+    "t": "Слишком много",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Verify": {
+    "t": "Подтвердить",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller1": {
+    "t": "Кассир 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller2": {
+    "t": "Кассир 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.viewVotes": {
+    "t": "Просмотр голосов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedError": {
+    "t": "Не удалось добавить голос",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedSuccess": {
+    "t": "Голос успешно добавлен",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCount": {
+    "t": "Голоса",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCreateSuccess": {
+    "t": "Голос успешно добавлен",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedError": {
+    "t": "Не удалось удалить голос",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedSuccess": {
+    "t": "Голос успешно удален",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSaveError": {
+    "t": "Не удалось сохранить голос",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSpoiledSuccess": {
+    "t": "Голос добавлен как испорченный ({code} – человек не имеет права)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votes": {
+    "t": "Голоса - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesEntered": {
+    "t": "{count} из {max} голосов введено",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesList": {
+    "t": "Список голосов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

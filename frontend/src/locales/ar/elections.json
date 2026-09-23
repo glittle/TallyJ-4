@@ -1,160 +1,792 @@
 {
-  "elections.advanceStage": "الانتقال إلى المرحلة التالية",
-  "elections.advanceTo": "الانتقال إلى {stage}",
-  "elections.ballots": "أوراق الاقتراع",
-  "elections.bulkDeleteError": "فشل في حذف بعض الانتخابات",
-  "elections.bulkDeleteMessage": "هل أنت متأكد من أنك تريد حذف {count} انتخابات محددة؟",
-  "elections.bulkDeleteSuccess": "تم حذف {count} انتخابات بنجاح",
-  "elections.calculateTally": "حساب النتائج",
-  "elections.clearFilters": "مسح المرشحات",
-  "elections.confirmAdvance": "هل أنت متأكد من أنك تريد الانتقال بهذه الانتخابات إلى {stage}؟",
-  "elections.confirmBulkDelete": "تأكيد الحذف المجمع",
-  "elections.confirmRevert": "هل أنت متأكد من أنك تريد إرجاع هذه الانتخابات إلى {stage}؟",
-  "elections.copyUrl": "نسخ الرابط",
-  "elections.createError": "فشل في إنشاء الانتخابات",
-  "elections.createFirst": "أنشئ انتخاباتك الأولى",
-  "elections.createNew": "إنشاء انتخابات",
-  "elections.createSuccess": "تم إنشاء الانتخابات بنجاح",
-  "elections.date": "تاريخ الانتخابات",
-  "elections.deleteConfirm": "هل أنت متأكد من أنك تريد حذف هذه الانتخابات؟ لا يمكن التراجع عن هذا الإجراء.",
-  "elections.deleteError": "فشل في حذف الانتخابات",
-  "elections.deleteSelected": "حذف المحدد ({count})",
-  "elections.deleteSuccess": "تم حذف الانتخابات بنجاح",
-  "elections.details": "تفاصيل الانتخابات",
-  "elections.edit": "تعديل الانتخابات",
-  "elections.electionModes.B": "انتخابات تكميلية",
-  "elections.electionModes.N": "انتخابات عادية",
-  "elections.electionModes.T": "كسر التعادل",
-  "elections.electionTypes.Con": "اتفاقية الوحدة",
-  "elections.electionTypes.LSA": "المجلس الروحاني المحلي",
-  "elections.electionTypes.LSA1": "المجلس الروحاني المحلي (مرحلتان) الوحدة المحلية",
-  "elections.electionTypes.LSA2": "المجلس الروحاني المحلي (مرحلتان) النهائي",
-  "elections.electionTypes.NSA": "المجلس الروحاني الوطني",
-  "elections.electionTypes.Oth": "أخرى",
-  "elections.electionTypes.Reg": "المجلس الإقليمي",
-  "elections.exportElection": "تصدير الانتخابات",
-  "elections.exportElectionError": "فشل في تصدير الانتخابات",
-  "elections.exportElectionSuccess": "تم تصدير الانتخابات بنجاح",
-  "elections.filterByStatus": "التصفية حسب الحالة",
-  "elections.filterByType": "التصفية حسب النوع",
-  "elections.form.convenor": "المنسق",
-  "elections.form.convenorPlaceholder": "أدخل اسم المنسق",
-  "elections.form.customMethods": "الطرق المخصصة",
-  "elections.form.customMethodsHelp": "حدد أي طرق تصويت مخصصة أو غير قياسية مستخدمة في هذه الانتخابات.",
-  "elections.form.customMethodsPlaceholder": "صف أي طرق تصويت مخصصة",
-  "elections.form.date": "تاريخ الانتخابات",
-  "elections.form.datePlaceholder": "حدد تاريخ الانتخابات",
-  "elections.form.dateRequired": "تاريخ الانتخاب مطلوب",
-  "elections.form.electionMode": "وضع الانتخابات",
-  "elections.form.electionPasscode": "رمز الانتخابات",
-  "elections.form.electionPasscodeHelp": "رمز الدخول مطلوب لتسجيل دخول الفارز.",
-  "elections.form.electionPasscodePlaceholder": "أدخل رمز الدخول",
-  "elections.form.emailFromAddress": "عنوان البريد الإلكتروني المرسل",
-  "elections.form.emailFromAddressPlaceholder": "أدخل عنوان البريد الإلكتروني للمرسل",
-  "elections.form.emailFromName": "اسم المرسل",
-  "elections.form.emailFromNamePlaceholder": "أدخل اسم المرسل",
-  "elections.form.emailInvalid": "عنوان البريد الإلكتروني غير صالح",
-  "elections.form.emailSubject": "موضوع البريد الإلكتروني",
-  "elections.form.emailSubjectPlaceholder": "أدخل موضوع البريد الإلكتروني",
-  "elections.form.emailText": "نص البريد الإلكتروني",
-  "elections.form.emailTextPlaceholder": "أدخل نص البريد الإلكتروني",
-  "elections.form.flags": "العلامات",
-  "elections.form.flagsHelp": "تُستخدم العلامات لشروط الانتخابات الخاصة.",
-  "elections.form.flagsPlaceholder": "أدخل أي علامات",
-  "elections.form.hidePreBallotPages": "إخفاء صفحات ما قبل الاقتراع",
-  "elections.form.linkedElection": "الانتخابات المرتبطة",
-  "elections.form.linkedElectionCount": "{count} انتخابات مرتبطة متاحة",
-  "elections.form.linkedElectionCount_plural": "{count} انتخابات مرتبطة متاحة",
-  "elections.form.linkedElectionHelp": "حدد انتخابات للربط لكسر التعادل أو الجولة الثانية.",
-  "elections.form.linkedElectionKind": "نوع الانتخابات المرتبطة",
-  "elections.form.linkedElectionKindPlaceholder": "حدد النوع",
-  "elections.form.linkedElectionPlaceholder": "حدد الانتخابات المرتبطة",
-  "elections.form.listForPublic": "القائمة للعامة",
-  "elections.form.lockedByBallots": "مقفل — تم إدخال الأصوات",
-  "elections.form.maskVotingMethod": "إخفاء طريقة التصويت",
-  "elections.form.modePlaceholder": "حدد وضع الانتخابات",
-  "elections.form.name": "اسم الانتخابات",
-  "elections.form.namePlaceholder": "أدخل اسم الانتخابات",
-  "elections.form.nameRequired": "اسم الانتخابات مطلوب",
-  "elections.form.numberExtra": "عدد الإضافيين",
-  "elections.form.numberToElect": "العدد المراد انتخابه",
-  "elections.form.numberToElectRequired": "العدد المراد انتخابه مطلوب",
-  "elections.form.onlineAnnounced": "تم الإعلان عن النتائج عبر الإنترنت",
-  "elections.form.onlineAnnouncedPlaceholder": "حدد وقت الإعلان",
-  "elections.form.onlineCloseIsEstimate": "وقت الإغلاق تقديري",
-  "elections.form.onlineSelectionProcess": "عملية الاختيار عبر الإنترنت",
-  "elections.form.onlineSelectionProcessPlaceholder": "حدد العملية",
-  "elections.form.onlineWhenClose": "ينتهي التصويت عبر الإنترنت",
-  "elections.form.onlineWhenClosePlaceholder": "حدد وقت الإغلاق",
-  "elections.form.onlineWhenOpen": "يبدأ التصويت عبر الإنترنت",
-  "elections.form.onlineWhenOpenPlaceholder": "حدد وقت البدء",
-  "elections.form.showAsTest": "عرض كاختبار",
-  "elections.form.showFullReport": "عرض التقرير الكامل",
-  "elections.form.smsText": "نص الرسالة النصية",
-  "elections.form.smsTextPlaceholder": "أدخل نص الرسالة النصية",
-  "elections.form.type": "نوع الانتخابات",
-  "elections.form.typePlaceholder": "حدد نوع الانتخابات",
-  "elections.form.typeRequired": "نوع الانتخابات مطلوب",
-  "elections.form.useCallInButton": "تفعيل التصويت عبر الهاتف",
-  "elections.form.useKiosk": "Enable kiosk mode",
-  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
-  "elections.form.votingMethods": "طرق التصويت",
-  "elections.form.votingMethodsHelp": "اختر الطرق التي سيتم بها الإدلاء بالأصوات.",
-  "elections.form.votingMethodsPlaceholder": "حدد طرق التصويت",
-  "elections.importCdnBallots": "استيراد أصوات CDN",
-  "elections.importCdnBallotsError": "فشل في استيراد أصوات CDN",
-  "elections.importCdnBallotsSuccess": "تم استيراد أصوات CDN بنجاح",
-  "elections.importElection": "استيراد الانتخابات",
-  "elections.importElectionError": "فشل في استيراد الانتخابات",
-  "elections.importElectionSuccess": "تم استيراد الانتخابات بنجاح",
-  "elections.list": "الانتخابات",
-  "elections.loadError": "فشل في تحميل الانتخابات",
-  "elections.locations": "المواقع",
-  "elections.manageBallots": "إدارة الأصوات",
-  "elections.manageLocations": "إدارة المواقع",
-  "elections.managePeople": "إدارة الأشخاص",
-  "elections.name": "اسم الانتخابات",
-  "elections.notFound": "الانتخابات غير موجودة",
-  "elections.onlineVotingDisabled": "التصويت عبر الإنترنت معطل",
-  "elections.onlineVotingEnabled": "التصويت عبر الإنترنت مفعل",
-  "elections.people": "الأشخاص",
-  "elections.quickActions": "الإجراءات السريعة",
-  "elections.revertTo": "العودة إلى {stage}",
-  "elections.searchPlaceholder": "البحث في الانتخابات بالاسم أو المنسق...",
-  "elections.stage.Counting": "الفرز",
-  "elections.stage.Finalized": "الانتهاء",
-  "elections.stage.Setup": "إعداد",
-  "elections.stageAdvanced": "تم الانتقال بالانتخابات إلى {stage}",
-  "elections.stageChangeError": "فشل تغيير مرحلة الانتخابات",
-  "elections.stageProgression": "مرحلة الانتخابات",
-  "elections.stageReverted": "تم إرجاع الانتخابات إلى {stage}",
-  "elections.statistics": "الإحصائيات",
-  "elections.status": "الحالة",
-  "elections.tabs.advanced": "متقدم",
-  "elections.tabs.auditLogs": "سجلات التدقيق",
-  "elections.tabs.ballots": "أوراق الاقتراع",
-  "elections.tabs.basicInfo": "المعلومات الأساسية",
-  "elections.tabs.communication": "الاتصال",
-  "elections.tabs.displayPrivacy": "العرض والخصوصية",
-  "elections.tabs.electionRules": "قواعد الانتخابات",
-  "elections.tabs.locations": "المواقع",
-  "elections.tabs.onlineVoting": "التصويت عبر الإنترنت",
-  "elections.tabs.people": "الأشخاص",
-  "elections.tabs.results": "النتائج",
-  "elections.tabs.tellers": "الفارزون",
-  "elections.tabs.votingMethods": "طرق التصويت",
-  "elections.tellerAccess": "وصول الفارز",
-  "elections.tellerAccessClosed": "وصول الفارز مغلق",
-  "elections.tellerAccessCode": "رمز الوصول",
-  "elections.tellerAccessOpen": "وصول الفارز مفتوح",
-  "elections.tellerAccessQrCode": "رمز QR",
-  "elections.tellerAccessUrl": "رابط قابل للمشاركة",
-  "elections.toElect": "للانتخاب",
-  "elections.toggleTellerAccess": "تبديل وصول الفارز",
-  "elections.type": "النوع",
-  "elections.updateError": "فشل في تحديث الانتخابات",
-  "elections.updateSuccess": "تم تحديث الانتخابات بنجاح",
-  "elections.viewReports": "عرض التقارير",
-  "elections.viewResults": "عرض النتائج",
-  "elections.voters": "الناخبون"
+  "elections.advanceStage": {
+    "t": "الانتقال إلى المرحلة التالية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.advanceTo": {
+    "t": "الانتقال إلى {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ballots": {
+    "t": "أوراق الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteError": {
+    "t": "فشل في حذف بعض الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteMessage": {
+    "t": "هل أنت متأكد من أنك تريد حذف {count} انتخابات محددة؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteSuccess": {
+    "t": "تم حذف {count} انتخابات بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.calculateTally": {
+    "t": "حساب النتائج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.clearFilters": {
+    "t": "مسح المرشحات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmAdvance": {
+    "t": "هل أنت متأكد من أنك تريد الانتقال بهذه الانتخابات إلى {stage}؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmBulkDelete": {
+    "t": "تأكيد الحذف المجمع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmRevert": {
+    "t": "هل أنت متأكد من أنك تريد إرجاع هذه الانتخابات إلى {stage}؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.copyUrl": {
+    "t": "نسخ الرابط",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createError": {
+    "t": "فشل في إنشاء الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createFirst": {
+    "t": "أنشئ انتخاباتك الأولى",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createNew": {
+    "t": "إنشاء انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createSuccess": {
+    "t": "تم إنشاء الانتخابات بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.date": {
+    "t": "تاريخ الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteConfirm": {
+    "t": "هل أنت متأكد من أنك تريد حذف هذه الانتخابات؟ لا يمكن التراجع عن هذا الإجراء.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteError": {
+    "t": "فشل في حذف الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSelected": {
+    "t": "حذف المحدد ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSuccess": {
+    "t": "تم حذف الانتخابات بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.details": {
+    "t": "تفاصيل الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.edit": {
+    "t": "تعديل الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.B": {
+    "t": "انتخابات تكميلية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.N": {
+    "t": "انتخابات عادية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.T": {
+    "t": "كسر التعادل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Con": {
+    "t": "اتفاقية الوحدة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA": {
+    "t": "المجلس الروحاني المحلي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA1": {
+    "t": "المجلس الروحاني المحلي (مرحلتان) الوحدة المحلية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA2": {
+    "t": "المجلس الروحاني المحلي (مرحلتان) النهائي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.NSA": {
+    "t": "المجلس الروحاني الوطني",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Oth": {
+    "t": "أخرى",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Reg": {
+    "t": "المجلس الإقليمي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElection": {
+    "t": "تصدير الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionError": {
+    "t": "فشل في تصدير الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionSuccess": {
+    "t": "تم تصدير الانتخابات بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByStatus": {
+    "t": "التصفية حسب الحالة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByType": {
+    "t": "التصفية حسب النوع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenor": {
+    "t": "المنسق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenorPlaceholder": {
+    "t": "أدخل اسم المنسق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethods": {
+    "t": "الطرق المخصصة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsHelp": {
+    "t": "حدد أي طرق تصويت مخصصة أو غير قياسية مستخدمة في هذه الانتخابات.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsPlaceholder": {
+    "t": "صف أي طرق تصويت مخصصة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.date": {
+    "t": "تاريخ الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.datePlaceholder": {
+    "t": "حدد تاريخ الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.dateRequired": {
+    "t": "تاريخ الانتخاب مطلوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionMode": {
+    "t": "وضع الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscode": {
+    "t": "رمز الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodeHelp": {
+    "t": "رمز الدخول مطلوب لتسجيل دخول الفارز.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodePlaceholder": {
+    "t": "أدخل رمز الدخول",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddress": {
+    "t": "عنوان البريد الإلكتروني المرسل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddressPlaceholder": {
+    "t": "أدخل عنوان البريد الإلكتروني للمرسل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromName": {
+    "t": "اسم المرسل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromNamePlaceholder": {
+    "t": "أدخل اسم المرسل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailInvalid": {
+    "t": "عنوان البريد الإلكتروني غير صالح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubject": {
+    "t": "موضوع البريد الإلكتروني",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubjectPlaceholder": {
+    "t": "أدخل موضوع البريد الإلكتروني",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailText": {
+    "t": "نص البريد الإلكتروني",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailTextPlaceholder": {
+    "t": "أدخل نص البريد الإلكتروني",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flags": {
+    "t": "العلامات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsHelp": {
+    "t": "تُستخدم العلامات لشروط الانتخابات الخاصة.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsPlaceholder": {
+    "t": "أدخل أي علامات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.hidePreBallotPages": {
+    "t": "إخفاء صفحات ما قبل الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElection": {
+    "t": "الانتخابات المرتبطة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount": {
+    "t": "{count} انتخابات مرتبطة متاحة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount_plural": {
+    "t": "{count} انتخابات مرتبطة متاحة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionHelp": {
+    "t": "حدد انتخابات للربط لكسر التعادل أو الجولة الثانية.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKind": {
+    "t": "نوع الانتخابات المرتبطة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKindPlaceholder": {
+    "t": "حدد النوع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionPlaceholder": {
+    "t": "حدد الانتخابات المرتبطة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.listForPublic": {
+    "t": "القائمة للعامة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.lockedByBallots": {
+    "t": "مقفل — تم إدخال الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.maskVotingMethod": {
+    "t": "إخفاء طريقة التصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.modePlaceholder": {
+    "t": "حدد وضع الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.name": {
+    "t": "اسم الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.namePlaceholder": {
+    "t": "أدخل اسم الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.nameRequired": {
+    "t": "اسم الانتخابات مطلوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberExtra": {
+    "t": "عدد الإضافيين",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElect": {
+    "t": "العدد المراد انتخابه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElectRequired": {
+    "t": "العدد المراد انتخابه مطلوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnounced": {
+    "t": "تم الإعلان عن النتائج عبر الإنترنت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnouncedPlaceholder": {
+    "t": "حدد وقت الإعلان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineCloseIsEstimate": {
+    "t": "وقت الإغلاق تقديري",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcess": {
+    "t": "عملية الاختيار عبر الإنترنت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessPlaceholder": {
+    "t": "حدد العملية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClose": {
+    "t": "ينتهي التصويت عبر الإنترنت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClosePlaceholder": {
+    "t": "حدد وقت الإغلاق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpen": {
+    "t": "يبدأ التصويت عبر الإنترنت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpenPlaceholder": {
+    "t": "حدد وقت البدء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showAsTest": {
+    "t": "عرض كاختبار",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showFullReport": {
+    "t": "عرض التقرير الكامل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsText": {
+    "t": "نص الرسالة النصية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsTextPlaceholder": {
+    "t": "أدخل نص الرسالة النصية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.type": {
+    "t": "نوع الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typePlaceholder": {
+    "t": "حدد نوع الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typeRequired": {
+    "t": "نوع الانتخابات مطلوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useCallInButton": {
+    "t": "تفعيل التصويت عبر الهاتف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKiosk": {
+    "t": "Enable kiosk mode",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKioskHelp": {
+    "t": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethods": {
+    "t": "طرق التصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsHelp": {
+    "t": "اختر الطرق التي سيتم بها الإدلاء بالأصوات.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsPlaceholder": {
+    "t": "حدد طرق التصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallots": {
+    "t": "استيراد أصوات CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsError": {
+    "t": "فشل في استيراد أصوات CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsSuccess": {
+    "t": "تم استيراد أصوات CDN بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElection": {
+    "t": "استيراد الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionError": {
+    "t": "فشل في استيراد الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionSuccess": {
+    "t": "تم استيراد الانتخابات بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.list": {
+    "t": "الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.loadError": {
+    "t": "فشل في تحميل الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.locations": {
+    "t": "المواقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageBallots": {
+    "t": "إدارة الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageLocations": {
+    "t": "إدارة المواقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.managePeople": {
+    "t": "إدارة الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.name": {
+    "t": "اسم الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.notFound": {
+    "t": "الانتخابات غير موجودة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingDisabled": {
+    "t": "التصويت عبر الإنترنت معطل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingEnabled": {
+    "t": "التصويت عبر الإنترنت مفعل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.people": {
+    "t": "الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.quickActions": {
+    "t": "الإجراءات السريعة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.revertTo": {
+    "t": "العودة إلى {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.searchPlaceholder": {
+    "t": "البحث في الانتخابات بالاسم أو المنسق...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Counting": {
+    "t": "الفرز",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Finalized": {
+    "t": "الانتهاء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Setup": {
+    "t": "إعداد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageAdvanced": {
+    "t": "تم الانتقال بالانتخابات إلى {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError": {
+    "t": "فشل تغيير مرحلة الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageProgression": {
+    "t": "مرحلة الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageReverted": {
+    "t": "تم إرجاع الانتخابات إلى {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.statistics": {
+    "t": "الإحصائيات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.status": {
+    "t": "الحالة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.advanced": {
+    "t": "متقدم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.auditLogs": {
+    "t": "سجلات التدقيق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.ballots": {
+    "t": "أوراق الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.basicInfo": {
+    "t": "المعلومات الأساسية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.communication": {
+    "t": "الاتصال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.displayPrivacy": {
+    "t": "العرض والخصوصية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.electionRules": {
+    "t": "قواعد الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.locations": {
+    "t": "المواقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.onlineVoting": {
+    "t": "التصويت عبر الإنترنت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.people": {
+    "t": "الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.results": {
+    "t": "النتائج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.tellers": {
+    "t": "الفارزون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.votingMethods": {
+    "t": "طرق التصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccess": {
+    "t": "وصول الفارز",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessClosed": {
+    "t": "وصول الفارز مغلق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessCode": {
+    "t": "رمز الوصول",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessOpen": {
+    "t": "وصول الفارز مفتوح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessQrCode": {
+    "t": "رمز QR",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessUrl": {
+    "t": "رابط قابل للمشاركة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toElect": {
+    "t": "للانتخاب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toggleTellerAccess": {
+    "t": "تبديل وصول الفارز",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.type": {
+    "t": "النوع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateError": {
+    "t": "فشل في تحديث الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateSuccess": {
+    "t": "تم تحديث الانتخابات بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewReports": {
+    "t": "عرض التقارير",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewResults": {
+    "t": "عرض النتائج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.voters": {
+    "t": "الناخبون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

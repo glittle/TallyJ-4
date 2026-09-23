@@ -1,24 +1,112 @@
 {
-  "dashboard.active": "فعال",
-  "dashboard.activeElections": "انتخابات فعال",
-  "dashboard.ballotsEntered": "برگه‌های رای وارد شده",
-  "dashboard.canVote": "می‌تواند رای دهد",
-  "dashboard.closed": "بسته",
-  "dashboard.closes": "بسته می‌شود",
-  "dashboard.electionDetails": "جزئیات انتخابات",
-  "dashboard.noElections": "انتخاباتی یافت نشد",
-  "dashboard.noTellers": "هیچ صندوق‌داری اختصاص داده نشده",
-  "dashboard.onlineVoting": "رای‌گیری آنلاین",
-  "dashboard.open": "باز کردن",
-  "dashboard.opens": "باز می‌شود",
-  "dashboard.otherActions": "اقدامات دیگر...",
-  "dashboard.recentElections": "انتخابات اخیر",
-  "dashboard.registered": "ثبت‌نام شده",
-  "dashboard.statistics": "آمار",
-  "dashboard.tellerCount": "تعداد صندوق‌دارها",
-  "dashboard.tellers": "صندوق‌دارها",
-  "dashboard.tellersStatus": "صندوق‌دارها",
-  "dashboard.totalBallots": "کل برگه‌های رای",
-  "dashboard.totalElections": "کل انتخابات",
-  "dashboard.totalVoters": "کل رای‌دهندگان"
+  "dashboard.active": {
+    "t": "فعال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.activeElections": {
+    "t": "انتخابات فعال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "برگه‌های رای وارد شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.canVote": {
+    "t": "می‌تواند رای دهد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closed": {
+    "t": "بسته",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closes": {
+    "t": "بسته می‌شود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "جزئیات انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noElections": {
+    "t": "انتخاباتی یافت نشد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noTellers": {
+    "t": "هیچ صندوق‌داری اختصاص داده نشده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "رای‌گیری آنلاین",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.open": {
+    "t": "باز کردن",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.opens": {
+    "t": "باز می‌شود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.otherActions": {
+    "t": "اقدامات دیگر...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.recentElections": {
+    "t": "انتخابات اخیر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.registered": {
+    "t": "ثبت‌نام شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.statistics": {
+    "t": "آمار",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "تعداد صندوق‌دارها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellers": {
+    "t": "صندوق‌دارها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "صندوق‌دارها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "کل برگه‌های رای",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalElections": {
+    "t": "کل انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "کل رای‌دهندگان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

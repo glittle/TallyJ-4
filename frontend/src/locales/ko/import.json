@@ -1,25 +1,117 @@
 {
-  "import.completed": "가져오기가 성공적으로 완료되었습니다",
-  "import.currentStatus": "상태: {status}",
-  "import.errorCount": "오류: {count}",
-  "import.errors.batchSaveFailed": "일괄 저장 실패: {message}",
-  "import.errors.duplicateBahaiId": "{rowNumber}행: 중복된 바하이 ID '{bahaiId}'",
-  "import.errors.duplicateEmail": "{rowNumber}행: 중복된 이메일 '{email}'",
-  "import.errors.duplicateName": "{rowNumber}행: 중복된 이름 '{firstName} {lastName}'",
-  "import.errors.duplicatePhone": "{rowNumber}행: 중복된 전화번호 '{phone}'",
-  "import.errors.fileNotFound": "가져오기 파일을 찾을 수 없거나 내용이 없습니다",
-  "import.errors.importFailed": "가져오기 실패: {message}",
-  "import.errors.importFailedAtLine": "{rowNumber}행에서 가져오기 실패: {message}",
-  "import.errors.invalidMappings": "유효하지 않은 열 매핑입니다",
-  "import.errors.lineError": "{rowNumber}행: {message}",
-  "import.errors.missingFirstName": "{rowNumber}행: 이름이 없습니다",
-  "import.errors.missingLastName": "{rowNumber}행: 성이 없습니다",
-  "import.errors.missingRequiredMappings": "이름 및 성 매핑이 필요합니다",
-  "import.errors.noMappings": "열 매핑이 구성되어 있지 않습니다",
-  "import.errorsTitle": "가져오기 오류",
-  "import.moreErrors": "그 외 {count}개 더...",
-  "import.processingRows": "행 {processed}/{total} 처리 중",
-  "import.progressTitle": "가져오기 진행",
-  "import.successCount": "성공: {count}",
-  "import.warnings.unrecognizedEligibility": "{rowNumber}행: 인식되지 않는 자격 상태: '{eligibilityValue}' - 자격 있는 것으로 처리됨"
+  "import.completed": {
+    "t": "가져오기가 성공적으로 완료되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.currentStatus": {
+    "t": "상태: {status}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorCount": {
+    "t": "오류: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.batchSaveFailed": {
+    "t": "일괄 저장 실패: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateBahaiId": {
+    "t": "{rowNumber}행: 중복된 바하이 ID '{bahaiId}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateEmail": {
+    "t": "{rowNumber}행: 중복된 이메일 '{email}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateName": {
+    "t": "{rowNumber}행: 중복된 이름 '{firstName} {lastName}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicatePhone": {
+    "t": "{rowNumber}행: 중복된 전화번호 '{phone}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.fileNotFound": {
+    "t": "가져오기 파일을 찾을 수 없거나 내용이 없습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailed": {
+    "t": "가져오기 실패: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailedAtLine": {
+    "t": "{rowNumber}행에서 가져오기 실패: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.invalidMappings": {
+    "t": "유효하지 않은 열 매핑입니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.lineError": {
+    "t": "{rowNumber}행: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingFirstName": {
+    "t": "{rowNumber}행: 이름이 없습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingLastName": {
+    "t": "{rowNumber}행: 성이 없습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingRequiredMappings": {
+    "t": "이름 및 성 매핑이 필요합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.noMappings": {
+    "t": "열 매핑이 구성되어 있지 않습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorsTitle": {
+    "t": "가져오기 오류",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.moreErrors": {
+    "t": "그 외 {count}개 더...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.processingRows": {
+    "t": "행 {processed}/{total} 처리 중",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.progressTitle": {
+    "t": "가져오기 진행",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.successCount": {
+    "t": "성공: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.warnings.unrecognizedEligibility": {
+    "t": "{rowNumber}행: 인식되지 않는 자격 상태: '{eligibilityValue}' - 자격 있는 것으로 처리됨",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

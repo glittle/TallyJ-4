@@ -1,36 +1,172 @@
 {
-  "audit.dialog.computerCode": "Msimbo wa Kompyuta",
-  "audit.dialog.dateTime": "Tarehe/Muda",
-  "audit.dialog.details": "Maelezo",
-  "audit.dialog.electionGuid": "GUID ya Uchaguzi",
-  "audit.dialog.hostAndVersion": "Mwenyeji na Toleo",
-  "audit.dialog.locationGuid": "GUID ya Mahali",
-  "audit.dialog.rowId": "ID ya Safu",
-  "audit.dialog.title": "Maelezo ya Kumbukumbu za Ukaguzi",
-  "audit.dialog.userId": "ID ya Mtumiaji",
-  "audit.filters.apply": "Tekeleza Vichujio",
-  "audit.filters.clear": "Futa Vichujio",
-  "audit.filters.computerCode": "Msimbo wa Kompyuta",
-  "audit.filters.computerCodePlaceholder": "Chuja kwa Msimbo wa Kompyuta",
-  "audit.filters.electionGuid": "GUID ya Uchaguzi",
-  "audit.filters.electionGuidPlaceholder": "Chuja kwa GUID ya Uchaguzi",
-  "audit.filters.endDate": "Tarehe ya Mwisho",
-  "audit.filters.endDatePlaceholder": "Tarehe ya Mwisho",
-  "audit.filters.locationGuid": "GUID ya Mahali",
-  "audit.filters.locationGuidPlaceholder": "Chuja kwa GUID ya Mahali",
-  "audit.filters.search": "Tafuta",
-  "audit.filters.searchPlaceholder": "Tafuta katika sehemu zote",
-  "audit.filters.startDate": "Tarehe ya Kuanza",
-  "audit.filters.startDatePlaceholder": "Tarehe ya Kuanza",
-  "audit.filters.voterId": "ID ya Mpiga Kura",
-  "audit.filters.voterIdPlaceholder": "Chuja kwa ID ya Mpiga Kura",
-  "audit.table.actions": "Vitendo",
-  "audit.table.computer": "Kompyuta",
-  "audit.table.dateTime": "Tarehe/Muda",
-  "audit.table.details": "Maelezo",
-  "audit.table.election": "Uchaguzi",
-  "audit.table.userId": "ID ya Mtumiaji",
-  "audit.table.view": "Tazama",
-  "audit.table.yes": "Ndiyo",
-  "audit.title": "Kumbukumbu za Ukaguzi"
+  "audit.dialog.computerCode": {
+    "t": "Msimbo wa Kompyuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.dateTime": {
+    "t": "Tarehe/Muda",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.details": {
+    "t": "Maelezo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.electionGuid": {
+    "t": "GUID ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.hostAndVersion": {
+    "t": "Mwenyeji na Toleo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.locationGuid": {
+    "t": "GUID ya Mahali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.rowId": {
+    "t": "ID ya Safu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.title": {
+    "t": "Maelezo ya Kumbukumbu za Ukaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.userId": {
+    "t": "ID ya Mtumiaji",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.apply": {
+    "t": "Tekeleza Vichujio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.clear": {
+    "t": "Futa Vichujio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCode": {
+    "t": "Msimbo wa Kompyuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCodePlaceholder": {
+    "t": "Chuja kwa Msimbo wa Kompyuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuid": {
+    "t": "GUID ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuidPlaceholder": {
+    "t": "Chuja kwa GUID ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDate": {
+    "t": "Tarehe ya Mwisho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDatePlaceholder": {
+    "t": "Tarehe ya Mwisho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuid": {
+    "t": "GUID ya Mahali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuidPlaceholder": {
+    "t": "Chuja kwa GUID ya Mahali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.search": {
+    "t": "Tafuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.searchPlaceholder": {
+    "t": "Tafuta katika sehemu zote",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDate": {
+    "t": "Tarehe ya Kuanza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDatePlaceholder": {
+    "t": "Tarehe ya Kuanza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterId": {
+    "t": "ID ya Mpiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterIdPlaceholder": {
+    "t": "Chuja kwa ID ya Mpiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.actions": {
+    "t": "Vitendo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.computer": {
+    "t": "Kompyuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.dateTime": {
+    "t": "Tarehe/Muda",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.details": {
+    "t": "Maelezo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.election": {
+    "t": "Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.userId": {
+    "t": "ID ya Mtumiaji",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.view": {
+    "t": "Tazama",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.yes": {
+    "t": "Ndiyo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.title": {
+    "t": "Kumbukumbu za Ukaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

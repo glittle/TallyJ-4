@@ -1,29 +1,137 @@
 {
-  "profile.changePassword": "Promijeni lozinku",
-  "profile.confirmPassword": "Potvrdi lozinku",
-  "profile.createdAt": "Član od",
-  "profile.currentPassword": "Trenutna lozinka",
-  "profile.loginMethod": "Metoda prijave",
-  "profile.name": "Ime",
-  "profile.newPassword": "Nova lozinka",
-  "profile.passwordsDoNotMatch": "Lozinke se ne podudaraju",
-  "profile.twoFactor.confirmCode": "Unesite 6-znamenkasti kôd iz vaše aplikacije za potvrdu postavljanja:",
-  "profile.twoFactor.confirmPlaceholder": "6-znamenkasti kôd",
-  "profile.twoFactor.confirmSetup": "Potvrdi i omogući dvofaktorsku provjeru",
-  "profile.twoFactor.disable": "Onemogući dvofaktorsku provjeru",
-  "profile.twoFactor.disableConfirm": "Unesite 6-znamenkasti kôd iz vaše aplikacije za provjeru autentičnosti kako biste onemogućili dvofaktorsku provjeru:",
-  "profile.twoFactor.disableSuccess": "Dvofaktorska provjera autentičnosti je onemogućena.",
-  "profile.twoFactor.disableTitle": "Onemogući dvofaktorsku provjeru autentičnosti",
-  "profile.twoFactor.disabled": "Nije omogućena",
-  "profile.twoFactor.enabled": "Omogućena",
-  "profile.twoFactor.loading": "Učitavanje statusa dvofaktorske provjere...",
-  "profile.twoFactor.method": "Metoda",
-  "profile.twoFactor.methodTotp": "Aplikacija za provjeru autentičnosti (TOTP)",
-  "profile.twoFactor.scanQr": "Skenirajte ovaj QR kôd pomoću aplikacije za provjeru autentičnosti (Google Authenticator, Microsoft Authenticator ili Authy).",
-  "profile.twoFactor.secretKey": "Ili unesite ovaj ključ ručno:",
-  "profile.twoFactor.setup": "Postavi dvofaktorsku provjeru",
-  "profile.twoFactor.setupSuccess": "Dvofaktorska provjera autentičnosti je omogućena.",
-  "profile.twoFactor.setupTitle": "Postavi dvofaktorsku provjeru autentičnosti",
-  "profile.twoFactor.status": "Stanje",
-  "profile.twoFactor.title": "Dvofaktorska provjera autentičnosti"
+  "profile.changePassword": {
+    "t": "Promijeni lozinku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.confirmPassword": {
+    "t": "Potvrdi lozinku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.createdAt": {
+    "t": "Član od",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.currentPassword": {
+    "t": "Trenutna lozinka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.loginMethod": {
+    "t": "Metoda prijave",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.name": {
+    "t": "Ime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.newPassword": {
+    "t": "Nova lozinka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.passwordsDoNotMatch": {
+    "t": "Lozinke se ne podudaraju",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmCode": {
+    "t": "Unesite 6-znamenkasti kôd iz vaše aplikacije za potvrdu postavljanja:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmPlaceholder": {
+    "t": "6-znamenkasti kôd",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmSetup": {
+    "t": "Potvrdi i omogući dvofaktorsku provjeru",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disable": {
+    "t": "Onemogući dvofaktorsku provjeru",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableConfirm": {
+    "t": "Unesite 6-znamenkasti kôd iz vaše aplikacije za provjeru autentičnosti kako biste onemogućili dvofaktorsku provjeru:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableSuccess": {
+    "t": "Dvofaktorska provjera autentičnosti je onemogućena.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableTitle": {
+    "t": "Onemogući dvofaktorsku provjeru autentičnosti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disabled": {
+    "t": "Nije omogućena",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.enabled": {
+    "t": "Omogućena",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.loading": {
+    "t": "Učitavanje statusa dvofaktorske provjere...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.method": {
+    "t": "Metoda",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.methodTotp": {
+    "t": "Aplikacija za provjeru autentičnosti (TOTP)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.scanQr": {
+    "t": "Skenirajte ovaj QR kôd pomoću aplikacije za provjeru autentičnosti (Google Authenticator, Microsoft Authenticator ili Authy).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.secretKey": {
+    "t": "Ili unesite ovaj ključ ručno:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setup": {
+    "t": "Postavi dvofaktorsku provjeru",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupSuccess": {
+    "t": "Dvofaktorska provjera autentičnosti je omogućena.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupTitle": {
+    "t": "Postavi dvofaktorsku provjeru autentičnosti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.status": {
+    "t": "Stanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.title": {
+    "t": "Dvofaktorska provjera autentičnosti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

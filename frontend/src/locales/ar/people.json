@@ -1,133 +1,657 @@
 {
-  "people.addPerson": "إضافة شخص",
-  "people.ageGroup.adult": "بالغ",
-  "people.ageGroup.youth": "شاب",
-  "people.ageGroupLabel": "الفئة العمرية",
-  "people.allPeople": "جميع الأشخاص",
-  "people.area": "المنطقة",
-  "people.bahaiId": "المعرّف البهائي",
-  "people.bulkActions": "الإجراءات المجمعة",
-  "people.bulkDeleteError": "فشل في حذف بعض الأشخاص",
-  "people.bulkDeleteMessage": "هل أنت متأكد من أنك تريد حذف {count} أشخاص محددين؟",
-  "people.bulkDeleteSuccess": "تم حذف {count} شخص بنجاح",
-  "people.canReceiveVotes": "يمكنه تلقي الأصوات",
-  "people.canVote": "يمكنه التصويت",
-  "people.candidates": "المرشحون المؤهلون",
-  "people.confirmBulkDelete": "تأكيد الحذف المجمع",
-  "people.createSuccess": "تم إضافة الشخص بنجاح",
-  "people.deleteConfirm": "هل أنت متأكد من أنك تريد حذف {name}؟",
-  "people.deleteError": "فشل في حذف الشخص",
-  "people.deleteSelected": "حذف المحدد ({count})",
-  "people.deleteSuccess": "تم حذف الشخص بنجاح",
-  "people.dropFileHere": "أسقط الملف هنا أو انقر للرفع",
-  "people.editPerson": "تعديل شخص",
-  "people.email": "البريد الإلكتروني",
-  "people.emailInvalid": "الرجاء إدخال بريد إلكتروني صالح",
-  "people.exportError": "فشل في تصدير الأشخاص",
-  "people.exportPeople": "تصدير الأشخاص",
-  "people.exportSuccess": "تم تصدير الأشخاص بنجاح",
-  "people.fileTooLarge": "الملف كبير جدًا. يرجى رفع ملف أصغر من 10 ميجابايت.",
-  "people.firstName": "الاسم الأول",
-  "people.fullName": "الاسم الكامل",
-  "people.import.action": "الإجراء",
-  "people.import.areaDesc": "المنطقة الجغرافية",
-  "people.import.bahaiIdDesc": "رقم المعرّف البهائي",
-  "people.import.clickToUpload": "انقر للرفع",
-  "people.import.confirmDeleteAllPeople": "تأكيد حذف جميع الأشخاص",
-  "people.import.confirmDeleteFile": "هل أنت متأكد من أنك تريد حذف هذا الملف؟",
-  "people.import.contentEncoding": "ترميز المحتوى",
-  "people.import.currentPeopleCount": "عدد الأشخاص الحالي",
-  "people.import.dataRows": "صفوف البيانات",
-  "people.import.deleteAllPeople": "حذف جميع الأشخاص",
-  "people.import.deleteAllPeopleError": "فشل في حذف جميع الأشخاص",
-  "people.import.deleteAllPeopleMessage": "هل أنت متأكد من أنك تريد حذف جميع الأشخاص من هذه الانتخابات؟ لا يمكن التراجع عن هذا الإجراء.",
-  "people.import.deleteFileError": "فشل في حذف الملف",
-  "people.import.dropFile": "أسقط الملف هنا أو",
-  "people.import.duplicateDesc": "الشخص إدخال مكرر",
-  "people.import.eligibilityDesc": "وصف حالة الأهلية",
-  "people.import.eligibilityValues": "قيم حالة الأهلية",
-  "people.import.eligibleDesc": "الشخص مؤهل للتصويت",
-  "people.import.emailDesc": "عنوان البريد الإلكتروني",
-  "people.import.fileName": "اسم الملف",
-  "people.import.filesOnServer": "الملفات على الخادم",
-  "people.import.firstNameDesc": "الاسم الأول للشخص",
-  "people.import.firstNameLastNameRequired": "يجب ربط حقول الاسم الأول واسم العائلة للمتابعة مع الاستيراد.",
-  "people.import.headerAutoDetected": "تم اكتشاف الرؤوس تلقائيًا في الصف {row}",
-  "people.import.headersOnLine": "الرؤوس في السطر",
-  "people.import.headersOnLineTooltip": "حدد الصف الذي يحتوي على رؤوس الأعمدة. يتم اكتشافه تلقائيًا لملفات Excel، ولكن يمكن تعديله إذا لزم الأمر.",
-  "people.import.ignore": "(تجاهل)",
-  "people.import.importNow": "استيراد الآن",
-  "people.import.importResults": "نتائج الاستيراد",
-  "people.import.importStepDesc": "سيتم تنفيذ خطوة الاستيراد في المرحلة التالية",
-  "people.import.importSummary": "ملخص الاستيراد",
-  "people.import.importing": "استيراد الأشخاص...",
-  "people.import.ineligibleDesc": "الشخص غير مؤهل للتصويت",
-  "people.import.lastNameDesc": "اسم عائلة الشخص",
-  "people.import.loadFilesError": "فشل في تحميل ملفات الاستيراد",
-  "people.import.mapColumns": "ربط الأعمدة",
-  "people.import.mapColumnsDesc": "ربط أعمدة ملفك بحقول فَرْزَج",
-  "people.import.mapTo": "ربط بـ:",
-  "people.import.mappedFields": "الحقول المربوطة",
-  "people.import.mappingSaved": "تم حفظ ربط الأعمدة بنجاح",
-  "people.import.otherActions": "إجراءات أخرى",
-  "people.import.otherInfoDesc": "معلومات إضافية",
-  "people.import.otherLastNamesDesc": "أسماء عائلة إضافية",
-  "people.import.otherNamesDesc": "أسماء أولى إضافية",
-  "people.import.peopleAdded": "الأشخاص المضافون",
-  "people.import.peopleSkipped": "الأشخاص المتجاهلون",
-  "people.import.phoneDesc": "رقم الهاتف",
-  "people.import.preview": "معاينة",
-  "people.import.reparse": "إعادة التحليل",
-  "people.import.reviewImport": "مراجعة والاستيراد",
-  "people.import.saveMapping": "حفظ الربط",
-  "people.import.select": "تحديد",
-  "people.import.selected": "محدد",
-  "people.import.size": "الحجم",
-  "people.import.status": "الحالة",
-  "people.import.step1": "رفع ملف",
-  "people.import.step2": "ربط الأعمدة",
-  "people.import.step3": "استيراد",
-  "people.import.supportedFormats": "التنسيقات المدعومة: CSV، TSV، TAB، TXT، XLSX (حد أقصى 10 ميجابايت)",
-  "people.import.tallyJField": "حقل فَرْزَج",
-  "people.import.tallyJFields": "مرجع حقول فَرْزَج",
-  "people.import.timeElapsed": "الوقت المستغرق",
-  "people.import.title": "استيراد أشخاص",
-  "people.import.underAgeDesc": "الشخص دون سن التصويت",
-  "people.import.uploadError": "فشل في رفع الملف",
-  "people.import.uploadFile": "رفع ملف",
-  "people.import.uploadTime": "وقت الرفع",
-  "people.import.validationWarning": "تحذير التحقق",
-  "people.import.warnings": "تحذيرات",
-  "people.importError": "فشل في بدء الاستيراد",
-  "people.importFormat": "ارفع ملف CSV أو Excel بالأعمدة التالية:",
-  "people.importInstructions": "تعليمات الاستيراد",
-  "people.importOptionalFields": "اختياري: البريد الإلكتروني، الهاتف، المنطقة، المعرّف البهائي، الأهلية",
-  "people.importPeople": "استيراد أشخاص",
-  "people.importRequiredFields": "مطلوب: الاسم الأول، اسم العائلة",
-  "people.importStarted": "بدأ الاستيراد. يرجى انتظار الإكمال.",
-  "people.importWarning": "سيتم تحديث الأشخاص الموجودون بأسماء مطابقة. سيتم إنشاء أشخاص جدد.",
-  "people.invalidFileType": "نوع ملف غير صالح. يرجى رفع ملف CSV أو Excel.",
-  "people.kioskCode": "Kiosk Code",
-  "people.kioskCodeExpired": "This code has expired. Renew it before the voter logs in.",
-  "people.kioskCodeExpires": "Expires {time} ({minutes} min left).",
-  "people.kioskCodeGenerate": "Make a kiosk code",
-  "people.kioskCodeGenerated": "Kiosk code is ready to share.",
-  "people.kioskCodeNone": "No kiosk code yet. Generate one when the voter is at the kiosk.",
-  "people.kioskCodeNote": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
-  "people.kioskCodeRenew": "Renew kiosk code",
-  "people.lastName": "اسم العائلة",
-  "people.lastNameRequired": "اسم العائلة مطلوب",
-  "people.leaveElectionGroupError": "فشل في مغادرة مجموعة الانتخابات:",
-  "people.loadError": "فشل في تحميل الأشخاص",
-  "people.management": "إدارة الأشخاص",
-  "people.phone": "الهاتف",
-  "people.phoneOnlineVoter.recentSms": "Recent SMS",
-  "people.phoneOnlineVoter.smsLogNoStatus": "Sent",
-  "people.phoneOnlineVoter.smsLogError": "Error {code}",
-  "people.saveError": "فشل في حفظ الشخص",
-  "people.search": "البحث بالاسم أو البريد الإلكتروني أو المعرّف",
-  "people.searchError": "فشل في البحث عن الأشخاص",
-  "people.supportedFormats": "التنسيقات المدعومة: CSV، XLS، XLSX (حد أقصى 10 ميجابايت)",
-  "people.updateSuccess": "تم تحديث الشخص بنجاح",
-  "people.voters": "الناخبون"
+  "people.addPerson": {
+    "t": "إضافة شخص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.adult": {
+    "t": "بالغ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.youth": {
+    "t": "شاب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroupLabel": {
+    "t": "الفئة العمرية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.allPeople": {
+    "t": "جميع الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.area": {
+    "t": "المنطقة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bahaiId": {
+    "t": "المعرّف البهائي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkActions": {
+    "t": "الإجراءات المجمعة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteError": {
+    "t": "فشل في حذف بعض الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteMessage": {
+    "t": "هل أنت متأكد من أنك تريد حذف {count} أشخاص محددين؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteSuccess": {
+    "t": "تم حذف {count} شخص بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canReceiveVotes": {
+    "t": "يمكنه تلقي الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canVote": {
+    "t": "يمكنه التصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.candidates": {
+    "t": "المرشحون المؤهلون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.confirmBulkDelete": {
+    "t": "تأكيد الحذف المجمع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.createSuccess": {
+    "t": "تم إضافة الشخص بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteConfirm": {
+    "t": "هل أنت متأكد من أنك تريد حذف {name}؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteError": {
+    "t": "فشل في حذف الشخص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSelected": {
+    "t": "حذف المحدد ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSuccess": {
+    "t": "تم حذف الشخص بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.dropFileHere": {
+    "t": "أسقط الملف هنا أو انقر للرفع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.editPerson": {
+    "t": "تعديل شخص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.email": {
+    "t": "البريد الإلكتروني",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.emailInvalid": {
+    "t": "الرجاء إدخال بريد إلكتروني صالح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportError": {
+    "t": "فشل في تصدير الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportPeople": {
+    "t": "تصدير الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportSuccess": {
+    "t": "تم تصدير الأشخاص بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fileTooLarge": {
+    "t": "الملف كبير جدًا. يرجى رفع ملف أصغر من 10 ميجابايت.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.firstName": {
+    "t": "الاسم الأول",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fullName": {
+    "t": "الاسم الكامل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.action": {
+    "t": "الإجراء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.areaDesc": {
+    "t": "المنطقة الجغرافية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.bahaiIdDesc": {
+    "t": "رقم المعرّف البهائي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.clickToUpload": {
+    "t": "انقر للرفع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteAllPeople": {
+    "t": "تأكيد حذف جميع الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteFile": {
+    "t": "هل أنت متأكد من أنك تريد حذف هذا الملف؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.contentEncoding": {
+    "t": "ترميز المحتوى",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.currentPeopleCount": {
+    "t": "عدد الأشخاص الحالي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dataRows": {
+    "t": "صفوف البيانات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeople": {
+    "t": "حذف جميع الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleError": {
+    "t": "فشل في حذف جميع الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleMessage": {
+    "t": "هل أنت متأكد من أنك تريد حذف جميع الأشخاص من هذه الانتخابات؟ لا يمكن التراجع عن هذا الإجراء.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteFileError": {
+    "t": "فشل في حذف الملف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dropFile": {
+    "t": "أسقط الملف هنا أو",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.duplicateDesc": {
+    "t": "الشخص إدخال مكرر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityDesc": {
+    "t": "وصف حالة الأهلية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityValues": {
+    "t": "قيم حالة الأهلية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibleDesc": {
+    "t": "الشخص مؤهل للتصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.emailDesc": {
+    "t": "عنوان البريد الإلكتروني",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileName": {
+    "t": "اسم الملف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.filesOnServer": {
+    "t": "الملفات على الخادم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameDesc": {
+    "t": "الاسم الأول للشخص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameLastNameRequired": {
+    "t": "يجب ربط حقول الاسم الأول واسم العائلة للمتابعة مع الاستيراد.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headerAutoDetected": {
+    "t": "تم اكتشاف الرؤوس تلقائيًا في الصف {row}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLine": {
+    "t": "الرؤوس في السطر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLineTooltip": {
+    "t": "حدد الصف الذي يحتوي على رؤوس الأعمدة. يتم اكتشافه تلقائيًا لملفات Excel، ولكن يمكن تعديله إذا لزم الأمر.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ignore": {
+    "t": "(تجاهل)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importNow": {
+    "t": "استيراد الآن",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importResults": {
+    "t": "نتائج الاستيراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importStepDesc": {
+    "t": "سيتم تنفيذ خطوة الاستيراد في المرحلة التالية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importSummary": {
+    "t": "ملخص الاستيراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importing": {
+    "t": "استيراد الأشخاص...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ineligibleDesc": {
+    "t": "الشخص غير مؤهل للتصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.lastNameDesc": {
+    "t": "اسم عائلة الشخص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.loadFilesError": {
+    "t": "فشل في تحميل ملفات الاستيراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumns": {
+    "t": "ربط الأعمدة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumnsDesc": {
+    "t": "ربط أعمدة ملفك بحقول فَرْزَج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapTo": {
+    "t": "ربط بـ:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappedFields": {
+    "t": "الحقول المربوطة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappingSaved": {
+    "t": "تم حفظ ربط الأعمدة بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherActions": {
+    "t": "إجراءات أخرى",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherInfoDesc": {
+    "t": "معلومات إضافية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherLastNamesDesc": {
+    "t": "أسماء عائلة إضافية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherNamesDesc": {
+    "t": "أسماء أولى إضافية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleAdded": {
+    "t": "الأشخاص المضافون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleSkipped": {
+    "t": "الأشخاص المتجاهلون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.phoneDesc": {
+    "t": "رقم الهاتف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.preview": {
+    "t": "معاينة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reparse": {
+    "t": "إعادة التحليل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reviewImport": {
+    "t": "مراجعة والاستيراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.saveMapping": {
+    "t": "حفظ الربط",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.select": {
+    "t": "تحديد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.selected": {
+    "t": "محدد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.size": {
+    "t": "الحجم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.status": {
+    "t": "الحالة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step1": {
+    "t": "رفع ملف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step2": {
+    "t": "ربط الأعمدة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step3": {
+    "t": "استيراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.supportedFormats": {
+    "t": "التنسيقات المدعومة: CSV، TSV، TAB، TXT، XLSX (حد أقصى 10 ميجابايت)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJField": {
+    "t": "حقل فَرْزَج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJFields": {
+    "t": "مرجع حقول فَرْزَج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.timeElapsed": {
+    "t": "الوقت المستغرق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.title": {
+    "t": "استيراد أشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.underAgeDesc": {
+    "t": "الشخص دون سن التصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadError": {
+    "t": "فشل في رفع الملف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadFile": {
+    "t": "رفع ملف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadTime": {
+    "t": "وقت الرفع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.validationWarning": {
+    "t": "تحذير التحقق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.warnings": {
+    "t": "تحذيرات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importError": {
+    "t": "فشل في بدء الاستيراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importFormat": {
+    "t": "ارفع ملف CSV أو Excel بالأعمدة التالية:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importInstructions": {
+    "t": "تعليمات الاستيراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importOptionalFields": {
+    "t": "اختياري: البريد الإلكتروني، الهاتف، المنطقة، المعرّف البهائي، الأهلية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importPeople": {
+    "t": "استيراد أشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importRequiredFields": {
+    "t": "مطلوب: الاسم الأول، اسم العائلة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importStarted": {
+    "t": "بدأ الاستيراد. يرجى انتظار الإكمال.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importWarning": {
+    "t": "سيتم تحديث الأشخاص الموجودون بأسماء مطابقة. سيتم إنشاء أشخاص جدد.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.invalidFileType": {
+    "t": "نوع ملف غير صالح. يرجى رفع ملف CSV أو Excel.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCode": {
+    "t": "Kiosk Code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpired": {
+    "t": "This code has expired. Renew it before the voter logs in.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpires": {
+    "t": "Expires {time} ({minutes} min left).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerate": {
+    "t": "Make a kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerated": {
+    "t": "Kiosk code is ready to share.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNone": {
+    "t": "No kiosk code yet. Generate one when the voter is at the kiosk.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNote": {
+    "t": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeRenew": {
+    "t": "Renew kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastName": {
+    "t": "اسم العائلة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastNameRequired": {
+    "t": "اسم العائلة مطلوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.leaveElectionGroupError": {
+    "t": "فشل في مغادرة مجموعة الانتخابات:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.loadError": {
+    "t": "فشل في تحميل الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.management": {
+    "t": "إدارة الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phone": {
+    "t": "الهاتف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.recentSms": {
+    "t": "Recent SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogNoStatus": {
+    "t": "Sent",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogError": {
+    "t": "Error {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.saveError": {
+    "t": "فشل في حفظ الشخص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.search": {
+    "t": "البحث بالاسم أو البريد الإلكتروني أو المعرّف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.searchError": {
+    "t": "فشل في البحث عن الأشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.supportedFormats": {
+    "t": "التنسيقات المدعومة: CSV، XLS، XLSX (حد أقصى 10 ميجابايت)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.updateSuccess": {
+    "t": "تم تحديث الشخص بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.voters": {
+    "t": "الناخبون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

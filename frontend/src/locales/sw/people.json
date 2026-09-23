@@ -1,133 +1,657 @@
 {
-  "people.addPerson": "Ongeza Mtu",
-  "people.ageGroup.adult": "Mkubwa",
-  "people.ageGroup.youth": "Vijana",
-  "people.ageGroupLabel": "Kikundi cha Umri",
-  "people.allPeople": "Watu Wote",
-  "people.area": "Eneo",
-  "people.bahaiId": "Kitambulisho cha Baha'i",
-  "people.bulkActions": "Vitendo vya Wingi",
-  "people.bulkDeleteError": "Imeshindwa kufuta baadhi ya watu",
-  "people.bulkDeleteMessage": "Je, una uhakika unataka kufuta watu {count} wasiochaguliwa?",
-  "people.bulkDeleteSuccess": "{count} watu wamefutwa kwa mafanikio",
-  "people.canReceiveVotes": "Inaweza Kukubaliana na Kura",
-  "people.canVote": "Inaweza Kupiga Kura",
-  "people.candidates": "Wagombea Wasiofaa",
-  "people.confirmBulkDelete": "Thibitisha Kufuta kwa Wingi",
-  "people.createSuccess": "Mtu imeongezwa kwa mafanikio",
-  "people.deleteConfirm": "Je, una uhakika unataka kufuta {name}?",
-  "people.deleteError": "Imeshindwa kufuta mtu",
-  "people.deleteSelected": "Futa Vilivyochaguliwa ({count})",
-  "people.deleteSuccess": "Mtu amefutwa kwa mafanikio",
-  "people.dropFileHere": "Dondosha faili hapa au bofya ili kupakia",
-  "people.editPerson": "Hariri Mtu",
-  "people.email": "Barua pepe",
-  "people.emailInvalid": "Tafadhali weka barua pepe halali",
-  "people.exportError": "Imeshindwa kuhamisha watu",
-  "people.exportPeople": "Hamisha Watu",
-  "people.exportSuccess": "Watu wahamishwa kwa mafanikio",
-  "people.fileTooLarge": "Faili kubwa sana. Tafadhali pakia faili ndogo kuliko 10MB.",
-  "people.firstName": "Jina la Kwanza",
-  "people.fullName": "Jina Kamili",
-  "people.import.action": "Kitendo",
-  "people.import.areaDesc": "Eneo la kijiografia",
-  "people.import.bahaiIdDesc": "Nambari ya Kitambulisho cha Baha'i",
-  "people.import.clickToUpload": "bofya ili kupakia",
-  "people.import.confirmDeleteAllPeople": "Thibitisha Kufuta Watu Wote",
-  "people.import.confirmDeleteFile": "Je, una uhakika unataka kufuta faili hili?",
-  "people.import.contentEncoding": "Uingizaji wa Msimu",
-  "people.import.currentPeopleCount": "Idadi Sasa ya Watu",
-  "people.import.dataRows": "Safu Mlalo za Data",
-  "people.import.deleteAllPeople": "Futa Watu Wote",
-  "people.import.deleteAllPeopleError": "Imeshindwa kufuta watu wote",
-  "people.import.deleteAllPeopleMessage": "Je, una uhakika unataka kufuta watu wote kutoka kwenye uchaguzi huu? Kitendo hiki hakiwezi kutenduliwa.",
-  "people.import.deleteFileError": "Imeshindwa kufuta faili",
-  "people.import.dropFile": "Dondosha faili hapa au",
-  "people.import.duplicateDesc": "Mtu ni ingizo linalorudia",
-  "people.import.eligibilityDesc": "Maelezo ya hali ya ustahimilivu",
-  "people.import.eligibilityValues": "Thamani za Hali ya Ustahimilivu",
-  "people.import.eligibleDesc": "Mtu anakubaliana na kura",
-  "people.import.emailDesc": "Anwani ya barua pepe",
-  "people.import.fileName": "Jina la Faili",
-  "people.import.filesOnServer": "Faili kwenye Seva",
-  "people.import.firstNameDesc": "Jina la kwanza la mtu",
-  "people.import.firstNameLastNameRequired": "Sehemu za Jina la Kwanza na Jina la Ukoo lazima ziramaniwe kuendelea na kuagiza.",
-  "people.import.headerAutoDetected": "Vichwa vilichambua kwa otomatiki katika safu {row}",
-  "people.import.headersOnLine": "Vichwa kwenye Mstari",
-  "people.import.headersOnLineTooltip": "Bainisha safu ipi ina vichwa vya safuweka. Iliyoambua kwa otomatiki kwa faili za Excel, lakini inaweza kubadilishwa ikiwa inahitajika.",
-  "people.import.ignore": "(puuza)",
-  "people.import.importNow": "Agiza Sasa",
-  "people.import.importResults": "Ingiza Matokeo",
-  "people.import.importStepDesc": "Hatua ya kuagiza itatekelezwa katika awamu inayofuata",
-  "people.import.importSummary": "Muhtasari wa Kuagiza",
-  "people.import.importing": "Kuagiza Watu...",
-  "people.import.ineligibleDesc": "Mtu si sahihi kwa kura",
-  "people.import.lastNameDesc": "Jina la ukoo la mtu",
-  "people.import.loadFilesError": "Imeshindwa kupakia faili za kuagiza",
-  "people.import.mapColumns": "Ramani Safuweka",
-  "people.import.mapColumnsDesc": "Linganisha safu za faili yako na sehemu za HesabuJ",
-  "people.import.mapTo": "Ramani kwa:",
-  "people.import.mappedFields": "Sehemu Zilizoramaniwa",
-  "people.import.mappingSaved": "Ramani ya safuweka ilihifadhiwa kwa mafanikio",
-  "people.import.otherActions": "Vitendo Vingine",
-  "people.import.otherInfoDesc": "Taarifa za ziada",
-  "people.import.otherLastNamesDesc": "Majina ya ziada ya ukoo",
-  "people.import.otherNamesDesc": "Majina ya ziada ya kwanza",
-  "people.import.peopleAdded": "Watu Wameongezwa",
-  "people.import.peopleSkipped": "Watu Waliruka",
-  "people.import.phoneDesc": "Nambari ya simu",
-  "people.import.preview": "Kwa Macho",
-  "people.import.reparse": "Ramani Upya",
-  "people.import.reviewImport": "Angalia na Kuagiza",
-  "people.import.saveMapping": "Hifadhi Ramani",
-  "people.import.select": "Chagua",
-  "people.import.selected": "Kilichochaguliwa",
-  "people.import.size": "Ukubwa",
-  "people.import.status": "Hali",
-  "people.import.step1": "Pakia Faili",
-  "people.import.step2": "Ramani Safuweka",
-  "people.import.step3": "Ingiza",
-  "people.import.supportedFormats": "Miundo inayosaidika: CSV, TSV, TAB, TXT, XLSX (kiwango cha juu 10MB)",
-  "people.import.tallyJField": "Sehemu ya HesabuJ",
-  "people.import.tallyJFields": "Rejea ya Sehemu za HesabuJ",
-  "people.import.timeElapsed": "Wakati Uliyopita",
-  "people.import.title": "Ingiza Watu",
-  "people.import.underAgeDesc": "Mtu yuko chini ya umri wa kura",
-  "people.import.uploadError": "Imeshindwa kupakia faili",
-  "people.import.uploadFile": "Pakia Faili",
-  "people.import.uploadTime": "Wakati wa Upakia",
-  "people.import.validationWarning": "Onyo la Uthibitisho",
-  "people.import.warnings": "Onyo",
-  "people.importError": "Imeshindwa kuanza kuagiza",
-  "people.importFormat": "Pakia faili la CSV au Excel na safuweka zifuatazo:",
-  "people.importInstructions": "Maelezo ya Kuagiza",
-  "people.importOptionalFields": "Wa Mazuri: Barua Pepe, Simu, Eneo, Kitambulisho cha Baha'i, Ustahimilivu",
-  "people.importPeople": "Ingiza Watu",
-  "people.importRequiredFields": "Inayohitajika: Jina la Kwanza, Jina la Ukoo",
-  "people.importStarted": "Kuagiza kulianza. Tafadhali subiri kumaliziwa.",
-  "people.importWarning": "Watu wasiozaliwa wenye majina yanayolingana watasasishwa. Watu wapya wataundwa.",
-  "people.invalidFileType": "Aina ya faili isiyosahihi. Tafadhali pakia faili la CSV au Excel.",
-  "people.kioskCode": "Kiosk Code",
-  "people.kioskCodeExpired": "This code has expired. Renew it before the voter logs in.",
-  "people.kioskCodeExpires": "Expires {time} ({minutes} min left).",
-  "people.kioskCodeGenerate": "Make a kiosk code",
-  "people.kioskCodeGenerated": "Kiosk code is ready to share.",
-  "people.kioskCodeNone": "No kiosk code yet. Generate one when the voter is at the kiosk.",
-  "people.kioskCodeNote": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
-  "people.kioskCodeRenew": "Renew kiosk code",
-  "people.lastName": "Jina la Mwisho",
-  "people.lastNameRequired": "Jina la ukoo ni muhimu",
-  "people.leaveElectionGroupError": "Imeshindwa kuondoka katika kikundi cha uchaguzi:",
-  "people.loadError": "Imeshindwa kupakia watu",
-  "people.management": "Usimamizi wa Watu",
-  "people.phone": "Simu",
-  "people.phoneOnlineVoter.recentSms": "Recent SMS",
-  "people.phoneOnlineVoter.smsLogNoStatus": "Sent",
-  "people.phoneOnlineVoter.smsLogError": "Error {code}",
-  "people.saveError": "Imeshindwa kuhifadhi mtu",
-  "people.search": "Tafuta kwa jina, barua pepe, au kitambulisho",
-  "people.searchError": "Imeshindwa kutafuta watu",
-  "people.supportedFormats": "Miundo inayosaidika: CSV, XLS, XLSX (kiwango cha juu 10MB)",
-  "people.updateSuccess": "Mtu iliyosasishwa kwa mafanikio",
-  "people.voters": "Wapiga Kura"
+  "people.addPerson": {
+    "t": "Ongeza Mtu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.adult": {
+    "t": "Mkubwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.youth": {
+    "t": "Vijana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroupLabel": {
+    "t": "Kikundi cha Umri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.allPeople": {
+    "t": "Watu Wote",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.area": {
+    "t": "Eneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bahaiId": {
+    "t": "Kitambulisho cha Baha'i",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkActions": {
+    "t": "Vitendo vya Wingi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteError": {
+    "t": "Imeshindwa kufuta baadhi ya watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteMessage": {
+    "t": "Je, una uhakika unataka kufuta watu {count} wasiochaguliwa?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteSuccess": {
+    "t": "{count} watu wamefutwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canReceiveVotes": {
+    "t": "Inaweza Kukubaliana na Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canVote": {
+    "t": "Inaweza Kupiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.candidates": {
+    "t": "Wagombea Wasiofaa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.confirmBulkDelete": {
+    "t": "Thibitisha Kufuta kwa Wingi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.createSuccess": {
+    "t": "Mtu imeongezwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteConfirm": {
+    "t": "Je, una uhakika unataka kufuta {name}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteError": {
+    "t": "Imeshindwa kufuta mtu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSelected": {
+    "t": "Futa Vilivyochaguliwa ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSuccess": {
+    "t": "Mtu amefutwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.dropFileHere": {
+    "t": "Dondosha faili hapa au bofya ili kupakia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.editPerson": {
+    "t": "Hariri Mtu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.email": {
+    "t": "Barua pepe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.emailInvalid": {
+    "t": "Tafadhali weka barua pepe halali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportError": {
+    "t": "Imeshindwa kuhamisha watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportPeople": {
+    "t": "Hamisha Watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportSuccess": {
+    "t": "Watu wahamishwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fileTooLarge": {
+    "t": "Faili kubwa sana. Tafadhali pakia faili ndogo kuliko 10MB.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.firstName": {
+    "t": "Jina la Kwanza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fullName": {
+    "t": "Jina Kamili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.action": {
+    "t": "Kitendo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.areaDesc": {
+    "t": "Eneo la kijiografia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.bahaiIdDesc": {
+    "t": "Nambari ya Kitambulisho cha Baha'i",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.clickToUpload": {
+    "t": "bofya ili kupakia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteAllPeople": {
+    "t": "Thibitisha Kufuta Watu Wote",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteFile": {
+    "t": "Je, una uhakika unataka kufuta faili hili?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.contentEncoding": {
+    "t": "Uingizaji wa Msimu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.currentPeopleCount": {
+    "t": "Idadi Sasa ya Watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dataRows": {
+    "t": "Safu Mlalo za Data",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeople": {
+    "t": "Futa Watu Wote",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleError": {
+    "t": "Imeshindwa kufuta watu wote",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleMessage": {
+    "t": "Je, una uhakika unataka kufuta watu wote kutoka kwenye uchaguzi huu? Kitendo hiki hakiwezi kutenduliwa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteFileError": {
+    "t": "Imeshindwa kufuta faili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dropFile": {
+    "t": "Dondosha faili hapa au",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.duplicateDesc": {
+    "t": "Mtu ni ingizo linalorudia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityDesc": {
+    "t": "Maelezo ya hali ya ustahimilivu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityValues": {
+    "t": "Thamani za Hali ya Ustahimilivu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibleDesc": {
+    "t": "Mtu anakubaliana na kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.emailDesc": {
+    "t": "Anwani ya barua pepe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileName": {
+    "t": "Jina la Faili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.filesOnServer": {
+    "t": "Faili kwenye Seva",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameDesc": {
+    "t": "Jina la kwanza la mtu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameLastNameRequired": {
+    "t": "Sehemu za Jina la Kwanza na Jina la Ukoo lazima ziramaniwe kuendelea na kuagiza.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headerAutoDetected": {
+    "t": "Vichwa vilichambua kwa otomatiki katika safu {row}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLine": {
+    "t": "Vichwa kwenye Mstari",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLineTooltip": {
+    "t": "Bainisha safu ipi ina vichwa vya safuweka. Iliyoambua kwa otomatiki kwa faili za Excel, lakini inaweza kubadilishwa ikiwa inahitajika.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ignore": {
+    "t": "(puuza)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importNow": {
+    "t": "Agiza Sasa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importResults": {
+    "t": "Ingiza Matokeo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importStepDesc": {
+    "t": "Hatua ya kuagiza itatekelezwa katika awamu inayofuata",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importSummary": {
+    "t": "Muhtasari wa Kuagiza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importing": {
+    "t": "Kuagiza Watu...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ineligibleDesc": {
+    "t": "Mtu si sahihi kwa kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.lastNameDesc": {
+    "t": "Jina la ukoo la mtu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.loadFilesError": {
+    "t": "Imeshindwa kupakia faili za kuagiza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumns": {
+    "t": "Ramani Safuweka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumnsDesc": {
+    "t": "Linganisha safu za faili yako na sehemu za HesabuJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapTo": {
+    "t": "Ramani kwa:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappedFields": {
+    "t": "Sehemu Zilizoramaniwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappingSaved": {
+    "t": "Ramani ya safuweka ilihifadhiwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherActions": {
+    "t": "Vitendo Vingine",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherInfoDesc": {
+    "t": "Taarifa za ziada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherLastNamesDesc": {
+    "t": "Majina ya ziada ya ukoo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherNamesDesc": {
+    "t": "Majina ya ziada ya kwanza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleAdded": {
+    "t": "Watu Wameongezwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleSkipped": {
+    "t": "Watu Waliruka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.phoneDesc": {
+    "t": "Nambari ya simu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.preview": {
+    "t": "Kwa Macho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reparse": {
+    "t": "Ramani Upya",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reviewImport": {
+    "t": "Angalia na Kuagiza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.saveMapping": {
+    "t": "Hifadhi Ramani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.select": {
+    "t": "Chagua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.selected": {
+    "t": "Kilichochaguliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.size": {
+    "t": "Ukubwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.status": {
+    "t": "Hali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step1": {
+    "t": "Pakia Faili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step2": {
+    "t": "Ramani Safuweka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step3": {
+    "t": "Ingiza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.supportedFormats": {
+    "t": "Miundo inayosaidika: CSV, TSV, TAB, TXT, XLSX (kiwango cha juu 10MB)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJField": {
+    "t": "Sehemu ya HesabuJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJFields": {
+    "t": "Rejea ya Sehemu za HesabuJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.timeElapsed": {
+    "t": "Wakati Uliyopita",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.title": {
+    "t": "Ingiza Watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.underAgeDesc": {
+    "t": "Mtu yuko chini ya umri wa kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadError": {
+    "t": "Imeshindwa kupakia faili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadFile": {
+    "t": "Pakia Faili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadTime": {
+    "t": "Wakati wa Upakia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.validationWarning": {
+    "t": "Onyo la Uthibitisho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.warnings": {
+    "t": "Onyo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importError": {
+    "t": "Imeshindwa kuanza kuagiza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importFormat": {
+    "t": "Pakia faili la CSV au Excel na safuweka zifuatazo:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importInstructions": {
+    "t": "Maelezo ya Kuagiza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importOptionalFields": {
+    "t": "Wa Mazuri: Barua Pepe, Simu, Eneo, Kitambulisho cha Baha'i, Ustahimilivu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importPeople": {
+    "t": "Ingiza Watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importRequiredFields": {
+    "t": "Inayohitajika: Jina la Kwanza, Jina la Ukoo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importStarted": {
+    "t": "Kuagiza kulianza. Tafadhali subiri kumaliziwa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importWarning": {
+    "t": "Watu wasiozaliwa wenye majina yanayolingana watasasishwa. Watu wapya wataundwa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.invalidFileType": {
+    "t": "Aina ya faili isiyosahihi. Tafadhali pakia faili la CSV au Excel.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCode": {
+    "t": "Kiosk Code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpired": {
+    "t": "This code has expired. Renew it before the voter logs in.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpires": {
+    "t": "Expires {time} ({minutes} min left).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerate": {
+    "t": "Make a kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerated": {
+    "t": "Kiosk code is ready to share.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNone": {
+    "t": "No kiosk code yet. Generate one when the voter is at the kiosk.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNote": {
+    "t": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeRenew": {
+    "t": "Renew kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastName": {
+    "t": "Jina la Mwisho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastNameRequired": {
+    "t": "Jina la ukoo ni muhimu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.leaveElectionGroupError": {
+    "t": "Imeshindwa kuondoka katika kikundi cha uchaguzi:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.loadError": {
+    "t": "Imeshindwa kupakia watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.management": {
+    "t": "Usimamizi wa Watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phone": {
+    "t": "Simu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.recentSms": {
+    "t": "Recent SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogNoStatus": {
+    "t": "Sent",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogError": {
+    "t": "Error {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.saveError": {
+    "t": "Imeshindwa kuhifadhi mtu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.search": {
+    "t": "Tafuta kwa jina, barua pepe, au kitambulisho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.searchError": {
+    "t": "Imeshindwa kutafuta watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.supportedFormats": {
+    "t": "Miundo inayosaidika: CSV, XLS, XLSX (kiwango cha juu 10MB)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.updateSuccess": {
+    "t": "Mtu iliyosasishwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.voters": {
+    "t": "Wapiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

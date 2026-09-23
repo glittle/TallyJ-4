@@ -1,21 +1,97 @@
 {
-  "presentation.electionResults": "Election Results",
-  "presentation.positionsToFill": "{count} positions to fill",
-  "presentation.totalBallots": "{count} ballots",
-  "presentation.totalVotes": "{count} votes",
-  "presentation.electedPeople": "Elected",
-  "presentation.extraPeople": "Extra",
-  "presentation.votes": "{count} votes | {count} vote | {count} votes",
-  "presentation.ties": "Ties",
-  "presentation.tieGroup": "Tie Group #{group}",
-  "presentation.tieBreakRequired": "Tie-break required",
-  "presentation.noData": "No presentation data available",
-  "presentation.generatedAt": "Generated at {time}",
-  "presentation.statusComplete": "Complete",
-  "presentation.statusInProgress": "In Progress",
-  "presentation.statusPaused": "Paused",
-  "presentation.statusError": "Error",
-  "presentation.elected": "Elected",
-  "presentation.extra": "Extra",
-  "presentation.other": "Other"
+  "presentation.electionResults": {
+    "t": "Election Results",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.positionsToFill": {
+    "t": "{count} positions to fill",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.totalBallots": {
+    "t": "{count} ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.totalVotes": {
+    "t": "{count} votes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.electedPeople": {
+    "t": "Elected",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.extraPeople": {
+    "t": "Extra",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.votes": {
+    "t": "{count} votes | {count} vote | {count} votes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.ties": {
+    "t": "Ties",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.tieGroup": {
+    "t": "Tie Group #{group}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.tieBreakRequired": {
+    "t": "Tie-break required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.noData": {
+    "t": "No presentation data available",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.generatedAt": {
+    "t": "Generated at {time}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.statusComplete": {
+    "t": "Complete",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.statusInProgress": {
+    "t": "In Progress",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.statusPaused": {
+    "t": "Paused",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.statusError": {
+    "t": "Error",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.elected": {
+    "t": "Elected",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.extra": {
+    "t": "Extra",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "presentation.other": {
+    "t": "Other",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

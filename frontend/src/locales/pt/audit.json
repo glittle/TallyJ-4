@@ -1,36 +1,172 @@
 {
-  "audit.dialog.computerCode": "Código do Computador",
-  "audit.dialog.dateTime": "Data/Hora",
-  "audit.dialog.details": "Detalhes",
-  "audit.dialog.electionGuid": "GUID da Eleição",
-  "audit.dialog.hostAndVersion": "Host e Versão",
-  "audit.dialog.locationGuid": "GUID do Local",
-  "audit.dialog.rowId": "ID da Linha",
-  "audit.dialog.title": "Detalhes do Registro de Auditoria",
-  "audit.dialog.userId": "ID do Usuário",
-  "audit.filters.apply": "Aplicar Filtros",
-  "audit.filters.clear": "Limpar Filtros",
-  "audit.filters.computerCode": "Código do Computador",
-  "audit.filters.computerCodePlaceholder": "Filtrar por Código do Computador",
-  "audit.filters.electionGuid": "GUID da Eleição",
-  "audit.filters.electionGuidPlaceholder": "Filtrar por GUID da Eleição",
-  "audit.filters.endDate": "Data de Fim",
-  "audit.filters.endDatePlaceholder": "Data de Fim",
-  "audit.filters.locationGuid": "GUID do Local",
-  "audit.filters.locationGuidPlaceholder": "Filtrar por GUID do Local",
-  "audit.filters.search": "Pesquisar",
-  "audit.filters.searchPlaceholder": "Pesquisar em todos os campos",
-  "audit.filters.startDate": "Data de Início",
-  "audit.filters.startDatePlaceholder": "Data de Início",
-  "audit.filters.voterId": "ID do Eleitor",
-  "audit.filters.voterIdPlaceholder": "Filtrar por ID do Eleitor",
-  "audit.table.actions": "Ações",
-  "audit.table.computer": "Computador",
-  "audit.table.dateTime": "Data/Hora",
-  "audit.table.details": "Detalhes",
-  "audit.table.election": "Eleição",
-  "audit.table.userId": "ID do Usuário",
-  "audit.table.view": "Ver",
-  "audit.table.yes": "Sim",
-  "audit.title": "Registros de Auditoria"
+  "audit.dialog.computerCode": {
+    "t": "Código do Computador",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.dateTime": {
+    "t": "Data/Hora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.details": {
+    "t": "Detalhes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.electionGuid": {
+    "t": "GUID da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.hostAndVersion": {
+    "t": "Host e Versão",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.locationGuid": {
+    "t": "GUID do Local",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.rowId": {
+    "t": "ID da Linha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.title": {
+    "t": "Detalhes do Registro de Auditoria",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.userId": {
+    "t": "ID do Usuário",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.apply": {
+    "t": "Aplicar Filtros",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.clear": {
+    "t": "Limpar Filtros",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCode": {
+    "t": "Código do Computador",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCodePlaceholder": {
+    "t": "Filtrar por Código do Computador",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuid": {
+    "t": "GUID da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuidPlaceholder": {
+    "t": "Filtrar por GUID da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDate": {
+    "t": "Data de Fim",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDatePlaceholder": {
+    "t": "Data de Fim",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuid": {
+    "t": "GUID do Local",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuidPlaceholder": {
+    "t": "Filtrar por GUID do Local",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.search": {
+    "t": "Pesquisar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.searchPlaceholder": {
+    "t": "Pesquisar em todos os campos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDate": {
+    "t": "Data de Início",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDatePlaceholder": {
+    "t": "Data de Início",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterId": {
+    "t": "ID do Eleitor",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterIdPlaceholder": {
+    "t": "Filtrar por ID do Eleitor",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.actions": {
+    "t": "Ações",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.computer": {
+    "t": "Computador",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.dateTime": {
+    "t": "Data/Hora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.details": {
+    "t": "Detalhes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.election": {
+    "t": "Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.userId": {
+    "t": "ID do Usuário",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.view": {
+    "t": "Ver",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.yes": {
+    "t": "Sim",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.title": {
+    "t": "Registros de Auditoria",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,12 +1,52 @@
 {
-  "nav.auditLogs": "Audit Logs",
-  "nav.dashboard": "Dashboard",
-  "nav.elections": "Elections",
-  "nav.frontDesk": "Front Desk",
-  "nav.importBallots": "Import Ballots",
-  "nav.profile": "Profile",
-  "nav.superAdmin": "Super Admin",
-  "nav.superAdminUsers": "Login Accounts",
-  "nav.tellers": "Tellers",
-  "nav.votingLocations": "Voting Locations"
+  "nav.auditLogs": {
+    "t": "Audit Logs",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.dashboard": {
+    "t": "Dashboard",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.elections": {
+    "t": "Elections",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.frontDesk": {
+    "t": "Front Desk",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.importBallots": {
+    "t": "Import Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.profile": {
+    "t": "Profile",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.superAdmin": {
+    "t": "Super Admin",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.superAdminUsers": {
+    "t": "Login Accounts",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.tellers": {
+    "t": "Tellers",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.votingLocations": {
+    "t": "Voting Locations",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

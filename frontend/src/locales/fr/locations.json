@@ -1,47 +1,227 @@
 {
-  "locations.computer.browserInfo": "Info du navigateur",
-  "locations.computer.browserInfoHelp": "Détecté automatiquement depuis votre navigateur",
-  "locations.computer.browserInfoMaxLength": "Les informations du navigateur ne peuvent pas dépasser 250 caractères",
-  "locations.computer.browserInfoPlaceholder": "Informations du navigateur détectées automatiquement",
-  "locations.computer.cancel": "Annuler",
-  "locations.computer.code": "Code d'ordinateur",
-  "locations.computer.codeHelp": "Code à 2 caractères (par ex., AA, AB, A1). Laisser vide pour générer automatiquement.",
-  "locations.computer.codeInvalid": "Le code d'ordinateur doit être 2 lettres majuscules ou chiffres",
-  "locations.computer.codeLength": "Le code d'ordinateur doit contenir exactement 2 caractères",
-  "locations.computer.codePlaceholder": "AA (laisser vide pour générer automatiquement)",
-  "locations.computer.ipAddress": "Adresse IP",
-  "locations.computer.ipAddressHelp": "Optionnel : Adresse IP de l'ordinateur",
-  "locations.computer.ipAddressMaxLength": "L'adresse IP ne peut pas dépasser 50 caractères",
-  "locations.computer.ipAddressPlaceholder": "Optionnel : Entrer l'adresse IP",
-  "locations.computer.register": "Enregistrer",
-  "locations.computer.success": "Ordinateur enregistré avec succès",
-  "locations.computer.title": "Enregistrer l'ordinateur",
-  "locations.currentLocation": "Emplacement actuel",
-  "locations.form.cancel": "Annuler",
-  "locations.form.contactInfo": "Coordonnées",
-  "locations.form.contactInfoMaxLength": "Les coordonnées ne peuvent pas dépasser 250 caractères",
-  "locations.form.contactInfoPlaceholder": "Entrer les coordonnées",
-  "locations.form.create": "Créer",
-  "locations.form.created": "Emplacement créé avec succès",
-  "locations.form.latitude": "Latitude",
-  "locations.form.latitudeHelp": "Plage : -90 à 90",
-  "locations.form.latitudeInvalid": "La latitude doit être une coordonnée valide entre -90 et 90",
-  "locations.form.latitudePlaceholder": "par ex., 37.7749",
-  "locations.form.longitude": "Longitude",
-  "locations.form.longitudeHelp": "Plage : -180 à 180",
-  "locations.form.longitudeInvalid": "La longitude doit être une coordonnée valide entre -180 et 180",
-  "locations.form.longitudePlaceholder": "par ex., -122.4194",
-  "locations.form.name": "Nom de l'emplacement",
-  "locations.form.nameMaxLength": "Le nom de l'emplacement ne peut pas dépasser 50 caractères",
-  "locations.form.namePlaceholder": "Entrer le nom de l'emplacement",
-  "locations.form.nameRequired": "Le nom de l'emplacement est requis",
-  "locations.form.save": "Sauvegarder",
-  "locations.form.sortOrder": "Ordre de tri",
-  "locations.form.sortOrderHelp": "Utilisé pour ordonner les emplacements dans les listes",
-  "locations.form.sortOrderInvalid": "L'ordre de tri doit être un nombre",
-  "locations.form.titleAdd": "Ajouter un emplacement",
-  "locations.form.titleEdit": "Modifier l'emplacement",
-  "locations.form.updated": "Emplacement modifié avec succès",
-  "locations.locationSelected": "Emplacement sélectionné avec succès",
-  "locations.selectLocation": "Sélectionner l'emplacement"
+  "locations.computer.browserInfo": {
+    "t": "Info du navigateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoHelp": {
+    "t": "Détecté automatiquement depuis votre navigateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoMaxLength": {
+    "t": "Les informations du navigateur ne peuvent pas dépasser 250 caractères",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoPlaceholder": {
+    "t": "Informations du navigateur détectées automatiquement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.cancel": {
+    "t": "Annuler",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.code": {
+    "t": "Code d'ordinateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeHelp": {
+    "t": "Code à 2 caractères (par ex., AA, AB, A1). Laisser vide pour générer automatiquement.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeInvalid": {
+    "t": "Le code d'ordinateur doit être 2 lettres majuscules ou chiffres",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeLength": {
+    "t": "Le code d'ordinateur doit contenir exactement 2 caractères",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codePlaceholder": {
+    "t": "AA (laisser vide pour générer automatiquement)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddress": {
+    "t": "Adresse IP",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressHelp": {
+    "t": "Optionnel : Adresse IP de l'ordinateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressMaxLength": {
+    "t": "L'adresse IP ne peut pas dépasser 50 caractères",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressPlaceholder": {
+    "t": "Optionnel : Entrer l'adresse IP",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.register": {
+    "t": "Enregistrer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.success": {
+    "t": "Ordinateur enregistré avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.title": {
+    "t": "Enregistrer l'ordinateur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.currentLocation": {
+    "t": "Emplacement actuel",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.cancel": {
+    "t": "Annuler",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfo": {
+    "t": "Coordonnées",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoMaxLength": {
+    "t": "Les coordonnées ne peuvent pas dépasser 250 caractères",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoPlaceholder": {
+    "t": "Entrer les coordonnées",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.create": {
+    "t": "Créer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.created": {
+    "t": "Emplacement créé avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitude": {
+    "t": "Latitude",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeHelp": {
+    "t": "Plage : -90 à 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeInvalid": {
+    "t": "La latitude doit être une coordonnée valide entre -90 et 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudePlaceholder": {
+    "t": "par ex., 37.7749",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitude": {
+    "t": "Longitude",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeHelp": {
+    "t": "Plage : -180 à 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeInvalid": {
+    "t": "La longitude doit être une coordonnée valide entre -180 et 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudePlaceholder": {
+    "t": "par ex., -122.4194",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.name": {
+    "t": "Nom de l'emplacement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameMaxLength": {
+    "t": "Le nom de l'emplacement ne peut pas dépasser 50 caractères",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.namePlaceholder": {
+    "t": "Entrer le nom de l'emplacement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameRequired": {
+    "t": "Le nom de l'emplacement est requis",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.save": {
+    "t": "Sauvegarder",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrder": {
+    "t": "Ordre de tri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderHelp": {
+    "t": "Utilisé pour ordonner les emplacements dans les listes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderInvalid": {
+    "t": "L'ordre de tri doit être un nombre",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleAdd": {
+    "t": "Ajouter un emplacement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleEdit": {
+    "t": "Modifier l'emplacement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.updated": {
+    "t": "Emplacement modifié avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.locationSelected": {
+    "t": "Emplacement sélectionné avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.selectLocation": {
+    "t": "Sélectionner l'emplacement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

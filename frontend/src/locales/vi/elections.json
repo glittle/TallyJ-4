@@ -1,160 +1,792 @@
 {
-  "elections.advanceStage": "Tiến đến giai đoạn tiếp theo",
-  "elections.advanceTo": "Tiến đến {stage}",
-  "elections.ballots": "Phiếu Bầu",
-  "elections.bulkDeleteError": "Không thể xóa một số cuộc bầu cử",
-  "elections.bulkDeleteMessage": "Bạn có chắc muốn xóa {count} cuộc bầu cử đã chọn không?",
-  "elections.bulkDeleteSuccess": "Đã xóa thành công {count} cuộc bầu cử",
-  "elections.calculateTally": "Tính Toán Kết Quả",
-  "elections.clearFilters": "Xóa Bộ Lọc",
-  "elections.confirmAdvance": "Bạn có chắc muốn chuyển cuộc bầu cử này sang {stage} không?",
-  "elections.confirmBulkDelete": "Xác Nhận Xóa Hàng Loạt",
-  "elections.confirmRevert": "Bạn có chắc muốn quay cuộc bầu cử này về {stage} không?",
-  "elections.copyUrl": "Sao Chép URL",
-  "elections.createError": "Không thể tạo cuộc bầu cử",
-  "elections.createFirst": "Tạo Cuộc Bầu Cử Đầu Tiên",
-  "elections.createNew": "Tạo Cuộc Bầu Cử",
-  "elections.createSuccess": "Đã tạo cuộc bầu cử thành công",
-  "elections.date": "Ngày Bầu Cử",
-  "elections.deleteConfirm": "Bạn có chắc muốn xóa cuộc bầu cử này không? Hành động này không thể hoàn tác.",
-  "elections.deleteError": "Không thể xóa cuộc bầu cử",
-  "elections.deleteSelected": "Xóa Đã Chọn ({count})",
-  "elections.deleteSuccess": "Đã xóa cuộc bầu cử thành công",
-  "elections.details": "Chi Tiết Cuộc Bầu Cử",
-  "elections.edit": "Chỉnh Sửa Cuộc Bầu Cử",
-  "elections.electionModes.B": "Bầu Cử Bổ Sung",
-  "elections.electionModes.N": "Bầu Cử Thông Thường",
-  "elections.electionModes.T": "Phá Vỡ Hòa",
-  "elections.electionTypes.Con": "Đại Hội Đơn Vị",
-  "elections.electionTypes.LSA": "Hội Đồng Tinh Thần Địa Phương",
-  "elections.electionTypes.LSA1": "Hội Đồng Tinh Thần Địa Phương (Hai Giai Đoạn) Đơn Vị Địa Phương",
-  "elections.electionTypes.LSA2": "Hội Đồng Tinh Thần Địa Phương (Hai Giai Đoạn) Vòng Cuối",
-  "elections.electionTypes.NSA": "Hội Đồng Tinh Thần Quốc Gia",
-  "elections.electionTypes.Oth": "Khác",
-  "elections.electionTypes.Reg": "Hội Đồng Khu Vực",
-  "elections.exportElection": "Xuất cuộc bầu cử",
-  "elections.exportElectionError": "Xuất cuộc bầu cử thất bại",
-  "elections.exportElectionSuccess": "Xuất cuộc bầu cử thành công",
-  "elections.filterByStatus": "Lọc Theo Trạng Thái",
-  "elections.filterByType": "Lọc Theo Loại",
-  "elections.form.convenor": "Người Triệu Tập",
-  "elections.form.convenorPlaceholder": "Nhập tên người triệu tập",
-  "elections.form.customMethods": "Phương Pháp Tùy Chỉnh",
-  "elections.form.customMethodsHelp": "Chỉ định các phương pháp bỏ phiếu tùy chỉnh hoặc không chuẩn được sử dụng trong cuộc bầu cử này.",
-  "elections.form.customMethodsPlaceholder": "Mô tả các phương pháp bỏ phiếu tùy chỉnh",
-  "elections.form.date": "Ngày Bầu Cử",
-  "elections.form.datePlaceholder": "Chọn ngày bầu cử",
-  "elections.form.dateRequired": "Ngày bầu cử là bắt buộc",
-  "elections.form.electionMode": "Chế Độ Bầu Cử",
-  "elections.form.electionPasscode": "Mật Khẩu Bầu Cử",
-  "elections.form.electionPasscodeHelp": "Cần có mật khẩu để kiểm phiếu viên đăng nhập.",
-  "elections.form.electionPasscodePlaceholder": "Nhập mật khẩu",
-  "elections.form.emailFromAddress": "Địa Chỉ Email Gửi",
-  "elections.form.emailFromAddressPlaceholder": "Nhập địa chỉ email người gửi",
-  "elections.form.emailFromName": "Tên Người Gửi Email",
-  "elections.form.emailFromNamePlaceholder": "Nhập tên người gửi",
-  "elections.form.emailInvalid": "Địa chỉ email không hợp lệ",
-  "elections.form.emailSubject": "Tiêu Đề Email",
-  "elections.form.emailSubjectPlaceholder": "Nhập tiêu đề email",
-  "elections.form.emailText": "Nội Dung Email",
-  "elections.form.emailTextPlaceholder": "Nhập nội dung email",
-  "elections.form.flags": "Cờ",
-  "elections.form.flagsHelp": "Các cờ được sử dụng cho các điều kiện bầu cử đặc biệt.",
-  "elections.form.flagsPlaceholder": "Nhập các cờ",
-  "elections.form.hidePreBallotPages": "Ẩn Trang Trước Khi Bỏ Phiếu",
-  "elections.form.linkedElection": "Cuộc Bầu Cử Liên Kết",
-  "elections.form.linkedElectionCount": "{count} cuộc bầu cử liên kết có sẵn",
-  "elections.form.linkedElectionCount_plural": "{count} cuộc bầu cử liên kết có sẵn",
-  "elections.form.linkedElectionHelp": "Chọn một cuộc bầu cử để liên kết cho phá vỡ hòa hoặc bầu lại.",
-  "elections.form.linkedElectionKind": "Loại Cuộc Bầu Cử Liên Kết",
-  "elections.form.linkedElectionKindPlaceholder": "Chọn loại",
-  "elections.form.linkedElectionPlaceholder": "Chọn cuộc bầu cử liên kết",
-  "elections.form.listForPublic": "Hiển Thị Công Khai",
-  "elections.form.lockedByBallots": "Đã khóa — phiếu bầu đã được nhập",
-  "elections.form.maskVotingMethod": "Ẩn Phương Thức Bỏ Phiếu",
-  "elections.form.modePlaceholder": "Chọn chế độ bầu cử",
-  "elections.form.name": "Tên Cuộc Bầu Cử",
-  "elections.form.namePlaceholder": "Nhập tên cuộc bầu cử",
-  "elections.form.nameRequired": "Tên cuộc bầu cử là bắt buộc",
-  "elections.form.numberExtra": "Số Lượng Dự Phòng",
-  "elections.form.numberToElect": "Số Lượng Cần Bầu",
-  "elections.form.numberToElectRequired": "Số lượng cần bầu là bắt buộc",
-  "elections.form.onlineAnnounced": "Kết Quả Trực Tuyến Được Công Bố",
-  "elections.form.onlineAnnouncedPlaceholder": "Chọn thời gian công bố",
-  "elections.form.onlineCloseIsEstimate": "Thời Gian Đóng Là Ước Tính",
-  "elections.form.onlineSelectionProcess": "Quy Trình Chọn Lựa Trực Tuyến",
-  "elections.form.onlineSelectionProcessPlaceholder": "Chọn quy trình",
-  "elections.form.onlineWhenClose": "Bỏ Phiếu Trực Tuyến Đóng Lúc",
-  "elections.form.onlineWhenClosePlaceholder": "Chọn thời gian đóng",
-  "elections.form.onlineWhenOpen": "Bỏ Phiếu Trực Tuyến Mở Lúc",
-  "elections.form.onlineWhenOpenPlaceholder": "Chọn thời gian mở",
-  "elections.form.showAsTest": "Hiển Thị Là Thử Nghiệm",
-  "elections.form.showFullReport": "Hiển Thị Báo Cáo Đầy Đủ",
-  "elections.form.smsText": "Nội Dung SMS",
-  "elections.form.smsTextPlaceholder": "Nhập nội dung tin nhắn SMS",
-  "elections.form.type": "Loại Cuộc Bầu Cử",
-  "elections.form.typePlaceholder": "Chọn loại cuộc bầu cử",
-  "elections.form.typeRequired": "Loại cuộc bầu cử là bắt buộc",
-  "elections.form.useCallInButton": "Bật Bỏ Phiếu Qua Điện Thoại",
-  "elections.form.useKiosk": "Enable kiosk mode",
-  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
-  "elections.form.votingMethods": "Phương Thức Bỏ Phiếu",
-  "elections.form.votingMethodsHelp": "Chọn các phương thức bỏ phiếu sẽ được sử dụng.",
-  "elections.form.votingMethodsPlaceholder": "Chọn phương thức bỏ phiếu",
-  "elections.importCdnBallots": "Nhập phiếu bầu CDN",
-  "elections.importCdnBallotsError": "Nhập phiếu bầu CDN thất bại",
-  "elections.importCdnBallotsSuccess": "Nhập phiếu bầu CDN thành công",
-  "elections.importElection": "Nhập cuộc bầu cử",
-  "elections.importElectionError": "Nhập cuộc bầu cử thất bại",
-  "elections.importElectionSuccess": "Nhập cuộc bầu cử thành công",
-  "elections.list": "Danh Sách Cuộc Bầu Cử",
-  "elections.loadError": "Không thể tải cuộc bầu cử",
-  "elections.locations": "Địa Điểm",
-  "elections.manageBallots": "Quản Lý Phiếu Bầu",
-  "elections.manageLocations": "Quản Lý Địa Điểm",
-  "elections.managePeople": "Quản Lý Người Dân",
-  "elections.name": "Tên Cuộc Bầu Cử",
-  "elections.notFound": "Không tìm thấy cuộc bầu cử",
-  "elections.onlineVotingDisabled": "Bỏ phiếu trực tuyến đã bị tắt",
-  "elections.onlineVotingEnabled": "Bỏ phiếu trực tuyến đã được bật",
-  "elections.people": "Người Dân",
-  "elections.quickActions": "Hành Động Nhanh",
-  "elections.revertTo": "Trở về {stage}",
-  "elections.searchPlaceholder": "Tìm kiếm cuộc bầu cử theo tên hoặc người triệu tập...",
-  "elections.stage.Counting": "Đang đếm",
-  "elections.stage.Finalized": "Đã hoàn tất",
-  "elections.stage.Setup": "Thiết lập",
-  "elections.stageAdvanced": "Cuộc bầu cử đã chuyển đến {stage}",
-  "elections.stageChangeError": "Thay đổi giai đoạn bầu cử thất bại",
-  "elections.stageProgression": "Giai đoạn bầu cử",
-  "elections.stageReverted": "Cuộc bầu cử đã quay lại {stage}",
-  "elections.statistics": "Thống Kê",
-  "elections.status": "Trạng Thái",
-  "elections.tabs.advanced": "Nâng Cao",
-  "elections.tabs.auditLogs": "Nhật Ký Kiểm Tra",
-  "elections.tabs.ballots": "Phiếu Bầu",
-  "elections.tabs.basicInfo": "Thông Tin Cơ Bản",
-  "elections.tabs.communication": "Liên Lạc",
-  "elections.tabs.displayPrivacy": "Hiển Thị & Quyền Riêng Tư",
-  "elections.tabs.electionRules": "Quy Tắc Bầu Cử",
-  "elections.tabs.locations": "Địa Điểm",
-  "elections.tabs.onlineVoting": "Bỏ Phiếu Trực Tuyến",
-  "elections.tabs.people": "Người Dân",
-  "elections.tabs.results": "Kết Quả",
-  "elections.tabs.tellers": "Kiểm Phiếu Viên",
-  "elections.tabs.votingMethods": "Phương Thức Bỏ Phiếu",
-  "elections.tellerAccess": "Quyền Truy Cập Kiểm Phiếu Viên",
-  "elections.tellerAccessClosed": "Quyền truy cập kiểm phiếu viên đã đóng",
-  "elections.tellerAccessCode": "Mã Truy Cập",
-  "elections.tellerAccessOpen": "Quyền truy cập kiểm phiếu viên đang mở",
-  "elections.tellerAccessQrCode": "Mã QR",
-  "elections.tellerAccessUrl": "URL Có Thể Chia Sẻ",
-  "elections.toElect": "Cần Bầu",
-  "elections.toggleTellerAccess": "Bật/Tắt Quyền Truy Cập Kiểm Phiếu Viên",
-  "elections.type": "Loại",
-  "elections.updateError": "Không thể cập nhật cuộc bầu cử",
-  "elections.updateSuccess": "Đã cập nhật cuộc bầu cử thành công",
-  "elections.viewReports": "Xem Báo Cáo",
-  "elections.viewResults": "Xem Kết Quả",
-  "elections.voters": "Cử Tri"
+  "elections.advanceStage": {
+    "t": "Tiến đến giai đoạn tiếp theo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.advanceTo": {
+    "t": "Tiến đến {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ballots": {
+    "t": "Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteError": {
+    "t": "Không thể xóa một số cuộc bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteMessage": {
+    "t": "Bạn có chắc muốn xóa {count} cuộc bầu cử đã chọn không?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteSuccess": {
+    "t": "Đã xóa thành công {count} cuộc bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.calculateTally": {
+    "t": "Tính Toán Kết Quả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.clearFilters": {
+    "t": "Xóa Bộ Lọc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmAdvance": {
+    "t": "Bạn có chắc muốn chuyển cuộc bầu cử này sang {stage} không?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmBulkDelete": {
+    "t": "Xác Nhận Xóa Hàng Loạt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmRevert": {
+    "t": "Bạn có chắc muốn quay cuộc bầu cử này về {stage} không?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.copyUrl": {
+    "t": "Sao Chép URL",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createError": {
+    "t": "Không thể tạo cuộc bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createFirst": {
+    "t": "Tạo Cuộc Bầu Cử Đầu Tiên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createNew": {
+    "t": "Tạo Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createSuccess": {
+    "t": "Đã tạo cuộc bầu cử thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.date": {
+    "t": "Ngày Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteConfirm": {
+    "t": "Bạn có chắc muốn xóa cuộc bầu cử này không? Hành động này không thể hoàn tác.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteError": {
+    "t": "Không thể xóa cuộc bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSelected": {
+    "t": "Xóa Đã Chọn ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSuccess": {
+    "t": "Đã xóa cuộc bầu cử thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.details": {
+    "t": "Chi Tiết Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.edit": {
+    "t": "Chỉnh Sửa Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.B": {
+    "t": "Bầu Cử Bổ Sung",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.N": {
+    "t": "Bầu Cử Thông Thường",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.T": {
+    "t": "Phá Vỡ Hòa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Con": {
+    "t": "Đại Hội Đơn Vị",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA": {
+    "t": "Hội Đồng Tinh Thần Địa Phương",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA1": {
+    "t": "Hội Đồng Tinh Thần Địa Phương (Hai Giai Đoạn) Đơn Vị Địa Phương",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA2": {
+    "t": "Hội Đồng Tinh Thần Địa Phương (Hai Giai Đoạn) Vòng Cuối",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.NSA": {
+    "t": "Hội Đồng Tinh Thần Quốc Gia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Oth": {
+    "t": "Khác",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Reg": {
+    "t": "Hội Đồng Khu Vực",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElection": {
+    "t": "Xuất cuộc bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionError": {
+    "t": "Xuất cuộc bầu cử thất bại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionSuccess": {
+    "t": "Xuất cuộc bầu cử thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByStatus": {
+    "t": "Lọc Theo Trạng Thái",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByType": {
+    "t": "Lọc Theo Loại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenor": {
+    "t": "Người Triệu Tập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenorPlaceholder": {
+    "t": "Nhập tên người triệu tập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethods": {
+    "t": "Phương Pháp Tùy Chỉnh",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsHelp": {
+    "t": "Chỉ định các phương pháp bỏ phiếu tùy chỉnh hoặc không chuẩn được sử dụng trong cuộc bầu cử này.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsPlaceholder": {
+    "t": "Mô tả các phương pháp bỏ phiếu tùy chỉnh",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.date": {
+    "t": "Ngày Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.datePlaceholder": {
+    "t": "Chọn ngày bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.dateRequired": {
+    "t": "Ngày bầu cử là bắt buộc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionMode": {
+    "t": "Chế Độ Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscode": {
+    "t": "Mật Khẩu Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodeHelp": {
+    "t": "Cần có mật khẩu để kiểm phiếu viên đăng nhập.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodePlaceholder": {
+    "t": "Nhập mật khẩu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddress": {
+    "t": "Địa Chỉ Email Gửi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddressPlaceholder": {
+    "t": "Nhập địa chỉ email người gửi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromName": {
+    "t": "Tên Người Gửi Email",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromNamePlaceholder": {
+    "t": "Nhập tên người gửi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailInvalid": {
+    "t": "Địa chỉ email không hợp lệ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubject": {
+    "t": "Tiêu Đề Email",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubjectPlaceholder": {
+    "t": "Nhập tiêu đề email",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailText": {
+    "t": "Nội Dung Email",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailTextPlaceholder": {
+    "t": "Nhập nội dung email",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flags": {
+    "t": "Cờ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsHelp": {
+    "t": "Các cờ được sử dụng cho các điều kiện bầu cử đặc biệt.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsPlaceholder": {
+    "t": "Nhập các cờ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.hidePreBallotPages": {
+    "t": "Ẩn Trang Trước Khi Bỏ Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElection": {
+    "t": "Cuộc Bầu Cử Liên Kết",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount": {
+    "t": "{count} cuộc bầu cử liên kết có sẵn",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount_plural": {
+    "t": "{count} cuộc bầu cử liên kết có sẵn",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionHelp": {
+    "t": "Chọn một cuộc bầu cử để liên kết cho phá vỡ hòa hoặc bầu lại.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKind": {
+    "t": "Loại Cuộc Bầu Cử Liên Kết",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKindPlaceholder": {
+    "t": "Chọn loại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionPlaceholder": {
+    "t": "Chọn cuộc bầu cử liên kết",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.listForPublic": {
+    "t": "Hiển Thị Công Khai",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.lockedByBallots": {
+    "t": "Đã khóa — phiếu bầu đã được nhập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.maskVotingMethod": {
+    "t": "Ẩn Phương Thức Bỏ Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.modePlaceholder": {
+    "t": "Chọn chế độ bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.name": {
+    "t": "Tên Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.namePlaceholder": {
+    "t": "Nhập tên cuộc bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.nameRequired": {
+    "t": "Tên cuộc bầu cử là bắt buộc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberExtra": {
+    "t": "Số Lượng Dự Phòng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElect": {
+    "t": "Số Lượng Cần Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElectRequired": {
+    "t": "Số lượng cần bầu là bắt buộc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnounced": {
+    "t": "Kết Quả Trực Tuyến Được Công Bố",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnouncedPlaceholder": {
+    "t": "Chọn thời gian công bố",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineCloseIsEstimate": {
+    "t": "Thời Gian Đóng Là Ước Tính",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcess": {
+    "t": "Quy Trình Chọn Lựa Trực Tuyến",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessPlaceholder": {
+    "t": "Chọn quy trình",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClose": {
+    "t": "Bỏ Phiếu Trực Tuyến Đóng Lúc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClosePlaceholder": {
+    "t": "Chọn thời gian đóng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpen": {
+    "t": "Bỏ Phiếu Trực Tuyến Mở Lúc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpenPlaceholder": {
+    "t": "Chọn thời gian mở",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showAsTest": {
+    "t": "Hiển Thị Là Thử Nghiệm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showFullReport": {
+    "t": "Hiển Thị Báo Cáo Đầy Đủ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsText": {
+    "t": "Nội Dung SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsTextPlaceholder": {
+    "t": "Nhập nội dung tin nhắn SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.type": {
+    "t": "Loại Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typePlaceholder": {
+    "t": "Chọn loại cuộc bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typeRequired": {
+    "t": "Loại cuộc bầu cử là bắt buộc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useCallInButton": {
+    "t": "Bật Bỏ Phiếu Qua Điện Thoại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKiosk": {
+    "t": "Enable kiosk mode",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKioskHelp": {
+    "t": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethods": {
+    "t": "Phương Thức Bỏ Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsHelp": {
+    "t": "Chọn các phương thức bỏ phiếu sẽ được sử dụng.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsPlaceholder": {
+    "t": "Chọn phương thức bỏ phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallots": {
+    "t": "Nhập phiếu bầu CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsError": {
+    "t": "Nhập phiếu bầu CDN thất bại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsSuccess": {
+    "t": "Nhập phiếu bầu CDN thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElection": {
+    "t": "Nhập cuộc bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionError": {
+    "t": "Nhập cuộc bầu cử thất bại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionSuccess": {
+    "t": "Nhập cuộc bầu cử thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.list": {
+    "t": "Danh Sách Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.loadError": {
+    "t": "Không thể tải cuộc bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.locations": {
+    "t": "Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageBallots": {
+    "t": "Quản Lý Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageLocations": {
+    "t": "Quản Lý Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.managePeople": {
+    "t": "Quản Lý Người Dân",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.name": {
+    "t": "Tên Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.notFound": {
+    "t": "Không tìm thấy cuộc bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingDisabled": {
+    "t": "Bỏ phiếu trực tuyến đã bị tắt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingEnabled": {
+    "t": "Bỏ phiếu trực tuyến đã được bật",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.people": {
+    "t": "Người Dân",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.quickActions": {
+    "t": "Hành Động Nhanh",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.revertTo": {
+    "t": "Trở về {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.searchPlaceholder": {
+    "t": "Tìm kiếm cuộc bầu cử theo tên hoặc người triệu tập...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Counting": {
+    "t": "Đang đếm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Finalized": {
+    "t": "Đã hoàn tất",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Setup": {
+    "t": "Thiết lập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageAdvanced": {
+    "t": "Cuộc bầu cử đã chuyển đến {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError": {
+    "t": "Thay đổi giai đoạn bầu cử thất bại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageProgression": {
+    "t": "Giai đoạn bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageReverted": {
+    "t": "Cuộc bầu cử đã quay lại {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.statistics": {
+    "t": "Thống Kê",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.status": {
+    "t": "Trạng Thái",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.advanced": {
+    "t": "Nâng Cao",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.auditLogs": {
+    "t": "Nhật Ký Kiểm Tra",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.ballots": {
+    "t": "Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.basicInfo": {
+    "t": "Thông Tin Cơ Bản",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.communication": {
+    "t": "Liên Lạc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.displayPrivacy": {
+    "t": "Hiển Thị & Quyền Riêng Tư",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.electionRules": {
+    "t": "Quy Tắc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.locations": {
+    "t": "Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.onlineVoting": {
+    "t": "Bỏ Phiếu Trực Tuyến",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.people": {
+    "t": "Người Dân",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.results": {
+    "t": "Kết Quả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.tellers": {
+    "t": "Kiểm Phiếu Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.votingMethods": {
+    "t": "Phương Thức Bỏ Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccess": {
+    "t": "Quyền Truy Cập Kiểm Phiếu Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessClosed": {
+    "t": "Quyền truy cập kiểm phiếu viên đã đóng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessCode": {
+    "t": "Mã Truy Cập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessOpen": {
+    "t": "Quyền truy cập kiểm phiếu viên đang mở",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessQrCode": {
+    "t": "Mã QR",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessUrl": {
+    "t": "URL Có Thể Chia Sẻ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toElect": {
+    "t": "Cần Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toggleTellerAccess": {
+    "t": "Bật/Tắt Quyền Truy Cập Kiểm Phiếu Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.type": {
+    "t": "Loại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateError": {
+    "t": "Không thể cập nhật cuộc bầu cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateSuccess": {
+    "t": "Đã cập nhật cuộc bầu cử thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewReports": {
+    "t": "Xem Báo Cáo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewResults": {
+    "t": "Xem Kết Quả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.voters": {
+    "t": "Cử Tri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

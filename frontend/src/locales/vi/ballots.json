@@ -1,74 +1,362 @@
 {
-  "ballots.addBallot": "Thêm Phiếu Bầu",
-  "ballots.addNewPerson": "Thêm Người Mới",
-  "ballots.addVote": "Thêm Phiếu",
-  "ballots.cacheLoadError": "Không thể tải danh sách ứng cử viên",
-  "ballots.cacheLoading": "Đang tải ứng cử viên...",
-  "ballots.candidate": "Ứng Cử Viên",
-  "ballots.candidateRequired": "Ứng cử viên là bắt buộc",
-  "ballots.cdnImport.ballotsCreated": "Phiếu bầu đã tạo",
-  "ballots.cdnImport.button": "Nhập phiếu bầu CDN",
-  "ballots.cdnImport.description": "Tải lên tệp XML đã xuất từ CDN (Cơ sở dữ liệu quốc gia Canada) để nhập phiếu bầu và các phiếu tương ứng vào cuộc bầu cử này. Tệp sẽ được phân tích cú pháp và phiếu bầu sẽ được tạo cho mỗi mục hợp lệ, cùng với tất cả hồ sơ phiếu liên quan.",
-  "ballots.cdnImport.errors": "Lỗi",
-  "ballots.cdnImport.failed": "Nhập thất bại",
-  "ballots.cdnImport.importing": "Đang nhập...",
-  "ballots.cdnImport.skippedRows": "Số hàng đã bỏ qua",
-  "ballots.cdnImport.success": "Nhập thành công",
-  "ballots.cdnImport.title": "Nhập phiếu bầu CDN",
-  "ballots.cdnImport.totalRows": "Tổng số hàng đã xử lý",
-  "ballots.cdnImport.uploadPrompt": "Nhấp hoặc kéo tệp XML vào đây để tải lên",
-  "ballots.cdnImport.votesCreated": "Phiếu đã tạo",
-  "ballots.cdnImport.warnings": "Cảnh báo",
-  "ballots.cdnImport.xmlOnly": "Chỉ hỗ trợ tệp XML",
-  "ballots.checkSpelling": "Kiểm tra chính tả hoặc thử tên khác",
-  "ballots.clearAll": "Xóa Tất Cả",
-  "ballots.code": "Mã Phiếu Bầu",
-  "ballots.computer": "Máy Tính",
-  "ballots.computerRequired": "Mã máy tính là bắt buộc",
-  "ballots.createSuccess": "Đã tạo phiếu bầu thành công",
-  "ballots.deleteConfirm": "Bạn có chắc chắn muốn xóa phiếu bầu này không?",
-  "ballots.deleteError": "Không thể xóa phiếu bầu",
-  "ballots.deleteSuccess": "Đã xóa phiếu bầu thành công",
-  "ballots.deleteVoteConfirm": "Bạn có chắc chắn muốn xóa phiếu này không?",
-  "ballots.deleteVoteError": "Không thể xóa phiếu",
-  "ballots.deleteVoteSuccess": "Đã xóa phiếu thành công",
-  "ballots.duplicateWarning": "Trùng lặp: Người này đã được chọn",
-  "ballots.enterVotes": "Nhập Phiếu",
-  "ballots.entry": "Nhập Phiếu Bầu - {code}",
-  "ballots.entryPage": "Nhập Phiếu Bầu",
-  "ballots.ineligible": "Không Đủ Điều Kiện",
-  "ballots.loadError": "Không thể tải phiếu bầu",
-  "ballots.location": "Địa Điểm",
-  "ballots.locationRequired": "Địa điểm là bắt buộc",
-  "ballots.management": "Quản Lý Phiếu Bầu",
-  "ballots.noMatchesFound": "Không tìm thấy kết quả phù hợp",
-  "ballots.personUpdated": "{name} đã được cập nhật",
-  "ballots.position": "Vị Trí",
-  "ballots.positionRequired": "Vị trí là bắt buộc",
-  "ballots.saveBallot": "Lưu Phiếu Bầu",
-  "ballots.saveError": "Không thể lưu phiếu bầu",
-  "ballots.status": "Trạng Thái",
-  "ballots.statusValue.Dup": "Trùng Lặp",
-  "ballots.statusValue.Empty": "Trống",
-  "ballots.statusValue.New": "Mới",
-  "ballots.statusValue.Ok": "OK",
-  "ballots.statusValue.Raw": "Thô",
-  "ballots.statusValue.Review": "Xem Lại",
-  "ballots.statusValue.TooFew": "Quá Ít",
-  "ballots.statusValue.TooMany": "Quá Nhiều",
-  "ballots.statusValue.Verify": "Xác Minh",
-  "ballots.teller1": "Kiểm Phiếu Viên 1",
-  "ballots.teller2": "Kiểm Phiếu Viên 2",
-  "ballots.viewVotes": "Xem Phiếu",
-  "ballots.voteAddedError": "Không thể thêm phiếu",
-  "ballots.voteAddedSuccess": "Đã thêm phiếu thành công",
-  "ballots.voteCount": "Phiếu",
-  "ballots.voteCreateSuccess": "Đã thêm phiếu thành công",
-  "ballots.voteRemovedError": "Không thể xóa phiếu",
-  "ballots.voteRemovedSuccess": "Đã xóa phiếu thành công",
-  "ballots.voteSaveError": "Không thể lưu phiếu",
-  "ballots.voteSpoiledSuccess": "Đã thêm phiếu bị hỏng ({code} – người không đủ điều kiện)",
-  "ballots.votes": "Phiếu - {code}",
-  "ballots.votesEntered": "{count} trong số {max} phiếu đã nhập",
-  "ballots.votesList": "Danh Sách Phiếu"
+  "ballots.addBallot": {
+    "t": "Thêm Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addNewPerson": {
+    "t": "Thêm Người Mới",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addVote": {
+    "t": "Thêm Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoadError": {
+    "t": "Không thể tải danh sách ứng cử viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoading": {
+    "t": "Đang tải ứng cử viên...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidate": {
+    "t": "Ứng Cử Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidateRequired": {
+    "t": "Ứng cử viên là bắt buộc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.ballotsCreated": {
+    "t": "Phiếu bầu đã tạo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.button": {
+    "t": "Nhập phiếu bầu CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.description": {
+    "t": "Tải lên tệp XML đã xuất từ CDN (Cơ sở dữ liệu quốc gia Canada) để nhập phiếu bầu và các phiếu tương ứng vào cuộc bầu cử này. Tệp sẽ được phân tích cú pháp và phiếu bầu sẽ được tạo cho mỗi mục hợp lệ, cùng với tất cả hồ sơ phiếu liên quan.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.errors": {
+    "t": "Lỗi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.failed": {
+    "t": "Nhập thất bại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.importing": {
+    "t": "Đang nhập...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.skippedRows": {
+    "t": "Số hàng đã bỏ qua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.success": {
+    "t": "Nhập thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.title": {
+    "t": "Nhập phiếu bầu CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.totalRows": {
+    "t": "Tổng số hàng đã xử lý",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.uploadPrompt": {
+    "t": "Nhấp hoặc kéo tệp XML vào đây để tải lên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.votesCreated": {
+    "t": "Phiếu đã tạo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.warnings": {
+    "t": "Cảnh báo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.xmlOnly": {
+    "t": "Chỉ hỗ trợ tệp XML",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.checkSpelling": {
+    "t": "Kiểm tra chính tả hoặc thử tên khác",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.clearAll": {
+    "t": "Xóa Tất Cả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.code": {
+    "t": "Mã Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computer": {
+    "t": "Máy Tính",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computerRequired": {
+    "t": "Mã máy tính là bắt buộc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.createSuccess": {
+    "t": "Đã tạo phiếu bầu thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteConfirm": {
+    "t": "Bạn có chắc chắn muốn xóa phiếu bầu này không?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteError": {
+    "t": "Không thể xóa phiếu bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteSuccess": {
+    "t": "Đã xóa phiếu bầu thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteConfirm": {
+    "t": "Bạn có chắc chắn muốn xóa phiếu này không?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteError": {
+    "t": "Không thể xóa phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteSuccess": {
+    "t": "Đã xóa phiếu thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.duplicateWarning": {
+    "t": "Trùng lặp: Người này đã được chọn",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.enterVotes": {
+    "t": "Nhập Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entry": {
+    "t": "Nhập Phiếu Bầu - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entryPage": {
+    "t": "Nhập Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.ineligible": {
+    "t": "Không Đủ Điều Kiện",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.loadError": {
+    "t": "Không thể tải phiếu bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.location": {
+    "t": "Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.locationRequired": {
+    "t": "Địa điểm là bắt buộc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.management": {
+    "t": "Quản Lý Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.noMatchesFound": {
+    "t": "Không tìm thấy kết quả phù hợp",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.personUpdated": {
+    "t": "{name} đã được cập nhật",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.position": {
+    "t": "Vị Trí",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.positionRequired": {
+    "t": "Vị trí là bắt buộc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveBallot": {
+    "t": "Lưu Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveError": {
+    "t": "Không thể lưu phiếu bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.status": {
+    "t": "Trạng Thái",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Dup": {
+    "t": "Trùng Lặp",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Empty": {
+    "t": "Trống",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.New": {
+    "t": "Mới",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Ok": {
+    "t": "OK",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Raw": {
+    "t": "Thô",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Review": {
+    "t": "Xem Lại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooFew": {
+    "t": "Quá Ít",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooMany": {
+    "t": "Quá Nhiều",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Verify": {
+    "t": "Xác Minh",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller1": {
+    "t": "Kiểm Phiếu Viên 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller2": {
+    "t": "Kiểm Phiếu Viên 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.viewVotes": {
+    "t": "Xem Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedError": {
+    "t": "Không thể thêm phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedSuccess": {
+    "t": "Đã thêm phiếu thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCount": {
+    "t": "Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCreateSuccess": {
+    "t": "Đã thêm phiếu thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedError": {
+    "t": "Không thể xóa phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedSuccess": {
+    "t": "Đã xóa phiếu thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSaveError": {
+    "t": "Không thể lưu phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSpoiledSuccess": {
+    "t": "Đã thêm phiếu bị hỏng ({code} – người không đủ điều kiện)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votes": {
+    "t": "Phiếu - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesEntered": {
+    "t": "{count} trong số {max} phiếu đã nhập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesList": {
+    "t": "Danh Sách Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

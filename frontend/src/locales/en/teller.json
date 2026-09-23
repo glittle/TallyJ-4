@@ -1,23 +1,107 @@
 {
-  "teller.form.cancel": "Cancel",
-  "teller.form.create": "Create",
-  "teller.form.name": "Teller Name",
-  "teller.form.nameMaxLength": "Teller name cannot exceed 50 characters",
-  "teller.form.namePlaceholder": "Enter teller name",
-  "teller.form.nameRequired": "Teller name is required",
-  "teller.form.save": "Save",
-  "teller.form.saved": "Teller saved",
-  "teller.form.titleAdd": "Add Teller",
-  "teller.form.titleEdit": "Edit Teller",
-  "teller.editDrawerTitle": "Edit {name}",
-  "teller.form.delete": "Delete",
-  "teller.confirm.deleteTellerTitle": "Warning",
-  "teller.confirm.deleteTellerMessage": "Are you sure you want to delete teller \"{name}\"?",
-  "teller.confirm.delete": "Delete",
-  "teller.confirm.cancel": "Cancel",
-  "teller.success.tellerDeleted": "Teller deleted successfully",
-  "teller.active.typeToAdd": "Type to add your name if not listed",
-  "teller.active.teller1Placeholder": "Teller at keyboard",
-  "teller.active.teller2Placeholder": "Second teller (optional)",
-  "teller.active.hint": "Type a new name or pick from the list."
+  "teller.form.cancel": {
+    "t": "Cancel",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.create": {
+    "t": "Create",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.name": {
+    "t": "Teller Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "Teller name cannot exceed 50 characters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "Enter teller name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "Teller name is required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.save": {
+    "t": "Save",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.saved": {
+    "t": "Teller saved",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "Add Teller",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "Edit Teller",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.editDrawerTitle": {
+    "t": "Edit {name}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.delete": {
+    "t": "Delete",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.confirm.deleteTellerTitle": {
+    "t": "Warning",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.confirm.deleteTellerMessage": {
+    "t": "Are you sure you want to delete teller \"{name}\"?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.confirm.delete": {
+    "t": "Delete",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.confirm.cancel": {
+    "t": "Cancel",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.success.tellerDeleted": {
+    "t": "Teller deleted successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.active.typeToAdd": {
+    "t": "Type to add your name if not listed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.active.teller1Placeholder": {
+    "t": "Teller at keyboard",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.active.teller2Placeholder": {
+    "t": "Second teller (optional)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.active.hint": {
+    "t": "Type a new name or pick from the list.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

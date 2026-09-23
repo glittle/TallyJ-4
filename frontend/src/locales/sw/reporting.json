@@ -1,194 +1,962 @@
 {
-  "reporting.advancedFilters": "Vichujio vya Hali ya Juu",
-  "reporting.allCanReceive": "Watu ambao wanaweza kupigwa kura",
-  "reporting.applyFilters": "Tumia Vichujio",
-  "reporting.area": "Eneo",
-  "reporting.averageVotesPerBallot": "Average Votes per Ballot",
-  "reporting.bahaiId": "Kitambulisho cha Bahá'í",
-  "reporting.ballotCode": "Kura",
-  "reporting.ballotCount": "Hesabu ya Kura",
-  "reporting.ballotId": "Kitambulisho cha Kura",
-  "reporting.ballotLengthDistribution": "Mgawanyo wa Urefu wa Kura",
-  "reporting.ballotReport": "Ripoti ya Kura",
-  "reporting.ballotReports": "Ripoti za Kura",
-  "reporting.ballotsByMethod": "Kura kwa Njia ya Kupiga Kura",
-  "reporting.ballotsCast": "Kura Zilizopigwa",
-  "reporting.ballotsEntered": "Kura Zilizowekwa",
-  "reporting.calledIn": "Kupiga Simu",
-  "reporting.canReceiveVotes": "Inaweza Kukubaliana na Kura",
-  "reporting.canVote": "Inaweza Kupiga Kura",
-  "reporting.candidate": "Mgombea",
-  "reporting.candidateName": "Jina la Mgombea",
-  "reporting.candidatePerformance": "Utendaji wa Mgombea",
-  "reporting.candidateVotes": "Kura za Mgombea",
-  "reporting.candidates": "Wagombea",
-  "reporting.category": "Kategoria",
-  "reporting.change": "Badilisha",
-  "reporting.charts": "Chati",
-  "reporting.clearFilters": "Futa Vichujio",
-  "reporting.comparisonSummary": "Muhtasari wa Ulinganisho",
-  "reporting.configureReport": "Sanidi Ripoti",
-  "reporting.contender": "Mshindani",
-  "reporting.convenor": "Mwamuzi",
-  "reporting.count": "Hesabu",
-  "reporting.cumulativeTurnout": "Mahudhurio ya Jumla",
-  "reporting.customReport": "Ripoti Maalum",
-  "reporting.date": "Tarehe",
-  "reporting.dateOfElection": "Tarehe ya Uchaguzi",
-  "reporting.dateRange": "Kipindi cha Tarehe",
-  "reporting.demographicBreakdown": "Uchambuzi wa Idadi ya Watu",
-  "reporting.description": "Maelezo",
-  "reporting.detailedStatistics": "Takwimu za Kina",
-  "reporting.droppedOff": "Kumwaga",
-  "reporting.earlyVoting": "Upigaji Kura wa Mapema",
-  "reporting.earlyVotingPercentage": "Early Voting %",
-  "reporting.elected": "Kuchaguliwa",
-  "reporting.electedCandidates": "Wagombea Waliochaguliwa",
-  "reporting.electedPersons": "Kuchaguliwa",
-  "reporting.election": "Uchaguzi",
-  "reporting.electionDate": "Tarehe ya Uchaguzi",
-  "reporting.electionDayVoting": "Upigaji Kura wa Siku ya Uchaguzi",
-  "reporting.electionDetails": "Maelezo ya Uchaguzi",
-  "reporting.electionName": "Jina la Uchaguzi",
-  "reporting.electionOverview": "Muhtasari wa Uchaguzi",
-  "reporting.electionSummary": "Muhtasari wa Uchaguzi",
-  "reporting.electionType": "Aina ya Uchaguzi",
-  "reporting.eligibilityReason": "Sababu ya Ustahimilivu",
-  "reporting.eliminated": "Ameondolewa",
-  "reporting.email": "Barua pepe",
-  "reporting.endDate": "Tarehe ya Mwisho",
-  "reporting.enterCandidateName": "Ingiza Jina la Mgombea",
-  "reporting.enterDescription": "Ingiza Maelezo",
-  "reporting.enterReportName": "Ingiza Jina la Ripoti",
-  "reporting.error": "Imeshindwa kupakia ripoti",
-  "reporting.exportCSV": "Hamisha CSV",
-  "reporting.exportExcel": "Hamisha Excel",
-  "reporting.exportFormats": "Muundo wa Kuhamisha",
-  "reporting.exportPDF": "Hamisha PDF",
-  "reporting.extra": "Ziada",
-  "reporting.extraCandidates": "Wagombea wa Ziada",
-  "reporting.firstChoice": "First Choice %",
-  "reporting.firstName": "Jina la Kwanza",
-  "reporting.firstTimeVoters": "Wapigakura wa Mara ya Kwanza",
-  "reporting.flags": "Bendera",
-  "reporting.generateComparison": "Tengeneza Ulinganisho",
-  "reporting.generateCustomReport": "Tengeneza Ripoti Maalum",
-  "reporting.generateReport": "Tengeneza Ripoti",
-  "reporting.groupN": "Kikundi {n}",
-  "reporting.hasSignedInEmail": "Iliyosaini (Barua Pepe)",
-  "reporting.hasSignedInPhone": "Iliyosaini (Simu)",
-  "reporting.historicalComparison": "Ulinganisho wa Kihistoria",
-  "reporting.imported": "Kuagiza",
-  "reporting.inPerson": "Kijidudu",
-  "reporting.inPersonVoters": "Wapigakura wa Ana kwa Ana",
-  "reporting.includeSections": "Jumuisha Sehemu",
-  "reporting.lastName": "Jina la Ukoo",
-  "reporting.loading": "Kupakia ripoti...",
-  "reporting.location": "Eneo",
-  "reporting.locationReport": "Ripoti ya Mahali",
-  "reporting.locationStatistics": "Takwimu za Mahali",
-  "reporting.locations": "Maeneo",
-  "reporting.mailedIn": "Inatumwa",
-  "reporting.matchingNames": "Majina Yanayolingana kwenye Matokeo",
-  "reporting.maxVotesOnBallot": "Kura Nyingi Zaidi kwenye Kura",
-  "reporting.metricsToCompare": "Vigezo vya Kulinganisha",
-  "reporting.minVotesOnBallot": "Kura Chache Zaidi kwenye Kura",
-  "reporting.name": "Jina",
-  "reporting.no": "Hapana",
-  "reporting.noBallots": "Hakuna kura iliyopatikana kwa kichujio hiki.",
-  "reporting.noChanges": "Hakuna rekodi za watu zilizobadilika iliyopatikana.",
-  "reporting.noDuplicates": "Hakuna kura zinazorudi iliyopatikana.",
-  "reporting.noEmails": "Hakuna rekodi za barua pepe/simu iliyopatikana.",
-  "reporting.noFlags": "Hakuna bendera za ujumbe zilizofafanuliwa.",
-  "reporting.noNonEligible": "Hakuna watu wenye hali ya ustahimilivu iliyopatikana.",
-  "reporting.noSpoiledVotes": "Hakuna kura zilizooza iliyopatikana.",
-  "reporting.numBallots": "Nambari ya Kura",
-  "reporting.numEligibleToVote": "Nambari ya Wasiofaa Kupiga Kura",
-  "reporting.online": "Mtandaoni",
-  "reporting.onlineKiosk": "Mtandaoni/Kiosk",
-  "reporting.onlineStatus": "Hali",
-  "reporting.onlineVoters": "Wapigakura Mtandaoni",
-  "reporting.other": "Nyingine",
-  "reporting.otherInfo": "Taarifa Nyingine",
-  "reporting.otherLastNames": "Majina Mengine ya Ukoo",
-  "reporting.otherNames": "Majina Mengine",
-  "reporting.overallTurnout": "Mahudhurio ya Jumla",
-  "reporting.overallTurnoutSummary": "Muhtasari wa Mahudhurio ya Jumla",
-  "reporting.participationRates": "Viwango vya Ushiriki",
-  "reporting.percentParticipation": "Ushiriki",
-  "reporting.percentage": "Asilimia",
-  "reporting.performance": "Utendaji",
-  "reporting.phone": "Simu",
-  "reporting.positionsToElect": "Nafasi za Kuchagua",
-  "reporting.print": "Chapisha",
-  "reporting.printHint": "Baadhi ya kivinjari, kama vile Chrome, vinaweza kuunda nakala ya PDF ya ripoti wakati wa kuchapisha.",
-  "reporting.rank": "Kiwango",
-  "reporting.reason": "Sababu",
-  "reporting.registeredVoters": "Wapigakura Waliosajiliwa",
-  "reporting.registrationLog": "Batli ya Usajili",
-  "reporting.registrationTime": "Wakati wa Usajili",
-  "reporting.reportGenerated": "Ripoti iliyoundwa kwa mafanikio",
-  "reporting.reportGenerationError": "Failed to generate report",
-  "reporting.reportName": "Jina la Ripoti",
-  "reporting.returningVoters": "Wapigakura Wanaorudi",
-  "reporting.section": "Sehemu",
-  "reporting.selectElections": "Chagua Chaguzi",
-  "reporting.selectElectionsToCompare": "Chagua Chaguzi za Kulinganisha",
-  "reporting.selectLocations": "Chagua Maeneo",
-  "reporting.selectMultipleElections": "Chagua Chaguzi Nyingi",
-  "reporting.selectReport": "Select Report Type",
-  "reporting.selectReportType": "Choose a report to generate",
-  "reporting.selectSortBy": "Select Sort By",
-  "reporting.sortBy": "Panga kwa",
-  "reporting.spoiledBallots": "Kura Zilizooza",
-  "reporting.spoiledVotes": "Kura Zilizooza",
-  "reporting.startDate": "Tarehe ya Kuanza",
-  "reporting.statistics": "Takwimu",
-  "reporting.status": "Hali",
-  "reporting.sumOfEnvelopesCollected": "Kura Jumla Zilizopigiwa (ikiwa na mahesabu ya mikono)",
-  "reporting.summary": "Muhtasari",
-  "reporting.summaryReport": "Muhtasari wa Uchaguzi",
-  "reporting.summaryStats": "Takwimu za Muhtasari",
-  "reporting.teller1": "Mahesabu 1",
-  "reporting.teller2": "Mahesabu 2",
-  "reporting.tieGroup": "Kundi la Sare {group}",
-  "reporting.tieNote": "* Mahesabu ya kuvunja ratiba yanaonyeshwa baada ya /",
-  "reporting.ties": "Sare",
-  "reporting.timeBasedTurnout": "Mahudhurio Kulingana na Muda",
-  "reporting.timePeriod": "Kipindi cha Muda",
-  "reporting.title": "Election Reports",
-  "reporting.to": "hadi",
-  "reporting.topCandidates": "Wagombea Bora",
-  "reporting.total": "Jumla",
-  "reporting.totalBallots": "Kura Jumla",
-  "reporting.totalBallotsCast": "Jumla ya Kura Zilizopigwa",
-  "reporting.totalEligible": "Msiofaa",
-  "reporting.totalVoters": "Total Voters",
-  "reporting.totalVotersHeader": "Wapiga Kura Jumla",
-  "reporting.totalVotes": "Kura Jumla",
-  "reporting.turnout": "Washiriki",
-  "reporting.turnoutAnalysis": "Uchambuzi wa Mahudhurio",
-  "reporting.turnoutByLocation": "Mahudhurio kwa Mahali",
-  "reporting.turnoutOverTime": "Mahudhurio kwa Muda",
-  "reporting.turnoutPercentage": "Turnout %",
-  "reporting.turnoutRange": "Kipindi cha Mahudhurio",
-  "reporting.validBallots": "Kura Sahihi",
-  "reporting.value": "Thamani",
-  "reporting.voteDistribution": "Mgawanyo wa Kura",
-  "reporting.votePercentage": "Vote %",
-  "reporting.voteRange": "Kipindi cha Kura",
-  "reporting.voteTime": "Muda wa Kura",
-  "reporting.voted": "Amepiga Kura",
-  "reporting.voterName": "Jina la Mpigakura",
-  "reporting.voterReport": "Ripoti ya Mpiga Kura",
-  "reporting.voterReports": "Ripoti za Wapiga Kura",
-  "reporting.voterTurnout": "Mahudhurio ya Wapigakura",
-  "reporting.votes": "Kura",
-  "reporting.votesOnBallot": "Kura kwenye kura hii",
-  "reporting.votesPerBallot": "Votes per Ballot",
-  "reporting.votingMethod": "Njia ya Kupiga Kura",
-  "reporting.whenEmail": "Barua Pepe Imetumwa",
-  "reporting.whenPhone": "Simu Imetumwa",
-  "reporting.whenStatus": "Wakati",
-  "reporting.yes": "Ndiyo"
+  "reporting.advancedFilters": {
+    "t": "Vichujio vya Hali ya Juu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.allCanReceive": {
+    "t": "Watu ambao wanaweza kupigwa kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.applyFilters": {
+    "t": "Tumia Vichujio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.area": {
+    "t": "Eneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.averageVotesPerBallot": {
+    "t": "Average Votes per Ballot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.bahaiId": {
+    "t": "Kitambulisho cha Bahá'í",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCode": {
+    "t": "Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCount": {
+    "t": "Hesabu ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotId": {
+    "t": "Kitambulisho cha Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotLengthDistribution": {
+    "t": "Mgawanyo wa Urefu wa Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReport": {
+    "t": "Ripoti ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReports": {
+    "t": "Ripoti za Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsByMethod": {
+    "t": "Kura kwa Njia ya Kupiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsCast": {
+    "t": "Kura Zilizopigwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsEntered": {
+    "t": "Kura Zilizowekwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.calledIn": {
+    "t": "Kupiga Simu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canReceiveVotes": {
+    "t": "Inaweza Kukubaliana na Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canVote": {
+    "t": "Inaweza Kupiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidate": {
+    "t": "Mgombea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateName": {
+    "t": "Jina la Mgombea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidatePerformance": {
+    "t": "Utendaji wa Mgombea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateVotes": {
+    "t": "Kura za Mgombea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidates": {
+    "t": "Wagombea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.category": {
+    "t": "Kategoria",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.change": {
+    "t": "Badilisha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.charts": {
+    "t": "Chati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.clearFilters": {
+    "t": "Futa Vichujio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.comparisonSummary": {
+    "t": "Muhtasari wa Ulinganisho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.configureReport": {
+    "t": "Sanidi Ripoti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.contender": {
+    "t": "Mshindani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.convenor": {
+    "t": "Mwamuzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.count": {
+    "t": "Hesabu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.cumulativeTurnout": {
+    "t": "Mahudhurio ya Jumla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.customReport": {
+    "t": "Ripoti Maalum",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.date": {
+    "t": "Tarehe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateOfElection": {
+    "t": "Tarehe ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateRange": {
+    "t": "Kipindi cha Tarehe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.demographicBreakdown": {
+    "t": "Uchambuzi wa Idadi ya Watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.description": {
+    "t": "Maelezo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.detailedStatistics": {
+    "t": "Takwimu za Kina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.droppedOff": {
+    "t": "Kumwaga",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVoting": {
+    "t": "Upigaji Kura wa Mapema",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVotingPercentage": {
+    "t": "Early Voting %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.elected": {
+    "t": "Kuchaguliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedCandidates": {
+    "t": "Wagombea Waliochaguliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedPersons": {
+    "t": "Kuchaguliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.election": {
+    "t": "Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDate": {
+    "t": "Tarehe ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDayVoting": {
+    "t": "Upigaji Kura wa Siku ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDetails": {
+    "t": "Maelezo ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionName": {
+    "t": "Jina la Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionOverview": {
+    "t": "Muhtasari wa Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionSummary": {
+    "t": "Muhtasari wa Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionType": {
+    "t": "Aina ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eligibilityReason": {
+    "t": "Sababu ya Ustahimilivu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eliminated": {
+    "t": "Ameondolewa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.email": {
+    "t": "Barua pepe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.endDate": {
+    "t": "Tarehe ya Mwisho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterCandidateName": {
+    "t": "Ingiza Jina la Mgombea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterDescription": {
+    "t": "Ingiza Maelezo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterReportName": {
+    "t": "Ingiza Jina la Ripoti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.error": {
+    "t": "Imeshindwa kupakia ripoti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportCSV": {
+    "t": "Hamisha CSV",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportExcel": {
+    "t": "Hamisha Excel",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportFormats": {
+    "t": "Muundo wa Kuhamisha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportPDF": {
+    "t": "Hamisha PDF",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extra": {
+    "t": "Ziada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extraCandidates": {
+    "t": "Wagombea wa Ziada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstChoice": {
+    "t": "First Choice %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstName": {
+    "t": "Jina la Kwanza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstTimeVoters": {
+    "t": "Wapigakura wa Mara ya Kwanza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.flags": {
+    "t": "Bendera",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateComparison": {
+    "t": "Tengeneza Ulinganisho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateCustomReport": {
+    "t": "Tengeneza Ripoti Maalum",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateReport": {
+    "t": "Tengeneza Ripoti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.groupN": {
+    "t": "Kikundi {n}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInEmail": {
+    "t": "Iliyosaini (Barua Pepe)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInPhone": {
+    "t": "Iliyosaini (Simu)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.historicalComparison": {
+    "t": "Ulinganisho wa Kihistoria",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.imported": {
+    "t": "Kuagiza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPerson": {
+    "t": "Kijidudu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPersonVoters": {
+    "t": "Wapigakura wa Ana kwa Ana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.includeSections": {
+    "t": "Jumuisha Sehemu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.lastName": {
+    "t": "Jina la Ukoo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.loading": {
+    "t": "Kupakia ripoti...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.location": {
+    "t": "Eneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationReport": {
+    "t": "Ripoti ya Mahali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationStatistics": {
+    "t": "Takwimu za Mahali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locations": {
+    "t": "Maeneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.mailedIn": {
+    "t": "Inatumwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.matchingNames": {
+    "t": "Majina Yanayolingana kwenye Matokeo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.maxVotesOnBallot": {
+    "t": "Kura Nyingi Zaidi kwenye Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.metricsToCompare": {
+    "t": "Vigezo vya Kulinganisha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.minVotesOnBallot": {
+    "t": "Kura Chache Zaidi kwenye Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.name": {
+    "t": "Jina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.no": {
+    "t": "Hapana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noBallots": {
+    "t": "Hakuna kura iliyopatikana kwa kichujio hiki.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noChanges": {
+    "t": "Hakuna rekodi za watu zilizobadilika iliyopatikana.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noDuplicates": {
+    "t": "Hakuna kura zinazorudi iliyopatikana.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noEmails": {
+    "t": "Hakuna rekodi za barua pepe/simu iliyopatikana.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noFlags": {
+    "t": "Hakuna bendera za ujumbe zilizofafanuliwa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noNonEligible": {
+    "t": "Hakuna watu wenye hali ya ustahimilivu iliyopatikana.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noSpoiledVotes": {
+    "t": "Hakuna kura zilizooza iliyopatikana.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numBallots": {
+    "t": "Nambari ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numEligibleToVote": {
+    "t": "Nambari ya Wasiofaa Kupiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.online": {
+    "t": "Mtandaoni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineKiosk": {
+    "t": "Mtandaoni/Kiosk",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineStatus": {
+    "t": "Hali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineVoters": {
+    "t": "Wapigakura Mtandaoni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.other": {
+    "t": "Nyingine",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherInfo": {
+    "t": "Taarifa Nyingine",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherLastNames": {
+    "t": "Majina Mengine ya Ukoo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherNames": {
+    "t": "Majina Mengine",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnout": {
+    "t": "Mahudhurio ya Jumla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnoutSummary": {
+    "t": "Muhtasari wa Mahudhurio ya Jumla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.participationRates": {
+    "t": "Viwango vya Ushiriki",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentParticipation": {
+    "t": "Ushiriki",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentage": {
+    "t": "Asilimia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.performance": {
+    "t": "Utendaji",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.phone": {
+    "t": "Simu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.positionsToElect": {
+    "t": "Nafasi za Kuchagua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.print": {
+    "t": "Chapisha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.printHint": {
+    "t": "Baadhi ya kivinjari, kama vile Chrome, vinaweza kuunda nakala ya PDF ya ripoti wakati wa kuchapisha.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.rank": {
+    "t": "Kiwango",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reason": {
+    "t": "Sababu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registeredVoters": {
+    "t": "Wapigakura Waliosajiliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationLog": {
+    "t": "Batli ya Usajili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationTime": {
+    "t": "Wakati wa Usajili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerated": {
+    "t": "Ripoti iliyoundwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerationError": {
+    "t": "Failed to generate report",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportName": {
+    "t": "Jina la Ripoti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.returningVoters": {
+    "t": "Wapigakura Wanaorudi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.section": {
+    "t": "Sehemu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElections": {
+    "t": "Chagua Chaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElectionsToCompare": {
+    "t": "Chagua Chaguzi za Kulinganisha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectLocations": {
+    "t": "Chagua Maeneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectMultipleElections": {
+    "t": "Chagua Chaguzi Nyingi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReport": {
+    "t": "Select Report Type",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReportType": {
+    "t": "Choose a report to generate",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectSortBy": {
+    "t": "Select Sort By",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sortBy": {
+    "t": "Panga kwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledBallots": {
+    "t": "Kura Zilizooza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledVotes": {
+    "t": "Kura Zilizooza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.startDate": {
+    "t": "Tarehe ya Kuanza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.statistics": {
+    "t": "Takwimu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.status": {
+    "t": "Hali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sumOfEnvelopesCollected": {
+    "t": "Kura Jumla Zilizopigiwa (ikiwa na mahesabu ya mikono)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summary": {
+    "t": "Muhtasari",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryReport": {
+    "t": "Muhtasari wa Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryStats": {
+    "t": "Takwimu za Muhtasari",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller1": {
+    "t": "Mahesabu 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller2": {
+    "t": "Mahesabu 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieGroup": {
+    "t": "Kundi la Sare {group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieNote": {
+    "t": "* Mahesabu ya kuvunja ratiba yanaonyeshwa baada ya /",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ties": {
+    "t": "Sare",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timeBasedTurnout": {
+    "t": "Mahudhurio Kulingana na Muda",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timePeriod": {
+    "t": "Kipindi cha Muda",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.title": {
+    "t": "Election Reports",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.to": {
+    "t": "hadi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.topCandidates": {
+    "t": "Wagombea Bora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.total": {
+    "t": "Jumla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallots": {
+    "t": "Kura Jumla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallotsCast": {
+    "t": "Jumla ya Kura Zilizopigwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalEligible": {
+    "t": "Msiofaa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVoters": {
+    "t": "Total Voters",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotersHeader": {
+    "t": "Wapiga Kura Jumla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotes": {
+    "t": "Kura Jumla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnout": {
+    "t": "Washiriki",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutAnalysis": {
+    "t": "Uchambuzi wa Mahudhurio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutByLocation": {
+    "t": "Mahudhurio kwa Mahali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutOverTime": {
+    "t": "Mahudhurio kwa Muda",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutPercentage": {
+    "t": "Turnout %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutRange": {
+    "t": "Kipindi cha Mahudhurio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.validBallots": {
+    "t": "Kura Sahihi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.value": {
+    "t": "Thamani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteDistribution": {
+    "t": "Mgawanyo wa Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votePercentage": {
+    "t": "Vote %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteRange": {
+    "t": "Kipindi cha Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteTime": {
+    "t": "Muda wa Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voted": {
+    "t": "Amepiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterName": {
+    "t": "Jina la Mpigakura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReport": {
+    "t": "Ripoti ya Mpiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReports": {
+    "t": "Ripoti za Wapiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterTurnout": {
+    "t": "Mahudhurio ya Wapigakura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votes": {
+    "t": "Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesOnBallot": {
+    "t": "Kura kwenye kura hii",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesPerBallot": {
+    "t": "Votes per Ballot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votingMethod": {
+    "t": "Njia ya Kupiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenEmail": {
+    "t": "Barua Pepe Imetumwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenPhone": {
+    "t": "Simu Imetumwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenStatus": {
+    "t": "Wakati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.yes": {
+    "t": "Ndiyo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

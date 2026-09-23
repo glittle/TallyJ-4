@@ -1,64 +1,312 @@
 {
-  "monitoring.acceptAll.button": "Accept all pending online ballots",
-  "monitoring.acceptAll.buttonShort": "Accept pending",
-  "monitoring.acceptAll.complete": "Accepted {accepted} pending online ballot(s).",
-  "monitoring.acceptAll.confirmMessage": "Accept {pending} pending online ballot(s) now?\n\nThis creates regular ballots as if a teller typed them from paper, then wipes the online vote content. It cannot be undone. Those voters will not be able to change those votes.\n\nOnline voting can stay open. Only ballots that are pending right now are accepted. You can run Accept all again later for any new pending ballots.",
-  "monitoring.acceptAll.confirmTitle": "Accept pending online ballots?",
-  "monitoring.acceptAll.finalized": "Cannot accept online ballots after the election is finalized.",
-  "monitoring.acceptAll.inProgress": "Another Accept all is already running for this election.",
-  "monitoring.acceptAll.none": "There are no pending online ballots to accept.",
-  "monitoring.acceptAll.nonePending": "No pending online ballots to accept.",
-  "monitoring.acceptAll.history": "Accept-all record",
-  "monitoring.acceptAll.when": "When",
-  "monitoring.acceptAll.who": "Accepted by",
-  "monitoring.acceptAll.pendingBefore": "Pending before",
-  "monitoring.acceptAll.pendingAfter": "Pending after",
-  "monitoring.acceptAll.acceptedBefore": "Accepted before",
-  "monitoring.acceptAll.acceptedAfter": "Accepted after",
-  "monitoring.acceptAll.noHistory": "No Accept-all runs yet.",
-  "monitoring.activeComputers": "Active computers",
-  "monitoring.ballotsEntered": "Ballots entered",
-  "monitoring.computerCode": "Computer",
-  "monitoring.computers": "Computers",
-  "monitoring.lastContact": "Last contact",
-  "monitoring.lastUpdated": "Last updated {time}",
-  "monitoring.location": "Location",
-  "monitoring.locations": "Locations",
-  "monitoring.noData": "No monitor data",
-  "monitoring.onlineVoting": "Online voting",
-  "monitoring.onlineWindow.title": "Closing",
-  "monitoring.onlineWindow.open": "Open",
-  "monitoring.onlineWindow.closed": "Closed",
-  "monitoring.onlineWindow.closingSoon": "Closing soon",
-  "monitoring.onlineWindow.noCloseTime": "No closing time set.",
-  "monitoring.onlineWindow.remainingClock": "{clock} remaining",
-  "monitoring.onlineWindow.scheduleCloseIn5Minutes": "Schedule close in 5 minutes",
-  "monitoring.onlineWindow.closeNow": "Close now",
-  "monitoring.onlineWindow.openFor5Minutes": "Open for 5 minutes",
-  "monitoring.onlineWindow.saved": "Online voting close time saved.",
-  "monitoring.connectedOnlineVoters.title": "Connected online voters",
-  "monitoring.connectedOnlineVoters.sessions": "Ballot-page sessions",
-  "monitoring.connectedOnlineVoters.note": "Anonymous count of online voter sessions currently on this election's ballot page. Names are not shown. This is not a count of ballots being built — composing is not stored until submit.",
-  "monitoring.ballotsByMethod.title": "Ballots by voting method",
-  "monitoring.ballotsByMethod.note": "People counted by the method recorded at Front Desk. Online also includes accepted online ballots that have no other method. Counts only.",
-  "monitoring.ballotsByMethod.inPerson": "In person",
-  "monitoring.ballotsByMethod.mailed": "Mailed",
-  "monitoring.ballotsByMethod.droppedOff": "Dropped off",
-  "monitoring.ballotsByMethod.kiosk": "Kiosk",
-  "monitoring.ballotsByMethod.online": "Online",
-  "monitoring.onlineBallots.breakdownTitle": "Pending vs accepted",
-  "monitoring.onlineBallots.countsOnly": "Counts only. Names are not shown. Ballot-page sessions are live connections, not ballots being built — composing is not stored until submit.",
-  "monitoring.onlineBallots.votedAnotherWay": "Pending, voted another way",
-  "monitoring.onlineBallots.status.Processed": "Accepted",
-  "monitoring.onlineBallots.status.Processing": "Processing",
-  "monitoring.onlineBallots.status.Submitted": "Still changeable",
-  "monitoring.onlineBallots.status.unknown": "Unknown",
-  "monitoring.pendingOnlineBallots": "Pending",
-  "monitoring.processedOnlineBallots": "Accepted",
-  "monitoring.registeredVoters": "Registered voters",
-  "monitoring.status": "Status",
-  "monitoring.totalBallots": "Total ballots",
-  "monitoring.totalOnlineBallots": "Online ballots",
-  "monitoring.totalVotes": "Total votes",
-  "monitoring.turnout": "Turnout"
+  "monitoring.acceptAll.button": {
+    "t": "Accept all pending online ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.buttonShort": {
+    "t": "Accept pending",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.complete": {
+    "t": "Accepted {accepted} pending online ballot(s).",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.confirmMessage": {
+    "t": "Accept {pending} pending online ballot(s) now?\n\nThis creates regular ballots as if a teller typed them from paper, then wipes the online vote content. It cannot be undone. Those voters will not be able to change those votes.\n\nOnline voting can stay open. Only ballots that are pending right now are accepted. You can run Accept all again later for any new pending ballots.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.confirmTitle": {
+    "t": "Accept pending online ballots?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.finalized": {
+    "t": "Cannot accept online ballots after the election is finalized.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.inProgress": {
+    "t": "Another Accept all is already running for this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.none": {
+    "t": "There are no pending online ballots to accept.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.nonePending": {
+    "t": "No pending online ballots to accept.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.history": {
+    "t": "Accept-all record",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.when": {
+    "t": "When",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.who": {
+    "t": "Accepted by",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.pendingBefore": {
+    "t": "Pending before",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.pendingAfter": {
+    "t": "Pending after",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.acceptedBefore": {
+    "t": "Accepted before",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.acceptedAfter": {
+    "t": "Accepted after",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.acceptAll.noHistory": {
+    "t": "No Accept-all runs yet.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.activeComputers": {
+    "t": "Active computers",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.ballotsEntered": {
+    "t": "Ballots entered",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.computerCode": {
+    "t": "Computer",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.computers": {
+    "t": "Computers",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.lastContact": {
+    "t": "Last contact",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.lastUpdated": {
+    "t": "Last updated {time}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.location": {
+    "t": "Location",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.locations": {
+    "t": "Locations",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.noData": {
+    "t": "No monitor data",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineVoting": {
+    "t": "Online voting",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineWindow.title": {
+    "t": "Closing",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineWindow.open": {
+    "t": "Open",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineWindow.closed": {
+    "t": "Closed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineWindow.closingSoon": {
+    "t": "Closing soon",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineWindow.noCloseTime": {
+    "t": "No closing time set.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineWindow.remainingClock": {
+    "t": "{clock} remaining",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineWindow.scheduleCloseIn5Minutes": {
+    "t": "Schedule close in 5 minutes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineWindow.closeNow": {
+    "t": "Close now",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineWindow.openFor5Minutes": {
+    "t": "Open for 5 minutes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineWindow.saved": {
+    "t": "Online voting close time saved.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.connectedOnlineVoters.title": {
+    "t": "Connected online voters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.connectedOnlineVoters.sessions": {
+    "t": "Ballot-page sessions",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.connectedOnlineVoters.note": {
+    "t": "Anonymous count of online voter sessions currently on this election's ballot page. Names are not shown. This is not a count of ballots being built — composing is not stored until submit.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.ballotsByMethod.title": {
+    "t": "Ballots by voting method",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.ballotsByMethod.note": {
+    "t": "People counted by the method recorded at Front Desk. Online also includes accepted online ballots that have no other method. Counts only.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.ballotsByMethod.inPerson": {
+    "t": "In person",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.ballotsByMethod.mailed": {
+    "t": "Mailed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.ballotsByMethod.droppedOff": {
+    "t": "Dropped off",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.ballotsByMethod.kiosk": {
+    "t": "Kiosk",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.ballotsByMethod.online": {
+    "t": "Online",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineBallots.breakdownTitle": {
+    "t": "Pending vs accepted",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineBallots.countsOnly": {
+    "t": "Counts only. Names are not shown. Ballot-page sessions are live connections, not ballots being built — composing is not stored until submit.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineBallots.votedAnotherWay": {
+    "t": "Pending, voted another way",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineBallots.status.Processed": {
+    "t": "Accepted",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineBallots.status.Processing": {
+    "t": "Processing",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineBallots.status.Submitted": {
+    "t": "Still changeable",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.onlineBallots.status.unknown": {
+    "t": "Unknown",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.pendingOnlineBallots": {
+    "t": "Pending",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.processedOnlineBallots": {
+    "t": "Accepted",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.registeredVoters": {
+    "t": "Registered voters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.status": {
+    "t": "Status",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.totalBallots": {
+    "t": "Total ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.totalOnlineBallots": {
+    "t": "Online ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.totalVotes": {
+    "t": "Total votes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "monitoring.turnout": {
+    "t": "Turnout",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

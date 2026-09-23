@@ -1,35 +1,167 @@
 {
-  "results.allResults": "Все результаты",
-  "results.ballotsReceived": "Полученные бюллетени",
-  "results.calculateTally": "Рассчитать итоги",
-  "results.calculatedAt": "Рассчитано {date}",
-  "results.candidate": "Кандидат",
-  "results.closeToNext": "Близко к следующему",
-  "results.elected": "Избранный",
-  "results.extra": "Дополнительный",
-  "results.flags": "Флаги",
-  "results.loadError": "Не удалось загрузить результаты",
-  "results.monitor": "Монитор выборов",
-  "results.noResults": "Результаты недоступны. Сначала рассчитайте итоги.",
-  "results.noTies": "Ничьи не обнаружены",
-  "results.numberToElect": "Количество для избрания",
-  "results.other": "Другой",
-  "results.presentation": "Вид презентации",
-  "results.rank": "Ранг",
-  "results.reporting": "Отчёты",
-  "results.section": "Раздел",
-  "results.spoiledBallots": "Испорченные бюллетени",
-  "results.tieBreakAlert": "Внимание: Некоторые ничьи требуют ручного разрыва",
-  "results.tieBreakMessage": "Для этой группы требуется разрыв ничьей, поскольку она охватывает границы разделов",
-  "results.tieBreakRequired": "Требуется разрыв ничьей",
-  "results.tieGroup": "Группа ничьей #{group}",
-  "results.tieManagement": "Управление ничьими",
-  "results.tied": "В ничьей",
-  "results.tiedCandidates": "Кандидаты в ничьей",
-  "results.ties": "Ничьи",
-  "results.title": "Результаты выборов",
-  "results.totalBallots": "Всего бюллетеней",
-  "results.totalVotes": "Всего голосов",
-  "results.validVotes": "Действительные голоса",
-  "results.votes": "Голоса"
+  "results.allResults": {
+    "t": "Все результаты",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ballotsReceived": {
+    "t": "Полученные бюллетени",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculateTally": {
+    "t": "Рассчитать итоги",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculatedAt": {
+    "t": "Рассчитано {date}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.candidate": {
+    "t": "Кандидат",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.closeToNext": {
+    "t": "Близко к следующему",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.elected": {
+    "t": "Избранный",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.extra": {
+    "t": "Дополнительный",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.flags": {
+    "t": "Флаги",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.loadError": {
+    "t": "Не удалось загрузить результаты",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.monitor": {
+    "t": "Монитор выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noResults": {
+    "t": "Результаты недоступны. Сначала рассчитайте итоги.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noTies": {
+    "t": "Ничьи не обнаружены",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.numberToElect": {
+    "t": "Количество для избрания",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.other": {
+    "t": "Другой",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.presentation": {
+    "t": "Вид презентации",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.rank": {
+    "t": "Ранг",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.reporting": {
+    "t": "Отчёты",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.section": {
+    "t": "Раздел",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.spoiledBallots": {
+    "t": "Испорченные бюллетени",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakAlert": {
+    "t": "Внимание: Некоторые ничьи требуют ручного разрыва",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakMessage": {
+    "t": "Для этой группы требуется разрыв ничьей, поскольку она охватывает границы разделов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakRequired": {
+    "t": "Требуется разрыв ничьей",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieGroup": {
+    "t": "Группа ничьей #{group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieManagement": {
+    "t": "Управление ничьими",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tied": {
+    "t": "В ничьей",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tiedCandidates": {
+    "t": "Кандидаты в ничьей",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ties": {
+    "t": "Ничьи",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.title": {
+    "t": "Результаты выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalBallots": {
+    "t": "Всего бюллетеней",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalVotes": {
+    "t": "Всего голосов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.validVotes": {
+    "t": "Действительные голоса",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.votes": {
+    "t": "Голоса",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

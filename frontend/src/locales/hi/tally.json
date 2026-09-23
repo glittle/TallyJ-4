@@ -1,20 +1,92 @@
 {
-  "tally.calculate": "गणना करें",
-  "tally.calculateError": "गणना करने में विफल",
-  "tally.calculateSuccess": "गणना सफलतापूर्वक की गई",
-  "tally.calculatingProgress": "गणना प्रगति",
-  "tally.normalElection": "सामान्य चुनाव",
-  "tally.processedBallots": "प्रोसेस किए गए मतपत्र",
-  "tally.resultsPreview": "परिणाम पूर्वावलोकन (शीर्ष 10)",
-  "tally.section.elected": "निर्वाचित",
-  "tally.section.extra": "अतिरिक्त",
-  "tally.section.other": "अन्य",
-  "tally.singleNameElection": "एकल नाम चुनाव",
-  "tally.title": "गणना करें",
-  "tally.viewFullResults": "पूर्ण परिणाम देखें",
-  "tally.warning": "चेतावनी",
-  "tally.warningMessage": "गणना करने से मौजूदा परिणाम अधिलेखित हो जाएंगे। यह क्रिया पूर्ववत नहीं की जा सकती।",
-  "tally.section.E": "निर्वाचित",
-  "tally.section.X": "अतिरिक्त",
-  "tally.section.O": "अन्य"
+  "tally.calculate": {
+    "t": "गणना करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateError": {
+    "t": "गणना करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "गणना सफलतापूर्वक की गई",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "गणना प्रगति",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.normalElection": {
+    "t": "सामान्य चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.processedBallots": {
+    "t": "प्रोसेस किए गए मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.resultsPreview": {
+    "t": "परिणाम पूर्वावलोकन (शीर्ष 10)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.elected": {
+    "t": "निर्वाचित",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.extra": {
+    "t": "अतिरिक्त",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.other": {
+    "t": "अन्य",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.singleNameElection": {
+    "t": "एकल नाम चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.title": {
+    "t": "गणना करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.viewFullResults": {
+    "t": "पूर्ण परिणाम देखें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warning": {
+    "t": "चेतावनी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warningMessage": {
+    "t": "गणना करने से मौजूदा परिणाम अधिलेखित हो जाएंगे। यह क्रिया पूर्ववत नहीं की जा सकती।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.E": {
+    "t": "निर्वाचित",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.X": {
+    "t": "अतिरिक्त",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.O": {
+    "t": "अन्य",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

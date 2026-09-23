@@ -1,25 +1,117 @@
 {
-  "import.completed": "Uvoz uspješno završen",
-  "import.currentStatus": "Stanje: {status}",
-  "import.errorCount": "Pogreške: {count}",
-  "import.errors.batchSaveFailed": "Skupno spremanje nije uspjelo: {message}",
-  "import.errors.duplicateBahaiId": "Redak {rowNumber}: Duplicirani Bahájski ID '{bahaiId}'",
-  "import.errors.duplicateEmail": "Redak {rowNumber}: Duplicirana e-pošta '{email}'",
-  "import.errors.duplicateName": "Redak {rowNumber}: Duplicirano ime '{firstName} {lastName}'",
-  "import.errors.duplicatePhone": "Redak {rowNumber}: Duplicirani telefon '{phone}'",
-  "import.errors.fileNotFound": "Datoteka za uvoz nije pronađena ili nema sadržaja",
-  "import.errors.importFailed": "Uvoz nije uspio: {message}",
-  "import.errors.importFailedAtLine": "Uvoz nije uspio u retku {rowNumber}: {message}",
-  "import.errors.invalidMappings": "Nevažeća mapiranja stupaca",
-  "import.errors.lineError": "Redak {rowNumber}: {message}",
-  "import.errors.missingFirstName": "Redak {rowNumber}: Nedostaje ime",
-  "import.errors.missingLastName": "Redak {rowNumber}: Nedostaje prezime",
-  "import.errors.missingRequiredMappings": "Mapiranja za Ime i Prezime su obavezna",
-  "import.errors.noMappings": "Nije konfigurirano nijedno mapiranje stupaca",
-  "import.errorsTitle": "Pogreške uvoza",
-  "import.moreErrors": "i još {count} pogrešaka...",
-  "import.processingRows": "Obrađuju se redovi {processed} od {total}",
-  "import.progressTitle": "Napredak uvoza",
-  "import.successCount": "Uspješno: {count}",
-  "import.warnings.unrecognizedEligibility": "Redak {rowNumber}: Neprepoznati status prihvatljivosti: '{eligibilityValue}' - tretira se kao prihvatljiv"
+  "import.completed": {
+    "t": "Uvoz uspješno završen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.currentStatus": {
+    "t": "Stanje: {status}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorCount": {
+    "t": "Pogreške: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.batchSaveFailed": {
+    "t": "Skupno spremanje nije uspjelo: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateBahaiId": {
+    "t": "Redak {rowNumber}: Duplicirani Bahájski ID '{bahaiId}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateEmail": {
+    "t": "Redak {rowNumber}: Duplicirana e-pošta '{email}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateName": {
+    "t": "Redak {rowNumber}: Duplicirano ime '{firstName} {lastName}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicatePhone": {
+    "t": "Redak {rowNumber}: Duplicirani telefon '{phone}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.fileNotFound": {
+    "t": "Datoteka za uvoz nije pronađena ili nema sadržaja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailed": {
+    "t": "Uvoz nije uspio: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailedAtLine": {
+    "t": "Uvoz nije uspio u retku {rowNumber}: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.invalidMappings": {
+    "t": "Nevažeća mapiranja stupaca",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.lineError": {
+    "t": "Redak {rowNumber}: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingFirstName": {
+    "t": "Redak {rowNumber}: Nedostaje ime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingLastName": {
+    "t": "Redak {rowNumber}: Nedostaje prezime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingRequiredMappings": {
+    "t": "Mapiranja za Ime i Prezime su obavezna",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.noMappings": {
+    "t": "Nije konfigurirano nijedno mapiranje stupaca",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorsTitle": {
+    "t": "Pogreške uvoza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.moreErrors": {
+    "t": "i još {count} pogrešaka...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.processingRows": {
+    "t": "Obrađuju se redovi {processed} od {total}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.progressTitle": {
+    "t": "Napredak uvoza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.successCount": {
+    "t": "Uspješno: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.warnings.unrecognizedEligibility": {
+    "t": "Redak {rowNumber}: Neprepoznati status prihvatljivosti: '{eligibilityValue}' - tretira se kao prihvatljiv",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }
