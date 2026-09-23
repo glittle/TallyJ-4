@@ -374,10 +374,10 @@ function canFindRawName(vote: VoteDto | null) {
         flex: 0 0 auto;
 
         &.el-button--primary {
-          color: #fff;
-          --el-button-text-color: #fff;
-          --el-button-hover-text-color: #fff;
-          --el-button-active-text-color: #fff;
+          color: var(--color-text-inverse);
+          --el-button-text-color: var(--color-text-inverse);
+          --el-button-hover-text-color: var(--color-text-inverse);
+          --el-button-active-text-color: var(--color-text-inverse);
         }
       }
 

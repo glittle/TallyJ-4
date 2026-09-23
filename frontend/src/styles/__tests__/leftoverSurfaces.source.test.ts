@@ -51,6 +51,48 @@ describe("leftover dark-theme surfaces (#285 follow-up)", () => {
     );
   });
 
+  it("warning banners use warning tokens, not cream hex", () => {
+    for (const rel of [
+      "components/AppSidebar.vue",
+      "pages/LandingPage.vue",
+      "components/common/LanguageFlagsSelector.vue",
+    ]) {
+      const source = readSrc(rel);
+      expect(source).toContain("background-color: var(--color-warning-50)");
+      expect(source).toContain("color: var(--color-warning-700)");
+      expect(source).toContain("var(--color-warning-500)");
+      expect(source).not.toContain("#fff4e5");
+      expect(source).not.toContain("#8c4a00");
+      expect(source).not.toContain("#3f2a1a");
+    }
+  });
+
+  it("audit log filters use the shared fill token", () => {
+    const source = readSrc("pages/AuditLogsPage.vue");
+    expect(source).toContain("background-color: var(--el-fill-color-light)");
+    expect(source).not.toContain("#f5f7fa");
+  });
+
+  it("teller inverse text on solid fills uses the inverse token", () => {
+    const panel = readSrc("components/ballots/BallotVotesPanel.vue");
+    expect(panel).toContain("color: var(--color-text-inverse)");
+    expect(panel).not.toMatch(/#fff\b/);
+    const stage = readSrc("components/nav/StageControl.vue");
+    expect(stage).toContain("var(--color-text-inverse)");
+    expect(stage).not.toMatch(/#fff\b/);
+    const banner = readSrc("components/common/TestElectionBanner.vue");
+    expect(banner).toContain("color: var(--color-text-inverse)");
+    expect(banner).not.toMatch(/color:\s*#fff\b/);
+  });
+
+  it("ballot import divider is not a frozen light hairline", () => {
+    const source = readSrc("pages/ballots/BallotImportPage.vue");
+    expect(source).toContain(
+      "border-top: 1px solid var(--el-border-color-extra-light)",
+    );
+    expect(source).not.toContain("#eee");
+  });
+
   it("results tie cards use border/danger tokens", () => {
     const ties = readSrc("pages/results/TieManagementPage.vue");
     const display = readSrc("components/results/TiesDisplay.vue");

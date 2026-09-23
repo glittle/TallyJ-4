@@ -61,15 +61,15 @@ const showTestElectionBanner = computed(() => {
   text-align: center;
   /* Explicit pair — do not inherit header text/bg (dark-on-dark on the
      translucent / Front Desk header). Always gather-stage orange, not the
-     current election stage and not error/danger red. White on
+     current election stage and not error/danger red. Inverse text on
      --color-stage-gather meets contrast in both light (#d97706) and
-     dark (#f59e0b) tokens. */
+     dark (#f59e0b) tokens. Inverse stays #ffffff in both themes. */
   background-color: var(--color-stage-gather);
-  color: #fff;
+  color: var(--color-text-inverse);
 
   .el-icon {
     font-size: 16px;
-    color: #fff;
+    color: var(--color-text-inverse);
   }
 }
 </style>

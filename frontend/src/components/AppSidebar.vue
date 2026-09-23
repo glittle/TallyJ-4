@@ -353,11 +353,11 @@ function dockSidebar() {
     margin: 0;
     max-width: 920px; /* Comfortable reading width */
     text-align: center;
-    background-color: #fff4e5;
-    color: #8c4a00;
+    background-color: var(--color-warning-50);
+    color: var(--color-warning-700);
     font-size: 1rem;
     line-height: 1.5;
-    border: 2px solid #f5a23d;
+    border: 2px solid var(--color-warning-500);
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     font-weight: normal;
@@ -367,22 +367,11 @@ function dockSidebar() {
     padding: 0 0.5em;
     text-align: center;
     margin: auto 0.5em 1em;
-    background-color: #fff4e5;
-    color: #8c4a00;
-    border: 2px solid #f5a23d;
+    background-color: var(--color-warning-50);
+    color: var(--color-warning-700);
+    border: 2px solid var(--color-warning-500);
     border-radius: 4px;
     font-size: 1rem;
-  }
-}
-
-:root.dark {
-  .main-layout {
-    .testOnlyWarning {
-      background-color: #3f2a1a;
-      color: #ffd9a8;
-      border-color: #f5a23d;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-    }
   }
 }
 </style>

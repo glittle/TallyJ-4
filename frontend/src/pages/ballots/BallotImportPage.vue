@@ -451,7 +451,7 @@ function getDelimiterLabel(delimiter: string): string {
     gap: 10px;
     margin-top: 30px;
     padding-top: 20px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--el-border-color-extra-light);
   }
 }
 </style>

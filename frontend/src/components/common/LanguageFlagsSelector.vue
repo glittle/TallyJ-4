@@ -52,9 +52,9 @@ onMounted(() => {
   padding: 0.5rem;
   /* :lang(ar|fa) sets text-align:right on every element; keep the group centered */
   text-align: center;
-  background-color: #fff4e5;
-  color: #8c4a00;
-  border: 2px solid #f5a23d;
+  background-color: var(--color-warning-50);
+  color: var(--color-warning-700);
+  border: 2px solid var(--color-warning-500);
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 

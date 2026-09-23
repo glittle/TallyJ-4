@@ -118,6 +118,32 @@ describe("dark theme tokens (dashboard/setup polish)", () => {
     );
   });
 
+  it("keeps warning-banner text at WCAG AA on warning-50 in both themes", () => {
+    expect(
+      contrastRatio(
+        tokenValue(light, "--color-warning-700"),
+        tokenValue(light, "--color-warning-50"),
+      ),
+    ).toBeGreaterThanOrEqual(4.5);
+    expect(
+      contrastRatio(
+        tokenValue(dark, "--color-warning-700"),
+        tokenValue(dark, "--color-warning-50"),
+      ),
+    ).toBeGreaterThanOrEqual(4.5);
+    expect(
+      contrastRatio(
+        tokenValue(light, "--color-warning-600"),
+        tokenValue(light, "--color-warning-50"),
+      ),
+    ).toBeLessThan(4.5);
+    expect(tokenValue(dark, "--color-frontdesk-filter-active-text")).toBe(
+      "var(--color-text-inverse)",
+    );
+    expect(tokenValue(light, "--color-text-inverse")).toBe("#ffffff");
+    expect(dark).not.toMatch(/--color-text-inverse:/);
+  });
+
   it("keeps the QR pad white in both themes so scanners can read the code", () => {
     expect(tokenValue(light, "--color-qr-pad")).toBe("#ffffff");
     expect(dark).not.toMatch(/--color-qr-pad:/);
