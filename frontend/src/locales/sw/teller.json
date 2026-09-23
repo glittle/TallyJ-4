@@ -1,17 +1,77 @@
 {
-  "teller.form.cancel": "Ghairi",
-  "teller.form.computerCode": "Nambari ya Kompyuta",
-  "teller.form.computerCodeHelp": "Herufi mbili kubwa (AA-ZZ) au acha tupu",
-  "teller.form.computerCodeInvalid": "Nambari ya kompyuta lazima iwe herufi 2 kubwa (AA-ZZ)",
-  "teller.form.computerCodePlaceholder": "mfano: AA",
-  "teller.form.create": "Unda",
-  "teller.form.headTeller": "Mhesabu Mkuu",
-  "teller.form.headTellerHelp": "Wahesabu wakuu wana ruhusa za ziada",
-  "teller.form.name": "Jina la Mhesabu",
-  "teller.form.nameMaxLength": "Jina la mhesabu haliwezi kuzidi herufi 50",
-  "teller.form.namePlaceholder": "Ingiza jina la mhesabu",
-  "teller.form.nameRequired": "Jina la mhesabu linahitajika",
-  "teller.form.save": "Hifadhi",
-  "teller.form.titleAdd": "Ongeza Mhesabu",
-  "teller.form.titleEdit": "Hariri Mhesabu"
+  "teller.form.cancel": {
+    "t": "Ghairi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCode": {
+    "t": "Nambari ya Kompyuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeHelp": {
+    "t": "Herufi mbili kubwa (AA-ZZ) au acha tupu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeInvalid": {
+    "t": "Nambari ya kompyuta lazima iwe herufi 2 kubwa (AA-ZZ)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodePlaceholder": {
+    "t": "mfano: AA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.create": {
+    "t": "Unda",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTeller": {
+    "t": "Mhesabu Mkuu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTellerHelp": {
+    "t": "Wahesabu wakuu wana ruhusa za ziada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.name": {
+    "t": "Jina la Mhesabu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "Jina la mhesabu haliwezi kuzidi herufi 50",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "Ingiza jina la mhesabu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "Jina la mhesabu linahitajika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.save": {
+    "t": "Hifadhi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "Ongeza Mhesabu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "Hariri Mhesabu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

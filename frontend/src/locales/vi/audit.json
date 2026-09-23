@@ -1,36 +1,172 @@
 {
-  "audit.dialog.computerCode": "Mã Máy Tính",
-  "audit.dialog.dateTime": "Ngày/Giờ",
-  "audit.dialog.details": "Chi Tiết",
-  "audit.dialog.electionGuid": "GUID Cuộc Bầu Cử",
-  "audit.dialog.hostAndVersion": "Máy Chủ và Phiên Bản",
-  "audit.dialog.locationGuid": "GUID Địa Điểm",
-  "audit.dialog.rowId": "ID Hàng",
-  "audit.dialog.title": "Chi Tiết Nhật Ký Kiểm Tra",
-  "audit.dialog.userId": "ID Người Dùng",
-  "audit.filters.apply": "Áp Dụng Bộ Lọc",
-  "audit.filters.clear": "Xóa Bộ Lọc",
-  "audit.filters.computerCode": "Mã Máy Tính",
-  "audit.filters.computerCodePlaceholder": "Lọc theo Mã Máy Tính",
-  "audit.filters.electionGuid": "GUID Cuộc Bầu Cử",
-  "audit.filters.electionGuidPlaceholder": "Lọc theo GUID Cuộc Bầu Cử",
-  "audit.filters.endDate": "Ngày Kết Thúc",
-  "audit.filters.endDatePlaceholder": "Ngày Kết Thúc",
-  "audit.filters.locationGuid": "GUID Địa Điểm",
-  "audit.filters.locationGuidPlaceholder": "Lọc theo GUID Địa Điểm",
-  "audit.filters.search": "Tìm Kiếm",
-  "audit.filters.searchPlaceholder": "Tìm kiếm tất cả các trường",
-  "audit.filters.startDate": "Ngày Bắt Đầu",
-  "audit.filters.startDatePlaceholder": "Ngày Bắt Đầu",
-  "audit.filters.voterId": "ID Cử Tri",
-  "audit.filters.voterIdPlaceholder": "Lọc theo ID Cử Tri",
-  "audit.table.actions": "Hành Động",
-  "audit.table.computer": "Máy Tính",
-  "audit.table.dateTime": "Ngày/Giờ",
-  "audit.table.details": "Chi Tiết",
-  "audit.table.election": "Cuộc Bầu Cử",
-  "audit.table.userId": "ID Người Dùng",
-  "audit.table.view": "Xem",
-  "audit.table.yes": "Có",
-  "audit.title": "Nhật Ký Kiểm Tra"
+  "audit.dialog.computerCode": {
+    "t": "Mã Máy Tính",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.dateTime": {
+    "t": "Ngày/Giờ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.details": {
+    "t": "Chi Tiết",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.electionGuid": {
+    "t": "GUID Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.hostAndVersion": {
+    "t": "Máy Chủ và Phiên Bản",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.locationGuid": {
+    "t": "GUID Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.rowId": {
+    "t": "ID Hàng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.title": {
+    "t": "Chi Tiết Nhật Ký Kiểm Tra",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.userId": {
+    "t": "ID Người Dùng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.apply": {
+    "t": "Áp Dụng Bộ Lọc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.clear": {
+    "t": "Xóa Bộ Lọc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCode": {
+    "t": "Mã Máy Tính",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCodePlaceholder": {
+    "t": "Lọc theo Mã Máy Tính",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuid": {
+    "t": "GUID Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuidPlaceholder": {
+    "t": "Lọc theo GUID Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDate": {
+    "t": "Ngày Kết Thúc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDatePlaceholder": {
+    "t": "Ngày Kết Thúc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuid": {
+    "t": "GUID Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuidPlaceholder": {
+    "t": "Lọc theo GUID Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.search": {
+    "t": "Tìm Kiếm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.searchPlaceholder": {
+    "t": "Tìm kiếm tất cả các trường",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDate": {
+    "t": "Ngày Bắt Đầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDatePlaceholder": {
+    "t": "Ngày Bắt Đầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterId": {
+    "t": "ID Cử Tri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterIdPlaceholder": {
+    "t": "Lọc theo ID Cử Tri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.actions": {
+    "t": "Hành Động",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.computer": {
+    "t": "Máy Tính",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.dateTime": {
+    "t": "Ngày/Giờ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.details": {
+    "t": "Chi Tiết",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.election": {
+    "t": "Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.userId": {
+    "t": "ID Người Dùng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.view": {
+    "t": "Xem",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.yes": {
+    "t": "Có",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.title": {
+    "t": "Nhật Ký Kiểm Tra",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,61 +1,297 @@
 {
-  "tally.calculate": "Calculate Tally",
-  "tally.calculateError": "Failed to calculate tally",
-  "tally.calculateSuccess": "Tally calculated successfully",
-  "tally.calculatingProgress": "Calculating Progress",
-  "tally.normalElection": "Normal Election",
-  "tally.processedBallots": "Processed Ballots",
-  "tally.progress.complete": "Tally calculation complete!",
-  "tally.progress.completeSingleName": "Single-name tally calculation complete!",
-  "tally.progress.processingBallots": "Processing ballots: {processed}/{total}",
-  "tally.progress.starting": "Starting tally calculation...",
-  "tally.progress.startingSingleName": "Starting single-name tally calculation...",
-  "tally.totalVotes": "Total Votes",
-  "tally.resultsPreview": "Results Preview (Top 10)",
-  "tally.section.elected": "Elected",
-  "tally.section.extra": "Extra",
-  "tally.section.other": "Other",
-  "tally.singleNameElection": "Single Name Election",
-  "tally.title": "Calculate Tally",
-  "tally.viewFullResults": "View Full Results",
-  "tally.warning": "Warning",
-  "tally.warningMessage": "Calculating the tally will overwrite any existing results. This action cannot be undone.",
-  "tally.section.E": "Elected",
-  "tally.section.X": "Extra",
-  "tally.section.O": "Other",
-  "tally.reconciliation.title": "Count reconciliation",
-  "tally.reconciliation.intro": "Front Desk registrations must match entered ballots (including spoiled) before Analyze or Finalize. Pending online ballots and duplicate registrations are listed by voter.",
-  "tally.reconciliation.ready": "Counts reconcile. Analyze and Finalize may proceed if other gates are clear.",
-  "tally.reconciliation.blocked": "{count} mismatch(es) must be resolved before Analyze or Finalize.",
-  "tally.reconciliation.frontDeskCount": "Front Desk (accounted)",
-  "tally.reconciliation.ballotCount": "Ballots entered",
-  "tally.reconciliation.pendingOnlineCount": "Pending online",
-  "tally.reconciliation.spoiledBallotCount": "Spoiled ballots (included in entered)",
-  "tally.reconciliation.kindColumn": "Mismatch",
-  "tally.reconciliation.subjectColumn": "Voter or ballot",
-  "tally.reconciliation.detailColumn": "Detail",
-  "tally.reconciliation.envelope": "Envelope {n}",
-  "tally.reconciliation.onlineStatus": "Online: {status}",
-  "tally.reconciliation.frontDeskVsBallotsSubject": "Front Desk {frontDesk} vs ballots {ballots}",
-  "tally.reconciliation.kind.FrontDeskVsBallots": "Front Desk vs ballot count",
-  "tally.reconciliation.kind.PendingOnline": "Pending online ballot",
-  "tally.reconciliation.kind.DuplicateEnvelope": "Duplicate envelope number",
-  "tally.reconciliation.kind.DuplicateVotingPath": "Paper check-in and online vote",
-  "tally.reconciliation.loadError": "Failed to load the reconciliation report",
-  "tally.reconciliation.finalizeBlocked": "Counts do not reconcile. Resolve the mismatches below (or on Calculate Tally) before finalizing.",
-  "tally.manualCounts.title": "Voter counts",
-  "tally.manualCounts.hint": "Leave a field empty to use the calculated value. Saving does not re-run Analyze.",
-  "tally.manualCounts.counts": "Counts",
-  "tally.manualCounts.calculated": "Calculated",
-  "tally.manualCounts.override": "Override",
-  "tally.manualCounts.final": "Final",
-  "tally.manualCounts.saveValues": "Save Values",
-  "tally.manualCounts.saveSuccess": "Manual counts saved. Run Analyze to apply them to the final results.",
-  "tally.manualCounts.useCalculated": "Use calculated",
-  "tally.manualCounts.eligibleVoters": "Eligible Voters",
-  "tally.manualCounts.inPerson": "In Person",
-  "tally.manualCounts.droppedOff": "Dropped Off",
-  "tally.manualCounts.mailedIn": "Mailed In",
-  "tally.manualCounts.calledIn": "Called In",
-  "tally.manualCounts.spoiledManual": "Additional spoiled ballots"
+  "tally.calculate": {
+    "t": "Calculate Tally",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateError": {
+    "t": "Failed to calculate tally",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "Tally calculated successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "Calculating Progress",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.normalElection": {
+    "t": "Normal Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.processedBallots": {
+    "t": "Processed Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.progress.complete": {
+    "t": "Tally calculation complete!",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.progress.completeSingleName": {
+    "t": "Single-name tally calculation complete!",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.progress.processingBallots": {
+    "t": "Processing ballots: {processed}/{total}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.progress.starting": {
+    "t": "Starting tally calculation...",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.progress.startingSingleName": {
+    "t": "Starting single-name tally calculation...",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.totalVotes": {
+    "t": "Total Votes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.resultsPreview": {
+    "t": "Results Preview (Top 10)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.elected": {
+    "t": "Elected",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.extra": {
+    "t": "Extra",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.other": {
+    "t": "Other",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.singleNameElection": {
+    "t": "Single Name Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.title": {
+    "t": "Calculate Tally",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.viewFullResults": {
+    "t": "View Full Results",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warning": {
+    "t": "Warning",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warningMessage": {
+    "t": "Calculating the tally will overwrite any existing results. This action cannot be undone.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.E": {
+    "t": "Elected",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.X": {
+    "t": "Extra",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.O": {
+    "t": "Other",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.title": {
+    "t": "Count reconciliation",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.intro": {
+    "t": "Front Desk registrations must match entered ballots (including spoiled) before Analyze or Finalize. Pending online ballots and duplicate registrations are listed by voter.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.ready": {
+    "t": "Counts reconcile. Analyze and Finalize may proceed if other gates are clear.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.blocked": {
+    "t": "{count} mismatch(es) must be resolved before Analyze or Finalize.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.frontDeskCount": {
+    "t": "Front Desk (accounted)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.ballotCount": {
+    "t": "Ballots entered",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.pendingOnlineCount": {
+    "t": "Pending online",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.spoiledBallotCount": {
+    "t": "Spoiled ballots (included in entered)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.kindColumn": {
+    "t": "Mismatch",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.subjectColumn": {
+    "t": "Voter or ballot",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.detailColumn": {
+    "t": "Detail",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.envelope": {
+    "t": "Envelope {n}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.onlineStatus": {
+    "t": "Online: {status}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.frontDeskVsBallotsSubject": {
+    "t": "Front Desk {frontDesk} vs ballots {ballots}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.kind.FrontDeskVsBallots": {
+    "t": "Front Desk vs ballot count",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.kind.PendingOnline": {
+    "t": "Pending online ballot",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.kind.DuplicateEnvelope": {
+    "t": "Duplicate envelope number",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.kind.DuplicateVotingPath": {
+    "t": "Paper check-in and online vote",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.loadError": {
+    "t": "Failed to load the reconciliation report",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.reconciliation.finalizeBlocked": {
+    "t": "Counts do not reconcile. Resolve the mismatches below (or on Calculate Tally) before finalizing.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.title": {
+    "t": "Voter counts",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.hint": {
+    "t": "Leave a field empty to use the calculated value. Saving does not re-run Analyze.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.counts": {
+    "t": "Counts",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.calculated": {
+    "t": "Calculated",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.override": {
+    "t": "Override",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.final": {
+    "t": "Final",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.saveValues": {
+    "t": "Save Values",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.saveSuccess": {
+    "t": "Manual counts saved. Run Analyze to apply them to the final results.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.useCalculated": {
+    "t": "Use calculated",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.eligibleVoters": {
+    "t": "Eligible Voters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.inPerson": {
+    "t": "In Person",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.droppedOff": {
+    "t": "Dropped Off",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.mailedIn": {
+    "t": "Mailed In",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.calledIn": {
+    "t": "Called In",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.manualCounts.spoiledManual": {
+    "t": "Additional spoiled ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

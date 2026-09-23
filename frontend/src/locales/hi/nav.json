@@ -1,10 +1,42 @@
 {
-  "nav.auditLogs": "ऑडिट लॉग",
-  "nav.dashboard": "डैशबोर्ड",
-  "nav.elections": "चुनाव",
-  "nav.frontDesk": "फ्रंट डेस्क",
-  "nav.profile": "प्रोफ़ाइल",
-  "nav.superAdmin": "सुपर एडमिन",
-  "nav.tellers": "गणनाकर्ता",
-  "nav.votingLocations": "मतदान स्थान"
+  "nav.auditLogs": {
+    "t": "ऑडिट लॉग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.dashboard": {
+    "t": "डैशबोर्ड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.elections": {
+    "t": "चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.frontDesk": {
+    "t": "फ्रंट डेस्क",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.profile": {
+    "t": "प्रोफ़ाइल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.superAdmin": {
+    "t": "सुपर एडमिन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.tellers": {
+    "t": "गणनाकर्ता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.votingLocations": {
+    "t": "मतदान स्थान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

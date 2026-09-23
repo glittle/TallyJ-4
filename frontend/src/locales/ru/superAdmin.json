@@ -1,28 +1,132 @@
 {
-  "superAdmin.detail.electionMode": "Режим выборов",
-  "superAdmin.detail.locations": "Места",
-  "superAdmin.detail.numberToElect": "Количество для избрания",
-  "superAdmin.detail.owners": "Менеджеры",
-  "superAdmin.detail.percentComplete": "Процент завершения",
-  "superAdmin.detail.title": "Детали выборов",
-  "superAdmin.elections.ballots": "Бюллетени",
-  "superAdmin.elections.convenor": "Организатор",
-  "superAdmin.elections.date": "Дата",
-  "superAdmin.elections.filterStatus": "Фильтр по статусу",
-  "superAdmin.elections.filterType": "Фильтр по типу",
-  "superAdmin.elections.name": "Название выборов",
-  "superAdmin.elections.noResults": "Выборы не найдены",
-  "superAdmin.elections.owner": "Владелец",
-  "superAdmin.elections.search": "Поиск выборов...",
-  "superAdmin.elections.status": "Статус",
-  "superAdmin.elections.type": "Тип",
-  "superAdmin.elections.voters": "Избиратели",
-  "superAdmin.error.accessDenied": "У вас нет доступа суперадминистратора",
-  "superAdmin.error.loadFailed": "Не удалось загрузить данные суперадминистратора",
-  "superAdmin.summary.archivedElections": "Архивные",
-  "superAdmin.summary.completedElections": "Завершенные",
-  "superAdmin.summary.openElections": "Открытые",
-  "superAdmin.summary.totalElections": "Всего выборов",
-  "superAdmin.summary.upcomingElections": "Предстоящие",
-  "superAdmin.title": "Панель управления суперадминистратора"
+  "superAdmin.detail.electionMode": {
+    "t": "Режим выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.locations": {
+    "t": "Места",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.numberToElect": {
+    "t": "Количество для избрания",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.owners": {
+    "t": "Менеджеры",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.percentComplete": {
+    "t": "Процент завершения",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.title": {
+    "t": "Детали выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.ballots": {
+    "t": "Бюллетени",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.convenor": {
+    "t": "Организатор",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.date": {
+    "t": "Дата",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterStatus": {
+    "t": "Фильтр по статусу",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterType": {
+    "t": "Фильтр по типу",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.name": {
+    "t": "Название выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.noResults": {
+    "t": "Выборы не найдены",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.owner": {
+    "t": "Владелец",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.search": {
+    "t": "Поиск выборов...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.status": {
+    "t": "Статус",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.type": {
+    "t": "Тип",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.voters": {
+    "t": "Избиратели",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.accessDenied": {
+    "t": "У вас нет доступа суперадминистратора",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.loadFailed": {
+    "t": "Не удалось загрузить данные суперадминистратора",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.archivedElections": {
+    "t": "Архивные",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.completedElections": {
+    "t": "Завершенные",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.openElections": {
+    "t": "Открытые",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.totalElections": {
+    "t": "Всего выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.upcomingElections": {
+    "t": "Предстоящие",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.title": {
+    "t": "Панель управления суперадминистратора",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

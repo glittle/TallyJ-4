@@ -1,78 +1,382 @@
 {
-  "voting.ballot.addPersonToPool": "내 투표용지에 사람 추가",
-  "voting.ballot.addToPool": "투표용지/풀에 추가",
-  "voting.ballot.addToPoolDescription": "이 선거를 위해 풀에 새로운 사람을 추가합니다.",
-  "voting.ballot.alreadyVoted": "이 선거에서 이미 투표하셨습니다.",
-  "voting.ballot.authRequired": "먼저 인증하세요",
-  "voting.ballot.backToElections": "돌아가기",
-  "voting.ballot.bothModeHint": "아래 목록에서 선택하거나 목록에 없는 이름을 입력하세요. 계표원들이 목록에 없는 이름을 처리합니다.",
-  "voting.ballot.duplicateError": "동일한 후보자를 여러 번 선택했습니다. 투표용지를 검토하세요.",
-  "voting.ballot.electionNotFound": "선거를 찾을 수 없음",
-  "voting.ballot.extraInfo": "추가 신원 정보",
-  "voting.ballot.extraInfoPlaceholder": "(선택사항: 이름만으로 충분하지 않은 경우 사용하세요)",
-  "voting.ballot.firstName": "이름",
-  "voting.ballot.firstNamePlaceholder": "이름",
-  "voting.ballot.guideline": "\"선거인이 봉사할 자격이 있다고 생각하는 사람들의 풀에서 선택할 때, 나이 분포, 다양성, 성별 등의 다른 요소를 충분히 고려하여 선택해야 합니다.\" — 보편적 정의의 집",
-  "voting.ballot.lastName": "성",
-  "voting.ballot.lastNamePlaceholder": "성",
-  "voting.ballot.loading": "선거 정보 로드 중...",
-  "voting.ballot.myBallot": "내 투표용지",
-  "voting.ballot.namePlaceholder": "이름 입력",
-  "voting.ballot.notOpen": "이 선거의 온라인 투표는 현재 열려 있지 않습니다.",
-  "voting.ballot.onceWarning": "한 번만 투표할 수 있습니다! 제출하기 전에 투표용지를 주의깊게 검토하세요.",
-  "voting.ballot.openNow": "지금 열기",
-  "voting.ballot.orderNote": "(이름의 순서는 중요하지 않습니다)",
-  "voting.ballot.randomModeHint": "투표하고 싶은 사람들의 이름을 입력하세요. 계표원들이 이 이름들을 등록된 투표자와 일치시킬 것입니다.",
-  "voting.ballot.searchPlaceholder": "후보자 검색",
-  "voting.ballot.submit": "투표용지 제출",
-  "voting.ballot.submitSuccess": "투표용지가 성공적으로 제출되었습니다!",
-  "voting.ballot.votingFor": "{count}명을 위해 투표 중",
-  "voting.confirmation.close": "닫기",
-  "voting.confirmation.election": "선거:",
-  "voting.confirmation.kioskRecorded": "Your ballot has been recorded. You can leave this computer.",
-  "voting.confirmation.kioskSubtitle": "This kiosk is clear for the next voter.",
-  "voting.confirmation.nextVoter": "Ready for next voter",
-  "voting.confirmation.noChange": "투표 용지를 변경하거나 다시 제출할 수 없습니다.",
-  "voting.confirmation.recorded": "귀하의 투표 용지가 안전하게 기록되었습니다.",
-  "voting.confirmation.submitted": "제출됨:",
-  "voting.confirmation.subtitle": "선거에 참여해 주셔서 감사합니다",
-  "voting.confirmation.title": "투표 용지가 성공적으로 제출되었습니다!",
-  "voting.election.instructions": "{count}명의 후보자에게 투표하세요.",
-  "voting.elections.alreadyVoted": "투표용지가 이미 제출됨",
-  "voting.elections.col.election": "선거",
-  "voting.elections.col.onlineVoting": "온라인 투표",
-  "voting.elections.col.yourNameAndBallot": "귀하의 이름 및 투표용지",
-  "voting.elections.footerNote": "뭔가 잘못되어 보이면, 세부 사항을 담당자 및/또는 글로벌 기술 지원에 보내주세요.",
-  "voting.elections.loadError": "선거 로드 실패. 다시 시도하세요.",
-  "voting.elections.loading": "선거 로드 중...",
-  "voting.elections.logout": "로그아웃",
-  "voting.elections.method.online": "온라인",
-  "voting.elections.noElections": "귀하의 계정에 대해 찾을 수 없습니다.",
-  "voting.elections.prepareBallot": "내 투표용지 준비",
-  "voting.elections.registered": "등록됨:",
-  "voting.elections.status.closed": "닫힘",
-  "voting.elections.status.closedDaysAgo": "{days}일 전에 닫힘",
-  "voting.elections.status.closedMonthsAgo": "{months}개월 전에 닫힘",
-  "voting.elections.status.closedToday": "오늘 닫힘",
-  "voting.elections.status.closedYearsAgo": "{years}년 전에 닫힘",
-  "voting.elections.status.closedYesterday": "어제 닫힘",
-  "voting.elections.status.closingAt": "{time}에 닫힐 예상",
-  "voting.elections.status.closingAtWithMinutes": "{hours}시간 {minutes}분 안에 닫힐 예상({time}에)",
-  "voting.elections.status.closingInMinutes": "{minutes}분 안에 닫힐 예상",
-  "voting.elections.status.closingSoon": "곧 닫힐 예정",
-  "voting.elections.status.estimatedSuffix": " (예상)",
-  "voting.elections.status.noOnlineVoting": "온라인 투표 없음",
-  "voting.elections.status.open": "열림",
-  "voting.elections.status.openNow": "지금 열기",
-  "voting.elections.title": "내 선거",
-  "voting.elections.welcome": "환영합니다! 귀하의 연락처 정보({voterId})가 아래 표시된 선거에서 발견되었습니다.",
-  "voting.elections.welcomeHint": "예정된 선거가 여기에 나열되지 않은 경우, 귀하의 정보가 등록되지 않았을 수 있습니다. 지원을 위해 선거의 담당자에게 문의하세요.",
-  "voting.status.alreadyVoted": "이 선거에 이미 투표 용지를 제출했습니다.",
-  "voting.status.notVoted": "아직 이 선거에 투표 용지를 제출하지 않았습니다.",
-  "voting.status.voterNotFound": "이 선거에서 투표자를 찾을 수 없습니다.",
-  "voting.submit.alreadyVoted": "이 선거에 이미 투표 용지를 제출했습니다.",
-  "voting.submit.electionNotFound": "선거를 찾을 수 없습니다.",
-  "voting.submit.error": "투표 용지를 제출하는 중 오류가 발생했습니다. 다시 시도해 주세요.",
-  "voting.submit.notOpen": "이 선거는 현재 온라인 투표가 열려 있지 않습니다.",
-  "voting.submit.voterNotFound": "투표자를 찾을 수 없습니다. 먼저 인증하세요."
+  "voting.ballot.addPersonToPool": {
+    "t": "내 투표용지에 사람 추가",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPool": {
+    "t": "투표용지/풀에 추가",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPoolDescription": {
+    "t": "이 선거를 위해 풀에 새로운 사람을 추가합니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.alreadyVoted": {
+    "t": "이 선거에서 이미 투표하셨습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.authRequired": {
+    "t": "먼저 인증하세요",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.backToElections": {
+    "t": "돌아가기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.bothModeHint": {
+    "t": "아래 목록에서 선택하거나 목록에 없는 이름을 입력하세요. 계표원들이 목록에 없는 이름을 처리합니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.duplicateError": {
+    "t": "동일한 후보자를 여러 번 선택했습니다. 투표용지를 검토하세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.electionNotFound": {
+    "t": "선거를 찾을 수 없음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfo": {
+    "t": "추가 신원 정보",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfoPlaceholder": {
+    "t": "(선택사항: 이름만으로 충분하지 않은 경우 사용하세요)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstName": {
+    "t": "이름",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstNamePlaceholder": {
+    "t": "이름",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.guideline": {
+    "t": "\"선거인이 봉사할 자격이 있다고 생각하는 사람들의 풀에서 선택할 때, 나이 분포, 다양성, 성별 등의 다른 요소를 충분히 고려하여 선택해야 합니다.\" — 보편적 정의의 집",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastName": {
+    "t": "성",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastNamePlaceholder": {
+    "t": "성",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.loading": {
+    "t": "선거 정보 로드 중...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.myBallot": {
+    "t": "내 투표용지",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.namePlaceholder": {
+    "t": "이름 입력",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.notOpen": {
+    "t": "이 선거의 온라인 투표는 현재 열려 있지 않습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.onceWarning": {
+    "t": "한 번만 투표할 수 있습니다! 제출하기 전에 투표용지를 주의깊게 검토하세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.openNow": {
+    "t": "지금 열기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.orderNote": {
+    "t": "(이름의 순서는 중요하지 않습니다)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.randomModeHint": {
+    "t": "투표하고 싶은 사람들의 이름을 입력하세요. 계표원들이 이 이름들을 등록된 투표자와 일치시킬 것입니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.searchPlaceholder": {
+    "t": "후보자 검색",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submit": {
+    "t": "투표용지 제출",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submitSuccess": {
+    "t": "투표용지가 성공적으로 제출되었습니다!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.votingFor": {
+    "t": "{count}명을 위해 투표 중",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.close": {
+    "t": "닫기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.election": {
+    "t": "선거:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskRecorded": {
+    "t": "Your ballot has been recorded. You can leave this computer.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskSubtitle": {
+    "t": "This kiosk is clear for the next voter.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.nextVoter": {
+    "t": "Ready for next voter",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.noChange": {
+    "t": "투표 용지를 변경하거나 다시 제출할 수 없습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.recorded": {
+    "t": "귀하의 투표 용지가 안전하게 기록되었습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.submitted": {
+    "t": "제출됨:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.subtitle": {
+    "t": "선거에 참여해 주셔서 감사합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.title": {
+    "t": "투표 용지가 성공적으로 제출되었습니다!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.election.instructions": {
+    "t": "{count}명의 후보자에게 투표하세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.alreadyVoted": {
+    "t": "투표용지가 이미 제출됨",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.election": {
+    "t": "선거",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.onlineVoting": {
+    "t": "온라인 투표",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.yourNameAndBallot": {
+    "t": "귀하의 이름 및 투표용지",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.footerNote": {
+    "t": "뭔가 잘못되어 보이면, 세부 사항을 담당자 및/또는 글로벌 기술 지원에 보내주세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loadError": {
+    "t": "선거 로드 실패. 다시 시도하세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loading": {
+    "t": "선거 로드 중...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.logout": {
+    "t": "로그아웃",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.method.online": {
+    "t": "온라인",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.noElections": {
+    "t": "귀하의 계정에 대해 찾을 수 없습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.prepareBallot": {
+    "t": "내 투표용지 준비",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.registered": {
+    "t": "등록됨:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closed": {
+    "t": "닫힘",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedDaysAgo": {
+    "t": "{days}일 전에 닫힘",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedMonthsAgo": {
+    "t": "{months}개월 전에 닫힘",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedToday": {
+    "t": "오늘 닫힘",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYearsAgo": {
+    "t": "{years}년 전에 닫힘",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYesterday": {
+    "t": "어제 닫힘",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAt": {
+    "t": "{time}에 닫힐 예상",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAtWithMinutes": {
+    "t": "{hours}시간 {minutes}분 안에 닫힐 예상({time}에)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingInMinutes": {
+    "t": "{minutes}분 안에 닫힐 예상",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingSoon": {
+    "t": "곧 닫힐 예정",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.estimatedSuffix": {
+    "t": " (예상)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.noOnlineVoting": {
+    "t": "온라인 투표 없음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.open": {
+    "t": "열림",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.openNow": {
+    "t": "지금 열기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.title": {
+    "t": "내 선거",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcome": {
+    "t": "환영합니다! 귀하의 연락처 정보({voterId})가 아래 표시된 선거에서 발견되었습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcomeHint": {
+    "t": "예정된 선거가 여기에 나열되지 않은 경우, 귀하의 정보가 등록되지 않았을 수 있습니다. 지원을 위해 선거의 담당자에게 문의하세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.alreadyVoted": {
+    "t": "이 선거에 이미 투표 용지를 제출했습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.notVoted": {
+    "t": "아직 이 선거에 투표 용지를 제출하지 않았습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.voterNotFound": {
+    "t": "이 선거에서 투표자를 찾을 수 없습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.alreadyVoted": {
+    "t": "이 선거에 이미 투표 용지를 제출했습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.electionNotFound": {
+    "t": "선거를 찾을 수 없습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.error": {
+    "t": "투표 용지를 제출하는 중 오류가 발생했습니다. 다시 시도해 주세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.notOpen": {
+    "t": "이 선거는 현재 온라인 투표가 열려 있지 않습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.voterNotFound": {
+    "t": "투표자를 찾을 수 없습니다. 먼저 인증하세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

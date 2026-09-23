@@ -1,26 +1,122 @@
 {
-  "eligibility.R01": "Không phải đại biểu trong cuộc bầu cử này",
-  "eligibility.R02": "Đã bị tước quyền (không thể bỏ phiếu)",
-  "eligibility.R03": "Khác (không thể bỏ phiếu nhưng có thể được bầu)",
-  "eligibility.V01": "Thanh niên 18/19/20 tuổi",
-  "eligibility.V02": "Bầu cử bổ sung: Đã thuộc Tổ Chức",
-  "eligibility.V03": "Thuộc tổ chức khác (ví dụ: Cố vấn)",
-  "eligibility.V04": "Đã bị tước quyền (không thể được bầu)",
-  "eligibility.V05": "Bầu cử phá vỡ hòa: Không bị hòa",
-  "eligibility.V06": "Khác (có thể bỏ phiếu nhưng không được bầu)",
-  "eligibility.X01": "Đã qua đời",
-  "eligibility.X02": "Mới chuyển đến nơi khác",
-  "eligibility.X03": "Không thuộc đơn vị địa phương này",
-  "eligibility.X04": "Không phải tín đồ Bahá'í đã đăng ký",
-  "eligibility.X05": "Dưới 18 tuổi",
-  "eligibility.X06": "Cư trú ở nơi khác",
-  "eligibility.X07": "Đã bị tước quyền (hoàn toàn)",
-  "eligibility.X08": "Không phải đại biểu và thuộc tổ chức khác",
-  "eligibility.X09": "Khác (không thể bỏ phiếu hoặc được bầu)",
-  "eligibility.eligible": "Đủ Điều Kiện",
-  "eligibility.groupR": "Chỉ có thể nhận phiếu (không thể bỏ phiếu)",
-  "eligibility.groupV": "Chỉ có thể bỏ phiếu (không thể nhận phiếu)",
-  "eligibility.groupX": "Không thể bỏ phiếu, không thể nhận phiếu",
-  "eligibility.label": "Điều Kiện",
-  "eligibility.selectReason": "Chọn lý do điều kiện"
+  "eligibility.R01": {
+    "t": "Không phải đại biểu trong cuộc bầu cử này",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.R02": {
+    "t": "Đã bị tước quyền (không thể bỏ phiếu)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.R03": {
+    "t": "Khác (không thể bỏ phiếu nhưng có thể được bầu)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V01": {
+    "t": "Thanh niên 18/19/20 tuổi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V02": {
+    "t": "Bầu cử bổ sung: Đã thuộc Tổ Chức",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V03": {
+    "t": "Thuộc tổ chức khác (ví dụ: Cố vấn)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V04": {
+    "t": "Đã bị tước quyền (không thể được bầu)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V05": {
+    "t": "Bầu cử phá vỡ hòa: Không bị hòa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V06": {
+    "t": "Khác (có thể bỏ phiếu nhưng không được bầu)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X01": {
+    "t": "Đã qua đời",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X02": {
+    "t": "Mới chuyển đến nơi khác",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X03": {
+    "t": "Không thuộc đơn vị địa phương này",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X04": {
+    "t": "Không phải tín đồ Bahá'í đã đăng ký",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X05": {
+    "t": "Dưới 18 tuổi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X06": {
+    "t": "Cư trú ở nơi khác",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X07": {
+    "t": "Đã bị tước quyền (hoàn toàn)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X08": {
+    "t": "Không phải đại biểu và thuộc tổ chức khác",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X09": {
+    "t": "Khác (không thể bỏ phiếu hoặc được bầu)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.eligible": {
+    "t": "Đủ Điều Kiện",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupR": {
+    "t": "Chỉ có thể nhận phiếu (không thể bỏ phiếu)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupV": {
+    "t": "Chỉ có thể bỏ phiếu (không thể nhận phiếu)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupX": {
+    "t": "Không thể bỏ phiếu, không thể nhận phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.label": {
+    "t": "Điều Kiện",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.selectReason": {
+    "t": "Chọn lý do điều kiện",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

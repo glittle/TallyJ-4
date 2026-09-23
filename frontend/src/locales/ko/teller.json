@@ -1,17 +1,77 @@
 {
-  "teller.form.cancel": "취소",
-  "teller.form.computerCode": "컴퓨터 코드",
-  "teller.form.computerCodeHelp": "대문자 2자 (AA-ZZ) 또는 비워두기",
-  "teller.form.computerCodeInvalid": "컴퓨터 코드는 대문자 2자 (AA-ZZ)여야 합니다",
-  "teller.form.computerCodePlaceholder": "예: AA",
-  "teller.form.create": "만들기",
-  "teller.form.headTeller": "수석 개표원",
-  "teller.form.headTellerHelp": "수석 개표원은 추가 권한을 가집니다",
-  "teller.form.name": "개표원 이름",
-  "teller.form.nameMaxLength": "개표원 이름은 50자를 초과할 수 없습니다",
-  "teller.form.namePlaceholder": "개표원 이름 입력",
-  "teller.form.nameRequired": "개표원 이름이 필요합니다",
-  "teller.form.save": "저장",
-  "teller.form.titleAdd": "개표원 추가",
-  "teller.form.titleEdit": "개표원 편집"
+  "teller.form.cancel": {
+    "t": "취소",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCode": {
+    "t": "컴퓨터 코드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeHelp": {
+    "t": "대문자 2자 (AA-ZZ) 또는 비워두기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeInvalid": {
+    "t": "컴퓨터 코드는 대문자 2자 (AA-ZZ)여야 합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodePlaceholder": {
+    "t": "예: AA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.create": {
+    "t": "만들기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTeller": {
+    "t": "수석 개표원",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTellerHelp": {
+    "t": "수석 개표원은 추가 권한을 가집니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.name": {
+    "t": "개표원 이름",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "개표원 이름은 50자를 초과할 수 없습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "개표원 이름 입력",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "개표원 이름이 필요합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.save": {
+    "t": "저장",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "개표원 추가",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "개표원 편집",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

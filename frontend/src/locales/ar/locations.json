@@ -1,47 +1,227 @@
 {
-  "locations.computer.browserInfo": "معلومات المتصفح",
-  "locations.computer.browserInfoHelp": "يتم اكتشافه تلقائيًا من متصفحك",
-  "locations.computer.browserInfoMaxLength": "لا يمكن أن تتجاوز معلومات المتصفح 250 حرفًا",
-  "locations.computer.browserInfoPlaceholder": "تم اكتشاف معلومات المتصفح تلقائيًا",
-  "locations.computer.cancel": "إلغاء",
-  "locations.computer.code": "رمز الكمبيوتر",
-  "locations.computer.codeHelp": "رمز من حرفين (مثال: AA, AB, A1). اتركه فارغًا للإنشاء التلقائي.",
-  "locations.computer.codeInvalid": "يجب أن يتكون رمز الكمبيوتر من حرفين كبيرين أو رقمين",
-  "locations.computer.codeLength": "يجب أن يتكون رمز الكمبيوتر من حرفين بالضبط",
-  "locations.computer.codePlaceholder": "AA (اترك فارغًا للإنشاء التلقائي)",
-  "locations.computer.ipAddress": "عنوان IP",
-  "locations.computer.ipAddressHelp": "اختياري: عنوان IP للكمبيوتر",
-  "locations.computer.ipAddressMaxLength": "لا يمكن أن يتجاوز عنوان IP 50 حرفًا",
-  "locations.computer.ipAddressPlaceholder": "اختياري: أدخل عنوان IP",
-  "locations.computer.register": "التسجيل",
-  "locations.computer.success": "تم تسجيل الكمبيوتر بنجاح",
-  "locations.computer.title": "تسجيل الكمبيوتر",
-  "locations.currentLocation": "الموقع الحالي",
-  "locations.form.cancel": "إلغاء",
-  "locations.form.contactInfo": "معلومات الاتصال",
-  "locations.form.contactInfoMaxLength": "لا يمكن أن تتجاوز معلومات الاتصال 250 حرفًا",
-  "locations.form.contactInfoPlaceholder": "أدخل معلومات الاتصال",
-  "locations.form.create": "إنشاء",
-  "locations.form.created": "تم إنشاء الموقع بنجاح",
-  "locations.form.latitude": "خط العرض",
-  "locations.form.latitudeHelp": "النطاق: -90 إلى 90",
-  "locations.form.latitudeInvalid": "يجب أن يكون خط العرض إحداثيًا صالحًا بين -90 و 90",
-  "locations.form.latitudePlaceholder": "مثال: 37.7749",
-  "locations.form.longitude": "خط الطول",
-  "locations.form.longitudeHelp": "النطاق: -180 إلى 180",
-  "locations.form.longitudeInvalid": "يجب أن يكون خط الطول إحداثيًا صالحًا بين -180 و 180",
-  "locations.form.longitudePlaceholder": "مثال: -122.4194",
-  "locations.form.name": "اسم الموقع",
-  "locations.form.nameMaxLength": "لا يمكن أن يتجاوز اسم الموقع 50 حرفًا",
-  "locations.form.namePlaceholder": "أدخل اسم الموقع",
-  "locations.form.nameRequired": "اسم الموقع مطلوب",
-  "locations.form.save": "حفظ",
-  "locations.form.sortOrder": "ترتيب الفرز",
-  "locations.form.sortOrderHelp": "يُستخدم لترتيب المواقع في القوائم",
-  "locations.form.sortOrderInvalid": "يجب أن يكون ترتيب الفرز رقمًا",
-  "locations.form.titleAdd": "إضافة موقع",
-  "locations.form.titleEdit": "تعديل موقع",
-  "locations.form.updated": "تم تحديث الموقع بنجاح",
-  "locations.locationSelected": "تم اختيار الموقع بنجاح",
-  "locations.selectLocation": "اختر الموقع"
+  "locations.computer.browserInfo": {
+    "t": "معلومات المتصفح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoHelp": {
+    "t": "يتم اكتشافه تلقائيًا من متصفحك",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoMaxLength": {
+    "t": "لا يمكن أن تتجاوز معلومات المتصفح 250 حرفًا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoPlaceholder": {
+    "t": "تم اكتشاف معلومات المتصفح تلقائيًا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.cancel": {
+    "t": "إلغاء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.code": {
+    "t": "رمز الكمبيوتر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeHelp": {
+    "t": "رمز من حرفين (مثال: AA, AB, A1). اتركه فارغًا للإنشاء التلقائي.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeInvalid": {
+    "t": "يجب أن يتكون رمز الكمبيوتر من حرفين كبيرين أو رقمين",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeLength": {
+    "t": "يجب أن يتكون رمز الكمبيوتر من حرفين بالضبط",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codePlaceholder": {
+    "t": "AA (اترك فارغًا للإنشاء التلقائي)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddress": {
+    "t": "عنوان IP",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressHelp": {
+    "t": "اختياري: عنوان IP للكمبيوتر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressMaxLength": {
+    "t": "لا يمكن أن يتجاوز عنوان IP 50 حرفًا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressPlaceholder": {
+    "t": "اختياري: أدخل عنوان IP",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.register": {
+    "t": "التسجيل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.success": {
+    "t": "تم تسجيل الكمبيوتر بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.title": {
+    "t": "تسجيل الكمبيوتر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.currentLocation": {
+    "t": "الموقع الحالي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.cancel": {
+    "t": "إلغاء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfo": {
+    "t": "معلومات الاتصال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoMaxLength": {
+    "t": "لا يمكن أن تتجاوز معلومات الاتصال 250 حرفًا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoPlaceholder": {
+    "t": "أدخل معلومات الاتصال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.create": {
+    "t": "إنشاء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.created": {
+    "t": "تم إنشاء الموقع بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitude": {
+    "t": "خط العرض",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeHelp": {
+    "t": "النطاق: -90 إلى 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeInvalid": {
+    "t": "يجب أن يكون خط العرض إحداثيًا صالحًا بين -90 و 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudePlaceholder": {
+    "t": "مثال: 37.7749",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitude": {
+    "t": "خط الطول",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeHelp": {
+    "t": "النطاق: -180 إلى 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeInvalid": {
+    "t": "يجب أن يكون خط الطول إحداثيًا صالحًا بين -180 و 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudePlaceholder": {
+    "t": "مثال: -122.4194",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.name": {
+    "t": "اسم الموقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameMaxLength": {
+    "t": "لا يمكن أن يتجاوز اسم الموقع 50 حرفًا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.namePlaceholder": {
+    "t": "أدخل اسم الموقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameRequired": {
+    "t": "اسم الموقع مطلوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.save": {
+    "t": "حفظ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrder": {
+    "t": "ترتيب الفرز",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderHelp": {
+    "t": "يُستخدم لترتيب المواقع في القوائم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderInvalid": {
+    "t": "يجب أن يكون ترتيب الفرز رقمًا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleAdd": {
+    "t": "إضافة موقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleEdit": {
+    "t": "تعديل موقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.updated": {
+    "t": "تم تحديث الموقع بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.locationSelected": {
+    "t": "تم اختيار الموقع بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.selectLocation": {
+    "t": "اختر الموقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

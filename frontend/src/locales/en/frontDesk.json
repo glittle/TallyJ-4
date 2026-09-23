@@ -1,88 +1,432 @@
 {
-  "frontDesk.page.title": "Front Desk - Voter Check-In",
-  "frontDesk.stats.checkedIn": "Checked In",
-  "frontDesk.stats.notCheckedIn": "Not Checked In",
-  "frontDesk.section.quickCheckIn": "Voter",
-  "frontDesk.search.placeholder": "Enter partial name or Bahá'í ID",
-  "frontDesk.filters.registrationStatus": "Show:",
-  "frontDesk.filters.registrationAll": "All ({count})",
-  "frontDesk.filters.registrationNotRegistered": "Not registered ({count})",
-  "frontDesk.filters.registrationRegistered": "Registered ({count})",
-  "frontDesk.filters.votingMethods": "Voting method filters:",
-  "frontDesk.filters.ballotNotReceived": "Ballot Not Received",
-  "frontDesk.filters.ballotNotReceivedWithCount": "Ballot Not Received ({count})",
-  "frontDesk.filters.ballotNotReceivedHelp": "Hide everyone whose ballot has been received. Combine with a flag to see who still has no ballot.",
-  "frontDesk.filters.flags": "Flags:",
-  "frontDesk.filters.flagLegend": "Flag Abbreviations:",
-  "frontDesk.filters.methodWithCount": "{label} ({count})",
-  "frontDesk.filters.flagWithCount": "{flag} ({count})",
-  "frontDesk.table.name": "Name",
-  "frontDesk.table.bahaiId": "Bahá'í ID",
-  "frontDesk.table.area": "Area",
-  "frontDesk.table.envNum": "Env #",
-  "frontDesk.table.method": "Method",
-  "frontDesk.table.sms": "SMS",
-  "frontDesk.table.whatsApp": "WhatsApp",
-  "frontDesk.table.flags": "Flags",
-  "frontDesk.table.time": "When",
-  "frontDesk.keyboardHint": "Use keyboard to navigate ↑ ↓ and check in.",
-  "frontDesk.dialog.checkIn": "Check in",
-  "frontDesk.dialog.update": "Update Registration",
-  "frontDesk.dialog.id": "ID:",
-  "frontDesk.dialog.area": "Area:",
-  "frontDesk.dialog.unregister": "Unregister",
-  "frontDesk.dialog.currentRegistration": "Current Registration",
-  "frontDesk.dialog.envelope": "Envelope #{num}",
-  "frontDesk.dialog.votingMethod": "Voting Method",
-  "frontDesk.envelope.set": "+",
-  "frontDesk.envelope.editTitle": "Envelope number",
-  "frontDesk.envelope.editPrompt": "Enter an envelope number for {name}.",
-  "frontDesk.envelope.clear": "Clear number",
-  "frontDesk.envelope.saved": "Envelope number updated",
-  "frontDesk.envelope.cleared": "Envelope number cleared",
-  "frontDesk.errors.updateEnvelope": "Failed to update envelope number",
-  "frontDesk.dialog.flags": "Flags",
-  "frontDesk.dialog.registrationHistory": "Registration History",
-  "frontDesk.dialog.checkingIn": "Checking in...",
-  "frontDesk.dialog.instructions": "Use ← → arrows or number keys, press Enter to confirm, Esc to cancel",
-  "frontDesk.votingMethod.inPerson": "In Person",
-  "frontDesk.votingMethod.mail": "Mailed",
-  "frontDesk.votingMethod.online": "Online",
-  "frontDesk.votingMethod.callIn": "Call-In",
-  "frontDesk.votingMethod.imported": "Imported",
-  "frontDesk.onlineStatus.draft": "Online draft",
-  "frontDesk.onlineStatus.pending": "Pending online",
-  "frontDesk.onlineStatus.accepted": "Accepted online",
-  "frontDesk.errors.alreadyAcceptedOnline": "This person already has an accepted online ballot. They cannot be checked in with another method.",
-  "frontDesk.errors.alreadyProcessingOnline": "Tellers are accepting this person's online ballot. Wait until that finishes before checking them in another way.",
-  "frontDesk.errors.onlineIsVoterInitiated": "Online ballots are started by the voter. Check this person in as in person, mailed, dropped off, or kiosk instead.",
-  "frontDesk.confirm.withdrawPendingOnline.title": "Unfinished online ballot",
-  "frontDesk.confirm.withdrawPendingOnline.message": "{name} has a draft or submitted online ballot that has not been accepted yet. Checking them in this way discards that online ballot so they are not counted twice.",
-  "frontDesk.confirm.withdrawPendingOnline.confirm": "Discard pending online ballot",
-  "frontDesk.history.checkedIn": "Checked in: {method}",
-  "frontDesk.history.teller1": "By: {name}",
-  "frontDesk.history.teller2": "By: {name}",
-  "frontDesk.history.reason": "Reason: {reason}",
-  "frontDesk.history.location": "Location: {name}",
-  "frontDesk.history.envelope": "Envelope: #{num}",
-  "frontDesk.common.dash": "-",
-  "frontDesk.messages.checkInSuccess": "{name} checked in successfully",
-  "frontDesk.messages.flagsUpdated": "Flags updated successfully",
-  "frontDesk.messages.unregistered": "Voter unregistered successfully",
-  "frontDesk.messages.invalidButton": "Invalid button selected: {index}",
-  "frontDesk.errors.fetchVoters": "Failed to fetch eligible voters",
-  "frontDesk.errors.checkIn": "Failed to check in voter",
-  "frontDesk.errors.unregister": "Failed to unregister voter",
-  "frontDesk.errors.updateFlags": "Failed to update flags",
-  "frontDesk.errors.updatePersonFlags": "Failed to update person flags",
-  "frontDesk.errors.loadData": "Failed to load data",
-  "frontDesk.confirm.removeFlag.title": "Confirm Remove Flag",
-  "frontDesk.confirm.removeFlag.message": "Remove flag \"{flag}\" from {name}?",
-  "frontDesk.confirm.removeFlag.confirm": "Remove",
-  "frontDesk.confirm.unregister.title": "Confirm Unregister",
-  "frontDesk.confirm.unregister.message": "Are you sure you want to unregister {name}? This will clear their check-in status.",
-  "frontDesk.confirm.unregister.confirm": "Unregister",
-  "frontDesk.unregisterReason": "Unregistered by front desk",
-  "frontDesk.tellerRequired.title": "Teller name required",
-  "frontDesk.tellerRequired.message": "Enter your name in for 'Teller at keyboard' above before checking in voters, updating flags, or changing envelope numbers."
+  "frontDesk.page.title": {
+    "t": "Front Desk - Voter Check-In",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.stats.checkedIn": {
+    "t": "Checked In",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.stats.notCheckedIn": {
+    "t": "Not Checked In",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.section.quickCheckIn": {
+    "t": "Voter",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.search.placeholder": {
+    "t": "Enter partial name or Bahá'í ID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.filters.registrationStatus": {
+    "t": "Show:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.filters.registrationAll": {
+    "t": "All ({count})",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.filters.registrationNotRegistered": {
+    "t": "Not registered ({count})",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.filters.registrationRegistered": {
+    "t": "Registered ({count})",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.filters.votingMethods": {
+    "t": "Voting method filters:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.filters.ballotNotReceived": {
+    "t": "Ballot Not Received",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.filters.ballotNotReceivedWithCount": {
+    "t": "Ballot Not Received ({count})",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.filters.ballotNotReceivedHelp": {
+    "t": "Hide everyone whose ballot has been received. Combine with a flag to see who still has no ballot.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.filters.flags": {
+    "t": "Flags:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.filters.flagLegend": {
+    "t": "Flag Abbreviations:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.filters.methodWithCount": {
+    "t": "{label} ({count})",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.filters.flagWithCount": {
+    "t": "{flag} ({count})",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.table.name": {
+    "t": "Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.table.bahaiId": {
+    "t": "Bahá'í ID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.table.area": {
+    "t": "Area",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.table.envNum": {
+    "t": "Env #",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.table.method": {
+    "t": "Method",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.table.sms": {
+    "t": "SMS",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.table.whatsApp": {
+    "t": "WhatsApp",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.table.flags": {
+    "t": "Flags",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.table.time": {
+    "t": "When",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.keyboardHint": {
+    "t": "Use keyboard to navigate ↑ ↓ and check in.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.dialog.checkIn": {
+    "t": "Check in",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.dialog.update": {
+    "t": "Update Registration",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.dialog.id": {
+    "t": "ID:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.dialog.area": {
+    "t": "Area:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.dialog.unregister": {
+    "t": "Unregister",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.dialog.currentRegistration": {
+    "t": "Current Registration",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.dialog.envelope": {
+    "t": "Envelope #{num}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.dialog.votingMethod": {
+    "t": "Voting Method",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.envelope.set": {
+    "t": "+",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.envelope.editTitle": {
+    "t": "Envelope number",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.envelope.editPrompt": {
+    "t": "Enter an envelope number for {name}.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.envelope.clear": {
+    "t": "Clear number",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.envelope.saved": {
+    "t": "Envelope number updated",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.envelope.cleared": {
+    "t": "Envelope number cleared",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.errors.updateEnvelope": {
+    "t": "Failed to update envelope number",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.dialog.flags": {
+    "t": "Flags",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.dialog.registrationHistory": {
+    "t": "Registration History",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.dialog.checkingIn": {
+    "t": "Checking in...",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.dialog.instructions": {
+    "t": "Use ← → arrows or number keys, press Enter to confirm, Esc to cancel",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.votingMethod.inPerson": {
+    "t": "In Person",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.votingMethod.mail": {
+    "t": "Mailed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.votingMethod.online": {
+    "t": "Online",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.votingMethod.callIn": {
+    "t": "Call-In",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.votingMethod.imported": {
+    "t": "Imported",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.onlineStatus.draft": {
+    "t": "Online draft",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.onlineStatus.pending": {
+    "t": "Pending online",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.onlineStatus.accepted": {
+    "t": "Accepted online",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.errors.alreadyAcceptedOnline": {
+    "t": "This person already has an accepted online ballot. They cannot be checked in with another method.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.errors.alreadyProcessingOnline": {
+    "t": "Tellers are accepting this person's online ballot. Wait until that finishes before checking them in another way.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.errors.onlineIsVoterInitiated": {
+    "t": "Online ballots are started by the voter. Check this person in as in person, mailed, dropped off, or kiosk instead.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.confirm.withdrawPendingOnline.title": {
+    "t": "Unfinished online ballot",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.confirm.withdrawPendingOnline.message": {
+    "t": "{name} has a draft or submitted online ballot that has not been accepted yet. Checking them in this way discards that online ballot so they are not counted twice.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.confirm.withdrawPendingOnline.confirm": {
+    "t": "Discard pending online ballot",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.history.checkedIn": {
+    "t": "Checked in: {method}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.history.teller1": {
+    "t": "By: {name}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.history.teller2": {
+    "t": "By: {name}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.history.reason": {
+    "t": "Reason: {reason}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.history.location": {
+    "t": "Location: {name}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.history.envelope": {
+    "t": "Envelope: #{num}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.common.dash": {
+    "t": "-",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.messages.checkInSuccess": {
+    "t": "{name} checked in successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.messages.flagsUpdated": {
+    "t": "Flags updated successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.messages.unregistered": {
+    "t": "Voter unregistered successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.messages.invalidButton": {
+    "t": "Invalid button selected: {index}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.errors.fetchVoters": {
+    "t": "Failed to fetch eligible voters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.errors.checkIn": {
+    "t": "Failed to check in voter",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.errors.unregister": {
+    "t": "Failed to unregister voter",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.errors.updateFlags": {
+    "t": "Failed to update flags",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.errors.updatePersonFlags": {
+    "t": "Failed to update person flags",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.errors.loadData": {
+    "t": "Failed to load data",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.confirm.removeFlag.title": {
+    "t": "Confirm Remove Flag",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.confirm.removeFlag.message": {
+    "t": "Remove flag \"{flag}\" from {name}?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.confirm.removeFlag.confirm": {
+    "t": "Remove",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.confirm.unregister.title": {
+    "t": "Confirm Unregister",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.confirm.unregister.message": {
+    "t": "Are you sure you want to unregister {name}? This will clear their check-in status.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.confirm.unregister.confirm": {
+    "t": "Unregister",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.unregisterReason": {
+    "t": "Unregistered by front desk",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.tellerRequired.title": {
+    "t": "Teller name required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "frontDesk.tellerRequired.message": {
+    "t": "Enter your name in for 'Teller at keyboard' above before checking in voters, updating flags, or changing envelope numbers.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

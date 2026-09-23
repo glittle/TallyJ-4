@@ -1,25 +1,117 @@
 {
-  "import.completed": "واردات با موفقیت تکمیل شد",
-  "import.currentStatus": "وضعیت: {status}",
-  "import.errorCount": "خطاها: {count}",
-  "import.errors.batchSaveFailed": "ذخیره دسته‌ای شکست خورد: {message}",
-  "import.errors.duplicateBahaiId": "خط {rowNumber}: شناسه بهائی تکراری '{bahaiId}'",
-  "import.errors.duplicateEmail": "خط {rowNumber}: ایمیل تکراری '{email}'",
-  "import.errors.duplicateName": "خط {rowNumber}: نام تکراری '{firstName} {lastName}'",
-  "import.errors.duplicatePhone": "خط {rowNumber}: تلفن تکراری '{phone}'",
-  "import.errors.fileNotFound": "فایل واردات یافت نشد یا محتوایی ندارد",
-  "import.errors.importFailed": "واردات شکست خورد: {message}",
-  "import.errors.importFailedAtLine": "واردات در خط {rowNumber} شکست خورد: {message}",
-  "import.errors.invalidMappings": "نگاشت‌های ستونی نامعتبر",
-  "import.errors.lineError": "خط {rowNumber}: {message}",
-  "import.errors.missingFirstName": "خط {rowNumber}: نام گم شده",
-  "import.errors.missingLastName": "خط {rowNumber}: نام خانوادگی گم شده",
-  "import.errors.missingRequiredMappings": "نگاشت‌های نام و نام خانوادگی لازم است",
-  "import.errors.noMappings": "هیچ نگاشت ستونی پیکربندی نشده",
-  "import.errorsTitle": "خطاهای واردات",
-  "import.moreErrors": "و {count} خطای بیشتر...",
-  "import.processingRows": "پردازش ردیف‌ها {processed} از {total}",
-  "import.progressTitle": "پیشرفت واردات",
-  "import.successCount": "موفق: {count}",
-  "import.warnings.unrecognizedEligibility": "خط {rowNumber}: وضعیت واجد شرایط بودن ناشناخته: '{eligibilityValue}' - به عنوان واجد شرایط درمان شد"
+  "import.completed": {
+    "t": "واردات با موفقیت تکمیل شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.currentStatus": {
+    "t": "وضعیت: {status}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorCount": {
+    "t": "خطاها: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.batchSaveFailed": {
+    "t": "ذخیره دسته‌ای شکست خورد: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateBahaiId": {
+    "t": "خط {rowNumber}: شناسه بهائی تکراری '{bahaiId}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateEmail": {
+    "t": "خط {rowNumber}: ایمیل تکراری '{email}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateName": {
+    "t": "خط {rowNumber}: نام تکراری '{firstName} {lastName}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicatePhone": {
+    "t": "خط {rowNumber}: تلفن تکراری '{phone}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.fileNotFound": {
+    "t": "فایل واردات یافت نشد یا محتوایی ندارد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailed": {
+    "t": "واردات شکست خورد: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailedAtLine": {
+    "t": "واردات در خط {rowNumber} شکست خورد: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.invalidMappings": {
+    "t": "نگاشت‌های ستونی نامعتبر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.lineError": {
+    "t": "خط {rowNumber}: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingFirstName": {
+    "t": "خط {rowNumber}: نام گم شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingLastName": {
+    "t": "خط {rowNumber}: نام خانوادگی گم شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingRequiredMappings": {
+    "t": "نگاشت‌های نام و نام خانوادگی لازم است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.noMappings": {
+    "t": "هیچ نگاشت ستونی پیکربندی نشده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorsTitle": {
+    "t": "خطاهای واردات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.moreErrors": {
+    "t": "و {count} خطای بیشتر...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.processingRows": {
+    "t": "پردازش ردیف‌ها {processed} از {total}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.progressTitle": {
+    "t": "پیشرفت واردات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.successCount": {
+    "t": "موفق: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.warnings.unrecognizedEligibility": {
+    "t": "خط {rowNumber}: وضعیت واجد شرایط بودن ناشناخته: '{eligibilityValue}' - به عنوان واجد شرایط درمان شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

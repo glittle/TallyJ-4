@@ -1,194 +1,962 @@
 {
-  "reporting.advancedFilters": "عوامل تصفية متقدمة",
-  "reporting.allCanReceive": "الأشخاص الذين يمكن التصويت لهم",
-  "reporting.applyFilters": "تطبيق المرشحات",
-  "reporting.area": "المنطقة",
-  "reporting.averageVotesPerBallot": "Average Votes per Ballot",
-  "reporting.bahaiId": "رقم بهائي",
-  "reporting.ballotCode": "الاقتراع",
-  "reporting.ballotCount": "عدد الاقتراعات",
-  "reporting.ballotId": "معرف الاقتراع",
-  "reporting.ballotLengthDistribution": "توزيع طول الاقتراع",
-  "reporting.ballotReport": "تقرير الاقتراع",
-  "reporting.ballotReports": "تقارير الاقتراع",
-  "reporting.ballotsByMethod": "الاقتراعات حسب طريقة التصويت",
-  "reporting.ballotsCast": "الاقتراعات المدلى بها",
-  "reporting.ballotsEntered": "الاقتراعات المدخلة",
-  "reporting.calledIn": "هاتفياً",
-  "reporting.canReceiveVotes": "يمكنه تلقي الأصوات",
-  "reporting.canVote": "يمكنه التصويت",
-  "reporting.candidate": "مرشح",
-  "reporting.candidateName": "اسم المرشح",
-  "reporting.candidatePerformance": "أداء المرشح",
-  "reporting.candidateVotes": "أصوات المرشح",
-  "reporting.candidates": "المرشحون",
-  "reporting.category": "الفئة",
-  "reporting.change": "تغيير",
-  "reporting.charts": "الرسوم البيانية",
-  "reporting.clearFilters": "مسح المرشحات",
-  "reporting.comparisonSummary": "ملخص المقارنة",
-  "reporting.configureReport": "تكوين التقرير",
-  "reporting.contender": "منافس",
-  "reporting.convenor": "المنسق",
-  "reporting.count": "العدد",
-  "reporting.cumulativeTurnout": "الإقبال المتراكم",
-  "reporting.customReport": "تقرير مخصص",
-  "reporting.date": "التاريخ",
-  "reporting.dateOfElection": "تاريخ الانتخابات",
-  "reporting.dateRange": "نطاق التاريخ",
-  "reporting.demographicBreakdown": "التفصيل الديموغرافي",
-  "reporting.description": "الوصف",
-  "reporting.detailedStatistics": "إحصائيات مفصلة",
-  "reporting.droppedOff": "تم إسقاطها",
-  "reporting.earlyVoting": "التصويت المبكر",
-  "reporting.earlyVotingPercentage": "Early Voting %",
-  "reporting.elected": "منتخب",
-  "reporting.electedCandidates": "المرشحون المنتخبون",
-  "reporting.electedPersons": "منتخب",
-  "reporting.election": "انتخابات",
-  "reporting.electionDate": "تاريخ الانتخابات",
-  "reporting.electionDayVoting": "يوم الانتخابات",
-  "reporting.electionDetails": "تفاصيل الانتخابات",
-  "reporting.electionName": "اسم الانتخابات",
-  "reporting.electionOverview": "نظرة عامة على الانتخابات",
-  "reporting.electionSummary": "ملخص الانتخابات",
-  "reporting.electionType": "نوع الانتخابات",
-  "reporting.eligibilityReason": "سبب الأهلية",
-  "reporting.eliminated": "مستبعد",
-  "reporting.email": "البريد الإلكتروني",
-  "reporting.endDate": "تاريخ الانتهاء",
-  "reporting.enterCandidateName": "أدخل اسم المرشح",
-  "reporting.enterDescription": "أدخل الوصف",
-  "reporting.enterReportName": "أدخل اسم التقرير",
-  "reporting.error": "فشل تحميل التقرير",
-  "reporting.exportCSV": "تصدير CSV",
-  "reporting.exportExcel": "تصدير Excel",
-  "reporting.exportFormats": "صيغ التصدير",
-  "reporting.exportPDF": "تصدير PDF",
-  "reporting.extra": "إضافي",
-  "reporting.extraCandidates": "مرشحون إضافيون",
-  "reporting.firstChoice": "First Choice %",
-  "reporting.firstName": "الاسم الأول",
-  "reporting.firstTimeVoters": "الناخبون لأول مرة",
-  "reporting.flags": "الأعلام",
-  "reporting.generateComparison": "إنشاء مقارنة",
-  "reporting.generateCustomReport": "إنشاء تقرير مخصص",
-  "reporting.generateReport": "إنشاء تقرير",
-  "reporting.groupN": "المجموعة {n}",
-  "reporting.hasSignedInEmail": "تم الدخول (البريد الإلكتروني)",
-  "reporting.hasSignedInPhone": "تم الدخول (الهاتف)",
-  "reporting.historicalComparison": "مقارنة تاريخية",
-  "reporting.imported": "مستوردة",
-  "reporting.inPerson": "شخصياً",
-  "reporting.inPersonVoters": "الناخبون شخصياً",
-  "reporting.includeSections": "تضمين الأقسام",
-  "reporting.lastName": "الاسم الأخير",
-  "reporting.loading": "جاري تحميل التقرير...",
-  "reporting.location": "موقع",
-  "reporting.locationReport": "تقرير الموقع",
-  "reporting.locationStatistics": "إحصائيات الموقع",
-  "reporting.locations": "المواقع",
-  "reporting.mailedIn": "بالبريد",
-  "reporting.matchingNames": "أسماء مطابقة على النتائج",
-  "reporting.maxVotesOnBallot": "الحد الأقصى للأصوات على الاقتراع",
-  "reporting.metricsToCompare": "المقاييس المراد مقارنتها",
-  "reporting.minVotesOnBallot": "الحد الأدنى للأصوات على الاقتراع",
-  "reporting.name": "الاسم",
-  "reporting.no": "لا",
-  "reporting.noBallots": "لم يتم العثور على اقتراعات لهذا المرشح.",
-  "reporting.noChanges": "لم يتم العثور على سجلات أشخاص تم تغييرهم.",
-  "reporting.noDuplicates": "لم يتم العثور على اقتراعات مكررة.",
-  "reporting.noEmails": "لم يتم العثور على سجلات بريد إلكتروني/هاتف.",
-  "reporting.noFlags": "لم يتم تعريف أي أعلام حضور.",
-  "reporting.noNonEligible": "لم يتم العثور على أشخاص بحالة أهلية.",
-  "reporting.noSpoiledVotes": "لم يتم العثور على أصوات تالفة.",
-  "reporting.numBallots": "عدد الاقتراعات",
-  "reporting.numEligibleToVote": "عدد المؤهلين للتصويت",
-  "reporting.online": "عبر الإنترنت",
-  "reporting.onlineKiosk": "عبر الإنترنت/كشك",
-  "reporting.onlineStatus": "الحالة",
-  "reporting.onlineVoters": "الناخبون عبر الإنترنت",
-  "reporting.other": "آخر",
-  "reporting.otherInfo": "معلومات أخرى",
-  "reporting.otherLastNames": "أسماء عائلية أخرى",
-  "reporting.otherNames": "أسماء أخرى",
-  "reporting.overallTurnout": "النسبة الإجمالية للإقبال",
-  "reporting.overallTurnoutSummary": "ملخص الإقبال الإجمالي",
-  "reporting.participationRates": "معدلات المشاركة",
-  "reporting.percentParticipation": "المشاركة",
-  "reporting.percentage": "النسبة المئوية",
-  "reporting.performance": "الأداء",
-  "reporting.phone": "الهاتف",
-  "reporting.positionsToElect": "المناصب المراد انتخابها",
-  "reporting.print": "طباعة",
-  "reporting.printHint": "يمكن لبعض المتصفحات مثل Chrome إنشاء نسخة PDF من التقرير عند الطباعة.",
-  "reporting.rank": "التصنيف",
-  "reporting.reason": "السبب",
-  "reporting.registeredVoters": "الناخبون المسجلون",
-  "reporting.registrationLog": "سجل التسجيل",
-  "reporting.registrationTime": "وقت التسجيل",
-  "reporting.reportGenerated": "تم إنشاء التقرير بنجاح",
-  "reporting.reportGenerationError": "Failed to generate report",
-  "reporting.reportName": "اسم التقرير",
-  "reporting.returningVoters": "الناخبون العائدون",
-  "reporting.section": "القسم",
-  "reporting.selectElections": "حدد الانتخابات",
-  "reporting.selectElectionsToCompare": "حدد الانتخابات للمقارنة",
-  "reporting.selectLocations": "تحديد المواقع",
-  "reporting.selectMultipleElections": "حدد انتخابات متعددة",
-  "reporting.selectReport": "Select Report Type",
-  "reporting.selectReportType": "Choose a report to generate",
-  "reporting.selectSortBy": "Select Sort By",
-  "reporting.sortBy": "الفرز حسب",
-  "reporting.spoiledBallots": "الاقتراعات التالفة",
-  "reporting.spoiledVotes": "الأصوات التالفة",
-  "reporting.startDate": "تاريخ البدء",
-  "reporting.statistics": "إحصائيات",
-  "reporting.status": "الحالة",
-  "reporting.sumOfEnvelopesCollected": "إجمالي الاقتراعات المدلى بها (شاملة العد اليدوي)",
-  "reporting.summary": "ملخص",
-  "reporting.summaryReport": "ملخص الانتخابات",
-  "reporting.summaryStats": "إحصائيات الملخص",
-  "reporting.teller1": "الموظف 1",
-  "reporting.teller2": "الموظف 2",
-  "reporting.tieGroup": "مجموعة التعادل {group}",
-  "reporting.tieNote": "* يتم عرض عدد فاصل التعادل بعد /",
-  "reporting.ties": "التعادلات",
-  "reporting.timeBasedTurnout": "الإقبال القائم على الوقت",
-  "reporting.timePeriod": "فترة زمنية",
-  "reporting.title": "Election Reports",
-  "reporting.to": "إلى",
-  "reporting.topCandidates": "أفضل المرشحين",
-  "reporting.total": "الإجمالي",
-  "reporting.totalBallots": "إجمالي الاقتراعات",
-  "reporting.totalBallotsCast": "إجمالي الاقتراعات المدلى بها",
-  "reporting.totalEligible": "مؤهل",
-  "reporting.totalVoters": "Total Voters",
-  "reporting.totalVotersHeader": "إجمالي الناخبين",
-  "reporting.totalVotes": "إجمالي الأصوات",
-  "reporting.turnout": "نسبة الإقبال",
-  "reporting.turnoutAnalysis": "تحليل الإقبال",
-  "reporting.turnoutByLocation": "الإقبال حسب الموقع",
-  "reporting.turnoutOverTime": "الإقبال على مدى الوقت",
-  "reporting.turnoutPercentage": "Turnout %",
-  "reporting.turnoutRange": "نطاق الإقبال",
-  "reporting.validBallots": "الاقتراعات الصحيحة",
-  "reporting.value": "القيمة",
-  "reporting.voteDistribution": "توزيع الأصوات",
-  "reporting.votePercentage": "Vote %",
-  "reporting.voteRange": "نطاق الأصوات",
-  "reporting.voteTime": "وقت الصوت",
-  "reporting.voted": "صوت",
-  "reporting.voterName": "اسم الناخب",
-  "reporting.voterReport": "تقرير الناخب",
-  "reporting.voterReports": "تقارير الناخبين",
-  "reporting.voterTurnout": "إقبال الناخبين",
-  "reporting.votes": "الأصوات",
-  "reporting.votesOnBallot": "الأصوات على هذا الاقتراع",
-  "reporting.votesPerBallot": "Votes per Ballot",
-  "reporting.votingMethod": "طريقة التصويت",
-  "reporting.whenEmail": "تم إرسال البريد الإلكتروني",
-  "reporting.whenPhone": "تم إرسال الهاتف",
-  "reporting.whenStatus": "متى",
-  "reporting.yes": "نعم"
+  "reporting.advancedFilters": {
+    "t": "عوامل تصفية متقدمة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.allCanReceive": {
+    "t": "الأشخاص الذين يمكن التصويت لهم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.applyFilters": {
+    "t": "تطبيق المرشحات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.area": {
+    "t": "المنطقة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.averageVotesPerBallot": {
+    "t": "Average Votes per Ballot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.bahaiId": {
+    "t": "رقم بهائي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCode": {
+    "t": "الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCount": {
+    "t": "عدد الاقتراعات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotId": {
+    "t": "معرف الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotLengthDistribution": {
+    "t": "توزيع طول الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReport": {
+    "t": "تقرير الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReports": {
+    "t": "تقارير الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsByMethod": {
+    "t": "الاقتراعات حسب طريقة التصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsCast": {
+    "t": "الاقتراعات المدلى بها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsEntered": {
+    "t": "الاقتراعات المدخلة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.calledIn": {
+    "t": "هاتفياً",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canReceiveVotes": {
+    "t": "يمكنه تلقي الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canVote": {
+    "t": "يمكنه التصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidate": {
+    "t": "مرشح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateName": {
+    "t": "اسم المرشح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidatePerformance": {
+    "t": "أداء المرشح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateVotes": {
+    "t": "أصوات المرشح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidates": {
+    "t": "المرشحون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.category": {
+    "t": "الفئة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.change": {
+    "t": "تغيير",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.charts": {
+    "t": "الرسوم البيانية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.clearFilters": {
+    "t": "مسح المرشحات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.comparisonSummary": {
+    "t": "ملخص المقارنة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.configureReport": {
+    "t": "تكوين التقرير",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.contender": {
+    "t": "منافس",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.convenor": {
+    "t": "المنسق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.count": {
+    "t": "العدد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.cumulativeTurnout": {
+    "t": "الإقبال المتراكم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.customReport": {
+    "t": "تقرير مخصص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.date": {
+    "t": "التاريخ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateOfElection": {
+    "t": "تاريخ الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateRange": {
+    "t": "نطاق التاريخ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.demographicBreakdown": {
+    "t": "التفصيل الديموغرافي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.description": {
+    "t": "الوصف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.detailedStatistics": {
+    "t": "إحصائيات مفصلة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.droppedOff": {
+    "t": "تم إسقاطها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVoting": {
+    "t": "التصويت المبكر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVotingPercentage": {
+    "t": "Early Voting %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.elected": {
+    "t": "منتخب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedCandidates": {
+    "t": "المرشحون المنتخبون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedPersons": {
+    "t": "منتخب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.election": {
+    "t": "انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDate": {
+    "t": "تاريخ الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDayVoting": {
+    "t": "يوم الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDetails": {
+    "t": "تفاصيل الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionName": {
+    "t": "اسم الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionOverview": {
+    "t": "نظرة عامة على الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionSummary": {
+    "t": "ملخص الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionType": {
+    "t": "نوع الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eligibilityReason": {
+    "t": "سبب الأهلية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eliminated": {
+    "t": "مستبعد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.email": {
+    "t": "البريد الإلكتروني",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.endDate": {
+    "t": "تاريخ الانتهاء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterCandidateName": {
+    "t": "أدخل اسم المرشح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterDescription": {
+    "t": "أدخل الوصف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterReportName": {
+    "t": "أدخل اسم التقرير",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.error": {
+    "t": "فشل تحميل التقرير",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportCSV": {
+    "t": "تصدير CSV",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportExcel": {
+    "t": "تصدير Excel",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportFormats": {
+    "t": "صيغ التصدير",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportPDF": {
+    "t": "تصدير PDF",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extra": {
+    "t": "إضافي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extraCandidates": {
+    "t": "مرشحون إضافيون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstChoice": {
+    "t": "First Choice %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstName": {
+    "t": "الاسم الأول",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstTimeVoters": {
+    "t": "الناخبون لأول مرة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.flags": {
+    "t": "الأعلام",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateComparison": {
+    "t": "إنشاء مقارنة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateCustomReport": {
+    "t": "إنشاء تقرير مخصص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateReport": {
+    "t": "إنشاء تقرير",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.groupN": {
+    "t": "المجموعة {n}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInEmail": {
+    "t": "تم الدخول (البريد الإلكتروني)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInPhone": {
+    "t": "تم الدخول (الهاتف)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.historicalComparison": {
+    "t": "مقارنة تاريخية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.imported": {
+    "t": "مستوردة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPerson": {
+    "t": "شخصياً",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPersonVoters": {
+    "t": "الناخبون شخصياً",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.includeSections": {
+    "t": "تضمين الأقسام",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.lastName": {
+    "t": "الاسم الأخير",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.loading": {
+    "t": "جاري تحميل التقرير...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.location": {
+    "t": "موقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationReport": {
+    "t": "تقرير الموقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationStatistics": {
+    "t": "إحصائيات الموقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locations": {
+    "t": "المواقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.mailedIn": {
+    "t": "بالبريد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.matchingNames": {
+    "t": "أسماء مطابقة على النتائج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.maxVotesOnBallot": {
+    "t": "الحد الأقصى للأصوات على الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.metricsToCompare": {
+    "t": "المقاييس المراد مقارنتها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.minVotesOnBallot": {
+    "t": "الحد الأدنى للأصوات على الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.name": {
+    "t": "الاسم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.no": {
+    "t": "لا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noBallots": {
+    "t": "لم يتم العثور على اقتراعات لهذا المرشح.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noChanges": {
+    "t": "لم يتم العثور على سجلات أشخاص تم تغييرهم.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noDuplicates": {
+    "t": "لم يتم العثور على اقتراعات مكررة.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noEmails": {
+    "t": "لم يتم العثور على سجلات بريد إلكتروني/هاتف.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noFlags": {
+    "t": "لم يتم تعريف أي أعلام حضور.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noNonEligible": {
+    "t": "لم يتم العثور على أشخاص بحالة أهلية.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noSpoiledVotes": {
+    "t": "لم يتم العثور على أصوات تالفة.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numBallots": {
+    "t": "عدد الاقتراعات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numEligibleToVote": {
+    "t": "عدد المؤهلين للتصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.online": {
+    "t": "عبر الإنترنت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineKiosk": {
+    "t": "عبر الإنترنت/كشك",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineStatus": {
+    "t": "الحالة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineVoters": {
+    "t": "الناخبون عبر الإنترنت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.other": {
+    "t": "آخر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherInfo": {
+    "t": "معلومات أخرى",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherLastNames": {
+    "t": "أسماء عائلية أخرى",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherNames": {
+    "t": "أسماء أخرى",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnout": {
+    "t": "النسبة الإجمالية للإقبال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnoutSummary": {
+    "t": "ملخص الإقبال الإجمالي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.participationRates": {
+    "t": "معدلات المشاركة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentParticipation": {
+    "t": "المشاركة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentage": {
+    "t": "النسبة المئوية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.performance": {
+    "t": "الأداء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.phone": {
+    "t": "الهاتف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.positionsToElect": {
+    "t": "المناصب المراد انتخابها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.print": {
+    "t": "طباعة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.printHint": {
+    "t": "يمكن لبعض المتصفحات مثل Chrome إنشاء نسخة PDF من التقرير عند الطباعة.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.rank": {
+    "t": "التصنيف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reason": {
+    "t": "السبب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registeredVoters": {
+    "t": "الناخبون المسجلون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationLog": {
+    "t": "سجل التسجيل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationTime": {
+    "t": "وقت التسجيل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerated": {
+    "t": "تم إنشاء التقرير بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerationError": {
+    "t": "Failed to generate report",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportName": {
+    "t": "اسم التقرير",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.returningVoters": {
+    "t": "الناخبون العائدون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.section": {
+    "t": "القسم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElections": {
+    "t": "حدد الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElectionsToCompare": {
+    "t": "حدد الانتخابات للمقارنة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectLocations": {
+    "t": "تحديد المواقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectMultipleElections": {
+    "t": "حدد انتخابات متعددة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReport": {
+    "t": "Select Report Type",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReportType": {
+    "t": "Choose a report to generate",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectSortBy": {
+    "t": "Select Sort By",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sortBy": {
+    "t": "الفرز حسب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledBallots": {
+    "t": "الاقتراعات التالفة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledVotes": {
+    "t": "الأصوات التالفة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.startDate": {
+    "t": "تاريخ البدء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.statistics": {
+    "t": "إحصائيات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.status": {
+    "t": "الحالة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sumOfEnvelopesCollected": {
+    "t": "إجمالي الاقتراعات المدلى بها (شاملة العد اليدوي)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summary": {
+    "t": "ملخص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryReport": {
+    "t": "ملخص الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryStats": {
+    "t": "إحصائيات الملخص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller1": {
+    "t": "الموظف 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller2": {
+    "t": "الموظف 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieGroup": {
+    "t": "مجموعة التعادل {group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieNote": {
+    "t": "* يتم عرض عدد فاصل التعادل بعد /",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ties": {
+    "t": "التعادلات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timeBasedTurnout": {
+    "t": "الإقبال القائم على الوقت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timePeriod": {
+    "t": "فترة زمنية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.title": {
+    "t": "Election Reports",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.to": {
+    "t": "إلى",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.topCandidates": {
+    "t": "أفضل المرشحين",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.total": {
+    "t": "الإجمالي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallots": {
+    "t": "إجمالي الاقتراعات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallotsCast": {
+    "t": "إجمالي الاقتراعات المدلى بها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalEligible": {
+    "t": "مؤهل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVoters": {
+    "t": "Total Voters",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotersHeader": {
+    "t": "إجمالي الناخبين",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotes": {
+    "t": "إجمالي الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnout": {
+    "t": "نسبة الإقبال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutAnalysis": {
+    "t": "تحليل الإقبال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutByLocation": {
+    "t": "الإقبال حسب الموقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutOverTime": {
+    "t": "الإقبال على مدى الوقت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutPercentage": {
+    "t": "Turnout %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutRange": {
+    "t": "نطاق الإقبال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.validBallots": {
+    "t": "الاقتراعات الصحيحة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.value": {
+    "t": "القيمة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteDistribution": {
+    "t": "توزيع الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votePercentage": {
+    "t": "Vote %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteRange": {
+    "t": "نطاق الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteTime": {
+    "t": "وقت الصوت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voted": {
+    "t": "صوت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterName": {
+    "t": "اسم الناخب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReport": {
+    "t": "تقرير الناخب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReports": {
+    "t": "تقارير الناخبين",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterTurnout": {
+    "t": "إقبال الناخبين",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votes": {
+    "t": "الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesOnBallot": {
+    "t": "الأصوات على هذا الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesPerBallot": {
+    "t": "Votes per Ballot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votingMethod": {
+    "t": "طريقة التصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenEmail": {
+    "t": "تم إرسال البريد الإلكتروني",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenPhone": {
+    "t": "تم إرسال الهاتف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenStatus": {
+    "t": "متى",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.yes": {
+    "t": "نعم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

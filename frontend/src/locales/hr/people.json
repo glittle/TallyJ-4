@@ -1,133 +1,657 @@
 {
-  "people.addPerson": "Dodaj osobu",
-  "people.ageGroup.adult": "Odrasli",
-  "people.ageGroup.youth": "Mladež",
-  "people.ageGroupLabel": "Dobna skupina",
-  "people.allPeople": "Sve osobe",
-  "people.area": "Područje",
-  "people.bahaiId": "Bahájski ID",
-  "people.bulkActions": "Skupne radnje",
-  "people.bulkDeleteError": "Brisanje nekih osoba nije uspjelo",
-  "people.bulkDeleteMessage": "Jeste li sigurni da želite izbrisati {count} odabranih osoba?",
-  "people.bulkDeleteSuccess": "{count} osoba uspješno obrisano",
-  "people.canReceiveVotes": "Može primiti glasove",
-  "people.canVote": "Može glasati",
-  "people.candidates": "Prihvatljivi kandidati",
-  "people.confirmBulkDelete": "Potvrdi masovno brisanje",
-  "people.createSuccess": "Osoba uspješno dodana",
-  "people.deleteConfirm": "Jeste li sigurni da želite izbrisati {name}?",
-  "people.deleteError": "Brisanje osobe nije uspjelo",
-  "people.deleteSelected": "Izbriši odabrano ({count})",
-  "people.deleteSuccess": "Osoba uspješno obrisana",
-  "people.dropFileHere": "Povucite datoteku ovdje ili kliknite za prijenos",
-  "people.editPerson": "Uredi osobu",
-  "people.email": "E-pošta",
-  "people.emailInvalid": "Unesite valjanu e-poštu",
-  "people.exportError": "Izvoz osoba nije uspio",
-  "people.exportPeople": "Izvezi osobe",
-  "people.exportSuccess": "Osobe uspješno izvezene",
-  "people.fileTooLarge": "Datoteka je prevelika. Molimo prenesite datoteku manju od 10 MB.",
-  "people.firstName": "Ime",
-  "people.fullName": "Puno ime",
-  "people.import.action": "Radnja",
-  "people.import.areaDesc": "Geografsko područje",
-  "people.import.bahaiIdDesc": "Bahájski ID broj",
-  "people.import.clickToUpload": "kliknite za prijenos",
-  "people.import.confirmDeleteAllPeople": "Potvrdi brisanje svih osoba",
-  "people.import.confirmDeleteFile": "Jeste li sigurni da želite izbrisati ovu datoteku?",
-  "people.import.contentEncoding": "Kodiranje sadržaja",
-  "people.import.currentPeopleCount": "Trenutni broj osoba",
-  "people.import.dataRows": "Redovi podataka",
-  "people.import.deleteAllPeople": "Izbriši sve osobe",
-  "people.import.deleteAllPeopleError": "Brisanje svih osoba nije uspjelo",
-  "people.import.deleteAllPeopleMessage": "Jeste li sigurni da želite izbrisati sve osobe s ovih izbora? Ova se radnja ne može poništiti.",
-  "people.import.deleteFileError": "Brisanje datoteke nije uspjelo",
-  "people.import.dropFile": "Povucite datoteku ovdje ili",
-  "people.import.duplicateDesc": "Osoba je duplikat unosa",
-  "people.import.eligibilityDesc": "Opis statusa prihvatljivosti",
-  "people.import.eligibilityValues": "Vrijednosti statusa prihvatljivosti",
-  "people.import.eligibleDesc": "Osoba je prihvatljiva za glasanje",
-  "people.import.emailDesc": "Adresa e-pošte",
-  "people.import.fileName": "Naziv datoteke",
-  "people.import.filesOnServer": "Datoteke na poslužitelju",
-  "people.import.firstNameDesc": "Ime osobe",
-  "people.import.firstNameLastNameRequired": "Polja Ime i Prezime moraju biti mapirana za nastavak uvoza.",
-  "people.import.headerAutoDetected": "Zaglavlja automatski otkrivena u retku {row}",
-  "people.import.headersOnLine": "Zaglavlja u retku",
-  "people.import.headersOnLineTooltip": "Navedite koji redak sadrži zaglavlja stupaca. Automatski se otkriva za Excel datoteke, ali se može prilagoditi po potrebi.",
-  "people.import.ignore": "(zanemari)",
-  "people.import.importNow": "Uvezi sada",
-  "people.import.importResults": "Rezultati uvoza",
-  "people.import.importStepDesc": "Korak uvoza bit će implementiran u sljedećoj fazi",
-  "people.import.importSummary": "Sažetak uvoza",
-  "people.import.importing": "Uvoz osoba...",
-  "people.import.ineligibleDesc": "Osoba nije prihvatljiva za glasanje",
-  "people.import.lastNameDesc": "Prezime osobe",
-  "people.import.loadFilesError": "Učitavanje datoteka za uvoz nije uspjelo",
-  "people.import.mapColumns": "Mapiraj stupce",
-  "people.import.mapColumnsDesc": "Mapirajte stupce iz vaše datoteke na TallyJ polja",
-  "people.import.mapTo": "Mapiraj na:",
-  "people.import.mappedFields": "Mapirana polja",
-  "people.import.mappingSaved": "Mapiranje stupaca uspješno spremljeno",
-  "people.import.otherActions": "Ostale radnje",
-  "people.import.otherInfoDesc": "Dodatne informacije",
-  "people.import.otherLastNamesDesc": "Dodatna prezimena",
-  "people.import.otherNamesDesc": "Dodatna imena",
-  "people.import.peopleAdded": "Dodane osobe",
-  "people.import.peopleSkipped": "Preskočene osobe",
-  "people.import.phoneDesc": "Broj telefona",
-  "people.import.preview": "Pregled",
-  "people.import.reparse": "Ponovno analiziraj",
-  "people.import.reviewImport": "Pregledaj i uvezi",
-  "people.import.saveMapping": "Spremi mapiranje",
-  "people.import.select": "Odaberi",
-  "people.import.selected": "Odabrano",
-  "people.import.size": "Veličina",
-  "people.import.status": "Stanje",
-  "people.import.step1": "Prenesi datoteku",
-  "people.import.step2": "Mapiraj stupce",
-  "people.import.step3": "Uvoz",
-  "people.import.supportedFormats": "Podržani formati: CSV, TSV, TAB, TXT, XLSX (maks. 10 MB)",
-  "people.import.tallyJField": "TallyJ polje",
-  "people.import.tallyJFields": "Referenca TallyJ polja",
-  "people.import.timeElapsed": "Proteklo vrijeme",
-  "people.import.title": "Uvezi osobe",
-  "people.import.underAgeDesc": "Osoba je ispod dobne granice za glasanje",
-  "people.import.uploadError": "Prijenos datoteke nije uspio",
-  "people.import.uploadFile": "Prenesi datoteku",
-  "people.import.uploadTime": "Vrijeme prijenosa",
-  "people.import.validationWarning": "Upozorenje o validaciji",
-  "people.import.warnings": "Upozorenja",
-  "people.importError": "Pokretanje uvoza nije uspjelo",
-  "people.importFormat": "Prenesite CSV ili Excel datoteku sa sljedećim stupcima:",
-  "people.importInstructions": "Upute za uvoz",
-  "people.importOptionalFields": "Neobavezno: E-pošta, Telefon, Područje, Bahájski ID, Prihvatljivost",
-  "people.importPeople": "Uvezi osobe",
-  "people.importRequiredFields": "Obavezno: Ime, Prezime",
-  "people.importStarted": "Uvoz je pokrenut. Molimo pričekajte završetak.",
-  "people.importWarning": "Postojeće osobe s odgovarajućim imenima bit će ažurirane. Nove osobe bit će stvorene.",
-  "people.invalidFileType": "Nevažeća vrsta datoteke. Molimo prenesite CSV ili Excel datoteku.",
-  "people.kioskCode": "Kiosk Code",
-  "people.kioskCodeExpired": "This code has expired. Renew it before the voter logs in.",
-  "people.kioskCodeExpires": "Expires {time} ({minutes} min left).",
-  "people.kioskCodeGenerate": "Make a kiosk code",
-  "people.kioskCodeGenerated": "Kiosk code is ready to share.",
-  "people.kioskCodeNone": "No kiosk code yet. Generate one when the voter is at the kiosk.",
-  "people.kioskCodeNote": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
-  "people.kioskCodeRenew": "Renew kiosk code",
-  "people.lastName": "Prezime",
-  "people.lastNameRequired": "Prezime je obavezno",
-  "people.leaveElectionGroupError": "Napuštanje izborne grupe nije uspjelo:",
-  "people.loadError": "Učitavanje osoba nije uspjelo",
-  "people.management": "Upravljanje osobama",
-  "people.phone": "Telefon",
-  "people.phoneOnlineVoter.recentSms": "Recent SMS",
-  "people.phoneOnlineVoter.smsLogNoStatus": "Sent",
-  "people.phoneOnlineVoter.smsLogError": "Error {code}",
-  "people.saveError": "Spremanje osobe nije uspjelo",
-  "people.search": "Pretraži po imenu, e-pošti ili ID-u",
-  "people.searchError": "Pretraživanje osoba nije uspjelo",
-  "people.supportedFormats": "Podržani formati: CSV, XLS, XLSX (maks. 10 MB)",
-  "people.updateSuccess": "Osoba uspješno ažurirana",
-  "people.voters": "Glasači"
+  "people.addPerson": {
+    "t": "Dodaj osobu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.adult": {
+    "t": "Odrasli",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.youth": {
+    "t": "Mladež",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroupLabel": {
+    "t": "Dobna skupina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.allPeople": {
+    "t": "Sve osobe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.area": {
+    "t": "Područje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bahaiId": {
+    "t": "Bahájski ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkActions": {
+    "t": "Skupne radnje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteError": {
+    "t": "Brisanje nekih osoba nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteMessage": {
+    "t": "Jeste li sigurni da želite izbrisati {count} odabranih osoba?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteSuccess": {
+    "t": "{count} osoba uspješno obrisano",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canReceiveVotes": {
+    "t": "Može primiti glasove",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canVote": {
+    "t": "Može glasati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.candidates": {
+    "t": "Prihvatljivi kandidati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.confirmBulkDelete": {
+    "t": "Potvrdi masovno brisanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.createSuccess": {
+    "t": "Osoba uspješno dodana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteConfirm": {
+    "t": "Jeste li sigurni da želite izbrisati {name}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteError": {
+    "t": "Brisanje osobe nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSelected": {
+    "t": "Izbriši odabrano ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSuccess": {
+    "t": "Osoba uspješno obrisana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.dropFileHere": {
+    "t": "Povucite datoteku ovdje ili kliknite za prijenos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.editPerson": {
+    "t": "Uredi osobu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.email": {
+    "t": "E-pošta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.emailInvalid": {
+    "t": "Unesite valjanu e-poštu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportError": {
+    "t": "Izvoz osoba nije uspio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportPeople": {
+    "t": "Izvezi osobe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportSuccess": {
+    "t": "Osobe uspješno izvezene",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fileTooLarge": {
+    "t": "Datoteka je prevelika. Molimo prenesite datoteku manju od 10 MB.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.firstName": {
+    "t": "Ime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fullName": {
+    "t": "Puno ime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.action": {
+    "t": "Radnja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.areaDesc": {
+    "t": "Geografsko područje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.bahaiIdDesc": {
+    "t": "Bahájski ID broj",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.clickToUpload": {
+    "t": "kliknite za prijenos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteAllPeople": {
+    "t": "Potvrdi brisanje svih osoba",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteFile": {
+    "t": "Jeste li sigurni da želite izbrisati ovu datoteku?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.contentEncoding": {
+    "t": "Kodiranje sadržaja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.currentPeopleCount": {
+    "t": "Trenutni broj osoba",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dataRows": {
+    "t": "Redovi podataka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeople": {
+    "t": "Izbriši sve osobe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleError": {
+    "t": "Brisanje svih osoba nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleMessage": {
+    "t": "Jeste li sigurni da želite izbrisati sve osobe s ovih izbora? Ova se radnja ne može poništiti.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteFileError": {
+    "t": "Brisanje datoteke nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dropFile": {
+    "t": "Povucite datoteku ovdje ili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.duplicateDesc": {
+    "t": "Osoba je duplikat unosa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityDesc": {
+    "t": "Opis statusa prihvatljivosti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityValues": {
+    "t": "Vrijednosti statusa prihvatljivosti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibleDesc": {
+    "t": "Osoba je prihvatljiva za glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.emailDesc": {
+    "t": "Adresa e-pošte",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileName": {
+    "t": "Naziv datoteke",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.filesOnServer": {
+    "t": "Datoteke na poslužitelju",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameDesc": {
+    "t": "Ime osobe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameLastNameRequired": {
+    "t": "Polja Ime i Prezime moraju biti mapirana za nastavak uvoza.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headerAutoDetected": {
+    "t": "Zaglavlja automatski otkrivena u retku {row}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLine": {
+    "t": "Zaglavlja u retku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLineTooltip": {
+    "t": "Navedite koji redak sadrži zaglavlja stupaca. Automatski se otkriva za Excel datoteke, ali se može prilagoditi po potrebi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ignore": {
+    "t": "(zanemari)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importNow": {
+    "t": "Uvezi sada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importResults": {
+    "t": "Rezultati uvoza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importStepDesc": {
+    "t": "Korak uvoza bit će implementiran u sljedećoj fazi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importSummary": {
+    "t": "Sažetak uvoza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importing": {
+    "t": "Uvoz osoba...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ineligibleDesc": {
+    "t": "Osoba nije prihvatljiva za glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.lastNameDesc": {
+    "t": "Prezime osobe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.loadFilesError": {
+    "t": "Učitavanje datoteka za uvoz nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumns": {
+    "t": "Mapiraj stupce",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumnsDesc": {
+    "t": "Mapirajte stupce iz vaše datoteke na TallyJ polja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapTo": {
+    "t": "Mapiraj na:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappedFields": {
+    "t": "Mapirana polja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappingSaved": {
+    "t": "Mapiranje stupaca uspješno spremljeno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherActions": {
+    "t": "Ostale radnje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherInfoDesc": {
+    "t": "Dodatne informacije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherLastNamesDesc": {
+    "t": "Dodatna prezimena",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherNamesDesc": {
+    "t": "Dodatna imena",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleAdded": {
+    "t": "Dodane osobe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleSkipped": {
+    "t": "Preskočene osobe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.phoneDesc": {
+    "t": "Broj telefona",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.preview": {
+    "t": "Pregled",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reparse": {
+    "t": "Ponovno analiziraj",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reviewImport": {
+    "t": "Pregledaj i uvezi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.saveMapping": {
+    "t": "Spremi mapiranje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.select": {
+    "t": "Odaberi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.selected": {
+    "t": "Odabrano",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.size": {
+    "t": "Veličina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.status": {
+    "t": "Stanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step1": {
+    "t": "Prenesi datoteku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step2": {
+    "t": "Mapiraj stupce",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step3": {
+    "t": "Uvoz",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.supportedFormats": {
+    "t": "Podržani formati: CSV, TSV, TAB, TXT, XLSX (maks. 10 MB)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJField": {
+    "t": "TallyJ polje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJFields": {
+    "t": "Referenca TallyJ polja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.timeElapsed": {
+    "t": "Proteklo vrijeme",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.title": {
+    "t": "Uvezi osobe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.underAgeDesc": {
+    "t": "Osoba je ispod dobne granice za glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadError": {
+    "t": "Prijenos datoteke nije uspio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadFile": {
+    "t": "Prenesi datoteku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadTime": {
+    "t": "Vrijeme prijenosa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.validationWarning": {
+    "t": "Upozorenje o validaciji",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.warnings": {
+    "t": "Upozorenja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importError": {
+    "t": "Pokretanje uvoza nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importFormat": {
+    "t": "Prenesite CSV ili Excel datoteku sa sljedećim stupcima:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importInstructions": {
+    "t": "Upute za uvoz",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importOptionalFields": {
+    "t": "Neobavezno: E-pošta, Telefon, Područje, Bahájski ID, Prihvatljivost",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importPeople": {
+    "t": "Uvezi osobe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importRequiredFields": {
+    "t": "Obavezno: Ime, Prezime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importStarted": {
+    "t": "Uvoz je pokrenut. Molimo pričekajte završetak.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importWarning": {
+    "t": "Postojeće osobe s odgovarajućim imenima bit će ažurirane. Nove osobe bit će stvorene.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.invalidFileType": {
+    "t": "Nevažeća vrsta datoteke. Molimo prenesite CSV ili Excel datoteku.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCode": {
+    "t": "Kiosk Code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpired": {
+    "t": "This code has expired. Renew it before the voter logs in.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpires": {
+    "t": "Expires {time} ({minutes} min left).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerate": {
+    "t": "Make a kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerated": {
+    "t": "Kiosk code is ready to share.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNone": {
+    "t": "No kiosk code yet. Generate one when the voter is at the kiosk.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNote": {
+    "t": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeRenew": {
+    "t": "Renew kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastName": {
+    "t": "Prezime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastNameRequired": {
+    "t": "Prezime je obavezno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.leaveElectionGroupError": {
+    "t": "Napuštanje izborne grupe nije uspjelo:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.loadError": {
+    "t": "Učitavanje osoba nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.management": {
+    "t": "Upravljanje osobama",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phone": {
+    "t": "Telefon",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.recentSms": {
+    "t": "Recent SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogNoStatus": {
+    "t": "Sent",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogError": {
+    "t": "Error {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.saveError": {
+    "t": "Spremanje osobe nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.search": {
+    "t": "Pretraži po imenu, e-pošti ili ID-u",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.searchError": {
+    "t": "Pretraživanje osoba nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.supportedFormats": {
+    "t": "Podržani formati: CSV, XLS, XLSX (maks. 10 MB)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.updateSuccess": {
+    "t": "Osoba uspješno ažurirana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.voters": {
+    "t": "Glasači",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,35 +1,167 @@
 {
-  "results.allResults": "Todos los Resultados",
-  "results.ballotsReceived": "Boletas Recibidas",
-  "results.calculateTally": "Calcular Escrutinio",
-  "results.calculatedAt": "Calculado el {date}",
-  "results.candidate": "Candidato",
-  "results.closeToNext": "Cerca del Siguiente",
-  "results.elected": "Elegido",
-  "results.extra": "Adicional",
-  "results.flags": "Indicadores",
-  "results.loadError": "Error al cargar los resultados",
-  "results.monitor": "Monitor de Elección",
-  "results.noResults": "No hay resultados disponibles. Calcule el escrutinio primero.",
-  "results.noTies": "No se detectaron empates",
-  "results.numberToElect": "Número a Elegir",
-  "results.other": "Otro",
-  "results.presentation": "Vista de Presentación",
-  "results.rank": "Clasificación",
-  "results.reporting": "Informes",
-  "results.section": "Sección",
-  "results.spoiledBallots": "Boletas Anuladas",
-  "results.tieBreakAlert": "Atención: Algunos empates requieren desempate manual",
-  "results.tieBreakMessage": "Se requiere un desempate para este grupo ya que abarca los límites de sección",
-  "results.tieBreakRequired": "Se Requiere Desempate",
-  "results.tieGroup": "Grupo de Empate #{group}",
-  "results.tieManagement": "Gestión de Empates",
-  "results.tied": "Empatado",
-  "results.tiedCandidates": "Candidatos Empatados",
-  "results.ties": "Empates",
-  "results.title": "Resultados de la Elección",
-  "results.totalBallots": "Total de Boletas",
-  "results.totalVotes": "Total de Votos",
-  "results.validVotes": "Votos Válidos",
-  "results.votes": "Votos"
+  "results.allResults": {
+    "t": "Todos los Resultados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ballotsReceived": {
+    "t": "Boletas Recibidas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculateTally": {
+    "t": "Calcular Escrutinio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculatedAt": {
+    "t": "Calculado el {date}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.candidate": {
+    "t": "Candidato",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.closeToNext": {
+    "t": "Cerca del Siguiente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.elected": {
+    "t": "Elegido",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.extra": {
+    "t": "Adicional",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.flags": {
+    "t": "Indicadores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.loadError": {
+    "t": "Error al cargar los resultados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.monitor": {
+    "t": "Monitor de Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noResults": {
+    "t": "No hay resultados disponibles. Calcule el escrutinio primero.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noTies": {
+    "t": "No se detectaron empates",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.numberToElect": {
+    "t": "Número a Elegir",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.other": {
+    "t": "Otro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.presentation": {
+    "t": "Vista de Presentación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.rank": {
+    "t": "Clasificación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.reporting": {
+    "t": "Informes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.section": {
+    "t": "Sección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.spoiledBallots": {
+    "t": "Boletas Anuladas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakAlert": {
+    "t": "Atención: Algunos empates requieren desempate manual",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakMessage": {
+    "t": "Se requiere un desempate para este grupo ya que abarca los límites de sección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakRequired": {
+    "t": "Se Requiere Desempate",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieGroup": {
+    "t": "Grupo de Empate #{group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieManagement": {
+    "t": "Gestión de Empates",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tied": {
+    "t": "Empatado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tiedCandidates": {
+    "t": "Candidatos Empatados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ties": {
+    "t": "Empates",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.title": {
+    "t": "Resultados de la Elección",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalBallots": {
+    "t": "Total de Boletas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalVotes": {
+    "t": "Total de Votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.validVotes": {
+    "t": "Votos Válidos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.votes": {
+    "t": "Votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

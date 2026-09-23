@@ -1,29 +1,137 @@
 {
-  "profile.changePassword": "비밀번호 변경",
-  "profile.confirmPassword": "비밀번호 확인",
-  "profile.createdAt": "가입일",
-  "profile.currentPassword": "현재 비밀번호",
-  "profile.loginMethod": "로그인 방법",
-  "profile.name": "이름",
-  "profile.newPassword": "새 비밀번호",
-  "profile.passwordsDoNotMatch": "비밀번호가 일치하지 않습니다",
-  "profile.twoFactor.confirmCode": "설정을 확인하려면 앱에서 6자리 코드를 입력하세요:",
-  "profile.twoFactor.confirmPlaceholder": "6자리 코드",
-  "profile.twoFactor.confirmSetup": "확인 및 2FA 활성화",
-  "profile.twoFactor.disable": "2FA 비활성화",
-  "profile.twoFactor.disableConfirm": "2FA를 비활성화하려면 인증 앱에서 6자리 코드를 입력하세요:",
-  "profile.twoFactor.disableSuccess": "이중 인증이 비활성화되었습니다.",
-  "profile.twoFactor.disableTitle": "이중 인증 비활성화",
-  "profile.twoFactor.disabled": "활성화되지 않음",
-  "profile.twoFactor.enabled": "활성화됨",
-  "profile.twoFactor.loading": "2FA 상태 로드 중...",
-  "profile.twoFactor.method": "방법",
-  "profile.twoFactor.methodTotp": "인증 앱 (TOTP)",
-  "profile.twoFactor.scanQr": "인증 앱(Google 인증기, Microsoft 인증기 또는 Authy)으로 이 QR 코드를 스캔하세요.",
-  "profile.twoFactor.secretKey": "또는 이 키를 직접 입력하세요:",
-  "profile.twoFactor.setup": "2FA 설정",
-  "profile.twoFactor.setupSuccess": "이중 인증이 활성화되었습니다.",
-  "profile.twoFactor.setupTitle": "이중 인증 설정",
-  "profile.twoFactor.status": "상태",
-  "profile.twoFactor.title": "이중 인증"
+  "profile.changePassword": {
+    "t": "비밀번호 변경",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.confirmPassword": {
+    "t": "비밀번호 확인",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.createdAt": {
+    "t": "가입일",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.currentPassword": {
+    "t": "현재 비밀번호",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.loginMethod": {
+    "t": "로그인 방법",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.name": {
+    "t": "이름",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.newPassword": {
+    "t": "새 비밀번호",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.passwordsDoNotMatch": {
+    "t": "비밀번호가 일치하지 않습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmCode": {
+    "t": "설정을 확인하려면 앱에서 6자리 코드를 입력하세요:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmPlaceholder": {
+    "t": "6자리 코드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmSetup": {
+    "t": "확인 및 2FA 활성화",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disable": {
+    "t": "2FA 비활성화",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableConfirm": {
+    "t": "2FA를 비활성화하려면 인증 앱에서 6자리 코드를 입력하세요:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableSuccess": {
+    "t": "이중 인증이 비활성화되었습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableTitle": {
+    "t": "이중 인증 비활성화",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disabled": {
+    "t": "활성화되지 않음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.enabled": {
+    "t": "활성화됨",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.loading": {
+    "t": "2FA 상태 로드 중...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.method": {
+    "t": "방법",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.methodTotp": {
+    "t": "인증 앱 (TOTP)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.scanQr": {
+    "t": "인증 앱(Google 인증기, Microsoft 인증기 또는 Authy)으로 이 QR 코드를 스캔하세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.secretKey": {
+    "t": "또는 이 키를 직접 입력하세요:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setup": {
+    "t": "2FA 설정",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupSuccess": {
+    "t": "이중 인증이 활성화되었습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupTitle": {
+    "t": "이중 인증 설정",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.status": {
+    "t": "상태",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.title": {
+    "t": "이중 인증",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

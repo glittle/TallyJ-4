@@ -1,20 +1,92 @@
 {
-  "tally.calculate": "Calcular Escrutinio",
-  "tally.calculateError": "Error al calcular el escrutinio",
-  "tally.calculateSuccess": "Escrutinio calculado exitosamente",
-  "tally.calculatingProgress": "Calculando Progreso",
-  "tally.normalElection": "Elección Normal",
-  "tally.processedBallots": "Boletas Procesadas",
-  "tally.resultsPreview": "Vista Previa de Resultados (Top 10)",
-  "tally.section.elected": "Elegido",
-  "tally.section.extra": "Extra",
-  "tally.section.other": "Otro",
-  "tally.singleNameElection": "Elección de Nombre Único",
-  "tally.title": "Calcular Escrutinio",
-  "tally.viewFullResults": "Ver Resultados Completos",
-  "tally.warning": "Advertencia",
-  "tally.warningMessage": "Calcular el escrutinio sobreescribirá cualquier resultado existente. Esta acción no se puede deshacer.",
-  "tally.section.E": "Elegido",
-  "tally.section.X": "Extra",
-  "tally.section.O": "Otro"
+  "tally.calculate": {
+    "t": "Calcular Escrutinio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateError": {
+    "t": "Error al calcular el escrutinio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "Escrutinio calculado exitosamente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "Calculando Progreso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.normalElection": {
+    "t": "Elección Normal",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.processedBallots": {
+    "t": "Boletas Procesadas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.resultsPreview": {
+    "t": "Vista Previa de Resultados (Top 10)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.elected": {
+    "t": "Elegido",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.extra": {
+    "t": "Extra",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.other": {
+    "t": "Otro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.singleNameElection": {
+    "t": "Elección de Nombre Único",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.title": {
+    "t": "Calcular Escrutinio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.viewFullResults": {
+    "t": "Ver Resultados Completos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warning": {
+    "t": "Advertencia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warningMessage": {
+    "t": "Calcular el escrutinio sobreescribirá cualquier resultado existente. Esta acción no se puede deshacer.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.E": {
+    "t": "Elegido",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.X": {
+    "t": "Extra",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.O": {
+    "t": "Otro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

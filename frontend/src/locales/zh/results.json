@@ -1,35 +1,167 @@
 {
-  "results.allResults": "所有结果",
-  "results.ballotsReceived": "收到的选票",
-  "results.calculateTally": "计算结果",
-  "results.calculatedAt": "{date} 计算",
-  "results.candidate": "候选人",
-  "results.closeToNext": "接近下一个",
-  "results.elected": "当选",
-  "results.extra": "额外",
-  "results.flags": "标志",
-  "results.loadError": "加载结果失败",
-  "results.monitor": "选举监控",
-  "results.noResults": "无可用结果。首先计算结果。",
-  "results.noTies": "未检测到平局",
-  "results.numberToElect": "选举人数",
-  "results.other": "其他",
-  "results.presentation": "演示视图",
-  "results.rank": "排名",
-  "results.reporting": "报告",
-  "results.section": "部分",
-  "results.spoiledBallots": "无效选票",
-  "results.tieBreakAlert": "注意：某些平局需要手动打破",
-  "results.tieBreakMessage": "由于该组跨越部分边界，需要打破平局",
-  "results.tieBreakRequired": "需要打破平局",
-  "results.tieGroup": "平局组 #{group}",
-  "results.tieManagement": "平局管理",
-  "results.tied": "平局",
-  "results.tiedCandidates": "平局候选人",
-  "results.ties": "平局",
-  "results.title": "选举结果",
-  "results.totalBallots": "总选票",
-  "results.totalVotes": "总票数",
-  "results.validVotes": "有效票数",
-  "results.votes": "票数"
+  "results.allResults": {
+    "t": "所有结果",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ballotsReceived": {
+    "t": "收到的选票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculateTally": {
+    "t": "计算结果",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculatedAt": {
+    "t": "{date} 计算",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.candidate": {
+    "t": "候选人",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.closeToNext": {
+    "t": "接近下一个",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.elected": {
+    "t": "当选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.extra": {
+    "t": "额外",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.flags": {
+    "t": "标志",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.loadError": {
+    "t": "加载结果失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.monitor": {
+    "t": "选举监控",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noResults": {
+    "t": "无可用结果。首先计算结果。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noTies": {
+    "t": "未检测到平局",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.numberToElect": {
+    "t": "选举人数",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.other": {
+    "t": "其他",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.presentation": {
+    "t": "演示视图",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.rank": {
+    "t": "排名",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.reporting": {
+    "t": "报告",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.section": {
+    "t": "部分",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.spoiledBallots": {
+    "t": "无效选票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakAlert": {
+    "t": "注意：某些平局需要手动打破",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakMessage": {
+    "t": "由于该组跨越部分边界，需要打破平局",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakRequired": {
+    "t": "需要打破平局",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieGroup": {
+    "t": "平局组 #{group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieManagement": {
+    "t": "平局管理",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tied": {
+    "t": "平局",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tiedCandidates": {
+    "t": "平局候选人",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ties": {
+    "t": "平局",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.title": {
+    "t": "选举结果",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalBallots": {
+    "t": "总选票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalVotes": {
+    "t": "总票数",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.validVotes": {
+    "t": "有效票数",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.votes": {
+    "t": "票数",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

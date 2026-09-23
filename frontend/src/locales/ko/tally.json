@@ -1,20 +1,92 @@
 {
-  "tally.calculate": "개표 계산",
-  "tally.calculateError": "개표 계산에 실패했습니다",
-  "tally.calculateSuccess": "개표가 성공적으로 계산되었습니다",
-  "tally.calculatingProgress": "계산 진행률",
-  "tally.normalElection": "일반 선거",
-  "tally.processedBallots": "처리된 투표 용지",
-  "tally.resultsPreview": "결과 미리보기 (상위 10개)",
-  "tally.section.elected": "선출된",
-  "tally.section.extra": "추가",
-  "tally.section.other": "기타",
-  "tally.singleNameElection": "단일 이름 선거",
-  "tally.title": "개표 계산",
-  "tally.viewFullResults": "전체 결과 보기",
-  "tally.warning": "경고",
-  "tally.warningMessage": "개표를 계산하면 기존 결과가 덮어씌워집니다. 이 작업은 취소할 수 없습니다.",
-  "tally.section.E": "선출된",
-  "tally.section.X": "추가",
-  "tally.section.O": "기타"
+  "tally.calculate": {
+    "t": "개표 계산",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateError": {
+    "t": "개표 계산에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "개표가 성공적으로 계산되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "계산 진행률",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.normalElection": {
+    "t": "일반 선거",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.processedBallots": {
+    "t": "처리된 투표 용지",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.resultsPreview": {
+    "t": "결과 미리보기 (상위 10개)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.elected": {
+    "t": "선출된",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.extra": {
+    "t": "추가",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.other": {
+    "t": "기타",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.singleNameElection": {
+    "t": "단일 이름 선거",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.title": {
+    "t": "개표 계산",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.viewFullResults": {
+    "t": "전체 결과 보기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warning": {
+    "t": "경고",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warningMessage": {
+    "t": "개표를 계산하면 기존 결과가 덮어씌워집니다. 이 작업은 취소할 수 없습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.E": {
+    "t": "선출된",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.X": {
+    "t": "추가",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.O": {
+    "t": "기타",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

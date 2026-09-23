@@ -1,78 +1,382 @@
 {
-  "voting.ballot.addPersonToPool": "افزودن شخص به برگه رای من",
-  "voting.ballot.addToPool": "افزودن به برگه رای/استخر من",
-  "voting.ballot.addToPoolDescription": "یک شخص جدید به استخر شما برای این انتخابات اضافه کنید.",
-  "voting.ballot.alreadyVoted": "شما قبلاً در این انتخابات رای داده‌اید.",
-  "voting.ballot.authRequired": "لطفاً ابتدا احراز هویت کنید",
-  "voting.ballot.backToElections": "بازگشت",
-  "voting.ballot.bothModeHint": "از لیست زیر انتخاب کنید، یا نامی تایپ کنید که در لیست نیست. شماران هر نامی که در لیست نیست را پردازش خواهند کرد.",
-  "voting.ballot.duplicateError": "شما یک نامزد را چندین بار انتخاب کرده‌اید. لطفاً برگه رای خود را بررسی کنید.",
-  "voting.ballot.electionNotFound": "انتخابات یافت نشد",
-  "voting.ballot.extraInfo": "اطلاعات شناسایی اضافی",
-  "voting.ballot.extraInfoPlaceholder": "(اختیاری: اگر نام ممکن است کافی نباشد از این استفاده کنید)",
-  "voting.ballot.firstName": "نام",
-  "voting.ballot.firstNamePlaceholder": "نام",
-  "voting.ballot.guideline": "\"از میان کسانی که انتخاب‌کننده معتقد است واجد شرایط خدمت هستند، انتخاب باید با در نظر گرفتن سایر عوامل مانند توزیع سنی، تنوع و جنسیت انجام شود.\" — بیت‌العدل جهانی",
-  "voting.ballot.lastName": "نام خانوادگی",
-  "voting.ballot.lastNamePlaceholder": "نام خانوادگی",
-  "voting.ballot.loading": "بارگذاری اطلاعات انتخابات...",
-  "voting.ballot.myBallot": "برگه رای من",
-  "voting.ballot.namePlaceholder": "یک نام تایپ کنید",
-  "voting.ballot.notOpen": "رای‌گیری آنلاین در حال حاضر برای این انتخابات باز نیست.",
-  "voting.ballot.onceWarning": "شما فقط یک بار می‌توانید رای دهید! لطفاً قبل از ارسال، برگه رای خود را با دقت بررسی کنید.",
-  "voting.ballot.openNow": "اکنون باز است",
-  "voting.ballot.orderNote": "(ترتیب نام‌ها مهم نیست)",
-  "voting.ballot.randomModeHint": "نام افرادی را که می‌خواهید به آنها رای دهید تایپ کنید. شماران این نام‌ها را با رای‌دهندگان ثبت شده مطابقت می‌دهند.",
-  "voting.ballot.searchPlaceholder": "جستجو برای نامزد",
-  "voting.ballot.submit": "ارسال برگه رای",
-  "voting.ballot.submitSuccess": "برگه رای با موفقیت ارسال شد!",
-  "voting.ballot.votingFor": "رای دادن به {count} نفر",
-  "voting.confirmation.close": "بستن",
-  "voting.confirmation.election": "انتخابات:",
-  "voting.confirmation.kioskRecorded": "Your ballot has been recorded. You can leave this computer.",
-  "voting.confirmation.kioskSubtitle": "This kiosk is clear for the next voter.",
-  "voting.confirmation.nextVoter": "Ready for next voter",
-  "voting.confirmation.noChange": "لطفاً توجه داشته باشید که نمی‌توانید برگه رای خود را تغییر دهید یا دوباره ارسال کنید.",
-  "voting.confirmation.recorded": "برگه رای شما به صورت امن ثبت شده است.",
-  "voting.confirmation.submitted": "ارسال شده:",
-  "voting.confirmation.subtitle": "از مشارکت شما در انتخابات سپاسگزاریم",
-  "voting.confirmation.title": "برگه رای با موفقیت ارسال شد!",
-  "voting.election.instructions": "لطفاً به {count} نامزد رای دهید.",
-  "voting.elections.alreadyVoted": "برگه رای قبلاً ارسال شده",
-  "voting.elections.col.election": "انتخابات",
-  "voting.elections.col.onlineVoting": "رای‌گیری آنلاین",
-  "voting.elections.col.yourNameAndBallot": "نام و برگه رای شما",
-  "voting.elections.footerNote": "اگر چیزی اشتباه به نظر می‌رسد، لطفاً از استفاده از TallyJ خودداری کنید و جزئیات را به سرشمار خود و/یا پشتیبانی فنی جهانی ارسال کنید.",
-  "voting.elections.loadError": "بارگذاری انتخابات ناموفق بود. لطفاً دوباره امتحان کنید.",
-  "voting.elections.loading": "بارگذاری انتخابات شما...",
-  "voting.elections.logout": "خروج",
-  "voting.elections.method.online": "آنلاین",
-  "voting.elections.noElections": "انتخاباتی برای حساب شما یافت نشد.",
-  "voting.elections.prepareBallot": "برگه رای من را آماده کن",
-  "voting.elections.registered": "ثبت نام شده:",
-  "voting.elections.status.closed": "بسته شده",
-  "voting.elections.status.closedDaysAgo": "{days} روز پیش بسته شد",
-  "voting.elections.status.closedMonthsAgo": "{months} ماه پیش بسته شد",
-  "voting.elections.status.closedToday": "امروز بسته شد",
-  "voting.elections.status.closedYearsAgo": "{years} سال پیش بسته شد",
-  "voting.elections.status.closedYesterday": "دیروز بسته شد",
-  "voting.elections.status.closingAt": "انتظار می‌رود در {time} بسته شود",
-  "voting.elections.status.closingAtWithMinutes": "انتظار می‌رود در {hours}س {minutes}د بسته شود (در {time})",
-  "voting.elections.status.closingInMinutes": "انتظار می‌رود در {minutes} دقیقه بسته شود",
-  "voting.elections.status.closingSoon": "به زودی بسته می‌شود",
-  "voting.elections.status.estimatedSuffix": " (تخمینی)",
-  "voting.elections.status.noOnlineVoting": "بدون رای‌گیری آنلاین",
-  "voting.elections.status.open": "باز",
-  "voting.elections.status.openNow": "اکنون باز است",
-  "voting.elections.title": "انتخابات شما",
-  "voting.elections.welcome": "خوش آمدید! اطلاعات تماس شما ({voterId}) در انتخابات نشان داده شده در زیر یافت شد.",
-  "voting.elections.welcomeHint": "اگر انتخاباتی آینده در اینجا لیست نشده، ممکن است در TallyJ وجود نداشته باشد یا اطلاعات شما در آن ثبت نشده باشد. لطفاً برای کمک با سرشمار انتخابات تماس بگیرید.",
-  "voting.status.alreadyVoted": "شما قبلاً برگه رای خود را برای این انتخابات ارسال کرده‌اید.",
-  "voting.status.notVoted": "شما هنوز برگه رای خود را برای این انتخابات ارسال نکرده‌اید.",
-  "voting.status.voterNotFound": "رای‌دهنده در این انتخابات یافت نشد.",
-  "voting.submit.alreadyVoted": "شما قبلاً برگه رای خود را برای این انتخابات ارسال کرده‌اید.",
-  "voting.submit.electionNotFound": "انتخابات یافت نشد.",
-  "voting.submit.error": "خطایی در ارسال برگه رای شما رخ داد. لطفاً دوباره امتحان کنید.",
-  "voting.submit.notOpen": "رای‌گیری آنلاین در حال حاضر برای این انتخابات باز نیست.",
-  "voting.submit.voterNotFound": "رای‌دهنده یافت نشد. لطفاً ابتدا احراز هویت کنید."
+  "voting.ballot.addPersonToPool": {
+    "t": "افزودن شخص به برگه رای من",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPool": {
+    "t": "افزودن به برگه رای/استخر من",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPoolDescription": {
+    "t": "یک شخص جدید به استخر شما برای این انتخابات اضافه کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.alreadyVoted": {
+    "t": "شما قبلاً در این انتخابات رای داده‌اید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.authRequired": {
+    "t": "لطفاً ابتدا احراز هویت کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.backToElections": {
+    "t": "بازگشت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.bothModeHint": {
+    "t": "از لیست زیر انتخاب کنید، یا نامی تایپ کنید که در لیست نیست. شماران هر نامی که در لیست نیست را پردازش خواهند کرد.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.duplicateError": {
+    "t": "شما یک نامزد را چندین بار انتخاب کرده‌اید. لطفاً برگه رای خود را بررسی کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.electionNotFound": {
+    "t": "انتخابات یافت نشد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfo": {
+    "t": "اطلاعات شناسایی اضافی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfoPlaceholder": {
+    "t": "(اختیاری: اگر نام ممکن است کافی نباشد از این استفاده کنید)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstName": {
+    "t": "نام",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstNamePlaceholder": {
+    "t": "نام",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.guideline": {
+    "t": "\"از میان کسانی که انتخاب‌کننده معتقد است واجد شرایط خدمت هستند، انتخاب باید با در نظر گرفتن سایر عوامل مانند توزیع سنی، تنوع و جنسیت انجام شود.\" — بیت‌العدل جهانی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastName": {
+    "t": "نام خانوادگی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastNamePlaceholder": {
+    "t": "نام خانوادگی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.loading": {
+    "t": "بارگذاری اطلاعات انتخابات...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.myBallot": {
+    "t": "برگه رای من",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.namePlaceholder": {
+    "t": "یک نام تایپ کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.notOpen": {
+    "t": "رای‌گیری آنلاین در حال حاضر برای این انتخابات باز نیست.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.onceWarning": {
+    "t": "شما فقط یک بار می‌توانید رای دهید! لطفاً قبل از ارسال، برگه رای خود را با دقت بررسی کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.openNow": {
+    "t": "اکنون باز است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.orderNote": {
+    "t": "(ترتیب نام‌ها مهم نیست)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.randomModeHint": {
+    "t": "نام افرادی را که می‌خواهید به آنها رای دهید تایپ کنید. شماران این نام‌ها را با رای‌دهندگان ثبت شده مطابقت می‌دهند.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.searchPlaceholder": {
+    "t": "جستجو برای نامزد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submit": {
+    "t": "ارسال برگه رای",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submitSuccess": {
+    "t": "برگه رای با موفقیت ارسال شد!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.votingFor": {
+    "t": "رای دادن به {count} نفر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.close": {
+    "t": "بستن",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.election": {
+    "t": "انتخابات:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskRecorded": {
+    "t": "Your ballot has been recorded. You can leave this computer.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskSubtitle": {
+    "t": "This kiosk is clear for the next voter.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.nextVoter": {
+    "t": "Ready for next voter",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.noChange": {
+    "t": "لطفاً توجه داشته باشید که نمی‌توانید برگه رای خود را تغییر دهید یا دوباره ارسال کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.recorded": {
+    "t": "برگه رای شما به صورت امن ثبت شده است.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.submitted": {
+    "t": "ارسال شده:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.subtitle": {
+    "t": "از مشارکت شما در انتخابات سپاسگزاریم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.title": {
+    "t": "برگه رای با موفقیت ارسال شد!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.election.instructions": {
+    "t": "لطفاً به {count} نامزد رای دهید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.alreadyVoted": {
+    "t": "برگه رای قبلاً ارسال شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.election": {
+    "t": "انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.onlineVoting": {
+    "t": "رای‌گیری آنلاین",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.yourNameAndBallot": {
+    "t": "نام و برگه رای شما",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.footerNote": {
+    "t": "اگر چیزی اشتباه به نظر می‌رسد، لطفاً از استفاده از TallyJ خودداری کنید و جزئیات را به سرشمار خود و/یا پشتیبانی فنی جهانی ارسال کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loadError": {
+    "t": "بارگذاری انتخابات ناموفق بود. لطفاً دوباره امتحان کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loading": {
+    "t": "بارگذاری انتخابات شما...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.logout": {
+    "t": "خروج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.method.online": {
+    "t": "آنلاین",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.noElections": {
+    "t": "انتخاباتی برای حساب شما یافت نشد.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.prepareBallot": {
+    "t": "برگه رای من را آماده کن",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.registered": {
+    "t": "ثبت نام شده:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closed": {
+    "t": "بسته شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedDaysAgo": {
+    "t": "{days} روز پیش بسته شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedMonthsAgo": {
+    "t": "{months} ماه پیش بسته شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedToday": {
+    "t": "امروز بسته شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYearsAgo": {
+    "t": "{years} سال پیش بسته شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYesterday": {
+    "t": "دیروز بسته شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAt": {
+    "t": "انتظار می‌رود در {time} بسته شود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAtWithMinutes": {
+    "t": "انتظار می‌رود در {hours}س {minutes}د بسته شود (در {time})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingInMinutes": {
+    "t": "انتظار می‌رود در {minutes} دقیقه بسته شود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingSoon": {
+    "t": "به زودی بسته می‌شود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.estimatedSuffix": {
+    "t": " (تخمینی)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.noOnlineVoting": {
+    "t": "بدون رای‌گیری آنلاین",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.open": {
+    "t": "باز",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.openNow": {
+    "t": "اکنون باز است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.title": {
+    "t": "انتخابات شما",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcome": {
+    "t": "خوش آمدید! اطلاعات تماس شما ({voterId}) در انتخابات نشان داده شده در زیر یافت شد.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcomeHint": {
+    "t": "اگر انتخاباتی آینده در اینجا لیست نشده، ممکن است در TallyJ وجود نداشته باشد یا اطلاعات شما در آن ثبت نشده باشد. لطفاً برای کمک با سرشمار انتخابات تماس بگیرید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.alreadyVoted": {
+    "t": "شما قبلاً برگه رای خود را برای این انتخابات ارسال کرده‌اید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.notVoted": {
+    "t": "شما هنوز برگه رای خود را برای این انتخابات ارسال نکرده‌اید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.voterNotFound": {
+    "t": "رای‌دهنده در این انتخابات یافت نشد.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.alreadyVoted": {
+    "t": "شما قبلاً برگه رای خود را برای این انتخابات ارسال کرده‌اید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.electionNotFound": {
+    "t": "انتخابات یافت نشد.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.error": {
+    "t": "خطایی در ارسال برگه رای شما رخ داد. لطفاً دوباره امتحان کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.notOpen": {
+    "t": "رای‌گیری آنلاین در حال حاضر برای این انتخابات باز نیست.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.voterNotFound": {
+    "t": "رای‌دهنده یافت نشد. لطفاً ابتدا احراز هویت کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,49 +1,237 @@
 {
-  "audit.dialog.dateTime": "Date/Time",
-  "audit.dialog.details": "Details",
-  "audit.dialog.electionGuid": "Election GUID",
-  "audit.dialog.email": "Email",
-  "audit.dialog.eventType": "Event Type",
-  "audit.dialog.id": "ID",
-  "audit.dialog.ipAddress": "IP Address",
-  "audit.dialog.onlineVoterId": "Online Voter ID",
-  "audit.dialog.severity": "Severity",
-  "audit.dialog.suspicious": "Suspicious",
-  "audit.dialog.title": "Audit Log Details",
-  "audit.dialog.userAgent": "User Agent",
-  "audit.dialog.userId": "User ID",
-  "audit.filters.apply": "Apply Filters",
-  "audit.filters.clear": "Clear Filters",
-  "audit.filters.electionGuid": "Election GUID",
-  "audit.filters.electionGuidPlaceholder": "Filter by Election GUID",
-  "audit.filters.email": "Email",
-  "audit.filters.emailPlaceholder": "Filter by email",
-  "audit.filters.endDate": "End Date",
-  "audit.filters.endDatePlaceholder": "End Date",
-  "audit.filters.ipAddress": "IP Address",
-  "audit.filters.ipAddressPlaceholder": "Filter by IP address",
-  "audit.filters.onlineVoterId": "Online Voter ID",
-  "audit.filters.onlineVoterIdPlaceholder": "Filter by online voter ID",
-  "audit.filters.search": "Search",
-  "audit.filters.searchPlaceholder": "Search details and user agent",
-  "audit.filters.startDate": "Start Date",
-  "audit.filters.startDatePlaceholder": "Start Date",
-  "audit.filters.suspicious": "Suspicious",
-  "audit.filters.suspiciousNo": "No",
-  "audit.filters.suspiciousPlaceholder": "Any",
-  "audit.filters.suspiciousYes": "Yes",
-  "audit.filters.userId": "User ID",
-  "audit.filters.userIdPlaceholder": "Filter by user ID",
-  "audit.table.actions": "Actions",
-  "audit.table.dateTime": "Date/Time",
-  "audit.table.details": "Details",
-  "audit.table.election": "Election",
-  "audit.table.email": "Email",
-  "audit.table.eventType": "Event Type",
-  "audit.table.severity": "Severity",
-  "audit.table.suspicious": "Suspicious",
-  "audit.table.userId": "User ID",
-  "audit.table.view": "View",
-  "audit.table.yes": "Yes",
-  "audit.title": "Audit Logs"
+  "audit.dialog.dateTime": {
+    "t": "Date/Time",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.details": {
+    "t": "Details",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.electionGuid": {
+    "t": "Election GUID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.email": {
+    "t": "Email",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.eventType": {
+    "t": "Event Type",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.id": {
+    "t": "ID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.ipAddress": {
+    "t": "IP Address",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.onlineVoterId": {
+    "t": "Online Voter ID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.severity": {
+    "t": "Severity",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.suspicious": {
+    "t": "Suspicious",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.title": {
+    "t": "Audit Log Details",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.userAgent": {
+    "t": "User Agent",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.userId": {
+    "t": "User ID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.apply": {
+    "t": "Apply Filters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.clear": {
+    "t": "Clear Filters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuid": {
+    "t": "Election GUID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuidPlaceholder": {
+    "t": "Filter by Election GUID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.email": {
+    "t": "Email",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.emailPlaceholder": {
+    "t": "Filter by email",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDate": {
+    "t": "End Date",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDatePlaceholder": {
+    "t": "End Date",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.ipAddress": {
+    "t": "IP Address",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.ipAddressPlaceholder": {
+    "t": "Filter by IP address",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.onlineVoterId": {
+    "t": "Online Voter ID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.onlineVoterIdPlaceholder": {
+    "t": "Filter by online voter ID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.search": {
+    "t": "Search",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.searchPlaceholder": {
+    "t": "Search details and user agent",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDate": {
+    "t": "Start Date",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDatePlaceholder": {
+    "t": "Start Date",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.suspicious": {
+    "t": "Suspicious",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.suspiciousNo": {
+    "t": "No",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.suspiciousPlaceholder": {
+    "t": "Any",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.suspiciousYes": {
+    "t": "Yes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.userId": {
+    "t": "User ID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.userIdPlaceholder": {
+    "t": "Filter by user ID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.actions": {
+    "t": "Actions",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.dateTime": {
+    "t": "Date/Time",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.details": {
+    "t": "Details",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.election": {
+    "t": "Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.email": {
+    "t": "Email",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.eventType": {
+    "t": "Event Type",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.severity": {
+    "t": "Severity",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.suspicious": {
+    "t": "Suspicious",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.userId": {
+    "t": "User ID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.view": {
+    "t": "View",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.yes": {
+    "t": "Yes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.title": {
+    "t": "Audit Logs",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,20 +1,92 @@
 {
-  "tally.calculate": "Calculer le dépouillement",
-  "tally.calculateError": "Échec du calcul du dépouillement",
-  "tally.calculateSuccess": "Dépouillement calculé avec succès",
-  "tally.calculatingProgress": "Calcul en cours",
-  "tally.normalElection": "Élection normale",
-  "tally.processedBallots": "Bulletins traités",
-  "tally.resultsPreview": "Aperçu des résultats (Top 10)",
-  "tally.section.elected": "Élu",
-  "tally.section.extra": "Supplémentaire",
-  "tally.section.other": "Autre",
-  "tally.singleNameElection": "Élection à nom unique",
-  "tally.title": "Calculer le dépouillement",
-  "tally.viewFullResults": "Voir tous les résultats",
-  "tally.warning": "Avertissement",
-  "tally.warningMessage": "Le calcul du dépouillement écrasera tous les résultats existants. Cette action est irréversible.",
-  "tally.section.E": "Élu",
-  "tally.section.X": "Supplémentaire",
-  "tally.section.O": "Autre"
+  "tally.calculate": {
+    "t": "Calculer le dépouillement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateError": {
+    "t": "Échec du calcul du dépouillement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "Dépouillement calculé avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "Calcul en cours",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.normalElection": {
+    "t": "Élection normale",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.processedBallots": {
+    "t": "Bulletins traités",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.resultsPreview": {
+    "t": "Aperçu des résultats (Top 10)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.elected": {
+    "t": "Élu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.extra": {
+    "t": "Supplémentaire",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.other": {
+    "t": "Autre",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.singleNameElection": {
+    "t": "Élection à nom unique",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.title": {
+    "t": "Calculer le dépouillement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.viewFullResults": {
+    "t": "Voir tous les résultats",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warning": {
+    "t": "Avertissement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warningMessage": {
+    "t": "Le calcul du dépouillement écrasera tous les résultats existants. Cette action est irréversible.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.E": {
+    "t": "Élu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.X": {
+    "t": "Supplémentaire",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.O": {
+    "t": "Autre",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

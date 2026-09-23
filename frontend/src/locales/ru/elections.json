@@ -1,160 +1,792 @@
 {
-  "elections.advanceStage": "Перейти к следующему этапу",
-  "elections.advanceTo": "Перейти к этапу {stage}",
-  "elections.ballots": "Бюллетени",
-  "elections.bulkDeleteError": "Не удалось удалить некоторые выборы",
-  "elections.bulkDeleteMessage": "Вы уверены, что хотите удалить {count} выбранных выборов?",
-  "elections.bulkDeleteSuccess": "{count} выборов успешно удалено",
-  "elections.calculateTally": "Подсчитать результаты",
-  "elections.clearFilters": "Очистить фильтры",
-  "elections.confirmAdvance": "Вы уверены, что хотите перевести эти выборы на этап {stage}?",
-  "elections.confirmBulkDelete": "Подтвердить массовое удаление",
-  "elections.confirmRevert": "Вы уверены, что хотите вернуть эти выборы на этап {stage}?",
-  "elections.copyUrl": "Копировать ссылку",
-  "elections.createError": "Не удалось создать выборы",
-  "elections.createFirst": "Создайте первые выборы",
-  "elections.createNew": "Создать выборы",
-  "elections.createSuccess": "Выборы успешно созданы",
-  "elections.date": "Дата выборов",
-  "elections.deleteConfirm": "Вы уверены, что хотите удалить эти выборы? Это действие нельзя отменить.",
-  "elections.deleteError": "Не удалось удалить выборы",
-  "elections.deleteSelected": "Удалить выбранное ({count})",
-  "elections.deleteSuccess": "Выборы успешно удалены",
-  "elections.details": "Сведения о выборах",
-  "elections.edit": "Редактировать выборы",
-  "elections.electionModes.B": "Дополнительные выборы",
-  "elections.electionModes.N": "Обычные выборы",
-  "elections.electionModes.T": "Разрешение ничьей",
-  "elections.electionTypes.Con": "Съезд единицы",
-  "elections.electionTypes.LSA": "Местное Духовное Собрание",
-  "elections.electionTypes.LSA1": "Местное Духовное Собрание (двухэтапное) — местная единица",
-  "elections.electionTypes.LSA2": "Местное Духовное Собрание (двухэтапное) — финал",
-  "elections.electionTypes.NSA": "Национальное Духовное Собрание",
-  "elections.electionTypes.Oth": "Другое",
-  "elections.electionTypes.Reg": "Региональный совет",
-  "elections.exportElection": "Экспортировать выборы",
-  "elections.exportElectionError": "Не удалось экспортировать выборы",
-  "elections.exportElectionSuccess": "Выборы успешно экспортированы",
-  "elections.filterByStatus": "Фильтр по статусу",
-  "elections.filterByType": "Фильтр по типу",
-  "elections.form.convenor": "Организатор",
-  "elections.form.convenorPlaceholder": "Введите имя организатора",
-  "elections.form.customMethods": "Пользовательские методы",
-  "elections.form.customMethodsHelp": "Укажите любые пользовательские или нестандартные методы голосования, используемые на этих выборах.",
-  "elections.form.customMethodsPlaceholder": "Опишите пользовательские методы голосования",
-  "elections.form.date": "Дата выборов",
-  "elections.form.datePlaceholder": "Выберите дату выборов",
-  "elections.form.dateRequired": "Дата выборов обязательна",
-  "elections.form.electionMode": "Режим выборов",
-  "elections.form.electionPasscode": "Пароль выборов",
-  "elections.form.electionPasscodeHelp": "Для входа счётчиков требуется пароль.",
-  "elections.form.electionPasscodePlaceholder": "Введите пароль",
-  "elections.form.emailFromAddress": "Email-адрес отправителя",
-  "elections.form.emailFromAddressPlaceholder": "Введите email-адрес отправителя",
-  "elections.form.emailFromName": "Имя отправителя email",
-  "elections.form.emailFromNamePlaceholder": "Введите имя отправителя",
-  "elections.form.emailInvalid": "Неверный email-адрес",
-  "elections.form.emailSubject": "Тема письма",
-  "elections.form.emailSubjectPlaceholder": "Введите тему письма",
-  "elections.form.emailText": "Текст письма",
-  "elections.form.emailTextPlaceholder": "Введите текст тела письма",
-  "elections.form.flags": "Флаги",
-  "elections.form.flagsHelp": "Флаги используются для особых условий выборов.",
-  "elections.form.flagsPlaceholder": "Введите флаги",
-  "elections.form.hidePreBallotPages": "Скрыть страницы перед голосованием",
-  "elections.form.linkedElection": "Связанные выборы",
-  "elections.form.linkedElectionCount": "Доступны {count} связанные выборы",
-  "elections.form.linkedElectionCount_plural": "Доступно {count} связанных выборов",
-  "elections.form.linkedElectionHelp": "Выберите выборы для связывания с целью разрешения ничьей или повторного тура.",
-  "elections.form.linkedElectionKind": "Тип связанных выборов",
-  "elections.form.linkedElectionKindPlaceholder": "Выберите тип",
-  "elections.form.linkedElectionPlaceholder": "Выберите связанные выборы",
-  "elections.form.listForPublic": "Отображать публично",
-  "elections.form.lockedByBallots": "Заблокировано — бюллетени уже введены",
-  "elections.form.maskVotingMethod": "Скрыть метод голосования",
-  "elections.form.modePlaceholder": "Выберите режим выборов",
-  "elections.form.name": "Название выборов",
-  "elections.form.namePlaceholder": "Введите название выборов",
-  "elections.form.nameRequired": "Название выборов обязательно",
-  "elections.form.numberExtra": "Количество дополнительных",
-  "elections.form.numberToElect": "Количество для избрания",
-  "elections.form.numberToElectRequired": "Количество для избрания обязательно",
-  "elections.form.onlineAnnounced": "Объявление результатов онлайн",
-  "elections.form.onlineAnnouncedPlaceholder": "Выберите время объявления",
-  "elections.form.onlineCloseIsEstimate": "Время закрытия приблизительное",
-  "elections.form.onlineSelectionProcess": "Процесс онлайн-отбора",
-  "elections.form.onlineSelectionProcessPlaceholder": "Выберите процесс",
-  "elections.form.onlineWhenClose": "Закрытие онлайн-голосования",
-  "elections.form.onlineWhenClosePlaceholder": "Выберите время закрытия",
-  "elections.form.onlineWhenOpen": "Открытие онлайн-голосования",
-  "elections.form.onlineWhenOpenPlaceholder": "Выберите время открытия",
-  "elections.form.showAsTest": "Показать как тест",
-  "elections.form.showFullReport": "Показать полный отчёт",
-  "elections.form.smsText": "Текст SMS",
-  "elections.form.smsTextPlaceholder": "Введите текст SMS-сообщения",
-  "elections.form.type": "Тип выборов",
-  "elections.form.typePlaceholder": "Выберите тип выборов",
-  "elections.form.typeRequired": "Тип выборов обязателен",
-  "elections.form.useCallInButton": "Включить голосование по телефону",
-  "elections.form.useKiosk": "Enable kiosk mode",
-  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
-  "elections.form.votingMethods": "Методы голосования",
-  "elections.form.votingMethodsHelp": "Выберите методы подачи голосов.",
-  "elections.form.votingMethodsPlaceholder": "Выберите методы голосования",
-  "elections.importCdnBallots": "Импортировать бюллетени CDN",
-  "elections.importCdnBallotsError": "Не удалось импортировать бюллетени CDN",
-  "elections.importCdnBallotsSuccess": "Бюллетени CDN успешно импортированы",
-  "elections.importElection": "Импортировать выборы",
-  "elections.importElectionError": "Не удалось импортировать выборы",
-  "elections.importElectionSuccess": "Выборы успешно импортированы",
-  "elections.list": "Выборы",
-  "elections.loadError": "Не удалось загрузить выборы",
-  "elections.locations": "Места",
-  "elections.manageBallots": "Управление бюллетенями",
-  "elections.manageLocations": "Управление местами",
-  "elections.managePeople": "Управление людьми",
-  "elections.name": "Название выборов",
-  "elections.notFound": "Выборы не найдены",
-  "elections.onlineVotingDisabled": "Онлайн-голосование отключено",
-  "elections.onlineVotingEnabled": "Онлайн-голосование включено",
-  "elections.people": "Люди",
-  "elections.quickActions": "Быстрые действия",
-  "elections.revertTo": "Вернуться к этапу {stage}",
-  "elections.searchPlaceholder": "Поиск выборов по названию или организатору...",
-  "elections.stage.Counting": "Подсчёт",
-  "elections.stage.Finalized": "Завершено",
-  "elections.stage.Setup": "Настройка",
-  "elections.stageAdvanced": "Выборы переведены на этап {stage}",
-  "elections.stageChangeError": "Не удалось изменить этап выборов",
-  "elections.stageProgression": "Этап выборов",
-  "elections.stageReverted": "Выборы возвращены на этап {stage}",
-  "elections.statistics": "Статистика",
-  "elections.status": "Статус",
-  "elections.tabs.advanced": "Дополнительно",
-  "elections.tabs.auditLogs": "Журнал аудита",
-  "elections.tabs.ballots": "Бюллетени",
-  "elections.tabs.basicInfo": "Основная информация",
-  "elections.tabs.communication": "Связь",
-  "elections.tabs.displayPrivacy": "Отображение и конфиденциальность",
-  "elections.tabs.electionRules": "Правила выборов",
-  "elections.tabs.locations": "Места",
-  "elections.tabs.onlineVoting": "Онлайн-голосование",
-  "elections.tabs.people": "Люди",
-  "elections.tabs.results": "Результаты",
-  "elections.tabs.tellers": "Счётчики",
-  "elections.tabs.votingMethods": "Методы голосования",
-  "elections.tellerAccess": "Доступ счётчиков",
-  "elections.tellerAccessClosed": "Доступ счётчиков закрыт",
-  "elections.tellerAccessCode": "Код доступа",
-  "elections.tellerAccessOpen": "Доступ счётчиков открыт",
-  "elections.tellerAccessQrCode": "QR-код",
-  "elections.tellerAccessUrl": "Ссылка для отправки",
-  "elections.toElect": "Избрать",
-  "elections.toggleTellerAccess": "Переключить доступ счётчиков",
-  "elections.type": "Тип",
-  "elections.updateError": "Не удалось обновить выборы",
-  "elections.updateSuccess": "Выборы успешно обновлены",
-  "elections.viewReports": "Просмотр отчётов",
-  "elections.viewResults": "Просмотр результатов",
-  "elections.voters": "Избиратели"
+  "elections.advanceStage": {
+    "t": "Перейти к следующему этапу",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.advanceTo": {
+    "t": "Перейти к этапу {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ballots": {
+    "t": "Бюллетени",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteError": {
+    "t": "Не удалось удалить некоторые выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteMessage": {
+    "t": "Вы уверены, что хотите удалить {count} выбранных выборов?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteSuccess": {
+    "t": "{count} выборов успешно удалено",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.calculateTally": {
+    "t": "Подсчитать результаты",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.clearFilters": {
+    "t": "Очистить фильтры",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmAdvance": {
+    "t": "Вы уверены, что хотите перевести эти выборы на этап {stage}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmBulkDelete": {
+    "t": "Подтвердить массовое удаление",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmRevert": {
+    "t": "Вы уверены, что хотите вернуть эти выборы на этап {stage}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.copyUrl": {
+    "t": "Копировать ссылку",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createError": {
+    "t": "Не удалось создать выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createFirst": {
+    "t": "Создайте первые выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createNew": {
+    "t": "Создать выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createSuccess": {
+    "t": "Выборы успешно созданы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.date": {
+    "t": "Дата выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteConfirm": {
+    "t": "Вы уверены, что хотите удалить эти выборы? Это действие нельзя отменить.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteError": {
+    "t": "Не удалось удалить выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSelected": {
+    "t": "Удалить выбранное ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSuccess": {
+    "t": "Выборы успешно удалены",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.details": {
+    "t": "Сведения о выборах",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.edit": {
+    "t": "Редактировать выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.B": {
+    "t": "Дополнительные выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.N": {
+    "t": "Обычные выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.T": {
+    "t": "Разрешение ничьей",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Con": {
+    "t": "Съезд единицы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA": {
+    "t": "Местное Духовное Собрание",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA1": {
+    "t": "Местное Духовное Собрание (двухэтапное) — местная единица",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA2": {
+    "t": "Местное Духовное Собрание (двухэтапное) — финал",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.NSA": {
+    "t": "Национальное Духовное Собрание",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Oth": {
+    "t": "Другое",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Reg": {
+    "t": "Региональный совет",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElection": {
+    "t": "Экспортировать выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionError": {
+    "t": "Не удалось экспортировать выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionSuccess": {
+    "t": "Выборы успешно экспортированы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByStatus": {
+    "t": "Фильтр по статусу",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByType": {
+    "t": "Фильтр по типу",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenor": {
+    "t": "Организатор",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenorPlaceholder": {
+    "t": "Введите имя организатора",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethods": {
+    "t": "Пользовательские методы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsHelp": {
+    "t": "Укажите любые пользовательские или нестандартные методы голосования, используемые на этих выборах.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsPlaceholder": {
+    "t": "Опишите пользовательские методы голосования",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.date": {
+    "t": "Дата выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.datePlaceholder": {
+    "t": "Выберите дату выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.dateRequired": {
+    "t": "Дата выборов обязательна",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionMode": {
+    "t": "Режим выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscode": {
+    "t": "Пароль выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodeHelp": {
+    "t": "Для входа счётчиков требуется пароль.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodePlaceholder": {
+    "t": "Введите пароль",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddress": {
+    "t": "Email-адрес отправителя",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddressPlaceholder": {
+    "t": "Введите email-адрес отправителя",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromName": {
+    "t": "Имя отправителя email",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromNamePlaceholder": {
+    "t": "Введите имя отправителя",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailInvalid": {
+    "t": "Неверный email-адрес",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubject": {
+    "t": "Тема письма",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubjectPlaceholder": {
+    "t": "Введите тему письма",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailText": {
+    "t": "Текст письма",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailTextPlaceholder": {
+    "t": "Введите текст тела письма",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flags": {
+    "t": "Флаги",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsHelp": {
+    "t": "Флаги используются для особых условий выборов.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsPlaceholder": {
+    "t": "Введите флаги",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.hidePreBallotPages": {
+    "t": "Скрыть страницы перед голосованием",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElection": {
+    "t": "Связанные выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount": {
+    "t": "Доступны {count} связанные выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount_plural": {
+    "t": "Доступно {count} связанных выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionHelp": {
+    "t": "Выберите выборы для связывания с целью разрешения ничьей или повторного тура.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKind": {
+    "t": "Тип связанных выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKindPlaceholder": {
+    "t": "Выберите тип",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionPlaceholder": {
+    "t": "Выберите связанные выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.listForPublic": {
+    "t": "Отображать публично",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.lockedByBallots": {
+    "t": "Заблокировано — бюллетени уже введены",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.maskVotingMethod": {
+    "t": "Скрыть метод голосования",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.modePlaceholder": {
+    "t": "Выберите режим выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.name": {
+    "t": "Название выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.namePlaceholder": {
+    "t": "Введите название выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.nameRequired": {
+    "t": "Название выборов обязательно",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberExtra": {
+    "t": "Количество дополнительных",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElect": {
+    "t": "Количество для избрания",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElectRequired": {
+    "t": "Количество для избрания обязательно",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnounced": {
+    "t": "Объявление результатов онлайн",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnouncedPlaceholder": {
+    "t": "Выберите время объявления",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineCloseIsEstimate": {
+    "t": "Время закрытия приблизительное",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcess": {
+    "t": "Процесс онлайн-отбора",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessPlaceholder": {
+    "t": "Выберите процесс",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClose": {
+    "t": "Закрытие онлайн-голосования",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClosePlaceholder": {
+    "t": "Выберите время закрытия",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpen": {
+    "t": "Открытие онлайн-голосования",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpenPlaceholder": {
+    "t": "Выберите время открытия",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showAsTest": {
+    "t": "Показать как тест",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showFullReport": {
+    "t": "Показать полный отчёт",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsText": {
+    "t": "Текст SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsTextPlaceholder": {
+    "t": "Введите текст SMS-сообщения",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.type": {
+    "t": "Тип выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typePlaceholder": {
+    "t": "Выберите тип выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typeRequired": {
+    "t": "Тип выборов обязателен",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useCallInButton": {
+    "t": "Включить голосование по телефону",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKiosk": {
+    "t": "Enable kiosk mode",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKioskHelp": {
+    "t": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethods": {
+    "t": "Методы голосования",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsHelp": {
+    "t": "Выберите методы подачи голосов.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsPlaceholder": {
+    "t": "Выберите методы голосования",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallots": {
+    "t": "Импортировать бюллетени CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsError": {
+    "t": "Не удалось импортировать бюллетени CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsSuccess": {
+    "t": "Бюллетени CDN успешно импортированы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElection": {
+    "t": "Импортировать выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionError": {
+    "t": "Не удалось импортировать выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionSuccess": {
+    "t": "Выборы успешно импортированы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.list": {
+    "t": "Выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.loadError": {
+    "t": "Не удалось загрузить выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.locations": {
+    "t": "Места",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageBallots": {
+    "t": "Управление бюллетенями",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageLocations": {
+    "t": "Управление местами",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.managePeople": {
+    "t": "Управление людьми",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.name": {
+    "t": "Название выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.notFound": {
+    "t": "Выборы не найдены",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingDisabled": {
+    "t": "Онлайн-голосование отключено",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingEnabled": {
+    "t": "Онлайн-голосование включено",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.people": {
+    "t": "Люди",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.quickActions": {
+    "t": "Быстрые действия",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.revertTo": {
+    "t": "Вернуться к этапу {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.searchPlaceholder": {
+    "t": "Поиск выборов по названию или организатору...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Counting": {
+    "t": "Подсчёт",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Finalized": {
+    "t": "Завершено",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Setup": {
+    "t": "Настройка",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageAdvanced": {
+    "t": "Выборы переведены на этап {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError": {
+    "t": "Не удалось изменить этап выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageProgression": {
+    "t": "Этап выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageReverted": {
+    "t": "Выборы возвращены на этап {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.statistics": {
+    "t": "Статистика",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.status": {
+    "t": "Статус",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.advanced": {
+    "t": "Дополнительно",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.auditLogs": {
+    "t": "Журнал аудита",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.ballots": {
+    "t": "Бюллетени",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.basicInfo": {
+    "t": "Основная информация",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.communication": {
+    "t": "Связь",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.displayPrivacy": {
+    "t": "Отображение и конфиденциальность",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.electionRules": {
+    "t": "Правила выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.locations": {
+    "t": "Места",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.onlineVoting": {
+    "t": "Онлайн-голосование",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.people": {
+    "t": "Люди",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.results": {
+    "t": "Результаты",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.tellers": {
+    "t": "Счётчики",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.votingMethods": {
+    "t": "Методы голосования",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccess": {
+    "t": "Доступ счётчиков",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessClosed": {
+    "t": "Доступ счётчиков закрыт",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessCode": {
+    "t": "Код доступа",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessOpen": {
+    "t": "Доступ счётчиков открыт",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessQrCode": {
+    "t": "QR-код",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessUrl": {
+    "t": "Ссылка для отправки",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toElect": {
+    "t": "Избрать",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toggleTellerAccess": {
+    "t": "Переключить доступ счётчиков",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.type": {
+    "t": "Тип",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateError": {
+    "t": "Не удалось обновить выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateSuccess": {
+    "t": "Выборы успешно обновлены",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewReports": {
+    "t": "Просмотр отчётов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewResults": {
+    "t": "Просмотр результатов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.voters": {
+    "t": "Избиратели",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

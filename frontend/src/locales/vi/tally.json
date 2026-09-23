@@ -1,20 +1,92 @@
 {
-  "tally.calculate": "Tính Toán Kết Quả",
-  "tally.calculateError": "Không thể tính toán kết quả",
-  "tally.calculateSuccess": "Đã tính toán kết quả thành công",
-  "tally.calculatingProgress": "Đang Tính Toán Tiến Trình",
-  "tally.normalElection": "Bầu Cử Thông Thường",
-  "tally.processedBallots": "Phiếu Bầu Đã Xử Lý",
-  "tally.resultsPreview": "Xem Trước Kết Quả (Top 10)",
-  "tally.section.elected": "Được bầu",
-  "tally.section.extra": "Bổ sung",
-  "tally.section.other": "Khác",
-  "tally.singleNameElection": "Bầu Cử Một Tên",
-  "tally.title": "Tính Toán Kết Quả",
-  "tally.viewFullResults": "Xem Kết Quả Đầy Đủ",
-  "tally.warning": "Cảnh Báo",
-  "tally.warningMessage": "Việc tính toán kết quả sẽ ghi đè lên bất kỳ kết quả hiện có nào. Hành động này không thể hoàn tác.",
-  "tally.section.E": "Được bầu",
-  "tally.section.X": "Bổ sung",
-  "tally.section.O": "Khác"
+  "tally.calculate": {
+    "t": "Tính Toán Kết Quả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateError": {
+    "t": "Không thể tính toán kết quả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "Đã tính toán kết quả thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "Đang Tính Toán Tiến Trình",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.normalElection": {
+    "t": "Bầu Cử Thông Thường",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.processedBallots": {
+    "t": "Phiếu Bầu Đã Xử Lý",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.resultsPreview": {
+    "t": "Xem Trước Kết Quả (Top 10)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.elected": {
+    "t": "Được bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.extra": {
+    "t": "Bổ sung",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.other": {
+    "t": "Khác",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.singleNameElection": {
+    "t": "Bầu Cử Một Tên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.title": {
+    "t": "Tính Toán Kết Quả",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.viewFullResults": {
+    "t": "Xem Kết Quả Đầy Đủ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warning": {
+    "t": "Cảnh Báo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warningMessage": {
+    "t": "Việc tính toán kết quả sẽ ghi đè lên bất kỳ kết quả hiện có nào. Hành động này không thể hoàn tác.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.E": {
+    "t": "Được bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.X": {
+    "t": "Bổ sung",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.O": {
+    "t": "Khác",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

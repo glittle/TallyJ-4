@@ -1,20 +1,92 @@
 {
-  "tally.calculate": "Laske ääntenlasku",
-  "tally.calculateError": "Ääntenlaskun laskeminen epäonnistui",
-  "tally.calculateSuccess": "Ääntenlasku laskettu onnistuneesti",
-  "tally.calculatingProgress": "Lasketaan edistymistä",
-  "tally.normalElection": "Normaalit vaalit",
-  "tally.processedBallots": "Käsitellyt äänestysliput",
-  "tally.resultsPreview": "Tulosten esikatselu (Top 10)",
-  "tally.section.elected": "Valittu",
-  "tally.section.extra": "Lisä",
-  "tally.section.other": "Muu",
-  "tally.singleNameElection": "Yhden nimen vaalit",
-  "tally.title": "Laske ääntenlasku",
-  "tally.viewFullResults": "Näytä koko tulokset",
-  "tally.warning": "Varoitus",
-  "tally.warningMessage": "Ääntenlaskun laskeminen korvaa kaikki olemassa olevat tulokset. Tätä toimintoa ei voi peruuttaa.",
-  "tally.section.E": "Valittu",
-  "tally.section.X": "Lisä",
-  "tally.section.O": "Muu"
+  "tally.calculate": {
+    "t": "Laske ääntenlasku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateError": {
+    "t": "Ääntenlaskun laskeminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "Ääntenlasku laskettu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "Lasketaan edistymistä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.normalElection": {
+    "t": "Normaalit vaalit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.processedBallots": {
+    "t": "Käsitellyt äänestysliput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.resultsPreview": {
+    "t": "Tulosten esikatselu (Top 10)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.elected": {
+    "t": "Valittu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.extra": {
+    "t": "Lisä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.other": {
+    "t": "Muu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.singleNameElection": {
+    "t": "Yhden nimen vaalit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.title": {
+    "t": "Laske ääntenlasku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.viewFullResults": {
+    "t": "Näytä koko tulokset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warning": {
+    "t": "Varoitus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warningMessage": {
+    "t": "Ääntenlaskun laskeminen korvaa kaikki olemassa olevat tulokset. Tätä toimintoa ei voi peruuttaa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.E": {
+    "t": "Valittu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.X": {
+    "t": "Lisä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.O": {
+    "t": "Muu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

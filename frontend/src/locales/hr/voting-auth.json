@@ -1,100 +1,492 @@
 {
-  "voting.auth.code.description": "Neki izbori glasačima daju osobni kôd za glasanje — obično poslan od strane administratora izbora e-poštom, poštom ili osobno. Ako ste primili takav kôd, unesite ga ovdje za izravni pristup glasačkom listiću.",
-  "voting.auth.code.label": "Kôd za glasanje",
-  "voting.auth.code.placeholder": "Unesite vaš unaprijed dodijeljen kôd za glasanje",
-  "voting.auth.code.proceed": "Nastavi na glasanje",
-  "voting.auth.email.codeSent": "Verifikacijski kôd poslan je na vašu e-poštu",
-  "voting.auth.email.description": "Ako administrator izbora ima vašu adresu e-pošte u evidenciji, unesite je ovdje. Poslat ćemo jednokratni kôd na tu adresu. Unesite kôd na sljedećem zaslonu za potvrdu identiteta i pristup glasačkom listiću.",
-  "voting.auth.email.label": "Adresa e-pošte",
-  "voting.auth.email.placeholder": "Unesite svoju adresu e-pošte",
-  "voting.auth.email.sendCode": "Pošalji verifikacijski kôd",
-  "voting.auth.error.noElection": "Nisu specificirani izbori",
-  "voting.auth.facebook.button": "Nastavi s Facebookom",
-  "voting.auth.facebook.cancelled": "Facebook prijava je otkazana.",
-  "voting.auth.facebook.description": "Ako imate Facebook račun čija e-pošta odgovara onoj registriranoj za ove izbore, možete se prijaviti s Facebookom.",
-  "voting.auth.facebook.error": "Došlo je do pogreške pri obradi vaše Facebook autentifikacije.",
-  "voting.auth.facebook.invalidToken": "Nevažeći Facebook pristupni token.",
-  "voting.auth.facebook.loading": "Učitavanje Facebook prijave...",
-  "voting.auth.facebook.noEmail": "Vaš Facebook račun nema verificiranu adresu e-pošte. Molimo koristite drugu metodu prijave.",
-  "voting.auth.facebook.noOpenElections": "Trenutno nema otvorenih izbora za online glasanje.",
-  "voting.auth.facebook.notRegistered": "Niste registrirani za glasanje ni na jednim trenutno otvorenim izborima.",
-  "voting.auth.facebook.popupBlocked": "Facebook skočni prozor za prijavu je blokiran. Molimo dozvolite skočne prozore za ovu stranicu i pokušajte ponovo.",
-  "voting.auth.faq.a1": "Kako bismo zaštitili integritet izbora, trebamo potvrditi da je svaki glasač ono što tvrdi da je te da se nalaze na popisu prihvatljivih glasača. To sprječava glasanje više od jednom ili u ime neke druge osobe.",
-  "voting.auth.faq.a2": "Informacije koje unosite moraju točno odgovarati onome što je administrator izbora registrirao za vas. Ako nisu prepoznate, molimo kontaktirajte administratora izbora — mogu provjeriti vaše podatke ili vam dati osobni kôd za glasanje.",
-  "voting.auth.faq.a3": "Da, apsolutno. Ovaj korak prijave samo potvrđuje da ste prihvatljivi glasač. Jednom kad ste na stranici glasačkog listića, vaši su izbori potpuno tajni. Sustav je osmišljen tako da nitko — pa ni administratori izbora — ne može povezati vaše ime s određenim izborima koje ste napravili.",
-  "voting.auth.faq.a4": "Ne. Nakon što ste predali glasački listić, sustav bilježi da ste glasali i neće prihvatiti drugu predaju od vas. Ovo je važna zaštitna mjera za integritet izbora.",
-  "voting.auth.faq.a5": "Možete koristiti bilo koju od dostupnih metoda — ne trebate koristiti sve. Ako imate e-poštu registriranu kod administratora izbora, koristite opciju E-pošta. Ako imate broj telefona, koristite opciju Telefon. Ako ste primili osobni kôd, koristite opciju Kôd. Kontaktirajte administratora izbora ako niste sigurni koja metoda se na vas odnosi.",
-  "voting.auth.faq.a6": "Da. Prijava s Googleom znači da Google potvrđuje vaš identitet nama — nikada ne vidimo vašu Google lozinku. Primamo samo vašu verificiranu adresu e-pošte, koju provjeravamo s popisom glasača. Google pruža ovu uslugu besplatno.",
-  "voting.auth.faq.a7": "Molimo kontaktirajte izravno svog administratora izbora. Mogu provjeriti vaše podatke o registraciji, dati osobni kôd za glasanje ili vam pomoći na bilo koji drugi način.",
-  "voting.auth.faq.q1": "Zašto se trebam prijaviti prije glasanja?",
-  "voting.auth.faq.q2": "Što ako moja adresa e-pošte ili broj telefona nije prepoznat?",
-  "voting.auth.faq.q3": "Je li moj glas tajan?",
-  "voting.auth.faq.q4": "Mogu li glasati više od jednom?",
-  "voting.auth.faq.q5": "Što ako nemam Google račun ni telefon?",
-  "voting.auth.faq.q6": "Je li sigurno prijaviti se s Googleom?",
-  "voting.auth.faq.q7": "Što ako naletim na problem?",
-  "voting.auth.faq.title": "Uobičajena pitanja",
-  "voting.auth.google.buttonText": "Prijavite se s Googleom",
-  "voting.auth.google.description": "Ako imate Google račun čija e-pošta registrirana u Googleu odgovara onoj koju administrator izbora ima u evidenciji, možete se prijaviti s Googleom. Ovo je praktična mogućnost koja ne zahtijeva poseban kôd.",
-  "voting.auth.google.emailNotVerified": "Google e-pošta mora biti verificirana za glasanje.",
-  "voting.auth.google.error": "Došlo je do pogreške pri obradi vaše Google autentifikacije.",
-  "voting.auth.google.invalidCredential": "Nevažeće Google vjerodajnice.",
-  "voting.auth.google.loading": "Učitavanje Google prijave...",
-  "voting.auth.google.noEmail": "Google nije dostavio e-poštu.",
-  "voting.auth.google.noOpenElections": "Trenutno nema otvorenih izbora za online glasanje.",
-  "voting.auth.google.notConfigured": "Google autentifikacija nije konfigurirana na ovom poslužitelju.",
-  "voting.auth.google.notRegistered": "Niste registrirani za glasanje ni na jednim trenutno otvorenim izborima.",
-  "voting.auth.google.prompt": "Kliknite gumb u nastavku za prijavu s vašim Google računom.",
-  "voting.auth.kakao.button": "카카오로 로그인 (Prijava s Kakaom)",
-  "voting.auth.kakao.description": "Ako imate Kakao račun (KakaoTalk) čija registrirana e-pošta ili telefon odgovara, možete se prijaviti s Kakaom.",
-  "voting.auth.kakao.error": "Došlo je do pogreške pri obradi vaše Kakao autentifikacije.",
-  "voting.auth.kakao.invalidToken": "Nevažeći Kakao pristupni token.",
-  "voting.auth.kakao.loading": "Učitavanje Kakao prijave...",
-  "voting.auth.kakao.noContact": "Vaš Kakao račun nije dostavio e-poštu ili broj telefona. Molimo koristite drugu metodu prijave.",
-  "voting.auth.kakao.noOpenElections": "Trenutno nema otvorenih izbora za online glasanje.",
-  "voting.auth.kakao.notRegistered": "Niste registrirani za glasanje ni na jednim trenutno otvorenim izborima.",
-  "voting.auth.kakao.popupBlocked": "Kakao skočni prozor za prijavu je blokiran. Molimo dozvolite skočne prozore za ovu stranicu i pokušajte ponovo.",
-  "voting.auth.phone.codeSent": "Verifikacijski kôd poslan putem {method}",
-  "voting.auth.phone.deliveryMethod": "Kako želite primiti kôd?",
-  "voting.auth.phone.description": "Ako administrator izbora ima vaš broj telefona u evidenciji, unesite ga ovdje. Poslat ćemo jednokratni verifikacijski kôd putem SMS-a, glasovnog poziva ili WhatsAppa. Unesite kôd na sljedećem zaslonu za potvrdu identiteta.",
-  "voting.auth.phone.label": "Broj telefona",
-  "voting.auth.phone.placeholder": "+1234567890",
-  "voting.auth.phone.sendCode": "Pošalji verifikacijski kôd",
-  "voting.auth.phone.sms": "SMS tekstualna poruka",
-  "voting.auth.phone.voice": "Glasovni poziv",
-  "voting.auth.phone.whatsapp": "WhatsApp poruka",
-  "voting.auth.phone.whatsappNote": "WhatsApp poruka bit će poslana na ovaj broj",
-  "voting.auth.requestCode.error": "Došlo je do pogreške pri obradi vašeg zahtjeva.",
-  "voting.auth.requestCode.noOpenElections": "Trenutno nema otvorenih izbora za online glasanje.",
-  "voting.auth.requestCode.notRegistered": "Niste registrirani za glasanje ni na jednim trenutno otvorenim izborima.",
-  "voting.auth.requestCode.sendFailed": "Slanje verifikacijskog kôda nije uspjelo. Molimo pokušajte ponovo.",
-  "voting.auth.requestCode.sent": "Ako su dostavljeni kontakt podaci valjani, poslan je verifikacijski kôd.",
-  "voting.auth.subtitle": "Molimo autentificirajte se za predaju glasačkog listića",
-  "voting.auth.tabs.code": "Kôd",
-  "voting.auth.tabs.email": "E-pošta",
-  "voting.auth.tabs.facebook": "Facebook",
-  "voting.auth.tabs.google": "Google",
-  "voting.auth.tabs.kakao": "Kakao",
-  "voting.auth.tabs.phone": "Telefon",
-  "voting.auth.tabs.telegram": "Telegram",
-  "voting.auth.telegram.description": "Sigurna prijava jednim dodirom putem Telegrama.",
-  "voting.auth.telegram.error": "Telegram prijava trenutno nije dostupna.",
-  "voting.auth.telegram.loading": "Učitavanje Telegram widgeta...",
-  "voting.auth.title": "TallyJ Online glasanje",
-  "voting.auth.verify.back": "Isprobaj drugu metodu",
-  "voting.auth.verify.codeExpired": "Verifikacijski kôd je istekao. Molimo zatražite novi kôd.",
-  "voting.auth.verify.detail": "Molimo provjerite svoju pretinac (i mapu neželjene pošte, za svaki slučaj) i unesite kôd u nastavku. Kôd vrijedi ograničeno vrijeme.",
-  "voting.auth.verify.error": "Došlo je do pogreške pri verifikaciji vašeg kôda.",
-  "voting.auth.verify.invalidCode": "Nevažeći verifikacijski kôd. Preostalo {attempts} pokušaja.",
-  "voting.auth.verify.label": "Verifikacijski kôd",
-  "voting.auth.verify.message": "Poslali smo verifikacijski kôd na {voterId}",
-  "voting.auth.verify.noCodeFound": "Nije pronađen verifikacijski kôd. Molimo zatražite novi kôd.",
-  "voting.auth.verify.placeholder": "Unesite primljeni kôd",
-  "voting.auth.verify.submit": "Verifikacija i nastavak na glasanje",
-  "voting.auth.verify.tooManyAttempts": "Previše neuspjelih pokušaja. Molimo zatražite novi kôd.",
-  "voting.auth.verify.voterNotFound": "Glasač nije pronađen. Molimo prvo zatražite verifikacijski kôd.",
-  "voting.auth.welcome.choose": "Molimo odaberite jednu od metoda u nastavku:",
-  "voting.auth.welcome.detail": "Ovo je jednostavna jednokratna provjera — ne stvaramo vam račun niti pohranjujemo osobne podatke osim onih koje administrator izbora već ima. Nakon potvrde bit ćete izravno preusmjereni na glasački listić.",
-  "voting.auth.welcome.heading": "Dobrodošli — Gotovo ste spremni za glasanje",
-  "voting.auth.welcome.intro": "Da biste glasali na ovim izborima, trebamo potvrditi vaš identitet. Vaš identitet mora odgovarati informacijama koje administrator izbora ima u evidenciji za prihvatljive glasače."
+  "voting.auth.code.description": {
+    "t": "Neki izbori glasačima daju osobni kôd za glasanje — obično poslan od strane administratora izbora e-poštom, poštom ili osobno. Ako ste primili takav kôd, unesite ga ovdje za izravni pristup glasačkom listiću.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.code.label": {
+    "t": "Kôd za glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.code.placeholder": {
+    "t": "Unesite vaš unaprijed dodijeljen kôd za glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.code.proceed": {
+    "t": "Nastavi na glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.email.codeSent": {
+    "t": "Verifikacijski kôd poslan je na vašu e-poštu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.email.description": {
+    "t": "Ako administrator izbora ima vašu adresu e-pošte u evidenciji, unesite je ovdje. Poslat ćemo jednokratni kôd na tu adresu. Unesite kôd na sljedećem zaslonu za potvrdu identiteta i pristup glasačkom listiću.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.email.label": {
+    "t": "Adresa e-pošte",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.email.placeholder": {
+    "t": "Unesite svoju adresu e-pošte",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.email.sendCode": {
+    "t": "Pošalji verifikacijski kôd",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.error.noElection": {
+    "t": "Nisu specificirani izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.button": {
+    "t": "Nastavi s Facebookom",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.cancelled": {
+    "t": "Facebook prijava je otkazana.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.description": {
+    "t": "Ako imate Facebook račun čija e-pošta odgovara onoj registriranoj za ove izbore, možete se prijaviti s Facebookom.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.error": {
+    "t": "Došlo je do pogreške pri obradi vaše Facebook autentifikacije.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.invalidToken": {
+    "t": "Nevažeći Facebook pristupni token.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.loading": {
+    "t": "Učitavanje Facebook prijave...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.noEmail": {
+    "t": "Vaš Facebook račun nema verificiranu adresu e-pošte. Molimo koristite drugu metodu prijave.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.noOpenElections": {
+    "t": "Trenutno nema otvorenih izbora za online glasanje.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.notRegistered": {
+    "t": "Niste registrirani za glasanje ni na jednim trenutno otvorenim izborima.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.popupBlocked": {
+    "t": "Facebook skočni prozor za prijavu je blokiran. Molimo dozvolite skočne prozore za ovu stranicu i pokušajte ponovo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a1": {
+    "t": "Kako bismo zaštitili integritet izbora, trebamo potvrditi da je svaki glasač ono što tvrdi da je te da se nalaze na popisu prihvatljivih glasača. To sprječava glasanje više od jednom ili u ime neke druge osobe.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a2": {
+    "t": "Informacije koje unosite moraju točno odgovarati onome što je administrator izbora registrirao za vas. Ako nisu prepoznate, molimo kontaktirajte administratora izbora — mogu provjeriti vaše podatke ili vam dati osobni kôd za glasanje.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a3": {
+    "t": "Da, apsolutno. Ovaj korak prijave samo potvrđuje da ste prihvatljivi glasač. Jednom kad ste na stranici glasačkog listića, vaši su izbori potpuno tajni. Sustav je osmišljen tako da nitko — pa ni administratori izbora — ne može povezati vaše ime s određenim izborima koje ste napravili.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a4": {
+    "t": "Ne. Nakon što ste predali glasački listić, sustav bilježi da ste glasali i neće prihvatiti drugu predaju od vas. Ovo je važna zaštitna mjera za integritet izbora.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a5": {
+    "t": "Možete koristiti bilo koju od dostupnih metoda — ne trebate koristiti sve. Ako imate e-poštu registriranu kod administratora izbora, koristite opciju E-pošta. Ako imate broj telefona, koristite opciju Telefon. Ako ste primili osobni kôd, koristite opciju Kôd. Kontaktirajte administratora izbora ako niste sigurni koja metoda se na vas odnosi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a6": {
+    "t": "Da. Prijava s Googleom znači da Google potvrđuje vaš identitet nama — nikada ne vidimo vašu Google lozinku. Primamo samo vašu verificiranu adresu e-pošte, koju provjeravamo s popisom glasača. Google pruža ovu uslugu besplatno.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a7": {
+    "t": "Molimo kontaktirajte izravno svog administratora izbora. Mogu provjeriti vaše podatke o registraciji, dati osobni kôd za glasanje ili vam pomoći na bilo koji drugi način.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q1": {
+    "t": "Zašto se trebam prijaviti prije glasanja?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q2": {
+    "t": "Što ako moja adresa e-pošte ili broj telefona nije prepoznat?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q3": {
+    "t": "Je li moj glas tajan?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q4": {
+    "t": "Mogu li glasati više od jednom?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q5": {
+    "t": "Što ako nemam Google račun ni telefon?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q6": {
+    "t": "Je li sigurno prijaviti se s Googleom?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q7": {
+    "t": "Što ako naletim na problem?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.title": {
+    "t": "Uobičajena pitanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.buttonText": {
+    "t": "Prijavite se s Googleom",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.description": {
+    "t": "Ako imate Google račun čija e-pošta registrirana u Googleu odgovara onoj koju administrator izbora ima u evidenciji, možete se prijaviti s Googleom. Ovo je praktična mogućnost koja ne zahtijeva poseban kôd.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.emailNotVerified": {
+    "t": "Google e-pošta mora biti verificirana za glasanje.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.error": {
+    "t": "Došlo je do pogreške pri obradi vaše Google autentifikacije.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.invalidCredential": {
+    "t": "Nevažeće Google vjerodajnice.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.loading": {
+    "t": "Učitavanje Google prijave...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.noEmail": {
+    "t": "Google nije dostavio e-poštu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.noOpenElections": {
+    "t": "Trenutno nema otvorenih izbora za online glasanje.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.notConfigured": {
+    "t": "Google autentifikacija nije konfigurirana na ovom poslužitelju.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.notRegistered": {
+    "t": "Niste registrirani za glasanje ni na jednim trenutno otvorenim izborima.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.prompt": {
+    "t": "Kliknite gumb u nastavku za prijavu s vašim Google računom.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.button": {
+    "t": "카카오로 로그인 (Prijava s Kakaom)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.description": {
+    "t": "Ako imate Kakao račun (KakaoTalk) čija registrirana e-pošta ili telefon odgovara, možete se prijaviti s Kakaom.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.error": {
+    "t": "Došlo je do pogreške pri obradi vaše Kakao autentifikacije.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.invalidToken": {
+    "t": "Nevažeći Kakao pristupni token.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.loading": {
+    "t": "Učitavanje Kakao prijave...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.noContact": {
+    "t": "Vaš Kakao račun nije dostavio e-poštu ili broj telefona. Molimo koristite drugu metodu prijave.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.noOpenElections": {
+    "t": "Trenutno nema otvorenih izbora za online glasanje.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.notRegistered": {
+    "t": "Niste registrirani za glasanje ni na jednim trenutno otvorenim izborima.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.popupBlocked": {
+    "t": "Kakao skočni prozor za prijavu je blokiran. Molimo dozvolite skočne prozore za ovu stranicu i pokušajte ponovo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.codeSent": {
+    "t": "Verifikacijski kôd poslan putem {method}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.deliveryMethod": {
+    "t": "Kako želite primiti kôd?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.description": {
+    "t": "Ako administrator izbora ima vaš broj telefona u evidenciji, unesite ga ovdje. Poslat ćemo jednokratni verifikacijski kôd putem SMS-a, glasovnog poziva ili WhatsAppa. Unesite kôd na sljedećem zaslonu za potvrdu identiteta.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.label": {
+    "t": "Broj telefona",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.placeholder": {
+    "t": "+1234567890",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.sendCode": {
+    "t": "Pošalji verifikacijski kôd",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.sms": {
+    "t": "SMS tekstualna poruka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.voice": {
+    "t": "Glasovni poziv",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.whatsapp": {
+    "t": "WhatsApp poruka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.whatsappNote": {
+    "t": "WhatsApp poruka bit će poslana na ovaj broj",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.requestCode.error": {
+    "t": "Došlo je do pogreške pri obradi vašeg zahtjeva.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.requestCode.noOpenElections": {
+    "t": "Trenutno nema otvorenih izbora za online glasanje.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.requestCode.notRegistered": {
+    "t": "Niste registrirani za glasanje ni na jednim trenutno otvorenim izborima.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.requestCode.sendFailed": {
+    "t": "Slanje verifikacijskog kôda nije uspjelo. Molimo pokušajte ponovo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.requestCode.sent": {
+    "t": "Ako su dostavljeni kontakt podaci valjani, poslan je verifikacijski kôd.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.subtitle": {
+    "t": "Molimo autentificirajte se za predaju glasačkog listića",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.code": {
+    "t": "Kôd",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.email": {
+    "t": "E-pošta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.facebook": {
+    "t": "Facebook",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.google": {
+    "t": "Google",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.kakao": {
+    "t": "Kakao",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.phone": {
+    "t": "Telefon",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.telegram": {
+    "t": "Telegram",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.telegram.description": {
+    "t": "Sigurna prijava jednim dodirom putem Telegrama.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.telegram.error": {
+    "t": "Telegram prijava trenutno nije dostupna.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.telegram.loading": {
+    "t": "Učitavanje Telegram widgeta...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.title": {
+    "t": "TallyJ Online glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.back": {
+    "t": "Isprobaj drugu metodu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.codeExpired": {
+    "t": "Verifikacijski kôd je istekao. Molimo zatražite novi kôd.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.detail": {
+    "t": "Molimo provjerite svoju pretinac (i mapu neželjene pošte, za svaki slučaj) i unesite kôd u nastavku. Kôd vrijedi ograničeno vrijeme.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.error": {
+    "t": "Došlo je do pogreške pri verifikaciji vašeg kôda.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.invalidCode": {
+    "t": "Nevažeći verifikacijski kôd. Preostalo {attempts} pokušaja.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.label": {
+    "t": "Verifikacijski kôd",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.message": {
+    "t": "Poslali smo verifikacijski kôd na {voterId}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.noCodeFound": {
+    "t": "Nije pronađen verifikacijski kôd. Molimo zatražite novi kôd.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.placeholder": {
+    "t": "Unesite primljeni kôd",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.submit": {
+    "t": "Verifikacija i nastavak na glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.tooManyAttempts": {
+    "t": "Previše neuspjelih pokušaja. Molimo zatražite novi kôd.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.voterNotFound": {
+    "t": "Glasač nije pronađen. Molimo prvo zatražite verifikacijski kôd.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.welcome.choose": {
+    "t": "Molimo odaberite jednu od metoda u nastavku:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.welcome.detail": {
+    "t": "Ovo je jednostavna jednokratna provjera — ne stvaramo vam račun niti pohranjujemo osobne podatke osim onih koje administrator izbora već ima. Nakon potvrde bit ćete izravno preusmjereni na glasački listić.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.welcome.heading": {
+    "t": "Dobrodošli — Gotovo ste spremni za glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.welcome.intro": {
+    "t": "Da biste glasali na ovim izborima, trebamo potvrditi vaš identitet. Vaš identitet mora odgovarati informacijama koje administrator izbora ima u evidenciji za prihvatljive glasače.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

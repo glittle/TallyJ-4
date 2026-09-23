@@ -1,47 +1,227 @@
 {
-  "locations.computer.browserInfo": "浏览器信息",
-  "locations.computer.browserInfoHelp": "自动从您的浏览器检测",
-  "locations.computer.browserInfoMaxLength": "浏览器信息不能超过 250 个字符",
-  "locations.computer.browserInfoPlaceholder": "自动检测的浏览器信息",
-  "locations.computer.cancel": "取消",
-  "locations.computer.code": "计算机代码",
-  "locations.computer.codeHelp": "2 个字符的代码（例如：AA、AB、A1）。留空自动生成。",
-  "locations.computer.codeInvalid": "计算机代码必须为 2 个大写字母或数字",
-  "locations.computer.codeLength": "计算机代码必须恰好为 2 个字符",
-  "locations.computer.codePlaceholder": "AA（留空自动生成）",
-  "locations.computer.ipAddress": "IP 地址",
-  "locations.computer.ipAddressHelp": "可选：计算机的 IP 地址",
-  "locations.computer.ipAddressMaxLength": "IP 地址不能超过 50 个字符",
-  "locations.computer.ipAddressPlaceholder": "可选：输入 IP 地址",
-  "locations.computer.register": "注册",
-  "locations.computer.success": "计算机注册成功",
-  "locations.computer.title": "注册计算机",
-  "locations.currentLocation": "当前地点",
-  "locations.form.cancel": "取消",
-  "locations.form.contactInfo": "联系信息",
-  "locations.form.contactInfoMaxLength": "联系信息不能超过 250 个字符",
-  "locations.form.contactInfoPlaceholder": "输入联系信息",
-  "locations.form.create": "创建",
-  "locations.form.created": "地点创建成功",
-  "locations.form.latitude": "纬度",
-  "locations.form.latitudeHelp": "范围：-90 至 90",
-  "locations.form.latitudeInvalid": "纬度必须是介于 -90 和 90 之间的有效坐标",
-  "locations.form.latitudePlaceholder": "例如：37.7749",
-  "locations.form.longitude": "经度",
-  "locations.form.longitudeHelp": "范围：-180 至 180",
-  "locations.form.longitudeInvalid": "经度必须是介于 -180 和 180 之间的有效坐标",
-  "locations.form.longitudePlaceholder": "例如：-122.4194",
-  "locations.form.name": "地点名称",
-  "locations.form.nameMaxLength": "地点名称不能超过 50 个字符",
-  "locations.form.namePlaceholder": "输入地点名称",
-  "locations.form.nameRequired": "地点名称为必填项",
-  "locations.form.save": "保存",
-  "locations.form.sortOrder": "排序顺序",
-  "locations.form.sortOrderHelp": "用于在列表中对地点进行排序",
-  "locations.form.sortOrderInvalid": "排序顺序必须为数字",
-  "locations.form.titleAdd": "添加地点",
-  "locations.form.titleEdit": "编辑地点",
-  "locations.form.updated": "地点更新成功",
-  "locations.locationSelected": "地点选择成功",
-  "locations.selectLocation": "选择地点"
+  "locations.computer.browserInfo": {
+    "t": "浏览器信息",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoHelp": {
+    "t": "自动从您的浏览器检测",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoMaxLength": {
+    "t": "浏览器信息不能超过 250 个字符",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoPlaceholder": {
+    "t": "自动检测的浏览器信息",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.cancel": {
+    "t": "取消",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.code": {
+    "t": "计算机代码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeHelp": {
+    "t": "2 个字符的代码（例如：AA、AB、A1）。留空自动生成。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeInvalid": {
+    "t": "计算机代码必须为 2 个大写字母或数字",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeLength": {
+    "t": "计算机代码必须恰好为 2 个字符",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codePlaceholder": {
+    "t": "AA（留空自动生成）",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddress": {
+    "t": "IP 地址",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressHelp": {
+    "t": "可选：计算机的 IP 地址",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressMaxLength": {
+    "t": "IP 地址不能超过 50 个字符",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressPlaceholder": {
+    "t": "可选：输入 IP 地址",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.register": {
+    "t": "注册",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.success": {
+    "t": "计算机注册成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.title": {
+    "t": "注册计算机",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.currentLocation": {
+    "t": "当前地点",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.cancel": {
+    "t": "取消",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfo": {
+    "t": "联系信息",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoMaxLength": {
+    "t": "联系信息不能超过 250 个字符",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoPlaceholder": {
+    "t": "输入联系信息",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.create": {
+    "t": "创建",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.created": {
+    "t": "地点创建成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitude": {
+    "t": "纬度",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeHelp": {
+    "t": "范围：-90 至 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeInvalid": {
+    "t": "纬度必须是介于 -90 和 90 之间的有效坐标",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudePlaceholder": {
+    "t": "例如：37.7749",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitude": {
+    "t": "经度",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeHelp": {
+    "t": "范围：-180 至 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeInvalid": {
+    "t": "经度必须是介于 -180 和 180 之间的有效坐标",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudePlaceholder": {
+    "t": "例如：-122.4194",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.name": {
+    "t": "地点名称",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameMaxLength": {
+    "t": "地点名称不能超过 50 个字符",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.namePlaceholder": {
+    "t": "输入地点名称",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameRequired": {
+    "t": "地点名称为必填项",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.save": {
+    "t": "保存",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrder": {
+    "t": "排序顺序",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderHelp": {
+    "t": "用于在列表中对地点进行排序",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderInvalid": {
+    "t": "排序顺序必须为数字",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleAdd": {
+    "t": "添加地点",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleEdit": {
+    "t": "编辑地点",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.updated": {
+    "t": "地点更新成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.locationSelected": {
+    "t": "地点选择成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.selectLocation": {
+    "t": "选择地点",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

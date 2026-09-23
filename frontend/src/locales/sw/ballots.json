@@ -1,74 +1,362 @@
 {
-  "ballots.addBallot": "Ongeza Kura",
-  "ballots.addNewPerson": "Ongeza Mtu Mpya",
-  "ballots.addVote": "Ongeza Kura",
-  "ballots.cacheLoadError": "Imeshindwa kupakia wagombea",
-  "ballots.cacheLoading": "Kupakia wagombea...",
-  "ballots.candidate": "Mgombea",
-  "ballots.candidateRequired": "Mgombea ni muhimu",
-  "ballots.cdnImport.ballotsCreated": "Kura ziliyoundwa",
-  "ballots.cdnImport.button": "Agiza Kura za CDN",
-  "ballots.cdnImport.description": "Pakia faili la XML lililohamishwa kutoka CDN (Canadian National Database) ili kuagiza kura na kura zake za sambamba katika uchaguzi huu. Faili litahajiniwa na kura litaundwa kwa kila ingizo sahihi, pamoja na rekodi zote za kura zinazohusiana.",
-  "ballots.cdnImport.errors": "Hitilafu",
-  "ballots.cdnImport.failed": "Kuagiza kushindwa",
-  "ballots.cdnImport.importing": "Kuagiza...",
-  "ballots.cdnImport.skippedRows": "Safu mlalo ziliruka",
-  "ballots.cdnImport.success": "Kuagiza kumaliziwa kwa mafanikio",
-  "ballots.cdnImport.title": "Agiza Kura za CDN",
-  "ballots.cdnImport.totalRows": "Safu mlalo jumla zilizopangiliwa",
-  "ballots.cdnImport.uploadPrompt": "Bofya au buruta faili la XML hapa ili kupakia",
-  "ballots.cdnImport.votesCreated": "Kura ziliyoundwa",
-  "ballots.cdnImport.warnings": "Onyo",
-  "ballots.cdnImport.xmlOnly": "Faili tu la XML linasaidiwa",
-  "ballots.checkSpelling": "Angalia tahajia au jaribu jina lingine",
-  "ballots.clearAll": "Futa Zote",
-  "ballots.code": "Nambari ya Kura",
-  "ballots.computer": "Kompyuta",
-  "ballots.computerRequired": "Nambari ya kompyuta ni muhimu",
-  "ballots.createSuccess": "Kura iliyoundwa kwa mafanikio",
-  "ballots.deleteConfirm": "Je, una uhakika unataka kufuta kura hii?",
-  "ballots.deleteError": "Imeshindwa kufuta kura",
-  "ballots.deleteSuccess": "Kura imefutwa kwa mafanikio",
-  "ballots.deleteVoteConfirm": "Je, una uhakika unataka kufuta kura hii?",
-  "ballots.deleteVoteError": "Imeshindwa kufuta kura",
-  "ballots.deleteVoteSuccess": "Kura iliyofutwa kwa mafanikio",
-  "ballots.duplicateWarning": "Nakala: Mtu huyu amekubwa tayari",
-  "ballots.enterVotes": "Ingiza Kura",
-  "ballots.entry": "Uingizaji wa Kura - {code}",
-  "ballots.entryPage": "Kuingiza Kura",
-  "ballots.ineligible": "Hastahili",
-  "ballots.loadError": "Imeshindwa kupakia kura",
-  "ballots.location": "Eneo",
-  "ballots.locationRequired": "Mahali pa kura ni muhimu",
-  "ballots.management": "Usimamizi wa Kura",
-  "ballots.noMatchesFound": "Hakuna mechi iliyopatikana",
-  "ballots.personUpdated": "{name} iliyosasishwa",
-  "ballots.position": "Nafasi",
-  "ballots.positionRequired": "Nafasi ni muhimu",
-  "ballots.saveBallot": "Hifadhi Kura",
-  "ballots.saveError": "Imeshindwa kuhifadhi kura",
-  "ballots.status": "Hali",
-  "ballots.statusValue.Dup": "Nakala",
-  "ballots.statusValue.Empty": "Tupu",
-  "ballots.statusValue.New": "Mpya",
-  "ballots.statusValue.Ok": "Sawa",
-  "ballots.statusValue.Raw": "Mbichi",
-  "ballots.statusValue.Review": "Kagua",
-  "ballots.statusValue.TooFew": "Chache sana",
-  "ballots.statusValue.TooMany": "Nyingi sana",
-  "ballots.statusValue.Verify": "Thibitisha",
-  "ballots.teller1": "Mahesabu 1",
-  "ballots.teller2": "Mahesabu 2",
-  "ballots.viewVotes": "Tazama Kura",
-  "ballots.voteAddedError": "Imeshindwa kuongeza kura",
-  "ballots.voteAddedSuccess": "Kura imeongezwa kwa mafanikio",
-  "ballots.voteCount": "Kura",
-  "ballots.voteCreateSuccess": "Kura imeongezwa kwa mafanikio",
-  "ballots.voteRemovedError": "Imeshindwa kuondoa kura",
-  "ballots.voteRemovedSuccess": "Kura imeondolewa kwa mafanikio",
-  "ballots.voteSaveError": "Imeshindwa kuhifadhi kura",
-  "ballots.voteSpoiledSuccess": "Kura imeongezwa kama iliyooza ({code} – mtu si sahihi)",
-  "ballots.votes": "Kura - {code}",
-  "ballots.votesEntered": "{count} kati ya {max} kura zimeingizwa",
-  "ballots.votesList": "Orodha ya Kura"
+  "ballots.addBallot": {
+    "t": "Ongeza Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addNewPerson": {
+    "t": "Ongeza Mtu Mpya",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addVote": {
+    "t": "Ongeza Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoadError": {
+    "t": "Imeshindwa kupakia wagombea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoading": {
+    "t": "Kupakia wagombea...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidate": {
+    "t": "Mgombea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidateRequired": {
+    "t": "Mgombea ni muhimu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.ballotsCreated": {
+    "t": "Kura ziliyoundwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.button": {
+    "t": "Agiza Kura za CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.description": {
+    "t": "Pakia faili la XML lililohamishwa kutoka CDN (Canadian National Database) ili kuagiza kura na kura zake za sambamba katika uchaguzi huu. Faili litahajiniwa na kura litaundwa kwa kila ingizo sahihi, pamoja na rekodi zote za kura zinazohusiana.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.errors": {
+    "t": "Hitilafu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.failed": {
+    "t": "Kuagiza kushindwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.importing": {
+    "t": "Kuagiza...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.skippedRows": {
+    "t": "Safu mlalo ziliruka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.success": {
+    "t": "Kuagiza kumaliziwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.title": {
+    "t": "Agiza Kura za CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.totalRows": {
+    "t": "Safu mlalo jumla zilizopangiliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.uploadPrompt": {
+    "t": "Bofya au buruta faili la XML hapa ili kupakia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.votesCreated": {
+    "t": "Kura ziliyoundwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.warnings": {
+    "t": "Onyo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.xmlOnly": {
+    "t": "Faili tu la XML linasaidiwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.checkSpelling": {
+    "t": "Angalia tahajia au jaribu jina lingine",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.clearAll": {
+    "t": "Futa Zote",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.code": {
+    "t": "Nambari ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computer": {
+    "t": "Kompyuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computerRequired": {
+    "t": "Nambari ya kompyuta ni muhimu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.createSuccess": {
+    "t": "Kura iliyoundwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteConfirm": {
+    "t": "Je, una uhakika unataka kufuta kura hii?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteError": {
+    "t": "Imeshindwa kufuta kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteSuccess": {
+    "t": "Kura imefutwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteConfirm": {
+    "t": "Je, una uhakika unataka kufuta kura hii?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteError": {
+    "t": "Imeshindwa kufuta kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteSuccess": {
+    "t": "Kura iliyofutwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.duplicateWarning": {
+    "t": "Nakala: Mtu huyu amekubwa tayari",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.enterVotes": {
+    "t": "Ingiza Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entry": {
+    "t": "Uingizaji wa Kura - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entryPage": {
+    "t": "Kuingiza Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.ineligible": {
+    "t": "Hastahili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.loadError": {
+    "t": "Imeshindwa kupakia kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.location": {
+    "t": "Eneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.locationRequired": {
+    "t": "Mahali pa kura ni muhimu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.management": {
+    "t": "Usimamizi wa Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.noMatchesFound": {
+    "t": "Hakuna mechi iliyopatikana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.personUpdated": {
+    "t": "{name} iliyosasishwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.position": {
+    "t": "Nafasi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.positionRequired": {
+    "t": "Nafasi ni muhimu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveBallot": {
+    "t": "Hifadhi Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveError": {
+    "t": "Imeshindwa kuhifadhi kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.status": {
+    "t": "Hali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Dup": {
+    "t": "Nakala",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Empty": {
+    "t": "Tupu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.New": {
+    "t": "Mpya",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Ok": {
+    "t": "Sawa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Raw": {
+    "t": "Mbichi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Review": {
+    "t": "Kagua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooFew": {
+    "t": "Chache sana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooMany": {
+    "t": "Nyingi sana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Verify": {
+    "t": "Thibitisha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller1": {
+    "t": "Mahesabu 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller2": {
+    "t": "Mahesabu 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.viewVotes": {
+    "t": "Tazama Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedError": {
+    "t": "Imeshindwa kuongeza kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedSuccess": {
+    "t": "Kura imeongezwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCount": {
+    "t": "Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCreateSuccess": {
+    "t": "Kura imeongezwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedError": {
+    "t": "Imeshindwa kuondoa kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedSuccess": {
+    "t": "Kura imeondolewa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSaveError": {
+    "t": "Imeshindwa kuhifadhi kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSpoiledSuccess": {
+    "t": "Kura imeongezwa kama iliyooza ({code} – mtu si sahihi)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votes": {
+    "t": "Kura - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesEntered": {
+    "t": "{count} kati ya {max} kura zimeingizwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesList": {
+    "t": "Orodha ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

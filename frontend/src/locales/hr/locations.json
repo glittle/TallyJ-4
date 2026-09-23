@@ -1,47 +1,227 @@
 {
-  "locations.computer.browserInfo": "Informacije o pregledniku",
-  "locations.computer.browserInfoHelp": "Automatski otkriveno iz vašeg preglednika",
-  "locations.computer.browserInfoMaxLength": "Informacije o pregledniku ne smiju premašiti 250 znakova",
-  "locations.computer.browserInfoPlaceholder": "Automatski otkrivene informacije o pregledniku",
-  "locations.computer.cancel": "Odustani",
-  "locations.computer.code": "Kôd računala",
-  "locations.computer.codeHelp": "2-znakasti kôd (npr. AA, AB, A1). Ostavite prazno za automatsko generiranje.",
-  "locations.computer.codeInvalid": "Kôd računala mora biti 2 velika slova ili znamenke",
-  "locations.computer.codeLength": "Kôd računala mora imati točno 2 znaka",
-  "locations.computer.codePlaceholder": "AA (ostavite prazno za automatsko generiranje)",
-  "locations.computer.ipAddress": "IP adresa",
-  "locations.computer.ipAddressHelp": "Neobavezno: IP adresa računala",
-  "locations.computer.ipAddressMaxLength": "IP adresa ne smije premašiti 50 znakova",
-  "locations.computer.ipAddressPlaceholder": "Neobavezno: Unesite IP adresu",
-  "locations.computer.register": "Registriraj",
-  "locations.computer.success": "Računalo uspješno registrirano",
-  "locations.computer.title": "Registriraj računalo",
-  "locations.currentLocation": "Trenutna lokacija",
-  "locations.form.cancel": "Odustani",
-  "locations.form.contactInfo": "Kontakt informacije",
-  "locations.form.contactInfoMaxLength": "Kontakt informacije ne smiju premašiti 250 znakova",
-  "locations.form.contactInfoPlaceholder": "Unesite kontakt informacije",
-  "locations.form.create": "Stvori",
-  "locations.form.created": "Lokacija uspješno stvorena",
-  "locations.form.latitude": "Zemljopisna širina",
-  "locations.form.latitudeHelp": "Raspon: -90 do 90",
-  "locations.form.latitudeInvalid": "Zemljopisna širina mora biti valjana koordinata između -90 i 90",
-  "locations.form.latitudePlaceholder": "npr. 37.7749",
-  "locations.form.longitude": "Zemljopisna dužina",
-  "locations.form.longitudeHelp": "Raspon: -180 do 180",
-  "locations.form.longitudeInvalid": "Zemljopisna dužina mora biti valjana koordinata između -180 i 180",
-  "locations.form.longitudePlaceholder": "npr. -122.4194",
-  "locations.form.name": "Naziv lokacije",
-  "locations.form.nameMaxLength": "Naziv lokacije ne smije premašiti 50 znakova",
-  "locations.form.namePlaceholder": "Unesite naziv lokacije",
-  "locations.form.nameRequired": "Naziv lokacije je obavezan",
-  "locations.form.save": "Spremi",
-  "locations.form.sortOrder": "Redoslijed sortiranja",
-  "locations.form.sortOrderHelp": "Koristi se za poredak lokacija u popisima",
-  "locations.form.sortOrderInvalid": "Redoslijed sortiranja mora biti broj",
-  "locations.form.titleAdd": "Dodaj lokaciju",
-  "locations.form.titleEdit": "Uredi lokaciju",
-  "locations.form.updated": "Lokacija uspješno ažurirana",
-  "locations.locationSelected": "Lokacija uspješno odabrana",
-  "locations.selectLocation": "Odaberi lokaciju"
+  "locations.computer.browserInfo": {
+    "t": "Informacije o pregledniku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoHelp": {
+    "t": "Automatski otkriveno iz vašeg preglednika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoMaxLength": {
+    "t": "Informacije o pregledniku ne smiju premašiti 250 znakova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoPlaceholder": {
+    "t": "Automatski otkrivene informacije o pregledniku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.cancel": {
+    "t": "Odustani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.code": {
+    "t": "Kôd računala",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeHelp": {
+    "t": "2-znakasti kôd (npr. AA, AB, A1). Ostavite prazno za automatsko generiranje.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeInvalid": {
+    "t": "Kôd računala mora biti 2 velika slova ili znamenke",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeLength": {
+    "t": "Kôd računala mora imati točno 2 znaka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codePlaceholder": {
+    "t": "AA (ostavite prazno za automatsko generiranje)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddress": {
+    "t": "IP adresa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressHelp": {
+    "t": "Neobavezno: IP adresa računala",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressMaxLength": {
+    "t": "IP adresa ne smije premašiti 50 znakova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressPlaceholder": {
+    "t": "Neobavezno: Unesite IP adresu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.register": {
+    "t": "Registriraj",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.success": {
+    "t": "Računalo uspješno registrirano",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.title": {
+    "t": "Registriraj računalo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.currentLocation": {
+    "t": "Trenutna lokacija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.cancel": {
+    "t": "Odustani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfo": {
+    "t": "Kontakt informacije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoMaxLength": {
+    "t": "Kontakt informacije ne smiju premašiti 250 znakova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoPlaceholder": {
+    "t": "Unesite kontakt informacije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.create": {
+    "t": "Stvori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.created": {
+    "t": "Lokacija uspješno stvorena",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitude": {
+    "t": "Zemljopisna širina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeHelp": {
+    "t": "Raspon: -90 do 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeInvalid": {
+    "t": "Zemljopisna širina mora biti valjana koordinata između -90 i 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudePlaceholder": {
+    "t": "npr. 37.7749",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitude": {
+    "t": "Zemljopisna dužina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeHelp": {
+    "t": "Raspon: -180 do 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeInvalid": {
+    "t": "Zemljopisna dužina mora biti valjana koordinata između -180 i 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudePlaceholder": {
+    "t": "npr. -122.4194",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.name": {
+    "t": "Naziv lokacije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameMaxLength": {
+    "t": "Naziv lokacije ne smije premašiti 50 znakova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.namePlaceholder": {
+    "t": "Unesite naziv lokacije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameRequired": {
+    "t": "Naziv lokacije je obavezan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.save": {
+    "t": "Spremi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrder": {
+    "t": "Redoslijed sortiranja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderHelp": {
+    "t": "Koristi se za poredak lokacija u popisima",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderInvalid": {
+    "t": "Redoslijed sortiranja mora biti broj",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleAdd": {
+    "t": "Dodaj lokaciju",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleEdit": {
+    "t": "Uredi lokaciju",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.updated": {
+    "t": "Lokacija uspješno ažurirana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.locationSelected": {
+    "t": "Lokacija uspješno odabrana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.selectLocation": {
+    "t": "Odaberi lokaciju",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

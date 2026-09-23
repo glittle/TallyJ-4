@@ -1,29 +1,137 @@
 {
-  "eligibility.R01": "Not a delegate in this election",
-  "eligibility.R02": "Rights removed (cannot vote)",
-  "eligibility.R03": "Other (cannot vote but can be voted for)",
-  "eligibility.V01": "Youth aged 18/19/20",
-  "eligibility.V02": "By-election: On Institution already",
-  "eligibility.V03": "On other Institution (e.g. Counsellor)",
-  "eligibility.V04": "Rights removed (cannot be voted for)",
-  "eligibility.V05": "Tie-break election: Not tied",
-  "eligibility.V06": "Other (can vote but not be voted for)",
-  "eligibility.X01": "Deceased",
-  "eligibility.X02": "Moved elsewhere recently",
-  "eligibility.X03": "Not in this local unit",
-  "eligibility.X04": "Not a registered Bahá’í",
-  "eligibility.X05": "Under 18 years old",
-  "eligibility.X06": "Resides elsewhere",
-  "eligibility.X07": "Rights removed (entirely)",
-  "eligibility.X08": "Not a delegate and on other Institution",
-  "eligibility.X09": "Other (cannot vote or be voted for)",
-  "eligibility.U01": "Unidentifiable",
-  "eligibility.U02": "Unreadable",
-  "eligibility.eligible": "Eligible",
-  "eligibility.groupEligible": "Can vote and receive votes",
-  "eligibility.groupR": "Can receive votes only (cannot vote)",
-  "eligibility.groupV": "Can vote only (cannot receive votes)",
-  "eligibility.groupX": "Cannot vote, cannot receive votes",
-  "eligibility.label": "Eligibility Status",
-  "eligibility.selectReason": "Select eligibility reason"
+  "eligibility.R01": {
+    "t": "Not a delegate in this election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.R02": {
+    "t": "Rights removed (cannot vote)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.R03": {
+    "t": "Other (cannot vote but can be voted for)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V01": {
+    "t": "Youth aged 18/19/20",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V02": {
+    "t": "By-election: On Institution already",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V03": {
+    "t": "On other Institution (e.g. Counsellor)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V04": {
+    "t": "Rights removed (cannot be voted for)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V05": {
+    "t": "Tie-break election: Not tied",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V06": {
+    "t": "Other (can vote but not be voted for)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X01": {
+    "t": "Deceased",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X02": {
+    "t": "Moved elsewhere recently",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X03": {
+    "t": "Not in this local unit",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X04": {
+    "t": "Not a registered Bahá’í",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X05": {
+    "t": "Under 18 years old",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X06": {
+    "t": "Resides elsewhere",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X07": {
+    "t": "Rights removed (entirely)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X08": {
+    "t": "Not a delegate and on other Institution",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X09": {
+    "t": "Other (cannot vote or be voted for)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.U01": {
+    "t": "Unidentifiable",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.U02": {
+    "t": "Unreadable",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.eligible": {
+    "t": "Eligible",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupEligible": {
+    "t": "Can vote and receive votes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupR": {
+    "t": "Can receive votes only (cannot vote)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupV": {
+    "t": "Can vote only (cannot receive votes)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupX": {
+    "t": "Cannot vote, cannot receive votes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.label": {
+    "t": "Eligibility Status",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.selectReason": {
+    "t": "Select eligibility reason",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,26 +1,122 @@
 {
-  "eligibility.R01": "이 선거의 대표자가 아님",
-  "eligibility.R02": "권리 박탈 (투표 불가)",
-  "eligibility.R03": "기타 (투표 불가하나 피선거 가능)",
-  "eligibility.V01": "18/19/20세 청소년",
-  "eligibility.V02": "보궐선거: 이미 기관에 소속",
-  "eligibility.V03": "다른 기관 소속 (예: 자문 위원)",
-  "eligibility.V04": "권리 박탈 (피선거 불가)",
-  "eligibility.V05": "동점 처리 선거: 동점 아님",
-  "eligibility.V06": "기타 (투표는 가능하나 피선거 불가)",
-  "eligibility.X01": "사망",
-  "eligibility.X02": "최근 다른 곳으로 이사",
-  "eligibility.X03": "이 지역 단위에 소속되지 않음",
-  "eligibility.X04": "등록된 바하이 신자가 아님",
-  "eligibility.X05": "18세 미만",
-  "eligibility.X06": "다른 곳에 거주",
-  "eligibility.X07": "권리 완전 박탈",
-  "eligibility.X08": "대표자가 아니며 다른 기관 소속",
-  "eligibility.X09": "기타 (투표도 피선거도 불가)",
-  "eligibility.eligible": "자격 있음",
-  "eligibility.groupR": "투표 받기만 가능 (투표 불가)",
-  "eligibility.groupV": "투표만 가능 (투표 받기 불가)",
-  "eligibility.groupX": "투표 불가, 투표 받기 불가",
-  "eligibility.label": "자격",
-  "eligibility.selectReason": "자격 이유 선택"
+  "eligibility.R01": {
+    "t": "이 선거의 대표자가 아님",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.R02": {
+    "t": "권리 박탈 (투표 불가)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.R03": {
+    "t": "기타 (투표 불가하나 피선거 가능)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V01": {
+    "t": "18/19/20세 청소년",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V02": {
+    "t": "보궐선거: 이미 기관에 소속",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V03": {
+    "t": "다른 기관 소속 (예: 자문 위원)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V04": {
+    "t": "권리 박탈 (피선거 불가)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V05": {
+    "t": "동점 처리 선거: 동점 아님",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V06": {
+    "t": "기타 (투표는 가능하나 피선거 불가)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X01": {
+    "t": "사망",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X02": {
+    "t": "최근 다른 곳으로 이사",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X03": {
+    "t": "이 지역 단위에 소속되지 않음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X04": {
+    "t": "등록된 바하이 신자가 아님",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X05": {
+    "t": "18세 미만",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X06": {
+    "t": "다른 곳에 거주",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X07": {
+    "t": "권리 완전 박탈",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X08": {
+    "t": "대표자가 아니며 다른 기관 소속",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X09": {
+    "t": "기타 (투표도 피선거도 불가)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.eligible": {
+    "t": "자격 있음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupR": {
+    "t": "투표 받기만 가능 (투표 불가)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupV": {
+    "t": "투표만 가능 (투표 받기 불가)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupX": {
+    "t": "투표 불가, 투표 받기 불가",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.label": {
+    "t": "자격",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.selectReason": {
+    "t": "자격 이유 선택",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

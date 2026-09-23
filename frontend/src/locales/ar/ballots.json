@@ -1,74 +1,362 @@
 {
-  "ballots.addBallot": "إضافة ورقة اقتراع",
-  "ballots.addNewPerson": "إضافة شخص جديد",
-  "ballots.addVote": "إضافة صوت",
-  "ballots.cacheLoadError": "فشل تحميل المرشحين",
-  "ballots.cacheLoading": "جاري تحميل المرشحين...",
-  "ballots.candidate": "مرشح",
-  "ballots.candidateRequired": "المرشح مطلوب",
-  "ballots.cdnImport.ballotsCreated": "تم إنشاء الاقتراعات",
-  "ballots.cdnImport.button": "استيراد اقتراعات CDN",
-  "ballots.cdnImport.description": "قم بتحميل ملف XML مُصدَّر من CDN (قاعدة بيانات وطنية كندية) لاستيراد الاقتراعات والأصوات المقابلة لها في هذه الانتخابات. سيتم تحليل الملف وإنشاء اقتراعات لكل إدخال صحيح، مع جميع سجلات الأصوات المرتبطة بها.",
-  "ballots.cdnImport.errors": "أخطاء",
-  "ballots.cdnImport.failed": "فشل الاستيراد",
-  "ballots.cdnImport.importing": "جاري الاستيراد...",
-  "ballots.cdnImport.skippedRows": "الصفوف المخطية",
-  "ballots.cdnImport.success": "تم إكمال الاستيراد بنجاح",
-  "ballots.cdnImport.title": "استيراد اقتراعات CDN",
-  "ballots.cdnImport.totalRows": "إجمالي الصفوف المعالجة",
-  "ballots.cdnImport.uploadPrompt": "انقر أو اسحب ملف XML هنا للتحميل",
-  "ballots.cdnImport.votesCreated": "تم إنشاء الأصوات",
-  "ballots.cdnImport.warnings": "تحذيرات",
-  "ballots.cdnImport.xmlOnly": "يتم دعم ملفات XML فقط",
-  "ballots.checkSpelling": "تحقق من الإملاء أو جرب اسماً مختلفاً",
-  "ballots.clearAll": "مسح الكل",
-  "ballots.code": "رمز الاقتراع",
-  "ballots.computer": "جهاز كمبيوتر",
-  "ballots.computerRequired": "رمز الكمبيوتر مطلوب",
-  "ballots.createSuccess": "تم إنشاء الاقتراع بنجاح",
-  "ballots.deleteConfirm": "هل أنت متأكد من أنك تريد حذف هذا الاقتراع؟",
-  "ballots.deleteError": "فشل حذف الاقتراع",
-  "ballots.deleteSuccess": "تم حذف ورقة الاقتراع بنجاح",
-  "ballots.deleteVoteConfirm": "هل أنت متأكد من أنك تريد حذف هذا الصوت؟",
-  "ballots.deleteVoteError": "فشل حذف الصوت",
-  "ballots.deleteVoteSuccess": "تم حذف الصوت بنجاح",
-  "ballots.duplicateWarning": "مكرر: هذا الشخص مختار بالفعل",
-  "ballots.enterVotes": "أدخل الأصوات",
-  "ballots.entry": "إدخال ورقة الاقتراع - {code}",
-  "ballots.entryPage": "إدخال الاقتراع",
-  "ballots.ineligible": "غير مؤهل",
-  "ballots.loadError": "فشل تحميل الاقتراعات",
-  "ballots.location": "موقع",
-  "ballots.locationRequired": "المكان مطلوب",
-  "ballots.management": "إدارة الاقتراع",
-  "ballots.noMatchesFound": "لم يتم العثور على تطابقات",
-  "ballots.personUpdated": "تم تحديث {name}",
-  "ballots.position": "منصب",
-  "ballots.positionRequired": "المنصب مطلوب",
-  "ballots.saveBallot": "حفظ الاقتراع",
-  "ballots.saveError": "فشل حفظ الاقتراع",
-  "ballots.status": "الحالة",
-  "ballots.statusValue.Dup": "مكرر",
-  "ballots.statusValue.Empty": "فارغ",
-  "ballots.statusValue.New": "جديد",
-  "ballots.statusValue.Ok": "موافق",
-  "ballots.statusValue.Raw": "خام",
-  "ballots.statusValue.Review": "مراجعة",
-  "ballots.statusValue.TooFew": "قليل جداً",
-  "ballots.statusValue.TooMany": "كثير جداً",
-  "ballots.statusValue.Verify": "تحقق",
-  "ballots.teller1": "الموظف 1",
-  "ballots.teller2": "الموظف 2",
-  "ballots.viewVotes": "عرض الأصوات",
-  "ballots.voteAddedError": "فشل إضافة الصوت",
-  "ballots.voteAddedSuccess": "تم إضافة الصوت بنجاح",
-  "ballots.voteCount": "الأصوات",
-  "ballots.voteCreateSuccess": "تم إضافة الصوت بنجاح",
-  "ballots.voteRemovedError": "فشل إزالة الصوت",
-  "ballots.voteRemovedSuccess": "تم إزالة الصوت بنجاح",
-  "ballots.voteSaveError": "فشل حفظ الصوت",
-  "ballots.voteSpoiledSuccess": "تم إضافة الصوت كمفسد ({code} – الشخص غير مؤهل)",
-  "ballots.votes": "الأصوات - {code}",
-  "ballots.votesEntered": "{count} من {max} أصوات تم إدخالها",
-  "ballots.votesList": "قائمة الأصوات"
+  "ballots.addBallot": {
+    "t": "إضافة ورقة اقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addNewPerson": {
+    "t": "إضافة شخص جديد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addVote": {
+    "t": "إضافة صوت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoadError": {
+    "t": "فشل تحميل المرشحين",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoading": {
+    "t": "جاري تحميل المرشحين...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidate": {
+    "t": "مرشح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidateRequired": {
+    "t": "المرشح مطلوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.ballotsCreated": {
+    "t": "تم إنشاء الاقتراعات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.button": {
+    "t": "استيراد اقتراعات CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.description": {
+    "t": "قم بتحميل ملف XML مُصدَّر من CDN (قاعدة بيانات وطنية كندية) لاستيراد الاقتراعات والأصوات المقابلة لها في هذه الانتخابات. سيتم تحليل الملف وإنشاء اقتراعات لكل إدخال صحيح، مع جميع سجلات الأصوات المرتبطة بها.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.errors": {
+    "t": "أخطاء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.failed": {
+    "t": "فشل الاستيراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.importing": {
+    "t": "جاري الاستيراد...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.skippedRows": {
+    "t": "الصفوف المخطية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.success": {
+    "t": "تم إكمال الاستيراد بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.title": {
+    "t": "استيراد اقتراعات CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.totalRows": {
+    "t": "إجمالي الصفوف المعالجة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.uploadPrompt": {
+    "t": "انقر أو اسحب ملف XML هنا للتحميل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.votesCreated": {
+    "t": "تم إنشاء الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.warnings": {
+    "t": "تحذيرات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.xmlOnly": {
+    "t": "يتم دعم ملفات XML فقط",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.checkSpelling": {
+    "t": "تحقق من الإملاء أو جرب اسماً مختلفاً",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.clearAll": {
+    "t": "مسح الكل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.code": {
+    "t": "رمز الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computer": {
+    "t": "جهاز كمبيوتر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computerRequired": {
+    "t": "رمز الكمبيوتر مطلوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.createSuccess": {
+    "t": "تم إنشاء الاقتراع بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteConfirm": {
+    "t": "هل أنت متأكد من أنك تريد حذف هذا الاقتراع؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteError": {
+    "t": "فشل حذف الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteSuccess": {
+    "t": "تم حذف ورقة الاقتراع بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteConfirm": {
+    "t": "هل أنت متأكد من أنك تريد حذف هذا الصوت؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteError": {
+    "t": "فشل حذف الصوت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteSuccess": {
+    "t": "تم حذف الصوت بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.duplicateWarning": {
+    "t": "مكرر: هذا الشخص مختار بالفعل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.enterVotes": {
+    "t": "أدخل الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entry": {
+    "t": "إدخال ورقة الاقتراع - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entryPage": {
+    "t": "إدخال الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.ineligible": {
+    "t": "غير مؤهل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.loadError": {
+    "t": "فشل تحميل الاقتراعات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.location": {
+    "t": "موقع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.locationRequired": {
+    "t": "المكان مطلوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.management": {
+    "t": "إدارة الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.noMatchesFound": {
+    "t": "لم يتم العثور على تطابقات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.personUpdated": {
+    "t": "تم تحديث {name}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.position": {
+    "t": "منصب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.positionRequired": {
+    "t": "المنصب مطلوب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveBallot": {
+    "t": "حفظ الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveError": {
+    "t": "فشل حفظ الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.status": {
+    "t": "الحالة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Dup": {
+    "t": "مكرر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Empty": {
+    "t": "فارغ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.New": {
+    "t": "جديد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Ok": {
+    "t": "موافق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Raw": {
+    "t": "خام",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Review": {
+    "t": "مراجعة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooFew": {
+    "t": "قليل جداً",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooMany": {
+    "t": "كثير جداً",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Verify": {
+    "t": "تحقق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller1": {
+    "t": "الموظف 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller2": {
+    "t": "الموظف 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.viewVotes": {
+    "t": "عرض الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedError": {
+    "t": "فشل إضافة الصوت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedSuccess": {
+    "t": "تم إضافة الصوت بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCount": {
+    "t": "الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCreateSuccess": {
+    "t": "تم إضافة الصوت بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedError": {
+    "t": "فشل إزالة الصوت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedSuccess": {
+    "t": "تم إزالة الصوت بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSaveError": {
+    "t": "فشل حفظ الصوت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSpoiledSuccess": {
+    "t": "تم إضافة الصوت كمفسد ({code} – الشخص غير مؤهل)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votes": {
+    "t": "الأصوات - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesEntered": {
+    "t": "{count} من {max} أصوات تم إدخالها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesList": {
+    "t": "قائمة الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

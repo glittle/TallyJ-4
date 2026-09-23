@@ -1,53 +1,257 @@
 {
-  "common.actionIrreversible": "이 작업은 취소할 수 없습니다.",
-  "common.actions": "작업",
-  "common.appName": "개표J",
-  "common.appTitle": "개표J 버전 4",
-  "common.back": "뒤로",
-  "common.badi.monthNames": "삽입일,찬란함,영광,아름다움,웅장함,빛,자비,말,완벽,이름,힘,의지,지식,힘,말,질문,명예,주권,지배,고귀함",
-  "common.cancel": "취소",
-  "common.clear": "지우기",
-  "common.clearFilters": "필터 초기화",
-  "common.close": "닫기",
-  "common.confirm": "확인",
-  "common.confirmAction": "{action}하시겠습니까?",
-  "common.confirmActionWithItem": "{item}을(를) {action}하시겠습니까?",
-  "common.confirmDelete": "{item}을(를) 삭제하시겠습니까?",
-  "common.copied": "클립보드에 복사되었습니다",
-  "common.create": "만들기",
-  "common.dangerZone": "위험 영역",
-  "common.dark": "어두운",
-  "common.delete": "삭제",
-  "common.deleteSelected": "선택 항목 삭제",
-  "common.edit": "편집",
-  "common.election": "선거",
-  "common.endDate": "종료 날짜",
-  "common.enter": "입력",
-  "common.error": "오류가 발생했습니다",
-  "common.language": "언어",
-  "common.light": "밝은",
-  "common.loading": "로드 중...",
-  "common.logoAlt": "개표J 로고",
-  "common.next": "다음",
-  "common.no": "아니오",
-  "common.open": "열기",
-  "common.or": "또는",
-  "common.previous": "이전",
-  "common.profile": "프로필",
-  "common.refresh": "새로 고침",
-  "common.save": "저장",
-  "common.settings": "설정",
-  "common.startDate": "시작 날짜",
-  "common.testOnlyLong": "{note} 개표J 버전 4의 이 미리보기는 아직 개발 중입니다.{br}로그인하여 기능을 시도할 수 있지만, 현재 바하이 선거에 사용해서는 안 됩니다.{br}시스템을 개선하는 동안 새로운 디자인에 대한 귀하의 피드백을 환영합니다.",
-  "common.testOnlyLongNote": "참고:",
-  "common.testOnlyShort": "개표J 버전 4의 이 미리보기는 아직 개발 중입니다. 현재 실제 선거에 사용해서는 안 됩니다.",
-  "common.theme": "테마",
-  "common.to": "까지",
-  "common.toggleTheme": "테마 전환",
-  "common.userMenu": "사용자 계정 메뉴",
-  "common.versionDisplay": "버전 4 Beta",
-  "common.view": "보기",
-  "common.warning": "경고",
-  "common.yes": "예",
-  "common.goHome": "홈"
+  "common.actionIrreversible": {
+    "t": "이 작업은 취소할 수 없습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.actions": {
+    "t": "작업",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appName": {
+    "t": "개표J",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appTitle": {
+    "t": "개표J 버전 4",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.back": {
+    "t": "뒤로",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.badi.monthNames": {
+    "t": "삽입일,찬란함,영광,아름다움,웅장함,빛,자비,말,완벽,이름,힘,의지,지식,힘,말,질문,명예,주권,지배,고귀함",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.cancel": {
+    "t": "취소",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clear": {
+    "t": "지우기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clearFilters": {
+    "t": "필터 초기화",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.close": {
+    "t": "닫기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirm": {
+    "t": "확인",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmAction": {
+    "t": "{action}하시겠습니까?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmActionWithItem": {
+    "t": "{item}을(를) {action}하시겠습니까?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmDelete": {
+    "t": "{item}을(를) 삭제하시겠습니까?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.copied": {
+    "t": "클립보드에 복사되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.create": {
+    "t": "만들기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dangerZone": {
+    "t": "위험 영역",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dark": {
+    "t": "어두운",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.delete": {
+    "t": "삭제",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.deleteSelected": {
+    "t": "선택 항목 삭제",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.edit": {
+    "t": "편집",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.election": {
+    "t": "선거",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.endDate": {
+    "t": "종료 날짜",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.enter": {
+    "t": "입력",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.error": {
+    "t": "오류가 발생했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.language": {
+    "t": "언어",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.light": {
+    "t": "밝은",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.loading": {
+    "t": "로드 중...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.logoAlt": {
+    "t": "개표J 로고",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.next": {
+    "t": "다음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.no": {
+    "t": "아니오",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.open": {
+    "t": "열기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.or": {
+    "t": "또는",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.previous": {
+    "t": "이전",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.profile": {
+    "t": "프로필",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.refresh": {
+    "t": "새로 고침",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.save": {
+    "t": "저장",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.settings": {
+    "t": "설정",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.startDate": {
+    "t": "시작 날짜",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLong": {
+    "t": "{note} 개표J 버전 4의 이 미리보기는 아직 개발 중입니다.{br}로그인하여 기능을 시도할 수 있지만, 현재 바하이 선거에 사용해서는 안 됩니다.{br}시스템을 개선하는 동안 새로운 디자인에 대한 귀하의 피드백을 환영합니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLongNote": {
+    "t": "참고:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyShort": {
+    "t": "개표J 버전 4의 이 미리보기는 아직 개발 중입니다. 현재 실제 선거에 사용해서는 안 됩니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.theme": {
+    "t": "테마",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.to": {
+    "t": "까지",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.toggleTheme": {
+    "t": "테마 전환",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.userMenu": {
+    "t": "사용자 계정 메뉴",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.versionDisplay": {
+    "t": "버전 4 Beta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.view": {
+    "t": "보기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.warning": {
+    "t": "경고",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.yes": {
+    "t": "예",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.goHome": {
+    "t": "홈",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

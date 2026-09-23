@@ -1,35 +1,167 @@
 {
-  "results.allResults": "جميع النتائج",
-  "results.ballotsReceived": "الأصوات المستلمة",
-  "results.calculateTally": "احسب النتائج",
-  "results.calculatedAt": "محسوب في {date}",
-  "results.candidate": "المرشح",
-  "results.closeToNext": "قريب من التالي",
-  "results.elected": "منتخب",
-  "results.extra": "إضافي",
-  "results.flags": "العلامات",
-  "results.loadError": "فشل في تحميل النتائج",
-  "results.monitor": "مراقب الانتخابات",
-  "results.noResults": "لا توجد نتائج متاحة. احسب النتائج أولاً.",
-  "results.noTies": "لم يتم اكتشاف تعادلات",
-  "results.numberToElect": "عدد المراد انتخابه",
-  "results.other": "آخر",
-  "results.presentation": "عرض العرض",
-  "results.rank": "الترتيب",
-  "results.reporting": "التقارير",
-  "results.section": "القسم",
-  "results.spoiledBallots": "الأصوات المعطلة",
-  "results.tieBreakAlert": "تنبيه: بعض التعادلات تتطلب كسر تعادل يدوي",
-  "results.tieBreakMessage": "مطلوب كسر تعادل لهذه المجموعة لأنها تمتد عبر حدود القسم",
-  "results.tieBreakRequired": "مطلوب كسر التعادل",
-  "results.tieGroup": "مجموعة التعادل #{group}",
-  "results.tieManagement": "إدارة التعادلات",
-  "results.tied": "متعادل",
-  "results.tiedCandidates": "المرشحون المتعادلون",
-  "results.ties": "التعادلات",
-  "results.title": "نتائج الانتخابات",
-  "results.totalBallots": "إجمالي الأصوات",
-  "results.totalVotes": "إجمالي الأصوات",
-  "results.validVotes": "الأصوات الصالحة",
-  "results.votes": "الأصوات"
+  "results.allResults": {
+    "t": "جميع النتائج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ballotsReceived": {
+    "t": "الأصوات المستلمة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculateTally": {
+    "t": "احسب النتائج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculatedAt": {
+    "t": "محسوب في {date}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.candidate": {
+    "t": "المرشح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.closeToNext": {
+    "t": "قريب من التالي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.elected": {
+    "t": "منتخب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.extra": {
+    "t": "إضافي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.flags": {
+    "t": "العلامات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.loadError": {
+    "t": "فشل في تحميل النتائج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.monitor": {
+    "t": "مراقب الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noResults": {
+    "t": "لا توجد نتائج متاحة. احسب النتائج أولاً.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noTies": {
+    "t": "لم يتم اكتشاف تعادلات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.numberToElect": {
+    "t": "عدد المراد انتخابه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.other": {
+    "t": "آخر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.presentation": {
+    "t": "عرض العرض",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.rank": {
+    "t": "الترتيب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.reporting": {
+    "t": "التقارير",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.section": {
+    "t": "القسم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.spoiledBallots": {
+    "t": "الأصوات المعطلة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakAlert": {
+    "t": "تنبيه: بعض التعادلات تتطلب كسر تعادل يدوي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakMessage": {
+    "t": "مطلوب كسر تعادل لهذه المجموعة لأنها تمتد عبر حدود القسم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakRequired": {
+    "t": "مطلوب كسر التعادل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieGroup": {
+    "t": "مجموعة التعادل #{group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieManagement": {
+    "t": "إدارة التعادلات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tied": {
+    "t": "متعادل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tiedCandidates": {
+    "t": "المرشحون المتعادلون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ties": {
+    "t": "التعادلات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.title": {
+    "t": "نتائج الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalBallots": {
+    "t": "إجمالي الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalVotes": {
+    "t": "إجمالي الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.validVotes": {
+    "t": "الأصوات الصالحة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.votes": {
+    "t": "الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,36 +1,172 @@
 {
-  "audit.dialog.computerCode": "컴퓨터 코드",
-  "audit.dialog.dateTime": "날짜/시간",
-  "audit.dialog.details": "세부 정보",
-  "audit.dialog.electionGuid": "선거 GUID",
-  "audit.dialog.hostAndVersion": "호스트 및 버전",
-  "audit.dialog.locationGuid": "위치 GUID",
-  "audit.dialog.rowId": "행 ID",
-  "audit.dialog.title": "감사 로그 세부 정보",
-  "audit.dialog.userId": "사용자 ID",
-  "audit.filters.apply": "필터 적용",
-  "audit.filters.clear": "필터 초기화",
-  "audit.filters.computerCode": "컴퓨터 코드",
-  "audit.filters.computerCodePlaceholder": "컴퓨터 코드로 필터링",
-  "audit.filters.electionGuid": "선거 GUID",
-  "audit.filters.electionGuidPlaceholder": "선거 GUID로 필터링",
-  "audit.filters.endDate": "종료 날짜",
-  "audit.filters.endDatePlaceholder": "종료 날짜",
-  "audit.filters.locationGuid": "위치 GUID",
-  "audit.filters.locationGuidPlaceholder": "위치 GUID로 필터링",
-  "audit.filters.search": "검색",
-  "audit.filters.searchPlaceholder": "모든 필드 검색",
-  "audit.filters.startDate": "시작 날짜",
-  "audit.filters.startDatePlaceholder": "시작 날짜",
-  "audit.filters.voterId": "투표자 ID",
-  "audit.filters.voterIdPlaceholder": "투표자 ID로 필터링",
-  "audit.table.actions": "작업",
-  "audit.table.computer": "컴퓨터",
-  "audit.table.dateTime": "날짜/시간",
-  "audit.table.details": "세부 정보",
-  "audit.table.election": "선거",
-  "audit.table.userId": "사용자 ID",
-  "audit.table.view": "보기",
-  "audit.table.yes": "예",
-  "audit.title": "감사 로그"
+  "audit.dialog.computerCode": {
+    "t": "컴퓨터 코드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.dateTime": {
+    "t": "날짜/시간",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.details": {
+    "t": "세부 정보",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.electionGuid": {
+    "t": "선거 GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.hostAndVersion": {
+    "t": "호스트 및 버전",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.locationGuid": {
+    "t": "위치 GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.rowId": {
+    "t": "행 ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.title": {
+    "t": "감사 로그 세부 정보",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.userId": {
+    "t": "사용자 ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.apply": {
+    "t": "필터 적용",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.clear": {
+    "t": "필터 초기화",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCode": {
+    "t": "컴퓨터 코드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCodePlaceholder": {
+    "t": "컴퓨터 코드로 필터링",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuid": {
+    "t": "선거 GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuidPlaceholder": {
+    "t": "선거 GUID로 필터링",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDate": {
+    "t": "종료 날짜",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDatePlaceholder": {
+    "t": "종료 날짜",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuid": {
+    "t": "위치 GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuidPlaceholder": {
+    "t": "위치 GUID로 필터링",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.search": {
+    "t": "검색",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.searchPlaceholder": {
+    "t": "모든 필드 검색",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDate": {
+    "t": "시작 날짜",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDatePlaceholder": {
+    "t": "시작 날짜",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterId": {
+    "t": "투표자 ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterIdPlaceholder": {
+    "t": "투표자 ID로 필터링",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.actions": {
+    "t": "작업",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.computer": {
+    "t": "컴퓨터",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.dateTime": {
+    "t": "날짜/시간",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.details": {
+    "t": "세부 정보",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.election": {
+    "t": "선거",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.userId": {
+    "t": "사용자 ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.view": {
+    "t": "보기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.yes": {
+    "t": "예",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.title": {
+    "t": "감사 로그",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

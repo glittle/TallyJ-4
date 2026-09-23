@@ -1,20 +1,92 @@
 {
-  "tally.calculate": "احسب النتائج",
-  "tally.calculateError": "فشل في حساب النتائج",
-  "tally.calculateSuccess": "تم حساب النتائج بنجاح",
-  "tally.calculatingProgress": "جاري الحساب",
-  "tally.normalElection": "انتخابات عادية",
-  "tally.processedBallots": "الأوراق المعالجة",
-  "tally.resultsPreview": "معاينة النتائج (أفضل 10)",
-  "tally.section.elected": "منتخب",
-  "tally.section.extra": "إضافي",
-  "tally.section.other": "آخر",
-  "tally.singleNameElection": "انتخابات اسم واحد",
-  "tally.title": "احسب النتائج",
-  "tally.viewFullResults": "عرض النتائج الكاملة",
-  "tally.warning": "تحذير",
-  "tally.warningMessage": "سيؤدي حساب النتائج إلى الكتابة فوق أي نتائج موجودة. لا يمكن التراجع عن هذا الإجراء.",
-  "tally.section.E": "منتخب",
-  "tally.section.X": "إضافي",
-  "tally.section.O": "آخر"
+  "tally.calculate": {
+    "t": "احسب النتائج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateError": {
+    "t": "فشل في حساب النتائج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "تم حساب النتائج بنجاح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "جاري الحساب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.normalElection": {
+    "t": "انتخابات عادية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.processedBallots": {
+    "t": "الأوراق المعالجة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.resultsPreview": {
+    "t": "معاينة النتائج (أفضل 10)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.elected": {
+    "t": "منتخب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.extra": {
+    "t": "إضافي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.other": {
+    "t": "آخر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.singleNameElection": {
+    "t": "انتخابات اسم واحد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.title": {
+    "t": "احسب النتائج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.viewFullResults": {
+    "t": "عرض النتائج الكاملة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warning": {
+    "t": "تحذير",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warningMessage": {
+    "t": "سيؤدي حساب النتائج إلى الكتابة فوق أي نتائج موجودة. لا يمكن التراجع عن هذا الإجراء.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.E": {
+    "t": "منتخب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.X": {
+    "t": "إضافي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.O": {
+    "t": "آخر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

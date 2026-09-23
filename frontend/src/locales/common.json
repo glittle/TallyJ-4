@@ -1,10 +1,30 @@
 {
-  "api.baseUrl": "/api",
+  "api.baseUrl": {
+    "t": "/api",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
   "api.timeout": 30000,
-  "arabic": "العربية",
-  "chinese": "中文",
-  "croatian": "Hrvatski",
-  "english": "English",
+  "arabic": {
+    "t": "العربية",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "chinese": {
+    "t": "中文",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "croatian": {
+    "t": "Hrvatski",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "english": {
+    "t": "English",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
   "features.exportFormats": [
     "PDF",
     "Excel",
@@ -12,22 +32,74 @@
   ],
   "features.realTimeUpdates": true,
   "features.signalR": true,
-  "finnish": "Suomi",
-  "french": "Français",
-  "hindi": "हिन्दी",
-  "korean": "한국어",
-  "persian": "فارسی",
-  "portuguese": "Português",
-  "russian": "Русский",
-  "spanish": "Español",
+  "finnish": {
+    "t": "Suomi",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "french": {
+    "t": "Français",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "hindi": {
+    "t": "हिन्दी",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "korean": {
+    "t": "한국어",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "persian": {
+    "t": "فارسی",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "portuguese": {
+    "t": "Português",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "russian": {
+    "t": "Русский",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "spanish": {
+    "t": "Español",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
   "supportedUploadPeopleFormats": [
     "CSV",
     "XLS",
     "XLSX"
   ],
-  "swahili": "Kiswahili",
-  "title": "TallyJ v4",
-  "validation.emailRegex": "^[a-zA-Z0-9._%+-]+{'@'}[a-zA-Z0-9.-]+\\.[a-zA-Z]{'{'}2,{'}'}$",
-  "validation.phoneRegex": "^[+]?[0-9\\s\\-\\(\\)]+$",
-  "vietnamese": "Tiếng Việt"
+  "swahili": {
+    "t": "Kiswahili",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "title": {
+    "t": "TallyJ v4",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "validation.emailRegex": {
+    "t": "^[a-zA-Z0-9._%+-]+{'@'}[a-zA-Z0-9.-]+\\.[a-zA-Z]{'{'}2,{'}'}$",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "validation.phoneRegex": {
+    "t": "^[+]?[0-9\\s\\-\\(\\)]+$",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "vietnamese": {
+    "t": "Tiếng Việt",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,24 +1,112 @@
 {
-  "dashboard.active": "Активные",
-  "dashboard.activeElections": "Активные выборы",
-  "dashboard.ballotsEntered": "Введенные бюллетени",
-  "dashboard.canVote": "Может голосовать",
-  "dashboard.closed": "Закрытые",
-  "dashboard.closes": "Закрывается",
-  "dashboard.electionDetails": "Детали выборов",
-  "dashboard.noElections": "Выборы не найдены",
-  "dashboard.noTellers": "Счетчики не назначены",
-  "dashboard.onlineVoting": "Онлайн-голосование",
-  "dashboard.open": "Открытые",
-  "dashboard.opens": "Открывается",
-  "dashboard.otherActions": "Другие действия...",
-  "dashboard.recentElections": "Недавние выборы",
-  "dashboard.registered": "Зарегистрированные",
-  "dashboard.statistics": "Статистика",
-  "dashboard.tellerCount": "Количество счетчиков",
-  "dashboard.tellers": "Счетчики",
-  "dashboard.tellersStatus": "Счетчики",
-  "dashboard.totalBallots": "Всего бюллетеней",
-  "dashboard.totalElections": "Всего выборов",
-  "dashboard.totalVoters": "Всего избирателей"
+  "dashboard.active": {
+    "t": "Активные",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.activeElections": {
+    "t": "Активные выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "Введенные бюллетени",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.canVote": {
+    "t": "Может голосовать",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closed": {
+    "t": "Закрытые",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closes": {
+    "t": "Закрывается",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "Детали выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noElections": {
+    "t": "Выборы не найдены",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noTellers": {
+    "t": "Счетчики не назначены",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "Онлайн-голосование",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.open": {
+    "t": "Открытые",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.opens": {
+    "t": "Открывается",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.otherActions": {
+    "t": "Другие действия...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.recentElections": {
+    "t": "Недавние выборы",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.registered": {
+    "t": "Зарегистрированные",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.statistics": {
+    "t": "Статистика",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "Количество счетчиков",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellers": {
+    "t": "Счетчики",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "Счетчики",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "Всего бюллетеней",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalElections": {
+    "t": "Всего выборов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "Всего избирателей",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

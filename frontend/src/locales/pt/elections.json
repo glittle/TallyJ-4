@@ -1,160 +1,792 @@
 {
-  "elections.advanceStage": "Avançar para a Próxima Etapa",
-  "elections.advanceTo": "Avançar para {stage}",
-  "elections.ballots": "Cédulas",
-  "elections.bulkDeleteError": "Falha ao excluir algumas eleições",
-  "elections.bulkDeleteMessage": "Tem certeza de que deseja excluir {count} eleições selecionadas?",
-  "elections.bulkDeleteSuccess": "{count} eleições excluídas com sucesso",
-  "elections.calculateTally": "Calcular Escrutínio",
-  "elections.clearFilters": "Limpar Filtros",
-  "elections.confirmAdvance": "Tem certeza de que deseja avançar esta eleição para {stage}?",
-  "elections.confirmBulkDelete": "Confirmar Exclusão em Massa",
-  "elections.confirmRevert": "Tem certeza de que deseja reverter esta eleição para {stage}?",
-  "elections.copyUrl": "Copiar URL",
-  "elections.createError": "Falha ao criar a eleição",
-  "elections.createFirst": "Crie sua Primeira Eleição",
-  "elections.createNew": "Criar Eleição",
-  "elections.createSuccess": "Eleição criada com sucesso",
-  "elections.date": "Data da Eleição",
-  "elections.deleteConfirm": "Tem certeza de que deseja excluir esta eleição? Esta ação não pode ser desfeita.",
-  "elections.deleteError": "Falha ao excluir a eleição",
-  "elections.deleteSelected": "Excluir Selecionadas ({count})",
-  "elections.deleteSuccess": "Eleição excluída com sucesso",
-  "elections.details": "Detalhes da Eleição",
-  "elections.edit": "Editar Eleição",
-  "elections.electionModes.B": "Eleição Parcial",
-  "elections.electionModes.N": "Eleição Normal",
-  "elections.electionModes.T": "Desempate",
-  "elections.electionTypes.Con": "Convenção da Unidade",
-  "elections.electionTypes.LSA": "Assembleia Espiritual Local",
-  "elections.electionTypes.LSA1": "Assembleia Espiritual Local (Dois Estágios) Unidade Local",
-  "elections.electionTypes.LSA2": "Assembleia Espiritual Local (Dois Estágios) Final",
-  "elections.electionTypes.NSA": "Assembleia Espiritual Nacional",
-  "elections.electionTypes.Oth": "Outro",
-  "elections.electionTypes.Reg": "Conselho Regional",
-  "elections.exportElection": "Exportar Eleição",
-  "elections.exportElectionError": "Falha ao exportar eleição",
-  "elections.exportElectionSuccess": "Eleição exportada com sucesso",
-  "elections.filterByStatus": "Filtrar por Status",
-  "elections.filterByType": "Filtrar por Tipo",
-  "elections.form.convenor": "Convocador",
-  "elections.form.convenorPlaceholder": "Digite o nome do convocador",
-  "elections.form.customMethods": "Métodos Personalizados",
-  "elections.form.customMethodsHelp": "Especifique quaisquer métodos de votação personalizados ou não padrão usados nesta eleição.",
-  "elections.form.customMethodsPlaceholder": "Descreva quaisquer métodos de votação personalizados",
-  "elections.form.date": "Data da Eleição",
-  "elections.form.datePlaceholder": "Selecione a data da eleição",
-  "elections.form.dateRequired": "A data da eleição é obrigatória",
-  "elections.form.electionMode": "Modo da Eleição",
-  "elections.form.electionPasscode": "Senha da Eleição",
-  "elections.form.electionPasscodeHelp": "Uma senha é necessária para o login de escrutinadores.",
-  "elections.form.electionPasscodePlaceholder": "Digite a senha",
-  "elections.form.emailFromAddress": "Endereço de E-mail do Remetente",
-  "elections.form.emailFromAddressPlaceholder": "Digite o endereço de e-mail do remetente",
-  "elections.form.emailFromName": "Nome do Remetente",
-  "elections.form.emailFromNamePlaceholder": "Digite o nome do remetente",
-  "elections.form.emailInvalid": "Endereço de e-mail inválido",
-  "elections.form.emailSubject": "Assunto do E-mail",
-  "elections.form.emailSubjectPlaceholder": "Digite o assunto do e-mail",
-  "elections.form.emailText": "Texto do E-mail",
-  "elections.form.emailTextPlaceholder": "Digite o corpo do e-mail",
-  "elections.form.flags": "Sinalizadores",
-  "elections.form.flagsHelp": "Os sinalizadores são usados para condições eleitorais especiais.",
-  "elections.form.flagsPlaceholder": "Digite quaisquer sinalizadores",
-  "elections.form.hidePreBallotPages": "Ocultar Páginas Pré-Cédula",
-  "elections.form.linkedElection": "Eleição Vinculada",
-  "elections.form.linkedElectionCount": "{count} eleição vinculada disponível",
-  "elections.form.linkedElectionCount_plural": "{count} eleições vinculadas disponíveis",
-  "elections.form.linkedElectionHelp": "Selecione uma eleição para vincular como desempate ou segundo turno.",
-  "elections.form.linkedElectionKind": "Tipo de Eleição Vinculada",
-  "elections.form.linkedElectionKindPlaceholder": "Selecione o tipo",
-  "elections.form.linkedElectionPlaceholder": "Selecione a eleição vinculada",
-  "elections.form.listForPublic": "Listar para o Público",
-  "elections.form.lockedByBallots": "Bloqueado — cédulas foram inseridas",
-  "elections.form.maskVotingMethod": "Ocultar Método de Votação",
-  "elections.form.modePlaceholder": "Selecione o modo da eleição",
-  "elections.form.name": "Nome da Eleição",
-  "elections.form.namePlaceholder": "Digite o nome da eleição",
-  "elections.form.nameRequired": "O nome da eleição é obrigatório",
-  "elections.form.numberExtra": "Número de Adicionais",
-  "elections.form.numberToElect": "Número a Eleger",
-  "elections.form.numberToElectRequired": "O número a eleger é obrigatório",
-  "elections.form.onlineAnnounced": "Resultados Online Anunciados",
-  "elections.form.onlineAnnouncedPlaceholder": "Selecione o horário do anúncio",
-  "elections.form.onlineCloseIsEstimate": "O Horário de Encerramento é Estimado",
-  "elections.form.onlineSelectionProcess": "Processo de Seleção Online",
-  "elections.form.onlineSelectionProcessPlaceholder": "Selecione o processo",
-  "elections.form.onlineWhenClose": "Encerramento da Votação Online",
-  "elections.form.onlineWhenClosePlaceholder": "Selecione o horário de encerramento",
-  "elections.form.onlineWhenOpen": "Abertura da Votação Online",
-  "elections.form.onlineWhenOpenPlaceholder": "Selecione o horário de abertura",
-  "elections.form.showAsTest": "Mostrar como Teste",
-  "elections.form.showFullReport": "Mostrar Relatório Completo",
-  "elections.form.smsText": "Texto SMS",
-  "elections.form.smsTextPlaceholder": "Digite o texto da mensagem SMS",
-  "elections.form.type": "Tipo de Eleição",
-  "elections.form.typePlaceholder": "Selecione o tipo de eleição",
-  "elections.form.typeRequired": "O tipo de eleição é obrigatório",
-  "elections.form.useCallInButton": "Ativar Votação por Ligação",
-  "elections.form.useKiosk": "Enable kiosk mode",
-  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
-  "elections.form.votingMethods": "Métodos de Votação",
-  "elections.form.votingMethodsHelp": "Escolha os métodos pelos quais os votos serão emitidos.",
-  "elections.form.votingMethodsPlaceholder": "Selecione os métodos de votação",
-  "elections.importCdnBallots": "Importar Cédulas CDN",
-  "elections.importCdnBallotsError": "Falha ao importar cédulas CDN",
-  "elections.importCdnBallotsSuccess": "Cédulas CDN importadas com sucesso",
-  "elections.importElection": "Importar Eleição",
-  "elections.importElectionError": "Falha ao importar eleição",
-  "elections.importElectionSuccess": "Eleição importada com sucesso",
-  "elections.list": "Eleições",
-  "elections.loadError": "Falha ao carregar a eleição",
-  "elections.locations": "Locais",
-  "elections.manageBallots": "Gerenciar Cédulas",
-  "elections.manageLocations": "Gerenciar Locais",
-  "elections.managePeople": "Gerenciar Pessoas",
-  "elections.name": "Nome da Eleição",
-  "elections.notFound": "Eleição não encontrada",
-  "elections.onlineVotingDisabled": "A votação online está desabilitada",
-  "elections.onlineVotingEnabled": "A votação online está habilitada",
-  "elections.people": "Pessoas",
-  "elections.quickActions": "Ações Rápidas",
-  "elections.revertTo": "Reverter para {stage}",
-  "elections.searchPlaceholder": "Pesquisar eleições por nome ou convocador...",
-  "elections.stage.Counting": "Contagem",
-  "elections.stage.Finalized": "Finalizado",
-  "elections.stage.Setup": "Configuração",
-  "elections.stageAdvanced": "Eleição avançada para {stage}",
-  "elections.stageChangeError": "Falha ao alterar a etapa da eleição",
-  "elections.stageProgression": "Etapa da Eleição",
-  "elections.stageReverted": "Eleição revertida para {stage}",
-  "elections.statistics": "Estatísticas",
-  "elections.status": "Estado",
-  "elections.tabs.advanced": "Avançado",
-  "elections.tabs.auditLogs": "Registros de Auditoria",
-  "elections.tabs.ballots": "Cédulas",
-  "elections.tabs.basicInfo": "Informações Básicas",
-  "elections.tabs.communication": "Comunicação",
-  "elections.tabs.displayPrivacy": "Exibição e Privacidade",
-  "elections.tabs.electionRules": "Regras Eleitorais",
-  "elections.tabs.locations": "Locais",
-  "elections.tabs.onlineVoting": "Votação Online",
-  "elections.tabs.people": "Pessoas",
-  "elections.tabs.results": "Resultados",
-  "elections.tabs.tellers": "Escrutinadores",
-  "elections.tabs.votingMethods": "Métodos de Votação",
-  "elections.tellerAccess": "Acesso de Escrutinadores",
-  "elections.tellerAccessClosed": "O acesso de escrutinadores está fechado",
-  "elections.tellerAccessCode": "Código de Acesso",
-  "elections.tellerAccessOpen": "O acesso de escrutinadores está aberto",
-  "elections.tellerAccessQrCode": "Código QR",
-  "elections.tellerAccessUrl": "URL Compartilhável",
-  "elections.toElect": "A Eleger",
-  "elections.toggleTellerAccess": "Ativar/Desativar Acesso de Escrutinadores",
-  "elections.type": "Tipo",
-  "elections.updateError": "Falha ao atualizar a eleição",
-  "elections.updateSuccess": "Eleição atualizada com sucesso",
-  "elections.viewReports": "Ver Relatórios",
-  "elections.viewResults": "Ver Resultados",
-  "elections.voters": "Eleitores"
+  "elections.advanceStage": {
+    "t": "Avançar para a Próxima Etapa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.advanceTo": {
+    "t": "Avançar para {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ballots": {
+    "t": "Cédulas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteError": {
+    "t": "Falha ao excluir algumas eleições",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteMessage": {
+    "t": "Tem certeza de que deseja excluir {count} eleições selecionadas?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteSuccess": {
+    "t": "{count} eleições excluídas com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.calculateTally": {
+    "t": "Calcular Escrutínio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.clearFilters": {
+    "t": "Limpar Filtros",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmAdvance": {
+    "t": "Tem certeza de que deseja avançar esta eleição para {stage}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmBulkDelete": {
+    "t": "Confirmar Exclusão em Massa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmRevert": {
+    "t": "Tem certeza de que deseja reverter esta eleição para {stage}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.copyUrl": {
+    "t": "Copiar URL",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createError": {
+    "t": "Falha ao criar a eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createFirst": {
+    "t": "Crie sua Primeira Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createNew": {
+    "t": "Criar Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createSuccess": {
+    "t": "Eleição criada com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.date": {
+    "t": "Data da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteConfirm": {
+    "t": "Tem certeza de que deseja excluir esta eleição? Esta ação não pode ser desfeita.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteError": {
+    "t": "Falha ao excluir a eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSelected": {
+    "t": "Excluir Selecionadas ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSuccess": {
+    "t": "Eleição excluída com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.details": {
+    "t": "Detalhes da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.edit": {
+    "t": "Editar Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.B": {
+    "t": "Eleição Parcial",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.N": {
+    "t": "Eleição Normal",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.T": {
+    "t": "Desempate",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Con": {
+    "t": "Convenção da Unidade",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA": {
+    "t": "Assembleia Espiritual Local",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA1": {
+    "t": "Assembleia Espiritual Local (Dois Estágios) Unidade Local",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA2": {
+    "t": "Assembleia Espiritual Local (Dois Estágios) Final",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.NSA": {
+    "t": "Assembleia Espiritual Nacional",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Oth": {
+    "t": "Outro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Reg": {
+    "t": "Conselho Regional",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElection": {
+    "t": "Exportar Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionError": {
+    "t": "Falha ao exportar eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionSuccess": {
+    "t": "Eleição exportada com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByStatus": {
+    "t": "Filtrar por Status",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByType": {
+    "t": "Filtrar por Tipo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenor": {
+    "t": "Convocador",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenorPlaceholder": {
+    "t": "Digite o nome do convocador",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethods": {
+    "t": "Métodos Personalizados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsHelp": {
+    "t": "Especifique quaisquer métodos de votação personalizados ou não padrão usados nesta eleição.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsPlaceholder": {
+    "t": "Descreva quaisquer métodos de votação personalizados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.date": {
+    "t": "Data da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.datePlaceholder": {
+    "t": "Selecione a data da eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.dateRequired": {
+    "t": "A data da eleição é obrigatória",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionMode": {
+    "t": "Modo da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscode": {
+    "t": "Senha da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodeHelp": {
+    "t": "Uma senha é necessária para o login de escrutinadores.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodePlaceholder": {
+    "t": "Digite a senha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddress": {
+    "t": "Endereço de E-mail do Remetente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddressPlaceholder": {
+    "t": "Digite o endereço de e-mail do remetente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromName": {
+    "t": "Nome do Remetente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromNamePlaceholder": {
+    "t": "Digite o nome do remetente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailInvalid": {
+    "t": "Endereço de e-mail inválido",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubject": {
+    "t": "Assunto do E-mail",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubjectPlaceholder": {
+    "t": "Digite o assunto do e-mail",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailText": {
+    "t": "Texto do E-mail",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailTextPlaceholder": {
+    "t": "Digite o corpo do e-mail",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flags": {
+    "t": "Sinalizadores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsHelp": {
+    "t": "Os sinalizadores são usados para condições eleitorais especiais.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsPlaceholder": {
+    "t": "Digite quaisquer sinalizadores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.hidePreBallotPages": {
+    "t": "Ocultar Páginas Pré-Cédula",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElection": {
+    "t": "Eleição Vinculada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount": {
+    "t": "{count} eleição vinculada disponível",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount_plural": {
+    "t": "{count} eleições vinculadas disponíveis",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionHelp": {
+    "t": "Selecione uma eleição para vincular como desempate ou segundo turno.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKind": {
+    "t": "Tipo de Eleição Vinculada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKindPlaceholder": {
+    "t": "Selecione o tipo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionPlaceholder": {
+    "t": "Selecione a eleição vinculada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.listForPublic": {
+    "t": "Listar para o Público",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.lockedByBallots": {
+    "t": "Bloqueado — cédulas foram inseridas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.maskVotingMethod": {
+    "t": "Ocultar Método de Votação",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.modePlaceholder": {
+    "t": "Selecione o modo da eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.name": {
+    "t": "Nome da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.namePlaceholder": {
+    "t": "Digite o nome da eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.nameRequired": {
+    "t": "O nome da eleição é obrigatório",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberExtra": {
+    "t": "Número de Adicionais",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElect": {
+    "t": "Número a Eleger",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElectRequired": {
+    "t": "O número a eleger é obrigatório",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnounced": {
+    "t": "Resultados Online Anunciados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnouncedPlaceholder": {
+    "t": "Selecione o horário do anúncio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineCloseIsEstimate": {
+    "t": "O Horário de Encerramento é Estimado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcess": {
+    "t": "Processo de Seleção Online",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessPlaceholder": {
+    "t": "Selecione o processo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClose": {
+    "t": "Encerramento da Votação Online",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClosePlaceholder": {
+    "t": "Selecione o horário de encerramento",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpen": {
+    "t": "Abertura da Votação Online",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpenPlaceholder": {
+    "t": "Selecione o horário de abertura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showAsTest": {
+    "t": "Mostrar como Teste",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showFullReport": {
+    "t": "Mostrar Relatório Completo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsText": {
+    "t": "Texto SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsTextPlaceholder": {
+    "t": "Digite o texto da mensagem SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.type": {
+    "t": "Tipo de Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typePlaceholder": {
+    "t": "Selecione o tipo de eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typeRequired": {
+    "t": "O tipo de eleição é obrigatório",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useCallInButton": {
+    "t": "Ativar Votação por Ligação",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKiosk": {
+    "t": "Enable kiosk mode",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKioskHelp": {
+    "t": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethods": {
+    "t": "Métodos de Votação",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsHelp": {
+    "t": "Escolha os métodos pelos quais os votos serão emitidos.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsPlaceholder": {
+    "t": "Selecione os métodos de votação",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallots": {
+    "t": "Importar Cédulas CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsError": {
+    "t": "Falha ao importar cédulas CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsSuccess": {
+    "t": "Cédulas CDN importadas com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElection": {
+    "t": "Importar Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionError": {
+    "t": "Falha ao importar eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionSuccess": {
+    "t": "Eleição importada com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.list": {
+    "t": "Eleições",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.loadError": {
+    "t": "Falha ao carregar a eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.locations": {
+    "t": "Locais",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageBallots": {
+    "t": "Gerenciar Cédulas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageLocations": {
+    "t": "Gerenciar Locais",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.managePeople": {
+    "t": "Gerenciar Pessoas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.name": {
+    "t": "Nome da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.notFound": {
+    "t": "Eleição não encontrada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingDisabled": {
+    "t": "A votação online está desabilitada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingEnabled": {
+    "t": "A votação online está habilitada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.people": {
+    "t": "Pessoas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.quickActions": {
+    "t": "Ações Rápidas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.revertTo": {
+    "t": "Reverter para {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.searchPlaceholder": {
+    "t": "Pesquisar eleições por nome ou convocador...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Counting": {
+    "t": "Contagem",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Finalized": {
+    "t": "Finalizado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Setup": {
+    "t": "Configuração",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageAdvanced": {
+    "t": "Eleição avançada para {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError": {
+    "t": "Falha ao alterar a etapa da eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageProgression": {
+    "t": "Etapa da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageReverted": {
+    "t": "Eleição revertida para {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.statistics": {
+    "t": "Estatísticas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.status": {
+    "t": "Estado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.advanced": {
+    "t": "Avançado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.auditLogs": {
+    "t": "Registros de Auditoria",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.ballots": {
+    "t": "Cédulas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.basicInfo": {
+    "t": "Informações Básicas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.communication": {
+    "t": "Comunicação",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.displayPrivacy": {
+    "t": "Exibição e Privacidade",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.electionRules": {
+    "t": "Regras Eleitorais",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.locations": {
+    "t": "Locais",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.onlineVoting": {
+    "t": "Votação Online",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.people": {
+    "t": "Pessoas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.results": {
+    "t": "Resultados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.tellers": {
+    "t": "Escrutinadores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.votingMethods": {
+    "t": "Métodos de Votação",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccess": {
+    "t": "Acesso de Escrutinadores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessClosed": {
+    "t": "O acesso de escrutinadores está fechado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessCode": {
+    "t": "Código de Acesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessOpen": {
+    "t": "O acesso de escrutinadores está aberto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessQrCode": {
+    "t": "Código QR",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessUrl": {
+    "t": "URL Compartilhável",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toElect": {
+    "t": "A Eleger",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toggleTellerAccess": {
+    "t": "Ativar/Desativar Acesso de Escrutinadores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.type": {
+    "t": "Tipo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateError": {
+    "t": "Falha ao atualizar a eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateSuccess": {
+    "t": "Eleição atualizada com sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewReports": {
+    "t": "Ver Relatórios",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewResults": {
+    "t": "Ver Resultados",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.voters": {
+    "t": "Eleitores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

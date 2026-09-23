@@ -1,78 +1,382 @@
 {
-  "voting.ballot.addPersonToPool": "إضافة شخص إلى ورقة اقتراعي",
-  "voting.ballot.addToPool": "إضافة إلى ورقة الاقتراع/المجموعة",
-  "voting.ballot.addToPoolDescription": "إضافة شخص جديد إلى مجموعتك لهذه الانتخابات.",
-  "voting.ballot.alreadyVoted": "لقد صوتت بالفعل في هذه الانتخابات.",
-  "voting.ballot.authRequired": "يرجى المصادقة أولاً",
-  "voting.ballot.backToElections": "العودة",
-  "voting.ballot.bothModeHint": "حدد من القائمة أدناه، أو اكتب اسمًا غير موجود في القائمة. سيقوم الفارزون بمعالجة أي أسماء غير موجودة في القائمة.",
-  "voting.ballot.duplicateError": "لقد حددت نفس المرشح عدة مرات. يرجى مراجعة ورقة اقتراعك.",
-  "voting.ballot.electionNotFound": "الانتخابات غير موجودة",
-  "voting.ballot.extraInfo": "معلومات تعريف إضافية",
-  "voting.ballot.extraInfoPlaceholder": "(اختياري: استخدم هذا إذا لم يكن الاسم كافيًا)",
-  "voting.ballot.firstName": "الاسم الأول",
-  "voting.ballot.firstNamePlaceholder": "الأول",
-  "voting.ballot.guideline": "\"من بين مجموعة أولئك الذين يعتقد الناخب أنهم مؤهلون للخدمة، يجب أن تتم الاختيار مع مراعاة مناسبة لعوامل أخرى مثل توزيع العمر والتنوع والجنس.\" — بيت العدل الأعلى",
-  "voting.ballot.lastName": "اسم العائلة",
-  "voting.ballot.lastNamePlaceholder": "العائلة",
-  "voting.ballot.loading": "جارٍ تحميل معلومات الانتخابات...",
-  "voting.ballot.myBallot": "ورقة اقتراعي",
-  "voting.ballot.namePlaceholder": "اكتب اسمًا",
-  "voting.ballot.notOpen": "التصويت عبر الإنترنت غير مفتوح حاليًا لهذه الانتخابات.",
-  "voting.ballot.onceWarning": "يمكنك التصويت مرة واحدة فقط! يرجى مراجعة ورقة اقتراعك بعناية قبل التقديم.",
-  "voting.ballot.openNow": "مفتوح الآن",
-  "voting.ballot.orderNote": "(ترتيب الأسماء لا يهم)",
-  "voting.ballot.randomModeHint": "اكتب أسماء الأشخاص الذين تريد التصويت لهم. سيقوم الفارزون بمطابقة هذه الأسماء مع الناخبين المسجلين.",
-  "voting.ballot.searchPlaceholder": "البحث عن مرشح",
-  "voting.ballot.submit": "تقديم ورقة الاقتراع",
-  "voting.ballot.submitSuccess": "تم تقديم ورقة الاقتراع بنجاح!",
-  "voting.ballot.votingFor": "التصويت لـ {count} أشخاص",
-  "voting.confirmation.close": "إغلاق",
-  "voting.confirmation.election": "الانتخابات:",
-  "voting.confirmation.kioskRecorded": "Your ballot has been recorded. You can leave this computer.",
-  "voting.confirmation.kioskSubtitle": "This kiosk is clear for the next voter.",
-  "voting.confirmation.nextVoter": "Ready for next voter",
-  "voting.confirmation.noChange": "يرجى ملاحظة أنك لا يمكنك تغيير أو إعادة تقديم ورقة اقتراعك.",
-  "voting.confirmation.recorded": "تم تسجيل ورقة اقتراعك بشكل آمن.",
-  "voting.confirmation.submitted": "تم التقديم:",
-  "voting.confirmation.subtitle": "شكرًا لك على المشاركة في الانتخابات",
-  "voting.confirmation.title": "تم تقديم ورقة الاقتراع بنجاح!",
-  "voting.election.instructions": "يرجى التصويت لـ {count} مرشحين.",
-  "voting.elections.alreadyVoted": "تم تقديم ورقة الاقتراع بالفعل",
-  "voting.elections.col.election": "الانتخابات",
-  "voting.elections.col.onlineVoting": "التصويت عبر الإنترنت",
-  "voting.elections.col.yourNameAndBallot": "اسمك وورقة اقتراعك",
-  "voting.elections.footerNote": "إذا بدا شيء خاطئًا، يرجى التوقف عن استخدام فَرْزَج وإرسال التفاصيل إلى رئيس الفارزين و/أو الدعم الفني العالمي.",
-  "voting.elections.loadError": "فشل في تحميل الانتخابات. يرجى المحاولة مرة أخرى.",
-  "voting.elections.loading": "جارٍ تحميل انتخاباتك...",
-  "voting.elections.logout": "تسجيل الخروج",
-  "voting.elections.method.online": "عبر الإنترنت",
-  "voting.elections.noElections": "لم يتم العثور على انتخابات لحسابك.",
-  "voting.elections.prepareBallot": "إعداد ورقة اقتراعي",
-  "voting.elections.registered": "مسجل:",
-  "voting.elections.status.closed": "مغلق",
-  "voting.elections.status.closedDaysAgo": "تم الإغلاق منذ {days} أيام",
-  "voting.elections.status.closedMonthsAgo": "تم الإغلاق منذ {months} أشهر",
-  "voting.elections.status.closedToday": "تم الإغلاق اليوم",
-  "voting.elections.status.closedYearsAgo": "تم الإغلاق منذ {years} سنوات",
-  "voting.elections.status.closedYesterday": "تم الإغلاق أمس",
-  "voting.elections.status.closingAt": "من المتوقع الإغلاق في {time}",
-  "voting.elections.status.closingAtWithMinutes": "من المتوقع الإغلاق خلال {hours}س {minutes}د (في {time})",
-  "voting.elections.status.closingInMinutes": "من المتوقع الإغلاق خلال {minutes} دقائق",
-  "voting.elections.status.closingSoon": "سيتم الإغلاق قريبًا جدًا",
-  "voting.elections.status.estimatedSuffix": " (تقديري)",
-  "voting.elections.status.noOnlineVoting": "لا يوجد تصويت عبر الإنترنت",
-  "voting.elections.status.open": "مفتوح",
-  "voting.elections.status.openNow": "مفتوح الآن",
-  "voting.elections.title": "انتخاباتك",
-  "voting.elections.welcome": "مرحبًا! تم العثور على معلومات الاتصال الخاصة بك ({voterId}) في الانتخابات المعروضة أدناه.",
-  "voting.elections.welcomeHint": "إذا لم تكن انتخابات قادمة مدرجة هنا، فقد لا تكون موجودة في فَرْزَج أو معلوماتك غير مسجلة فيها. يرجى الاتصال برئيس الفارزين في الانتخابات للحصول على المساعدة.",
-  "voting.status.alreadyVoted": "لقد قدمت بالفعل ورقة اقتراعك لهذه الانتخابات.",
-  "voting.status.notVoted": "لم تقدم بعد ورقة اقتراعك لهذه الانتخابات.",
-  "voting.status.voterNotFound": "الناخب غير موجود في هذه الانتخابات.",
-  "voting.submit.alreadyVoted": "لقد قدمت بالفعل ورقة اقتراع لهذه الانتخابات.",
-  "voting.submit.electionNotFound": "الانتخابات غير موجودة.",
-  "voting.submit.error": "حدث خطأ أثناء تقديم ورقة اقتراعك. يرجى المحاولة مرة أخرى.",
-  "voting.submit.notOpen": "التصويت عبر الإنترنت غير مفتوح حاليًا لهذه الانتخابات.",
-  "voting.submit.voterNotFound": "الناخب غير موجود. يرجى المصادقة أولاً."
+  "voting.ballot.addPersonToPool": {
+    "t": "إضافة شخص إلى ورقة اقتراعي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPool": {
+    "t": "إضافة إلى ورقة الاقتراع/المجموعة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPoolDescription": {
+    "t": "إضافة شخص جديد إلى مجموعتك لهذه الانتخابات.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.alreadyVoted": {
+    "t": "لقد صوتت بالفعل في هذه الانتخابات.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.authRequired": {
+    "t": "يرجى المصادقة أولاً",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.backToElections": {
+    "t": "العودة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.bothModeHint": {
+    "t": "حدد من القائمة أدناه، أو اكتب اسمًا غير موجود في القائمة. سيقوم الفارزون بمعالجة أي أسماء غير موجودة في القائمة.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.duplicateError": {
+    "t": "لقد حددت نفس المرشح عدة مرات. يرجى مراجعة ورقة اقتراعك.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.electionNotFound": {
+    "t": "الانتخابات غير موجودة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfo": {
+    "t": "معلومات تعريف إضافية",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfoPlaceholder": {
+    "t": "(اختياري: استخدم هذا إذا لم يكن الاسم كافيًا)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstName": {
+    "t": "الاسم الأول",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstNamePlaceholder": {
+    "t": "الأول",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.guideline": {
+    "t": "\"من بين مجموعة أولئك الذين يعتقد الناخب أنهم مؤهلون للخدمة، يجب أن تتم الاختيار مع مراعاة مناسبة لعوامل أخرى مثل توزيع العمر والتنوع والجنس.\" — بيت العدل الأعلى",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastName": {
+    "t": "اسم العائلة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastNamePlaceholder": {
+    "t": "العائلة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.loading": {
+    "t": "جارٍ تحميل معلومات الانتخابات...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.myBallot": {
+    "t": "ورقة اقتراعي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.namePlaceholder": {
+    "t": "اكتب اسمًا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.notOpen": {
+    "t": "التصويت عبر الإنترنت غير مفتوح حاليًا لهذه الانتخابات.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.onceWarning": {
+    "t": "يمكنك التصويت مرة واحدة فقط! يرجى مراجعة ورقة اقتراعك بعناية قبل التقديم.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.openNow": {
+    "t": "مفتوح الآن",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.orderNote": {
+    "t": "(ترتيب الأسماء لا يهم)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.randomModeHint": {
+    "t": "اكتب أسماء الأشخاص الذين تريد التصويت لهم. سيقوم الفارزون بمطابقة هذه الأسماء مع الناخبين المسجلين.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.searchPlaceholder": {
+    "t": "البحث عن مرشح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submit": {
+    "t": "تقديم ورقة الاقتراع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submitSuccess": {
+    "t": "تم تقديم ورقة الاقتراع بنجاح!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.votingFor": {
+    "t": "التصويت لـ {count} أشخاص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.close": {
+    "t": "إغلاق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.election": {
+    "t": "الانتخابات:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskRecorded": {
+    "t": "Your ballot has been recorded. You can leave this computer.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskSubtitle": {
+    "t": "This kiosk is clear for the next voter.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.nextVoter": {
+    "t": "Ready for next voter",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.noChange": {
+    "t": "يرجى ملاحظة أنك لا يمكنك تغيير أو إعادة تقديم ورقة اقتراعك.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.recorded": {
+    "t": "تم تسجيل ورقة اقتراعك بشكل آمن.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.submitted": {
+    "t": "تم التقديم:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.subtitle": {
+    "t": "شكرًا لك على المشاركة في الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.title": {
+    "t": "تم تقديم ورقة الاقتراع بنجاح!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.election.instructions": {
+    "t": "يرجى التصويت لـ {count} مرشحين.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.alreadyVoted": {
+    "t": "تم تقديم ورقة الاقتراع بالفعل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.election": {
+    "t": "الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.onlineVoting": {
+    "t": "التصويت عبر الإنترنت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.yourNameAndBallot": {
+    "t": "اسمك وورقة اقتراعك",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.footerNote": {
+    "t": "إذا بدا شيء خاطئًا، يرجى التوقف عن استخدام فَرْزَج وإرسال التفاصيل إلى رئيس الفارزين و/أو الدعم الفني العالمي.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loadError": {
+    "t": "فشل في تحميل الانتخابات. يرجى المحاولة مرة أخرى.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loading": {
+    "t": "جارٍ تحميل انتخاباتك...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.logout": {
+    "t": "تسجيل الخروج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.method.online": {
+    "t": "عبر الإنترنت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.noElections": {
+    "t": "لم يتم العثور على انتخابات لحسابك.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.prepareBallot": {
+    "t": "إعداد ورقة اقتراعي",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.registered": {
+    "t": "مسجل:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closed": {
+    "t": "مغلق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedDaysAgo": {
+    "t": "تم الإغلاق منذ {days} أيام",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedMonthsAgo": {
+    "t": "تم الإغلاق منذ {months} أشهر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedToday": {
+    "t": "تم الإغلاق اليوم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYearsAgo": {
+    "t": "تم الإغلاق منذ {years} سنوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYesterday": {
+    "t": "تم الإغلاق أمس",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAt": {
+    "t": "من المتوقع الإغلاق في {time}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAtWithMinutes": {
+    "t": "من المتوقع الإغلاق خلال {hours}س {minutes}د (في {time})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingInMinutes": {
+    "t": "من المتوقع الإغلاق خلال {minutes} دقائق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingSoon": {
+    "t": "سيتم الإغلاق قريبًا جدًا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.estimatedSuffix": {
+    "t": " (تقديري)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.noOnlineVoting": {
+    "t": "لا يوجد تصويت عبر الإنترنت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.open": {
+    "t": "مفتوح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.openNow": {
+    "t": "مفتوح الآن",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.title": {
+    "t": "انتخاباتك",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcome": {
+    "t": "مرحبًا! تم العثور على معلومات الاتصال الخاصة بك ({voterId}) في الانتخابات المعروضة أدناه.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcomeHint": {
+    "t": "إذا لم تكن انتخابات قادمة مدرجة هنا، فقد لا تكون موجودة في فَرْزَج أو معلوماتك غير مسجلة فيها. يرجى الاتصال برئيس الفارزين في الانتخابات للحصول على المساعدة.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.alreadyVoted": {
+    "t": "لقد قدمت بالفعل ورقة اقتراعك لهذه الانتخابات.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.notVoted": {
+    "t": "لم تقدم بعد ورقة اقتراعك لهذه الانتخابات.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.voterNotFound": {
+    "t": "الناخب غير موجود في هذه الانتخابات.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.alreadyVoted": {
+    "t": "لقد قدمت بالفعل ورقة اقتراع لهذه الانتخابات.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.electionNotFound": {
+    "t": "الانتخابات غير موجودة.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.error": {
+    "t": "حدث خطأ أثناء تقديم ورقة اقتراعك. يرجى المحاولة مرة أخرى.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.notOpen": {
+    "t": "التصويت عبر الإنترنت غير مفتوح حاليًا لهذه الانتخابات.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.voterNotFound": {
+    "t": "الناخب غير موجود. يرجى المصادقة أولاً.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

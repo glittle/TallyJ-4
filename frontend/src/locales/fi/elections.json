@@ -1,160 +1,792 @@
 {
-  "elections.advanceStage": "Siirry seuraavaan vaiheeseen",
-  "elections.advanceTo": "Siirry vaiheeseen {stage}",
-  "elections.ballots": "Äänestyslipukkeet",
-  "elections.bulkDeleteError": "Joidenkin vaalien poistaminen epäonnistui",
-  "elections.bulkDeleteMessage": "Oletko varma, että haluat poistaa {count} valittua vaalia?",
-  "elections.bulkDeleteSuccess": "{count} vaalia poistettu onnistuneesti",
-  "elections.calculateTally": "Laske äänet",
-  "elections.clearFilters": "Tyhjennä suodattimet",
-  "elections.confirmAdvance": "Haluatko varmasti siirtää nämä vaalit vaiheeseen {stage}?",
-  "elections.confirmBulkDelete": "Vahvista massapoisto",
-  "elections.confirmRevert": "Haluatko varmasti palauttaa nämä vaalit vaiheeseen {stage}?",
-  "elections.copyUrl": "Kopioi URL",
-  "elections.createError": "Vaalien luonti epäonnistui",
-  "elections.createFirst": "Luo ensimmäinen vaalisi",
-  "elections.createNew": "Luo vaali",
-  "elections.createSuccess": "Vaali luotu onnistuneesti",
-  "elections.date": "Vaalipäivä",
-  "elections.deleteConfirm": "Oletko varma, että haluat poistaa tämän vaalin? Tätä toimintoa ei voi peruuttaa.",
-  "elections.deleteError": "Vaalien poistaminen epäonnistui",
-  "elections.deleteSelected": "Poista valitut ({count})",
-  "elections.deleteSuccess": "Vaali poistettu onnistuneesti",
-  "elections.details": "Vaalitiedot",
-  "elections.edit": "Muokkaa vaalia",
-  "elections.electionModes.B": "Väli vaali",
-  "elections.electionModes.N": "Normaali vaali",
-  "elections.electionModes.T": "Tasapelin ratkaisu",
-  "elections.electionTypes.Con": "Yksikön kokous",
-  "elections.electionTypes.LSA": "Paikallinen hengellinen kokous",
-  "elections.electionTypes.LSA1": "Paikallinen hengellinen kokous (kaksivaiheinen) paikallinen yksikkö",
-  "elections.electionTypes.LSA2": "Paikallinen hengellinen kokous (kaksivaiheinen) lopullinen",
-  "elections.electionTypes.NSA": "Kansallinen hengellinen kokous",
-  "elections.electionTypes.Oth": "Muu",
-  "elections.electionTypes.Reg": "Alueellinen neuvosto",
-  "elections.exportElection": "Vie vaalit",
-  "elections.exportElectionError": "Vaalien vienti epäonnistui",
-  "elections.exportElectionSuccess": "Vaalit viety onnistuneesti",
-  "elections.filterByStatus": "Suodata tilan mukaan",
-  "elections.filterByType": "Suodata tyypin mukaan",
-  "elections.form.convenor": "Vastaava",
-  "elections.form.convenorPlaceholder": "Syötä vastaavan nimi",
-  "elections.form.customMethods": "Mukautetut menetelmät",
-  "elections.form.customMethodsHelp": "Määritä kaikki mukautetut tai ei-standardit äänestysmenetelmät, joita käytetään tässä vaalissa.",
-  "elections.form.customMethodsPlaceholder": "Kuvaile mukautettuja äänestysmenetelmiä",
-  "elections.form.date": "Vaalipäivä",
-  "elections.form.datePlaceholder": "Valitse vaalipäivä",
-  "elections.form.dateRequired": "Vaalipäivä on pakollinen",
-  "elections.form.electionMode": "Vaalitila",
-  "elections.form.electionPasscode": "Vaalikoodi",
-  "elections.form.electionPasscodeHelp": "Koodi vaaditaan laskijan kirjautumiseen.",
-  "elections.form.electionPasscodePlaceholder": "Syötä koodi",
-  "elections.form.emailFromAddress": "Sähköpostin lähettäjän osoite",
-  "elections.form.emailFromAddressPlaceholder": "Syötä lähettäjän sähköpostiosoite",
-  "elections.form.emailFromName": "Sähköpostin lähettäjän nimi",
-  "elections.form.emailFromNamePlaceholder": "Syötä lähettäjän nimi",
-  "elections.form.emailInvalid": "Virheellinen sähköpostiosoite",
-  "elections.form.emailSubject": "Sähköpostin aihe",
-  "elections.form.emailSubjectPlaceholder": "Syötä sähköpostin aihe",
-  "elections.form.emailText": "Sähköpostin teksti",
-  "elections.form.emailTextPlaceholder": "Syötä sähköpostin runko",
-  "elections.form.flags": "Liput",
-  "elections.form.flagsHelp": "Lippuja käytetään erityisiin vaaliehtoihin.",
-  "elections.form.flagsPlaceholder": "Syötä liput",
-  "elections.form.hidePreBallotPages": "Piilota esitäyssivut",
-  "elections.form.linkedElection": "Linkitetty vaali",
-  "elections.form.linkedElectionCount": "{count} linkitetty vaali saatavilla",
-  "elections.form.linkedElectionCount_plural": "{count} linkitettyä vaalia saatavilla",
-  "elections.form.linkedElectionHelp": "Valitse vaali linkitettäväksi tasapelin ratkaisemiseksi tai uusintavaaleiksi.",
-  "elections.form.linkedElectionKind": "Linkitetyn vaalin tyyppi",
-  "elections.form.linkedElectionKindPlaceholder": "Valitse tyyppi",
-  "elections.form.linkedElectionPlaceholder": "Valitse linkitetty vaali",
-  "elections.form.listForPublic": "Listaa julkisesti",
-  "elections.form.lockedByBallots": "Lukittu — äänestyslippuja on syötetty",
-  "elections.form.maskVotingMethod": "Peitä äänestysmenetelmä",
-  "elections.form.modePlaceholder": "Valitse vaalitila",
-  "elections.form.name": "Vaalien nimi",
-  "elections.form.namePlaceholder": "Syötä vaalien nimi",
-  "elections.form.nameRequired": "Vaalien nimi vaaditaan",
-  "elections.form.numberExtra": "Lisämäärä",
-  "elections.form.numberToElect": "Valittavien määrä",
-  "elections.form.numberToElectRequired": "Valittavien määrä vaaditaan",
-  "elections.form.onlineAnnounced": "Online-tulokset julkistettu",
-  "elections.form.onlineAnnouncedPlaceholder": "Valitse julkistusaika",
-  "elections.form.onlineCloseIsEstimate": "Sulkemisaika on arvio",
-  "elections.form.onlineSelectionProcess": "Online-valintaprosessi",
-  "elections.form.onlineSelectionProcessPlaceholder": "Valitse prosessi",
-  "elections.form.onlineWhenClose": "Online-äänestys sulkeutuu",
-  "elections.form.onlineWhenClosePlaceholder": "Valitse sulkemisaika",
-  "elections.form.onlineWhenOpen": "Online-äänestys avautuu",
-  "elections.form.onlineWhenOpenPlaceholder": "Valitse avaamisaika",
-  "elections.form.showAsTest": "Näytä testinä",
-  "elections.form.showFullReport": "Näytä täysi raportti",
-  "elections.form.smsText": "SMS-teksti",
-  "elections.form.smsTextPlaceholder": "Syötä SMS-viestin teksti",
-  "elections.form.type": "Vaalien tyyppi",
-  "elections.form.typePlaceholder": "Valitse vaalien tyyppi",
-  "elections.form.typeRequired": "Vaalien tyyppi vaaditaan",
-  "elections.form.useCallInButton": "Ota käyttöön puhelimitse äänestäminen",
-  "elections.form.useKiosk": "Enable kiosk mode",
-  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
-  "elections.form.votingMethods": "Äänestysmenetelmät",
-  "elections.form.votingMethodsHelp": "Valitse menetelmät, joilla äänet annetaan.",
-  "elections.form.votingMethodsPlaceholder": "Valitse äänestysmenetelmät",
-  "elections.importCdnBallots": "Tuo CDN-liput",
-  "elections.importCdnBallotsError": "CDN-lippujen tuonti epäonnistui",
-  "elections.importCdnBallotsSuccess": "CDN-liput tuotu onnistuneesti",
-  "elections.importElection": "Tuo vaalit",
-  "elections.importElectionError": "Vaalien tuonti epäonnistui",
-  "elections.importElectionSuccess": "Vaalit tuotu onnistuneesti",
-  "elections.list": "Vaalit",
-  "elections.loadError": "Vaalien lataaminen epäonnistui. Yritä uudelleen.",
-  "elections.locations": "Sijainnit",
-  "elections.manageBallots": "Hallinnoi äänestyslipukkeita",
-  "elections.manageLocations": "Hallinnoi sijainteja",
-  "elections.managePeople": "Hallinnoi ihmisiä",
-  "elections.name": "Vaalien nimi",
-  "elections.notFound": "Vaalia ei löytynyt",
-  "elections.onlineVotingDisabled": "Online-äänestys ei ole käytössä",
-  "elections.onlineVotingEnabled": "Online-äänestys on käytössä",
-  "elections.people": "Ihmiset",
-  "elections.quickActions": "Pikatoiminnot",
-  "elections.revertTo": "Palaa vaiheeseen {stage}",
-  "elections.searchPlaceholder": "Hae vaaleja nimen tai vastaavan mukaan...",
-  "elections.stage.Counting": "Laskenta",
-  "elections.stage.Finalized": "Viimeistelty",
-  "elections.stage.Setup": "Valmistelu",
-  "elections.stageAdvanced": "Vaalit siirretty vaiheeseen {stage}",
-  "elections.stageChangeError": "Vaalien vaiheen muuttaminen epäonnistui",
-  "elections.stageProgression": "Vaalien vaihe",
-  "elections.stageReverted": "Vaalit palautettu vaiheeseen {stage}",
-  "elections.statistics": "Tilastot",
-  "elections.status": "Tila",
-  "elections.tabs.advanced": "Lisäasetukset",
-  "elections.tabs.auditLogs": "Tarkastuslokit",
-  "elections.tabs.ballots": "Äänestyslipukkeet",
-  "elections.tabs.basicInfo": "Perustiedot",
-  "elections.tabs.communication": "Viestintä",
-  "elections.tabs.displayPrivacy": "Näyttö ja yksityisyys",
-  "elections.tabs.electionRules": "Vaalien säännöt",
-  "elections.tabs.locations": "Sijainnit",
-  "elections.tabs.onlineVoting": "Online-äänestys",
-  "elections.tabs.people": "Ihmiset",
-  "elections.tabs.results": "Tulokset",
-  "elections.tabs.tellers": "Laskijat",
-  "elections.tabs.votingMethods": "Äänestysmenetelmät",
-  "elections.tellerAccess": "Laskijan pääsy",
-  "elections.tellerAccessClosed": "Laskijan pääsy on suljettu",
-  "elections.tellerAccessCode": "Pääsykoodi",
-  "elections.tellerAccessOpen": "Laskijan pääsy on avoin",
-  "elections.tellerAccessQrCode": "QR-koodi",
-  "elections.tellerAccessUrl": "Jaettava URL",
-  "elections.toElect": "Valittavana",
-  "elections.toggleTellerAccess": "Vaihda laskijan pääsyä",
-  "elections.type": "Tyyppi",
-  "elections.updateError": "Vaalien päivitys epäonnistui",
-  "elections.updateSuccess": "Vaali päivitetty onnistuneesti",
-  "elections.viewReports": "Näytä raportit",
-  "elections.viewResults": "Näytä tulokset",
-  "elections.voters": "Äänestäjät"
+  "elections.advanceStage": {
+    "t": "Siirry seuraavaan vaiheeseen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.advanceTo": {
+    "t": "Siirry vaiheeseen {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ballots": {
+    "t": "Äänestyslipukkeet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteError": {
+    "t": "Joidenkin vaalien poistaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteMessage": {
+    "t": "Oletko varma, että haluat poistaa {count} valittua vaalia?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteSuccess": {
+    "t": "{count} vaalia poistettu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.calculateTally": {
+    "t": "Laske äänet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.clearFilters": {
+    "t": "Tyhjennä suodattimet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmAdvance": {
+    "t": "Haluatko varmasti siirtää nämä vaalit vaiheeseen {stage}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmBulkDelete": {
+    "t": "Vahvista massapoisto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmRevert": {
+    "t": "Haluatko varmasti palauttaa nämä vaalit vaiheeseen {stage}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.copyUrl": {
+    "t": "Kopioi URL",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createError": {
+    "t": "Vaalien luonti epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createFirst": {
+    "t": "Luo ensimmäinen vaalisi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createNew": {
+    "t": "Luo vaali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createSuccess": {
+    "t": "Vaali luotu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.date": {
+    "t": "Vaalipäivä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteConfirm": {
+    "t": "Oletko varma, että haluat poistaa tämän vaalin? Tätä toimintoa ei voi peruuttaa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteError": {
+    "t": "Vaalien poistaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSelected": {
+    "t": "Poista valitut ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSuccess": {
+    "t": "Vaali poistettu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.details": {
+    "t": "Vaalitiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.edit": {
+    "t": "Muokkaa vaalia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.B": {
+    "t": "Väli vaali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.N": {
+    "t": "Normaali vaali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.T": {
+    "t": "Tasapelin ratkaisu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Con": {
+    "t": "Yksikön kokous",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA": {
+    "t": "Paikallinen hengellinen kokous",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA1": {
+    "t": "Paikallinen hengellinen kokous (kaksivaiheinen) paikallinen yksikkö",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA2": {
+    "t": "Paikallinen hengellinen kokous (kaksivaiheinen) lopullinen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.NSA": {
+    "t": "Kansallinen hengellinen kokous",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Oth": {
+    "t": "Muu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Reg": {
+    "t": "Alueellinen neuvosto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElection": {
+    "t": "Vie vaalit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionError": {
+    "t": "Vaalien vienti epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionSuccess": {
+    "t": "Vaalit viety onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByStatus": {
+    "t": "Suodata tilan mukaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByType": {
+    "t": "Suodata tyypin mukaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenor": {
+    "t": "Vastaava",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenorPlaceholder": {
+    "t": "Syötä vastaavan nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethods": {
+    "t": "Mukautetut menetelmät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsHelp": {
+    "t": "Määritä kaikki mukautetut tai ei-standardit äänestysmenetelmät, joita käytetään tässä vaalissa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsPlaceholder": {
+    "t": "Kuvaile mukautettuja äänestysmenetelmiä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.date": {
+    "t": "Vaalipäivä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.datePlaceholder": {
+    "t": "Valitse vaalipäivä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.dateRequired": {
+    "t": "Vaalipäivä on pakollinen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionMode": {
+    "t": "Vaalitila",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscode": {
+    "t": "Vaalikoodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodeHelp": {
+    "t": "Koodi vaaditaan laskijan kirjautumiseen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodePlaceholder": {
+    "t": "Syötä koodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddress": {
+    "t": "Sähköpostin lähettäjän osoite",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddressPlaceholder": {
+    "t": "Syötä lähettäjän sähköpostiosoite",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromName": {
+    "t": "Sähköpostin lähettäjän nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromNamePlaceholder": {
+    "t": "Syötä lähettäjän nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailInvalid": {
+    "t": "Virheellinen sähköpostiosoite",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubject": {
+    "t": "Sähköpostin aihe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubjectPlaceholder": {
+    "t": "Syötä sähköpostin aihe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailText": {
+    "t": "Sähköpostin teksti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailTextPlaceholder": {
+    "t": "Syötä sähköpostin runko",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flags": {
+    "t": "Liput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsHelp": {
+    "t": "Lippuja käytetään erityisiin vaaliehtoihin.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsPlaceholder": {
+    "t": "Syötä liput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.hidePreBallotPages": {
+    "t": "Piilota esitäyssivut",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElection": {
+    "t": "Linkitetty vaali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount": {
+    "t": "{count} linkitetty vaali saatavilla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount_plural": {
+    "t": "{count} linkitettyä vaalia saatavilla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionHelp": {
+    "t": "Valitse vaali linkitettäväksi tasapelin ratkaisemiseksi tai uusintavaaleiksi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKind": {
+    "t": "Linkitetyn vaalin tyyppi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKindPlaceholder": {
+    "t": "Valitse tyyppi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionPlaceholder": {
+    "t": "Valitse linkitetty vaali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.listForPublic": {
+    "t": "Listaa julkisesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.lockedByBallots": {
+    "t": "Lukittu — äänestyslippuja on syötetty",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.maskVotingMethod": {
+    "t": "Peitä äänestysmenetelmä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.modePlaceholder": {
+    "t": "Valitse vaalitila",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.name": {
+    "t": "Vaalien nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.namePlaceholder": {
+    "t": "Syötä vaalien nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.nameRequired": {
+    "t": "Vaalien nimi vaaditaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberExtra": {
+    "t": "Lisämäärä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElect": {
+    "t": "Valittavien määrä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElectRequired": {
+    "t": "Valittavien määrä vaaditaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnounced": {
+    "t": "Online-tulokset julkistettu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnouncedPlaceholder": {
+    "t": "Valitse julkistusaika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineCloseIsEstimate": {
+    "t": "Sulkemisaika on arvio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcess": {
+    "t": "Online-valintaprosessi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessPlaceholder": {
+    "t": "Valitse prosessi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClose": {
+    "t": "Online-äänestys sulkeutuu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClosePlaceholder": {
+    "t": "Valitse sulkemisaika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpen": {
+    "t": "Online-äänestys avautuu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpenPlaceholder": {
+    "t": "Valitse avaamisaika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showAsTest": {
+    "t": "Näytä testinä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showFullReport": {
+    "t": "Näytä täysi raportti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsText": {
+    "t": "SMS-teksti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsTextPlaceholder": {
+    "t": "Syötä SMS-viestin teksti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.type": {
+    "t": "Vaalien tyyppi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typePlaceholder": {
+    "t": "Valitse vaalien tyyppi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typeRequired": {
+    "t": "Vaalien tyyppi vaaditaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useCallInButton": {
+    "t": "Ota käyttöön puhelimitse äänestäminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKiosk": {
+    "t": "Enable kiosk mode",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKioskHelp": {
+    "t": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethods": {
+    "t": "Äänestysmenetelmät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsHelp": {
+    "t": "Valitse menetelmät, joilla äänet annetaan.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsPlaceholder": {
+    "t": "Valitse äänestysmenetelmät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallots": {
+    "t": "Tuo CDN-liput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsError": {
+    "t": "CDN-lippujen tuonti epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsSuccess": {
+    "t": "CDN-liput tuotu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElection": {
+    "t": "Tuo vaalit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionError": {
+    "t": "Vaalien tuonti epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionSuccess": {
+    "t": "Vaalit tuotu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.list": {
+    "t": "Vaalit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.loadError": {
+    "t": "Vaalien lataaminen epäonnistui. Yritä uudelleen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.locations": {
+    "t": "Sijainnit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageBallots": {
+    "t": "Hallinnoi äänestyslipukkeita",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageLocations": {
+    "t": "Hallinnoi sijainteja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.managePeople": {
+    "t": "Hallinnoi ihmisiä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.name": {
+    "t": "Vaalien nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.notFound": {
+    "t": "Vaalia ei löytynyt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingDisabled": {
+    "t": "Online-äänestys ei ole käytössä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingEnabled": {
+    "t": "Online-äänestys on käytössä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.people": {
+    "t": "Ihmiset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.quickActions": {
+    "t": "Pikatoiminnot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.revertTo": {
+    "t": "Palaa vaiheeseen {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.searchPlaceholder": {
+    "t": "Hae vaaleja nimen tai vastaavan mukaan...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Counting": {
+    "t": "Laskenta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Finalized": {
+    "t": "Viimeistelty",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Setup": {
+    "t": "Valmistelu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageAdvanced": {
+    "t": "Vaalit siirretty vaiheeseen {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError": {
+    "t": "Vaalien vaiheen muuttaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageProgression": {
+    "t": "Vaalien vaihe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageReverted": {
+    "t": "Vaalit palautettu vaiheeseen {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.statistics": {
+    "t": "Tilastot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.status": {
+    "t": "Tila",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.advanced": {
+    "t": "Lisäasetukset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.auditLogs": {
+    "t": "Tarkastuslokit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.ballots": {
+    "t": "Äänestyslipukkeet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.basicInfo": {
+    "t": "Perustiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.communication": {
+    "t": "Viestintä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.displayPrivacy": {
+    "t": "Näyttö ja yksityisyys",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.electionRules": {
+    "t": "Vaalien säännöt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.locations": {
+    "t": "Sijainnit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.onlineVoting": {
+    "t": "Online-äänestys",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.people": {
+    "t": "Ihmiset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.results": {
+    "t": "Tulokset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.tellers": {
+    "t": "Laskijat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.votingMethods": {
+    "t": "Äänestysmenetelmät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccess": {
+    "t": "Laskijan pääsy",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessClosed": {
+    "t": "Laskijan pääsy on suljettu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessCode": {
+    "t": "Pääsykoodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessOpen": {
+    "t": "Laskijan pääsy on avoin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessQrCode": {
+    "t": "QR-koodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessUrl": {
+    "t": "Jaettava URL",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toElect": {
+    "t": "Valittavana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toggleTellerAccess": {
+    "t": "Vaihda laskijan pääsyä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.type": {
+    "t": "Tyyppi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateError": {
+    "t": "Vaalien päivitys epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateSuccess": {
+    "t": "Vaali päivitetty onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewReports": {
+    "t": "Näytä raportit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewResults": {
+    "t": "Näytä tulokset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.voters": {
+    "t": "Äänestäjät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

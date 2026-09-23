@@ -1,31 +1,147 @@
 {
-  "dashboard.setupTipsCard.eyebrow": "Setup Tips",
-  "dashboard.setupTipsCard.title": "Getting started",
-  "dashboard.setupTipsCard.tip1": "Edit the election to set the date, type, and number to elect.",
-  "dashboard.setupTipsCard.tip2": "Add people in People Management.",
-  "dashboard.setupTipsCard.tip3": "Configure your voting location(s) and assign tellers.",
-  "dashboard.setupTipsCard.tip4": "When you're ready, switch to Gathering Ballots mode.",
-  "dashboard.tips.dismiss": "Dismiss",
-  "dashboard.active": "Active",
-  "dashboard.activeElections": "Active Elections",
-  "dashboard.ballotsEntered": "Ballots Entered",
-  "dashboard.canVote": "Can Vote",
-  "dashboard.closed": "Closed",
-  "dashboard.closes": "Closes",
-  "dashboard.electionDetails": "Election Details",
-  "dashboard.noElections": "No elections found",
-  "dashboard.noTellers": "No tellers assigned",
-  "dashboard.onlineVoting": "Online Voting",
-  "dashboard.open": "Open",
-  "dashboard.opens": "Opens",
-  "dashboard.otherActions": "Other Actions...",
-  "dashboard.recentElections": "Recent Elections",
-  "dashboard.registered": "Registered",
-  "dashboard.statistics": "Statistics",
-  "dashboard.tellerCount": "Teller Count",
-  "dashboard.tellers": "Tellers",
-  "dashboard.tellersStatus": "Tellers",
-  "dashboard.totalBallots": "Total Ballots",
-  "dashboard.totalElections": "Elections",
-  "dashboard.totalVoters": "Total Voters"
+  "dashboard.setupTipsCard.eyebrow": {
+    "t": "Setup Tips",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.setupTipsCard.title": {
+    "t": "Getting started",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.setupTipsCard.tip1": {
+    "t": "Edit the election to set the date, type, and number to elect.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.setupTipsCard.tip2": {
+    "t": "Add people in People Management.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.setupTipsCard.tip3": {
+    "t": "Configure your voting location(s) and assign tellers.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.setupTipsCard.tip4": {
+    "t": "When you're ready, switch to Gathering Ballots mode.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tips.dismiss": {
+    "t": "Dismiss",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.active": {
+    "t": "Active",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.activeElections": {
+    "t": "Active Elections",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "Ballots Entered",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.canVote": {
+    "t": "Can Vote",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closed": {
+    "t": "Closed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closes": {
+    "t": "Closes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "Election Details",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noElections": {
+    "t": "No elections found",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noTellers": {
+    "t": "No tellers assigned",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "Online Voting",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.open": {
+    "t": "Open",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.opens": {
+    "t": "Opens",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.otherActions": {
+    "t": "Other Actions...",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.recentElections": {
+    "t": "Recent Elections",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.registered": {
+    "t": "Registered",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.statistics": {
+    "t": "Statistics",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "Teller Count",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellers": {
+    "t": "Tellers",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "Tellers",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "Total Ballots",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalElections": {
+    "t": "Elections",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "Total Voters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

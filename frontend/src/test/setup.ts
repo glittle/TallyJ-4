@@ -2,6 +2,7 @@ import { createPinia } from "pinia";
 import { createRouter, createWebHistory } from "vue-router";
 import { createI18n } from "vue-i18n";
 import { createAppConfig, setAppConfig } from "../config/appConfig";
+import { isRichEntry, unwrapMessages } from "../locales/richEntries.js";
 
 setAppConfig(
   createAppConfig({
@@ -52,13 +53,16 @@ function deepMerge(
     const sourceVal = source[key];
     const targetVal = result[key];
 
-    if (
+    if (isRichEntry(sourceVal)) {
+      result[key] = sourceVal;
+    } else if (
       sourceVal &&
       typeof sourceVal === "object" &&
       !Array.isArray(sourceVal) &&
       targetVal &&
       typeof targetVal === "object" &&
-      !Array.isArray(targetVal)
+      !Array.isArray(targetVal) &&
+      !isRichEntry(targetVal)
     ) {
       result[key] = deepMerge(
         targetVal as Record<string, unknown>,
@@ -80,7 +84,10 @@ function buildEnglishMessages(): Record<string, unknown> {
 
   let messages: Record<string, unknown> = {};
   for (const mod of Object.values(modules)) {
-    messages = deepMerge(messages, flatToNested(mod));
+    messages = deepMerge(
+      messages,
+      flatToNested(unwrapMessages(mod) as Record<string, string>),
+    );
   }
 
   return messages;

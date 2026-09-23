@@ -1,100 +1,492 @@
 {
-  "voting.auth.code.description": "Jotkin vaalit antavat äänestäjille henkilökohtaisen äänestyskoodin — yleensä vaalien järjestäjä lähettää sen sähköpostilla, postitse tai henkilökohtaisesti. Jos sait tällaisen koodin, syötä se tähän päästäksesi suoraan äänestyslipukkeeseen.",
-  "voting.auth.code.label": "Äänestyskoodi",
-  "voting.auth.code.placeholder": "Syötä ennalta annettu äänestyskoodisi",
-  "voting.auth.code.proceed": "Jatka äänestämään",
-  "voting.auth.email.codeSent": "Vahvistuskoodi lähetetty sähköpostiisi",
-  "voting.auth.email.description": "Jos vaalien järjestäjällä on sähköpostiosoitteesi tiedostossa, syötä se tähän. Lähetämme kertaluonteisen koodin kyseiseen osoitteeseen. Syötä koodi seuraavalla näytöllä vahvistaaksesi henkilöllisyytesi ja päästäksesi äänestyslipukkeeseen.",
-  "voting.auth.email.label": "Sähköpostiosoite",
-  "voting.auth.email.placeholder": "Syötä sähköpostiosoitteesi",
-  "voting.auth.email.sendCode": "Lähetä vahvistuskoodi",
-  "voting.auth.error.noElection": "Vaalia ei määritetty",
-  "voting.auth.facebook.button": "Jatka Facebookilla",
-  "voting.auth.facebook.cancelled": "Facebook-kirjautuminen peruutettiin.",
-  "voting.auth.facebook.description": "Jos sinulla on Facebook-tili, jonka sähköpostiosoite vastaa tässä vaalissa rekisteröityä, voit kirjautua Facebookilla.",
-  "voting.auth.facebook.error": "Facebook-tunnistautumisen käsittelyssä tapahtui virhe.",
-  "voting.auth.facebook.invalidToken": "Virheellinen Facebook-käyttötunnus.",
-  "voting.auth.facebook.loading": "Ladataan Facebook-kirjautumista...",
-  "voting.auth.facebook.noEmail": "Facebook-tililläsi ei ole vahvistettua sähköpostiosoitetta. Käytä toista kirjautumismenetelmää.",
-  "voting.auth.facebook.noOpenElections": "Yhtään vaalia ei ole tällä hetkellä avoinna online-äänestykseen.",
-  "voting.auth.facebook.notRegistered": "Et ole rekisteröitynyt äänestämään missään tällä hetkellä avoinna olevassa vaalissa.",
-  "voting.auth.facebook.popupBlocked": "Facebook-kirjautumisen ponnahdusikkuna estettiin. Salli ponnahdusikkunat tälle sivustolle ja yritä uudelleen.",
-  "voting.auth.faq.a1": "Vaalien eheyden suojaamiseksi meidän on vahvistettava, että jokainen äänestäjä on se, keneksi hän sanoo olevansa, ja että hän on kelpoisten äänestäjien listalla. Tämä estää ketään äänestämästä useammin kuin kerran tai jonkun muun puolesta.",
-  "voting.auth.faq.a2": "Syöttämäsi tiedot on vastattava täsmälleen vaalien järjestäjän sinulle rekisteröimiä tietoja. Jos niitä ei tunnisteta, ota yhteyttä vaalien järjestäjään — he voivat vahvistaa tietosi tai antaa sinulle henkilökohtaisen äänestyskoodin.",
-  "voting.auth.faq.a3": "Kyllä, ehdottomasti. Tämä kirjautumisvaihe vahvistaa vain, että olet kelpoinen äänestäjä. Kun olet äänestyslipukkeen sivulla, valintasi ovat täysin yksityisiä. Järjestelmä on suunniteltu niin, ettei kukaan — edes vaalien järjestäjät — voi yhdistää nimeäsi tiettyihin valintoihin, jotka teit.",
-  "voting.auth.faq.a4": "Ei. Kun olet lähettänyt äänestyslipukkeesi, järjestelmä tallentaa, että olet äänestänyt, eikä hyväksy toista lähetyksen sinulta. Tämä on tärkeä suojaus vaalien eheyden vuoksi.",
-  "voting.auth.faq.a5": "Voit käyttää mitä tahansa saatavilla olevista menetelmistä — sinun ei tarvitse käyttää kaikkia niitä. Jos sinulla on sähköpostiosoite tiedostossa vaalien järjestäjällä, käytä Sähköposti-vaihtoehtoa. Jos sinulla on puhelinnumero, käytä Puhelin-vaihtoehtoa. Jos sait henkilökohtaisen koodin, käytä Koodi-vaihtoehtoa. Ota yhteyttä vaalien järjestäjään, jos olet epävarma siitä, mikä menetelmä koskee sinua.",
-  "voting.auth.faq.a6": "Kyllä. Googlella kirjautuminen tarkoittaa, että Google vahvistaa henkilöllisyytesi meille — emme koskaan näe Google-salasanaasi. Saamme vain vahvistetun sähköpostiosoitteesi, jonka tarkistamme äänestäjälistasta. Google tarjoaa tämän palvelun maksutta.",
-  "voting.auth.faq.a7": "Ota suoraan yhteyttä vaalien järjestäjään. He voivat tarkistaa rekisteröintitietosi, antaa henkilökohtaisen äänestyskoodin tai auttaa muulla tavalla.",
-  "voting.auth.faq.q1": "Miksi minun on kirjauduttava ennen äänestämistä?",
-  "voting.auth.faq.q2": "Entä jos sähköpostiosoitettani tai puhelinnumeroani ei tunnisteta?",
-  "voting.auth.faq.q3": "Onko ääneni yksityinen?",
-  "voting.auth.faq.q4": "Voinko äänestää useammin kuin kerran?",
-  "voting.auth.faq.q5": "Entä jos minulla ei ole Google-tiliä tai puhelinta?",
-  "voting.auth.faq.q6": "Onko Googlella kirjautuminen turvallista?",
-  "voting.auth.faq.q7": "Entä jos törmään ongelmaan?",
-  "voting.auth.faq.title": "Yleisiä kysymyksiä",
-  "voting.auth.google.buttonText": "Kirjaudu Google-tilillä",
-  "voting.auth.google.description": "Jos sinulla on Google-tili ja Googleen rekisteröity sähköpostiosoitteesi vastaa vaalien järjestäjän tiedostoissa olevaa, voit kirjautua Googlella. Tämä on kätevä vaihtoehto, joka ei vaadi erillistä koodia.",
-  "voting.auth.google.emailNotVerified": "Google-sähköpostin on oltava vahvistettu äänestääksesi.",
-  "voting.auth.google.error": "Google-tunnistautumisen käsittelyssä tapahtui virhe.",
-  "voting.auth.google.invalidCredential": "Virheellinen Google-tunniste.",
-  "voting.auth.google.loading": "Ladataan Google-kirjautumista...",
-  "voting.auth.google.noEmail": "Google ei antanut sähköpostia.",
-  "voting.auth.google.noOpenElections": "Yhtään vaalia ei ole tällä hetkellä avoinna online-äänestykseen.",
-  "voting.auth.google.notConfigured": "Google-tunnistautuminen ei ole määritetty tällä palvelimella.",
-  "voting.auth.google.notRegistered": "Et ole rekisteröitynyt äänestämään missään tällä hetkellä avoinna olevassa vaalissa.",
-  "voting.auth.google.prompt": "Napsauta alla olevaa painiketta kirjautuaksesi Google-tililläsi.",
-  "voting.auth.kakao.button": "카카오로 로그인 (Kirjaudu Kakaolla)",
-  "voting.auth.kakao.description": "Jos sinulla on Kakao-tili (KakaoTalk) ja rekisteröity sähköpostisi tai puhelinnumerosi vastaa, voit kirjautua Kakaolla.",
-  "voting.auth.kakao.error": "Kakao-tunnistautumisen käsittelyssä tapahtui virhe.",
-  "voting.auth.kakao.invalidToken": "Virheellinen Kakao-käyttötunnus.",
-  "voting.auth.kakao.loading": "Ladataan Kakao-kirjautumista...",
-  "voting.auth.kakao.noContact": "Kakao-tilisi ei antanut sähköpostia tai puhelinnumeroa. Käytä toista kirjautumismenetelmää.",
-  "voting.auth.kakao.noOpenElections": "Yhtään vaalia ei ole tällä hetkellä avoinna online-äänestykseen.",
-  "voting.auth.kakao.notRegistered": "Et ole rekisteröitynyt äänestämään missään tällä hetkellä avoinna olevassa vaalissa.",
-  "voting.auth.kakao.popupBlocked": "Kakao-kirjautumisen ponnahdusikkuna estettiin. Salli ponnahdusikkunat tälle sivustolle ja yritä uudelleen.",
-  "voting.auth.phone.codeSent": "Vahvistuskoodi lähetetty {method} kautta",
-  "voting.auth.phone.deliveryMethod": "Miten haluat vastaanottaa koodin?",
-  "voting.auth.phone.description": "Jos vaalien järjestäjällä on puhelinnumerosi tiedostossa, syötä se tähän. Lähetämme kertaluonteisen vahvistuskoodin SMS:llä, äänipuhelulla tai WhatsAppilla. Syötä koodi seuraavalla näytöllä vahvistaaksesi henkilöllisyytesi.",
-  "voting.auth.phone.label": "Puhelinnumero",
-  "voting.auth.phone.placeholder": "+1234567890",
-  "voting.auth.phone.sendCode": "Lähetä vahvistuskoodi",
-  "voting.auth.phone.sms": "SMS-tekstiviesti",
-  "voting.auth.phone.voice": "Äänipuhelu",
-  "voting.auth.phone.whatsapp": "WhatsApp-viesti",
-  "voting.auth.phone.whatsappNote": "WhatsApp-viesti lähetetään tähän numeroon",
-  "voting.auth.requestCode.error": "Pyyntösi käsittelyssä tapahtui virhe.",
-  "voting.auth.requestCode.noOpenElections": "Yhtään vaalia ei ole tällä hetkellä avoinna online-äänestykseen.",
-  "voting.auth.requestCode.notRegistered": "Et ole rekisteröitynyt äänestämään missään tällä hetkellä avoinna olevassa vaalissa.",
-  "voting.auth.requestCode.sendFailed": "Vahvistuskoodin lähettäminen epäonnistui. Yritä uudelleen.",
-  "voting.auth.requestCode.sent": "Jos annettu yhteystieto on kelvollinen, vahvistuskoodi on lähetetty.",
-  "voting.auth.subtitle": "Tunnistaudu antaaksesi äänesi",
-  "voting.auth.tabs.code": "Koodi",
-  "voting.auth.tabs.email": "Sähköposti",
-  "voting.auth.tabs.facebook": "Facebook",
-  "voting.auth.tabs.google": "Google",
-  "voting.auth.tabs.kakao": "Kakao",
-  "voting.auth.tabs.phone": "Puhelin",
-  "voting.auth.tabs.telegram": "Telegram",
-  "voting.auth.telegram.description": "Turvallinen yhden napsautuksen kirjautuminen Telegramilla.",
-  "voting.auth.telegram.error": "Telegram-kirjautuminen ei ole tällä hetkellä saatavilla.",
-  "voting.auth.telegram.loading": "Ladataan Telegram-widgettiä...",
-  "voting.auth.title": "LaskiJ Online-äänestys",
-  "voting.auth.verify.back": "Kokeile eri menetelmää",
-  "voting.auth.verify.codeExpired": "Vahvistuskoodi on vanhentunut. Pyydä uusi koodi.",
-  "voting.auth.verify.detail": "Tarkista sähköpostisi (ja roskapostikansio varmuuden vuoksi) ja syötä alla oleva koodi. Koodi on voimassa rajoitetun ajan.",
-  "voting.auth.verify.error": "Koodin vahvistuksessa tapahtui virhe.",
-  "voting.auth.verify.invalidCode": "Virheellinen vahvistuskoodi. {attempts} yritystä jäljellä.",
-  "voting.auth.verify.label": "Vahvistuskoodi",
-  "voting.auth.verify.message": "Olemme lähettäneet vahvistuskoodin osoitteeseen {voterId}",
-  "voting.auth.verify.noCodeFound": "Vahvistuskoodia ei löytynyt. Pyydä uusi koodi.",
-  "voting.auth.verify.placeholder": "Syötä vastaanottamasi koodi",
-  "voting.auth.verify.submit": "Vahvista ja jatka äänestämään",
-  "voting.auth.verify.tooManyAttempts": "Liian monta epäonnistunutta yritystä. Pyydä uusi koodi.",
-  "voting.auth.verify.voterNotFound": "Äänestäjää ei löytynyt. Pyydä ensin vahvistuskoodi.",
-  "voting.auth.welcome.choose": "Valitse yksi alla olevista menetelmistä:",
-  "voting.auth.welcome.detail": "Tämä on yksinkertainen kertaluonteinen tarkistus — emme luo sinulle tiliä emmekä tallenna mitään henkilötietoja vaalien järjestäjän jo hallussa olevien tietojen lisäksi. Kun vahvistus on tehty, sinut ohjataan suoraan äänestyslipukkeeseen.",
-  "voting.auth.welcome.heading": "Tervetuloa — Olet lähes valmis äänestämään",
-  "voting.auth.welcome.intro": "Voidaksesi äänestää tässä vaalissa, meidän on vahvistettava henkilöllisyytesi. Henkilöllisyytesi on vastattava vaalien järjestäjän tiedostoissa olevia tietoja kelpoisten äänestäjien osalta."
+  "voting.auth.code.description": {
+    "t": "Jotkin vaalit antavat äänestäjille henkilökohtaisen äänestyskoodin — yleensä vaalien järjestäjä lähettää sen sähköpostilla, postitse tai henkilökohtaisesti. Jos sait tällaisen koodin, syötä se tähän päästäksesi suoraan äänestyslipukkeeseen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.code.label": {
+    "t": "Äänestyskoodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.code.placeholder": {
+    "t": "Syötä ennalta annettu äänestyskoodisi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.code.proceed": {
+    "t": "Jatka äänestämään",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.email.codeSent": {
+    "t": "Vahvistuskoodi lähetetty sähköpostiisi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.email.description": {
+    "t": "Jos vaalien järjestäjällä on sähköpostiosoitteesi tiedostossa, syötä se tähän. Lähetämme kertaluonteisen koodin kyseiseen osoitteeseen. Syötä koodi seuraavalla näytöllä vahvistaaksesi henkilöllisyytesi ja päästäksesi äänestyslipukkeeseen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.email.label": {
+    "t": "Sähköpostiosoite",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.email.placeholder": {
+    "t": "Syötä sähköpostiosoitteesi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.email.sendCode": {
+    "t": "Lähetä vahvistuskoodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.error.noElection": {
+    "t": "Vaalia ei määritetty",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.button": {
+    "t": "Jatka Facebookilla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.cancelled": {
+    "t": "Facebook-kirjautuminen peruutettiin.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.description": {
+    "t": "Jos sinulla on Facebook-tili, jonka sähköpostiosoite vastaa tässä vaalissa rekisteröityä, voit kirjautua Facebookilla.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.error": {
+    "t": "Facebook-tunnistautumisen käsittelyssä tapahtui virhe.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.invalidToken": {
+    "t": "Virheellinen Facebook-käyttötunnus.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.loading": {
+    "t": "Ladataan Facebook-kirjautumista...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.noEmail": {
+    "t": "Facebook-tililläsi ei ole vahvistettua sähköpostiosoitetta. Käytä toista kirjautumismenetelmää.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.noOpenElections": {
+    "t": "Yhtään vaalia ei ole tällä hetkellä avoinna online-äänestykseen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.notRegistered": {
+    "t": "Et ole rekisteröitynyt äänestämään missään tällä hetkellä avoinna olevassa vaalissa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.facebook.popupBlocked": {
+    "t": "Facebook-kirjautumisen ponnahdusikkuna estettiin. Salli ponnahdusikkunat tälle sivustolle ja yritä uudelleen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a1": {
+    "t": "Vaalien eheyden suojaamiseksi meidän on vahvistettava, että jokainen äänestäjä on se, keneksi hän sanoo olevansa, ja että hän on kelpoisten äänestäjien listalla. Tämä estää ketään äänestämästä useammin kuin kerran tai jonkun muun puolesta.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a2": {
+    "t": "Syöttämäsi tiedot on vastattava täsmälleen vaalien järjestäjän sinulle rekisteröimiä tietoja. Jos niitä ei tunnisteta, ota yhteyttä vaalien järjestäjään — he voivat vahvistaa tietosi tai antaa sinulle henkilökohtaisen äänestyskoodin.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a3": {
+    "t": "Kyllä, ehdottomasti. Tämä kirjautumisvaihe vahvistaa vain, että olet kelpoinen äänestäjä. Kun olet äänestyslipukkeen sivulla, valintasi ovat täysin yksityisiä. Järjestelmä on suunniteltu niin, ettei kukaan — edes vaalien järjestäjät — voi yhdistää nimeäsi tiettyihin valintoihin, jotka teit.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a4": {
+    "t": "Ei. Kun olet lähettänyt äänestyslipukkeesi, järjestelmä tallentaa, että olet äänestänyt, eikä hyväksy toista lähetyksen sinulta. Tämä on tärkeä suojaus vaalien eheyden vuoksi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a5": {
+    "t": "Voit käyttää mitä tahansa saatavilla olevista menetelmistä — sinun ei tarvitse käyttää kaikkia niitä. Jos sinulla on sähköpostiosoite tiedostossa vaalien järjestäjällä, käytä Sähköposti-vaihtoehtoa. Jos sinulla on puhelinnumero, käytä Puhelin-vaihtoehtoa. Jos sait henkilökohtaisen koodin, käytä Koodi-vaihtoehtoa. Ota yhteyttä vaalien järjestäjään, jos olet epävarma siitä, mikä menetelmä koskee sinua.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a6": {
+    "t": "Kyllä. Googlella kirjautuminen tarkoittaa, että Google vahvistaa henkilöllisyytesi meille — emme koskaan näe Google-salasanaasi. Saamme vain vahvistetun sähköpostiosoitteesi, jonka tarkistamme äänestäjälistasta. Google tarjoaa tämän palvelun maksutta.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.a7": {
+    "t": "Ota suoraan yhteyttä vaalien järjestäjään. He voivat tarkistaa rekisteröintitietosi, antaa henkilökohtaisen äänestyskoodin tai auttaa muulla tavalla.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q1": {
+    "t": "Miksi minun on kirjauduttava ennen äänestämistä?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q2": {
+    "t": "Entä jos sähköpostiosoitettani tai puhelinnumeroani ei tunnisteta?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q3": {
+    "t": "Onko ääneni yksityinen?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q4": {
+    "t": "Voinko äänestää useammin kuin kerran?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q5": {
+    "t": "Entä jos minulla ei ole Google-tiliä tai puhelinta?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q6": {
+    "t": "Onko Googlella kirjautuminen turvallista?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.q7": {
+    "t": "Entä jos törmään ongelmaan?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.faq.title": {
+    "t": "Yleisiä kysymyksiä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.buttonText": {
+    "t": "Kirjaudu Google-tilillä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.description": {
+    "t": "Jos sinulla on Google-tili ja Googleen rekisteröity sähköpostiosoitteesi vastaa vaalien järjestäjän tiedostoissa olevaa, voit kirjautua Googlella. Tämä on kätevä vaihtoehto, joka ei vaadi erillistä koodia.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.emailNotVerified": {
+    "t": "Google-sähköpostin on oltava vahvistettu äänestääksesi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.error": {
+    "t": "Google-tunnistautumisen käsittelyssä tapahtui virhe.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.invalidCredential": {
+    "t": "Virheellinen Google-tunniste.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.loading": {
+    "t": "Ladataan Google-kirjautumista...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.noEmail": {
+    "t": "Google ei antanut sähköpostia.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.noOpenElections": {
+    "t": "Yhtään vaalia ei ole tällä hetkellä avoinna online-äänestykseen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.notConfigured": {
+    "t": "Google-tunnistautuminen ei ole määritetty tällä palvelimella.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.notRegistered": {
+    "t": "Et ole rekisteröitynyt äänestämään missään tällä hetkellä avoinna olevassa vaalissa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.google.prompt": {
+    "t": "Napsauta alla olevaa painiketta kirjautuaksesi Google-tililläsi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.button": {
+    "t": "카카오로 로그인 (Kirjaudu Kakaolla)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.description": {
+    "t": "Jos sinulla on Kakao-tili (KakaoTalk) ja rekisteröity sähköpostisi tai puhelinnumerosi vastaa, voit kirjautua Kakaolla.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.error": {
+    "t": "Kakao-tunnistautumisen käsittelyssä tapahtui virhe.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.invalidToken": {
+    "t": "Virheellinen Kakao-käyttötunnus.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.loading": {
+    "t": "Ladataan Kakao-kirjautumista...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.noContact": {
+    "t": "Kakao-tilisi ei antanut sähköpostia tai puhelinnumeroa. Käytä toista kirjautumismenetelmää.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.noOpenElections": {
+    "t": "Yhtään vaalia ei ole tällä hetkellä avoinna online-äänestykseen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.notRegistered": {
+    "t": "Et ole rekisteröitynyt äänestämään missään tällä hetkellä avoinna olevassa vaalissa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.kakao.popupBlocked": {
+    "t": "Kakao-kirjautumisen ponnahdusikkuna estettiin. Salli ponnahdusikkunat tälle sivustolle ja yritä uudelleen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.codeSent": {
+    "t": "Vahvistuskoodi lähetetty {method} kautta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.deliveryMethod": {
+    "t": "Miten haluat vastaanottaa koodin?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.description": {
+    "t": "Jos vaalien järjestäjällä on puhelinnumerosi tiedostossa, syötä se tähän. Lähetämme kertaluonteisen vahvistuskoodin SMS:llä, äänipuhelulla tai WhatsAppilla. Syötä koodi seuraavalla näytöllä vahvistaaksesi henkilöllisyytesi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.label": {
+    "t": "Puhelinnumero",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.placeholder": {
+    "t": "+1234567890",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.sendCode": {
+    "t": "Lähetä vahvistuskoodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.sms": {
+    "t": "SMS-tekstiviesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.voice": {
+    "t": "Äänipuhelu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.whatsapp": {
+    "t": "WhatsApp-viesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.phone.whatsappNote": {
+    "t": "WhatsApp-viesti lähetetään tähän numeroon",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.requestCode.error": {
+    "t": "Pyyntösi käsittelyssä tapahtui virhe.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.requestCode.noOpenElections": {
+    "t": "Yhtään vaalia ei ole tällä hetkellä avoinna online-äänestykseen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.requestCode.notRegistered": {
+    "t": "Et ole rekisteröitynyt äänestämään missään tällä hetkellä avoinna olevassa vaalissa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.requestCode.sendFailed": {
+    "t": "Vahvistuskoodin lähettäminen epäonnistui. Yritä uudelleen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.requestCode.sent": {
+    "t": "Jos annettu yhteystieto on kelvollinen, vahvistuskoodi on lähetetty.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.subtitle": {
+    "t": "Tunnistaudu antaaksesi äänesi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.code": {
+    "t": "Koodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.email": {
+    "t": "Sähköposti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.facebook": {
+    "t": "Facebook",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.google": {
+    "t": "Google",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.kakao": {
+    "t": "Kakao",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.phone": {
+    "t": "Puhelin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.tabs.telegram": {
+    "t": "Telegram",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.telegram.description": {
+    "t": "Turvallinen yhden napsautuksen kirjautuminen Telegramilla.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.telegram.error": {
+    "t": "Telegram-kirjautuminen ei ole tällä hetkellä saatavilla.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.telegram.loading": {
+    "t": "Ladataan Telegram-widgettiä...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.title": {
+    "t": "LaskiJ Online-äänestys",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.back": {
+    "t": "Kokeile eri menetelmää",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.codeExpired": {
+    "t": "Vahvistuskoodi on vanhentunut. Pyydä uusi koodi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.detail": {
+    "t": "Tarkista sähköpostisi (ja roskapostikansio varmuuden vuoksi) ja syötä alla oleva koodi. Koodi on voimassa rajoitetun ajan.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.error": {
+    "t": "Koodin vahvistuksessa tapahtui virhe.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.invalidCode": {
+    "t": "Virheellinen vahvistuskoodi. {attempts} yritystä jäljellä.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.label": {
+    "t": "Vahvistuskoodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.message": {
+    "t": "Olemme lähettäneet vahvistuskoodin osoitteeseen {voterId}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.noCodeFound": {
+    "t": "Vahvistuskoodia ei löytynyt. Pyydä uusi koodi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.placeholder": {
+    "t": "Syötä vastaanottamasi koodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.submit": {
+    "t": "Vahvista ja jatka äänestämään",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.tooManyAttempts": {
+    "t": "Liian monta epäonnistunutta yritystä. Pyydä uusi koodi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.verify.voterNotFound": {
+    "t": "Äänestäjää ei löytynyt. Pyydä ensin vahvistuskoodi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.welcome.choose": {
+    "t": "Valitse yksi alla olevista menetelmistä:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.welcome.detail": {
+    "t": "Tämä on yksinkertainen kertaluonteinen tarkistus — emme luo sinulle tiliä emmekä tallenna mitään henkilötietoja vaalien järjestäjän jo hallussa olevien tietojen lisäksi. Kun vahvistus on tehty, sinut ohjataan suoraan äänestyslipukkeeseen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.welcome.heading": {
+    "t": "Tervetuloa — Olet lähes valmis äänestämään",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.auth.welcome.intro": {
+    "t": "Voidaksesi äänestää tässä vaalissa, meidän on vahvistettava henkilöllisyytesi. Henkilöllisyytesi on vastattava vaalien järjestäjän tiedostoissa olevia tietoja kelpoisten äänestäjien osalta.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

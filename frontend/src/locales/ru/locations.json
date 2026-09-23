@@ -1,47 +1,227 @@
 {
-  "locations.computer.browserInfo": "Информация о браузере",
-  "locations.computer.browserInfoHelp": "Автоматически определяется из вашего браузера",
-  "locations.computer.browserInfoMaxLength": "Информация о браузере не может превышать 250 символов",
-  "locations.computer.browserInfoPlaceholder": "Автоматически определённая информация о браузере",
-  "locations.computer.cancel": "Отмена",
-  "locations.computer.code": "Код компьютера",
-  "locations.computer.codeHelp": "Код из 2 символов (напр., AA, AB, A1). Оставьте пустым для автоматической генерации.",
-  "locations.computer.codeInvalid": "Код компьютера должен состоять из 2 заглавных букв или цифр",
-  "locations.computer.codeLength": "Код компьютера должен содержать ровно 2 символа",
-  "locations.computer.codePlaceholder": "AA (оставьте пустым для автоматической генерации)",
-  "locations.computer.ipAddress": "IP-адрес",
-  "locations.computer.ipAddressHelp": "Необязательно: IP-адрес компьютера",
-  "locations.computer.ipAddressMaxLength": "IP-адрес не может превышать 50 символов",
-  "locations.computer.ipAddressPlaceholder": "Необязательно: введите IP-адрес",
-  "locations.computer.register": "Зарегистрироваться",
-  "locations.computer.success": "Компьютер успешно зарегистрирован",
-  "locations.computer.title": "Регистрация компьютера",
-  "locations.currentLocation": "Текущее место",
-  "locations.form.cancel": "Отмена",
-  "locations.form.contactInfo": "Контактная информация",
-  "locations.form.contactInfoMaxLength": "Контактная информация не может превышать 250 символов",
-  "locations.form.contactInfoPlaceholder": "Введите контактную информацию",
-  "locations.form.create": "Создать",
-  "locations.form.created": "Место успешно создано",
-  "locations.form.latitude": "Широта",
-  "locations.form.latitudeHelp": "Диапазон: от -90 до 90",
-  "locations.form.latitudeInvalid": "Широта должна быть допустимой координатой в диапазоне от -90 до 90",
-  "locations.form.latitudePlaceholder": "напр., 37.7749",
-  "locations.form.longitude": "Долгота",
-  "locations.form.longitudeHelp": "Диапазон: от -180 до 180",
-  "locations.form.longitudeInvalid": "Долгота должна быть допустимой координатой в диапазоне от -180 до 180",
-  "locations.form.longitudePlaceholder": "напр., -122.4194",
-  "locations.form.name": "Название места",
-  "locations.form.nameMaxLength": "Название места не может превышать 50 символов",
-  "locations.form.namePlaceholder": "Введите название места",
-  "locations.form.nameRequired": "Название места обязательно",
-  "locations.form.save": "Сохранить",
-  "locations.form.sortOrder": "Порядок сортировки",
-  "locations.form.sortOrderHelp": "Используется для упорядочивания мест в списках",
-  "locations.form.sortOrderInvalid": "Порядок сортировки должен быть числом",
-  "locations.form.titleAdd": "Добавить место",
-  "locations.form.titleEdit": "Редактировать место",
-  "locations.form.updated": "Место успешно обновлено",
-  "locations.locationSelected": "Место успешно выбрано",
-  "locations.selectLocation": "Выбрать место"
+  "locations.computer.browserInfo": {
+    "t": "Информация о браузере",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoHelp": {
+    "t": "Автоматически определяется из вашего браузера",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoMaxLength": {
+    "t": "Информация о браузере не может превышать 250 символов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoPlaceholder": {
+    "t": "Автоматически определённая информация о браузере",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.cancel": {
+    "t": "Отмена",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.code": {
+    "t": "Код компьютера",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeHelp": {
+    "t": "Код из 2 символов (напр., AA, AB, A1). Оставьте пустым для автоматической генерации.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeInvalid": {
+    "t": "Код компьютера должен состоять из 2 заглавных букв или цифр",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeLength": {
+    "t": "Код компьютера должен содержать ровно 2 символа",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codePlaceholder": {
+    "t": "AA (оставьте пустым для автоматической генерации)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddress": {
+    "t": "IP-адрес",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressHelp": {
+    "t": "Необязательно: IP-адрес компьютера",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressMaxLength": {
+    "t": "IP-адрес не может превышать 50 символов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressPlaceholder": {
+    "t": "Необязательно: введите IP-адрес",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.register": {
+    "t": "Зарегистрироваться",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.success": {
+    "t": "Компьютер успешно зарегистрирован",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.title": {
+    "t": "Регистрация компьютера",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.currentLocation": {
+    "t": "Текущее место",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.cancel": {
+    "t": "Отмена",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfo": {
+    "t": "Контактная информация",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoMaxLength": {
+    "t": "Контактная информация не может превышать 250 символов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoPlaceholder": {
+    "t": "Введите контактную информацию",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.create": {
+    "t": "Создать",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.created": {
+    "t": "Место успешно создано",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitude": {
+    "t": "Широта",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeHelp": {
+    "t": "Диапазон: от -90 до 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeInvalid": {
+    "t": "Широта должна быть допустимой координатой в диапазоне от -90 до 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudePlaceholder": {
+    "t": "напр., 37.7749",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitude": {
+    "t": "Долгота",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeHelp": {
+    "t": "Диапазон: от -180 до 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeInvalid": {
+    "t": "Долгота должна быть допустимой координатой в диапазоне от -180 до 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudePlaceholder": {
+    "t": "напр., -122.4194",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.name": {
+    "t": "Название места",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameMaxLength": {
+    "t": "Название места не может превышать 50 символов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.namePlaceholder": {
+    "t": "Введите название места",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameRequired": {
+    "t": "Название места обязательно",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.save": {
+    "t": "Сохранить",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrder": {
+    "t": "Порядок сортировки",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderHelp": {
+    "t": "Используется для упорядочивания мест в списках",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderInvalid": {
+    "t": "Порядок сортировки должен быть числом",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleAdd": {
+    "t": "Добавить место",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleEdit": {
+    "t": "Редактировать место",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.updated": {
+    "t": "Место успешно обновлено",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.locationSelected": {
+    "t": "Место успешно выбрано",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.selectLocation": {
+    "t": "Выбрать место",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

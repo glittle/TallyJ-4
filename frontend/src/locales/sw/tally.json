@@ -1,20 +1,92 @@
 {
-  "tally.calculate": "Hesabu Matokeo",
-  "tally.calculateError": "Imeshindwa kuhesabu matokeo",
-  "tally.calculateSuccess": "Matokeo yamehesabiwa kwa mafanikio",
-  "tally.calculatingProgress": "Inahesabu Maendeleo",
-  "tally.normalElection": "Uchaguzi wa Kawaida",
-  "tally.processedBallots": "Kura Zilizosindikishwa",
-  "tally.resultsPreview": "Hakikisho la Matokeo (10 Bora)",
-  "tally.section.elected": "Mteule",
-  "tally.section.extra": "Zaidi",
-  "tally.section.other": "Zingine",
-  "tally.singleNameElection": "Uchaguzi wa Jina Moja",
-  "tally.title": "Hesabu Matokeo",
-  "tally.viewFullResults": "Tazama Matokeo Kamili",
-  "tally.warning": "Onyo",
-  "tally.warningMessage": "Kuhesabu matokeo kutafuta matokeo yoyote yaliyopo. Kitendo hiki hakiwezi kutenduliwa.",
-  "tally.section.E": "Mteule",
-  "tally.section.X": "Zaidi",
-  "tally.section.O": "Zingine"
+  "tally.calculate": {
+    "t": "Hesabu Matokeo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateError": {
+    "t": "Imeshindwa kuhesabu matokeo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "Matokeo yamehesabiwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "Inahesabu Maendeleo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.normalElection": {
+    "t": "Uchaguzi wa Kawaida",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.processedBallots": {
+    "t": "Kura Zilizosindikishwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.resultsPreview": {
+    "t": "Hakikisho la Matokeo (10 Bora)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.elected": {
+    "t": "Mteule",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.extra": {
+    "t": "Zaidi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.other": {
+    "t": "Zingine",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.singleNameElection": {
+    "t": "Uchaguzi wa Jina Moja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.title": {
+    "t": "Hesabu Matokeo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.viewFullResults": {
+    "t": "Tazama Matokeo Kamili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warning": {
+    "t": "Onyo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warningMessage": {
+    "t": "Kuhesabu matokeo kutafuta matokeo yoyote yaliyopo. Kitendo hiki hakiwezi kutenduliwa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.E": {
+    "t": "Mteule",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.X": {
+    "t": "Zaidi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.O": {
+    "t": "Zingine",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

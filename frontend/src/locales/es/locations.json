@@ -1,47 +1,227 @@
 {
-  "locations.computer.browserInfo": "Información del Navegador",
-  "locations.computer.browserInfoHelp": "Detectado automáticamente desde su navegador",
-  "locations.computer.browserInfoMaxLength": "La información del navegador no puede exceder 250 caracteres",
-  "locations.computer.browserInfoPlaceholder": "Información del navegador detectada automáticamente",
-  "locations.computer.cancel": "Cancelar",
-  "locations.computer.code": "Código de Computadora",
-  "locations.computer.codeHelp": "Código de 2 caracteres (p. ej., AA, AB, A1). Dejar vacío para generar automáticamente.",
-  "locations.computer.codeInvalid": "El código de computadora debe ser 2 letras mayúsculas o números",
-  "locations.computer.codeLength": "El código de computadora debe tener exactamente 2 caracteres",
-  "locations.computer.codePlaceholder": "AA (dejar vacío para generar automáticamente)",
-  "locations.computer.ipAddress": "Dirección IP",
-  "locations.computer.ipAddressHelp": "Opcional: Dirección IP de la computadora",
-  "locations.computer.ipAddressMaxLength": "La dirección IP no puede exceder 50 caracteres",
-  "locations.computer.ipAddressPlaceholder": "Opcional: Ingrese la dirección IP",
-  "locations.computer.register": "Registrar",
-  "locations.computer.success": "Computadora registrada exitosamente",
-  "locations.computer.title": "Registrar Computadora",
-  "locations.currentLocation": "Ubicación Actual",
-  "locations.form.cancel": "Cancelar",
-  "locations.form.contactInfo": "Información de Contacto",
-  "locations.form.contactInfoMaxLength": "La información de contacto no puede exceder 250 caracteres",
-  "locations.form.contactInfoPlaceholder": "Ingrese la información de contacto",
-  "locations.form.create": "Crear",
-  "locations.form.created": "Ubicación creada exitosamente",
-  "locations.form.latitude": "Latitud",
-  "locations.form.latitudeHelp": "Rango: -90 a 90",
-  "locations.form.latitudeInvalid": "La latitud debe ser una coordenada válida entre -90 y 90",
-  "locations.form.latitudePlaceholder": "p. ej., 37.7749",
-  "locations.form.longitude": "Longitud",
-  "locations.form.longitudeHelp": "Rango: -180 a 180",
-  "locations.form.longitudeInvalid": "La longitud debe ser una coordenada válida entre -180 y 180",
-  "locations.form.longitudePlaceholder": "p. ej., -122.4194",
-  "locations.form.name": "Nombre de la Ubicación",
-  "locations.form.nameMaxLength": "El nombre de la ubicación no puede exceder 50 caracteres",
-  "locations.form.namePlaceholder": "Ingrese el nombre de la ubicación",
-  "locations.form.nameRequired": "El nombre de la ubicación es obligatorio",
-  "locations.form.save": "Guardar",
-  "locations.form.sortOrder": "Orden de Clasificación",
-  "locations.form.sortOrderHelp": "Usado para ordenar ubicaciones en las listas",
-  "locations.form.sortOrderInvalid": "El orden de clasificación debe ser un número",
-  "locations.form.titleAdd": "Agregar Ubicación",
-  "locations.form.titleEdit": "Editar Ubicación",
-  "locations.form.updated": "Ubicación actualizada exitosamente",
-  "locations.locationSelected": "Ubicación seleccionada exitosamente",
-  "locations.selectLocation": "Seleccionar Ubicación"
+  "locations.computer.browserInfo": {
+    "t": "Información del Navegador",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoHelp": {
+    "t": "Detectado automáticamente desde su navegador",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoMaxLength": {
+    "t": "La información del navegador no puede exceder 250 caracteres",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoPlaceholder": {
+    "t": "Información del navegador detectada automáticamente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.cancel": {
+    "t": "Cancelar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.code": {
+    "t": "Código de Computadora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeHelp": {
+    "t": "Código de 2 caracteres (p. ej., AA, AB, A1). Dejar vacío para generar automáticamente.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeInvalid": {
+    "t": "El código de computadora debe ser 2 letras mayúsculas o números",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeLength": {
+    "t": "El código de computadora debe tener exactamente 2 caracteres",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codePlaceholder": {
+    "t": "AA (dejar vacío para generar automáticamente)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddress": {
+    "t": "Dirección IP",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressHelp": {
+    "t": "Opcional: Dirección IP de la computadora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressMaxLength": {
+    "t": "La dirección IP no puede exceder 50 caracteres",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressPlaceholder": {
+    "t": "Opcional: Ingrese la dirección IP",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.register": {
+    "t": "Registrar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.success": {
+    "t": "Computadora registrada exitosamente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.title": {
+    "t": "Registrar Computadora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.currentLocation": {
+    "t": "Ubicación Actual",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.cancel": {
+    "t": "Cancelar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfo": {
+    "t": "Información de Contacto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoMaxLength": {
+    "t": "La información de contacto no puede exceder 250 caracteres",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoPlaceholder": {
+    "t": "Ingrese la información de contacto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.create": {
+    "t": "Crear",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.created": {
+    "t": "Ubicación creada exitosamente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitude": {
+    "t": "Latitud",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeHelp": {
+    "t": "Rango: -90 a 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeInvalid": {
+    "t": "La latitud debe ser una coordenada válida entre -90 y 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudePlaceholder": {
+    "t": "p. ej., 37.7749",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitude": {
+    "t": "Longitud",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeHelp": {
+    "t": "Rango: -180 a 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeInvalid": {
+    "t": "La longitud debe ser una coordenada válida entre -180 y 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudePlaceholder": {
+    "t": "p. ej., -122.4194",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.name": {
+    "t": "Nombre de la Ubicación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameMaxLength": {
+    "t": "El nombre de la ubicación no puede exceder 50 caracteres",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.namePlaceholder": {
+    "t": "Ingrese el nombre de la ubicación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameRequired": {
+    "t": "El nombre de la ubicación es obligatorio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.save": {
+    "t": "Guardar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrder": {
+    "t": "Orden de Clasificación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderHelp": {
+    "t": "Usado para ordenar ubicaciones en las listas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderInvalid": {
+    "t": "El orden de clasificación debe ser un número",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleAdd": {
+    "t": "Agregar Ubicación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleEdit": {
+    "t": "Editar Ubicación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.updated": {
+    "t": "Ubicación actualizada exitosamente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.locationSelected": {
+    "t": "Ubicación seleccionada exitosamente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.selectLocation": {
+    "t": "Seleccionar Ubicación",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

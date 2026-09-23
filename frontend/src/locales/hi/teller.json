@@ -1,17 +1,77 @@
 {
-  "teller.form.cancel": "रद्द करें",
-  "teller.form.computerCode": "कंप्यूटर कोड",
-  "teller.form.computerCodeHelp": "दो अपरकेस अक्षर (AA-ZZ) या खाली छोड़ें",
-  "teller.form.computerCodeInvalid": "कंप्यूटर कोड 2 अपरकेस अक्षर होने चाहिए (AA-ZZ)",
-  "teller.form.computerCodePlaceholder": "जैसे, AA",
-  "teller.form.create": "बनाएं",
-  "teller.form.headTeller": "मुख्य गणनाकर्ता",
-  "teller.form.headTellerHelp": "मुख्य गणनाकर्ताओं के पास अतिरिक्त अनुमतियाँ हैं",
-  "teller.form.name": "गणनाकर्ता का नाम",
-  "teller.form.nameMaxLength": "गणनाकर्ता का नाम 50 वर्णों से अधिक नहीं हो सकता",
-  "teller.form.namePlaceholder": "गणनाकर्ता का नाम दर्ज करें",
-  "teller.form.nameRequired": "गणनाकर्ता का नाम आवश्यक है",
-  "teller.form.save": "सहेजें",
-  "teller.form.titleAdd": "गणनाकर्ता जोड़ें",
-  "teller.form.titleEdit": "गणनाकर्ता संपादित करें"
+  "teller.form.cancel": {
+    "t": "रद्द करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCode": {
+    "t": "कंप्यूटर कोड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeHelp": {
+    "t": "दो अपरकेस अक्षर (AA-ZZ) या खाली छोड़ें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeInvalid": {
+    "t": "कंप्यूटर कोड 2 अपरकेस अक्षर होने चाहिए (AA-ZZ)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodePlaceholder": {
+    "t": "जैसे, AA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.create": {
+    "t": "बनाएं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTeller": {
+    "t": "मुख्य गणनाकर्ता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTellerHelp": {
+    "t": "मुख्य गणनाकर्ताओं के पास अतिरिक्त अनुमतियाँ हैं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.name": {
+    "t": "गणनाकर्ता का नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "गणनाकर्ता का नाम 50 वर्णों से अधिक नहीं हो सकता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "गणनाकर्ता का नाम दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "गणनाकर्ता का नाम आवश्यक है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.save": {
+    "t": "सहेजें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "गणनाकर्ता जोड़ें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "गणनाकर्ता संपादित करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

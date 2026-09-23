@@ -1,20 +1,92 @@
 {
-  "error.errorDetails": "Error Details",
-  "error.forbidden": "Access denied.",
-  "error.goHome": "Go Home",
-  "error.networkError": "Network error. Please check your connection and try again.",
-  "error.notFound": "The requested resource was not found.",
-  "error.pageError": "An error occurred while loading this page. Please try again.",
-  "error.serverError": "Server error. Please try again later.",
-  "error.sessionExpired": "Your session has expired. Please log in again.",
-  "error.somethingWentWrong": "Something went wrong",
-  "error.payloadTooLarge": "This request is too large.",
-  "error.tooManyRequests": "Too many requests. Please try again later.",
-  "error.tryAgain": "Try Again",
-  "error.unauthorized": "You are not authorized to perform this action.",
-  "error.validationError": "Please check your input and try again.",
-  "notification.error": "Error",
-  "notification.info": "Information",
-  "notification.success": "Success",
-  "notification.warning": "Warning"
+  "error.errorDetails": {
+    "t": "Error Details",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.forbidden": {
+    "t": "Access denied.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.goHome": {
+    "t": "Go Home",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.networkError": {
+    "t": "Network error. Please check your connection and try again.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.notFound": {
+    "t": "The requested resource was not found.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.pageError": {
+    "t": "An error occurred while loading this page. Please try again.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.serverError": {
+    "t": "Server error. Please try again later.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.sessionExpired": {
+    "t": "Your session has expired. Please log in again.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.somethingWentWrong": {
+    "t": "Something went wrong",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.payloadTooLarge": {
+    "t": "This request is too large.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.tooManyRequests": {
+    "t": "Too many requests. Please try again later.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.tryAgain": {
+    "t": "Try Again",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.unauthorized": {
+    "t": "You are not authorized to perform this action.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.validationError": {
+    "t": "Please check your input and try again.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.error": {
+    "t": "Error",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.info": {
+    "t": "Information",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.success": {
+    "t": "Success",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.warning": {
+    "t": "Warning",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

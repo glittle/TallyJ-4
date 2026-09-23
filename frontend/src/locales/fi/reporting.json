@@ -1,194 +1,962 @@
 {
-  "reporting.advancedFilters": "Edistyneet suodattimet",
-  "reporting.allCanReceive": "Henkilöt, joille voidaan äänestää",
-  "reporting.applyFilters": "Käytä suodattimia",
-  "reporting.area": "Alue",
-  "reporting.averageVotesPerBallot": "Keskimäärin ääniä per äänestyslippu",
-  "reporting.bahaiId": "Bahá'í-tunniste",
-  "reporting.ballotCode": "Lippu",
-  "reporting.ballotCount": "Äänestyslipun määrä",
-  "reporting.ballotId": "Äänestyslipun tunnus",
-  "reporting.ballotLengthDistribution": "Äänestyslipun pituuden jakautuminen",
-  "reporting.ballotReport": "Äänestyslippu raportti",
-  "reporting.ballotReports": "Lippuraporttrit",
-  "reporting.ballotsByMethod": "Liput äänestystavan mukaan",
-  "reporting.ballotsCast": "Heitetyt äänestysliput",
-  "reporting.ballotsEntered": "Syötetyt äänestysliput",
-  "reporting.calledIn": "Puhelimitse",
-  "reporting.canReceiveVotes": "Voi vastaanottaa ääniä",
-  "reporting.canVote": "Voi äänestää",
-  "reporting.candidate": "Ehdokas",
-  "reporting.candidateName": "Ehdokkaan nimi",
-  "reporting.candidatePerformance": "Ehdokkaiden suoritus",
-  "reporting.candidateVotes": "Ehdokkaiden äänet",
-  "reporting.candidates": "Ehdokkaat",
-  "reporting.category": "Kategoria",
-  "reporting.change": "Muutos",
-  "reporting.charts": "Kaaviot",
-  "reporting.clearFilters": "Tyhjennä suodattimet",
-  "reporting.comparisonSummary": "Vertailuyhteenveto",
-  "reporting.configureReport": "Määritä raportti",
-  "reporting.contender": "Kilpailija",
-  "reporting.convenor": "Puheenjohtaja",
-  "reporting.count": "Määrä",
-  "reporting.cumulativeTurnout": "Kumulatiivinen osallistuminen",
-  "reporting.customReport": "Mukautettu raportti",
-  "reporting.date": "Päivämäärä",
-  "reporting.dateOfElection": "Vaalien päivämäärä",
-  "reporting.dateRange": "Päivämääräväli",
-  "reporting.demographicBreakdown": "Demografinen erittely",
-  "reporting.description": "Kuvaus",
-  "reporting.detailedStatistics": "Yksityiskohtaiset tilastot",
-  "reporting.droppedOff": "Jätetty",
-  "reporting.earlyVoting": "Ennakkoäänestys",
-  "reporting.earlyVotingPercentage": "Ennakkoäänestys %",
-  "reporting.elected": "Valittu",
-  "reporting.electedCandidates": "Valitut ehdokkaat",
-  "reporting.electedPersons": "Valitut",
-  "reporting.election": "Vaalit",
-  "reporting.electionDate": "Vaalien päivämäärä",
-  "reporting.electionDayVoting": "Vaalipäivän äänestys",
-  "reporting.electionDetails": "Vaalien tiedot",
-  "reporting.electionName": "Vaalien nimi",
-  "reporting.electionOverview": "Vaalien yleiskatsaus",
-  "reporting.electionSummary": "Vaalien yhteenveto",
-  "reporting.electionType": "Vaalien tyyppi",
-  "reporting.eligibilityReason": "Kelpoisuuden syy",
-  "reporting.eliminated": "Eliminoitu",
-  "reporting.email": "Sähköposti",
-  "reporting.endDate": "Lopetuspäivä",
-  "reporting.enterCandidateName": "Syötä ehdokkaan nimi",
-  "reporting.enterDescription": "Syötä kuvaus",
-  "reporting.enterReportName": "Syötä raportin nimi",
-  "reporting.error": "Raportin lataaminen epäonnistui",
-  "reporting.exportCSV": "Vie CSV",
-  "reporting.exportExcel": "Vie Excel",
-  "reporting.exportFormats": "Viemismuodot",
-  "reporting.exportPDF": "Vie PDF",
-  "reporting.extra": "Lisä",
-  "reporting.extraCandidates": "Lisäehdokkaat",
-  "reporting.firstChoice": "Ensimmäinen valinta %",
-  "reporting.firstName": "Etunimi",
-  "reporting.firstTimeVoters": "Ensimmäistä kertaa äänestäjät",
-  "reporting.flags": "Merkinnät",
-  "reporting.generateComparison": "Luo vertailu",
-  "reporting.generateCustomReport": "Luo mukautettu raportti",
-  "reporting.generateReport": "Luo raportti",
-  "reporting.groupN": "Ryhmä {n}",
-  "reporting.hasSignedInEmail": "Kirjautunut (Sähköposti)",
-  "reporting.hasSignedInPhone": "Kirjautunut (Puhelin)",
-  "reporting.historicalComparison": "Historiallinen vertailu",
-  "reporting.imported": "Tuotu",
-  "reporting.inPerson": "Paikan päällä",
-  "reporting.inPersonVoters": "Paikan päällä äänestäjät",
-  "reporting.includeSections": "Sisällytä osiot",
-  "reporting.lastName": "Sukunimi",
-  "reporting.loading": "Ladataan raporttia...",
-  "reporting.location": "Sijainti",
-  "reporting.locationReport": "Sijaintiraportti",
-  "reporting.locationStatistics": "Sijaintitilastot",
-  "reporting.locations": "Sijainnit",
-  "reporting.mailedIn": "Postitse",
-  "reporting.matchingNames": "Vastaavat nimet tuloksissa",
-  "reporting.maxVotesOnBallot": "Enimmäisäänet äänestyslipussa",
-  "reporting.metricsToCompare": "Vertailtavat mittarit",
-  "reporting.minVotesOnBallot": "Vähimmäisäänet äänestyslipussa",
-  "reporting.name": "Nimi",
-  "reporting.no": "Ei",
-  "reporting.noBallots": "Tälle suodattimelle ei löytynyt lippuja.",
-  "reporting.noChanges": "Ei muuttuneita henkilötietoja löytynyt.",
-  "reporting.noDuplicates": "Yhtään kaksinkertaista lippua ei löytynyt.",
-  "reporting.noEmails": "Sähköpostia/puhelinta tietoja ei löytynyt.",
-  "reporting.noFlags": "Osallistumismerkintöjä ei ole määritelty.",
-  "reporting.noNonEligible": "Ei henkilöitä, joilla olisi kelpoisuuden tila, löytynyt.",
-  "reporting.noSpoiledVotes": "Mitätöityjä ääniä ei löytynyt.",
-  "reporting.numBallots": "Lippujen lukumäärä",
-  "reporting.numEligibleToVote": "Äänioikeutettuja",
-  "reporting.online": "Verkossa",
-  "reporting.onlineKiosk": "Verkossa/Kioski",
-  "reporting.onlineStatus": "Tila",
-  "reporting.onlineVoters": "Online-äänestäjät",
-  "reporting.other": "Muu",
-  "reporting.otherInfo": "Muut tiedot",
-  "reporting.otherLastNames": "Muut sukunimet",
-  "reporting.otherNames": "Muut nimet",
-  "reporting.overallTurnout": "Yleinen osallistuminen",
-  "reporting.overallTurnoutSummary": "Yleinen osallistumisyhteenveto",
-  "reporting.participationRates": "Osallistumisasteet",
-  "reporting.percentParticipation": "Osallistuminen",
-  "reporting.percentage": "Prosentti",
-  "reporting.performance": "Suoritus",
-  "reporting.phone": "Puhelin",
-  "reporting.positionsToElect": "Valittavat paikat",
-  "reporting.print": "Tulosta",
-  "reporting.printHint": "Jotkut selaimet, kuten Chrome, voivat luoda PDF-kopion raportista tulostettaessa.",
-  "reporting.rank": "Sijoitus",
-  "reporting.reason": "Syy",
-  "reporting.registeredVoters": "Rekisteröidyt äänestäjät",
-  "reporting.registrationLog": "Rekisteröintiloki",
-  "reporting.registrationTime": "Rekisteröinnin aika",
-  "reporting.reportGenerated": "Raportti luotu onnistuneesti",
-  "reporting.reportGenerationError": "Raportin luominen epäonnistui",
-  "reporting.reportName": "Raportin nimi",
-  "reporting.returningVoters": "Paluuväki äänestäjät",
-  "reporting.section": "Osio",
-  "reporting.selectElections": "Valitse vaalit",
-  "reporting.selectElectionsToCompare": "Valitse vertailtavat vaalit",
-  "reporting.selectLocations": "Valitse sijainnit",
-  "reporting.selectMultipleElections": "Valitse useita vaaleja",
-  "reporting.selectReport": "Valitse raportin tyyppi",
-  "reporting.selectReportType": "Valitse luotava raportti",
-  "reporting.selectSortBy": "Valitse järjestys",
-  "reporting.sortBy": "Järjestä",
-  "reporting.spoiledBallots": "Mitätöidyt äänestysliput",
-  "reporting.spoiledVotes": "Mitätöidyt äänet",
-  "reporting.startDate": "Aloituspäivä",
-  "reporting.statistics": "Tilastot",
-  "reporting.status": "Tila",
-  "reporting.sumOfEnvelopesCollected": "Liput yhteensä (ml. käsintehty laskenta)",
-  "reporting.summary": "Yhteenveto",
-  "reporting.summaryReport": "Vaalien yhteenveto",
-  "reporting.summaryStats": "Yhteenvetotilastot",
-  "reporting.teller1": "Laskija 1",
-  "reporting.teller2": "Laskija 2",
-  "reporting.tieGroup": "Tasapeliryhmä {group}",
-  "reporting.tieNote": "* Tasapäästö näytetään / jälkeen",
-  "reporting.ties": "Tasapelit",
-  "reporting.timeBasedTurnout": "Ajan perusteella osallistuminen",
-  "reporting.timePeriod": "Ajanjakso",
-  "reporting.title": "Vaaliraportit",
-  "reporting.to": "asti",
-  "reporting.topCandidates": "Parhaat ehdokkaat",
-  "reporting.total": "Yhteensä",
-  "reporting.totalBallots": "Äänestysliput yhteensä",
-  "reporting.totalBallotsCast": "Heitetyt äänestysliput yhteensä",
-  "reporting.totalEligible": "Oikeutettu",
-  "reporting.totalVoters": "Äänestäjät yhteensä",
-  "reporting.totalVotersHeader": "Äänestäjät yhteensä",
-  "reporting.totalVotes": "Äänet yhteensä",
-  "reporting.turnout": "Osallistuminen",
-  "reporting.turnoutAnalysis": "Osallistumisanalyysi",
-  "reporting.turnoutByLocation": "Osallistuminen sijainnin mukaan",
-  "reporting.turnoutOverTime": "Osallistuminen ajan myötä",
-  "reporting.turnoutPercentage": "Osallistuminen %",
-  "reporting.turnoutRange": "Osallistumisalue",
-  "reporting.validBallots": "Kelvolliset äänestysliput",
-  "reporting.value": "Arvo",
-  "reporting.voteDistribution": "Äänien jakautuminen",
-  "reporting.votePercentage": "Ääniprosentti",
-  "reporting.voteRange": "Äänialue",
-  "reporting.voteTime": "Äänestysaika",
-  "reporting.voted": "Äänestänyt",
-  "reporting.voterName": "Äänestäjän nimi",
-  "reporting.voterReport": "Äänestäjäraportti",
-  "reporting.voterReports": "Äänestäjäraporttrit",
-  "reporting.voterTurnout": "Äänestäjien osallistuminen",
-  "reporting.votes": "Äänet",
-  "reporting.votesOnBallot": "Äänet tässä lipussa",
-  "reporting.votesPerBallot": "Ääniä per äänestyslippu",
-  "reporting.votingMethod": "Äänestystapa",
-  "reporting.whenEmail": "Sähköposti lähetetty",
-  "reporting.whenPhone": "Puhelin lähetetty",
-  "reporting.whenStatus": "Milloin",
-  "reporting.yes": "Kyllä"
+  "reporting.advancedFilters": {
+    "t": "Edistyneet suodattimet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.allCanReceive": {
+    "t": "Henkilöt, joille voidaan äänestää",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.applyFilters": {
+    "t": "Käytä suodattimia",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.area": {
+    "t": "Alue",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.averageVotesPerBallot": {
+    "t": "Keskimäärin ääniä per äänestyslippu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.bahaiId": {
+    "t": "Bahá'í-tunniste",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCode": {
+    "t": "Lippu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCount": {
+    "t": "Äänestyslipun määrä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotId": {
+    "t": "Äänestyslipun tunnus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotLengthDistribution": {
+    "t": "Äänestyslipun pituuden jakautuminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReport": {
+    "t": "Äänestyslippu raportti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReports": {
+    "t": "Lippuraporttrit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsByMethod": {
+    "t": "Liput äänestystavan mukaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsCast": {
+    "t": "Heitetyt äänestysliput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsEntered": {
+    "t": "Syötetyt äänestysliput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.calledIn": {
+    "t": "Puhelimitse",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canReceiveVotes": {
+    "t": "Voi vastaanottaa ääniä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canVote": {
+    "t": "Voi äänestää",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidate": {
+    "t": "Ehdokas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateName": {
+    "t": "Ehdokkaan nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidatePerformance": {
+    "t": "Ehdokkaiden suoritus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateVotes": {
+    "t": "Ehdokkaiden äänet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidates": {
+    "t": "Ehdokkaat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.category": {
+    "t": "Kategoria",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.change": {
+    "t": "Muutos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.charts": {
+    "t": "Kaaviot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.clearFilters": {
+    "t": "Tyhjennä suodattimet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.comparisonSummary": {
+    "t": "Vertailuyhteenveto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.configureReport": {
+    "t": "Määritä raportti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.contender": {
+    "t": "Kilpailija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.convenor": {
+    "t": "Puheenjohtaja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.count": {
+    "t": "Määrä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.cumulativeTurnout": {
+    "t": "Kumulatiivinen osallistuminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.customReport": {
+    "t": "Mukautettu raportti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.date": {
+    "t": "Päivämäärä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateOfElection": {
+    "t": "Vaalien päivämäärä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateRange": {
+    "t": "Päivämääräväli",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.demographicBreakdown": {
+    "t": "Demografinen erittely",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.description": {
+    "t": "Kuvaus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.detailedStatistics": {
+    "t": "Yksityiskohtaiset tilastot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.droppedOff": {
+    "t": "Jätetty",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVoting": {
+    "t": "Ennakkoäänestys",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVotingPercentage": {
+    "t": "Ennakkoäänestys %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.elected": {
+    "t": "Valittu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedCandidates": {
+    "t": "Valitut ehdokkaat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedPersons": {
+    "t": "Valitut",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.election": {
+    "t": "Vaalit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDate": {
+    "t": "Vaalien päivämäärä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDayVoting": {
+    "t": "Vaalipäivän äänestys",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDetails": {
+    "t": "Vaalien tiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionName": {
+    "t": "Vaalien nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionOverview": {
+    "t": "Vaalien yleiskatsaus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionSummary": {
+    "t": "Vaalien yhteenveto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionType": {
+    "t": "Vaalien tyyppi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eligibilityReason": {
+    "t": "Kelpoisuuden syy",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eliminated": {
+    "t": "Eliminoitu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.email": {
+    "t": "Sähköposti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.endDate": {
+    "t": "Lopetuspäivä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterCandidateName": {
+    "t": "Syötä ehdokkaan nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterDescription": {
+    "t": "Syötä kuvaus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterReportName": {
+    "t": "Syötä raportin nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.error": {
+    "t": "Raportin lataaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportCSV": {
+    "t": "Vie CSV",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportExcel": {
+    "t": "Vie Excel",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportFormats": {
+    "t": "Viemismuodot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportPDF": {
+    "t": "Vie PDF",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extra": {
+    "t": "Lisä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extraCandidates": {
+    "t": "Lisäehdokkaat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstChoice": {
+    "t": "Ensimmäinen valinta %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstName": {
+    "t": "Etunimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstTimeVoters": {
+    "t": "Ensimmäistä kertaa äänestäjät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.flags": {
+    "t": "Merkinnät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateComparison": {
+    "t": "Luo vertailu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateCustomReport": {
+    "t": "Luo mukautettu raportti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateReport": {
+    "t": "Luo raportti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.groupN": {
+    "t": "Ryhmä {n}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInEmail": {
+    "t": "Kirjautunut (Sähköposti)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInPhone": {
+    "t": "Kirjautunut (Puhelin)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.historicalComparison": {
+    "t": "Historiallinen vertailu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.imported": {
+    "t": "Tuotu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPerson": {
+    "t": "Paikan päällä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPersonVoters": {
+    "t": "Paikan päällä äänestäjät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.includeSections": {
+    "t": "Sisällytä osiot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.lastName": {
+    "t": "Sukunimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.loading": {
+    "t": "Ladataan raporttia...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.location": {
+    "t": "Sijainti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationReport": {
+    "t": "Sijaintiraportti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationStatistics": {
+    "t": "Sijaintitilastot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locations": {
+    "t": "Sijainnit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.mailedIn": {
+    "t": "Postitse",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.matchingNames": {
+    "t": "Vastaavat nimet tuloksissa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.maxVotesOnBallot": {
+    "t": "Enimmäisäänet äänestyslipussa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.metricsToCompare": {
+    "t": "Vertailtavat mittarit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.minVotesOnBallot": {
+    "t": "Vähimmäisäänet äänestyslipussa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.name": {
+    "t": "Nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.no": {
+    "t": "Ei",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noBallots": {
+    "t": "Tälle suodattimelle ei löytynyt lippuja.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noChanges": {
+    "t": "Ei muuttuneita henkilötietoja löytynyt.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noDuplicates": {
+    "t": "Yhtään kaksinkertaista lippua ei löytynyt.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noEmails": {
+    "t": "Sähköpostia/puhelinta tietoja ei löytynyt.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noFlags": {
+    "t": "Osallistumismerkintöjä ei ole määritelty.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noNonEligible": {
+    "t": "Ei henkilöitä, joilla olisi kelpoisuuden tila, löytynyt.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noSpoiledVotes": {
+    "t": "Mitätöityjä ääniä ei löytynyt.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numBallots": {
+    "t": "Lippujen lukumäärä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numEligibleToVote": {
+    "t": "Äänioikeutettuja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.online": {
+    "t": "Verkossa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineKiosk": {
+    "t": "Verkossa/Kioski",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineStatus": {
+    "t": "Tila",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineVoters": {
+    "t": "Online-äänestäjät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.other": {
+    "t": "Muu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherInfo": {
+    "t": "Muut tiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherLastNames": {
+    "t": "Muut sukunimet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherNames": {
+    "t": "Muut nimet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnout": {
+    "t": "Yleinen osallistuminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnoutSummary": {
+    "t": "Yleinen osallistumisyhteenveto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.participationRates": {
+    "t": "Osallistumisasteet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentParticipation": {
+    "t": "Osallistuminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentage": {
+    "t": "Prosentti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.performance": {
+    "t": "Suoritus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.phone": {
+    "t": "Puhelin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.positionsToElect": {
+    "t": "Valittavat paikat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.print": {
+    "t": "Tulosta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.printHint": {
+    "t": "Jotkut selaimet, kuten Chrome, voivat luoda PDF-kopion raportista tulostettaessa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.rank": {
+    "t": "Sijoitus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reason": {
+    "t": "Syy",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registeredVoters": {
+    "t": "Rekisteröidyt äänestäjät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationLog": {
+    "t": "Rekisteröintiloki",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationTime": {
+    "t": "Rekisteröinnin aika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerated": {
+    "t": "Raportti luotu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerationError": {
+    "t": "Raportin luominen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportName": {
+    "t": "Raportin nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.returningVoters": {
+    "t": "Paluuväki äänestäjät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.section": {
+    "t": "Osio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElections": {
+    "t": "Valitse vaalit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElectionsToCompare": {
+    "t": "Valitse vertailtavat vaalit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectLocations": {
+    "t": "Valitse sijainnit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectMultipleElections": {
+    "t": "Valitse useita vaaleja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReport": {
+    "t": "Valitse raportin tyyppi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReportType": {
+    "t": "Valitse luotava raportti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectSortBy": {
+    "t": "Valitse järjestys",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sortBy": {
+    "t": "Järjestä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledBallots": {
+    "t": "Mitätöidyt äänestysliput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledVotes": {
+    "t": "Mitätöidyt äänet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.startDate": {
+    "t": "Aloituspäivä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.statistics": {
+    "t": "Tilastot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.status": {
+    "t": "Tila",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sumOfEnvelopesCollected": {
+    "t": "Liput yhteensä (ml. käsintehty laskenta)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summary": {
+    "t": "Yhteenveto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryReport": {
+    "t": "Vaalien yhteenveto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryStats": {
+    "t": "Yhteenvetotilastot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller1": {
+    "t": "Laskija 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller2": {
+    "t": "Laskija 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieGroup": {
+    "t": "Tasapeliryhmä {group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieNote": {
+    "t": "* Tasapäästö näytetään / jälkeen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ties": {
+    "t": "Tasapelit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timeBasedTurnout": {
+    "t": "Ajan perusteella osallistuminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timePeriod": {
+    "t": "Ajanjakso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.title": {
+    "t": "Vaaliraportit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.to": {
+    "t": "asti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.topCandidates": {
+    "t": "Parhaat ehdokkaat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.total": {
+    "t": "Yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallots": {
+    "t": "Äänestysliput yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallotsCast": {
+    "t": "Heitetyt äänestysliput yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalEligible": {
+    "t": "Oikeutettu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVoters": {
+    "t": "Äänestäjät yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotersHeader": {
+    "t": "Äänestäjät yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotes": {
+    "t": "Äänet yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnout": {
+    "t": "Osallistuminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutAnalysis": {
+    "t": "Osallistumisanalyysi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutByLocation": {
+    "t": "Osallistuminen sijainnin mukaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutOverTime": {
+    "t": "Osallistuminen ajan myötä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutPercentage": {
+    "t": "Osallistuminen %",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutRange": {
+    "t": "Osallistumisalue",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.validBallots": {
+    "t": "Kelvolliset äänestysliput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.value": {
+    "t": "Arvo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteDistribution": {
+    "t": "Äänien jakautuminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votePercentage": {
+    "t": "Ääniprosentti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteRange": {
+    "t": "Äänialue",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteTime": {
+    "t": "Äänestysaika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voted": {
+    "t": "Äänestänyt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterName": {
+    "t": "Äänestäjän nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReport": {
+    "t": "Äänestäjäraportti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReports": {
+    "t": "Äänestäjäraporttrit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterTurnout": {
+    "t": "Äänestäjien osallistuminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votes": {
+    "t": "Äänet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesOnBallot": {
+    "t": "Äänet tässä lipussa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesPerBallot": {
+    "t": "Ääniä per äänestyslippu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votingMethod": {
+    "t": "Äänestystapa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenEmail": {
+    "t": "Sähköposti lähetetty",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenPhone": {
+    "t": "Puhelin lähetetty",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenStatus": {
+    "t": "Milloin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.yes": {
+    "t": "Kyllä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

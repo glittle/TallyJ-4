@@ -1,47 +1,227 @@
 {
-  "locations.computer.browserInfo": "Taarifa za Kivinjari",
-  "locations.computer.browserInfoHelp": "Zimetambuliwa kiotomatiki kutoka kwa kivinjari chako",
-  "locations.computer.browserInfoMaxLength": "Taarifa za kivinjari haziwezi kuzidi herufi 250",
-  "locations.computer.browserInfoPlaceholder": "Taarifa za kivinjari zimetambuliwa kiotomatiki",
-  "locations.computer.cancel": "Ghairi",
-  "locations.computer.code": "Msimbo wa Kompyuta",
-  "locations.computer.codeHelp": "Msimbo wa herufi 2 (mf., AA, AB, A1). Acha tupu kwa utengenezaji wa kiotomatiki.",
-  "locations.computer.codeInvalid": "Msimbo wa kompyuta lazima uwe herufi 2 kubwa au nambari",
-  "locations.computer.codeLength": "Msimbo wa kompyuta lazima uwe herufi 2 haswa",
-  "locations.computer.codePlaceholder": "AA (acha tupu kwa utengenezaji wa kiotomatiki)",
-  "locations.computer.ipAddress": "Anwani ya IP",
-  "locations.computer.ipAddressHelp": "Hiari: Anwani ya IP ya kompyuta",
-  "locations.computer.ipAddressMaxLength": "Anwani ya IP haiwezi kuzidi herufi 50",
-  "locations.computer.ipAddressPlaceholder": "Hiari: Ingiza anwani ya IP",
-  "locations.computer.register": "Jisajili",
-  "locations.computer.success": "Kompyuta imesajiliwa kwa mafanikio",
-  "locations.computer.title": "Sajili Kompyuta",
-  "locations.currentLocation": "Eneo la Sasa",
-  "locations.form.cancel": "Ghairi",
-  "locations.form.contactInfo": "Taarifa za Mawasiliano",
-  "locations.form.contactInfoMaxLength": "Taarifa za mawasiliano haziwezi kuzidi herufi 250",
-  "locations.form.contactInfoPlaceholder": "Ingiza taarifa za mawasiliano",
-  "locations.form.create": "Unda",
-  "locations.form.created": "Eneo limeundwa kwa mafanikio",
-  "locations.form.latitude": "Latitudo",
-  "locations.form.latitudeHelp": "Kipimo: -90 hadi 90",
-  "locations.form.latitudeInvalid": "Latitudo lazima iwe kuratibu sahihi kati ya -90 na 90",
-  "locations.form.latitudePlaceholder": "mf., 37.7749",
-  "locations.form.longitude": "Longitudo",
-  "locations.form.longitudeHelp": "Kipimo: -180 hadi 180",
-  "locations.form.longitudeInvalid": "Longitudo lazima iwe kuratibu sahihi kati ya -180 na 180",
-  "locations.form.longitudePlaceholder": "mf., -122.4194",
-  "locations.form.name": "Jina la Eneo",
-  "locations.form.nameMaxLength": "Jina la eneo haliwezi kuzidi herufi 50",
-  "locations.form.namePlaceholder": "Ingiza jina la eneo",
-  "locations.form.nameRequired": "Jina la eneo linahitajika",
-  "locations.form.save": "Hifadhi",
-  "locations.form.sortOrder": "Mpangilio wa Kupanga",
-  "locations.form.sortOrderHelp": "Hutumika kupanga maeneo katika orodha",
-  "locations.form.sortOrderInvalid": "Mpangilio wa kupanga lazima uwe nambari",
-  "locations.form.titleAdd": "Ongeza Eneo",
-  "locations.form.titleEdit": "Hariri Eneo",
-  "locations.form.updated": "Eneo limesasishwa kwa mafanikio",
-  "locations.locationSelected": "Eneo limechaguliwa kwa mafanikio",
-  "locations.selectLocation": "Chagua Eneo"
+  "locations.computer.browserInfo": {
+    "t": "Taarifa za Kivinjari",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoHelp": {
+    "t": "Zimetambuliwa kiotomatiki kutoka kwa kivinjari chako",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoMaxLength": {
+    "t": "Taarifa za kivinjari haziwezi kuzidi herufi 250",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoPlaceholder": {
+    "t": "Taarifa za kivinjari zimetambuliwa kiotomatiki",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.cancel": {
+    "t": "Ghairi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.code": {
+    "t": "Msimbo wa Kompyuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeHelp": {
+    "t": "Msimbo wa herufi 2 (mf., AA, AB, A1). Acha tupu kwa utengenezaji wa kiotomatiki.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeInvalid": {
+    "t": "Msimbo wa kompyuta lazima uwe herufi 2 kubwa au nambari",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeLength": {
+    "t": "Msimbo wa kompyuta lazima uwe herufi 2 haswa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codePlaceholder": {
+    "t": "AA (acha tupu kwa utengenezaji wa kiotomatiki)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddress": {
+    "t": "Anwani ya IP",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressHelp": {
+    "t": "Hiari: Anwani ya IP ya kompyuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressMaxLength": {
+    "t": "Anwani ya IP haiwezi kuzidi herufi 50",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressPlaceholder": {
+    "t": "Hiari: Ingiza anwani ya IP",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.register": {
+    "t": "Jisajili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.success": {
+    "t": "Kompyuta imesajiliwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.title": {
+    "t": "Sajili Kompyuta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.currentLocation": {
+    "t": "Eneo la Sasa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.cancel": {
+    "t": "Ghairi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfo": {
+    "t": "Taarifa za Mawasiliano",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoMaxLength": {
+    "t": "Taarifa za mawasiliano haziwezi kuzidi herufi 250",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoPlaceholder": {
+    "t": "Ingiza taarifa za mawasiliano",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.create": {
+    "t": "Unda",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.created": {
+    "t": "Eneo limeundwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitude": {
+    "t": "Latitudo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeHelp": {
+    "t": "Kipimo: -90 hadi 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeInvalid": {
+    "t": "Latitudo lazima iwe kuratibu sahihi kati ya -90 na 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudePlaceholder": {
+    "t": "mf., 37.7749",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitude": {
+    "t": "Longitudo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeHelp": {
+    "t": "Kipimo: -180 hadi 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeInvalid": {
+    "t": "Longitudo lazima iwe kuratibu sahihi kati ya -180 na 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudePlaceholder": {
+    "t": "mf., -122.4194",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.name": {
+    "t": "Jina la Eneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameMaxLength": {
+    "t": "Jina la eneo haliwezi kuzidi herufi 50",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.namePlaceholder": {
+    "t": "Ingiza jina la eneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameRequired": {
+    "t": "Jina la eneo linahitajika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.save": {
+    "t": "Hifadhi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrder": {
+    "t": "Mpangilio wa Kupanga",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderHelp": {
+    "t": "Hutumika kupanga maeneo katika orodha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderInvalid": {
+    "t": "Mpangilio wa kupanga lazima uwe nambari",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleAdd": {
+    "t": "Ongeza Eneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleEdit": {
+    "t": "Hariri Eneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.updated": {
+    "t": "Eneo limesasishwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.locationSelected": {
+    "t": "Eneo limechaguliwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.selectLocation": {
+    "t": "Chagua Eneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

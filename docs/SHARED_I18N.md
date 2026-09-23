@@ -28,25 +28,34 @@ backend/appsettings.json
 
 ---
 
-## File format: flat dotted JSON
+## File format: flat dotted keys, rich leaves
 
-Files are `Dictionary<string, string>`, not nested objects:
+Keys stay flat dotted strings. Each message leaf is `{ t, s, w }`, not a bare string and not a nested message tree:
 
 ```json
 {
-  "common.appTitle": "TallyJ v4",
-  "auth.errors.invalidCredentials": "Invalid email or password",
-  "tally.section.elected": "Elected"
+  "common.appTitle": {
+    "t": "TallyJ v4",
+    "s": "source",
+    "w": "2026-09-23T17:00:00Z"
+  },
+  "auth.errors.invalidCredentials": {
+    "t": "Invalid email or password",
+    "s": "source",
+    "w": "2026-09-23T17:00:00Z"
+  }
 }
 ```
 
-Why flat:
+`t` is the text. `s` is `source` for English (and for string leaves in a root shared file such as `common.json`). Other locales use `ai`, `human`, or `approved`. `w` is when that text was last set (ISO-8601 UTC). See `docs/i18n-rich-entries-upgrade.md` for the AI overwrite rules.
 
-- C# deserializes each file as `Dictionary<string, string>` and looks up `"auth.errors.invalidCredentials"` as-is.
-- Vue-i18n wants nested objects, so the frontend runs a `flatToNested()` split-on-`.` before `createI18n`.
-- A key cannot be both a leaf string and a parent prefix. `people.notifyWhatsApp` as a button label plus `people.notifyWhatsApp.textNotSet` as an error makes `flatToNested` throw (`Cannot create property 'textNotSet' on string`). Use a sibling leaf (`people.notifyWhatsAppSend`) or a different parent.
+Why flat keys:
 
-If you store nested JSON (`{ "auth": { "errors": { ... } } }`), the C# localizer will not find keys. If you store only nested Vue files, you have two catalogs again.
+- The C# localizer looks up `"auth.errors.invalidCredentials"` as a key and returns `t`. It does not deserialize the file as `Dictionary<string, string>`.
+- Vue-i18n wants nested objects of strings, so the frontend unwraps each leaf to `t`, then runs `flatToNested()` (split on `.`) before `createI18n`.
+- A key cannot be both a leaf and a parent prefix. `people.notifyWhatsApp` as a button label plus `people.notifyWhatsApp.textNotSet` as an error makes `flatToNested` throw. Use a sibling leaf (`people.notifyWhatsAppSend`) or a different parent.
+
+If you store nested JSON (`{ "auth": { "errors": { ... } } }`), the C# localizer will not find keys. If you store only nested Vue files, you have two catalogs again. Production `bundled/{lang}.json` is the unwrapped text catalog (no `s` / `w`). Do not point the API at that bundle.
 
 Group files by area (`auth.json`, `tally.json`, `errors.json`). Merge all `*.json` in a locale folder into one catalog. Duplicate keys: first wins; log a warning.
 
@@ -86,12 +95,12 @@ TallyJ uses (1) for auth and tally section labels, and (2) for election-stage er
 - English loaded eagerly; other locales lazy.
 - Preferred language: `localStorage`, else `navigator.languages`, else `en`.
 - Every API call sets `Accept-Language` from the current locale.
-- Production build **merges** per-locale JSON files into `locales/bundled/{lang}.json` (one chunk per language). Dev loads the per-file sources. Never edit `bundled/`.
+- Production build **merges** per-locale JSON files into `locales/bundled/{lang}.json` (one chunk per language) **after unwrapping** to text. Dev loads the per-file sources and unwraps at runtime. Never edit `bundled/`.
 - RTL: `:lang(ar), :lang(fa) { direction: rtl }`.
 
 Adding a string:
 
-1. Add it **only** under `locales/en/<area>.json`.
+1. Add it **only** under `locales/en/<area>.json` as `{ "t": "...", "s": "source", "w": "<now, ISO-8601 UTC>" }`.
 2. Use `$t('area.foo')` or `t('area.foo', { name })`.
 3. Do not paste English into `fr/`, `es/`, … as a placeholder. Empty/missing is better: it is obvious what still needs translation.
 
@@ -146,10 +155,11 @@ If you call `_localizer["common.confirmDelete", itemName]` on a `{item}` string,
 
 A node script (`validate:i18n`) that:
 
-- Parses every JSON file
-- Rejects empty values and non-strings
+- Parses every JSON file (skips generated `bundled/`)
+- Requires each message leaf to be `{ t, s, w }` with a non-empty `t`, an allowed `s`, and an ISO-8601 UTC `w`
+- Rejects bare strings in source files
 - Rejects duplicate keys in a file and across files in one locale
-- Optionally checks key-set equality across locales
+- Checks key-set equality across locales (keys, not `t` text)
 
 Run it locally when you touch locales. Decide whether CI should fail on missing keys in other languages.
 
@@ -166,7 +176,7 @@ Do not document A and enforce B.
 
 For a new .NET  + Vue repo:
 
-1. `frontend/src/locales/en/*.json` — flat dotted keys, one file per area.
+1. `frontend/src/locales/en/*.json` — flat dotted keys, rich `{ t, s, w }` leaves, one file per area.
 2. Vue: `flatToNested` → `createI18n`, fallback `en`, `Accept-Language` on the API client.
 3. C#: `JsonStringLocalizer` reading `Localization:ResourcesPath`, `UseRequestLocalization`, **non-empty `SupportedCultures`**, English fallback on miss.
 4. Two call patterns: lookup vs return-the-key. Default to return-the-key for UI.

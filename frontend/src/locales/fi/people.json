@@ -1,133 +1,657 @@
 {
-  "people.addPerson": "Lisää henkilö",
-  "people.ageGroup.adult": "Aikuinen",
-  "people.ageGroup.youth": "Nuori",
-  "people.ageGroupLabel": "Ikäryhmä",
-  "people.allPeople": "Kaikki ihmiset",
-  "people.area": "Alue",
-  "people.bahaiId": "Bahá'í ID",
-  "people.bulkActions": "Massatoiminnot",
-  "people.bulkDeleteError": "Joidenkin henkilöiden poistaminen epäonnistui",
-  "people.bulkDeleteMessage": "Oletko varma, että haluat poistaa {count} valittua henkilöä?",
-  "people.bulkDeleteSuccess": "{count} henkilöä poistettu onnistuneesti",
-  "people.canReceiveVotes": "Voi vastaanottaa ääniä",
-  "people.canVote": "Voi äänestää",
-  "people.candidates": "Kelpoiset ehdokkaat",
-  "people.confirmBulkDelete": "Vahvista massapoisto",
-  "people.createSuccess": "Henkilö lisätty onnistuneesti",
-  "people.deleteConfirm": "Oletko varma, että haluat poistaa henkilön {name}?",
-  "people.deleteError": "Henkilön poistaminen epäonnistui",
-  "people.deleteSelected": "Poista valitut ({count})",
-  "people.deleteSuccess": "Henkilö poistettu onnistuneesti",
-  "people.dropFileHere": "Pudota tiedosto tähän tai napsauta ladataksesi",
-  "people.editPerson": "Muokkaa henkilöä",
-  "people.email": "Sähköposti",
-  "people.emailInvalid": "Syötä kelvollinen sähköpostiosoite",
-  "people.exportError": "Ihmisten vienti epäonnistui",
-  "people.exportPeople": "Vie ihmisiä",
-  "people.exportSuccess": "Ihmiset viety onnistuneesti",
-  "people.fileTooLarge": "Tiedosto liian suuri. Lataa tiedosto, joka on pienempi kuin 10 Mt.",
-  "people.firstName": "Etunimi",
-  "people.fullName": "Koko nimi",
-  "people.import.action": "Toiminto",
-  "people.import.areaDesc": "Maantieteellinen alue",
-  "people.import.bahaiIdDesc": "Bahá'í ID-numero",
-  "people.import.clickToUpload": "napsauta ladataksesi",
-  "people.import.confirmDeleteAllPeople": "Vahvista kaikkien henkilöiden poistaminen",
-  "people.import.confirmDeleteFile": "Oletko varma, että haluat poistaa tämän tiedoston?",
-  "people.import.contentEncoding": "Sisällön koodaus",
-  "people.import.currentPeopleCount": "Nykyinen henkilöiden määrä",
-  "people.import.dataRows": "Datarivit",
-  "people.import.deleteAllPeople": "Poista kaikki henkilöt",
-  "people.import.deleteAllPeopleError": "Kaikkien henkilöiden poistaminen epäonnistui",
-  "people.import.deleteAllPeopleMessage": "Oletko varma, että haluat poistaa kaikki henkilöt tästä vaalista? Tätä toimintoa ei voi peruuttaa.",
-  "people.import.deleteFileError": "Tiedoston poistaminen epäonnistui",
-  "people.import.dropFile": "Pudota tiedosto tähän tai",
-  "people.import.duplicateDesc": "Henkilö on kaksoiskappale",
-  "people.import.eligibilityDesc": "Kelpoisuustila",
-  "people.import.eligibilityValues": "Kelpoisuustilan arvot",
-  "people.import.eligibleDesc": "Henkilö on oikeutettu äänestämään",
-  "people.import.emailDesc": "Sähköpostiosoite",
-  "people.import.fileName": "Tiedoston nimi",
-  "people.import.filesOnServer": "Palvelimella olevat tiedostot",
-  "people.import.firstNameDesc": "Henkilön etunimi",
-  "people.import.firstNameLastNameRequired": "Etunimi- ja Sukunimi-kentät on kartoitettava ennen tuonnin jatkamista.",
-  "people.import.headerAutoDetected": "Otsikot havaittu automaattisesti rivillä {row}",
-  "people.import.headersOnLine": "Otsikot rivillä",
-  "people.import.headersOnLineTooltip": "Määritä, millä rivillä sarakeotsikot ovat. Excel-tiedostoille havaitaan automaattisesti, mutta voidaan säätää tarvittaessa.",
-  "people.import.ignore": "(ohita)",
-  "people.import.importNow": "Tuo nyt",
-  "people.import.importResults": "Tuonnin tulokset",
-  "people.import.importStepDesc": "Tuontivaihe toteutetaan seuraavassa vaiheessa",
-  "people.import.importSummary": "Tuonnin yhteenveto",
-  "people.import.importing": "Tuodaan ihmisiä...",
-  "people.import.ineligibleDesc": "Henkilö ei ole oikeutettu äänestämään",
-  "people.import.lastNameDesc": "Henkilön sukunimi",
-  "people.import.loadFilesError": "Tuontitiedostojen lataaminen epäonnistui",
-  "people.import.mapColumns": "Kartoituskentät",
-  "people.import.mapColumnsDesc": "Kartoitta tiedostosi sarakkeet TallyJ-kenttiin",
-  "people.import.mapTo": "Kartoitta:",
-  "people.import.mappedFields": "Kartoitetut kentät",
-  "people.import.mappingSaved": "Sarakkeen kartoitus tallennettu onnistuneesti",
-  "people.import.otherActions": "Muut toiminnot",
-  "people.import.otherInfoDesc": "Lisätiedot",
-  "people.import.otherLastNamesDesc": "Lisäsukunimet",
-  "people.import.otherNamesDesc": "Lisäetunimet",
-  "people.import.peopleAdded": "Lisätyt henkilöt",
-  "people.import.peopleSkipped": "Ohitetut henkilöt",
-  "people.import.phoneDesc": "Puhelinnumero",
-  "people.import.preview": "Esikatselu",
-  "people.import.reparse": "Jäsennä uudelleen",
-  "people.import.reviewImport": "Tarkista ja tuo",
-  "people.import.saveMapping": "Tallenna kartoitus",
-  "people.import.select": "Valitse",
-  "people.import.selected": "Valittu",
-  "people.import.size": "Koko",
-  "people.import.status": "Tila",
-  "people.import.step1": "Lataa tiedosto",
-  "people.import.step2": "Kartoituskentät",
-  "people.import.step3": "Tuo",
-  "people.import.supportedFormats": "Tuetut muodot: CSV, TSV, TAB, TXT, XLSX (enintään 10 Mt)",
-  "people.import.tallyJField": "TallyJ-kenttä",
-  "people.import.tallyJFields": "TallyJ-kenttien viite",
-  "people.import.timeElapsed": "Kulunut aika",
-  "people.import.title": "Tuo ihmisiä",
-  "people.import.underAgeDesc": "Henkilö on alle äänestysikäinen",
-  "people.import.uploadError": "Tiedoston lataaminen epäonnistui",
-  "people.import.uploadFile": "Lataa tiedosto",
-  "people.import.uploadTime": "Latausaika",
-  "people.import.validationWarning": "Validointivaroitus",
-  "people.import.warnings": "Varoitukset",
-  "people.importError": "Tuonnin aloittaminen epäonnistui",
-  "people.importFormat": "Lataa CSV- tai Excel-tiedosto seuraavilla sarakkeilla:",
-  "people.importInstructions": "Tuontiohjeet",
-  "people.importOptionalFields": "Valinnaiset: Sähköposti, Puhelin, Alue, Bahá'í ID, Kelpoisuus",
-  "people.importPeople": "Tuo ihmisiä",
-  "people.importRequiredFields": "Vaaditut: Etunimi, Sukunimi",
-  "people.importStarted": "Tuonti aloitettu. Odota valmistumista.",
-  "people.importWarning": "Olemassa olevat henkilöt vastaavilla nimillä päivitetään. Uudet henkilöt luodaan.",
-  "people.invalidFileType": "Virheellinen tiedostotyyppi. Lataa CSV- tai Excel-tiedosto.",
-  "people.kioskCode": "Kiosk Code",
-  "people.kioskCodeExpired": "This code has expired. Renew it before the voter logs in.",
-  "people.kioskCodeExpires": "Expires {time} ({minutes} min left).",
-  "people.kioskCodeGenerate": "Make a kiosk code",
-  "people.kioskCodeGenerated": "Kiosk code is ready to share.",
-  "people.kioskCodeNone": "No kiosk code yet. Generate one when the voter is at the kiosk.",
-  "people.kioskCodeNote": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
-  "people.kioskCodeRenew": "Renew kiosk code",
-  "people.lastName": "Sukunimi",
-  "people.lastNameRequired": "Sukunimi vaaditaan",
-  "people.leaveElectionGroupError": "Vaaliryhmästä lähteminen epäonnistui:",
-  "people.loadError": "Ihmisten lataaminen epäonnistui",
-  "people.management": "Ihmisten hallinta",
-  "people.phone": "Puhelin",
-  "people.phoneOnlineVoter.recentSms": "Recent SMS",
-  "people.phoneOnlineVoter.smsLogNoStatus": "Sent",
-  "people.phoneOnlineVoter.smsLogError": "Error {code}",
-  "people.saveError": "Henkilön tallentaminen epäonnistui",
-  "people.search": "Hae nimen, sähköpostin tai ID:n mukaan",
-  "people.searchError": "Ihmisten hakeminen epäonnistui",
-  "people.supportedFormats": "Tuetut muodot: CSV, XLS, XLSX (enintään 10 Mt)",
-  "people.updateSuccess": "Henkilö päivitetty onnistuneesti",
-  "people.voters": "Äänestäjät"
+  "people.addPerson": {
+    "t": "Lisää henkilö",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.adult": {
+    "t": "Aikuinen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.youth": {
+    "t": "Nuori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroupLabel": {
+    "t": "Ikäryhmä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.allPeople": {
+    "t": "Kaikki ihmiset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.area": {
+    "t": "Alue",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bahaiId": {
+    "t": "Bahá'í ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkActions": {
+    "t": "Massatoiminnot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteError": {
+    "t": "Joidenkin henkilöiden poistaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteMessage": {
+    "t": "Oletko varma, että haluat poistaa {count} valittua henkilöä?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteSuccess": {
+    "t": "{count} henkilöä poistettu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canReceiveVotes": {
+    "t": "Voi vastaanottaa ääniä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canVote": {
+    "t": "Voi äänestää",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.candidates": {
+    "t": "Kelpoiset ehdokkaat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.confirmBulkDelete": {
+    "t": "Vahvista massapoisto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.createSuccess": {
+    "t": "Henkilö lisätty onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteConfirm": {
+    "t": "Oletko varma, että haluat poistaa henkilön {name}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteError": {
+    "t": "Henkilön poistaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSelected": {
+    "t": "Poista valitut ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSuccess": {
+    "t": "Henkilö poistettu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.dropFileHere": {
+    "t": "Pudota tiedosto tähän tai napsauta ladataksesi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.editPerson": {
+    "t": "Muokkaa henkilöä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.email": {
+    "t": "Sähköposti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.emailInvalid": {
+    "t": "Syötä kelvollinen sähköpostiosoite",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportError": {
+    "t": "Ihmisten vienti epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportPeople": {
+    "t": "Vie ihmisiä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportSuccess": {
+    "t": "Ihmiset viety onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fileTooLarge": {
+    "t": "Tiedosto liian suuri. Lataa tiedosto, joka on pienempi kuin 10 Mt.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.firstName": {
+    "t": "Etunimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fullName": {
+    "t": "Koko nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.action": {
+    "t": "Toiminto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.areaDesc": {
+    "t": "Maantieteellinen alue",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.bahaiIdDesc": {
+    "t": "Bahá'í ID-numero",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.clickToUpload": {
+    "t": "napsauta ladataksesi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteAllPeople": {
+    "t": "Vahvista kaikkien henkilöiden poistaminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteFile": {
+    "t": "Oletko varma, että haluat poistaa tämän tiedoston?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.contentEncoding": {
+    "t": "Sisällön koodaus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.currentPeopleCount": {
+    "t": "Nykyinen henkilöiden määrä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dataRows": {
+    "t": "Datarivit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeople": {
+    "t": "Poista kaikki henkilöt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleError": {
+    "t": "Kaikkien henkilöiden poistaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleMessage": {
+    "t": "Oletko varma, että haluat poistaa kaikki henkilöt tästä vaalista? Tätä toimintoa ei voi peruuttaa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteFileError": {
+    "t": "Tiedoston poistaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dropFile": {
+    "t": "Pudota tiedosto tähän tai",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.duplicateDesc": {
+    "t": "Henkilö on kaksoiskappale",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityDesc": {
+    "t": "Kelpoisuustila",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityValues": {
+    "t": "Kelpoisuustilan arvot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibleDesc": {
+    "t": "Henkilö on oikeutettu äänestämään",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.emailDesc": {
+    "t": "Sähköpostiosoite",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileName": {
+    "t": "Tiedoston nimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.filesOnServer": {
+    "t": "Palvelimella olevat tiedostot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameDesc": {
+    "t": "Henkilön etunimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameLastNameRequired": {
+    "t": "Etunimi- ja Sukunimi-kentät on kartoitettava ennen tuonnin jatkamista.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headerAutoDetected": {
+    "t": "Otsikot havaittu automaattisesti rivillä {row}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLine": {
+    "t": "Otsikot rivillä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLineTooltip": {
+    "t": "Määritä, millä rivillä sarakeotsikot ovat. Excel-tiedostoille havaitaan automaattisesti, mutta voidaan säätää tarvittaessa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ignore": {
+    "t": "(ohita)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importNow": {
+    "t": "Tuo nyt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importResults": {
+    "t": "Tuonnin tulokset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importStepDesc": {
+    "t": "Tuontivaihe toteutetaan seuraavassa vaiheessa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importSummary": {
+    "t": "Tuonnin yhteenveto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importing": {
+    "t": "Tuodaan ihmisiä...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ineligibleDesc": {
+    "t": "Henkilö ei ole oikeutettu äänestämään",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.lastNameDesc": {
+    "t": "Henkilön sukunimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.loadFilesError": {
+    "t": "Tuontitiedostojen lataaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumns": {
+    "t": "Kartoituskentät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumnsDesc": {
+    "t": "Kartoitta tiedostosi sarakkeet TallyJ-kenttiin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapTo": {
+    "t": "Kartoitta:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappedFields": {
+    "t": "Kartoitetut kentät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappingSaved": {
+    "t": "Sarakkeen kartoitus tallennettu onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherActions": {
+    "t": "Muut toiminnot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherInfoDesc": {
+    "t": "Lisätiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherLastNamesDesc": {
+    "t": "Lisäsukunimet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherNamesDesc": {
+    "t": "Lisäetunimet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleAdded": {
+    "t": "Lisätyt henkilöt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleSkipped": {
+    "t": "Ohitetut henkilöt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.phoneDesc": {
+    "t": "Puhelinnumero",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.preview": {
+    "t": "Esikatselu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reparse": {
+    "t": "Jäsennä uudelleen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reviewImport": {
+    "t": "Tarkista ja tuo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.saveMapping": {
+    "t": "Tallenna kartoitus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.select": {
+    "t": "Valitse",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.selected": {
+    "t": "Valittu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.size": {
+    "t": "Koko",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.status": {
+    "t": "Tila",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step1": {
+    "t": "Lataa tiedosto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step2": {
+    "t": "Kartoituskentät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step3": {
+    "t": "Tuo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.supportedFormats": {
+    "t": "Tuetut muodot: CSV, TSV, TAB, TXT, XLSX (enintään 10 Mt)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJField": {
+    "t": "TallyJ-kenttä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJFields": {
+    "t": "TallyJ-kenttien viite",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.timeElapsed": {
+    "t": "Kulunut aika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.title": {
+    "t": "Tuo ihmisiä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.underAgeDesc": {
+    "t": "Henkilö on alle äänestysikäinen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadError": {
+    "t": "Tiedoston lataaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadFile": {
+    "t": "Lataa tiedosto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadTime": {
+    "t": "Latausaika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.validationWarning": {
+    "t": "Validointivaroitus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.warnings": {
+    "t": "Varoitukset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importError": {
+    "t": "Tuonnin aloittaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importFormat": {
+    "t": "Lataa CSV- tai Excel-tiedosto seuraavilla sarakkeilla:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importInstructions": {
+    "t": "Tuontiohjeet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importOptionalFields": {
+    "t": "Valinnaiset: Sähköposti, Puhelin, Alue, Bahá'í ID, Kelpoisuus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importPeople": {
+    "t": "Tuo ihmisiä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importRequiredFields": {
+    "t": "Vaaditut: Etunimi, Sukunimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importStarted": {
+    "t": "Tuonti aloitettu. Odota valmistumista.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importWarning": {
+    "t": "Olemassa olevat henkilöt vastaavilla nimillä päivitetään. Uudet henkilöt luodaan.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.invalidFileType": {
+    "t": "Virheellinen tiedostotyyppi. Lataa CSV- tai Excel-tiedosto.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCode": {
+    "t": "Kiosk Code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpired": {
+    "t": "This code has expired. Renew it before the voter logs in.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpires": {
+    "t": "Expires {time} ({minutes} min left).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerate": {
+    "t": "Make a kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerated": {
+    "t": "Kiosk code is ready to share.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNone": {
+    "t": "No kiosk code yet. Generate one when the voter is at the kiosk.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNote": {
+    "t": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeRenew": {
+    "t": "Renew kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastName": {
+    "t": "Sukunimi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastNameRequired": {
+    "t": "Sukunimi vaaditaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.leaveElectionGroupError": {
+    "t": "Vaaliryhmästä lähteminen epäonnistui:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.loadError": {
+    "t": "Ihmisten lataaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.management": {
+    "t": "Ihmisten hallinta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phone": {
+    "t": "Puhelin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.recentSms": {
+    "t": "Recent SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogNoStatus": {
+    "t": "Sent",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogError": {
+    "t": "Error {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.saveError": {
+    "t": "Henkilön tallentaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.search": {
+    "t": "Hae nimen, sähköpostin tai ID:n mukaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.searchError": {
+    "t": "Ihmisten hakeminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.supportedFormats": {
+    "t": "Tuetut muodot: CSV, XLS, XLSX (enintään 10 Mt)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.updateSuccess": {
+    "t": "Henkilö päivitetty onnistuneesti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.voters": {
+    "t": "Äänestäjät",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

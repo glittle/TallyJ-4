@@ -1,18 +1,82 @@
 {
-  "error.errorDetails": "Chi Tiết Lỗi",
-  "error.forbidden": "Từ chối truy cập.",
-  "error.goHome": "Về Trang Chủ",
-  "error.networkError": "Lỗi mạng. Vui lòng kiểm tra kết nối của bạn và thử lại.",
-  "error.notFound": "Không tìm thấy tài nguyên yêu cầu.",
-  "error.pageError": "Đã xảy ra lỗi khi tải trang này. Vui lòng thử lại.",
-  "error.serverError": "Lỗi máy chủ. Vui lòng thử lại sau.",
-  "error.sessionExpired": "Phiên của bạn đã hết hạn. Vui lòng đăng nhập lại.",
-  "error.somethingWentWrong": "Đã xảy ra lỗi",
-  "error.tryAgain": "Thử Lại",
-  "error.unauthorized": "Bạn không có quyền thực hiện hành động này.",
-  "error.validationError": "Vui lòng kiểm tra dữ liệu nhập và thử lại.",
-  "notification.error": "Lỗi",
-  "notification.info": "Thông Tin",
-  "notification.success": "Thành Công",
-  "notification.warning": "Cảnh Báo"
+  "error.errorDetails": {
+    "t": "Chi Tiết Lỗi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.forbidden": {
+    "t": "Từ chối truy cập.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.goHome": {
+    "t": "Về Trang Chủ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.networkError": {
+    "t": "Lỗi mạng. Vui lòng kiểm tra kết nối của bạn và thử lại.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.notFound": {
+    "t": "Không tìm thấy tài nguyên yêu cầu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.pageError": {
+    "t": "Đã xảy ra lỗi khi tải trang này. Vui lòng thử lại.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.serverError": {
+    "t": "Lỗi máy chủ. Vui lòng thử lại sau.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.sessionExpired": {
+    "t": "Phiên của bạn đã hết hạn. Vui lòng đăng nhập lại.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.somethingWentWrong": {
+    "t": "Đã xảy ra lỗi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.tryAgain": {
+    "t": "Thử Lại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.unauthorized": {
+    "t": "Bạn không có quyền thực hiện hành động này.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.validationError": {
+    "t": "Vui lòng kiểm tra dữ liệu nhập và thử lại.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.error": {
+    "t": "Lỗi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.info": {
+    "t": "Thông Tin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.success": {
+    "t": "Thành Công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.warning": {
+    "t": "Cảnh Báo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

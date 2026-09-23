@@ -1,64 +1,312 @@
 {
-  "common.actionIrreversible": "This action cannot be undone.",
-  "common.actions": "Actions",
-  "common.appName": "TallyJ",
-  "common.appTitle": "TallyJ v4",
-  "common.back": "Back",
-  "common.badi.monthNames": "Intercalary Days,Splendor,Glory,Beauty,Grandeur,Light,Mercy,Words,Perfection,Names,Might,Will,Knowledge,Power,Speech,Questions,Honor,Sovereignty,Dominion,Loftiness",
-  "common.cancel": "Cancel",
-  "common.clear": "Clear",
-  "common.clearFilters": "Clear Filters",
-  "common.close": "Close",
-  "common.confirm": "Confirm",
-  "common.confirmAction": "Are you sure you want to {action}?",
-  "common.confirmActionWithItem": "Are you sure you want to {action} {item}?",
-  "common.confirmDelete": "Are you sure you want to delete {item}?",
-  "common.copy": "Copy",
-  "common.copied": "Copied to clipboard",
-  "common.create": "Create",
-  "common.dangerZone": "Danger Zone",
-  "common.dark": "Dark",
-  "common.delete": "Delete",
-  "common.deleteSelected": "Delete Selected",
-  "common.edit": "Edit",
-  "common.election": "Election",
-  "common.endDate": "End Date",
-  "common.enter": "Enter",
-  "common.error": "An error occurred",
-  "common.language": "Language",
-  "common.light": "Light",
-  "common.loading": "Loading...",
-  "common.logoAlt": "TallyJ Logo",
-  "common.next": "Next",
-  "common.no": "No",
-  "common.open": "Open",
-  "common.or": "or",
-  "common.previous": "Previous",
-  "common.profile": "Profile",
-  "common.refresh": "Refresh",
-  "common.save": "Save",
-  "common.settings": "Settings",
-  "common.startDate": "Start Date",
-  "common.testOnlyLong": "{note} This preview of TallyJ Version 4 is still in development.{br}You can log in and try the features, but it should not be used for actual Bahá'í elections at this time.{br}We welcome your feedback on the new design as we continue to improve the system.",
-  "common.testOnlyLongNote": "Please Note:",
-  "common.testOnlyShort": "Development & Testing Only",
-  "common.theme": "Theme",
-  "common.to": "to",
-  "common.toggleTheme": "Toggle theme",
-  "common.user": "User",
-  "common.userMenu": "User account menu",
-  "common.toggleNavigation": "Toggle navigation menu",
-  "common.hideSidebar": "Hide sidebar",
-  "common.dockSidebar": "Keep sidebar open",
-  "common.mainNavigation": "Main navigation",
-  "common.mainMenu": "Main menu",
-  "common.electionNavigation": "Election navigation",
-  "common.skipToMainContent": "Skip to main content",
-  "common.settingsComingSoon": "Settings page coming soon",
-  "common.statusFeedbackDoc": "Status & Feedback Document V4",
-  "common.versionDisplay": "Version 4 Beta",
-  "common.view": "View",
-  "common.warning": "Warning",
-  "common.yes": "Yes",
-  "common.goHome": "Home"
+  "common.actionIrreversible": {
+    "t": "This action cannot be undone.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.actions": {
+    "t": "Actions",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appName": {
+    "t": "TallyJ",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.appTitle": {
+    "t": "TallyJ v4",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.back": {
+    "t": "Back",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.badi.monthNames": {
+    "t": "Intercalary Days,Splendor,Glory,Beauty,Grandeur,Light,Mercy,Words,Perfection,Names,Might,Will,Knowledge,Power,Speech,Questions,Honor,Sovereignty,Dominion,Loftiness",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.cancel": {
+    "t": "Cancel",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clear": {
+    "t": "Clear",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.clearFilters": {
+    "t": "Clear Filters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.close": {
+    "t": "Close",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirm": {
+    "t": "Confirm",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmAction": {
+    "t": "Are you sure you want to {action}?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmActionWithItem": {
+    "t": "Are you sure you want to {action} {item}?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.confirmDelete": {
+    "t": "Are you sure you want to delete {item}?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.copy": {
+    "t": "Copy",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.copied": {
+    "t": "Copied to clipboard",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.create": {
+    "t": "Create",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dangerZone": {
+    "t": "Danger Zone",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dark": {
+    "t": "Dark",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.delete": {
+    "t": "Delete",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.deleteSelected": {
+    "t": "Delete Selected",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.edit": {
+    "t": "Edit",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.election": {
+    "t": "Election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.endDate": {
+    "t": "End Date",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.enter": {
+    "t": "Enter",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.error": {
+    "t": "An error occurred",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.language": {
+    "t": "Language",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.light": {
+    "t": "Light",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.loading": {
+    "t": "Loading...",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.logoAlt": {
+    "t": "TallyJ Logo",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.next": {
+    "t": "Next",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.no": {
+    "t": "No",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.open": {
+    "t": "Open",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.or": {
+    "t": "or",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.previous": {
+    "t": "Previous",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.profile": {
+    "t": "Profile",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.refresh": {
+    "t": "Refresh",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.save": {
+    "t": "Save",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.settings": {
+    "t": "Settings",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.startDate": {
+    "t": "Start Date",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLong": {
+    "t": "{note} This preview of TallyJ Version 4 is still in development.{br}You can log in and try the features, but it should not be used for actual Bahá'í elections at this time.{br}We welcome your feedback on the new design as we continue to improve the system.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyLongNote": {
+    "t": "Please Note:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.testOnlyShort": {
+    "t": "Development & Testing Only",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.theme": {
+    "t": "Theme",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.to": {
+    "t": "to",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.toggleTheme": {
+    "t": "Toggle theme",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.user": {
+    "t": "User",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.userMenu": {
+    "t": "User account menu",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.toggleNavigation": {
+    "t": "Toggle navigation menu",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.hideSidebar": {
+    "t": "Hide sidebar",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.dockSidebar": {
+    "t": "Keep sidebar open",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.mainNavigation": {
+    "t": "Main navigation",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.mainMenu": {
+    "t": "Main menu",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.electionNavigation": {
+    "t": "Election navigation",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.skipToMainContent": {
+    "t": "Skip to main content",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.settingsComingSoon": {
+    "t": "Settings page coming soon",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.statusFeedbackDoc": {
+    "t": "Status & Feedback Document V4",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.versionDisplay": {
+    "t": "Version 4 Beta",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.view": {
+    "t": "View",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.warning": {
+    "t": "Warning",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.yes": {
+    "t": "Yes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "common.goHome": {
+    "t": "Home",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

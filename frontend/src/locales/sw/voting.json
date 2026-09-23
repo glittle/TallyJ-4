@@ -1,78 +1,382 @@
 {
-  "voting.ballot.addPersonToPool": "Ongeza Mtu kwenye Karatasi Yangu ya Kura",
-  "voting.ballot.addToPool": "Ongeza kwenye Karatasi Yangu ya Kura/Bwawa",
-  "voting.ballot.addToPoolDescription": "Ongeza mtu mpya kwenye bwawa lako kwa uchaguzi huu.",
-  "voting.ballot.alreadyVoted": "Tayari umepiga kura katika uchaguzi huu.",
-  "voting.ballot.authRequired": "Tafadhali thibitisha utambulisho kwanza",
-  "voting.ballot.backToElections": "Rudi",
-  "voting.ballot.bothModeHint": "Chagua kutoka kwenye orodha hapa chini, au andika jina ambalo haliko kwenye orodha. Wasimamizi watahitimisha majina yoyote ambayo hayako kwenye orodha.",
-  "voting.ballot.duplicateError": "Umewachagua wagombea wale wale mara kadhaa. Tafadhali kagua karatasi yako ya kura.",
-  "voting.ballot.electionNotFound": "Uchaguzi haukupatikana",
-  "voting.ballot.extraInfo": "Taarifa za ziada za kutambulisha",
-  "voting.ballot.extraInfoPlaceholder": "(Hiari: Tumia hii ikiwa jina linaweza kutotosha)",
-  "voting.ballot.firstName": "Jina la kwanza",
-  "voting.ballot.firstNamePlaceholder": "Kwanza",
-  "voting.ballot.guideline": "\"Kutoka katika kundi la wale ambao mchaguzi anaamini kuwa wana sifa ya kutumika, uteuzi unapaswa kufanywa kwa kuzingatia mambo mengine kama usambazaji wa umri, utofauti, na jinsia.\" — Nyumba ya Haki ya Ulimwenguni",
-  "voting.ballot.lastName": "Jina la mwisho",
-  "voting.ballot.lastNamePlaceholder": "Mwisho",
-  "voting.ballot.loading": "Inapakia taarifa za uchaguzi...",
-  "voting.ballot.myBallot": "Karatasi Yangu ya Kura",
-  "voting.ballot.namePlaceholder": "Andika jina",
-  "voting.ballot.notOpen": "Kupiga kura mtandaoni kwa sasa hakufunguliwi kwa uchaguzi huu.",
-  "voting.ballot.onceWarning": "Unaweza kupiga kura mara moja tu! Tafadhali kagua karatasi yako ya kura kwa uangalifu kabla ya kuwasilisha.",
-  "voting.ballot.openNow": "Imefunguliwa Sasa",
-  "voting.ballot.orderNote": "(Mpangilio wa majina hauna maana)",
-  "voting.ballot.randomModeHint": "Andika majina ya watu unaotaka kupigia kura. Wasimamizi watafananisha majina haya na wapiga kura waliosajiliwa.",
-  "voting.ballot.searchPlaceholder": "Tafuta mgombea",
-  "voting.ballot.submit": "Wasilisha Karatasi ya Kura",
-  "voting.ballot.submitSuccess": "Karatasi ya kura imewasilishwa kwa mafanikio!",
-  "voting.ballot.votingFor": "Kupiga kura kwa Watu {count}",
-  "voting.confirmation.close": "Funga",
-  "voting.confirmation.election": "Uchaguzi:",
-  "voting.confirmation.kioskRecorded": "Your ballot has been recorded. You can leave this computer.",
-  "voting.confirmation.kioskSubtitle": "This kiosk is clear for the next voter.",
-  "voting.confirmation.nextVoter": "Ready for next voter",
-  "voting.confirmation.noChange": "Tafadhali kumbuka kwamba huwezi kubadilisha au kuwasilisha tena karatasi yako ya kura.",
-  "voting.confirmation.recorded": "Karatasi yako ya kura imerekodiwa kwa usalama.",
-  "voting.confirmation.submitted": "Imewasilishwa:",
-  "voting.confirmation.subtitle": "Asante kwa kushiriki katika uchaguzi",
-  "voting.confirmation.title": "Karatasi ya kura imewasilishwa kwa mafanikio!",
-  "voting.election.instructions": "Tafadhali piga kura kwa wagombea {count}.",
-  "voting.elections.alreadyVoted": "Karatasi ya kura tayari imewasilishwa",
-  "voting.elections.col.election": "Uchaguzi",
-  "voting.elections.col.onlineVoting": "Kupiga Kura Mtandaoni",
-  "voting.elections.col.yourNameAndBallot": "Jina Lako na Karatasi ya Kura",
-  "voting.elections.footerNote": "Ikiwa kitu kinaonekana kibaya, tafadhali acha kutumia TallyJ na tuma maelezo kwa msimamizi wako mkuu na/au usaidizi wa kiufundi wa kimataifa.",
-  "voting.elections.loadError": "Imeshindikana kupakia uchaguzi. Tafadhali jaribu tena.",
-  "voting.elections.loading": "Inapakia uchaguzi wako...",
-  "voting.elections.logout": "Ondoka",
-  "voting.elections.method.online": "Mtandaoni",
-  "voting.elections.noElections": "Hakuna uchaguzi uliopatikana kwa akaunti yako.",
-  "voting.elections.prepareBallot": "Andaa karatasi yangu ya kura",
-  "voting.elections.registered": "Imeandikishwa:",
-  "voting.elections.status.closed": "Imefungwa",
-  "voting.elections.status.closedDaysAgo": "Imefungwa siku {days} zilizopita",
-  "voting.elections.status.closedMonthsAgo": "Imefungwa miezi {months} iliyopita",
-  "voting.elections.status.closedToday": "Imefungwa leo",
-  "voting.elections.status.closedYearsAgo": "Imefungwa miaka {years} iliyopita",
-  "voting.elections.status.closedYesterday": "Imefungwa jana",
-  "voting.elections.status.closingAt": "Inatarajiwa kufungwa saa {time}",
-  "voting.elections.status.closingAtWithMinutes": "Inatarajiwa kufungwa katika {hours}s {minutes}d (saa {time})",
-  "voting.elections.status.closingInMinutes": "Inatarajiwa kufungwa katika dakika {minutes}",
-  "voting.elections.status.closingSoon": "Inafungwa hivi karibuni",
-  "voting.elections.status.estimatedSuffix": " (tathmini)",
-  "voting.elections.status.noOnlineVoting": "Hakuna kupiga kura mtandaoni",
-  "voting.elections.status.open": "Imefunguliwa",
-  "voting.elections.status.openNow": "Imefunguliwa Sasa",
-  "voting.elections.title": "Uchaguzi Wako",
-  "voting.elections.welcome": "Karibu! Taarifa zako za mawasiliano ({voterId}) zilipatikana katika uchaguzi ulioonyeshwa hapa chini.",
-  "voting.elections.welcomeHint": "Ikiwa uchaguzi ujao hauko katika orodha hapa, inawezekana haupo katika TallyJ au taarifa zako hazijasajiliwa ndani yake. Tafadhali wasiliana na msimamizi mkuu wa uchaguzi kwa usaidizi.",
-  "voting.status.alreadyVoted": "Tayari umewasilisha karatasi yako ya kura kwa uchaguzi huu.",
-  "voting.status.notVoted": "Bado haujawasilisha karatasi yako ya kura kwa uchaguzi huu.",
-  "voting.status.voterNotFound": "Mpiga kura hajapatikana katika uchaguzi huu.",
-  "voting.submit.alreadyVoted": "Tayari umewasilisha karatasi ya kura kwa uchaguzi huu.",
-  "voting.submit.electionNotFound": "Uchaguzi haukupatikana.",
-  "voting.submit.error": "Hitilafu ilitokea wakati wa kuwasilisha karatasi yako ya kura. Tafadhali jaribu tena.",
-  "voting.submit.notOpen": "Kupiga kura mtandaoni kwa sasa hakufunguliwi kwa uchaguzi huu.",
-  "voting.submit.voterNotFound": "Mpiga kura hajapatikana. Tafadhali thibitisha utambulisho kwanza."
+  "voting.ballot.addPersonToPool": {
+    "t": "Ongeza Mtu kwenye Karatasi Yangu ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPool": {
+    "t": "Ongeza kwenye Karatasi Yangu ya Kura/Bwawa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPoolDescription": {
+    "t": "Ongeza mtu mpya kwenye bwawa lako kwa uchaguzi huu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.alreadyVoted": {
+    "t": "Tayari umepiga kura katika uchaguzi huu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.authRequired": {
+    "t": "Tafadhali thibitisha utambulisho kwanza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.backToElections": {
+    "t": "Rudi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.bothModeHint": {
+    "t": "Chagua kutoka kwenye orodha hapa chini, au andika jina ambalo haliko kwenye orodha. Wasimamizi watahitimisha majina yoyote ambayo hayako kwenye orodha.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.duplicateError": {
+    "t": "Umewachagua wagombea wale wale mara kadhaa. Tafadhali kagua karatasi yako ya kura.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.electionNotFound": {
+    "t": "Uchaguzi haukupatikana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfo": {
+    "t": "Taarifa za ziada za kutambulisha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfoPlaceholder": {
+    "t": "(Hiari: Tumia hii ikiwa jina linaweza kutotosha)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstName": {
+    "t": "Jina la kwanza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstNamePlaceholder": {
+    "t": "Kwanza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.guideline": {
+    "t": "\"Kutoka katika kundi la wale ambao mchaguzi anaamini kuwa wana sifa ya kutumika, uteuzi unapaswa kufanywa kwa kuzingatia mambo mengine kama usambazaji wa umri, utofauti, na jinsia.\" — Nyumba ya Haki ya Ulimwenguni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastName": {
+    "t": "Jina la mwisho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastNamePlaceholder": {
+    "t": "Mwisho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.loading": {
+    "t": "Inapakia taarifa za uchaguzi...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.myBallot": {
+    "t": "Karatasi Yangu ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.namePlaceholder": {
+    "t": "Andika jina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.notOpen": {
+    "t": "Kupiga kura mtandaoni kwa sasa hakufunguliwi kwa uchaguzi huu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.onceWarning": {
+    "t": "Unaweza kupiga kura mara moja tu! Tafadhali kagua karatasi yako ya kura kwa uangalifu kabla ya kuwasilisha.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.openNow": {
+    "t": "Imefunguliwa Sasa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.orderNote": {
+    "t": "(Mpangilio wa majina hauna maana)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.randomModeHint": {
+    "t": "Andika majina ya watu unaotaka kupigia kura. Wasimamizi watafananisha majina haya na wapiga kura waliosajiliwa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.searchPlaceholder": {
+    "t": "Tafuta mgombea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submit": {
+    "t": "Wasilisha Karatasi ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submitSuccess": {
+    "t": "Karatasi ya kura imewasilishwa kwa mafanikio!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.votingFor": {
+    "t": "Kupiga kura kwa Watu {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.close": {
+    "t": "Funga",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.election": {
+    "t": "Uchaguzi:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskRecorded": {
+    "t": "Your ballot has been recorded. You can leave this computer.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskSubtitle": {
+    "t": "This kiosk is clear for the next voter.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.nextVoter": {
+    "t": "Ready for next voter",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.noChange": {
+    "t": "Tafadhali kumbuka kwamba huwezi kubadilisha au kuwasilisha tena karatasi yako ya kura.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.recorded": {
+    "t": "Karatasi yako ya kura imerekodiwa kwa usalama.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.submitted": {
+    "t": "Imewasilishwa:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.subtitle": {
+    "t": "Asante kwa kushiriki katika uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.title": {
+    "t": "Karatasi ya kura imewasilishwa kwa mafanikio!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.election.instructions": {
+    "t": "Tafadhali piga kura kwa wagombea {count}.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.alreadyVoted": {
+    "t": "Karatasi ya kura tayari imewasilishwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.election": {
+    "t": "Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.onlineVoting": {
+    "t": "Kupiga Kura Mtandaoni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.yourNameAndBallot": {
+    "t": "Jina Lako na Karatasi ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.footerNote": {
+    "t": "Ikiwa kitu kinaonekana kibaya, tafadhali acha kutumia TallyJ na tuma maelezo kwa msimamizi wako mkuu na/au usaidizi wa kiufundi wa kimataifa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loadError": {
+    "t": "Imeshindikana kupakia uchaguzi. Tafadhali jaribu tena.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loading": {
+    "t": "Inapakia uchaguzi wako...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.logout": {
+    "t": "Ondoka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.method.online": {
+    "t": "Mtandaoni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.noElections": {
+    "t": "Hakuna uchaguzi uliopatikana kwa akaunti yako.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.prepareBallot": {
+    "t": "Andaa karatasi yangu ya kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.registered": {
+    "t": "Imeandikishwa:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closed": {
+    "t": "Imefungwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedDaysAgo": {
+    "t": "Imefungwa siku {days} zilizopita",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedMonthsAgo": {
+    "t": "Imefungwa miezi {months} iliyopita",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedToday": {
+    "t": "Imefungwa leo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYearsAgo": {
+    "t": "Imefungwa miaka {years} iliyopita",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYesterday": {
+    "t": "Imefungwa jana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAt": {
+    "t": "Inatarajiwa kufungwa saa {time}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAtWithMinutes": {
+    "t": "Inatarajiwa kufungwa katika {hours}s {minutes}d (saa {time})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingInMinutes": {
+    "t": "Inatarajiwa kufungwa katika dakika {minutes}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingSoon": {
+    "t": "Inafungwa hivi karibuni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.estimatedSuffix": {
+    "t": " (tathmini)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.noOnlineVoting": {
+    "t": "Hakuna kupiga kura mtandaoni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.open": {
+    "t": "Imefunguliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.openNow": {
+    "t": "Imefunguliwa Sasa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.title": {
+    "t": "Uchaguzi Wako",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcome": {
+    "t": "Karibu! Taarifa zako za mawasiliano ({voterId}) zilipatikana katika uchaguzi ulioonyeshwa hapa chini.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcomeHint": {
+    "t": "Ikiwa uchaguzi ujao hauko katika orodha hapa, inawezekana haupo katika TallyJ au taarifa zako hazijasajiliwa ndani yake. Tafadhali wasiliana na msimamizi mkuu wa uchaguzi kwa usaidizi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.alreadyVoted": {
+    "t": "Tayari umewasilisha karatasi yako ya kura kwa uchaguzi huu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.notVoted": {
+    "t": "Bado haujawasilisha karatasi yako ya kura kwa uchaguzi huu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.voterNotFound": {
+    "t": "Mpiga kura hajapatikana katika uchaguzi huu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.alreadyVoted": {
+    "t": "Tayari umewasilisha karatasi ya kura kwa uchaguzi huu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.electionNotFound": {
+    "t": "Uchaguzi haukupatikana.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.error": {
+    "t": "Hitilafu ilitokea wakati wa kuwasilisha karatasi yako ya kura. Tafadhali jaribu tena.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.notOpen": {
+    "t": "Kupiga kura mtandaoni kwa sasa hakufunguliwi kwa uchaguzi huu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.voterNotFound": {
+    "t": "Mpiga kura hajapatikana. Tafadhali thibitisha utambulisho kwanza.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

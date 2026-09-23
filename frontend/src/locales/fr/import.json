@@ -1,25 +1,117 @@
 {
-  "import.completed": "Importation terminée avec succès",
-  "import.currentStatus": "Statut : {status}",
-  "import.errorCount": "Erreurs : {count}",
-  "import.errors.batchSaveFailed": "Échec de la sauvegarde par lot: {message}",
-  "import.errors.duplicateBahaiId": "Ligne {rowNumber}: ID Bahá’í en double '{bahaiId}' - ignoré",
-  "import.errors.duplicateEmail": "Ligne {rowNumber}: Email en double '{email}' - ignoré",
-  "import.errors.duplicateName": "Ligne {rowNumber}: Nom en double '{firstName} {lastName}' - ignoré",
-  "import.errors.duplicatePhone": "Ligne {rowNumber}: Téléphone en double '{phone}' - ignoré",
-  "import.errors.fileNotFound": "Fichier d'importation introuvable ou vide",
-  "import.errors.importFailed": "Échec de l'importation: {message}",
-  "import.errors.importFailedAtLine": "Échec de l'importation à la ligne {rowNumber}: {message}",
-  "import.errors.invalidMappings": "Mappages de colonnes invalides",
-  "import.errors.lineError": "Ligne {rowNumber}: {message}",
-  "import.errors.missingFirstName": "Ligne {rowNumber}: Prénom manquant - ignoré",
-  "import.errors.missingLastName": "Ligne {rowNumber}: Nom manquant - ignoré",
-  "import.errors.missingRequiredMappings": "Les mappages Prénom et Nom sont requis",
-  "import.errors.noMappings": "Aucun mappage de colonnes configuré",
-  "import.errorsTitle": "Erreurs d'importation",
-  "import.moreErrors": "et {count} autres erreurs...",
-  "import.processingRows": "Traitement des lignes {processed} sur {total}",
-  "import.progressTitle": "Progression de l'importation",
-  "import.successCount": "Réussites : {count}",
-  "import.warnings.unrecognizedEligibility": "Ligne {rowNumber}: Statut d'éligibilité non reconnu: '{eligibilityValue}' - traité comme éligible"
+  "import.completed": {
+    "t": "Importation terminée avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.currentStatus": {
+    "t": "Statut : {status}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorCount": {
+    "t": "Erreurs : {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.batchSaveFailed": {
+    "t": "Échec de la sauvegarde par lot: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateBahaiId": {
+    "t": "Ligne {rowNumber}: ID Bahá’í en double '{bahaiId}' - ignoré",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateEmail": {
+    "t": "Ligne {rowNumber}: Email en double '{email}' - ignoré",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateName": {
+    "t": "Ligne {rowNumber}: Nom en double '{firstName} {lastName}' - ignoré",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicatePhone": {
+    "t": "Ligne {rowNumber}: Téléphone en double '{phone}' - ignoré",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.fileNotFound": {
+    "t": "Fichier d'importation introuvable ou vide",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailed": {
+    "t": "Échec de l'importation: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailedAtLine": {
+    "t": "Échec de l'importation à la ligne {rowNumber}: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.invalidMappings": {
+    "t": "Mappages de colonnes invalides",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.lineError": {
+    "t": "Ligne {rowNumber}: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingFirstName": {
+    "t": "Ligne {rowNumber}: Prénom manquant - ignoré",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingLastName": {
+    "t": "Ligne {rowNumber}: Nom manquant - ignoré",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingRequiredMappings": {
+    "t": "Les mappages Prénom et Nom sont requis",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.noMappings": {
+    "t": "Aucun mappage de colonnes configuré",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorsTitle": {
+    "t": "Erreurs d'importation",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.moreErrors": {
+    "t": "et {count} autres erreurs...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.processingRows": {
+    "t": "Traitement des lignes {processed} sur {total}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.progressTitle": {
+    "t": "Progression de l'importation",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.successCount": {
+    "t": "Réussites : {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.warnings.unrecognizedEligibility": {
+    "t": "Ligne {rowNumber}: Statut d'éligibilité non reconnu: '{eligibilityValue}' - traité comme éligible",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

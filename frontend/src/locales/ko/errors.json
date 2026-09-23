@@ -1,18 +1,82 @@
 {
-  "error.errorDetails": "오류 세부 정보",
-  "error.forbidden": "접근이 거부되었습니다.",
-  "error.goHome": "홈으로 이동",
-  "error.networkError": "네트워크 오류입니다. 연결 상태를 확인하고 다시 시도해 주세요.",
-  "error.notFound": "요청한 리소스를 찾을 수 없습니다.",
-  "error.pageError": "이 페이지를 로드하는 중 오류가 발생했습니다. 다시 시도해 주세요.",
-  "error.serverError": "서버 오류입니다. 나중에 다시 시도해 주세요.",
-  "error.sessionExpired": "세션이 만료되었습니다. 다시 로그인해 주세요.",
-  "error.somethingWentWrong": "오류가 발생했습니다",
-  "error.tryAgain": "다시 시도",
-  "error.unauthorized": "이 작업을 수행할 권한이 없습니다.",
-  "error.validationError": "입력 내용을 확인하고 다시 시도해 주세요.",
-  "notification.error": "오류",
-  "notification.info": "정보",
-  "notification.success": "성공",
-  "notification.warning": "경고"
+  "error.errorDetails": {
+    "t": "오류 세부 정보",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.forbidden": {
+    "t": "접근이 거부되었습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.goHome": {
+    "t": "홈으로 이동",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.networkError": {
+    "t": "네트워크 오류입니다. 연결 상태를 확인하고 다시 시도해 주세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.notFound": {
+    "t": "요청한 리소스를 찾을 수 없습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.pageError": {
+    "t": "이 페이지를 로드하는 중 오류가 발생했습니다. 다시 시도해 주세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.serverError": {
+    "t": "서버 오류입니다. 나중에 다시 시도해 주세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.sessionExpired": {
+    "t": "세션이 만료되었습니다. 다시 로그인해 주세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.somethingWentWrong": {
+    "t": "오류가 발생했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.tryAgain": {
+    "t": "다시 시도",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.unauthorized": {
+    "t": "이 작업을 수행할 권한이 없습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.validationError": {
+    "t": "입력 내용을 확인하고 다시 시도해 주세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.error": {
+    "t": "오류",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.info": {
+    "t": "정보",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.success": {
+    "t": "성공",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.warning": {
+    "t": "경고",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

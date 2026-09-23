@@ -1,17 +1,77 @@
 {
-  "teller.form.cancel": "取消",
-  "teller.form.computerCode": "计算机代码",
-  "teller.form.computerCodeHelp": "两个大写字母（AA-ZZ）或留空",
-  "teller.form.computerCodeInvalid": "计算机代码必须为 2 个大写字母（AA-ZZ）",
-  "teller.form.computerCodePlaceholder": "例如：AA",
-  "teller.form.create": "创建",
-  "teller.form.headTeller": "首席计票员",
-  "teller.form.headTellerHelp": "首席计票员拥有额外权限",
-  "teller.form.name": "计票员姓名",
-  "teller.form.nameMaxLength": "计票员姓名不能超过 50 个字符",
-  "teller.form.namePlaceholder": "输入计票员姓名",
-  "teller.form.nameRequired": "计票员姓名为必填项",
-  "teller.form.save": "保存",
-  "teller.form.titleAdd": "添加计票员",
-  "teller.form.titleEdit": "编辑计票员"
+  "teller.form.cancel": {
+    "t": "取消",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCode": {
+    "t": "计算机代码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeHelp": {
+    "t": "两个大写字母（AA-ZZ）或留空",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeInvalid": {
+    "t": "计算机代码必须为 2 个大写字母（AA-ZZ）",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodePlaceholder": {
+    "t": "例如：AA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.create": {
+    "t": "创建",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTeller": {
+    "t": "首席计票员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTellerHelp": {
+    "t": "首席计票员拥有额外权限",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.name": {
+    "t": "计票员姓名",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "计票员姓名不能超过 50 个字符",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "输入计票员姓名",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "计票员姓名为必填项",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.save": {
+    "t": "保存",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "添加计票员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "编辑计票员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

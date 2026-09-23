@@ -1,28 +1,132 @@
 {
-  "superAdmin.detail.electionMode": "Chế Độ Bầu Cử",
-  "superAdmin.detail.locations": "Địa Điểm",
-  "superAdmin.detail.numberToElect": "Số Lượng Cần Bầu",
-  "superAdmin.detail.owners": "Người Quản Lý",
-  "superAdmin.detail.percentComplete": "Phần Trăm Hoàn Thành",
-  "superAdmin.detail.title": "Chi Tiết Cuộc Bầu Cử",
-  "superAdmin.elections.ballots": "Phiếu Bầu",
-  "superAdmin.elections.convenor": "Người Triệu Tập",
-  "superAdmin.elections.date": "Ngày",
-  "superAdmin.elections.filterStatus": "Lọc theo trạng thái",
-  "superAdmin.elections.filterType": "Lọc theo loại",
-  "superAdmin.elections.name": "Tên Cuộc Bầu Cử",
-  "superAdmin.elections.noResults": "Không tìm thấy cuộc bầu cử nào",
-  "superAdmin.elections.owner": "Chủ Sở Hữu",
-  "superAdmin.elections.search": "Tìm kiếm cuộc bầu cử...",
-  "superAdmin.elections.status": "Trạng Thái",
-  "superAdmin.elections.type": "Loại",
-  "superAdmin.elections.voters": "Cử Tri",
-  "superAdmin.error.accessDenied": "Bạn không có quyền truy cập quản trị viên cấp cao",
-  "superAdmin.error.loadFailed": "Không thể tải dữ liệu quản trị viên cấp cao",
-  "superAdmin.summary.archivedElections": "Đã Lưu Trữ",
-  "superAdmin.summary.completedElections": "Đã Hoàn Thành",
-  "superAdmin.summary.openElections": "Đang Mở",
-  "superAdmin.summary.totalElections": "Tổng Số Cuộc Bầu Cử",
-  "superAdmin.summary.upcomingElections": "Sắp Diễn Ra",
-  "superAdmin.title": "Bảng Điều Khiển Quản Trị Viên Cấp Cao"
+  "superAdmin.detail.electionMode": {
+    "t": "Chế Độ Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.locations": {
+    "t": "Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.numberToElect": {
+    "t": "Số Lượng Cần Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.owners": {
+    "t": "Người Quản Lý",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.percentComplete": {
+    "t": "Phần Trăm Hoàn Thành",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.title": {
+    "t": "Chi Tiết Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.ballots": {
+    "t": "Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.convenor": {
+    "t": "Người Triệu Tập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.date": {
+    "t": "Ngày",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterStatus": {
+    "t": "Lọc theo trạng thái",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterType": {
+    "t": "Lọc theo loại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.name": {
+    "t": "Tên Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.noResults": {
+    "t": "Không tìm thấy cuộc bầu cử nào",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.owner": {
+    "t": "Chủ Sở Hữu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.search": {
+    "t": "Tìm kiếm cuộc bầu cử...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.status": {
+    "t": "Trạng Thái",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.type": {
+    "t": "Loại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.voters": {
+    "t": "Cử Tri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.accessDenied": {
+    "t": "Bạn không có quyền truy cập quản trị viên cấp cao",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.loadFailed": {
+    "t": "Không thể tải dữ liệu quản trị viên cấp cao",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.archivedElections": {
+    "t": "Đã Lưu Trữ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.completedElections": {
+    "t": "Đã Hoàn Thành",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.openElections": {
+    "t": "Đang Mở",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.totalElections": {
+    "t": "Tổng Số Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.upcomingElections": {
+    "t": "Sắp Diễn Ra",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.title": {
+    "t": "Bảng Điều Khiển Quản Trị Viên Cấp Cao",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

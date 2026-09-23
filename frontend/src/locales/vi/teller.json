@@ -1,17 +1,77 @@
 {
-  "teller.form.cancel": "Hủy",
-  "teller.form.computerCode": "Mã Máy Tính",
-  "teller.form.computerCodeHelp": "Hai chữ hoa (AA-ZZ) hoặc để trống",
-  "teller.form.computerCodeInvalid": "Mã máy tính phải là 2 chữ hoa (AA-ZZ)",
-  "teller.form.computerCodePlaceholder": "ví dụ: AA",
-  "teller.form.create": "Tạo",
-  "teller.form.headTeller": "Trưởng Ban Kiểm Phiếu",
-  "teller.form.headTellerHelp": "Trưởng ban kiểm phiếu có thêm quyền hạn",
-  "teller.form.name": "Tên Kiểm Phiếu Viên",
-  "teller.form.nameMaxLength": "Tên kiểm phiếu viên không được vượt quá 50 ký tự",
-  "teller.form.namePlaceholder": "Nhập tên kiểm phiếu viên",
-  "teller.form.nameRequired": "Tên kiểm phiếu viên là bắt buộc",
-  "teller.form.save": "Lưu",
-  "teller.form.titleAdd": "Thêm Kiểm Phiếu Viên",
-  "teller.form.titleEdit": "Chỉnh Sửa Kiểm Phiếu Viên"
+  "teller.form.cancel": {
+    "t": "Hủy",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCode": {
+    "t": "Mã Máy Tính",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeHelp": {
+    "t": "Hai chữ hoa (AA-ZZ) hoặc để trống",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeInvalid": {
+    "t": "Mã máy tính phải là 2 chữ hoa (AA-ZZ)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodePlaceholder": {
+    "t": "ví dụ: AA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.create": {
+    "t": "Tạo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTeller": {
+    "t": "Trưởng Ban Kiểm Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTellerHelp": {
+    "t": "Trưởng ban kiểm phiếu có thêm quyền hạn",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.name": {
+    "t": "Tên Kiểm Phiếu Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "Tên kiểm phiếu viên không được vượt quá 50 ký tự",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "Nhập tên kiểm phiếu viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "Tên kiểm phiếu viên là bắt buộc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.save": {
+    "t": "Lưu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "Thêm Kiểm Phiếu Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "Chỉnh Sửa Kiểm Phiếu Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

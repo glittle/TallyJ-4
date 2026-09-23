@@ -1,18 +1,82 @@
 {
-  "error.errorDetails": "Detalji pogreške",
-  "error.forbidden": "Pristup odbijen.",
-  "error.goHome": "Idi na početnu stranicu",
-  "error.networkError": "Mrežna pogreška. Molimo provjerite vezu i pokušajte ponovo.",
-  "error.notFound": "Traženi resurs nije pronađen.",
-  "error.pageError": "Došlo je do pogreške pri učitavanju ove stranice. Molimo pokušajte ponovno.",
-  "error.serverError": "Pogreška poslužitelja. Molimo pokušajte ponovo kasnije.",
-  "error.sessionExpired": "Vaša je sesija istekla. Molimo prijavite se ponovo.",
-  "error.somethingWentWrong": "Nešto je pošlo po krivu",
-  "error.tryAgain": "Pokušaj ponovo",
-  "error.unauthorized": "Nemate ovlasti za izvođenje ove radnje.",
-  "error.validationError": "Molimo provjerite unos i pokušajte ponovo.",
-  "notification.error": "Pogreška",
-  "notification.info": "Informacija",
-  "notification.success": "Uspjeh",
-  "notification.warning": "Upozorenje"
+  "error.errorDetails": {
+    "t": "Detalji pogreške",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.forbidden": {
+    "t": "Pristup odbijen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.goHome": {
+    "t": "Idi na početnu stranicu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.networkError": {
+    "t": "Mrežna pogreška. Molimo provjerite vezu i pokušajte ponovo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.notFound": {
+    "t": "Traženi resurs nije pronađen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.pageError": {
+    "t": "Došlo je do pogreške pri učitavanju ove stranice. Molimo pokušajte ponovno.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.serverError": {
+    "t": "Pogreška poslužitelja. Molimo pokušajte ponovo kasnije.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.sessionExpired": {
+    "t": "Vaša je sesija istekla. Molimo prijavite se ponovo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.somethingWentWrong": {
+    "t": "Nešto je pošlo po krivu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.tryAgain": {
+    "t": "Pokušaj ponovo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.unauthorized": {
+    "t": "Nemate ovlasti za izvođenje ove radnje.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.validationError": {
+    "t": "Molimo provjerite unos i pokušajte ponovo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.error": {
+    "t": "Pogreška",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.info": {
+    "t": "Informacija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.success": {
+    "t": "Uspjeh",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.warning": {
+    "t": "Upozorenje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,160 +1,792 @@
 {
-  "elections.advanceStage": "پیشروی به مرحله بعد",
-  "elections.advanceTo": "پیشروی به {stage}",
-  "elections.ballots": "آرا",
-  "elections.bulkDeleteError": "حذف برخی انتخابات با شکست مواجه شد",
-  "elections.bulkDeleteMessage": "آیا مطمئن هستید که می‌خواهید {count} انتخابات انتخاب‌شده را حذف کنید؟",
-  "elections.bulkDeleteSuccess": "{count} انتخابات با موفقیت حذف شد",
-  "elections.calculateTally": "محاسبه آرا",
-  "elections.clearFilters": "پاک کردن فیلترها",
-  "elections.confirmAdvance": "آیا مطمئن هستید که می‌خواهید این انتخابات را به {stage} پیش ببرید؟",
-  "elections.confirmBulkDelete": "تأیید حذف گروهی",
-  "elections.confirmRevert": "آیا مطمئن هستید که می‌خواهید این انتخابات را به {stage} بازگردانید؟",
-  "elections.copyUrl": "کپی آدرس",
-  "elections.createError": "ایجاد انتخابات با شکست مواجه شد",
-  "elections.createFirst": "اولین انتخابات خود را ایجاد کنید",
-  "elections.createNew": "ایجاد انتخابات",
-  "elections.createSuccess": "انتخابات با موفقیت ایجاد شد",
-  "elections.date": "تاریخ انتخابات",
-  "elections.deleteConfirm": "آیا مطمئن هستید که می‌خواهید این انتخابات را حذف کنید؟ این عمل قابل بازگشت نیست.",
-  "elections.deleteError": "حذف انتخابات با شکست مواجه شد",
-  "elections.deleteSelected": "حذف موارد انتخاب‌شده ({count})",
-  "elections.deleteSuccess": "انتخابات با موفقیت حذف شد",
-  "elections.details": "جزئیات انتخابات",
-  "elections.edit": "ویرایش انتخابات",
-  "elections.electionModes.B": "انتخابات میان‌دوره‌ای",
-  "elections.electionModes.N": "انتخابات عادی",
-  "elections.electionModes.T": "رفع تساوی",
-  "elections.electionTypes.Con": "کنوانسیون واحد",
-  "elections.electionTypes.LSA": "محفل روحانی محلی",
-  "elections.electionTypes.LSA1": "محفل روحانی محلی (دو مرحله‌ای) واحد محلی",
-  "elections.electionTypes.LSA2": "محفل روحانی محلی (دو مرحله‌ای) نهایی",
-  "elections.electionTypes.NSA": "محفل روحانی ملی",
-  "elections.electionTypes.Oth": "سایر",
-  "elections.electionTypes.Reg": "شورای منطقه‌ای",
-  "elections.exportElection": "خروجی گرفتن از انتخابات",
-  "elections.exportElectionError": "خروجی گرفتن از انتخابات با شکست مواجه شد",
-  "elections.exportElectionSuccess": "خروجی انتخابات با موفقیت گرفته شد",
-  "elections.filterByStatus": "فیلتر بر اساس وضعیت",
-  "elections.filterByType": "فیلتر بر اساس نوع",
-  "elections.form.convenor": "هماهنگ‌کننده",
-  "elections.form.convenorPlaceholder": "نام هماهنگ‌کننده را وارد کنید",
-  "elections.form.customMethods": "روش‌های سفارشی",
-  "elections.form.customMethodsHelp": "هر روش رأی‌گیری سفارشی یا غیراستاندارد که در این انتخابات استفاده می‌شود را مشخص کنید.",
-  "elections.form.customMethodsPlaceholder": "هر روش رأی‌گیری سفارشی را توصیف کنید",
-  "elections.form.date": "تاریخ انتخابات",
-  "elections.form.datePlaceholder": "تاریخ انتخابات را انتخاب کنید",
-  "elections.form.dateRequired": "تاریخ انتخابات الزامی است",
-  "elections.form.electionMode": "حالت انتخابات",
-  "elections.form.electionPasscode": "رمز انتخابات",
-  "elections.form.electionPasscodeHelp": "برای ورود شمارنده رمز لازم است.",
-  "elections.form.electionPasscodePlaceholder": "رمز را وارد کنید",
-  "elections.form.emailFromAddress": "آدرس ایمیل فرستنده",
-  "elections.form.emailFromAddressPlaceholder": "آدرس ایمیل فرستنده را وارد کنید",
-  "elections.form.emailFromName": "نام فرستنده ایمیل",
-  "elections.form.emailFromNamePlaceholder": "نام فرستنده را وارد کنید",
-  "elections.form.emailInvalid": "آدرس ایمیل نامعتبر است",
-  "elections.form.emailSubject": "موضوع ایمیل",
-  "elections.form.emailSubjectPlaceholder": "موضوع ایمیل را وارد کنید",
-  "elections.form.emailText": "متن ایمیل",
-  "elections.form.emailTextPlaceholder": "متن بدنه ایمیل را وارد کنید",
-  "elections.form.flags": "پرچم‌ها",
-  "elections.form.flagsHelp": "پرچم‌ها برای شرایط ویژه انتخابات استفاده می‌شوند.",
-  "elections.form.flagsPlaceholder": "پرچم‌ها را وارد کنید",
-  "elections.form.hidePreBallotPages": "پنهان کردن صفحات پیش از رأی‌گیری",
-  "elections.form.linkedElection": "انتخابات مرتبط",
-  "elections.form.linkedElectionCount": "{count} انتخابات مرتبط در دسترس است",
-  "elections.form.linkedElectionCount_plural": "{count} انتخابات مرتبط در دسترس است",
-  "elections.form.linkedElectionHelp": "یک انتخابات را برای اتصال جهت رفع تساوی یا دور دوم انتخاب کنید.",
-  "elections.form.linkedElectionKind": "نوع انتخابات مرتبط",
-  "elections.form.linkedElectionKindPlaceholder": "نوع را انتخاب کنید",
-  "elections.form.linkedElectionPlaceholder": "انتخابات مرتبط را انتخاب کنید",
-  "elections.form.listForPublic": "نمایش برای عموم",
-  "elections.form.lockedByBallots": "قفل شده — آرا وارد شده‌اند",
-  "elections.form.maskVotingMethod": "پنهان کردن روش رأی‌گیری",
-  "elections.form.modePlaceholder": "حالت انتخابات را انتخاب کنید",
-  "elections.form.name": "نام انتخابات",
-  "elections.form.namePlaceholder": "نام انتخابات را وارد کنید",
-  "elections.form.nameRequired": "نام انتخابات الزامی است",
-  "elections.form.numberExtra": "تعداد اضافی",
-  "elections.form.numberToElect": "تعداد برای انتخاب",
-  "elections.form.numberToElectRequired": "تعداد برای انتخاب الزامی است",
-  "elections.form.onlineAnnounced": "اعلام نتایج آنلاین",
-  "elections.form.onlineAnnouncedPlaceholder": "زمان اعلام را انتخاب کنید",
-  "elections.form.onlineCloseIsEstimate": "زمان پایان تخمینی است",
-  "elections.form.onlineSelectionProcess": "فرآیند انتخاب آنلاین",
-  "elections.form.onlineSelectionProcessPlaceholder": "فرآیند را انتخاب کنید",
-  "elections.form.onlineWhenClose": "زمان پایان رأی‌گیری آنلاین",
-  "elections.form.onlineWhenClosePlaceholder": "زمان پایان را انتخاب کنید",
-  "elections.form.onlineWhenOpen": "زمان شروع رأی‌گیری آنلاین",
-  "elections.form.onlineWhenOpenPlaceholder": "زمان شروع را انتخاب کنید",
-  "elections.form.showAsTest": "نمایش به عنوان آزمایشی",
-  "elections.form.showFullReport": "نمایش گزارش کامل",
-  "elections.form.smsText": "متن پیامک",
-  "elections.form.smsTextPlaceholder": "متن پیامک را وارد کنید",
-  "elections.form.type": "نوع انتخابات",
-  "elections.form.typePlaceholder": "نوع انتخابات را انتخاب کنید",
-  "elections.form.typeRequired": "نوع انتخابات الزامی است",
-  "elections.form.useCallInButton": "فعال‌سازی رأی‌گیری تلفنی",
-  "elections.form.useKiosk": "Enable kiosk mode",
-  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
-  "elections.form.votingMethods": "روش‌های رأی‌گیری",
-  "elections.form.votingMethodsHelp": "روش‌هایی که آرا با آنها ثبت خواهند شد را انتخاب کنید.",
-  "elections.form.votingMethodsPlaceholder": "روش‌های رأی‌گیری را انتخاب کنید",
-  "elections.importCdnBallots": "وارد کردن آرای CDN",
-  "elections.importCdnBallotsError": "وارد کردن آرای CDN با شکست مواجه شد",
-  "elections.importCdnBallotsSuccess": "آرای CDN با موفقیت وارد شد",
-  "elections.importElection": "وارد کردن انتخابات",
-  "elections.importElectionError": "وارد کردن انتخابات با شکست مواجه شد",
-  "elections.importElectionSuccess": "انتخابات با موفقیت وارد شد",
-  "elections.list": "انتخابات",
-  "elections.loadError": "بارگذاری انتخابات با شکست مواجه شد",
-  "elections.locations": "مکان‌ها",
-  "elections.manageBallots": "مدیریت آرا",
-  "elections.manageLocations": "مدیریت مکان‌ها",
-  "elections.managePeople": "مدیریت افراد",
-  "elections.name": "نام انتخابات",
-  "elections.notFound": "انتخابات یافت نشد",
-  "elections.onlineVotingDisabled": "رأی‌گیری آنلاین غیرفعال است",
-  "elections.onlineVotingEnabled": "رأی‌گیری آنلاین فعال است",
-  "elections.people": "افراد",
-  "elections.quickActions": "اقدامات سریع",
-  "elections.revertTo": "بازگشت به {stage}",
-  "elections.searchPlaceholder": "جستجوی انتخابات با نام یا هماهنگ‌کننده...",
-  "elections.stage.Counting": "شمارش",
-  "elections.stage.Finalized": "نهایی شده",
-  "elections.stage.Setup": "راه‌اندازی",
-  "elections.stageAdvanced": "انتخابات به {stage} پیشروی کرد",
-  "elections.stageChangeError": "تغییر مرحله انتخابات با شکست مواجه شد",
-  "elections.stageProgression": "مرحله انتخابات",
-  "elections.stageReverted": "انتخابات به {stage} بازگشت",
-  "elections.statistics": "آمار",
-  "elections.status": "وضعیت",
-  "elections.tabs.advanced": "پیشرفته",
-  "elections.tabs.auditLogs": "گزارش‌های حسابرسی",
-  "elections.tabs.ballots": "آرا",
-  "elections.tabs.basicInfo": "اطلاعات اولیه",
-  "elections.tabs.communication": "ارتباطات",
-  "elections.tabs.displayPrivacy": "نمایش و حریم خصوصی",
-  "elections.tabs.electionRules": "قوانین انتخابات",
-  "elections.tabs.locations": "مکان‌ها",
-  "elections.tabs.onlineVoting": "رأی‌گیری آنلاین",
-  "elections.tabs.people": "افراد",
-  "elections.tabs.results": "نتایج",
-  "elections.tabs.tellers": "شمارنده‌ها",
-  "elections.tabs.votingMethods": "روش‌های رأی‌گیری",
-  "elections.tellerAccess": "دسترسی شمارنده",
-  "elections.tellerAccessClosed": "دسترسی شمارنده بسته است",
-  "elections.tellerAccessCode": "کد دسترسی",
-  "elections.tellerAccessOpen": "دسترسی شمارنده باز است",
-  "elections.tellerAccessQrCode": "کد QR",
-  "elections.tellerAccessUrl": "آدرس قابل اشتراک",
-  "elections.toElect": "برای انتخاب",
-  "elections.toggleTellerAccess": "تغییر وضعیت دسترسی شمارنده",
-  "elections.type": "نوع",
-  "elections.updateError": "به‌روزرسانی انتخابات با شکست مواجه شد",
-  "elections.updateSuccess": "انتخابات با موفقیت به‌روزرسانی شد",
-  "elections.viewReports": "مشاهده گزارش‌ها",
-  "elections.viewResults": "مشاهده نتایج",
-  "elections.voters": "رأی‌دهندگان"
+  "elections.advanceStage": {
+    "t": "پیشروی به مرحله بعد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.advanceTo": {
+    "t": "پیشروی به {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ballots": {
+    "t": "آرا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteError": {
+    "t": "حذف برخی انتخابات با شکست مواجه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteMessage": {
+    "t": "آیا مطمئن هستید که می‌خواهید {count} انتخابات انتخاب‌شده را حذف کنید؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteSuccess": {
+    "t": "{count} انتخابات با موفقیت حذف شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.calculateTally": {
+    "t": "محاسبه آرا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.clearFilters": {
+    "t": "پاک کردن فیلترها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmAdvance": {
+    "t": "آیا مطمئن هستید که می‌خواهید این انتخابات را به {stage} پیش ببرید؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmBulkDelete": {
+    "t": "تأیید حذف گروهی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmRevert": {
+    "t": "آیا مطمئن هستید که می‌خواهید این انتخابات را به {stage} بازگردانید؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.copyUrl": {
+    "t": "کپی آدرس",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createError": {
+    "t": "ایجاد انتخابات با شکست مواجه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createFirst": {
+    "t": "اولین انتخابات خود را ایجاد کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createNew": {
+    "t": "ایجاد انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createSuccess": {
+    "t": "انتخابات با موفقیت ایجاد شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.date": {
+    "t": "تاریخ انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteConfirm": {
+    "t": "آیا مطمئن هستید که می‌خواهید این انتخابات را حذف کنید؟ این عمل قابل بازگشت نیست.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteError": {
+    "t": "حذف انتخابات با شکست مواجه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSelected": {
+    "t": "حذف موارد انتخاب‌شده ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSuccess": {
+    "t": "انتخابات با موفقیت حذف شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.details": {
+    "t": "جزئیات انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.edit": {
+    "t": "ویرایش انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.B": {
+    "t": "انتخابات میان‌دوره‌ای",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.N": {
+    "t": "انتخابات عادی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.T": {
+    "t": "رفع تساوی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Con": {
+    "t": "کنوانسیون واحد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA": {
+    "t": "محفل روحانی محلی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA1": {
+    "t": "محفل روحانی محلی (دو مرحله‌ای) واحد محلی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA2": {
+    "t": "محفل روحانی محلی (دو مرحله‌ای) نهایی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.NSA": {
+    "t": "محفل روحانی ملی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Oth": {
+    "t": "سایر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Reg": {
+    "t": "شورای منطقه‌ای",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElection": {
+    "t": "خروجی گرفتن از انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionError": {
+    "t": "خروجی گرفتن از انتخابات با شکست مواجه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionSuccess": {
+    "t": "خروجی انتخابات با موفقیت گرفته شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByStatus": {
+    "t": "فیلتر بر اساس وضعیت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByType": {
+    "t": "فیلتر بر اساس نوع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenor": {
+    "t": "هماهنگ‌کننده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenorPlaceholder": {
+    "t": "نام هماهنگ‌کننده را وارد کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethods": {
+    "t": "روش‌های سفارشی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsHelp": {
+    "t": "هر روش رأی‌گیری سفارشی یا غیراستاندارد که در این انتخابات استفاده می‌شود را مشخص کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsPlaceholder": {
+    "t": "هر روش رأی‌گیری سفارشی را توصیف کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.date": {
+    "t": "تاریخ انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.datePlaceholder": {
+    "t": "تاریخ انتخابات را انتخاب کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.dateRequired": {
+    "t": "تاریخ انتخابات الزامی است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionMode": {
+    "t": "حالت انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscode": {
+    "t": "رمز انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodeHelp": {
+    "t": "برای ورود شمارنده رمز لازم است.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodePlaceholder": {
+    "t": "رمز را وارد کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddress": {
+    "t": "آدرس ایمیل فرستنده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddressPlaceholder": {
+    "t": "آدرس ایمیل فرستنده را وارد کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromName": {
+    "t": "نام فرستنده ایمیل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromNamePlaceholder": {
+    "t": "نام فرستنده را وارد کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailInvalid": {
+    "t": "آدرس ایمیل نامعتبر است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubject": {
+    "t": "موضوع ایمیل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubjectPlaceholder": {
+    "t": "موضوع ایمیل را وارد کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailText": {
+    "t": "متن ایمیل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailTextPlaceholder": {
+    "t": "متن بدنه ایمیل را وارد کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flags": {
+    "t": "پرچم‌ها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsHelp": {
+    "t": "پرچم‌ها برای شرایط ویژه انتخابات استفاده می‌شوند.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsPlaceholder": {
+    "t": "پرچم‌ها را وارد کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.hidePreBallotPages": {
+    "t": "پنهان کردن صفحات پیش از رأی‌گیری",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElection": {
+    "t": "انتخابات مرتبط",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount": {
+    "t": "{count} انتخابات مرتبط در دسترس است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount_plural": {
+    "t": "{count} انتخابات مرتبط در دسترس است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionHelp": {
+    "t": "یک انتخابات را برای اتصال جهت رفع تساوی یا دور دوم انتخاب کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKind": {
+    "t": "نوع انتخابات مرتبط",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKindPlaceholder": {
+    "t": "نوع را انتخاب کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionPlaceholder": {
+    "t": "انتخابات مرتبط را انتخاب کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.listForPublic": {
+    "t": "نمایش برای عموم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.lockedByBallots": {
+    "t": "قفل شده — آرا وارد شده‌اند",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.maskVotingMethod": {
+    "t": "پنهان کردن روش رأی‌گیری",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.modePlaceholder": {
+    "t": "حالت انتخابات را انتخاب کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.name": {
+    "t": "نام انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.namePlaceholder": {
+    "t": "نام انتخابات را وارد کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.nameRequired": {
+    "t": "نام انتخابات الزامی است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberExtra": {
+    "t": "تعداد اضافی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElect": {
+    "t": "تعداد برای انتخاب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElectRequired": {
+    "t": "تعداد برای انتخاب الزامی است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnounced": {
+    "t": "اعلام نتایج آنلاین",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnouncedPlaceholder": {
+    "t": "زمان اعلام را انتخاب کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineCloseIsEstimate": {
+    "t": "زمان پایان تخمینی است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcess": {
+    "t": "فرآیند انتخاب آنلاین",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessPlaceholder": {
+    "t": "فرآیند را انتخاب کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClose": {
+    "t": "زمان پایان رأی‌گیری آنلاین",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClosePlaceholder": {
+    "t": "زمان پایان را انتخاب کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpen": {
+    "t": "زمان شروع رأی‌گیری آنلاین",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpenPlaceholder": {
+    "t": "زمان شروع را انتخاب کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showAsTest": {
+    "t": "نمایش به عنوان آزمایشی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showFullReport": {
+    "t": "نمایش گزارش کامل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsText": {
+    "t": "متن پیامک",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsTextPlaceholder": {
+    "t": "متن پیامک را وارد کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.type": {
+    "t": "نوع انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typePlaceholder": {
+    "t": "نوع انتخابات را انتخاب کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typeRequired": {
+    "t": "نوع انتخابات الزامی است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useCallInButton": {
+    "t": "فعال‌سازی رأی‌گیری تلفنی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKiosk": {
+    "t": "Enable kiosk mode",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKioskHelp": {
+    "t": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethods": {
+    "t": "روش‌های رأی‌گیری",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsHelp": {
+    "t": "روش‌هایی که آرا با آنها ثبت خواهند شد را انتخاب کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsPlaceholder": {
+    "t": "روش‌های رأی‌گیری را انتخاب کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallots": {
+    "t": "وارد کردن آرای CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsError": {
+    "t": "وارد کردن آرای CDN با شکست مواجه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsSuccess": {
+    "t": "آرای CDN با موفقیت وارد شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElection": {
+    "t": "وارد کردن انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionError": {
+    "t": "وارد کردن انتخابات با شکست مواجه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionSuccess": {
+    "t": "انتخابات با موفقیت وارد شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.list": {
+    "t": "انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.loadError": {
+    "t": "بارگذاری انتخابات با شکست مواجه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.locations": {
+    "t": "مکان‌ها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageBallots": {
+    "t": "مدیریت آرا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageLocations": {
+    "t": "مدیریت مکان‌ها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.managePeople": {
+    "t": "مدیریت افراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.name": {
+    "t": "نام انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.notFound": {
+    "t": "انتخابات یافت نشد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingDisabled": {
+    "t": "رأی‌گیری آنلاین غیرفعال است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingEnabled": {
+    "t": "رأی‌گیری آنلاین فعال است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.people": {
+    "t": "افراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.quickActions": {
+    "t": "اقدامات سریع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.revertTo": {
+    "t": "بازگشت به {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.searchPlaceholder": {
+    "t": "جستجوی انتخابات با نام یا هماهنگ‌کننده...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Counting": {
+    "t": "شمارش",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Finalized": {
+    "t": "نهایی شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Setup": {
+    "t": "راه‌اندازی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageAdvanced": {
+    "t": "انتخابات به {stage} پیشروی کرد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError": {
+    "t": "تغییر مرحله انتخابات با شکست مواجه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageProgression": {
+    "t": "مرحله انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageReverted": {
+    "t": "انتخابات به {stage} بازگشت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.statistics": {
+    "t": "آمار",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.status": {
+    "t": "وضعیت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.advanced": {
+    "t": "پیشرفته",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.auditLogs": {
+    "t": "گزارش‌های حسابرسی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.ballots": {
+    "t": "آرا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.basicInfo": {
+    "t": "اطلاعات اولیه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.communication": {
+    "t": "ارتباطات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.displayPrivacy": {
+    "t": "نمایش و حریم خصوصی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.electionRules": {
+    "t": "قوانین انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.locations": {
+    "t": "مکان‌ها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.onlineVoting": {
+    "t": "رأی‌گیری آنلاین",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.people": {
+    "t": "افراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.results": {
+    "t": "نتایج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.tellers": {
+    "t": "شمارنده‌ها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.votingMethods": {
+    "t": "روش‌های رأی‌گیری",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccess": {
+    "t": "دسترسی شمارنده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessClosed": {
+    "t": "دسترسی شمارنده بسته است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessCode": {
+    "t": "کد دسترسی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessOpen": {
+    "t": "دسترسی شمارنده باز است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessQrCode": {
+    "t": "کد QR",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessUrl": {
+    "t": "آدرس قابل اشتراک",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toElect": {
+    "t": "برای انتخاب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toggleTellerAccess": {
+    "t": "تغییر وضعیت دسترسی شمارنده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.type": {
+    "t": "نوع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateError": {
+    "t": "به‌روزرسانی انتخابات با شکست مواجه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateSuccess": {
+    "t": "انتخابات با موفقیت به‌روزرسانی شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewReports": {
+    "t": "مشاهده گزارش‌ها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewResults": {
+    "t": "مشاهده نتایج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.voters": {
+    "t": "رأی‌دهندگان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

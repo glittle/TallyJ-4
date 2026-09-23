@@ -1,160 +1,792 @@
 {
-  "elections.advanceStage": "Sogea kwenye Hatua Inayofuata",
-  "elections.advanceTo": "Sogea kwenye {stage}",
-  "elections.ballots": "Kura",
-  "elections.bulkDeleteError": "Imeshindwa kufuta baadhi ya chaguzi",
-  "elections.bulkDeleteMessage": "Una uhakika unataka kufuta chaguzi {count} zilizochaguliwa?",
-  "elections.bulkDeleteSuccess": "Chaguzi {count} zimefutwa kwa mafanikio",
-  "elections.calculateTally": "Hesabu Matokeo",
-  "elections.clearFilters": "Futa Vichujio",
-  "elections.confirmAdvance": "Una uhakika unataka kusogeza uchaguzi huu kwenye {stage}?",
-  "elections.confirmBulkDelete": "Thibitisha Ufutaji wa Jumla",
-  "elections.confirmRevert": "Una uhakika unataka kurudisha uchaguzi huu kwenye {stage}?",
-  "elections.copyUrl": "Nakili URL",
-  "elections.createError": "Imeshindwa kuunda uchaguzi",
-  "elections.createFirst": "Unda Uchaguzi Wako wa Kwanza",
-  "elections.createNew": "Unda Uchaguzi",
-  "elections.createSuccess": "Uchaguzi umeundwa kwa mafanikio",
-  "elections.date": "Tarehe ya Uchaguzi",
-  "elections.deleteConfirm": "Una uhakika unataka kufuta uchaguzi huu? Kitendo hiki hakiwezi kutenduliwa.",
-  "elections.deleteError": "Imeshindwa kufuta uchaguzi",
-  "elections.deleteSelected": "Futa Zilizochaguliwa ({count})",
-  "elections.deleteSuccess": "Uchaguzi umefutwa kwa mafanikio",
-  "elections.details": "Maelezo ya Uchaguzi",
-  "elections.edit": "Hariri Uchaguzi",
-  "elections.electionModes.B": "Uchaguzi Mdogo",
-  "elections.electionModes.N": "Uchaguzi wa Kawaida",
-  "elections.electionModes.T": "Kuvunja Sare",
-  "elections.electionTypes.Con": "Mkutano wa Kitengo",
-  "elections.electionTypes.LSA": "Baraza la Kiroho la Mahali",
-  "elections.electionTypes.LSA1": "Baraza la Kiroho la Mahali (Hatua Mbili) Kitengo cha Mahali",
-  "elections.electionTypes.LSA2": "Baraza la Kiroho la Mahali (Hatua Mbili) Mwisho",
-  "elections.electionTypes.NSA": "Baraza la Kiroho la Kitaifa",
-  "elections.electionTypes.Oth": "Nyingine",
-  "elections.electionTypes.Reg": "Baraza la Kikanda",
-  "elections.exportElection": "Hamisha Uchaguzi",
-  "elections.exportElectionError": "Imeshindwa kuhamisha uchaguzi",
-  "elections.exportElectionSuccess": "Uchaguzi umehamishwa kwa mafanikio",
-  "elections.filterByStatus": "Chuja kwa Hali",
-  "elections.filterByType": "Chuja kwa Aina",
-  "elections.form.convenor": "Mwenyekiti",
-  "elections.form.convenorPlaceholder": "Ingiza jina la mwenyekiti",
-  "elections.form.customMethods": "Mbinu Maalum",
-  "elections.form.customMethodsHelp": "Ainisha mbinu yoyote maalum au isiyo ya kawaida ya upigaji kura inayotumika katika uchaguzi huu.",
-  "elections.form.customMethodsPlaceholder": "Eleza mbinu zozote maalum za upigaji kura",
-  "elections.form.date": "Tarehe ya Uchaguzi",
-  "elections.form.datePlaceholder": "Chagua tarehe ya uchaguzi",
-  "elections.form.dateRequired": "Tarehe ya uchaguzi inahitajika",
-  "elections.form.electionMode": "Hali ya Uchaguzi",
-  "elections.form.electionPasscode": "Nambari ya Siri ya Uchaguzi",
-  "elections.form.electionPasscodeHelp": "Nambari ya siri inahitajika kwa kuingia kwa mhesabu.",
-  "elections.form.electionPasscodePlaceholder": "Ingiza nambari ya siri",
-  "elections.form.emailFromAddress": "Anwani ya Barua Pepe ya Mtumaji",
-  "elections.form.emailFromAddressPlaceholder": "Ingiza anwani ya barua pepe ya mtumaji",
-  "elections.form.emailFromName": "Jina la Mtumaji wa Barua Pepe",
-  "elections.form.emailFromNamePlaceholder": "Ingiza jina la mtumaji",
-  "elections.form.emailInvalid": "Anwani ya barua pepe si sahihi",
-  "elections.form.emailSubject": "Kichwa cha Barua Pepe",
-  "elections.form.emailSubjectPlaceholder": "Ingiza kichwa cha barua pepe",
-  "elections.form.emailText": "Maandishi ya Barua Pepe",
-  "elections.form.emailTextPlaceholder": "Ingiza maandishi ya mwili wa barua pepe",
-  "elections.form.flags": "Bendera",
-  "elections.form.flagsHelp": "Bendera hutumika kwa hali maalum za uchaguzi.",
-  "elections.form.flagsPlaceholder": "Ingiza bendera zozote",
-  "elections.form.hidePreBallotPages": "Ficha Kurasa za Kabla ya Kura",
-  "elections.form.linkedElection": "Uchaguzi Uliounganishwa",
-  "elections.form.linkedElectionCount": "Uchaguzi {count} uliounganishwa unapatikana",
-  "elections.form.linkedElectionCount_plural": "Chaguzi {count} zilizounganishwa zinapatikana",
-  "elections.form.linkedElectionHelp": "Chagua uchaguzi wa kuunganisha kwa ajili ya kuvunja sare au duru ya pili.",
-  "elections.form.linkedElectionKind": "Aina ya Uchaguzi Uliounganishwa",
-  "elections.form.linkedElectionKindPlaceholder": "Chagua aina",
-  "elections.form.linkedElectionPlaceholder": "Chagua uchaguzi uliounganishwa",
-  "elections.form.listForPublic": "Orodhesha kwa Umma",
-  "elections.form.lockedByBallots": "Imefungwa — kura zimeingizwa",
-  "elections.form.maskVotingMethod": "Ficha Mbinu ya Upigaji Kura",
-  "elections.form.modePlaceholder": "Chagua hali ya uchaguzi",
-  "elections.form.name": "Jina la Uchaguzi",
-  "elections.form.namePlaceholder": "Ingiza jina la uchaguzi",
-  "elections.form.nameRequired": "Jina la uchaguzi linahitajika",
-  "elections.form.numberExtra": "Idadi ya Ziada",
-  "elections.form.numberToElect": "Idadi ya Kuchagua",
-  "elections.form.numberToElectRequired": "Idadi ya kuchagua inahitajika",
-  "elections.form.onlineAnnounced": "Matokeo ya Mtandaoni Yametangazwa",
-  "elections.form.onlineAnnouncedPlaceholder": "Chagua wakati wa tangazo",
-  "elections.form.onlineCloseIsEstimate": "Wakati wa Kufunga ni Makadirio",
-  "elections.form.onlineSelectionProcess": "Mchakato wa Uchaguzi wa Mtandaoni",
-  "elections.form.onlineSelectionProcessPlaceholder": "Chagua mchakato",
-  "elections.form.onlineWhenClose": "Upigaji Kura wa Mtandaoni Unafungwa",
-  "elections.form.onlineWhenClosePlaceholder": "Chagua wakati wa kufunga",
-  "elections.form.onlineWhenOpen": "Upigaji Kura wa Mtandaoni Unafunguliwa",
-  "elections.form.onlineWhenOpenPlaceholder": "Chagua wakati wa kufungua",
-  "elections.form.showAsTest": "Onyesha Kama Jaribio",
-  "elections.form.showFullReport": "Onyesha Ripoti Kamili",
-  "elections.form.smsText": "Maandishi ya SMS",
-  "elections.form.smsTextPlaceholder": "Ingiza maandishi ya ujumbe wa SMS",
-  "elections.form.type": "Aina ya Uchaguzi",
-  "elections.form.typePlaceholder": "Chagua aina ya uchaguzi",
-  "elections.form.typeRequired": "Aina ya uchaguzi inahitajika",
-  "elections.form.useCallInButton": "Wezesha Upigaji Kura kwa Simu",
-  "elections.form.useKiosk": "Enable kiosk mode",
-  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
-  "elections.form.votingMethods": "Mbinu za Upigaji Kura",
-  "elections.form.votingMethodsHelp": "Chagua mbinu ambazo kura zitapigwa kwazo.",
-  "elections.form.votingMethodsPlaceholder": "Chagua mbinu za upigaji kura",
-  "elections.importCdnBallots": "Ingiza Kura za CDN",
-  "elections.importCdnBallotsError": "Imeshindwa kuingiza kura za CDN",
-  "elections.importCdnBallotsSuccess": "Kura za CDN zimeingizwa kwa mafanikio",
-  "elections.importElection": "Ingiza Uchaguzi",
-  "elections.importElectionError": "Imeshindwa kuingiza uchaguzi",
-  "elections.importElectionSuccess": "Uchaguzi umeingizwa kwa mafanikio",
-  "elections.list": "Uchaguzi",
-  "elections.loadError": "Imeshindwa kupakia uchaguzi",
-  "elections.locations": "Maeneo",
-  "elections.manageBallots": "Simamia Kura",
-  "elections.manageLocations": "Simamia Maeneo",
-  "elections.managePeople": "Simamia Watu",
-  "elections.name": "Jina la Uchaguzi",
-  "elections.notFound": "Uchaguzi haujapatikana",
-  "elections.onlineVotingDisabled": "Upigaji kura wa mtandaoni umezimwa",
-  "elections.onlineVotingEnabled": "Upigaji kura wa mtandaoni umewezeshwa",
-  "elections.people": "Watu",
-  "elections.quickActions": "Vitendo vya Haraka",
-  "elections.revertTo": "Rudi kwenye {stage}",
-  "elections.searchPlaceholder": "Tafuta uchaguzi kwa jina au mwenyekiti...",
-  "elections.stage.Counting": "Uhesabuji",
-  "elections.stage.Finalized": "Imekamilishwa",
-  "elections.stage.Setup": "Usanidi",
-  "elections.stageAdvanced": "Uchaguzi umesogezwa kwenye {stage}",
-  "elections.stageChangeError": "Imeshindwa kubadilisha hatua ya uchaguzi",
-  "elections.stageProgression": "Hatua ya Uchaguzi",
-  "elections.stageReverted": "Uchaguzi umerudishwa kwenye {stage}",
-  "elections.statistics": "Takwimu",
-  "elections.status": "Hali",
-  "elections.tabs.advanced": "Kina",
-  "elections.tabs.auditLogs": "Kumbukumbu za Ukaguzi",
-  "elections.tabs.ballots": "Kura",
-  "elections.tabs.basicInfo": "Taarifa za Msingi",
-  "elections.tabs.communication": "Mawasiliano",
-  "elections.tabs.displayPrivacy": "Onyesho na Faragha",
-  "elections.tabs.electionRules": "Sheria za Uchaguzi",
-  "elections.tabs.locations": "Maeneo",
-  "elections.tabs.onlineVoting": "Upigaji Kura wa Mtandaoni",
-  "elections.tabs.people": "Watu",
-  "elections.tabs.results": "Matokeo",
-  "elections.tabs.tellers": "Wahesabu",
-  "elections.tabs.votingMethods": "Mbinu za Upigaji Kura",
-  "elections.tellerAccess": "Ufikiaji wa Mhesabu",
-  "elections.tellerAccessClosed": "Ufikiaji wa mhesabu umefungwa",
-  "elections.tellerAccessCode": "Nambari ya Ufikiaji",
-  "elections.tellerAccessOpen": "Ufikiaji wa mhesabu umefunguliwa",
-  "elections.tellerAccessQrCode": "Msimbo wa QR",
-  "elections.tellerAccessUrl": "URL Inayoshirikika",
-  "elections.toElect": "Kuchagua",
-  "elections.toggleTellerAccess": "Badilisha Ufikiaji wa Mhesabu",
-  "elections.type": "Aina",
-  "elections.updateError": "Imeshindwa kusasisha uchaguzi",
-  "elections.updateSuccess": "Uchaguzi umesasishwa kwa mafanikio",
-  "elections.viewReports": "Tazama Ripoti",
-  "elections.viewResults": "Tazama Matokeo",
-  "elections.voters": "Wapiga Kura"
+  "elections.advanceStage": {
+    "t": "Sogea kwenye Hatua Inayofuata",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.advanceTo": {
+    "t": "Sogea kwenye {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ballots": {
+    "t": "Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteError": {
+    "t": "Imeshindwa kufuta baadhi ya chaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteMessage": {
+    "t": "Una uhakika unataka kufuta chaguzi {count} zilizochaguliwa?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteSuccess": {
+    "t": "Chaguzi {count} zimefutwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.calculateTally": {
+    "t": "Hesabu Matokeo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.clearFilters": {
+    "t": "Futa Vichujio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmAdvance": {
+    "t": "Una uhakika unataka kusogeza uchaguzi huu kwenye {stage}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmBulkDelete": {
+    "t": "Thibitisha Ufutaji wa Jumla",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmRevert": {
+    "t": "Una uhakika unataka kurudisha uchaguzi huu kwenye {stage}?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.copyUrl": {
+    "t": "Nakili URL",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createError": {
+    "t": "Imeshindwa kuunda uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createFirst": {
+    "t": "Unda Uchaguzi Wako wa Kwanza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createNew": {
+    "t": "Unda Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createSuccess": {
+    "t": "Uchaguzi umeundwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.date": {
+    "t": "Tarehe ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteConfirm": {
+    "t": "Una uhakika unataka kufuta uchaguzi huu? Kitendo hiki hakiwezi kutenduliwa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteError": {
+    "t": "Imeshindwa kufuta uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSelected": {
+    "t": "Futa Zilizochaguliwa ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSuccess": {
+    "t": "Uchaguzi umefutwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.details": {
+    "t": "Maelezo ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.edit": {
+    "t": "Hariri Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.B": {
+    "t": "Uchaguzi Mdogo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.N": {
+    "t": "Uchaguzi wa Kawaida",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.T": {
+    "t": "Kuvunja Sare",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Con": {
+    "t": "Mkutano wa Kitengo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA": {
+    "t": "Baraza la Kiroho la Mahali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA1": {
+    "t": "Baraza la Kiroho la Mahali (Hatua Mbili) Kitengo cha Mahali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA2": {
+    "t": "Baraza la Kiroho la Mahali (Hatua Mbili) Mwisho",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.NSA": {
+    "t": "Baraza la Kiroho la Kitaifa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Oth": {
+    "t": "Nyingine",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Reg": {
+    "t": "Baraza la Kikanda",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElection": {
+    "t": "Hamisha Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionError": {
+    "t": "Imeshindwa kuhamisha uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionSuccess": {
+    "t": "Uchaguzi umehamishwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByStatus": {
+    "t": "Chuja kwa Hali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByType": {
+    "t": "Chuja kwa Aina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenor": {
+    "t": "Mwenyekiti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenorPlaceholder": {
+    "t": "Ingiza jina la mwenyekiti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethods": {
+    "t": "Mbinu Maalum",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsHelp": {
+    "t": "Ainisha mbinu yoyote maalum au isiyo ya kawaida ya upigaji kura inayotumika katika uchaguzi huu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsPlaceholder": {
+    "t": "Eleza mbinu zozote maalum za upigaji kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.date": {
+    "t": "Tarehe ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.datePlaceholder": {
+    "t": "Chagua tarehe ya uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.dateRequired": {
+    "t": "Tarehe ya uchaguzi inahitajika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionMode": {
+    "t": "Hali ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscode": {
+    "t": "Nambari ya Siri ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodeHelp": {
+    "t": "Nambari ya siri inahitajika kwa kuingia kwa mhesabu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodePlaceholder": {
+    "t": "Ingiza nambari ya siri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddress": {
+    "t": "Anwani ya Barua Pepe ya Mtumaji",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddressPlaceholder": {
+    "t": "Ingiza anwani ya barua pepe ya mtumaji",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromName": {
+    "t": "Jina la Mtumaji wa Barua Pepe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromNamePlaceholder": {
+    "t": "Ingiza jina la mtumaji",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailInvalid": {
+    "t": "Anwani ya barua pepe si sahihi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubject": {
+    "t": "Kichwa cha Barua Pepe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubjectPlaceholder": {
+    "t": "Ingiza kichwa cha barua pepe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailText": {
+    "t": "Maandishi ya Barua Pepe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailTextPlaceholder": {
+    "t": "Ingiza maandishi ya mwili wa barua pepe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flags": {
+    "t": "Bendera",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsHelp": {
+    "t": "Bendera hutumika kwa hali maalum za uchaguzi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsPlaceholder": {
+    "t": "Ingiza bendera zozote",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.hidePreBallotPages": {
+    "t": "Ficha Kurasa za Kabla ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElection": {
+    "t": "Uchaguzi Uliounganishwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount": {
+    "t": "Uchaguzi {count} uliounganishwa unapatikana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount_plural": {
+    "t": "Chaguzi {count} zilizounganishwa zinapatikana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionHelp": {
+    "t": "Chagua uchaguzi wa kuunganisha kwa ajili ya kuvunja sare au duru ya pili.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKind": {
+    "t": "Aina ya Uchaguzi Uliounganishwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKindPlaceholder": {
+    "t": "Chagua aina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionPlaceholder": {
+    "t": "Chagua uchaguzi uliounganishwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.listForPublic": {
+    "t": "Orodhesha kwa Umma",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.lockedByBallots": {
+    "t": "Imefungwa — kura zimeingizwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.maskVotingMethod": {
+    "t": "Ficha Mbinu ya Upigaji Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.modePlaceholder": {
+    "t": "Chagua hali ya uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.name": {
+    "t": "Jina la Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.namePlaceholder": {
+    "t": "Ingiza jina la uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.nameRequired": {
+    "t": "Jina la uchaguzi linahitajika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberExtra": {
+    "t": "Idadi ya Ziada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElect": {
+    "t": "Idadi ya Kuchagua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElectRequired": {
+    "t": "Idadi ya kuchagua inahitajika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnounced": {
+    "t": "Matokeo ya Mtandaoni Yametangazwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnouncedPlaceholder": {
+    "t": "Chagua wakati wa tangazo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineCloseIsEstimate": {
+    "t": "Wakati wa Kufunga ni Makadirio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcess": {
+    "t": "Mchakato wa Uchaguzi wa Mtandaoni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessPlaceholder": {
+    "t": "Chagua mchakato",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClose": {
+    "t": "Upigaji Kura wa Mtandaoni Unafungwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClosePlaceholder": {
+    "t": "Chagua wakati wa kufunga",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpen": {
+    "t": "Upigaji Kura wa Mtandaoni Unafunguliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpenPlaceholder": {
+    "t": "Chagua wakati wa kufungua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showAsTest": {
+    "t": "Onyesha Kama Jaribio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showFullReport": {
+    "t": "Onyesha Ripoti Kamili",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsText": {
+    "t": "Maandishi ya SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsTextPlaceholder": {
+    "t": "Ingiza maandishi ya ujumbe wa SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.type": {
+    "t": "Aina ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typePlaceholder": {
+    "t": "Chagua aina ya uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typeRequired": {
+    "t": "Aina ya uchaguzi inahitajika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useCallInButton": {
+    "t": "Wezesha Upigaji Kura kwa Simu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKiosk": {
+    "t": "Enable kiosk mode",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKioskHelp": {
+    "t": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethods": {
+    "t": "Mbinu za Upigaji Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsHelp": {
+    "t": "Chagua mbinu ambazo kura zitapigwa kwazo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsPlaceholder": {
+    "t": "Chagua mbinu za upigaji kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallots": {
+    "t": "Ingiza Kura za CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsError": {
+    "t": "Imeshindwa kuingiza kura za CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsSuccess": {
+    "t": "Kura za CDN zimeingizwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElection": {
+    "t": "Ingiza Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionError": {
+    "t": "Imeshindwa kuingiza uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionSuccess": {
+    "t": "Uchaguzi umeingizwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.list": {
+    "t": "Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.loadError": {
+    "t": "Imeshindwa kupakia uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.locations": {
+    "t": "Maeneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageBallots": {
+    "t": "Simamia Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageLocations": {
+    "t": "Simamia Maeneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.managePeople": {
+    "t": "Simamia Watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.name": {
+    "t": "Jina la Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.notFound": {
+    "t": "Uchaguzi haujapatikana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingDisabled": {
+    "t": "Upigaji kura wa mtandaoni umezimwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingEnabled": {
+    "t": "Upigaji kura wa mtandaoni umewezeshwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.people": {
+    "t": "Watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.quickActions": {
+    "t": "Vitendo vya Haraka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.revertTo": {
+    "t": "Rudi kwenye {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.searchPlaceholder": {
+    "t": "Tafuta uchaguzi kwa jina au mwenyekiti...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Counting": {
+    "t": "Uhesabuji",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Finalized": {
+    "t": "Imekamilishwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Setup": {
+    "t": "Usanidi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageAdvanced": {
+    "t": "Uchaguzi umesogezwa kwenye {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError": {
+    "t": "Imeshindwa kubadilisha hatua ya uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageProgression": {
+    "t": "Hatua ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageReverted": {
+    "t": "Uchaguzi umerudishwa kwenye {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.statistics": {
+    "t": "Takwimu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.status": {
+    "t": "Hali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.advanced": {
+    "t": "Kina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.auditLogs": {
+    "t": "Kumbukumbu za Ukaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.ballots": {
+    "t": "Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.basicInfo": {
+    "t": "Taarifa za Msingi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.communication": {
+    "t": "Mawasiliano",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.displayPrivacy": {
+    "t": "Onyesho na Faragha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.electionRules": {
+    "t": "Sheria za Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.locations": {
+    "t": "Maeneo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.onlineVoting": {
+    "t": "Upigaji Kura wa Mtandaoni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.people": {
+    "t": "Watu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.results": {
+    "t": "Matokeo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.tellers": {
+    "t": "Wahesabu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.votingMethods": {
+    "t": "Mbinu za Upigaji Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccess": {
+    "t": "Ufikiaji wa Mhesabu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessClosed": {
+    "t": "Ufikiaji wa mhesabu umefungwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessCode": {
+    "t": "Nambari ya Ufikiaji",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessOpen": {
+    "t": "Ufikiaji wa mhesabu umefunguliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessQrCode": {
+    "t": "Msimbo wa QR",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessUrl": {
+    "t": "URL Inayoshirikika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toElect": {
+    "t": "Kuchagua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toggleTellerAccess": {
+    "t": "Badilisha Ufikiaji wa Mhesabu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.type": {
+    "t": "Aina",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateError": {
+    "t": "Imeshindwa kusasisha uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateSuccess": {
+    "t": "Uchaguzi umesasishwa kwa mafanikio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewReports": {
+    "t": "Tazama Ripoti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewResults": {
+    "t": "Tazama Matokeo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.voters": {
+    "t": "Wapiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

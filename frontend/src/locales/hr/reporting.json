@@ -1,194 +1,962 @@
 {
-  "reporting.advancedFilters": "Napredni filtri",
-  "reporting.allCanReceive": "Osobe koje mogu primiti glasove",
-  "reporting.applyFilters": "Primijeni filtre",
-  "reporting.area": "Područje",
-  "reporting.averageVotesPerBallot": "Prosječan broj glasova po glasačkom listiću",
-  "reporting.bahaiId": "Bahájski ID",
-  "reporting.ballotCode": "Glasački listić",
-  "reporting.ballotCount": "Broj glasačkih listića",
-  "reporting.ballotId": "ID glasačkog listića",
-  "reporting.ballotLengthDistribution": "Distribucija duljine glasačkih listića",
-  "reporting.ballotReport": "Izvješće o glasačkim listićima",
-  "reporting.ballotReports": "Izvješća o glasačkim listićima",
-  "reporting.ballotsByMethod": "Glasački listići po metodi glasanja",
-  "reporting.ballotsCast": "Predani glasački listići",
-  "reporting.ballotsEntered": "Uneseni glasački listići",
-  "reporting.calledIn": "Pozivom",
-  "reporting.canReceiveVotes": "Može primiti glasove",
-  "reporting.canVote": "Može glasati",
-  "reporting.candidate": "Kandidat",
-  "reporting.candidateName": "Ime kandidata",
-  "reporting.candidatePerformance": "Uspješnost kandidata",
-  "reporting.candidateVotes": "Glasovi kandidata",
-  "reporting.candidates": "Kandidati",
-  "reporting.category": "Kategorija",
-  "reporting.change": "Promjena",
-  "reporting.charts": "Grafovi",
-  "reporting.clearFilters": "Očisti filtre",
-  "reporting.comparisonSummary": "Sažetak usporedbe",
-  "reporting.configureReport": "Konfiguriraj izvješće",
-  "reporting.contender": "Natjecatelj",
-  "reporting.convenor": "Sazivač",
-  "reporting.count": "Broj",
-  "reporting.cumulativeTurnout": "Kumulativni odaziv",
-  "reporting.customReport": "Prilagođeno izvješće",
-  "reporting.date": "Datum",
-  "reporting.dateOfElection": "Datum izbora",
-  "reporting.dateRange": "Raspon datuma",
-  "reporting.demographicBreakdown": "Demografska raščlamba",
-  "reporting.description": "Opis",
-  "reporting.detailedStatistics": "Detaljne statistike",
-  "reporting.droppedOff": "Osobnom dostavom",
-  "reporting.earlyVoting": "Rano glasanje",
-  "reporting.earlyVotingPercentage": "% ranog glasanja",
-  "reporting.elected": "Izabrani",
-  "reporting.electedCandidates": "Izabrani kandidati",
-  "reporting.electedPersons": "Izabrani",
-  "reporting.election": "Izbori",
-  "reporting.electionDate": "Datum izbora",
-  "reporting.electionDayVoting": "Glasanje na dan izbora",
-  "reporting.electionDetails": "Detalji izbora",
-  "reporting.electionName": "Naziv izbora",
-  "reporting.electionOverview": "Pregled izbora",
-  "reporting.electionSummary": "Sažetak izbora",
-  "reporting.electionType": "Vrsta izbora",
-  "reporting.eligibilityReason": "Razlog prihvatljivosti",
-  "reporting.eliminated": "Eliminiran",
-  "reporting.email": "E-pošta",
-  "reporting.endDate": "Datum završetka",
-  "reporting.enterCandidateName": "Unesite ime kandidata",
-  "reporting.enterDescription": "Unesite opis",
-  "reporting.enterReportName": "Unesite naziv izvješća",
-  "reporting.error": "Učitavanje izvješća nije uspjelo",
-  "reporting.exportCSV": "Izvezi CSV",
-  "reporting.exportExcel": "Izvezi Excel",
-  "reporting.exportFormats": "Formati izvoza",
-  "reporting.exportPDF": "Izvezi PDF",
-  "reporting.extra": "Dodatni",
-  "reporting.extraCandidates": "Dodatni kandidati",
-  "reporting.firstChoice": "% prvog izbora",
-  "reporting.firstName": "Ime",
-  "reporting.firstTimeVoters": "Glasači po prvi put",
-  "reporting.flags": "Oznake",
-  "reporting.generateComparison": "Generiraj usporedbu",
-  "reporting.generateCustomReport": "Generiraj prilagođeno izvješće",
-  "reporting.generateReport": "Generiraj izvješće",
-  "reporting.groupN": "Grupa {n}",
-  "reporting.hasSignedInEmail": "Prijavljen (e-pošta)",
-  "reporting.hasSignedInPhone": "Prijavljen (telefon)",
-  "reporting.historicalComparison": "Povijesna usporedba",
-  "reporting.imported": "Uvezeno",
-  "reporting.inPerson": "Osobno",
-  "reporting.inPersonVoters": "Glasači osobno",
-  "reporting.includeSections": "Uključi sekcije",
-  "reporting.lastName": "Prezime",
-  "reporting.loading": "Učitavanje izvješća...",
-  "reporting.location": "Lokacija",
-  "reporting.locationReport": "Izvješće o lokacijama",
-  "reporting.locationStatistics": "Statistike lokacija",
-  "reporting.locations": "Lokacije",
-  "reporting.mailedIn": "Poštom",
-  "reporting.matchingNames": "Odgovarajuća imena u rezultatima",
-  "reporting.maxVotesOnBallot": "Maks. glasova na glasačkom listiću",
-  "reporting.metricsToCompare": "Metrke za usporedbu",
-  "reporting.minVotesOnBallot": "Min. glasova na glasačkom listiću",
-  "reporting.name": "Ime",
-  "reporting.no": "Ne",
-  "reporting.noBallots": "Nisu pronađeni glasački listići za ovaj filter.",
-  "reporting.noChanges": "Nisu pronađeni promijenjeni zapisi osoba.",
-  "reporting.noDuplicates": "Nisu pronađeni duplikati glasačkih listića.",
-  "reporting.noEmails": "Nisu pronađeni zapisi e-pošte/telefona.",
-  "reporting.noFlags": "Nisu definirane oznake prisutnosti.",
-  "reporting.noNonEligible": "Nisu pronađene osobe s određenim statusom prihvatljivosti.",
-  "reporting.noSpoiledVotes": "Nisu pronađeni nevažeći glasovi.",
-  "reporting.numBallots": "Broj glasačkih listića",
-  "reporting.numEligibleToVote": "Broj prihvatljivih za glasanje",
-  "reporting.online": "Online",
-  "reporting.onlineKiosk": "Online/Kiosk",
-  "reporting.onlineStatus": "Stanje",
-  "reporting.onlineVoters": "Online glasači",
-  "reporting.other": "Ostali",
-  "reporting.otherInfo": "Ostale informacije",
-  "reporting.otherLastNames": "Ostala prezimena",
-  "reporting.otherNames": "Ostala imena",
-  "reporting.overallTurnout": "Ukupni odaziv",
-  "reporting.overallTurnoutSummary": "Sažetak ukupnog odaziva",
-  "reporting.participationRates": "Stope sudjelovanja",
-  "reporting.percentParticipation": "Sudjelovanje",
-  "reporting.percentage": "Postotak",
-  "reporting.performance": "Uspješnost",
-  "reporting.phone": "Telefon",
-  "reporting.positionsToElect": "Pozicije za izabrati",
-  "reporting.print": "Ispis (Ctrl+P)",
-  "reporting.printHint": "Neki preglednici, poput Chromea, mogu stvoriti PDF kopiju izvješća pri ispisu.",
-  "reporting.rank": "Rang",
-  "reporting.reason": "Razlog",
-  "reporting.registeredVoters": "Registrirani glasači",
-  "reporting.registrationLog": "Zapisnik registracije",
-  "reporting.registrationTime": "Vrijeme registracije",
-  "reporting.reportGenerated": "Izvješće uspješno generirano",
-  "reporting.reportGenerationError": "Pogreška pri generiranju izvješća",
-  "reporting.reportName": "Naziv izvješća",
-  "reporting.returningVoters": "Povratni glasači",
-  "reporting.section": "Sekcija",
-  "reporting.selectElections": "Odaberi izbore",
-  "reporting.selectElectionsToCompare": "Odaberi izbore za usporedbu",
-  "reporting.selectLocations": "Odaberi lokacije",
-  "reporting.selectMultipleElections": "Odaberi više izbora",
-  "reporting.selectReport": "Molimo odaberite izvješće...",
-  "reporting.selectReportType": "Odaberi vrstu izvješća",
-  "reporting.selectSortBy": "Odaberi sortiranje",
-  "reporting.sortBy": "Sortiraj po",
-  "reporting.spoiledBallots": "Nevažeći glasački listići",
-  "reporting.spoiledVotes": "Nevažeći glasovi",
-  "reporting.startDate": "Datum početka",
-  "reporting.statistics": "Statistike",
-  "reporting.status": "Stanje",
-  "reporting.sumOfEnvelopesCollected": "Ukupno predanih glasačkih listića (uklj. ručno prebrojeno)",
-  "reporting.summary": "Sažetak",
-  "reporting.summaryReport": "Sažetak izbora",
-  "reporting.summaryStats": "Sažete statistike",
-  "reporting.teller1": "Brojač glasova 1",
-  "reporting.teller2": "Brojač glasova 2",
-  "reporting.tieGroup": "Grupa izjednačenja {group}",
-  "reporting.tieNote": "* Broj glasova za razrješavanje izjednačenja prikazan iza /",
-  "reporting.ties": "Izjednačenja",
-  "reporting.timeBasedTurnout": "Odaziv temeljen na vremenu",
-  "reporting.timePeriod": "Vremensko razdoblje",
-  "reporting.title": "Izvješća",
-  "reporting.to": "do",
-  "reporting.topCandidates": "Vodeći kandidati",
-  "reporting.total": "Ukupno",
-  "reporting.totalBallots": "Ukupno glasačkih listića",
-  "reporting.totalBallotsCast": "Ukupno predanih glasačkih listića",
-  "reporting.totalEligible": "Prihvatljivi",
-  "reporting.totalVoters": "Ukupno: {count}",
-  "reporting.totalVotersHeader": "Ukupno glasača",
-  "reporting.totalVotes": "Ukupno glasova",
-  "reporting.turnout": "Odaziv",
-  "reporting.turnoutAnalysis": "Analiza odaziva",
-  "reporting.turnoutByLocation": "Odaziv po lokaciji",
-  "reporting.turnoutOverTime": "Odaziv kroz vrijeme",
-  "reporting.turnoutPercentage": "% odaziva",
-  "reporting.turnoutRange": "Raspon odaziva",
-  "reporting.validBallots": "Valjani glasački listići",
-  "reporting.value": "Vrijednost",
-  "reporting.voteDistribution": "Distribucija glasova",
-  "reporting.votePercentage": "% glasova",
-  "reporting.voteRange": "Raspon glasova",
-  "reporting.voteTime": "Vrijeme glasanja",
-  "reporting.voted": "Glasovalo",
-  "reporting.voterName": "Ime glasača",
-  "reporting.voterReport": "Izvješće o glasačima",
-  "reporting.voterReports": "Izvješća o glasačima",
-  "reporting.voterTurnout": "Odaziv glasača",
-  "reporting.votes": "Glasovi",
-  "reporting.votesOnBallot": "Glasovi na ovom listiću",
-  "reporting.votesPerBallot": "Glasovi po glasačkom listiću",
-  "reporting.votingMethod": "Metoda glasanja",
-  "reporting.whenEmail": "E-pošta poslana",
-  "reporting.whenPhone": "Telefon poslan",
-  "reporting.whenStatus": "Kada",
-  "reporting.yes": "Da"
+  "reporting.advancedFilters": {
+    "t": "Napredni filtri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.allCanReceive": {
+    "t": "Osobe koje mogu primiti glasove",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.applyFilters": {
+    "t": "Primijeni filtre",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.area": {
+    "t": "Područje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.averageVotesPerBallot": {
+    "t": "Prosječan broj glasova po glasačkom listiću",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.bahaiId": {
+    "t": "Bahájski ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCode": {
+    "t": "Glasački listić",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotCount": {
+    "t": "Broj glasačkih listića",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotId": {
+    "t": "ID glasačkog listića",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotLengthDistribution": {
+    "t": "Distribucija duljine glasačkih listića",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReport": {
+    "t": "Izvješće o glasačkim listićima",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotReports": {
+    "t": "Izvješća o glasačkim listićima",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsByMethod": {
+    "t": "Glasački listići po metodi glasanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsCast": {
+    "t": "Predani glasački listići",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ballotsEntered": {
+    "t": "Uneseni glasački listići",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.calledIn": {
+    "t": "Pozivom",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canReceiveVotes": {
+    "t": "Može primiti glasove",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.canVote": {
+    "t": "Može glasati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidate": {
+    "t": "Kandidat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateName": {
+    "t": "Ime kandidata",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidatePerformance": {
+    "t": "Uspješnost kandidata",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidateVotes": {
+    "t": "Glasovi kandidata",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.candidates": {
+    "t": "Kandidati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.category": {
+    "t": "Kategorija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.change": {
+    "t": "Promjena",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.charts": {
+    "t": "Grafovi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.clearFilters": {
+    "t": "Očisti filtre",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.comparisonSummary": {
+    "t": "Sažetak usporedbe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.configureReport": {
+    "t": "Konfiguriraj izvješće",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.contender": {
+    "t": "Natjecatelj",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.convenor": {
+    "t": "Sazivač",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.count": {
+    "t": "Broj",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.cumulativeTurnout": {
+    "t": "Kumulativni odaziv",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.customReport": {
+    "t": "Prilagođeno izvješće",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.date": {
+    "t": "Datum",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateOfElection": {
+    "t": "Datum izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.dateRange": {
+    "t": "Raspon datuma",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.demographicBreakdown": {
+    "t": "Demografska raščlamba",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.description": {
+    "t": "Opis",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.detailedStatistics": {
+    "t": "Detaljne statistike",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.droppedOff": {
+    "t": "Osobnom dostavom",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVoting": {
+    "t": "Rano glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.earlyVotingPercentage": {
+    "t": "% ranog glasanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.elected": {
+    "t": "Izabrani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedCandidates": {
+    "t": "Izabrani kandidati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electedPersons": {
+    "t": "Izabrani",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.election": {
+    "t": "Izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDate": {
+    "t": "Datum izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDayVoting": {
+    "t": "Glasanje na dan izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionDetails": {
+    "t": "Detalji izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionName": {
+    "t": "Naziv izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionOverview": {
+    "t": "Pregled izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionSummary": {
+    "t": "Sažetak izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.electionType": {
+    "t": "Vrsta izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eligibilityReason": {
+    "t": "Razlog prihvatljivosti",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.eliminated": {
+    "t": "Eliminiran",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.email": {
+    "t": "E-pošta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.endDate": {
+    "t": "Datum završetka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterCandidateName": {
+    "t": "Unesite ime kandidata",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterDescription": {
+    "t": "Unesite opis",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.enterReportName": {
+    "t": "Unesite naziv izvješća",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.error": {
+    "t": "Učitavanje izvješća nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportCSV": {
+    "t": "Izvezi CSV",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportExcel": {
+    "t": "Izvezi Excel",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportFormats": {
+    "t": "Formati izvoza",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.exportPDF": {
+    "t": "Izvezi PDF",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extra": {
+    "t": "Dodatni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.extraCandidates": {
+    "t": "Dodatni kandidati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstChoice": {
+    "t": "% prvog izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstName": {
+    "t": "Ime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.firstTimeVoters": {
+    "t": "Glasači po prvi put",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.flags": {
+    "t": "Oznake",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateComparison": {
+    "t": "Generiraj usporedbu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateCustomReport": {
+    "t": "Generiraj prilagođeno izvješće",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.generateReport": {
+    "t": "Generiraj izvješće",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.groupN": {
+    "t": "Grupa {n}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInEmail": {
+    "t": "Prijavljen (e-pošta)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.hasSignedInPhone": {
+    "t": "Prijavljen (telefon)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.historicalComparison": {
+    "t": "Povijesna usporedba",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.imported": {
+    "t": "Uvezeno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPerson": {
+    "t": "Osobno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.inPersonVoters": {
+    "t": "Glasači osobno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.includeSections": {
+    "t": "Uključi sekcije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.lastName": {
+    "t": "Prezime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.loading": {
+    "t": "Učitavanje izvješća...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.location": {
+    "t": "Lokacija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationReport": {
+    "t": "Izvješće o lokacijama",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locationStatistics": {
+    "t": "Statistike lokacija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.locations": {
+    "t": "Lokacije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.mailedIn": {
+    "t": "Poštom",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.matchingNames": {
+    "t": "Odgovarajuća imena u rezultatima",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.maxVotesOnBallot": {
+    "t": "Maks. glasova na glasačkom listiću",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.metricsToCompare": {
+    "t": "Metrke za usporedbu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.minVotesOnBallot": {
+    "t": "Min. glasova na glasačkom listiću",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.name": {
+    "t": "Ime",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.no": {
+    "t": "Ne",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noBallots": {
+    "t": "Nisu pronađeni glasački listići za ovaj filter.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noChanges": {
+    "t": "Nisu pronađeni promijenjeni zapisi osoba.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noDuplicates": {
+    "t": "Nisu pronađeni duplikati glasačkih listića.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noEmails": {
+    "t": "Nisu pronađeni zapisi e-pošte/telefona.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noFlags": {
+    "t": "Nisu definirane oznake prisutnosti.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noNonEligible": {
+    "t": "Nisu pronađene osobe s određenim statusom prihvatljivosti.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.noSpoiledVotes": {
+    "t": "Nisu pronađeni nevažeći glasovi.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numBallots": {
+    "t": "Broj glasačkih listića",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.numEligibleToVote": {
+    "t": "Broj prihvatljivih za glasanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.online": {
+    "t": "Online",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineKiosk": {
+    "t": "Online/Kiosk",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineStatus": {
+    "t": "Stanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.onlineVoters": {
+    "t": "Online glasači",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.other": {
+    "t": "Ostali",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherInfo": {
+    "t": "Ostale informacije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherLastNames": {
+    "t": "Ostala prezimena",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.otherNames": {
+    "t": "Ostala imena",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnout": {
+    "t": "Ukupni odaziv",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.overallTurnoutSummary": {
+    "t": "Sažetak ukupnog odaziva",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.participationRates": {
+    "t": "Stope sudjelovanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentParticipation": {
+    "t": "Sudjelovanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.percentage": {
+    "t": "Postotak",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.performance": {
+    "t": "Uspješnost",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.phone": {
+    "t": "Telefon",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.positionsToElect": {
+    "t": "Pozicije za izabrati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.print": {
+    "t": "Ispis (Ctrl+P)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.printHint": {
+    "t": "Neki preglednici, poput Chromea, mogu stvoriti PDF kopiju izvješća pri ispisu.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.rank": {
+    "t": "Rang",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reason": {
+    "t": "Razlog",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registeredVoters": {
+    "t": "Registrirani glasači",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationLog": {
+    "t": "Zapisnik registracije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.registrationTime": {
+    "t": "Vrijeme registracije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerated": {
+    "t": "Izvješće uspješno generirano",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportGenerationError": {
+    "t": "Pogreška pri generiranju izvješća",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.reportName": {
+    "t": "Naziv izvješća",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.returningVoters": {
+    "t": "Povratni glasači",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.section": {
+    "t": "Sekcija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElections": {
+    "t": "Odaberi izbore",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectElectionsToCompare": {
+    "t": "Odaberi izbore za usporedbu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectLocations": {
+    "t": "Odaberi lokacije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectMultipleElections": {
+    "t": "Odaberi više izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReport": {
+    "t": "Molimo odaberite izvješće...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectReportType": {
+    "t": "Odaberi vrstu izvješća",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.selectSortBy": {
+    "t": "Odaberi sortiranje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sortBy": {
+    "t": "Sortiraj po",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledBallots": {
+    "t": "Nevažeći glasački listići",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.spoiledVotes": {
+    "t": "Nevažeći glasovi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.startDate": {
+    "t": "Datum početka",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.statistics": {
+    "t": "Statistike",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.status": {
+    "t": "Stanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.sumOfEnvelopesCollected": {
+    "t": "Ukupno predanih glasačkih listića (uklj. ručno prebrojeno)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summary": {
+    "t": "Sažetak",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryReport": {
+    "t": "Sažetak izbora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.summaryStats": {
+    "t": "Sažete statistike",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller1": {
+    "t": "Brojač glasova 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.teller2": {
+    "t": "Brojač glasova 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieGroup": {
+    "t": "Grupa izjednačenja {group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.tieNote": {
+    "t": "* Broj glasova za razrješavanje izjednačenja prikazan iza /",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.ties": {
+    "t": "Izjednačenja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timeBasedTurnout": {
+    "t": "Odaziv temeljen na vremenu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.timePeriod": {
+    "t": "Vremensko razdoblje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.title": {
+    "t": "Izvješća",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.to": {
+    "t": "do",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.topCandidates": {
+    "t": "Vodeći kandidati",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.total": {
+    "t": "Ukupno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallots": {
+    "t": "Ukupno glasačkih listića",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalBallotsCast": {
+    "t": "Ukupno predanih glasačkih listića",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalEligible": {
+    "t": "Prihvatljivi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVoters": {
+    "t": "Ukupno: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotersHeader": {
+    "t": "Ukupno glasača",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.totalVotes": {
+    "t": "Ukupno glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnout": {
+    "t": "Odaziv",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutAnalysis": {
+    "t": "Analiza odaziva",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutByLocation": {
+    "t": "Odaziv po lokaciji",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutOverTime": {
+    "t": "Odaziv kroz vrijeme",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutPercentage": {
+    "t": "% odaziva",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.turnoutRange": {
+    "t": "Raspon odaziva",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.validBallots": {
+    "t": "Valjani glasački listići",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.value": {
+    "t": "Vrijednost",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteDistribution": {
+    "t": "Distribucija glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votePercentage": {
+    "t": "% glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteRange": {
+    "t": "Raspon glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voteTime": {
+    "t": "Vrijeme glasanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voted": {
+    "t": "Glasovalo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterName": {
+    "t": "Ime glasača",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReport": {
+    "t": "Izvješće o glasačima",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterReports": {
+    "t": "Izvješća o glasačima",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.voterTurnout": {
+    "t": "Odaziv glasača",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votes": {
+    "t": "Glasovi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesOnBallot": {
+    "t": "Glasovi na ovom listiću",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votesPerBallot": {
+    "t": "Glasovi po glasačkom listiću",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.votingMethod": {
+    "t": "Metoda glasanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenEmail": {
+    "t": "E-pošta poslana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenPhone": {
+    "t": "Telefon poslan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.whenStatus": {
+    "t": "Kada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "reporting.yes": {
+    "t": "Da",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

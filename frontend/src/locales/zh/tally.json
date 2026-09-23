@@ -1,20 +1,92 @@
 {
-  "tally.calculate": "计算结果",
-  "tally.calculateError": "计算结果失败",
-  "tally.calculateSuccess": "结果计算成功",
-  "tally.calculatingProgress": "计算进度",
-  "tally.normalElection": "正常选举",
-  "tally.processedBallots": "已处理的选票",
-  "tally.resultsPreview": "结果预览（前10名）",
-  "tally.section.elected": "当选",
-  "tally.section.extra": "额外",
-  "tally.section.other": "其他",
-  "tally.singleNameElection": "单一名称选举",
-  "tally.title": "计算结果",
-  "tally.viewFullResults": "查看完整结果",
-  "tally.warning": "警告",
-  "tally.warningMessage": "计算结果将覆盖任何现有结果。此操作无法撤销。",
-  "tally.section.E": "当选",
-  "tally.section.X": "额外",
-  "tally.section.O": "其他"
+  "tally.calculate": {
+    "t": "计算结果",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateError": {
+    "t": "计算结果失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "结果计算成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "计算进度",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.normalElection": {
+    "t": "正常选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.processedBallots": {
+    "t": "已处理的选票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.resultsPreview": {
+    "t": "结果预览（前10名）",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.elected": {
+    "t": "当选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.extra": {
+    "t": "额外",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.other": {
+    "t": "其他",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.singleNameElection": {
+    "t": "单一名称选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.title": {
+    "t": "计算结果",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.viewFullResults": {
+    "t": "查看完整结果",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warning": {
+    "t": "警告",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warningMessage": {
+    "t": "计算结果将覆盖任何现有结果。此操作无法撤销。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.E": {
+    "t": "当选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.X": {
+    "t": "额外",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.O": {
+    "t": "其他",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,18 +1,82 @@
 {
-  "error.errorDetails": "Virhetiedot",
-  "error.forbidden": "Pääsy estetty.",
-  "error.goHome": "Siirry kotiin",
-  "error.networkError": "Verkkovirhe. Tarkista yhteys ja yritä uudelleen.",
-  "error.notFound": "Pyydettyä resurssia ei löytynyt.",
-  "error.pageError": "Tämän sivun latauksessa tapahtui virhe. Yritä uudelleen.",
-  "error.serverError": "Palvelinvirhe. Yritä myöhemmin uudelleen.",
-  "error.sessionExpired": "Istuntosi on vanhentunut. Kirjaudu sisään uudelleen.",
-  "error.somethingWentWrong": "Jotain meni pieleen",
-  "error.tryAgain": "Yritä uudelleen",
-  "error.unauthorized": "Sinulla ei ole oikeuksia suorittaa tätä toimintoa.",
-  "error.validationError": "Tarkista syötteesi ja yritä uudelleen.",
-  "notification.error": "Virhe",
-  "notification.info": "Tiedot",
-  "notification.success": "Onnistuminen",
-  "notification.warning": "Varoitus"
+  "error.errorDetails": {
+    "t": "Virhetiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.forbidden": {
+    "t": "Pääsy estetty.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.goHome": {
+    "t": "Siirry kotiin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.networkError": {
+    "t": "Verkkovirhe. Tarkista yhteys ja yritä uudelleen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.notFound": {
+    "t": "Pyydettyä resurssia ei löytynyt.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.pageError": {
+    "t": "Tämän sivun latauksessa tapahtui virhe. Yritä uudelleen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.serverError": {
+    "t": "Palvelinvirhe. Yritä myöhemmin uudelleen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.sessionExpired": {
+    "t": "Istuntosi on vanhentunut. Kirjaudu sisään uudelleen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.somethingWentWrong": {
+    "t": "Jotain meni pieleen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.tryAgain": {
+    "t": "Yritä uudelleen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.unauthorized": {
+    "t": "Sinulla ei ole oikeuksia suorittaa tätä toimintoa.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.validationError": {
+    "t": "Tarkista syötteesi ja yritä uudelleen.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.error": {
+    "t": "Virhe",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.info": {
+    "t": "Tiedot",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.success": {
+    "t": "Onnistuminen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.warning": {
+    "t": "Varoitus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

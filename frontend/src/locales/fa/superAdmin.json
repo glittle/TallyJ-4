@@ -1,28 +1,132 @@
 {
-  "superAdmin.detail.electionMode": "حالت انتخابات",
-  "superAdmin.detail.locations": "مکان‌ها",
-  "superAdmin.detail.numberToElect": "تعداد قابل انتخاب",
-  "superAdmin.detail.owners": "مدیران",
-  "superAdmin.detail.percentComplete": "درصد تکمیل",
-  "superAdmin.detail.title": "جزئیات انتخابات",
-  "superAdmin.elections.ballots": "آرا",
-  "superAdmin.elections.convenor": "گرداننده",
-  "superAdmin.elections.date": "تاریخ",
-  "superAdmin.elections.filterStatus": "فیلتر بر اساس وضعیت",
-  "superAdmin.elections.filterType": "فیلتر بر اساس نوع",
-  "superAdmin.elections.name": "نام انتخابات",
-  "superAdmin.elections.noResults": "انتخاباتی یافت نشد",
-  "superAdmin.elections.owner": "مالک",
-  "superAdmin.elections.search": "جستجوی انتخابات...",
-  "superAdmin.elections.status": "وضعیت",
-  "superAdmin.elections.type": "نوع",
-  "superAdmin.elections.voters": "رأی‌دهندگان",
-  "superAdmin.error.accessDenied": "شما به مدیریت ارشد دسترسی ندارید",
-  "superAdmin.error.loadFailed": "بارگذاری داده‌های مدیر ارشد ناموفق بود",
-  "superAdmin.summary.archivedElections": "آرشیو شده",
-  "superAdmin.summary.completedElections": "تکمیل‌شده",
-  "superAdmin.summary.openElections": "باز کردن",
-  "superAdmin.summary.totalElections": "کل انتخابات",
-  "superAdmin.summary.upcomingElections": "آینده",
-  "superAdmin.title": "داشبورد مدیر ارشد"
+  "superAdmin.detail.electionMode": {
+    "t": "حالت انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.locations": {
+    "t": "مکان‌ها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.numberToElect": {
+    "t": "تعداد قابل انتخاب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.owners": {
+    "t": "مدیران",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.percentComplete": {
+    "t": "درصد تکمیل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.title": {
+    "t": "جزئیات انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.ballots": {
+    "t": "آرا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.convenor": {
+    "t": "گرداننده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.date": {
+    "t": "تاریخ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterStatus": {
+    "t": "فیلتر بر اساس وضعیت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterType": {
+    "t": "فیلتر بر اساس نوع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.name": {
+    "t": "نام انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.noResults": {
+    "t": "انتخاباتی یافت نشد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.owner": {
+    "t": "مالک",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.search": {
+    "t": "جستجوی انتخابات...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.status": {
+    "t": "وضعیت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.type": {
+    "t": "نوع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.voters": {
+    "t": "رأی‌دهندگان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.accessDenied": {
+    "t": "شما به مدیریت ارشد دسترسی ندارید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.loadFailed": {
+    "t": "بارگذاری داده‌های مدیر ارشد ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.archivedElections": {
+    "t": "آرشیو شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.completedElections": {
+    "t": "تکمیل‌شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.openElections": {
+    "t": "باز کردن",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.totalElections": {
+    "t": "کل انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.upcomingElections": {
+    "t": "آینده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.title": {
+    "t": "داشبورد مدیر ارشد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

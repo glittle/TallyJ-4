@@ -1,133 +1,657 @@
 {
-  "people.addPerson": "افزودن شخص",
-  "people.ageGroup.adult": "بزرگسال",
-  "people.ageGroup.youth": "جوان",
-  "people.ageGroupLabel": "گروه سنی",
-  "people.allPeople": "همه افراد",
-  "people.area": "منطقه",
-  "people.bahaiId": "شناسه بهائی",
-  "people.bulkActions": "اقدامات گروهی",
-  "people.bulkDeleteError": "حذف برخی افراد ناموفق بود",
-  "people.bulkDeleteMessage": "آیا مطمئنید که می‌خواهید {count} فرد انتخاب‌شده را حذف کنید؟",
-  "people.bulkDeleteSuccess": "{count} فرد با موفقیت حذف شدند",
-  "people.canReceiveVotes": "می‌تواند رأی دریافت کند",
-  "people.canVote": "می‌تواند رأی دهد",
-  "people.candidates": "نامزدهای واجد شرایط",
-  "people.confirmBulkDelete": "تأیید حذف گروهی",
-  "people.createSuccess": "فرد با موفقیت اضافه شد",
-  "people.deleteConfirm": "آیا مطمئنید که می‌خواهید {name} را حذف کنید؟",
-  "people.deleteError": "حذف فرد ناموفق بود",
-  "people.deleteSelected": "حذف موارد انتخاب‌شده ({count})",
-  "people.deleteSuccess": "شخص با موفقیت حذف شد",
-  "people.dropFileHere": "فایل را اینجا رها کنید یا برای بارگذاری کلیک کنید",
-  "people.editPerson": "ویرایش شخص",
-  "people.email": "ایمیل",
-  "people.emailInvalid": "لطفاً ایمیل معتبر وارد کنید",
-  "people.exportError": "خروجی گرفتن از افراد ناموفق بود",
-  "people.exportPeople": "خروجی گرفتن از افراد",
-  "people.exportSuccess": "خروجی افراد با موفقیت گرفته شد",
-  "people.fileTooLarge": "فایل خیلی بزرگ است. لطفاً فایلی کوچک‌تر از ۱۰ مگابایت بارگذاری کنید.",
-  "people.firstName": "نام",
-  "people.fullName": "نام کامل",
-  "people.import.action": "اقدام",
-  "people.import.areaDesc": "منطقه جغرافیایی",
-  "people.import.bahaiIdDesc": "شماره شناسه بهائی",
-  "people.import.clickToUpload": "برای بارگذاری کلیک کنید",
-  "people.import.confirmDeleteAllPeople": "تأیید حذف همه افراد",
-  "people.import.confirmDeleteFile": "آیا مطمئنید که می‌خواهید این فایل را حذف کنید؟",
-  "people.import.contentEncoding": "کدگذاری محتوا",
-  "people.import.currentPeopleCount": "تعداد افراد فعلی",
-  "people.import.dataRows": "ردیف‌های داده",
-  "people.import.deleteAllPeople": "حذف همه افراد",
-  "people.import.deleteAllPeopleError": "حذف همه افراد ناموفق بود",
-  "people.import.deleteAllPeopleMessage": "آیا مطمئنید که می‌خواهید همه افراد را از این انتخابات حذف کنید؟ این عمل قابل بازگشت نیست.",
-  "people.import.deleteFileError": "حذف فایل ناموفق بود",
-  "people.import.dropFile": "فایل را اینجا رها کنید یا",
-  "people.import.duplicateDesc": "فرد یک ورودی تکراری است",
-  "people.import.eligibilityDesc": "توضیح وضعیت صلاحیت",
-  "people.import.eligibilityValues": "مقادیر وضعیت صلاحیت",
-  "people.import.eligibleDesc": "فرد واجد شرایط رأی دادن است",
-  "people.import.emailDesc": "آدرس ایمیل",
-  "people.import.fileName": "نام فایل",
-  "people.import.filesOnServer": "فایل‌های روی سرور",
-  "people.import.firstNameDesc": "نام کوچک فرد",
-  "people.import.firstNameLastNameRequired": "فیلدهای نام و نام خانوادگی برای ادامه ورود باید نگاشت شوند.",
-  "people.import.headerAutoDetected": "سرفصل‌ها به طور خودکار در ردیف {row} شناسایی شدند",
-  "people.import.headersOnLine": "سرفصل‌ها در خط",
-  "people.import.headersOnLineTooltip": "مشخص کنید کدام ردیف شامل سرفصل ستون‌ها است. برای فایل‌های اکسل به طور خودکار شناسایی می‌شود اما در صورت نیاز قابل تنظیم است.",
-  "people.import.ignore": "(نادیده بگیر)",
-  "people.import.importNow": "اکنون وارد کن",
-  "people.import.importResults": "وارد کردن نتایج",
-  "people.import.importStepDesc": "مرحله ورود در فاز بعدی پیاده‌سازی خواهد شد",
-  "people.import.importSummary": "خلاصه ورود اطلاعات",
-  "people.import.importing": "در حال ورود افراد...",
-  "people.import.ineligibleDesc": "فرد واجد شرایط رأی دادن نیست",
-  "people.import.lastNameDesc": "نام خانوادگی فرد",
-  "people.import.loadFilesError": "بارگذاری فایل‌های ورود ناموفق بود",
-  "people.import.mapColumns": "نگاشت ستون‌ها",
-  "people.import.mapColumnsDesc": "ستون‌های فایل خود را به فیلدهای شمارَج نگاشت کنید",
-  "people.import.mapTo": "نگاشت به:",
-  "people.import.mappedFields": "فیلدهای نگاشت‌شده",
-  "people.import.mappingSaved": "نگاشت ستون با موفقیت ذخیره شد",
-  "people.import.otherActions": "اقدامات دیگر",
-  "people.import.otherInfoDesc": "اطلاعات اضافی",
-  "people.import.otherLastNamesDesc": "نام‌های خانوادگی دیگر",
-  "people.import.otherNamesDesc": "نام‌های دیگر",
-  "people.import.peopleAdded": "افراد اضافه‌شده",
-  "people.import.peopleSkipped": "افراد رد شده",
-  "people.import.phoneDesc": "شماره تلفن",
-  "people.import.preview": "پیش‌نمایش",
-  "people.import.reparse": "تحلیل مجدد",
-  "people.import.reviewImport": "بررسی و ورود",
-  "people.import.saveMapping": "ذخیره نگاشت",
-  "people.import.select": "انتخاب",
-  "people.import.selected": "انتخاب‌شده",
-  "people.import.size": "اندازه",
-  "people.import.status": "وضعیت",
-  "people.import.step1": "آپلود فایل",
-  "people.import.step2": "نگاشت ستون‌ها",
-  "people.import.step3": "وارد کردن",
-  "people.import.supportedFormats": "فرمت‌های پشتیبانی‌شده: CSV، TSV، TAB، TXT، XLSX (حداکثر ۱۰ مگابایت)",
-  "people.import.tallyJField": "فیلد شمارَج",
-  "people.import.tallyJFields": "مرجع فیلدهای شمارَج",
-  "people.import.timeElapsed": "زمان سپری‌شده",
-  "people.import.title": "وارد کردن افراد",
-  "people.import.underAgeDesc": "فرد زیر سن رأی‌دهی است",
-  "people.import.uploadError": "بارگذاری فایل ناموفق بود",
-  "people.import.uploadFile": "آپلود فایل",
-  "people.import.uploadTime": "زمان بارگذاری",
-  "people.import.validationWarning": "هشدار اعتبارسنجی",
-  "people.import.warnings": "هشدارها",
-  "people.importError": "آغاز ورود اطلاعات ناموفق بود",
-  "people.importFormat": "یک فایل CSV یا اکسل با ستون‌های زیر بارگذاری کنید:",
-  "people.importInstructions": "دستورالعمل‌های ورود اطلاعات",
-  "people.importOptionalFields": "اختیاری: ایمیل، تلفن، منطقه، شناسه بهائی، صلاحیت",
-  "people.importPeople": "وارد کردن افراد",
-  "people.importRequiredFields": "الزامی: نام، نام خانوادگی",
-  "people.importStarted": "ورود اطلاعات آغاز شد. لطفاً منتظر تکمیل بمانید.",
-  "people.importWarning": "افراد موجود با نام‌های منطبق به‌روزرسانی می‌شوند. افراد جدید ایجاد خواهند شد.",
-  "people.invalidFileType": "نوع فایل نامعتبر است. لطفاً یک فایل CSV یا اکسل بارگذاری کنید.",
-  "people.kioskCode": "Kiosk Code",
-  "people.kioskCodeExpired": "This code has expired. Renew it before the voter logs in.",
-  "people.kioskCodeExpires": "Expires {time} ({minutes} min left).",
-  "people.kioskCodeGenerate": "Make a kiosk code",
-  "people.kioskCodeGenerated": "Kiosk code is ready to share.",
-  "people.kioskCodeNone": "No kiosk code yet. Generate one when the voter is at the kiosk.",
-  "people.kioskCodeNote": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
-  "people.kioskCodeRenew": "Renew kiosk code",
-  "people.lastName": "نام خانوادگی",
-  "people.lastNameRequired": "نام خانوادگی الزامی است",
-  "people.leaveElectionGroupError": "خروج از گروه انتخابات ناموفق بود:",
-  "people.loadError": "بارگذاری افراد ناموفق بود",
-  "people.management": "مدیریت افراد",
-  "people.phone": "تلفن",
-  "people.phoneOnlineVoter.recentSms": "Recent SMS",
-  "people.phoneOnlineVoter.smsLogNoStatus": "Sent",
-  "people.phoneOnlineVoter.smsLogError": "Error {code}",
-  "people.saveError": "ذخیره فرد ناموفق بود",
-  "people.search": "جستجو بر اساس نام، ایمیل یا شناسه",
-  "people.searchError": "جستجوی افراد ناموفق بود",
-  "people.supportedFormats": "فرمت‌های پشتیبانی‌شده: CSV، XLS، XLSX (حداکثر ۱۰ مگابایت)",
-  "people.updateSuccess": "فرد با موفقیت به‌روزرسانی شد",
-  "people.voters": "رأی‌دهندگان"
+  "people.addPerson": {
+    "t": "افزودن شخص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.adult": {
+    "t": "بزرگسال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.youth": {
+    "t": "جوان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroupLabel": {
+    "t": "گروه سنی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.allPeople": {
+    "t": "همه افراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.area": {
+    "t": "منطقه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bahaiId": {
+    "t": "شناسه بهائی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkActions": {
+    "t": "اقدامات گروهی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteError": {
+    "t": "حذف برخی افراد ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteMessage": {
+    "t": "آیا مطمئنید که می‌خواهید {count} فرد انتخاب‌شده را حذف کنید؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteSuccess": {
+    "t": "{count} فرد با موفقیت حذف شدند",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canReceiveVotes": {
+    "t": "می‌تواند رأی دریافت کند",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canVote": {
+    "t": "می‌تواند رأی دهد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.candidates": {
+    "t": "نامزدهای واجد شرایط",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.confirmBulkDelete": {
+    "t": "تأیید حذف گروهی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.createSuccess": {
+    "t": "فرد با موفقیت اضافه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteConfirm": {
+    "t": "آیا مطمئنید که می‌خواهید {name} را حذف کنید؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteError": {
+    "t": "حذف فرد ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSelected": {
+    "t": "حذف موارد انتخاب‌شده ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSuccess": {
+    "t": "شخص با موفقیت حذف شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.dropFileHere": {
+    "t": "فایل را اینجا رها کنید یا برای بارگذاری کلیک کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.editPerson": {
+    "t": "ویرایش شخص",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.email": {
+    "t": "ایمیل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.emailInvalid": {
+    "t": "لطفاً ایمیل معتبر وارد کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportError": {
+    "t": "خروجی گرفتن از افراد ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportPeople": {
+    "t": "خروجی گرفتن از افراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportSuccess": {
+    "t": "خروجی افراد با موفقیت گرفته شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fileTooLarge": {
+    "t": "فایل خیلی بزرگ است. لطفاً فایلی کوچک‌تر از ۱۰ مگابایت بارگذاری کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.firstName": {
+    "t": "نام",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fullName": {
+    "t": "نام کامل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.action": {
+    "t": "اقدام",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.areaDesc": {
+    "t": "منطقه جغرافیایی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.bahaiIdDesc": {
+    "t": "شماره شناسه بهائی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.clickToUpload": {
+    "t": "برای بارگذاری کلیک کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteAllPeople": {
+    "t": "تأیید حذف همه افراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteFile": {
+    "t": "آیا مطمئنید که می‌خواهید این فایل را حذف کنید؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.contentEncoding": {
+    "t": "کدگذاری محتوا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.currentPeopleCount": {
+    "t": "تعداد افراد فعلی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dataRows": {
+    "t": "ردیف‌های داده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeople": {
+    "t": "حذف همه افراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleError": {
+    "t": "حذف همه افراد ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleMessage": {
+    "t": "آیا مطمئنید که می‌خواهید همه افراد را از این انتخابات حذف کنید؟ این عمل قابل بازگشت نیست.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteFileError": {
+    "t": "حذف فایل ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dropFile": {
+    "t": "فایل را اینجا رها کنید یا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.duplicateDesc": {
+    "t": "فرد یک ورودی تکراری است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityDesc": {
+    "t": "توضیح وضعیت صلاحیت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityValues": {
+    "t": "مقادیر وضعیت صلاحیت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibleDesc": {
+    "t": "فرد واجد شرایط رأی دادن است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.emailDesc": {
+    "t": "آدرس ایمیل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileName": {
+    "t": "نام فایل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.filesOnServer": {
+    "t": "فایل‌های روی سرور",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameDesc": {
+    "t": "نام کوچک فرد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameLastNameRequired": {
+    "t": "فیلدهای نام و نام خانوادگی برای ادامه ورود باید نگاشت شوند.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headerAutoDetected": {
+    "t": "سرفصل‌ها به طور خودکار در ردیف {row} شناسایی شدند",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLine": {
+    "t": "سرفصل‌ها در خط",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLineTooltip": {
+    "t": "مشخص کنید کدام ردیف شامل سرفصل ستون‌ها است. برای فایل‌های اکسل به طور خودکار شناسایی می‌شود اما در صورت نیاز قابل تنظیم است.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ignore": {
+    "t": "(نادیده بگیر)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importNow": {
+    "t": "اکنون وارد کن",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importResults": {
+    "t": "وارد کردن نتایج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importStepDesc": {
+    "t": "مرحله ورود در فاز بعدی پیاده‌سازی خواهد شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importSummary": {
+    "t": "خلاصه ورود اطلاعات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importing": {
+    "t": "در حال ورود افراد...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ineligibleDesc": {
+    "t": "فرد واجد شرایط رأی دادن نیست",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.lastNameDesc": {
+    "t": "نام خانوادگی فرد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.loadFilesError": {
+    "t": "بارگذاری فایل‌های ورود ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumns": {
+    "t": "نگاشت ستون‌ها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumnsDesc": {
+    "t": "ستون‌های فایل خود را به فیلدهای شمارَج نگاشت کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapTo": {
+    "t": "نگاشت به:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappedFields": {
+    "t": "فیلدهای نگاشت‌شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappingSaved": {
+    "t": "نگاشت ستون با موفقیت ذخیره شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherActions": {
+    "t": "اقدامات دیگر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherInfoDesc": {
+    "t": "اطلاعات اضافی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherLastNamesDesc": {
+    "t": "نام‌های خانوادگی دیگر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherNamesDesc": {
+    "t": "نام‌های دیگر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleAdded": {
+    "t": "افراد اضافه‌شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleSkipped": {
+    "t": "افراد رد شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.phoneDesc": {
+    "t": "شماره تلفن",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.preview": {
+    "t": "پیش‌نمایش",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reparse": {
+    "t": "تحلیل مجدد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reviewImport": {
+    "t": "بررسی و ورود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.saveMapping": {
+    "t": "ذخیره نگاشت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.select": {
+    "t": "انتخاب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.selected": {
+    "t": "انتخاب‌شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.size": {
+    "t": "اندازه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.status": {
+    "t": "وضعیت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step1": {
+    "t": "آپلود فایل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step2": {
+    "t": "نگاشت ستون‌ها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step3": {
+    "t": "وارد کردن",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.supportedFormats": {
+    "t": "فرمت‌های پشتیبانی‌شده: CSV، TSV، TAB، TXT، XLSX (حداکثر ۱۰ مگابایت)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJField": {
+    "t": "فیلد شمارَج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJFields": {
+    "t": "مرجع فیلدهای شمارَج",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.timeElapsed": {
+    "t": "زمان سپری‌شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.title": {
+    "t": "وارد کردن افراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.underAgeDesc": {
+    "t": "فرد زیر سن رأی‌دهی است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadError": {
+    "t": "بارگذاری فایل ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadFile": {
+    "t": "آپلود فایل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadTime": {
+    "t": "زمان بارگذاری",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.validationWarning": {
+    "t": "هشدار اعتبارسنجی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.warnings": {
+    "t": "هشدارها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importError": {
+    "t": "آغاز ورود اطلاعات ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importFormat": {
+    "t": "یک فایل CSV یا اکسل با ستون‌های زیر بارگذاری کنید:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importInstructions": {
+    "t": "دستورالعمل‌های ورود اطلاعات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importOptionalFields": {
+    "t": "اختیاری: ایمیل، تلفن، منطقه، شناسه بهائی، صلاحیت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importPeople": {
+    "t": "وارد کردن افراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importRequiredFields": {
+    "t": "الزامی: نام، نام خانوادگی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importStarted": {
+    "t": "ورود اطلاعات آغاز شد. لطفاً منتظر تکمیل بمانید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importWarning": {
+    "t": "افراد موجود با نام‌های منطبق به‌روزرسانی می‌شوند. افراد جدید ایجاد خواهند شد.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.invalidFileType": {
+    "t": "نوع فایل نامعتبر است. لطفاً یک فایل CSV یا اکسل بارگذاری کنید.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCode": {
+    "t": "Kiosk Code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpired": {
+    "t": "This code has expired. Renew it before the voter logs in.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpires": {
+    "t": "Expires {time} ({minutes} min left).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerate": {
+    "t": "Make a kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerated": {
+    "t": "Kiosk code is ready to share.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNone": {
+    "t": "No kiosk code yet. Generate one when the voter is at the kiosk.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNote": {
+    "t": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeRenew": {
+    "t": "Renew kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastName": {
+    "t": "نام خانوادگی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastNameRequired": {
+    "t": "نام خانوادگی الزامی است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.leaveElectionGroupError": {
+    "t": "خروج از گروه انتخابات ناموفق بود:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.loadError": {
+    "t": "بارگذاری افراد ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.management": {
+    "t": "مدیریت افراد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phone": {
+    "t": "تلفن",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.recentSms": {
+    "t": "Recent SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogNoStatus": {
+    "t": "Sent",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogError": {
+    "t": "Error {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.saveError": {
+    "t": "ذخیره فرد ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.search": {
+    "t": "جستجو بر اساس نام، ایمیل یا شناسه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.searchError": {
+    "t": "جستجوی افراد ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.supportedFormats": {
+    "t": "فرمت‌های پشتیبانی‌شده: CSV، XLS، XLSX (حداکثر ۱۰ مگابایت)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.updateSuccess": {
+    "t": "فرد با موفقیت به‌روزرسانی شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.voters": {
+    "t": "رأی‌دهندگان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

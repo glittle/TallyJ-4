@@ -1,133 +1,657 @@
 {
-  "people.addPerson": "사람 추가",
-  "people.ageGroup.adult": "성인",
-  "people.ageGroup.youth": "청소년",
-  "people.ageGroupLabel": "연령 그룹",
-  "people.allPeople": "전체 사람",
-  "people.area": "지역",
-  "people.bahaiId": "바하이 ID",
-  "people.bulkActions": "일괄 작업",
-  "people.bulkDeleteError": "일부 사람 삭제에 실패했습니다",
-  "people.bulkDeleteMessage": "선택한 {count}명을 삭제하시겠습니까?",
-  "people.bulkDeleteSuccess": "{count}명이 성공적으로 삭제되었습니다",
-  "people.canReceiveVotes": "투표 받기 가능",
-  "people.canVote": "투표 가능",
-  "people.candidates": "자격 있는 후보자",
-  "people.confirmBulkDelete": "일괄 삭제 확인",
-  "people.createSuccess": "사람이 성공적으로 추가되었습니다",
-  "people.deleteConfirm": "{name}을(를) 삭제하시겠습니까?",
-  "people.deleteError": "사람 삭제에 실패했습니다",
-  "people.deleteSelected": "선택 항목 삭제 ({count})",
-  "people.deleteSuccess": "사람이 성공적으로 삭제되었습니다",
-  "people.dropFileHere": "파일을 여기에 드롭하거나 클릭하여 업로드",
-  "people.editPerson": "사람 편집",
-  "people.email": "이메일",
-  "people.emailInvalid": "유효한 이메일을 입력하세요",
-  "people.exportError": "사람 내보내기에 실패했습니다",
-  "people.exportPeople": "사람 내보내기",
-  "people.exportSuccess": "사람이 성공적으로 내보내졌습니다",
-  "people.fileTooLarge": "파일이 너무 큽니다. 10MB 미만의 파일을 업로드하세요.",
-  "people.firstName": "이름",
-  "people.fullName": "전체 이름",
-  "people.import.action": "작업",
-  "people.import.areaDesc": "지리적 지역",
-  "people.import.bahaiIdDesc": "바하이 ID 번호",
-  "people.import.clickToUpload": "클릭하여 업로드",
-  "people.import.confirmDeleteAllPeople": "모든 사람 삭제 확인",
-  "people.import.confirmDeleteFile": "이 파일을 삭제하시겠습니까?",
-  "people.import.contentEncoding": "콘텐츠 인코딩",
-  "people.import.currentPeopleCount": "현재 사람 수",
-  "people.import.dataRows": "데이터 행",
-  "people.import.deleteAllPeople": "모든 사람 삭제",
-  "people.import.deleteAllPeopleError": "모든 사람 삭제에 실패했습니다",
-  "people.import.deleteAllPeopleMessage": "이 선거의 모든 사람을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
-  "people.import.deleteFileError": "파일 삭제에 실패했습니다",
-  "people.import.dropFile": "파일을 여기에 드롭하거나",
-  "people.import.duplicateDesc": "중복 항목",
-  "people.import.eligibilityDesc": "자격 상태 설명",
-  "people.import.eligibilityValues": "자격 상태 값",
-  "people.import.eligibleDesc": "투표 자격 있음",
-  "people.import.emailDesc": "이메일 주소",
-  "people.import.fileName": "파일 이름",
-  "people.import.filesOnServer": "서버의 파일",
-  "people.import.firstNameDesc": "사람의 이름",
-  "people.import.firstNameLastNameRequired": "가져오기를 진행하려면 이름과 성 필드를 매핑해야 합니다.",
-  "people.import.headerAutoDetected": "{row}행에서 헤더가 자동으로 감지되었습니다",
-  "people.import.headersOnLine": "헤더 행 위치",
-  "people.import.headersOnLineTooltip": "열 헤더가 있는 행을 지정하세요. Excel 파일의 경우 자동으로 감지되지만 필요에 따라 조정할 수 있습니다.",
-  "people.import.ignore": "(무시)",
-  "people.import.importNow": "지금 가져오기",
-  "people.import.importResults": "가져오기 결과",
-  "people.import.importStepDesc": "가져오기 단계는 다음 단계에서 구현될 예정입니다",
-  "people.import.importSummary": "가져오기 요약",
-  "people.import.importing": "사람 가져오는 중...",
-  "people.import.ineligibleDesc": "투표 자격 없음",
-  "people.import.lastNameDesc": "사람의 성",
-  "people.import.loadFilesError": "가져오기 파일 로드에 실패했습니다",
-  "people.import.mapColumns": "열 매핑",
-  "people.import.mapColumnsDesc": "파일의 열을 개표J 필드에 매핑하세요",
-  "people.import.mapTo": "매핑:",
-  "people.import.mappedFields": "매핑된 필드",
-  "people.import.mappingSaved": "열 매핑이 성공적으로 저장되었습니다",
-  "people.import.otherActions": "기타 작업",
-  "people.import.otherInfoDesc": "추가 정보",
-  "people.import.otherLastNamesDesc": "추가 성",
-  "people.import.otherNamesDesc": "추가 이름",
-  "people.import.peopleAdded": "추가된 사람",
-  "people.import.peopleSkipped": "건너뛴 사람",
-  "people.import.phoneDesc": "전화번호",
-  "people.import.preview": "미리보기",
-  "people.import.reparse": "다시 파싱",
-  "people.import.reviewImport": "검토 및 가져오기",
-  "people.import.saveMapping": "매핑 저장",
-  "people.import.select": "선택",
-  "people.import.selected": "선택됨",
-  "people.import.size": "크기",
-  "people.import.status": "상태",
-  "people.import.step1": "파일 업로드",
-  "people.import.step2": "열 매핑",
-  "people.import.step3": "가져오기",
-  "people.import.supportedFormats": "지원 형식: CSV, TSV, TAB, TXT, XLSX (최대 10MB)",
-  "people.import.tallyJField": "개표J 필드",
-  "people.import.tallyJFields": "개표J 필드 참조",
-  "people.import.timeElapsed": "경과 시간",
-  "people.import.title": "사람 가져오기",
-  "people.import.underAgeDesc": "투표 연령 미달",
-  "people.import.uploadError": "파일 업로드에 실패했습니다",
-  "people.import.uploadFile": "파일 업로드",
-  "people.import.uploadTime": "업로드 시간",
-  "people.import.validationWarning": "유효성 검사 경고",
-  "people.import.warnings": "경고",
-  "people.importError": "가져오기 시작에 실패했습니다",
-  "people.importFormat": "다음 열이 포함된 CSV 또는 Excel 파일을 업로드하세요:",
-  "people.importInstructions": "가져오기 안내",
-  "people.importOptionalFields": "선택: 이메일, 전화번호, 지역, 바하이 ID, 자격",
-  "people.importPeople": "사람 가져오기",
-  "people.importRequiredFields": "필수: 이름, 성",
-  "people.importStarted": "가져오기가 시작되었습니다. 완료될 때까지 기다려 주세요.",
-  "people.importWarning": "이름이 일치하는 기존 사람은 업데이트됩니다. 새 사람이 생성됩니다.",
-  "people.invalidFileType": "유효하지 않은 파일 형식입니다. CSV 또는 Excel 파일을 업로드하세요.",
-  "people.kioskCode": "Kiosk Code",
-  "people.kioskCodeExpired": "This code has expired. Renew it before the voter logs in.",
-  "people.kioskCodeExpires": "Expires {time} ({minutes} min left).",
-  "people.kioskCodeGenerate": "Make a kiosk code",
-  "people.kioskCodeGenerated": "Kiosk code is ready to share.",
-  "people.kioskCodeNone": "No kiosk code yet. Generate one when the voter is at the kiosk.",
-  "people.kioskCodeNote": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
-  "people.kioskCodeRenew": "Renew kiosk code",
-  "people.lastName": "성",
-  "people.lastNameRequired": "성이 필요합니다",
-  "people.leaveElectionGroupError": "선거 그룹 탈퇴에 실패했습니다:",
-  "people.loadError": "사람 로드에 실패했습니다",
-  "people.management": "사람 관리",
-  "people.phone": "전화번호",
-  "people.phoneOnlineVoter.recentSms": "Recent SMS",
-  "people.phoneOnlineVoter.smsLogNoStatus": "Sent",
-  "people.phoneOnlineVoter.smsLogError": "Error {code}",
-  "people.saveError": "사람 저장에 실패했습니다",
-  "people.search": "이름, 이메일 또는 ID로 검색",
-  "people.searchError": "사람 검색에 실패했습니다",
-  "people.supportedFormats": "지원 형식: CSV, XLS, XLSX (최대 10MB)",
-  "people.updateSuccess": "사람이 성공적으로 업데이트되었습니다",
-  "people.voters": "투표자"
+  "people.addPerson": {
+    "t": "사람 추가",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.adult": {
+    "t": "성인",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.youth": {
+    "t": "청소년",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroupLabel": {
+    "t": "연령 그룹",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.allPeople": {
+    "t": "전체 사람",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.area": {
+    "t": "지역",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bahaiId": {
+    "t": "바하이 ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkActions": {
+    "t": "일괄 작업",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteError": {
+    "t": "일부 사람 삭제에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteMessage": {
+    "t": "선택한 {count}명을 삭제하시겠습니까?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteSuccess": {
+    "t": "{count}명이 성공적으로 삭제되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canReceiveVotes": {
+    "t": "투표 받기 가능",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canVote": {
+    "t": "투표 가능",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.candidates": {
+    "t": "자격 있는 후보자",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.confirmBulkDelete": {
+    "t": "일괄 삭제 확인",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.createSuccess": {
+    "t": "사람이 성공적으로 추가되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteConfirm": {
+    "t": "{name}을(를) 삭제하시겠습니까?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteError": {
+    "t": "사람 삭제에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSelected": {
+    "t": "선택 항목 삭제 ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSuccess": {
+    "t": "사람이 성공적으로 삭제되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.dropFileHere": {
+    "t": "파일을 여기에 드롭하거나 클릭하여 업로드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.editPerson": {
+    "t": "사람 편집",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.email": {
+    "t": "이메일",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.emailInvalid": {
+    "t": "유효한 이메일을 입력하세요",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportError": {
+    "t": "사람 내보내기에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportPeople": {
+    "t": "사람 내보내기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportSuccess": {
+    "t": "사람이 성공적으로 내보내졌습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fileTooLarge": {
+    "t": "파일이 너무 큽니다. 10MB 미만의 파일을 업로드하세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.firstName": {
+    "t": "이름",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fullName": {
+    "t": "전체 이름",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.action": {
+    "t": "작업",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.areaDesc": {
+    "t": "지리적 지역",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.bahaiIdDesc": {
+    "t": "바하이 ID 번호",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.clickToUpload": {
+    "t": "클릭하여 업로드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteAllPeople": {
+    "t": "모든 사람 삭제 확인",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteFile": {
+    "t": "이 파일을 삭제하시겠습니까?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.contentEncoding": {
+    "t": "콘텐츠 인코딩",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.currentPeopleCount": {
+    "t": "현재 사람 수",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dataRows": {
+    "t": "데이터 행",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeople": {
+    "t": "모든 사람 삭제",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleError": {
+    "t": "모든 사람 삭제에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleMessage": {
+    "t": "이 선거의 모든 사람을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteFileError": {
+    "t": "파일 삭제에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dropFile": {
+    "t": "파일을 여기에 드롭하거나",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.duplicateDesc": {
+    "t": "중복 항목",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityDesc": {
+    "t": "자격 상태 설명",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityValues": {
+    "t": "자격 상태 값",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibleDesc": {
+    "t": "투표 자격 있음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.emailDesc": {
+    "t": "이메일 주소",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileName": {
+    "t": "파일 이름",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.filesOnServer": {
+    "t": "서버의 파일",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameDesc": {
+    "t": "사람의 이름",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameLastNameRequired": {
+    "t": "가져오기를 진행하려면 이름과 성 필드를 매핑해야 합니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headerAutoDetected": {
+    "t": "{row}행에서 헤더가 자동으로 감지되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLine": {
+    "t": "헤더 행 위치",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLineTooltip": {
+    "t": "열 헤더가 있는 행을 지정하세요. Excel 파일의 경우 자동으로 감지되지만 필요에 따라 조정할 수 있습니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ignore": {
+    "t": "(무시)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importNow": {
+    "t": "지금 가져오기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importResults": {
+    "t": "가져오기 결과",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importStepDesc": {
+    "t": "가져오기 단계는 다음 단계에서 구현될 예정입니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importSummary": {
+    "t": "가져오기 요약",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importing": {
+    "t": "사람 가져오는 중...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ineligibleDesc": {
+    "t": "투표 자격 없음",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.lastNameDesc": {
+    "t": "사람의 성",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.loadFilesError": {
+    "t": "가져오기 파일 로드에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumns": {
+    "t": "열 매핑",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumnsDesc": {
+    "t": "파일의 열을 개표J 필드에 매핑하세요",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapTo": {
+    "t": "매핑:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappedFields": {
+    "t": "매핑된 필드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappingSaved": {
+    "t": "열 매핑이 성공적으로 저장되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherActions": {
+    "t": "기타 작업",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherInfoDesc": {
+    "t": "추가 정보",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherLastNamesDesc": {
+    "t": "추가 성",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherNamesDesc": {
+    "t": "추가 이름",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleAdded": {
+    "t": "추가된 사람",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleSkipped": {
+    "t": "건너뛴 사람",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.phoneDesc": {
+    "t": "전화번호",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.preview": {
+    "t": "미리보기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reparse": {
+    "t": "다시 파싱",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reviewImport": {
+    "t": "검토 및 가져오기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.saveMapping": {
+    "t": "매핑 저장",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.select": {
+    "t": "선택",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.selected": {
+    "t": "선택됨",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.size": {
+    "t": "크기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.status": {
+    "t": "상태",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step1": {
+    "t": "파일 업로드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step2": {
+    "t": "열 매핑",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step3": {
+    "t": "가져오기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.supportedFormats": {
+    "t": "지원 형식: CSV, TSV, TAB, TXT, XLSX (최대 10MB)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJField": {
+    "t": "개표J 필드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJFields": {
+    "t": "개표J 필드 참조",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.timeElapsed": {
+    "t": "경과 시간",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.title": {
+    "t": "사람 가져오기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.underAgeDesc": {
+    "t": "투표 연령 미달",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadError": {
+    "t": "파일 업로드에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadFile": {
+    "t": "파일 업로드",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadTime": {
+    "t": "업로드 시간",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.validationWarning": {
+    "t": "유효성 검사 경고",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.warnings": {
+    "t": "경고",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importError": {
+    "t": "가져오기 시작에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importFormat": {
+    "t": "다음 열이 포함된 CSV 또는 Excel 파일을 업로드하세요:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importInstructions": {
+    "t": "가져오기 안내",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importOptionalFields": {
+    "t": "선택: 이메일, 전화번호, 지역, 바하이 ID, 자격",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importPeople": {
+    "t": "사람 가져오기",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importRequiredFields": {
+    "t": "필수: 이름, 성",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importStarted": {
+    "t": "가져오기가 시작되었습니다. 완료될 때까지 기다려 주세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importWarning": {
+    "t": "이름이 일치하는 기존 사람은 업데이트됩니다. 새 사람이 생성됩니다.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.invalidFileType": {
+    "t": "유효하지 않은 파일 형식입니다. CSV 또는 Excel 파일을 업로드하세요.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCode": {
+    "t": "Kiosk Code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpired": {
+    "t": "This code has expired. Renew it before the voter logs in.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpires": {
+    "t": "Expires {time} ({minutes} min left).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerate": {
+    "t": "Make a kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerated": {
+    "t": "Kiosk code is ready to share.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNone": {
+    "t": "No kiosk code yet. Generate one when the voter is at the kiosk.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNote": {
+    "t": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeRenew": {
+    "t": "Renew kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastName": {
+    "t": "성",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastNameRequired": {
+    "t": "성이 필요합니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.leaveElectionGroupError": {
+    "t": "선거 그룹 탈퇴에 실패했습니다:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.loadError": {
+    "t": "사람 로드에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.management": {
+    "t": "사람 관리",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phone": {
+    "t": "전화번호",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.recentSms": {
+    "t": "Recent SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogNoStatus": {
+    "t": "Sent",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogError": {
+    "t": "Error {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.saveError": {
+    "t": "사람 저장에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.search": {
+    "t": "이름, 이메일 또는 ID로 검색",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.searchError": {
+    "t": "사람 검색에 실패했습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.supportedFormats": {
+    "t": "지원 형식: CSV, XLS, XLSX (최대 10MB)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.updateSuccess": {
+    "t": "사람이 성공적으로 업데이트되었습니다",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.voters": {
+    "t": "투표자",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

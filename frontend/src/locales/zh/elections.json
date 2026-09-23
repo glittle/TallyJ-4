@@ -1,160 +1,792 @@
 {
-  "elections.advanceStage": "前进到下一阶段",
-  "elections.advanceTo": "前进到 {stage}",
-  "elections.ballots": "选票",
-  "elections.bulkDeleteError": "删除部分选举失败",
-  "elections.bulkDeleteMessage": "您确定要删除选中的 {count} 个选举吗？",
-  "elections.bulkDeleteSuccess": "已成功删除 {count} 个选举",
-  "elections.calculateTally": "计算票数",
-  "elections.clearFilters": "清除筛选",
-  "elections.confirmAdvance": "您确定要将此选举前进到 {stage} 吗？",
-  "elections.confirmBulkDelete": "确认批量删除",
-  "elections.confirmRevert": "您确定要将此选举回退到 {stage} 吗？",
-  "elections.copyUrl": "复制链接",
-  "elections.createError": "创建选举失败",
-  "elections.createFirst": "创建您的第一个选举",
-  "elections.createNew": "创建选举",
-  "elections.createSuccess": "选举创建成功",
-  "elections.date": "选举日期",
-  "elections.deleteConfirm": "您确定要删除此选举吗？此操作无法撤销。",
-  "elections.deleteError": "删除选举失败",
-  "elections.deleteSelected": "删除选中项（{count}）",
-  "elections.deleteSuccess": "选举删除成功",
-  "elections.details": "选举详情",
-  "elections.edit": "编辑选举",
-  "elections.electionModes.B": "补选",
-  "elections.electionModes.N": "常规选举",
-  "elections.electionModes.T": "打破平局",
-  "elections.electionTypes.Con": "单位大会",
-  "elections.electionTypes.LSA": "地方灵体会",
-  "elections.electionTypes.LSA1": "地方灵体会（两阶段）地方单位",
-  "elections.electionTypes.LSA2": "地方灵体会（两阶段）最终",
-  "elections.electionTypes.NSA": "全国灵体会",
-  "elections.electionTypes.Oth": "其他",
-  "elections.electionTypes.Reg": "地区理事会",
-  "elections.exportElection": "导出选举",
-  "elections.exportElectionError": "导出选举失败",
-  "elections.exportElectionSuccess": "选举导出成功",
-  "elections.filterByStatus": "按状态筛选",
-  "elections.filterByType": "按类型筛选",
-  "elections.form.convenor": "召集人",
-  "elections.form.convenorPlaceholder": "输入召集人姓名",
-  "elections.form.customMethods": "自定义方法",
-  "elections.form.customMethodsHelp": "指定此次选举中使用的任何自定义或非标准投票方式。",
-  "elections.form.customMethodsPlaceholder": "描述任何自定义投票方式",
-  "elections.form.date": "选举日期",
-  "elections.form.datePlaceholder": "选择选举日期",
-  "elections.form.dateRequired": "选举日期是必需的",
-  "elections.form.electionMode": "选举模式",
-  "elections.form.electionPasscode": "选举密码",
-  "elections.form.electionPasscodeHelp": "计票员登录需要密码。",
-  "elections.form.electionPasscodePlaceholder": "输入密码",
-  "elections.form.emailFromAddress": "发件人邮箱地址",
-  "elections.form.emailFromAddressPlaceholder": "输入发件人邮箱地址",
-  "elections.form.emailFromName": "发件人姓名",
-  "elections.form.emailFromNamePlaceholder": "输入发件人姓名",
-  "elections.form.emailInvalid": "邮箱地址无效",
-  "elections.form.emailSubject": "邮件主题",
-  "elections.form.emailSubjectPlaceholder": "输入邮件主题",
-  "elections.form.emailText": "邮件正文",
-  "elections.form.emailTextPlaceholder": "输入邮件正文",
-  "elections.form.flags": "标记",
-  "elections.form.flagsHelp": "标记用于特殊的选举条件。",
-  "elections.form.flagsPlaceholder": "输入任何标记",
-  "elections.form.hidePreBallotPages": "隐藏投票前页面",
-  "elections.form.linkedElection": "关联选举",
-  "elections.form.linkedElectionCount": "有 {count} 个关联选举可用",
-  "elections.form.linkedElectionCount_plural": "有 {count} 个关联选举可用",
-  "elections.form.linkedElectionHelp": "选择一个选举进行关联以用于打破平局或决选。",
-  "elections.form.linkedElectionKind": "关联选举类型",
-  "elections.form.linkedElectionKindPlaceholder": "选择类型",
-  "elections.form.linkedElectionPlaceholder": "选择关联选举",
-  "elections.form.listForPublic": "向公众显示",
-  "elections.form.lockedByBallots": "已锁定 — 已有选票录入",
-  "elections.form.maskVotingMethod": "隐藏投票方式",
-  "elections.form.modePlaceholder": "选择选举模式",
-  "elections.form.name": "选举名称",
-  "elections.form.namePlaceholder": "输入选举名称",
-  "elections.form.nameRequired": "选举名称为必填项",
-  "elections.form.numberExtra": "额外数量",
-  "elections.form.numberToElect": "当选数量",
-  "elections.form.numberToElectRequired": "当选数量为必填项",
-  "elections.form.onlineAnnounced": "在线结果公布",
-  "elections.form.onlineAnnouncedPlaceholder": "选择公布时间",
-  "elections.form.onlineCloseIsEstimate": "结束时间为估计值",
-  "elections.form.onlineSelectionProcess": "在线选举流程",
-  "elections.form.onlineSelectionProcessPlaceholder": "选择流程",
-  "elections.form.onlineWhenClose": "在线投票结束时间",
-  "elections.form.onlineWhenClosePlaceholder": "选择结束时间",
-  "elections.form.onlineWhenOpen": "在线投票开始时间",
-  "elections.form.onlineWhenOpenPlaceholder": "选择开始时间",
-  "elections.form.showAsTest": "显示为测试",
-  "elections.form.showFullReport": "显示完整报告",
-  "elections.form.smsText": "短信文本",
-  "elections.form.smsTextPlaceholder": "输入短信文本",
-  "elections.form.type": "选举类型",
-  "elections.form.typePlaceholder": "选择选举类型",
-  "elections.form.typeRequired": "选举类型为必填项",
-  "elections.form.useCallInButton": "启用电话投票",
-  "elections.form.useKiosk": "Enable kiosk mode",
-  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
-  "elections.form.votingMethods": "投票方式",
-  "elections.form.votingMethodsHelp": "选择投票的方式。",
-  "elections.form.votingMethodsPlaceholder": "选择投票方式",
-  "elections.importCdnBallots": "导入 CDN 选票",
-  "elections.importCdnBallotsError": "导入 CDN 选票失败",
-  "elections.importCdnBallotsSuccess": "CDN 选票导入成功",
-  "elections.importElection": "导入选举",
-  "elections.importElectionError": "导入选举失败",
-  "elections.importElectionSuccess": "选举导入成功",
-  "elections.list": "选举",
-  "elections.loadError": "加载选举失败",
-  "elections.locations": "地点",
-  "elections.manageBallots": "管理选票",
-  "elections.manageLocations": "管理地点",
-  "elections.managePeople": "管理人员",
-  "elections.name": "选举名称",
-  "elections.notFound": "未找到选举",
-  "elections.onlineVotingDisabled": "在线投票已禁用",
-  "elections.onlineVotingEnabled": "在线投票已启用",
-  "elections.people": "人员",
-  "elections.quickActions": "快速操作",
-  "elections.revertTo": "回退到 {stage}",
-  "elections.searchPlaceholder": "按名称或召集人搜索选举...",
-  "elections.stage.Counting": "计票",
-  "elections.stage.Finalized": "已完成",
-  "elections.stage.Setup": "设置",
-  "elections.stageAdvanced": "选举已前进到 {stage}",
-  "elections.stageChangeError": "更改选举阶段失败",
-  "elections.stageProgression": "选举阶段",
-  "elections.stageReverted": "选举已回退到 {stage}",
-  "elections.statistics": "统计",
-  "elections.status": "状态",
-  "elections.tabs.advanced": "高级",
-  "elections.tabs.auditLogs": "审计日志",
-  "elections.tabs.ballots": "选票",
-  "elections.tabs.basicInfo": "基本信息",
-  "elections.tabs.communication": "通信",
-  "elections.tabs.displayPrivacy": "显示与隐私",
-  "elections.tabs.electionRules": "选举规则",
-  "elections.tabs.locations": "地点",
-  "elections.tabs.onlineVoting": "在线投票",
-  "elections.tabs.people": "人员",
-  "elections.tabs.results": "结果",
-  "elections.tabs.tellers": "计票员",
-  "elections.tabs.votingMethods": "投票方式",
-  "elections.tellerAccess": "计票员访问",
-  "elections.tellerAccessClosed": "计票员访问已关闭",
-  "elections.tellerAccessCode": "访问码",
-  "elections.tellerAccessOpen": "计票员访问已开启",
-  "elections.tellerAccessQrCode": "二维码",
-  "elections.tellerAccessUrl": "可分享链接",
-  "elections.toElect": "当选",
-  "elections.toggleTellerAccess": "切换计票员访问",
-  "elections.type": "类型",
-  "elections.updateError": "更新选举失败",
-  "elections.updateSuccess": "选举更新成功",
-  "elections.viewReports": "查看报告",
-  "elections.viewResults": "查看结果",
-  "elections.voters": "选民"
+  "elections.advanceStage": {
+    "t": "前进到下一阶段",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.advanceTo": {
+    "t": "前进到 {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ballots": {
+    "t": "选票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteError": {
+    "t": "删除部分选举失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteMessage": {
+    "t": "您确定要删除选中的 {count} 个选举吗？",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteSuccess": {
+    "t": "已成功删除 {count} 个选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.calculateTally": {
+    "t": "计算票数",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.clearFilters": {
+    "t": "清除筛选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmAdvance": {
+    "t": "您确定要将此选举前进到 {stage} 吗？",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmBulkDelete": {
+    "t": "确认批量删除",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmRevert": {
+    "t": "您确定要将此选举回退到 {stage} 吗？",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.copyUrl": {
+    "t": "复制链接",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createError": {
+    "t": "创建选举失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createFirst": {
+    "t": "创建您的第一个选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createNew": {
+    "t": "创建选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createSuccess": {
+    "t": "选举创建成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.date": {
+    "t": "选举日期",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteConfirm": {
+    "t": "您确定要删除此选举吗？此操作无法撤销。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteError": {
+    "t": "删除选举失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSelected": {
+    "t": "删除选中项（{count}）",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSuccess": {
+    "t": "选举删除成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.details": {
+    "t": "选举详情",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.edit": {
+    "t": "编辑选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.B": {
+    "t": "补选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.N": {
+    "t": "常规选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.T": {
+    "t": "打破平局",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Con": {
+    "t": "单位大会",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA": {
+    "t": "地方灵体会",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA1": {
+    "t": "地方灵体会（两阶段）地方单位",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA2": {
+    "t": "地方灵体会（两阶段）最终",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.NSA": {
+    "t": "全国灵体会",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Oth": {
+    "t": "其他",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Reg": {
+    "t": "地区理事会",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElection": {
+    "t": "导出选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionError": {
+    "t": "导出选举失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionSuccess": {
+    "t": "选举导出成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByStatus": {
+    "t": "按状态筛选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByType": {
+    "t": "按类型筛选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenor": {
+    "t": "召集人",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenorPlaceholder": {
+    "t": "输入召集人姓名",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethods": {
+    "t": "自定义方法",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsHelp": {
+    "t": "指定此次选举中使用的任何自定义或非标准投票方式。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsPlaceholder": {
+    "t": "描述任何自定义投票方式",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.date": {
+    "t": "选举日期",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.datePlaceholder": {
+    "t": "选择选举日期",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.dateRequired": {
+    "t": "选举日期是必需的",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionMode": {
+    "t": "选举模式",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscode": {
+    "t": "选举密码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodeHelp": {
+    "t": "计票员登录需要密码。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodePlaceholder": {
+    "t": "输入密码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddress": {
+    "t": "发件人邮箱地址",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddressPlaceholder": {
+    "t": "输入发件人邮箱地址",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromName": {
+    "t": "发件人姓名",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromNamePlaceholder": {
+    "t": "输入发件人姓名",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailInvalid": {
+    "t": "邮箱地址无效",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubject": {
+    "t": "邮件主题",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubjectPlaceholder": {
+    "t": "输入邮件主题",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailText": {
+    "t": "邮件正文",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailTextPlaceholder": {
+    "t": "输入邮件正文",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flags": {
+    "t": "标记",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsHelp": {
+    "t": "标记用于特殊的选举条件。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsPlaceholder": {
+    "t": "输入任何标记",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.hidePreBallotPages": {
+    "t": "隐藏投票前页面",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElection": {
+    "t": "关联选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount": {
+    "t": "有 {count} 个关联选举可用",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount_plural": {
+    "t": "有 {count} 个关联选举可用",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionHelp": {
+    "t": "选择一个选举进行关联以用于打破平局或决选。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKind": {
+    "t": "关联选举类型",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKindPlaceholder": {
+    "t": "选择类型",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionPlaceholder": {
+    "t": "选择关联选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.listForPublic": {
+    "t": "向公众显示",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.lockedByBallots": {
+    "t": "已锁定 — 已有选票录入",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.maskVotingMethod": {
+    "t": "隐藏投票方式",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.modePlaceholder": {
+    "t": "选择选举模式",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.name": {
+    "t": "选举名称",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.namePlaceholder": {
+    "t": "输入选举名称",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.nameRequired": {
+    "t": "选举名称为必填项",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberExtra": {
+    "t": "额外数量",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElect": {
+    "t": "当选数量",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElectRequired": {
+    "t": "当选数量为必填项",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnounced": {
+    "t": "在线结果公布",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnouncedPlaceholder": {
+    "t": "选择公布时间",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineCloseIsEstimate": {
+    "t": "结束时间为估计值",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcess": {
+    "t": "在线选举流程",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessPlaceholder": {
+    "t": "选择流程",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClose": {
+    "t": "在线投票结束时间",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClosePlaceholder": {
+    "t": "选择结束时间",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpen": {
+    "t": "在线投票开始时间",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpenPlaceholder": {
+    "t": "选择开始时间",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showAsTest": {
+    "t": "显示为测试",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showFullReport": {
+    "t": "显示完整报告",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsText": {
+    "t": "短信文本",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsTextPlaceholder": {
+    "t": "输入短信文本",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.type": {
+    "t": "选举类型",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typePlaceholder": {
+    "t": "选择选举类型",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typeRequired": {
+    "t": "选举类型为必填项",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useCallInButton": {
+    "t": "启用电话投票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKiosk": {
+    "t": "Enable kiosk mode",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKioskHelp": {
+    "t": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethods": {
+    "t": "投票方式",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsHelp": {
+    "t": "选择投票的方式。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsPlaceholder": {
+    "t": "选择投票方式",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallots": {
+    "t": "导入 CDN 选票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsError": {
+    "t": "导入 CDN 选票失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsSuccess": {
+    "t": "CDN 选票导入成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElection": {
+    "t": "导入选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionError": {
+    "t": "导入选举失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionSuccess": {
+    "t": "选举导入成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.list": {
+    "t": "选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.loadError": {
+    "t": "加载选举失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.locations": {
+    "t": "地点",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageBallots": {
+    "t": "管理选票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageLocations": {
+    "t": "管理地点",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.managePeople": {
+    "t": "管理人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.name": {
+    "t": "选举名称",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.notFound": {
+    "t": "未找到选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingDisabled": {
+    "t": "在线投票已禁用",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingEnabled": {
+    "t": "在线投票已启用",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.people": {
+    "t": "人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.quickActions": {
+    "t": "快速操作",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.revertTo": {
+    "t": "回退到 {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.searchPlaceholder": {
+    "t": "按名称或召集人搜索选举...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Counting": {
+    "t": "计票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Finalized": {
+    "t": "已完成",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Setup": {
+    "t": "设置",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageAdvanced": {
+    "t": "选举已前进到 {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError": {
+    "t": "更改选举阶段失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageProgression": {
+    "t": "选举阶段",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageReverted": {
+    "t": "选举已回退到 {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.statistics": {
+    "t": "统计",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.status": {
+    "t": "状态",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.advanced": {
+    "t": "高级",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.auditLogs": {
+    "t": "审计日志",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.ballots": {
+    "t": "选票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.basicInfo": {
+    "t": "基本信息",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.communication": {
+    "t": "通信",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.displayPrivacy": {
+    "t": "显示与隐私",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.electionRules": {
+    "t": "选举规则",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.locations": {
+    "t": "地点",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.onlineVoting": {
+    "t": "在线投票",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.people": {
+    "t": "人员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.results": {
+    "t": "结果",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.tellers": {
+    "t": "计票员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.votingMethods": {
+    "t": "投票方式",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccess": {
+    "t": "计票员访问",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessClosed": {
+    "t": "计票员访问已关闭",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessCode": {
+    "t": "访问码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessOpen": {
+    "t": "计票员访问已开启",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessQrCode": {
+    "t": "二维码",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessUrl": {
+    "t": "可分享链接",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toElect": {
+    "t": "当选",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toggleTellerAccess": {
+    "t": "切换计票员访问",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.type": {
+    "t": "类型",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateError": {
+    "t": "更新选举失败",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateSuccess": {
+    "t": "选举更新成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewReports": {
+    "t": "查看报告",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewResults": {
+    "t": "查看结果",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.voters": {
+    "t": "选民",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

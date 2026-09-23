@@ -1,24 +1,112 @@
 {
-  "dashboard.active": "सक्रिय",
-  "dashboard.activeElections": "सक्रिय चुनाव",
-  "dashboard.ballotsEntered": "दर्ज मतपत्र",
-  "dashboard.canVote": "मतदान कर सकते हैं",
-  "dashboard.closed": "बंद",
-  "dashboard.closes": "बंद होता है",
-  "dashboard.electionDetails": "चुनाव विवरण",
-  "dashboard.noElections": "कोई चुनाव नहीं मिला",
-  "dashboard.noTellers": "कोई गणनाकर्ता नियुक्त नहीं",
-  "dashboard.onlineVoting": "ऑनलाइन मतदान",
-  "dashboard.open": "खुला",
-  "dashboard.opens": "खुलता है",
-  "dashboard.otherActions": "अन्य क्रियाएँ...",
-  "dashboard.recentElections": "हाल के चुनाव",
-  "dashboard.registered": "पंजीकृत",
-  "dashboard.statistics": "आँकड़े",
-  "dashboard.tellerCount": "गणनाकर्ताओं की संख्या",
-  "dashboard.tellers": "गणनाकर्ता",
-  "dashboard.tellersStatus": "गणनाकर्ता",
-  "dashboard.totalBallots": "कुल मतपत्र",
-  "dashboard.totalElections": "कुल चुनाव",
-  "dashboard.totalVoters": "कुल मतदाता"
+  "dashboard.active": {
+    "t": "सक्रिय",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.activeElections": {
+    "t": "सक्रिय चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "दर्ज मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.canVote": {
+    "t": "मतदान कर सकते हैं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closed": {
+    "t": "बंद",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closes": {
+    "t": "बंद होता है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "चुनाव विवरण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noElections": {
+    "t": "कोई चुनाव नहीं मिला",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noTellers": {
+    "t": "कोई गणनाकर्ता नियुक्त नहीं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "ऑनलाइन मतदान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.open": {
+    "t": "खुला",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.opens": {
+    "t": "खुलता है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.otherActions": {
+    "t": "अन्य क्रियाएँ...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.recentElections": {
+    "t": "हाल के चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.registered": {
+    "t": "पंजीकृत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.statistics": {
+    "t": "आँकड़े",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "गणनाकर्ताओं की संख्या",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellers": {
+    "t": "गणनाकर्ता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "गणनाकर्ता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "कुल मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalElections": {
+    "t": "कुल चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "कुल मतदाता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

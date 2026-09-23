@@ -1,10 +1,42 @@
 {
-  "nav.auditLogs": "Kumbukumbu za Ukaguzi",
-  "nav.dashboard": "Dashibodi",
-  "nav.elections": "Uchaguzi",
-  "nav.frontDesk": "Meza ya Mbele",
-  "nav.profile": "Wasifu",
-  "nav.superAdmin": "Msimamizi Mkuu",
-  "nav.tellers": "Wasimamizi",
-  "nav.votingLocations": "Mahali pa Kupiga Kura"
+  "nav.auditLogs": {
+    "t": "Kumbukumbu za Ukaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.dashboard": {
+    "t": "Dashibodi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.elections": {
+    "t": "Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.frontDesk": {
+    "t": "Meza ya Mbele",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.profile": {
+    "t": "Wasifu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.superAdmin": {
+    "t": "Msimamizi Mkuu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.tellers": {
+    "t": "Wasimamizi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.votingLocations": {
+    "t": "Mahali pa Kupiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

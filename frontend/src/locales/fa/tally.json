@@ -1,20 +1,92 @@
 {
-  "tally.calculate": "محاسبه آرا",
-  "tally.calculateError": "محاسبه آرا ناموفق بود",
-  "tally.calculateSuccess": "آرا با موفقیت محاسبه شد",
-  "tally.calculatingProgress": "در حال محاسبه",
-  "tally.normalElection": "انتخابات عادی",
-  "tally.processedBallots": "آرا پردازش شده",
-  "tally.resultsPreview": "پیش نمایش نتایج (10 برتر)",
-  "tally.section.elected": "منتخب",
-  "tally.section.extra": "اضافی",
-  "tally.section.other": "دیگر",
-  "tally.singleNameElection": "انتخابات تک نامی",
-  "tally.title": "محاسبه آرا",
-  "tally.viewFullResults": "مشاهده نتایج کامل",
-  "tally.warning": "هشدار",
-  "tally.warningMessage": "محاسبه آرا باعث بازنویسی هر نتیجه موجودی خواهد شد. این عمل قابل برگرداندن نیست.",
-  "tally.section.E": "منتخب",
-  "tally.section.X": "اضافی",
-  "tally.section.O": "دیگر"
+  "tally.calculate": {
+    "t": "محاسبه آرا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateError": {
+    "t": "محاسبه آرا ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "آرا با موفقیت محاسبه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "در حال محاسبه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.normalElection": {
+    "t": "انتخابات عادی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.processedBallots": {
+    "t": "آرا پردازش شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.resultsPreview": {
+    "t": "پیش نمایش نتایج (10 برتر)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.elected": {
+    "t": "منتخب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.extra": {
+    "t": "اضافی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.other": {
+    "t": "دیگر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.singleNameElection": {
+    "t": "انتخابات تک نامی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.title": {
+    "t": "محاسبه آرا",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.viewFullResults": {
+    "t": "مشاهده نتایج کامل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warning": {
+    "t": "هشدار",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.warningMessage": {
+    "t": "محاسبه آرا باعث بازنویسی هر نتیجه موجودی خواهد شد. این عمل قابل برگرداندن نیست.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.E": {
+    "t": "منتخب",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.X": {
+    "t": "اضافی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "tally.section.O": {
+    "t": "دیگر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -82,15 +82,24 @@ public class JsonLocalizationProvider : IJsonLocalizationProvider
                 try
                 {
                     var jsonContent = File.ReadAllText(jsonFile);
-                    var data = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonContent);
+                    var data = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(jsonContent);
 
                     if (data != null)
                     {
                         foreach (var kvp in data)
                         {
+                            if (!TryReadMessageText(kvp.Value, out var text))
+                            {
+                                _logger.LogWarning(
+                                    "Skipping non-message value for key '{Key}' in {File}.",
+                                    kvp.Key,
+                                    Path.GetFileName(jsonFile));
+                                continue;
+                            }
+
                             if (!resources.ContainsKey(kvp.Key))
                             {
-                                resources[kvp.Key] = kvp.Value;
+                                resources[kvp.Key] = text;
                             }
                             else
                             {
@@ -111,6 +120,31 @@ public class JsonLocalizationProvider : IJsonLocalizationProvider
             _logger.LogInformation("Loaded {Count} translation keys for culture: {Culture}", resources.Count, cultureName);
             return resources;
         }) ?? new Dictionary<string, string>();
+    }
+
+    /// <summary>
+    /// Reads the text of a message leaf.
+    /// Source files store <c>{ t, s, w }</c>; <c>t</c> is the string the API returns.
+    /// A bare string is still accepted so older catalogs and tests keep loading.
+    /// </summary>
+    private static bool TryReadMessageText(JsonElement value, out string text)
+    {
+        if (value.ValueKind == JsonValueKind.String)
+        {
+            text = value.GetString() ?? string.Empty;
+            return true;
+        }
+
+        if (value.ValueKind == JsonValueKind.Object
+            && value.TryGetProperty("t", out var textElement)
+            && textElement.ValueKind == JsonValueKind.String)
+        {
+            text = textElement.GetString() ?? string.Empty;
+            return true;
+        }
+
+        text = string.Empty;
+        return false;
     }
 }
 

@@ -1,24 +1,112 @@
 {
-  "dashboard.active": "Inayotumika",
-  "dashboard.activeElections": "Uchaguzi Unaoendelea",
-  "dashboard.ballotsEntered": "Kura Zilizoingizwa",
-  "dashboard.canVote": "Anaweza Kupiga Kura",
-  "dashboard.closed": "Imefungwa",
-  "dashboard.closes": "Inafunga",
-  "dashboard.electionDetails": "Maelezo ya Uchaguzi",
-  "dashboard.noElections": "Hakuna uchaguzi uliopatikana",
-  "dashboard.noTellers": "Hakuna wasimamizi waliopewa jukumu",
-  "dashboard.onlineVoting": "Upigaji Kura Mtandaoni",
-  "dashboard.open": "Fungua",
-  "dashboard.opens": "Inafungua",
-  "dashboard.otherActions": "Vitendo Vingine...",
-  "dashboard.recentElections": "Uchaguzi wa Hivi Karibuni",
-  "dashboard.registered": "Wamesajiliwa",
-  "dashboard.statistics": "Takwimu",
-  "dashboard.tellerCount": "Idadi ya Wasimamizi",
-  "dashboard.tellers": "Wasimamizi",
-  "dashboard.tellersStatus": "Wasimamizi",
-  "dashboard.totalBallots": "Jumla ya Kura",
-  "dashboard.totalElections": "Jumla ya Uchaguzi",
-  "dashboard.totalVoters": "Jumla ya Wapiga Kura"
+  "dashboard.active": {
+    "t": "Inayotumika",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.activeElections": {
+    "t": "Uchaguzi Unaoendelea",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "Kura Zilizoingizwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.canVote": {
+    "t": "Anaweza Kupiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closed": {
+    "t": "Imefungwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closes": {
+    "t": "Inafunga",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "Maelezo ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noElections": {
+    "t": "Hakuna uchaguzi uliopatikana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noTellers": {
+    "t": "Hakuna wasimamizi waliopewa jukumu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "Upigaji Kura Mtandaoni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.open": {
+    "t": "Fungua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.opens": {
+    "t": "Inafungua",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.otherActions": {
+    "t": "Vitendo Vingine...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.recentElections": {
+    "t": "Uchaguzi wa Hivi Karibuni",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.registered": {
+    "t": "Wamesajiliwa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.statistics": {
+    "t": "Takwimu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "Idadi ya Wasimamizi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellers": {
+    "t": "Wasimamizi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "Wasimamizi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "Jumla ya Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalElections": {
+    "t": "Jumla ya Uchaguzi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "Jumla ya Wapiga Kura",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

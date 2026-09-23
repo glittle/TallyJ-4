@@ -1,78 +1,382 @@
 {
-  "voting.ballot.addPersonToPool": "Adicionar Pessoa à Minha Cédula",
-  "voting.ballot.addToPool": "Adicionar à sua Cédula/Pool",
-  "voting.ballot.addToPoolDescription": "Adicione uma nova pessoa ao seu pool para esta eleição.",
-  "voting.ballot.alreadyVoted": "Você já votou nesta eleição.",
-  "voting.ballot.authRequired": "Por favor, autentique-se primeiro",
-  "voting.ballot.backToElections": "Retornar",
-  "voting.ballot.bothModeHint": "Selecione na lista abaixo ou digite um nome que não esteja na lista. Os escrutinadores processarão todos os nomes que não estejam na lista.",
-  "voting.ballot.duplicateError": "Você selecionou o mesmo candidato várias vezes. Por favor, revise sua cédula.",
-  "voting.ballot.electionNotFound": "Eleição não encontrada",
-  "voting.ballot.extraInfo": "Informações de Identificação Extra",
-  "voting.ballot.extraInfoPlaceholder": "(Opcional: Use isso se o nome pode não ser suficiente)",
-  "voting.ballot.firstName": "Primeiro nome",
-  "voting.ballot.firstNamePlaceholder": "Primeiro",
-  "voting.ballot.guideline": "\"De entre o grupo daqueles que o eleitor acredita serem qualificados para servir, a seleção deve ser feita com devida consideração dada a outros fatores como distribuição etária, diversidade e gênero.\" — Universal House of Justice",
-  "voting.ballot.lastName": "Sobrenome",
-  "voting.ballot.lastNamePlaceholder": "Último",
-  "voting.ballot.loading": "Carregando informações da eleição...",
-  "voting.ballot.myBallot": "Minha Cédula",
-  "voting.ballot.namePlaceholder": "Digite um nome",
-  "voting.ballot.notOpen": "A votação online não está atualmente aberta para esta eleição.",
-  "voting.ballot.onceWarning": "Você só pode votar uma vez! Por favor, revise sua cédula com cuidado antes de enviar.",
-  "voting.ballot.openNow": "Aberto Agora",
-  "voting.ballot.orderNote": "(A ordem dos nomes não importa)",
-  "voting.ballot.randomModeHint": "Digite os nomes das pessoas em que deseja votar. Os escrutinadores corresponderão esses nomes aos eleitores registrados.",
-  "voting.ballot.searchPlaceholder": "Procure por um candidato",
-  "voting.ballot.submit": "Enviar Cédula",
-  "voting.ballot.submitSuccess": "Cédula enviada com sucesso!",
-  "voting.ballot.votingFor": "Votando para {count} Pessoas",
-  "voting.confirmation.close": "Fechar",
-  "voting.confirmation.election": "Eleição:",
-  "voting.confirmation.kioskRecorded": "Your ballot has been recorded. You can leave this computer.",
-  "voting.confirmation.kioskSubtitle": "This kiosk is clear for the next voter.",
-  "voting.confirmation.nextVoter": "Ready for next voter",
-  "voting.confirmation.noChange": "Observe que você não pode alterar nem reenviar sua cédula.",
-  "voting.confirmation.recorded": "Sua cédula foi registrada com segurança.",
-  "voting.confirmation.submitted": "Enviado em:",
-  "voting.confirmation.subtitle": "Obrigado por participar da eleição",
-  "voting.confirmation.title": "Cédula Enviada com Sucesso!",
-  "voting.election.instructions": "Por favor, vote em {count} candidatos.",
-  "voting.elections.alreadyVoted": "Cédula já enviada",
-  "voting.elections.col.election": "Eleição",
-  "voting.elections.col.onlineVoting": "Votação Online",
-  "voting.elections.col.yourNameAndBallot": "Seu Nome e Cédula",
-  "voting.elections.footerNote": "Se algo parecer errado, pare de usar TallyJ e envie detalhes para seu chefe de escrutinadores e/ou para o suporte técnico global.",
-  "voting.elections.loadError": "Falha ao carregar eleições. Por favor, tente novamente.",
-  "voting.elections.loading": "Carregando suas eleições...",
-  "voting.elections.logout": "Sair",
-  "voting.elections.method.online": "Online",
-  "voting.elections.noElections": "Nenhuma eleição encontrada para sua conta.",
-  "voting.elections.prepareBallot": "Preparar minha Cédula",
-  "voting.elections.registered": "Registrado:",
-  "voting.elections.status.closed": "Fechado",
-  "voting.elections.status.closedDaysAgo": "Fechado há {days} dias",
-  "voting.elections.status.closedMonthsAgo": "Fechado há {months} meses",
-  "voting.elections.status.closedToday": "Fechado hoje",
-  "voting.elections.status.closedYearsAgo": "Fechado há {years} anos",
-  "voting.elections.status.closedYesterday": "Fechado ontem",
-  "voting.elections.status.closingAt": "Previsto para fechar às {time}",
-  "voting.elections.status.closingAtWithMinutes": "Previsto para fechar em {hours}h {minutes}m (às {time})",
-  "voting.elections.status.closingInMinutes": "Previsto para fechar em {minutes} minutos",
-  "voting.elections.status.closingSoon": "Fechando em breve",
-  "voting.elections.status.estimatedSuffix": " (estimado)",
-  "voting.elections.status.noOnlineVoting": "Sem votação online",
-  "voting.elections.status.open": "Aberto",
-  "voting.elections.status.openNow": "Aberto Agora",
-  "voting.elections.title": "Suas Eleições",
-  "voting.elections.welcome": "Bem-vindo! Suas informações de contato ({voterId}) foram encontradas nas eleições mostradas abaixo.",
-  "voting.elections.welcomeHint": "Se uma eleição próxima não estiver listada aqui, ela pode não existir em TallyJ ou suas informações não estão registradas nela. Por favor, entre em contato com o chefe de escrutinadores da eleição para obter assistência.",
-  "voting.status.alreadyVoted": "Você já enviou sua cédula para esta eleição.",
-  "voting.status.notVoted": "Você ainda não enviou uma cédula para esta eleição.",
-  "voting.status.voterNotFound": "Eleitor não encontrado nesta eleição.",
-  "voting.submit.alreadyVoted": "Você já enviou uma cédula para esta eleição.",
-  "voting.submit.electionNotFound": "Eleição não encontrada.",
-  "voting.submit.error": "Ocorreu um erro ao enviar sua cédula. Por favor, tente novamente.",
-  "voting.submit.notOpen": "A votação online não está atualmente aberta para esta eleição.",
-  "voting.submit.voterNotFound": "Eleitor não encontrado. Por favor, autentique-se primeiro."
+  "voting.ballot.addPersonToPool": {
+    "t": "Adicionar Pessoa à Minha Cédula",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPool": {
+    "t": "Adicionar à sua Cédula/Pool",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.addToPoolDescription": {
+    "t": "Adicione uma nova pessoa ao seu pool para esta eleição.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.alreadyVoted": {
+    "t": "Você já votou nesta eleição.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.authRequired": {
+    "t": "Por favor, autentique-se primeiro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.backToElections": {
+    "t": "Retornar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.bothModeHint": {
+    "t": "Selecione na lista abaixo ou digite um nome que não esteja na lista. Os escrutinadores processarão todos os nomes que não estejam na lista.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.duplicateError": {
+    "t": "Você selecionou o mesmo candidato várias vezes. Por favor, revise sua cédula.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.electionNotFound": {
+    "t": "Eleição não encontrada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfo": {
+    "t": "Informações de Identificação Extra",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.extraInfoPlaceholder": {
+    "t": "(Opcional: Use isso se o nome pode não ser suficiente)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstName": {
+    "t": "Primeiro nome",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.firstNamePlaceholder": {
+    "t": "Primeiro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.guideline": {
+    "t": "\"De entre o grupo daqueles que o eleitor acredita serem qualificados para servir, a seleção deve ser feita com devida consideração dada a outros fatores como distribuição etária, diversidade e gênero.\" — Universal House of Justice",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastName": {
+    "t": "Sobrenome",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.lastNamePlaceholder": {
+    "t": "Último",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.loading": {
+    "t": "Carregando informações da eleição...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.myBallot": {
+    "t": "Minha Cédula",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.namePlaceholder": {
+    "t": "Digite um nome",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.notOpen": {
+    "t": "A votação online não está atualmente aberta para esta eleição.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.onceWarning": {
+    "t": "Você só pode votar uma vez! Por favor, revise sua cédula com cuidado antes de enviar.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.openNow": {
+    "t": "Aberto Agora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.orderNote": {
+    "t": "(A ordem dos nomes não importa)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.randomModeHint": {
+    "t": "Digite os nomes das pessoas em que deseja votar. Os escrutinadores corresponderão esses nomes aos eleitores registrados.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.searchPlaceholder": {
+    "t": "Procure por um candidato",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submit": {
+    "t": "Enviar Cédula",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.submitSuccess": {
+    "t": "Cédula enviada com sucesso!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.ballot.votingFor": {
+    "t": "Votando para {count} Pessoas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.close": {
+    "t": "Fechar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.election": {
+    "t": "Eleição:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskRecorded": {
+    "t": "Your ballot has been recorded. You can leave this computer.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.kioskSubtitle": {
+    "t": "This kiosk is clear for the next voter.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.nextVoter": {
+    "t": "Ready for next voter",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.noChange": {
+    "t": "Observe que você não pode alterar nem reenviar sua cédula.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.recorded": {
+    "t": "Sua cédula foi registrada com segurança.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.submitted": {
+    "t": "Enviado em:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.subtitle": {
+    "t": "Obrigado por participar da eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.confirmation.title": {
+    "t": "Cédula Enviada com Sucesso!",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.election.instructions": {
+    "t": "Por favor, vote em {count} candidatos.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.alreadyVoted": {
+    "t": "Cédula já enviada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.election": {
+    "t": "Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.onlineVoting": {
+    "t": "Votação Online",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.col.yourNameAndBallot": {
+    "t": "Seu Nome e Cédula",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.footerNote": {
+    "t": "Se algo parecer errado, pare de usar TallyJ e envie detalhes para seu chefe de escrutinadores e/ou para o suporte técnico global.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loadError": {
+    "t": "Falha ao carregar eleições. Por favor, tente novamente.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.loading": {
+    "t": "Carregando suas eleições...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.logout": {
+    "t": "Sair",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.method.online": {
+    "t": "Online",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.noElections": {
+    "t": "Nenhuma eleição encontrada para sua conta.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.prepareBallot": {
+    "t": "Preparar minha Cédula",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.registered": {
+    "t": "Registrado:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closed": {
+    "t": "Fechado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedDaysAgo": {
+    "t": "Fechado há {days} dias",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedMonthsAgo": {
+    "t": "Fechado há {months} meses",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedToday": {
+    "t": "Fechado hoje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYearsAgo": {
+    "t": "Fechado há {years} anos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closedYesterday": {
+    "t": "Fechado ontem",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAt": {
+    "t": "Previsto para fechar às {time}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingAtWithMinutes": {
+    "t": "Previsto para fechar em {hours}h {minutes}m (às {time})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingInMinutes": {
+    "t": "Previsto para fechar em {minutes} minutos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.closingSoon": {
+    "t": "Fechando em breve",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.estimatedSuffix": {
+    "t": " (estimado)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.noOnlineVoting": {
+    "t": "Sem votação online",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.open": {
+    "t": "Aberto",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.status.openNow": {
+    "t": "Aberto Agora",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.title": {
+    "t": "Suas Eleições",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcome": {
+    "t": "Bem-vindo! Suas informações de contato ({voterId}) foram encontradas nas eleições mostradas abaixo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.elections.welcomeHint": {
+    "t": "Se uma eleição próxima não estiver listada aqui, ela pode não existir em TallyJ ou suas informações não estão registradas nela. Por favor, entre em contato com o chefe de escrutinadores da eleição para obter assistência.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.alreadyVoted": {
+    "t": "Você já enviou sua cédula para esta eleição.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.notVoted": {
+    "t": "Você ainda não enviou uma cédula para esta eleição.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.status.voterNotFound": {
+    "t": "Eleitor não encontrado nesta eleição.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.alreadyVoted": {
+    "t": "Você já enviou uma cédula para esta eleição.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.electionNotFound": {
+    "t": "Eleição não encontrada.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.error": {
+    "t": "Ocorreu um erro ao enviar sua cédula. Por favor, tente novamente.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.notOpen": {
+    "t": "A votação online não está atualmente aberta para esta eleição.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.voterNotFound": {
+    "t": "Eleitor não encontrado. Por favor, autentique-se primeiro.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

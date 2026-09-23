@@ -1,26 +1,122 @@
 {
-  "eligibility.R01": "Não é delegado nesta eleição",
-  "eligibility.R02": "Direitos removidos (não pode votar)",
-  "eligibility.R03": "Outro (não pode votar, mas pode ser votado)",
-  "eligibility.V01": "Jovem de 18/19/20 anos",
-  "eligibility.V02": "Eleição parcial: Já está na Instituição",
-  "eligibility.V03": "Em outra Instituição (ex.: Conselheiro)",
-  "eligibility.V04": "Direitos removidos (não pode ser votado)",
-  "eligibility.V05": "Eleição de desempate: Não está empatado",
-  "eligibility.V06": "Outro (pode votar, mas não ser votado)",
-  "eligibility.X01": "Falecido",
-  "eligibility.X02": "Mudou-se recentemente para outro lugar",
-  "eligibility.X03": "Não está nesta unidade local",
-  "eligibility.X04": "Não é bahá'í registrado",
-  "eligibility.X05": "Menor de 18 anos",
-  "eligibility.X06": "Reside em outro lugar",
-  "eligibility.X07": "Direitos removidos (inteiramente)",
-  "eligibility.X08": "Não é delegado e está em outra Instituição",
-  "eligibility.X09": "Outro (não pode votar nem ser votado)",
-  "eligibility.eligible": "Elegível",
-  "eligibility.groupR": "Pode receber votos apenas (não pode votar)",
-  "eligibility.groupV": "Pode votar apenas (não pode receber votos)",
-  "eligibility.groupX": "Não pode votar, não pode receber votos",
-  "eligibility.label": "Elegibilidade",
-  "eligibility.selectReason": "Selecione o motivo de elegibilidade"
+  "eligibility.R01": {
+    "t": "Não é delegado nesta eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.R02": {
+    "t": "Direitos removidos (não pode votar)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.R03": {
+    "t": "Outro (não pode votar, mas pode ser votado)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V01": {
+    "t": "Jovem de 18/19/20 anos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V02": {
+    "t": "Eleição parcial: Já está na Instituição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V03": {
+    "t": "Em outra Instituição (ex.: Conselheiro)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V04": {
+    "t": "Direitos removidos (não pode ser votado)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V05": {
+    "t": "Eleição de desempate: Não está empatado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.V06": {
+    "t": "Outro (pode votar, mas não ser votado)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X01": {
+    "t": "Falecido",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X02": {
+    "t": "Mudou-se recentemente para outro lugar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X03": {
+    "t": "Não está nesta unidade local",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X04": {
+    "t": "Não é bahá'í registrado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X05": {
+    "t": "Menor de 18 anos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X06": {
+    "t": "Reside em outro lugar",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X07": {
+    "t": "Direitos removidos (inteiramente)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X08": {
+    "t": "Não é delegado e está em outra Instituição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.X09": {
+    "t": "Outro (não pode votar nem ser votado)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.eligible": {
+    "t": "Elegível",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupR": {
+    "t": "Pode receber votos apenas (não pode votar)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupV": {
+    "t": "Pode votar apenas (não pode receber votos)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.groupX": {
+    "t": "Não pode votar, não pode receber votos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.label": {
+    "t": "Elegibilidade",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "eligibility.selectReason": {
+    "t": "Selecione o motivo de elegibilidade",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

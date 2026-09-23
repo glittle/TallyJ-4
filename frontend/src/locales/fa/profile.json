@@ -1,29 +1,137 @@
 {
-  "profile.changePassword": "تغییر رمز عبور",
-  "profile.confirmPassword": "تأیید رمز عبور",
-  "profile.createdAt": "عضو از",
-  "profile.currentPassword": "رمز عبور فعلی",
-  "profile.loginMethod": "روش ورود",
-  "profile.name": "نام",
-  "profile.newPassword": "رمز عبور جدید",
-  "profile.passwordsDoNotMatch": "رمزهای عبور مطابقت ندارند",
-  "profile.twoFactor.confirmCode": "کد 6 رقمی اپلیکیشن خود را برای تأیید راه‌اندازی وارد کنید:",
-  "profile.twoFactor.confirmPlaceholder": "کد 6 رقمی",
-  "profile.twoFactor.confirmSetup": "تأیید و فعال کردن 2FA",
-  "profile.twoFactor.disable": "غیرفعال کردن 2FA",
-  "profile.twoFactor.disableConfirm": "کد 6 رقمی اپلیکیشن احراز هویت خود را برای غیرفعال کردن 2FA وارد کنید:",
-  "profile.twoFactor.disableSuccess": "احراز هویت دو مرحله‌ای غیرفعال شد.",
-  "profile.twoFactor.disableTitle": "غیرفعال کردن احراز هویت دو مرحله‌ای",
-  "profile.twoFactor.disabled": "غیرفعال",
-  "profile.twoFactor.enabled": "فعال",
-  "profile.twoFactor.loading": "بارگذاری وضعیت 2FA...",
-  "profile.twoFactor.method": "روش",
-  "profile.twoFactor.methodTotp": "اپلیکیشن احراز هویت (TOTP)",
-  "profile.twoFactor.scanQr": "این کد QR را با اپلیکیشن احراز هویت خود اسکن کنید (Google Authenticator، Microsoft Authenticator یا Authy).",
-  "profile.twoFactor.secretKey": "یا این کلید را به صورت دستی وارد کنید:",
-  "profile.twoFactor.setup": "راه‌اندازی 2FA",
-  "profile.twoFactor.setupSuccess": "احراز هویت دو مرحله‌ای فعال شد.",
-  "profile.twoFactor.setupTitle": "راه‌اندازی احراز هویت دو مرحله‌ای",
-  "profile.twoFactor.status": "وضعیت",
-  "profile.twoFactor.title": "احراز هویت دو مرحله‌ای"
+  "profile.changePassword": {
+    "t": "تغییر رمز عبور",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.confirmPassword": {
+    "t": "تأیید رمز عبور",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.createdAt": {
+    "t": "عضو از",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.currentPassword": {
+    "t": "رمز عبور فعلی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.loginMethod": {
+    "t": "روش ورود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.name": {
+    "t": "نام",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.newPassword": {
+    "t": "رمز عبور جدید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.passwordsDoNotMatch": {
+    "t": "رمزهای عبور مطابقت ندارند",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmCode": {
+    "t": "کد 6 رقمی اپلیکیشن خود را برای تأیید راه‌اندازی وارد کنید:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmPlaceholder": {
+    "t": "کد 6 رقمی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmSetup": {
+    "t": "تأیید و فعال کردن 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disable": {
+    "t": "غیرفعال کردن 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableConfirm": {
+    "t": "کد 6 رقمی اپلیکیشن احراز هویت خود را برای غیرفعال کردن 2FA وارد کنید:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableSuccess": {
+    "t": "احراز هویت دو مرحله‌ای غیرفعال شد.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableTitle": {
+    "t": "غیرفعال کردن احراز هویت دو مرحله‌ای",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disabled": {
+    "t": "غیرفعال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.enabled": {
+    "t": "فعال",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.loading": {
+    "t": "بارگذاری وضعیت 2FA...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.method": {
+    "t": "روش",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.methodTotp": {
+    "t": "اپلیکیشن احراز هویت (TOTP)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.scanQr": {
+    "t": "این کد QR را با اپلیکیشن احراز هویت خود اسکن کنید (Google Authenticator، Microsoft Authenticator یا Authy).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.secretKey": {
+    "t": "یا این کلید را به صورت دستی وارد کنید:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setup": {
+    "t": "راه‌اندازی 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupSuccess": {
+    "t": "احراز هویت دو مرحله‌ای فعال شد.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupTitle": {
+    "t": "راه‌اندازی احراز هویت دو مرحله‌ای",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.status": {
+    "t": "وضعیت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.title": {
+    "t": "احراز هویت دو مرحله‌ای",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

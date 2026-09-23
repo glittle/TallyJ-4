@@ -1,24 +1,112 @@
 {
-  "dashboard.active": "Đang Hoạt Động",
-  "dashboard.activeElections": "Cuộc Bầu Cử Đang Hoạt Động",
-  "dashboard.ballotsEntered": "Phiếu Đã Nhập",
-  "dashboard.canVote": "Có Thể Bỏ Phiếu",
-  "dashboard.closed": "Đã Đóng",
-  "dashboard.closes": "Đóng Lúc",
-  "dashboard.electionDetails": "Chi Tiết Cuộc Bầu Cử",
-  "dashboard.noElections": "Không tìm thấy cuộc bầu cử nào",
-  "dashboard.noTellers": "Chưa có kiểm phiếu viên được phân công",
-  "dashboard.onlineVoting": "Bỏ Phiếu Trực Tuyến",
-  "dashboard.open": "Đang Mở",
-  "dashboard.opens": "Mở Lúc",
-  "dashboard.otherActions": "Hành Động Khác...",
-  "dashboard.recentElections": "Cuộc Bầu Cử Gần Đây",
-  "dashboard.registered": "Đã Đăng Ký",
-  "dashboard.statistics": "Thống Kê",
-  "dashboard.tellerCount": "Số Kiểm Phiếu Viên",
-  "dashboard.tellers": "Kiểm Phiếu Viên",
-  "dashboard.tellersStatus": "Kiểm Phiếu Viên",
-  "dashboard.totalBallots": "Tổng Số Phiếu Bầu",
-  "dashboard.totalElections": "Tổng Số Cuộc Bầu Cử",
-  "dashboard.totalVoters": "Tổng Số Cử Tri"
+  "dashboard.active": {
+    "t": "Đang Hoạt Động",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.activeElections": {
+    "t": "Cuộc Bầu Cử Đang Hoạt Động",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "Phiếu Đã Nhập",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.canVote": {
+    "t": "Có Thể Bỏ Phiếu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closed": {
+    "t": "Đã Đóng",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closes": {
+    "t": "Đóng Lúc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "Chi Tiết Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noElections": {
+    "t": "Không tìm thấy cuộc bầu cử nào",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noTellers": {
+    "t": "Chưa có kiểm phiếu viên được phân công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "Bỏ Phiếu Trực Tuyến",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.open": {
+    "t": "Đang Mở",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.opens": {
+    "t": "Mở Lúc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.otherActions": {
+    "t": "Hành Động Khác...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.recentElections": {
+    "t": "Cuộc Bầu Cử Gần Đây",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.registered": {
+    "t": "Đã Đăng Ký",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.statistics": {
+    "t": "Thống Kê",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "Số Kiểm Phiếu Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellers": {
+    "t": "Kiểm Phiếu Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "Kiểm Phiếu Viên",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "Tổng Số Phiếu Bầu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalElections": {
+    "t": "Tổng Số Cuộc Bầu Cử",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "Tổng Số Cử Tri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

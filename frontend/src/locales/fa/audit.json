@@ -1,36 +1,172 @@
 {
-  "audit.dialog.computerCode": "کد کامپیوتر",
-  "audit.dialog.dateTime": "تاریخ/زمان",
-  "audit.dialog.details": "جزئیات",
-  "audit.dialog.electionGuid": "GUID انتخابات",
-  "audit.dialog.hostAndVersion": "میزبان و نسخه",
-  "audit.dialog.locationGuid": "GUID مکان",
-  "audit.dialog.rowId": "شناسه ردیف",
-  "audit.dialog.title": "جزئیات گزارش حسابرسی",
-  "audit.dialog.userId": "شناسه کاربر",
-  "audit.filters.apply": "اعمال فیلترها",
-  "audit.filters.clear": "پاک کردن فیلترها",
-  "audit.filters.computerCode": "کد کامپیوتر",
-  "audit.filters.computerCodePlaceholder": "فیلتر بر اساس کد کامپیوتر",
-  "audit.filters.electionGuid": "شناسه GUID انتخابات",
-  "audit.filters.electionGuidPlaceholder": "فیلتر بر اساس GUID انتخابات",
-  "audit.filters.endDate": "تاریخ پایان",
-  "audit.filters.endDatePlaceholder": "تاریخ پایان",
-  "audit.filters.locationGuid": "شناسه GUID مکان",
-  "audit.filters.locationGuidPlaceholder": "فیلتر بر اساس GUID مکان",
-  "audit.filters.search": "جستجو",
-  "audit.filters.searchPlaceholder": "جستجو در همه فیلدها",
-  "audit.filters.startDate": "تاریخ شروع",
-  "audit.filters.startDatePlaceholder": "تاریخ شروع",
-  "audit.filters.voterId": "شناسه رای‌دهنده",
-  "audit.filters.voterIdPlaceholder": "فیلتر بر اساس شناسه رای‌دهنده",
-  "audit.table.actions": "اقدامات",
-  "audit.table.computer": "کامپیوتر",
-  "audit.table.dateTime": "تاریخ/زمان",
-  "audit.table.details": "جزئیات",
-  "audit.table.election": "انتخابات",
-  "audit.table.userId": "شناسه کاربر",
-  "audit.table.view": "مشاهده",
-  "audit.table.yes": "بله",
-  "audit.title": "گزارش‌های حسابرسی"
+  "audit.dialog.computerCode": {
+    "t": "کد کامپیوتر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.dateTime": {
+    "t": "تاریخ/زمان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.details": {
+    "t": "جزئیات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.electionGuid": {
+    "t": "GUID انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.hostAndVersion": {
+    "t": "میزبان و نسخه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.locationGuid": {
+    "t": "GUID مکان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.rowId": {
+    "t": "شناسه ردیف",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.title": {
+    "t": "جزئیات گزارش حسابرسی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.userId": {
+    "t": "شناسه کاربر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.apply": {
+    "t": "اعمال فیلترها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.clear": {
+    "t": "پاک کردن فیلترها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCode": {
+    "t": "کد کامپیوتر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCodePlaceholder": {
+    "t": "فیلتر بر اساس کد کامپیوتر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuid": {
+    "t": "شناسه GUID انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuidPlaceholder": {
+    "t": "فیلتر بر اساس GUID انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDate": {
+    "t": "تاریخ پایان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDatePlaceholder": {
+    "t": "تاریخ پایان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuid": {
+    "t": "شناسه GUID مکان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuidPlaceholder": {
+    "t": "فیلتر بر اساس GUID مکان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.search": {
+    "t": "جستجو",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.searchPlaceholder": {
+    "t": "جستجو در همه فیلدها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDate": {
+    "t": "تاریخ شروع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDatePlaceholder": {
+    "t": "تاریخ شروع",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterId": {
+    "t": "شناسه رای‌دهنده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterIdPlaceholder": {
+    "t": "فیلتر بر اساس شناسه رای‌دهنده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.actions": {
+    "t": "اقدامات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.computer": {
+    "t": "کامپیوتر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.dateTime": {
+    "t": "تاریخ/زمان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.details": {
+    "t": "جزئیات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.election": {
+    "t": "انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.userId": {
+    "t": "شناسه کاربر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.view": {
+    "t": "مشاهده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.yes": {
+    "t": "بله",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.title": {
+    "t": "گزارش‌های حسابرسی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

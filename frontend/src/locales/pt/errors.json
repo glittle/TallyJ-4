@@ -1,18 +1,82 @@
 {
-  "error.errorDetails": "Detalhes do Erro",
-  "error.forbidden": "Acesso negado.",
-  "error.goHome": "Ir para o Início",
-  "error.networkError": "Erro de rede. Por favor, verifique sua conexão e tente novamente.",
-  "error.notFound": "O recurso solicitado não foi encontrado.",
-  "error.pageError": "Ocorreu um erro ao carregar esta página. Por favor, tente novamente.",
-  "error.serverError": "Erro do servidor. Por favor, tente novamente mais tarde.",
-  "error.sessionExpired": "Sua sessão expirou. Por favor, faça login novamente.",
-  "error.somethingWentWrong": "Algo deu errado",
-  "error.tryAgain": "Tentar Novamente",
-  "error.unauthorized": "Você não está autorizado a realizar esta ação.",
-  "error.validationError": "Por favor, verifique sua entrada e tente novamente.",
-  "notification.error": "Erro",
-  "notification.info": "Informação",
-  "notification.success": "Sucesso",
-  "notification.warning": "Aviso"
+  "error.errorDetails": {
+    "t": "Detalhes do Erro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.forbidden": {
+    "t": "Acesso negado.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.goHome": {
+    "t": "Ir para o Início",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.networkError": {
+    "t": "Erro de rede. Por favor, verifique sua conexão e tente novamente.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.notFound": {
+    "t": "O recurso solicitado não foi encontrado.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.pageError": {
+    "t": "Ocorreu um erro ao carregar esta página. Por favor, tente novamente.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.serverError": {
+    "t": "Erro do servidor. Por favor, tente novamente mais tarde.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.sessionExpired": {
+    "t": "Sua sessão expirou. Por favor, faça login novamente.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.somethingWentWrong": {
+    "t": "Algo deu errado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.tryAgain": {
+    "t": "Tentar Novamente",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.unauthorized": {
+    "t": "Você não está autorizado a realizar esta ação.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.validationError": {
+    "t": "Por favor, verifique sua entrada e tente novamente.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.error": {
+    "t": "Erro",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.info": {
+    "t": "Informação",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.success": {
+    "t": "Sucesso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.warning": {
+    "t": "Aviso",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

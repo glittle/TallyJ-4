@@ -1,29 +1,137 @@
 {
-  "profile.changePassword": "Alterar Senha",
-  "profile.confirmPassword": "Confirmar Senha",
-  "profile.createdAt": "Membro Desde",
-  "profile.currentPassword": "Senha Atual",
-  "profile.loginMethod": "Método de Login",
-  "profile.name": "Nome",
-  "profile.newPassword": "Nova Senha",
-  "profile.passwordsDoNotMatch": "As senhas não coincidem",
-  "profile.twoFactor.confirmCode": "Digite o código de 6 dígitos do seu aplicativo para confirmar a configuração:",
-  "profile.twoFactor.confirmPlaceholder": "Código de 6 dígitos",
-  "profile.twoFactor.confirmSetup": "Confirmar e Ativar 2FA",
-  "profile.twoFactor.disable": "Desativar 2FA",
-  "profile.twoFactor.disableConfirm": "Digite o código de 6 dígitos do seu aplicativo autenticador para desativar o 2FA:",
-  "profile.twoFactor.disableSuccess": "A autenticação de dois fatores foi desativada.",
-  "profile.twoFactor.disableTitle": "Desativar Autenticação de Dois Fatores",
-  "profile.twoFactor.disabled": "Não ativada",
-  "profile.twoFactor.enabled": "Ativada",
-  "profile.twoFactor.loading": "Carregando status do 2FA...",
-  "profile.twoFactor.method": "Método",
-  "profile.twoFactor.methodTotp": "Aplicativo Autenticador (TOTP)",
-  "profile.twoFactor.scanQr": "Escaneie este código QR com seu aplicativo autenticador (Google Authenticator, Microsoft Authenticator ou Authy).",
-  "profile.twoFactor.secretKey": "Ou insira esta chave manualmente:",
-  "profile.twoFactor.setup": "Configurar 2FA",
-  "profile.twoFactor.setupSuccess": "A autenticação de dois fatores foi ativada.",
-  "profile.twoFactor.setupTitle": "Configurar Autenticação de Dois Fatores",
-  "profile.twoFactor.status": "Estado",
-  "profile.twoFactor.title": "Autenticação de Dois Fatores"
+  "profile.changePassword": {
+    "t": "Alterar Senha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.confirmPassword": {
+    "t": "Confirmar Senha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.createdAt": {
+    "t": "Membro Desde",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.currentPassword": {
+    "t": "Senha Atual",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.loginMethod": {
+    "t": "Método de Login",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.name": {
+    "t": "Nome",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.newPassword": {
+    "t": "Nova Senha",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.passwordsDoNotMatch": {
+    "t": "As senhas não coincidem",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmCode": {
+    "t": "Digite o código de 6 dígitos do seu aplicativo para confirmar a configuração:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmPlaceholder": {
+    "t": "Código de 6 dígitos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.confirmSetup": {
+    "t": "Confirmar e Ativar 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disable": {
+    "t": "Desativar 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableConfirm": {
+    "t": "Digite o código de 6 dígitos do seu aplicativo autenticador para desativar o 2FA:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableSuccess": {
+    "t": "A autenticação de dois fatores foi desativada.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disableTitle": {
+    "t": "Desativar Autenticação de Dois Fatores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.disabled": {
+    "t": "Não ativada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.enabled": {
+    "t": "Ativada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.loading": {
+    "t": "Carregando status do 2FA...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.method": {
+    "t": "Método",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.methodTotp": {
+    "t": "Aplicativo Autenticador (TOTP)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.scanQr": {
+    "t": "Escaneie este código QR com seu aplicativo autenticador (Google Authenticator, Microsoft Authenticator ou Authy).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.secretKey": {
+    "t": "Ou insira esta chave manualmente:",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setup": {
+    "t": "Configurar 2FA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupSuccess": {
+    "t": "A autenticação de dois fatores foi ativada.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.setupTitle": {
+    "t": "Configurar Autenticação de Dois Fatores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.status": {
+    "t": "Estado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "profile.twoFactor.title": {
+    "t": "Autenticação de Dois Fatores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

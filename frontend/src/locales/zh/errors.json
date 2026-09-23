@@ -1,18 +1,82 @@
 {
-  "error.errorDetails": "错误详情",
-  "error.forbidden": "访问被拒绝。",
-  "error.goHome": "返回首页",
-  "error.networkError": "网络错误。请检查您的连接并重试。",
-  "error.notFound": "未找到请求的资源。",
-  "error.pageError": "加载此页面时发生错误。请重试。",
-  "error.serverError": "服务器错误。请稍后重试。",
-  "error.sessionExpired": "您的会话已过期。请重新登录。",
-  "error.somethingWentWrong": "出了些问题",
-  "error.tryAgain": "重试",
-  "error.unauthorized": "您无权执行此操作。",
-  "error.validationError": "请检查您的输入并重试。",
-  "notification.error": "错误",
-  "notification.info": "信息",
-  "notification.success": "成功",
-  "notification.warning": "警告"
+  "error.errorDetails": {
+    "t": "错误详情",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.forbidden": {
+    "t": "访问被拒绝。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.goHome": {
+    "t": "返回首页",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.networkError": {
+    "t": "网络错误。请检查您的连接并重试。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.notFound": {
+    "t": "未找到请求的资源。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.pageError": {
+    "t": "加载此页面时发生错误。请重试。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.serverError": {
+    "t": "服务器错误。请稍后重试。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.sessionExpired": {
+    "t": "您的会话已过期。请重新登录。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.somethingWentWrong": {
+    "t": "出了些问题",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.tryAgain": {
+    "t": "重试",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.unauthorized": {
+    "t": "您无权执行此操作。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "error.validationError": {
+    "t": "请检查您的输入并重试。",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.error": {
+    "t": "错误",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.info": {
+    "t": "信息",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.success": {
+    "t": "成功",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "notification.warning": {
+    "t": "警告",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

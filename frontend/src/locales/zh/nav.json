@@ -1,10 +1,42 @@
 {
-  "nav.auditLogs": "审计日志",
-  "nav.dashboard": "仪表盘",
-  "nav.elections": "选举",
-  "nav.frontDesk": "前台",
-  "nav.profile": "个人资料",
-  "nav.superAdmin": "超级管理员",
-  "nav.tellers": "计票员",
-  "nav.votingLocations": "投票地点"
+  "nav.auditLogs": {
+    "t": "审计日志",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.dashboard": {
+    "t": "仪表盘",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.elections": {
+    "t": "选举",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.frontDesk": {
+    "t": "前台",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.profile": {
+    "t": "个人资料",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.superAdmin": {
+    "t": "超级管理员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.tellers": {
+    "t": "计票员",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.votingLocations": {
+    "t": "投票地点",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

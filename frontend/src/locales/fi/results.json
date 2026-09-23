@@ -1,35 +1,167 @@
 {
-  "results.allResults": "Kaikki tulokset",
-  "results.ballotsReceived": "Vastaanotetut äänestysliput",
-  "results.calculateTally": "Laske ääntenlasku",
-  "results.calculatedAt": "Laskettu {date}",
-  "results.candidate": "Ehdokas",
-  "results.closeToNext": "Lähellä seuraavaa",
-  "results.elected": "Valittu",
-  "results.extra": "Lisä",
-  "results.flags": "Liput",
-  "results.loadError": "Tulosten lataaminen epäonnistui",
-  "results.monitor": "Vaaliseuranta",
-  "results.noResults": "Ei tuloksia saatavilla. Laske ääntenlasku ensin.",
-  "results.noTies": "Tasapelejä ei havaittu",
-  "results.numberToElect": "Valittavien määrä",
-  "results.other": "Muu",
-  "results.presentation": "Esitysnäkymä",
-  "results.rank": "Sijoitus",
-  "results.reporting": "Raportit",
-  "results.section": "Osio",
-  "results.spoiledBallots": "Mitätöidyt äänestysliput",
-  "results.tieBreakAlert": "Huomio: Jotkut tasapelit vaativat manuaalista ratkaisemista",
-  "results.tieBreakMessage": "Tasapelin ratkaiseminen vaaditaan tälle ryhmälle koska se ylittää osiorajoja",
-  "results.tieBreakRequired": "Tasapelin ratkaiseminen vaaditaan",
-  "results.tieGroup": "Tasapeliryhmä #{group}",
-  "results.tieManagement": "Tasapelien hallinta",
-  "results.tied": "Tasapeli",
-  "results.tiedCandidates": "Tasapeli ehdokkaat",
-  "results.ties": "Tasapelit",
-  "results.title": "Vaalitulokset",
-  "results.totalBallots": "Äänestysliput yhteensä",
-  "results.totalVotes": "Äänet yhteensä",
-  "results.validVotes": "Kelvolliset äänet",
-  "results.votes": "Äänet"
+  "results.allResults": {
+    "t": "Kaikki tulokset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ballotsReceived": {
+    "t": "Vastaanotetut äänestysliput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculateTally": {
+    "t": "Laske ääntenlasku",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.calculatedAt": {
+    "t": "Laskettu {date}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.candidate": {
+    "t": "Ehdokas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.closeToNext": {
+    "t": "Lähellä seuraavaa",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.elected": {
+    "t": "Valittu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.extra": {
+    "t": "Lisä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.flags": {
+    "t": "Liput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.loadError": {
+    "t": "Tulosten lataaminen epäonnistui",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.monitor": {
+    "t": "Vaaliseuranta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noResults": {
+    "t": "Ei tuloksia saatavilla. Laske ääntenlasku ensin.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.noTies": {
+    "t": "Tasapelejä ei havaittu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.numberToElect": {
+    "t": "Valittavien määrä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.other": {
+    "t": "Muu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.presentation": {
+    "t": "Esitysnäkymä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.rank": {
+    "t": "Sijoitus",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.reporting": {
+    "t": "Raportit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.section": {
+    "t": "Osio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.spoiledBallots": {
+    "t": "Mitätöidyt äänestysliput",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakAlert": {
+    "t": "Huomio: Jotkut tasapelit vaativat manuaalista ratkaisemista",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakMessage": {
+    "t": "Tasapelin ratkaiseminen vaaditaan tälle ryhmälle koska se ylittää osiorajoja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieBreakRequired": {
+    "t": "Tasapelin ratkaiseminen vaaditaan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieGroup": {
+    "t": "Tasapeliryhmä #{group}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tieManagement": {
+    "t": "Tasapelien hallinta",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tied": {
+    "t": "Tasapeli",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.tiedCandidates": {
+    "t": "Tasapeli ehdokkaat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.ties": {
+    "t": "Tasapelit",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.title": {
+    "t": "Vaalitulokset",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalBallots": {
+    "t": "Äänestysliput yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.totalVotes": {
+    "t": "Äänet yhteensä",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.validVotes": {
+    "t": "Kelvolliset äänet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "results.votes": {
+    "t": "Äänet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

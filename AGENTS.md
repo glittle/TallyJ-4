@@ -183,6 +183,8 @@ Run `npm run validate:i18n` when you touch locale files.
 When adding new user-facing strings, **only add them to the English locale** (`src/locales/en/`).
 Other languages are updated separately in periodic review cycles — do not add placeholder or machine-translated strings to non-English locales.
 
+Each message leaf is `{ "t": "<text>", "s": "source", "w": "<ISO-8601 UTC>" }`, not a bare string. Bump `w` when the English text changes. Other locales use `s` of `ai`, `human`, or `approved`. The vue-i18n load path and `merge-locales` unwrap to `t`; production `bundled/` files stay text-only. See `docs/i18n-rich-entries-upgrade.md` and `context/i18n-rich-entries.md`.
+
 **Never edit files in `src/locales/bundled/`** — these are auto-generated during build by `npm run merge-locales` and will be overwritten. Always edit the source files in individual locale directories (e.g., `src/locales/en/auth.json`).
 
 Architecture of the shared Vue + ASP.NET Core JSON catalog is explained in [`docs/SHARED_I18N.md`](docs/SHARED_I18N.md).

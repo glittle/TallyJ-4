@@ -1,47 +1,227 @@
 {
-  "locations.computer.browserInfo": "Thông Tin Trình Duyệt",
-  "locations.computer.browserInfoHelp": "Tự động phát hiện từ trình duyệt của bạn",
-  "locations.computer.browserInfoMaxLength": "Thông tin trình duyệt không được vượt quá 250 ký tự",
-  "locations.computer.browserInfoPlaceholder": "Thông tin trình duyệt được phát hiện tự động",
-  "locations.computer.cancel": "Hủy",
-  "locations.computer.code": "Mã Máy Tính",
-  "locations.computer.codeHelp": "Mã 2 ký tự (ví dụ: AA, AB, A1). Để trống để tự tạo.",
-  "locations.computer.codeInvalid": "Mã máy tính phải là 2 chữ hoa hoặc chữ số",
-  "locations.computer.codeLength": "Mã máy tính phải đúng 2 ký tự",
-  "locations.computer.codePlaceholder": "AA (để trống để tự tạo)",
-  "locations.computer.ipAddress": "Địa Chỉ IP",
-  "locations.computer.ipAddressHelp": "Tùy chọn: Địa chỉ IP của máy tính",
-  "locations.computer.ipAddressMaxLength": "Địa chỉ IP không được vượt quá 50 ký tự",
-  "locations.computer.ipAddressPlaceholder": "Tùy chọn: Nhập địa chỉ IP",
-  "locations.computer.register": "Đăng Ký",
-  "locations.computer.success": "Đã đăng ký máy tính thành công",
-  "locations.computer.title": "Đăng Ký Máy Tính",
-  "locations.currentLocation": "Địa Điểm Hiện Tại",
-  "locations.form.cancel": "Hủy",
-  "locations.form.contactInfo": "Thông Tin Liên Hệ",
-  "locations.form.contactInfoMaxLength": "Thông tin liên hệ không được vượt quá 250 ký tự",
-  "locations.form.contactInfoPlaceholder": "Nhập thông tin liên hệ",
-  "locations.form.create": "Tạo",
-  "locations.form.created": "Đã tạo địa điểm thành công",
-  "locations.form.latitude": "Vĩ Độ",
-  "locations.form.latitudeHelp": "Phạm vi: -90 đến 90",
-  "locations.form.latitudeInvalid": "Vĩ độ phải là tọa độ hợp lệ từ -90 đến 90",
-  "locations.form.latitudePlaceholder": "ví dụ: 37.7749",
-  "locations.form.longitude": "Kinh Độ",
-  "locations.form.longitudeHelp": "Phạm vi: -180 đến 180",
-  "locations.form.longitudeInvalid": "Kinh độ phải là tọa độ hợp lệ từ -180 đến 180",
-  "locations.form.longitudePlaceholder": "ví dụ: -122.4194",
-  "locations.form.name": "Tên Địa Điểm",
-  "locations.form.nameMaxLength": "Tên địa điểm không được vượt quá 50 ký tự",
-  "locations.form.namePlaceholder": "Nhập tên địa điểm",
-  "locations.form.nameRequired": "Tên địa điểm là bắt buộc",
-  "locations.form.save": "Lưu",
-  "locations.form.sortOrder": "Thứ Tự Sắp Xếp",
-  "locations.form.sortOrderHelp": "Dùng để sắp xếp địa điểm trong danh sách",
-  "locations.form.sortOrderInvalid": "Thứ tự sắp xếp phải là số",
-  "locations.form.titleAdd": "Thêm Địa Điểm",
-  "locations.form.titleEdit": "Chỉnh Sửa Địa Điểm",
-  "locations.form.updated": "Đã cập nhật địa điểm thành công",
-  "locations.locationSelected": "Đã chọn địa điểm thành công",
-  "locations.selectLocation": "Chọn Địa Điểm"
+  "locations.computer.browserInfo": {
+    "t": "Thông Tin Trình Duyệt",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoHelp": {
+    "t": "Tự động phát hiện từ trình duyệt của bạn",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoMaxLength": {
+    "t": "Thông tin trình duyệt không được vượt quá 250 ký tự",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.browserInfoPlaceholder": {
+    "t": "Thông tin trình duyệt được phát hiện tự động",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.cancel": {
+    "t": "Hủy",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.code": {
+    "t": "Mã Máy Tính",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeHelp": {
+    "t": "Mã 2 ký tự (ví dụ: AA, AB, A1). Để trống để tự tạo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeInvalid": {
+    "t": "Mã máy tính phải là 2 chữ hoa hoặc chữ số",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codeLength": {
+    "t": "Mã máy tính phải đúng 2 ký tự",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.codePlaceholder": {
+    "t": "AA (để trống để tự tạo)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddress": {
+    "t": "Địa Chỉ IP",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressHelp": {
+    "t": "Tùy chọn: Địa chỉ IP của máy tính",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressMaxLength": {
+    "t": "Địa chỉ IP không được vượt quá 50 ký tự",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.ipAddressPlaceholder": {
+    "t": "Tùy chọn: Nhập địa chỉ IP",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.register": {
+    "t": "Đăng Ký",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.success": {
+    "t": "Đã đăng ký máy tính thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.computer.title": {
+    "t": "Đăng Ký Máy Tính",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.currentLocation": {
+    "t": "Địa Điểm Hiện Tại",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.cancel": {
+    "t": "Hủy",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfo": {
+    "t": "Thông Tin Liên Hệ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoMaxLength": {
+    "t": "Thông tin liên hệ không được vượt quá 250 ký tự",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.contactInfoPlaceholder": {
+    "t": "Nhập thông tin liên hệ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.create": {
+    "t": "Tạo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.created": {
+    "t": "Đã tạo địa điểm thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitude": {
+    "t": "Vĩ Độ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeHelp": {
+    "t": "Phạm vi: -90 đến 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudeInvalid": {
+    "t": "Vĩ độ phải là tọa độ hợp lệ từ -90 đến 90",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.latitudePlaceholder": {
+    "t": "ví dụ: 37.7749",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitude": {
+    "t": "Kinh Độ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeHelp": {
+    "t": "Phạm vi: -180 đến 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudeInvalid": {
+    "t": "Kinh độ phải là tọa độ hợp lệ từ -180 đến 180",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.longitudePlaceholder": {
+    "t": "ví dụ: -122.4194",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.name": {
+    "t": "Tên Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameMaxLength": {
+    "t": "Tên địa điểm không được vượt quá 50 ký tự",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.namePlaceholder": {
+    "t": "Nhập tên địa điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.nameRequired": {
+    "t": "Tên địa điểm là bắt buộc",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.save": {
+    "t": "Lưu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrder": {
+    "t": "Thứ Tự Sắp Xếp",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderHelp": {
+    "t": "Dùng để sắp xếp địa điểm trong danh sách",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.sortOrderInvalid": {
+    "t": "Thứ tự sắp xếp phải là số",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleAdd": {
+    "t": "Thêm Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.titleEdit": {
+    "t": "Chỉnh Sửa Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.form.updated": {
+    "t": "Đã cập nhật địa điểm thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.locationSelected": {
+    "t": "Đã chọn địa điểm thành công",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "locations.selectLocation": {
+    "t": "Chọn Địa Điểm",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

@@ -1,160 +1,792 @@
 {
-  "elections.advanceStage": "अगले चरण में आगे बढ़ें",
-  "elections.advanceTo": "आगे बढ़ें {stage}",
-  "elections.ballots": "मतपत्र",
-  "elections.bulkDeleteError": "कुछ चुनाव हटाने में विफल",
-  "elections.bulkDeleteMessage": "क्या आप वाकई {count} चयनित चुनाव हटाना चाहते हैं?",
-  "elections.bulkDeleteSuccess": "{count} चुनाव सफलतापूर्वक हटाए गए",
-  "elections.calculateTally": "गणना करें",
-  "elections.clearFilters": "फ़िल्टर साफ़ करें",
-  "elections.confirmAdvance": "क्या आप निश्चित हैं कि आप इस चुनाव को {stage} में आगे बढ़ाना चाहते हैं?",
-  "elections.confirmBulkDelete": "बल्क हटाने की पुष्टि करें",
-  "elections.confirmRevert": "क्या आप निश्चित हैं कि आप इस चुनाव को {stage} को वापस करना चाहते हैं?",
-  "elections.copyUrl": "URL कॉपी करें",
-  "elections.createError": "चुनाव बनाने में विफल",
-  "elections.createFirst": "अपना पहला चुनाव बनाएं",
-  "elections.createNew": "चुनाव बनाएं",
-  "elections.createSuccess": "चुनाव सफलतापूर्वक बनाया गया",
-  "elections.date": "चुनाव तिथि",
-  "elections.deleteConfirm": "क्या आप वाकई इस चुनाव को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
-  "elections.deleteError": "चुनाव हटाने में विफल",
-  "elections.deleteSelected": "चयनित हटाएं ({count})",
-  "elections.deleteSuccess": "चुनाव सफलतापूर्वक हटाया गया",
-  "elections.details": "चुनाव विवरण",
-  "elections.edit": "चुनाव संपादित करें",
-  "elections.electionModes.B": "उप-चुनाव",
-  "elections.electionModes.N": "सामान्य चुनाव",
-  "elections.electionModes.T": "टाई-ब्रेक",
-  "elections.electionTypes.Con": "इकाई सम्मेलन",
-  "elections.electionTypes.LSA": "स्थानीय आध्यात्मिक सभा",
-  "elections.electionTypes.LSA1": "स्थानीय आध्यात्मिक सभा (दो-चरण) स्थानीय इकाई",
-  "elections.electionTypes.LSA2": "स्थानीय आध्यात्मिक सभा (दो-चरण) अंतिम",
-  "elections.electionTypes.NSA": "राष्ट्रीय आध्यात्मिक सभा",
-  "elections.electionTypes.Oth": "अन्य",
-  "elections.electionTypes.Reg": "क्षेत्रीय परिषद",
-  "elections.exportElection": "चुनाव निर्यात करें",
-  "elections.exportElectionError": "चुनाव निर्यात करने में विफल",
-  "elections.exportElectionSuccess": "चुनाव सफलतापूर्वक निर्यात किया गया",
-  "elections.filterByStatus": "स्थिति द्वारा फ़िल्टर करें",
-  "elections.filterByType": "प्रकार द्वारा फ़िल्टर करें",
-  "elections.form.convenor": "संयोजक",
-  "elections.form.convenorPlaceholder": "संयोजक का नाम दर्ज करें",
-  "elections.form.customMethods": "कस्टम तरीके",
-  "elections.form.customMethodsHelp": "इस चुनाव में उपयोग किए गए किसी भी कस्टम या गैर-मानक मतदान तरीकों को निर्दिष्ट करें।",
-  "elections.form.customMethodsPlaceholder": "किसी भी कस्टम मतदान तरीकों का वर्णन करें",
-  "elections.form.date": "चुनाव तिथि",
-  "elections.form.datePlaceholder": "चुनाव तिथि चुनें",
-  "elections.form.dateRequired": "चुनाव की तारीख आवश्यक है",
-  "elections.form.electionMode": "चुनाव मोड",
-  "elections.form.electionPasscode": "चुनाव पासकोड",
-  "elections.form.electionPasscodeHelp": "गणनाकर्ता लॉगिन के लिए पासकोड आवश्यक है।",
-  "elections.form.electionPasscodePlaceholder": "पासकोड दर्ज करें",
-  "elections.form.emailFromAddress": "ईमेल प्रेषक पता",
-  "elections.form.emailFromAddressPlaceholder": "प्रेषक ईमेल पता दर्ज करें",
-  "elections.form.emailFromName": "ईमेल प्रेषक नाम",
-  "elections.form.emailFromNamePlaceholder": "प्रेषक नाम दर्ज करें",
-  "elections.form.emailInvalid": "अमान्य ईमेल पता",
-  "elections.form.emailSubject": "ईमेल विषय",
-  "elections.form.emailSubjectPlaceholder": "ईमेल विषय दर्ज करें",
-  "elections.form.emailText": "ईमेल पाठ",
-  "elections.form.emailTextPlaceholder": "ईमेल मुख्य भाग दर्ज करें",
-  "elections.form.flags": "फ्लैग",
-  "elections.form.flagsHelp": "फ्लैग विशेष चुनाव शर्तों के लिए उपयोग किए जाते हैं।",
-  "elections.form.flagsPlaceholder": "कोई फ्लैग दर्ज करें",
-  "elections.form.hidePreBallotPages": "मतपत्र-पूर्व पृष्ठ छिपाएं",
-  "elections.form.linkedElection": "लिंक किया गया चुनाव",
-  "elections.form.linkedElectionCount": "{count} लिंक किया गया चुनाव उपलब्ध है",
-  "elections.form.linkedElectionCount_plural": "{count} लिंक किए गए चुनाव उपलब्ध हैं",
-  "elections.form.linkedElectionHelp": "टाई-ब्रेक या रन-ऑफ के लिए लिंक करने हेतु एक चुनाव चुनें।",
-  "elections.form.linkedElectionKind": "लिंक किए गए चुनाव का प्रकार",
-  "elections.form.linkedElectionKindPlaceholder": "प्रकार चुनें",
-  "elections.form.linkedElectionPlaceholder": "लिंक किया गया चुनाव चुनें",
-  "elections.form.listForPublic": "सार्वजनिक सूची",
-  "elections.form.lockedByBallots": "लॉक — मतपत्र दर्ज किए जा चुके हैं",
-  "elections.form.maskVotingMethod": "मतदान पद्धति छुपाएं",
-  "elections.form.modePlaceholder": "चुनाव मोड चुनें",
-  "elections.form.name": "चुनाव का नाम",
-  "elections.form.namePlaceholder": "चुनाव का नाम दर्ज करें",
-  "elections.form.nameRequired": "चुनाव का नाम आवश्यक है",
-  "elections.form.numberExtra": "अतिरिक्त संख्या",
-  "elections.form.numberToElect": "निर्वाचित करने की संख्या",
-  "elections.form.numberToElectRequired": "निर्वाचित करने की संख्या आवश्यक है",
-  "elections.form.onlineAnnounced": "ऑनलाइन परिणाम घोषित",
-  "elections.form.onlineAnnouncedPlaceholder": "घोषणा समय चुनें",
-  "elections.form.onlineCloseIsEstimate": "समापन समय अनुमानित है",
-  "elections.form.onlineSelectionProcess": "ऑनलाइन चयन प्रक्रिया",
-  "elections.form.onlineSelectionProcessPlaceholder": "प्रक्रिया चुनें",
-  "elections.form.onlineWhenClose": "ऑनलाइन मतदान बंद होता है",
-  "elections.form.onlineWhenClosePlaceholder": "समापन समय चुनें",
-  "elections.form.onlineWhenOpen": "ऑनलाइन मतदान खुलता है",
-  "elections.form.onlineWhenOpenPlaceholder": "प्रारंभ समय चुनें",
-  "elections.form.showAsTest": "परीक्षण के रूप में दिखाएं",
-  "elections.form.showFullReport": "पूर्ण रिपोर्ट दिखाएं",
-  "elections.form.smsText": "SMS पाठ",
-  "elections.form.smsTextPlaceholder": "SMS संदेश पाठ दर्ज करें",
-  "elections.form.type": "चुनाव प्रकार",
-  "elections.form.typePlaceholder": "चुनाव प्रकार चुनें",
-  "elections.form.typeRequired": "चुनाव प्रकार आवश्यक है",
-  "elections.form.useCallInButton": "कॉल-इन मतदान सक्षम करें",
-  "elections.form.useKiosk": "Enable kiosk mode",
-  "elections.form.useKioskHelp": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
-  "elections.form.votingMethods": "मतदान तरीके",
-  "elections.form.votingMethodsHelp": "वे तरीके चुनें जिनके द्वारा मत डाले जाएंगे।",
-  "elections.form.votingMethodsPlaceholder": "मतदान तरीके चुनें",
-  "elections.importCdnBallots": "CDN मतपत्र आयात करें",
-  "elections.importCdnBallotsError": "CDN मतपत्र आयात करने में विफल",
-  "elections.importCdnBallotsSuccess": "CDN मतपत्र सफलतापूर्वक आयात किए गए",
-  "elections.importElection": "चुनाव आयात करें",
-  "elections.importElectionError": "चुनाव आयात करने में विफल",
-  "elections.importElectionSuccess": "चुनाव सफलतापूर्वक आयात किया गया",
-  "elections.list": "चुनाव",
-  "elections.loadError": "चुनाव लोड करने में विफल",
-  "elections.locations": "स्थान",
-  "elections.manageBallots": "मतपत्र प्रबंधित करें",
-  "elections.manageLocations": "स्थान प्रबंधित करें",
-  "elections.managePeople": "लोगों को प्रबंधित करें",
-  "elections.name": "चुनाव का नाम",
-  "elections.notFound": "चुनाव नहीं मिला",
-  "elections.onlineVotingDisabled": "ऑनलाइन मतदान अक्षम है",
-  "elections.onlineVotingEnabled": "ऑनलाइन मतदान सक्षम है",
-  "elections.people": "लोग",
-  "elections.quickActions": "त्वरित क्रियाएँ",
-  "elections.revertTo": "वापस करें {stage}",
-  "elections.searchPlaceholder": "नाम या संयोजक द्वारा चुनाव खोजें...",
-  "elections.stage.Counting": "गिनती",
-  "elections.stage.Finalized": "अंतिम",
-  "elections.stage.Setup": "सेटअप",
-  "elections.stageAdvanced": "चुनाव {stage} को आगे बढ़ाया गया",
-  "elections.stageChangeError": "चुनाव चरण बदलने में विफल",
-  "elections.stageProgression": "चुनाव चरण",
-  "elections.stageReverted": "चुनाव {stage} को वापस किया गया",
-  "elections.statistics": "आँकड़े",
-  "elections.status": "स्थिति",
-  "elections.tabs.advanced": "उन्नत",
-  "elections.tabs.auditLogs": "ऑडिट लॉग",
-  "elections.tabs.ballots": "मतपत्र",
-  "elections.tabs.basicInfo": "बुनियादी जानकारी",
-  "elections.tabs.communication": "संचार",
-  "elections.tabs.displayPrivacy": "प्रदर्शन और गोपनीयता",
-  "elections.tabs.electionRules": "चुनाव नियम",
-  "elections.tabs.locations": "स्थान",
-  "elections.tabs.onlineVoting": "ऑनलाइन मतदान",
-  "elections.tabs.people": "लोग",
-  "elections.tabs.results": "परिणाम",
-  "elections.tabs.tellers": "गणनाकर्ता",
-  "elections.tabs.votingMethods": "मतदान तरीके",
-  "elections.tellerAccess": "गणनाकर्ता पहुँच",
-  "elections.tellerAccessClosed": "गणनाकर्ता पहुँच बंद है",
-  "elections.tellerAccessCode": "एक्सेस कोड",
-  "elections.tellerAccessOpen": "गणनाकर्ता पहुँच खुली है",
-  "elections.tellerAccessQrCode": "QR कोड",
-  "elections.tellerAccessUrl": "साझा करने योग्य URL",
-  "elections.toElect": "निर्वाचित करना है",
-  "elections.toggleTellerAccess": "गणनाकर्ता पहुँच टॉगल करें",
-  "elections.type": "प्रकार",
-  "elections.updateError": "चुनाव अपडेट करने में विफल",
-  "elections.updateSuccess": "चुनाव सफलतापूर्वक अपडेट किया गया",
-  "elections.viewReports": "रिपोर्ट देखें",
-  "elections.viewResults": "परिणाम देखें",
-  "elections.voters": "मतदाता"
+  "elections.advanceStage": {
+    "t": "अगले चरण में आगे बढ़ें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.advanceTo": {
+    "t": "आगे बढ़ें {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ballots": {
+    "t": "मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteError": {
+    "t": "कुछ चुनाव हटाने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteMessage": {
+    "t": "क्या आप वाकई {count} चयनित चुनाव हटाना चाहते हैं?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.bulkDeleteSuccess": {
+    "t": "{count} चुनाव सफलतापूर्वक हटाए गए",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.calculateTally": {
+    "t": "गणना करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.clearFilters": {
+    "t": "फ़िल्टर साफ़ करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmAdvance": {
+    "t": "क्या आप निश्चित हैं कि आप इस चुनाव को {stage} में आगे बढ़ाना चाहते हैं?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmBulkDelete": {
+    "t": "बल्क हटाने की पुष्टि करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.confirmRevert": {
+    "t": "क्या आप निश्चित हैं कि आप इस चुनाव को {stage} को वापस करना चाहते हैं?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.copyUrl": {
+    "t": "URL कॉपी करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createError": {
+    "t": "चुनाव बनाने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createFirst": {
+    "t": "अपना पहला चुनाव बनाएं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createNew": {
+    "t": "चुनाव बनाएं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.createSuccess": {
+    "t": "चुनाव सफलतापूर्वक बनाया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.date": {
+    "t": "चुनाव तिथि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteConfirm": {
+    "t": "क्या आप वाकई इस चुनाव को हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteError": {
+    "t": "चुनाव हटाने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSelected": {
+    "t": "चयनित हटाएं ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.deleteSuccess": {
+    "t": "चुनाव सफलतापूर्वक हटाया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.details": {
+    "t": "चुनाव विवरण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.edit": {
+    "t": "चुनाव संपादित करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.B": {
+    "t": "उप-चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.N": {
+    "t": "सामान्य चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionModes.T": {
+    "t": "टाई-ब्रेक",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Con": {
+    "t": "इकाई सम्मेलन",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA": {
+    "t": "स्थानीय आध्यात्मिक सभा",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA1": {
+    "t": "स्थानीय आध्यात्मिक सभा (दो-चरण) स्थानीय इकाई",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.LSA2": {
+    "t": "स्थानीय आध्यात्मिक सभा (दो-चरण) अंतिम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.NSA": {
+    "t": "राष्ट्रीय आध्यात्मिक सभा",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Oth": {
+    "t": "अन्य",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.electionTypes.Reg": {
+    "t": "क्षेत्रीय परिषद",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElection": {
+    "t": "चुनाव निर्यात करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionError": {
+    "t": "चुनाव निर्यात करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.exportElectionSuccess": {
+    "t": "चुनाव सफलतापूर्वक निर्यात किया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByStatus": {
+    "t": "स्थिति द्वारा फ़िल्टर करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.filterByType": {
+    "t": "प्रकार द्वारा फ़िल्टर करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenor": {
+    "t": "संयोजक",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.convenorPlaceholder": {
+    "t": "संयोजक का नाम दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethods": {
+    "t": "कस्टम तरीके",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsHelp": {
+    "t": "इस चुनाव में उपयोग किए गए किसी भी कस्टम या गैर-मानक मतदान तरीकों को निर्दिष्ट करें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.customMethodsPlaceholder": {
+    "t": "किसी भी कस्टम मतदान तरीकों का वर्णन करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.date": {
+    "t": "चुनाव तिथि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.datePlaceholder": {
+    "t": "चुनाव तिथि चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.dateRequired": {
+    "t": "चुनाव की तारीख आवश्यक है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionMode": {
+    "t": "चुनाव मोड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscode": {
+    "t": "चुनाव पासकोड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodeHelp": {
+    "t": "गणनाकर्ता लॉगिन के लिए पासकोड आवश्यक है।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.electionPasscodePlaceholder": {
+    "t": "पासकोड दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddress": {
+    "t": "ईमेल प्रेषक पता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromAddressPlaceholder": {
+    "t": "प्रेषक ईमेल पता दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromName": {
+    "t": "ईमेल प्रेषक नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailFromNamePlaceholder": {
+    "t": "प्रेषक नाम दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailInvalid": {
+    "t": "अमान्य ईमेल पता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubject": {
+    "t": "ईमेल विषय",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailSubjectPlaceholder": {
+    "t": "ईमेल विषय दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailText": {
+    "t": "ईमेल पाठ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.emailTextPlaceholder": {
+    "t": "ईमेल मुख्य भाग दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flags": {
+    "t": "फ्लैग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsHelp": {
+    "t": "फ्लैग विशेष चुनाव शर्तों के लिए उपयोग किए जाते हैं।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.flagsPlaceholder": {
+    "t": "कोई फ्लैग दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.hidePreBallotPages": {
+    "t": "मतपत्र-पूर्व पृष्ठ छिपाएं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElection": {
+    "t": "लिंक किया गया चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount": {
+    "t": "{count} लिंक किया गया चुनाव उपलब्ध है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionCount_plural": {
+    "t": "{count} लिंक किए गए चुनाव उपलब्ध हैं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionHelp": {
+    "t": "टाई-ब्रेक या रन-ऑफ के लिए लिंक करने हेतु एक चुनाव चुनें।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKind": {
+    "t": "लिंक किए गए चुनाव का प्रकार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionKindPlaceholder": {
+    "t": "प्रकार चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.linkedElectionPlaceholder": {
+    "t": "लिंक किया गया चुनाव चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.listForPublic": {
+    "t": "सार्वजनिक सूची",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.lockedByBallots": {
+    "t": "लॉक — मतपत्र दर्ज किए जा चुके हैं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.maskVotingMethod": {
+    "t": "मतदान पद्धति छुपाएं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.modePlaceholder": {
+    "t": "चुनाव मोड चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.name": {
+    "t": "चुनाव का नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.namePlaceholder": {
+    "t": "चुनाव का नाम दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.nameRequired": {
+    "t": "चुनाव का नाम आवश्यक है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberExtra": {
+    "t": "अतिरिक्त संख्या",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElect": {
+    "t": "निर्वाचित करने की संख्या",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.numberToElectRequired": {
+    "t": "निर्वाचित करने की संख्या आवश्यक है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnounced": {
+    "t": "ऑनलाइन परिणाम घोषित",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineAnnouncedPlaceholder": {
+    "t": "घोषणा समय चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineCloseIsEstimate": {
+    "t": "समापन समय अनुमानित है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcess": {
+    "t": "ऑनलाइन चयन प्रक्रिया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineSelectionProcessPlaceholder": {
+    "t": "प्रक्रिया चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClose": {
+    "t": "ऑनलाइन मतदान बंद होता है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenClosePlaceholder": {
+    "t": "समापन समय चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpen": {
+    "t": "ऑनलाइन मतदान खुलता है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.onlineWhenOpenPlaceholder": {
+    "t": "प्रारंभ समय चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showAsTest": {
+    "t": "परीक्षण के रूप में दिखाएं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.showFullReport": {
+    "t": "पूर्ण रिपोर्ट दिखाएं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsText": {
+    "t": "SMS पाठ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.smsTextPlaceholder": {
+    "t": "SMS संदेश पाठ दर्ज करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.type": {
+    "t": "चुनाव प्रकार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typePlaceholder": {
+    "t": "चुनाव प्रकार चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.typeRequired": {
+    "t": "चुनाव प्रकार आवश्यक है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useCallInButton": {
+    "t": "कॉल-इन मतदान सक्षम करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKiosk": {
+    "t": "Enable kiosk mode",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.useKioskHelp": {
+    "t": "For voters without email or phone. Tellers mint a short code from the person record; the voter types it at a shared kiosk. Also turns on online voting, which kiosk login uses.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethods": {
+    "t": "मतदान तरीके",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsHelp": {
+    "t": "वे तरीके चुनें जिनके द्वारा मत डाले जाएंगे।",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.form.votingMethodsPlaceholder": {
+    "t": "मतदान तरीके चुनें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallots": {
+    "t": "CDN मतपत्र आयात करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsError": {
+    "t": "CDN मतपत्र आयात करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importCdnBallotsSuccess": {
+    "t": "CDN मतपत्र सफलतापूर्वक आयात किए गए",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElection": {
+    "t": "चुनाव आयात करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionError": {
+    "t": "चुनाव आयात करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.importElectionSuccess": {
+    "t": "चुनाव सफलतापूर्वक आयात किया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.list": {
+    "t": "चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.loadError": {
+    "t": "चुनाव लोड करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.locations": {
+    "t": "स्थान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageBallots": {
+    "t": "मतपत्र प्रबंधित करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.manageLocations": {
+    "t": "स्थान प्रबंधित करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.managePeople": {
+    "t": "लोगों को प्रबंधित करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.name": {
+    "t": "चुनाव का नाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.notFound": {
+    "t": "चुनाव नहीं मिला",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingDisabled": {
+    "t": "ऑनलाइन मतदान अक्षम है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingEnabled": {
+    "t": "ऑनलाइन मतदान सक्षम है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.people": {
+    "t": "लोग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.quickActions": {
+    "t": "त्वरित क्रियाएँ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.revertTo": {
+    "t": "वापस करें {stage}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.searchPlaceholder": {
+    "t": "नाम या संयोजक द्वारा चुनाव खोजें...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Counting": {
+    "t": "गिनती",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Finalized": {
+    "t": "अंतिम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stage.Setup": {
+    "t": "सेटअप",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageAdvanced": {
+    "t": "चुनाव {stage} को आगे बढ़ाया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageChangeError": {
+    "t": "चुनाव चरण बदलने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageProgression": {
+    "t": "चुनाव चरण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.stageReverted": {
+    "t": "चुनाव {stage} को वापस किया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.statistics": {
+    "t": "आँकड़े",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.status": {
+    "t": "स्थिति",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.advanced": {
+    "t": "उन्नत",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.auditLogs": {
+    "t": "ऑडिट लॉग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.ballots": {
+    "t": "मतपत्र",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.basicInfo": {
+    "t": "बुनियादी जानकारी",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.communication": {
+    "t": "संचार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.displayPrivacy": {
+    "t": "प्रदर्शन और गोपनीयता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.electionRules": {
+    "t": "चुनाव नियम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.locations": {
+    "t": "स्थान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.onlineVoting": {
+    "t": "ऑनलाइन मतदान",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.people": {
+    "t": "लोग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.results": {
+    "t": "परिणाम",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.tellers": {
+    "t": "गणनाकर्ता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tabs.votingMethods": {
+    "t": "मतदान तरीके",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccess": {
+    "t": "गणनाकर्ता पहुँच",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessClosed": {
+    "t": "गणनाकर्ता पहुँच बंद है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessCode": {
+    "t": "एक्सेस कोड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessOpen": {
+    "t": "गणनाकर्ता पहुँच खुली है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessQrCode": {
+    "t": "QR कोड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerAccessUrl": {
+    "t": "साझा करने योग्य URL",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toElect": {
+    "t": "निर्वाचित करना है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.toggleTellerAccess": {
+    "t": "गणनाकर्ता पहुँच टॉगल करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.type": {
+    "t": "प्रकार",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateError": {
+    "t": "चुनाव अपडेट करने में विफल",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.updateSuccess": {
+    "t": "चुनाव सफलतापूर्वक अपडेट किया गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewReports": {
+    "t": "रिपोर्ट देखें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.viewResults": {
+    "t": "परिणाम देखें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.voters": {
+    "t": "मतदाता",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

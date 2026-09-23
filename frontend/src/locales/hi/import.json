@@ -1,25 +1,117 @@
 {
-  "import.completed": "आयात सफलतापूर्वक पूर्ण हुआ",
-  "import.currentStatus": "स्थिति: {status}",
-  "import.errorCount": "त्रुटियाँ: {count}",
-  "import.errors.batchSaveFailed": "बैच सहेजना विफल: {message}",
-  "import.errors.duplicateBahaiId": "पंक्ति {rowNumber}: डुप्लिकेट Bahá'í Id '{bahaiId}'",
-  "import.errors.duplicateEmail": "पंक्ति {rowNumber}: डुप्लिकेट ईमेल '{email}'",
-  "import.errors.duplicateName": "पंक्ति {rowNumber}: डुप्लिकेट नाम '{firstName} {lastName}'",
-  "import.errors.duplicatePhone": "पंक्ति {rowNumber}: डुप्लिकेट फ़ोन '{phone}'",
-  "import.errors.fileNotFound": "आयात फ़ाइल नहीं मिली या कोई सामग्री नहीं है",
-  "import.errors.importFailed": "आयात विफल: {message}",
-  "import.errors.importFailedAtLine": "पंक्ति {rowNumber} पर आयात विफल: {message}",
-  "import.errors.invalidMappings": "अमान्य कॉलम मैपिंग",
-  "import.errors.lineError": "पंक्ति {rowNumber}: {message}",
-  "import.errors.missingFirstName": "पंक्ति {rowNumber}: पहला नाम गायब है",
-  "import.errors.missingLastName": "पंक्ति {rowNumber}: अंतिम नाम गायब है",
-  "import.errors.missingRequiredMappings": "FirstName और LastName मैपिंग आवश्यक हैं",
-  "import.errors.noMappings": "कोई कॉलम मैपिंग कॉन्फ़िगर नहीं की गई",
-  "import.errorsTitle": "आयात त्रुटियाँ",
-  "import.moreErrors": "और {count} त्रुटियाँ...",
-  "import.processingRows": "{total} में से {processed} पंक्तियाँ प्रोसेस हो रही हैं",
-  "import.progressTitle": "आयात प्रगति",
-  "import.successCount": "सफल: {count}",
-  "import.warnings.unrecognizedEligibility": "पंक्ति {rowNumber}: अपरिचित पात्रता स्थिति: '{eligibilityValue}' - पात्र माना गया"
+  "import.completed": {
+    "t": "आयात सफलतापूर्वक पूर्ण हुआ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.currentStatus": {
+    "t": "स्थिति: {status}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorCount": {
+    "t": "त्रुटियाँ: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.batchSaveFailed": {
+    "t": "बैच सहेजना विफल: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateBahaiId": {
+    "t": "पंक्ति {rowNumber}: डुप्लिकेट Bahá'í Id '{bahaiId}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateEmail": {
+    "t": "पंक्ति {rowNumber}: डुप्लिकेट ईमेल '{email}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicateName": {
+    "t": "पंक्ति {rowNumber}: डुप्लिकेट नाम '{firstName} {lastName}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.duplicatePhone": {
+    "t": "पंक्ति {rowNumber}: डुप्लिकेट फ़ोन '{phone}'",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.fileNotFound": {
+    "t": "आयात फ़ाइल नहीं मिली या कोई सामग्री नहीं है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailed": {
+    "t": "आयात विफल: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.importFailedAtLine": {
+    "t": "पंक्ति {rowNumber} पर आयात विफल: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.invalidMappings": {
+    "t": "अमान्य कॉलम मैपिंग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.lineError": {
+    "t": "पंक्ति {rowNumber}: {message}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingFirstName": {
+    "t": "पंक्ति {rowNumber}: पहला नाम गायब है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingLastName": {
+    "t": "पंक्ति {rowNumber}: अंतिम नाम गायब है",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.missingRequiredMappings": {
+    "t": "FirstName और LastName मैपिंग आवश्यक हैं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errors.noMappings": {
+    "t": "कोई कॉलम मैपिंग कॉन्फ़िगर नहीं की गई",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.errorsTitle": {
+    "t": "आयात त्रुटियाँ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.moreErrors": {
+    "t": "और {count} त्रुटियाँ...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.processingRows": {
+    "t": "{total} में से {processed} पंक्तियाँ प्रोसेस हो रही हैं",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.progressTitle": {
+    "t": "आयात प्रगति",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.successCount": {
+    "t": "सफल: {count}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "import.warnings.unrecognizedEligibility": {
+    "t": "पंक्ति {rowNumber}: अपरिचित पात्रता स्थिति: '{eligibilityValue}' - पात्र माना गया",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

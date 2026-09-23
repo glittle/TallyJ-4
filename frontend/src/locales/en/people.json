@@ -1,274 +1,1362 @@
 {
-  "people.addPerson": "Add Person",
-  "people.allPeople": "All People",
-  "people.area": "Area",
-  "people.bahaiId": "Baha'i ID",
-  "people.bulkActions": "Bulk Actions",
-  "people.bulkDeleteError": "Failed to delete some people",
-  "people.bulkDeleteMessage": "Are you sure you want to delete {count} selected people?",
-  "people.bulkDeleteSuccess": "{count} people deleted successfully",
-  "people.canReceiveVotes": "Can Receive Votes",
-  "people.canVote": "Can Vote",
-  "people.votablePeople": "Eligible People",
-  "people.confirmBulkDelete": "Confirm Bulk Delete",
-  "people.createSuccess": "Person added successfully",
-  "people.deleteConfirm": "Are you sure you want to delete {name}?",
-  "people.deleteError": "Failed to delete person",
-  "people.deleteSelected": "Delete Selected ({count})",
-  "people.deleteSuccess": "Person deleted successfully",
-  "people.dropFileHere": "Drop file here or click to upload",
-  "people.editPerson": "Edit Person",
-  "people.editDrawerTitle": "Edit {name}",
-  "people.email": "Email",
-  "people.emailInvalid": "Please enter a valid email",
-  "people.exportError": "Failed to export people",
-  "people.exportPeople": "Export People",
-  "people.exportSuccess": "People exported successfully",
-  "people.fileTooLarge": "File too large. Please upload a file smaller than 10MB.",
-  "people.firstName": "First Name",
-  "people.fullName": "Full Name",
-  "people.import.action": "Action",
-  "people.import.areaDesc": "Geographic area",
-  "people.import.bahaiIdDesc": "Baha'i ID number",
-  "people.import.clickToUpload": "click to upload",
-  "people.import.chooseFileDesc": "Upload a new file or pick one already on the server.",
-  "people.import.chooseFileFirst": "Choose a file above to map its columns.",
-  "people.import.confirmMapping": "Confirm mapping",
-  "people.import.confirmMappingFirst": "Confirm the column mapping before loading people.",
-  "people.import.confirmDeleteAllPeople": "Confirm Delete All People",
-  "people.import.confirmDeleteFile": "Are you sure you want to delete this file?",
-  "people.import.contentEncoding": "Content Encoding",
-  "people.import.currentPeopleCount": "Current People Count",
-  "people.import.dataRows": "Data Rows",
-  "people.import.deleteAllPeople": "Delete All People",
-  "people.import.deleteAllPeopleError": "Failed to delete all people",
-  "people.import.deleteAllPeopleMessage": "Are you sure you want to delete all people from this election? This action cannot be undone.",
-  "people.import.deleteAllSuccess": "{count} people deleted",
-  "people.import.deleteFileError": "Failed to delete file",
-  "people.import.fileDeleted": "File deleted",
-  "people.import.fileUploadedSuccessfully": "File uploaded",
-  "people.import.dropFile": "Drop file here or",
-  "people.import.copyCode": "Copy code",
-  "people.import.copyDescription": "Copy description",
-  "people.import.duplicateDesc": "Person is a duplicate entry",
-  "people.import.eligibilityCodesIntro": "Use a code such as V04 or X02, or the exact description as shown below. Empty cells are treated as eligible.",
-  "people.import.eligibilityCodesTitle": "Eligibility statuses",
-  "people.import.eligibilityDesc": "Description of eligibility status",
-  "people.import.eligibilityValues": "Accepted eligibility values",
-  "people.import.eligibleDesc": "Person is eligible to vote",
-  "people.import.emailDesc": "Email address",
-  "people.import.fileGuideEligibility": "You can include an eligibility column if some people should not vote or receive votes. Use a status code or the exact description. If that column is missing, or a cell is empty, that person is treated as eligible.",
-  "people.import.fileGuideIntro": "The file needs one row per person. Column names do not have to match TallyJ exactly — you will map them in the next step.",
-  "people.import.fileGuideOptional": "Baha'i ID, email, phone, area, other names, other last names, other info, and eligibility.",
-  "people.import.fileGuideOptionalLabel": "Optional:",
-  "people.import.fileGuideRequired": "First name and last name.",
-  "people.import.fileGuideRequiredLabel": "Required:",
-  "people.import.fileGuideTitle": "What the file should contain",
-  "people.import.fileColumn": "File column",
-  "people.import.fileName": "File Name",
-  "people.import.filesOnServer": "Files on Server",
-  "people.import.firstNameDesc": "Person's first name",
-  "people.import.firstNameLastNameRequired": "First name and last name must each come from a column.",
-  "people.import.fromColumn": "From this column",
-  "people.import.headerAutoDetected": "Headers automatically detected on row {row}",
-  "people.import.headersOnLine": "Headers on Line",
-  "people.import.headersOnLineTooltip": "Specify which row contains column headers. Auto-detected for Excel files, but can be adjusted if needed.",
-  "people.import.ignore": "(ignore)",
-  "people.import.importComplete": "Loaded {added} people, skipped {skipped}",
-  "people.import.importFailed": "Load failed: {count} errors",
-  "people.import.importFailedGeneric": "Failed to load people",
-  "people.import.importNow": "Import Now",
-  "people.import.importResults": "Load results",
-  "people.import.importStepDesc": "Review the mapping, then add these people to the election.",
-  "people.import.importSummary": "Import Summary",
-  "people.import.importing": "Importing People...",
-  "people.import.ineligibleDesc": "Person is not eligible to vote",
-  "people.import.lastNameDesc": "Person's last name",
-  "people.import.loadFilesError": "Failed to load import files",
-  "people.import.loadPeople": "Load people",
-  "people.import.loadPeopleDesc": "Review the mapping, then add these people to the election.",
-  "people.import.mapColumns": "Map columns",
-  "people.import.mapColumnsDesc": "Choose a TallyJ field for each column in your file.",
-  "people.import.mapToField": "TallyJ field",
-  "people.import.mappedCount": "{count} fields mapped",
-  "people.import.mappingConfirmed": "Mapping confirmed",
-  "people.import.mappingNeedsConfirm": "Confirm the mapping to continue",
-  "people.import.mapTo": "Map to:",
-  "people.import.mappedFields": "Mapped Fields",
-  "people.import.mappingSaved": "Column mapping confirmed",
-  "people.import.noSource": "(not mapped)",
-  "people.import.peopleInElection": "People currently in this election",
-  "people.import.pipelineFileHint": "Upload or pick a file",
-  "people.import.pipelineLoadHint": "Add people to the election",
-  "people.import.pipelineMapHint": "Match file columns to TallyJ fields",
-  "people.import.requiredMapped": "Mapped",
-  "people.import.requiredMissing": "Not mapped yet",
-  "people.import.requiredToConfirm": "Required before you can confirm",
-  "people.import.readyToLoad": "Ready to load {count} data rows",
-  "people.import.rowClickToSelect": "Click a file to use it",
-  "people.import.selectedFile": "Selected file",
-  "people.import.sourcePreview": "Sample values from the file",
-  "people.import.statusUploaded": "Uploaded",
-  "people.import.unmappedRequired": "First name and last name must each come from a column.",
-  "people.import.unusedColumns": "Leave a column unmapped to ignore it.",
-  "people.import.otherActions": "Other Actions",
-  "people.import.otherInfoDesc": "Additional information",
-  "people.import.otherLastNamesDesc": "Additional last names",
-  "people.import.otherNamesDesc": "Additional first names",
-  "people.import.peopleAdded": "People Added",
-  "people.import.peopleSkipped": "People Skipped",
-  "people.import.phoneDesc": "Phone number",
-  "people.import.preview": "Preview",
-  "people.import.reparse": "Re-parse",
-  "people.import.reviewImport": "Review and Import",
-  "people.import.saveMapping": "Save Mapping",
-  "people.import.select": "Select",
-  "people.import.selected": "Selected",
-  "people.import.size": "Size",
-  "people.import.status": "Status",
-  "people.import.step1": "Choose file",
-  "people.import.step2": "Map columns",
-  "people.import.step3": "Load people",
-  "people.import.showEligibilityCodes": "Eligibility statuses",
-  "people.import.supportedFormats": "Supported formats: CSV, TSV, TAB, TXT, XLSX (max 10MB)",
-  "people.import.tallyJField": "TallyJ Field",
-  "people.import.tallyJFields": "TallyJ Fields Reference",
-  "people.import.timeElapsed": "Time Elapsed",
-  "people.import.title": "Import People",
-  "people.import.underAgeDesc": "Person is under voting age",
-  "people.import.uploadError": "Failed to upload file",
-  "people.import.uploadFile": "Upload File",
-  "people.import.uploadTime": "Upload Time",
-  "people.import.validationWarning": "Validation Warning",
-  "people.import.warnings": "Warnings",
-  "people.importError": "Failed to start import",
-  "people.importFormat": "Upload a CSV or Excel file with the following columns:",
-  "people.importInstructions": "Import Instructions",
-  "people.importOptionalFields": "Optional: Email, Phone, Area, Baha'i ID, Eligibility",
-  "people.importPeople": "Import People",
-  "people.importRequiredFields": "Required: First Name, Last Name",
-  "people.importStarted": "Import started. Please wait for completion.",
-  "people.importWarning": "Existing people with matching names will be updated. New people will be created.",
-  "people.invalidFileType": "Invalid file type. Please upload a CSV or Excel file.",
-  "people.lastName": "Last Name",
-  "people.lastNameRequired": "Last name is required",
-  "people.swapFirstLast": "Swap",
-  "people.eligibilityRequired": "Eligibility is required",
-  "people.otherLastNames": "Other Last Names",
-  "people.otherNames": "Other Names",
-  "people.otherInfo": "Other Info",
-  "people.kioskCode": "Kiosk Code",
-  "people.kioskCodeNote": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
-  "people.kioskCodeGenerate": "Make a kiosk code",
-  "people.kioskCodeRenew": "Renew kiosk code",
-  "people.kioskCodeGenerated": "Kiosk code is ready to share.",
-  "people.kioskCodeExpires": "Expires {time} ({minutes} min left).",
-  "people.kioskCodeExpired": "This code has expired. Renew it before the voter logs in.",
-  "people.kioskCodeNone": "No kiosk code yet. Generate one when the voter is at the kiosk.",
-  "people.unitName": "Unit Name",
-  "people.canVoteInElection": "Can vote in this election?",
-  "people.canReceiveVotesInElection": "Can be voted for in this election?",
-  "people.cannotMarkCannotVoteAfterVoted": "This person has already voted. Their status cannot be changed to cannot vote.",
-  "people.guestCannotAddPeople": "Ask a logged-in teller to add the required name.",
-  "people.eligibilityLockedAfterVoted": "This person has already voted. Statuses that remove the right to vote are not available.",
-  "people.eligibilityYes": "Yes",
-  "people.eligibilityNo": "No",
-  "people.registrationHistoryWithMethod": "Registration History — {method}",
-  "people.deleteNotAllowed": "This person cannot be removed because they have voted or been voted for.",
-  "people.onlineStatus.draft": "Started an online ballot (not submitted).",
-  "people.onlineStatus.pending": "Has a pending online ballot (submitted, not yet accepted).",
-  "people.onlineStatus.accepted": "Has an accepted online ballot.",
-  "people.votingMethod.kiosk": "Kiosk",
-  "people.votingMethod.droppedOff": "Dropped Off",
-  "people.votingMethod.custom1": "Custom 1",
-  "people.votingMethod.custom2": "Custom 2",
-  "people.votingMethod.custom3": "Custom 3",
-  "people.leaveElectionGroupError": "Failed to leave election group:",
-  "people.loadError": "Failed to load people",
-  "people.management": "People Management",
-  "people.phone": "Phone",
-  "people.phoneOnlineVoter.auth": "Online phone status",
-  "people.phoneOnlineVoter.neverSeen": "Never seen",
-  "people.phoneOnlineVoter.notYetUsedForAuth": "Not yet used for authentication",
-  "people.phoneOnlineVoter.firstRegistered": "First registered {time}",
-  "people.phoneOnlineVoter.lastLogin": "Last login",
-  "people.phoneOnlineVoter.smsStatus": "SMS status",
-  "people.phoneOnlineVoter.smsColumn": "SMS",
-  "people.phoneOnlineVoter.imported": "Imported",
-  "people.phoneOnlineVoter.smsUnchecked": "Unchecked",
-  "people.phoneOnlineVoter.smsOk": "OK",
-  "people.phoneOnlineVoter.smsBlocked": "Blocked ({reason})",
-  "people.phoneOnlineVoter.recentSms": "Recent SMS",
-  "people.phoneOnlineVoter.smsLogNoStatus": "Sent",
-  "people.phoneOnlineVoter.smsLogError": "Error {code}",
-  "people.phoneOnlineVoter.setOk": "Set OK",
-  "people.phoneOnlineVoter.block": "Block",
-  "people.phoneOnlineVoter.blockReason": "Block reason",
-  "people.phoneOnlineVoter.blockReasonPlaceholder": "e.g. landline, undeliverable, admin",
-  "people.phoneOnlineVoter.setSuccess": "SMS status updated",
-  "people.phoneOnlineVoter.globalHint": "This status applies to this phone for all elections.",
-  "people.phoneOnlineVoter.noPhone": "This person has no phone to set SMS status on.",
-  "people.phoneOnlineVoter.noPhoneRow": "This phone cannot receive an SMS status because another identifier already uses that value.",
-  "people.phoneOnlineVoter.invalidStatus": "SMS status must be OK or a short block reason (max 50 characters).",
-  "people.phoneOnlineVoter.whatsAppColumn": "WhatsApp",
-  "people.phoneOnlineVoter.whatsAppStatus": "WhatsApp status",
-  "people.phoneOnlineVoter.whatsAppUnchecked": "Unchecked",
-  "people.phoneOnlineVoter.whatsAppOk": "OK",
-  "people.phoneOnlineVoter.whatsAppReason": "{reason}",
-  "people.phoneOnlineVoter.checkWhatsApp": "Check WhatsApp",
-  "people.phoneOnlineVoter.checkWhatsAppSuccess": "WhatsApp status updated",
-  "people.phoneOnlineVoter.whatsAppNoPhone": "This person has no phone to check WhatsApp on.",
-  "people.phoneOnlineVoter.whatsAppNoPhoneRow": "This phone cannot receive a WhatsApp status because another identifier already uses that value.",
-  "people.phoneOnlineVoter.whatsAppNotConfigured": "WhatsApp checking is not configured on this server.",
-  "people.phoneOnlineVoter.whatsAppTooMany": "At most {max} people can be checked at once.",
-  "people.checkWhatsAppSelected": "Check WhatsApp ({count})",
-  "people.checkWhatsAppSelectedNone": "Select people with phone numbers to check WhatsApp.",
-  "people.checkWhatsAppSelectedCancel": "Cancel check",
-  "people.checkWhatsAppSelectedCancelled": "Check cancelled. Numbers already checked were saved.",
-  "people.checkWhatsAppSelectedResults": "WhatsApp check results",
-  "people.checkWhatsAppSelectedSummary": "{checked} checked: {ok} OK, {noWa} no WhatsApp, {failed} failed. {skipped} skipped.",
-  "people.checkWhatsAppSelectedClose": "Close",
-  "people.checkWhatsAppSelectedOutcome.OK": "OK",
-  "people.checkWhatsAppSelectedOutcome.no-wa": "No WhatsApp",
-  "people.checkWhatsAppSelectedOutcome.check-failed": "Failed",
-  "people.checkWhatsAppSelectedOutcome.skipped-no-phone": "Skipped (no phone)",
-  "people.checkWhatsAppSelectedOutcome.skipped-non-p": "Skipped (not a phone row)",
-  "people.checkWhatsAppSelectedOutcome.skipped-other-election": "Skipped (not in this election)",
-  "people.checkWhatsAppSelectedOutcome.cancelled": "Cancelled",
-  "people.notifyWhatsAppSend": "Send WhatsApp ({count})",
-  "people.notifyWhatsAppNone": "Select people to send WhatsApp to known-OK numbers.",
-  "people.notifyWhatsAppAbort": "Stop sending",
-  "people.notifyWhatsAppResults": "WhatsApp notify results",
-  "people.notifyWhatsAppSummary": "{sent} sent, {skipped} skipped, {failed} failed, {cancelled} cancelled.",
-  "people.notifyWhatsAppQueued": "Sending WhatsApp to {queued} known-OK numbers. Already-sent messages stay sent if you stop.",
-  "people.notifyWhatsAppClose": "Close",
-  "people.notifyWhatsApp.textNotSet": "Set the SMS text on the election before sending WhatsApp.",
-  "people.notifyWhatsApp.alreadyRunning": "A WhatsApp notify is already sending for this election.",
-  "people.notifyWhatsApp.electionNotFound": "Election not found.",
-  "people.notifyWhatsApp.notFound": "No WhatsApp notify is running for this election.",
-  "people.notifyWhatsAppOutcome.sent": "Sent",
-  "people.notifyWhatsAppOutcome.failed": "Failed",
-  "people.notifyWhatsAppOutcome.queued": "Queued",
-  "people.notifyWhatsAppOutcome.cancelled": "Cancelled",
-  "people.notifyWhatsAppOutcome.skipped-no-phone": "Skipped (no phone)",
-  "people.notifyWhatsAppOutcome.skipped-non-p": "Skipped (not a phone row)",
-  "people.notifyWhatsAppOutcome.skipped-other-election": "Skipped (not in this election)",
-  "people.notifyWhatsAppOutcome.skipped-unchecked": "Skipped (unchecked)",
-  "people.notifyWhatsAppOutcome.skipped-no-wa": "Skipped (no WhatsApp)",
-  "people.notifyWhatsAppOutcome.skipped-check-failed": "Skipped (check failed)",
-  "people.notifyWhatsAppOutcome.skipped-not-ok": "Skipped (not OK)",
-  "people.selectedCount": "{count} selected",
-  "people.registrationHistory": "Registration History",
-  "people.votesReceived": "Votes Received",
-  "people.saveError": "Failed to save person",
-  "people.filterWhatsApp": "WhatsApp",
-  "people.filterWhatsAppOption.all": "All",
-  "people.filterWhatsAppOption.hasWhatsApp": "Has WhatsApp",
-  "people.filterWhatsAppOption.unchecked": "Unchecked",
-  "people.filterWhatsAppOption.noWhatsApp": "No WhatsApp",
-  "people.search": "Search by name, email, or ID",
-  "people.searchError": "Failed to search people",
-  "people.supportedFormats": "Supported formats: CSV, XLS, XLSX (max 10MB)",
-  "people.updateSuccess": "Person updated successfully",
-  "people.voters": "Voters"
+  "people.addPerson": {
+    "t": "Add Person",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.allPeople": {
+    "t": "All People",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.area": {
+    "t": "Area",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bahaiId": {
+    "t": "Baha'i ID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkActions": {
+    "t": "Bulk Actions",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteError": {
+    "t": "Failed to delete some people",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteMessage": {
+    "t": "Are you sure you want to delete {count} selected people?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteSuccess": {
+    "t": "{count} people deleted successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canReceiveVotes": {
+    "t": "Can Receive Votes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canVote": {
+    "t": "Can Vote",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.votablePeople": {
+    "t": "Eligible People",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.confirmBulkDelete": {
+    "t": "Confirm Bulk Delete",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.createSuccess": {
+    "t": "Person added successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteConfirm": {
+    "t": "Are you sure you want to delete {name}?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteError": {
+    "t": "Failed to delete person",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSelected": {
+    "t": "Delete Selected ({count})",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSuccess": {
+    "t": "Person deleted successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.dropFileHere": {
+    "t": "Drop file here or click to upload",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.editPerson": {
+    "t": "Edit Person",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.editDrawerTitle": {
+    "t": "Edit {name}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.email": {
+    "t": "Email",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.emailInvalid": {
+    "t": "Please enter a valid email",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportError": {
+    "t": "Failed to export people",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportPeople": {
+    "t": "Export People",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportSuccess": {
+    "t": "People exported successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fileTooLarge": {
+    "t": "File too large. Please upload a file smaller than 10MB.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.firstName": {
+    "t": "First Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fullName": {
+    "t": "Full Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.action": {
+    "t": "Action",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.areaDesc": {
+    "t": "Geographic area",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.bahaiIdDesc": {
+    "t": "Baha'i ID number",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.clickToUpload": {
+    "t": "click to upload",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.chooseFileDesc": {
+    "t": "Upload a new file or pick one already on the server.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.chooseFileFirst": {
+    "t": "Choose a file above to map its columns.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmMapping": {
+    "t": "Confirm mapping",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmMappingFirst": {
+    "t": "Confirm the column mapping before loading people.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteAllPeople": {
+    "t": "Confirm Delete All People",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteFile": {
+    "t": "Are you sure you want to delete this file?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.contentEncoding": {
+    "t": "Content Encoding",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.currentPeopleCount": {
+    "t": "Current People Count",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dataRows": {
+    "t": "Data Rows",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeople": {
+    "t": "Delete All People",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleError": {
+    "t": "Failed to delete all people",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleMessage": {
+    "t": "Are you sure you want to delete all people from this election? This action cannot be undone.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllSuccess": {
+    "t": "{count} people deleted",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteFileError": {
+    "t": "Failed to delete file",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileDeleted": {
+    "t": "File deleted",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileUploadedSuccessfully": {
+    "t": "File uploaded",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dropFile": {
+    "t": "Drop file here or",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.copyCode": {
+    "t": "Copy code",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.copyDescription": {
+    "t": "Copy description",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.duplicateDesc": {
+    "t": "Person is a duplicate entry",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityCodesIntro": {
+    "t": "Use a code such as V04 or X02, or the exact description as shown below. Empty cells are treated as eligible.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityCodesTitle": {
+    "t": "Eligibility statuses",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityDesc": {
+    "t": "Description of eligibility status",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityValues": {
+    "t": "Accepted eligibility values",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibleDesc": {
+    "t": "Person is eligible to vote",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.emailDesc": {
+    "t": "Email address",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileGuideEligibility": {
+    "t": "You can include an eligibility column if some people should not vote or receive votes. Use a status code or the exact description. If that column is missing, or a cell is empty, that person is treated as eligible.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileGuideIntro": {
+    "t": "The file needs one row per person. Column names do not have to match TallyJ exactly — you will map them in the next step.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileGuideOptional": {
+    "t": "Baha'i ID, email, phone, area, other names, other last names, other info, and eligibility.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileGuideOptionalLabel": {
+    "t": "Optional:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileGuideRequired": {
+    "t": "First name and last name.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileGuideRequiredLabel": {
+    "t": "Required:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileGuideTitle": {
+    "t": "What the file should contain",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileColumn": {
+    "t": "File column",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileName": {
+    "t": "File Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.filesOnServer": {
+    "t": "Files on Server",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameDesc": {
+    "t": "Person's first name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameLastNameRequired": {
+    "t": "First name and last name must each come from a column.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fromColumn": {
+    "t": "From this column",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headerAutoDetected": {
+    "t": "Headers automatically detected on row {row}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLine": {
+    "t": "Headers on Line",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLineTooltip": {
+    "t": "Specify which row contains column headers. Auto-detected for Excel files, but can be adjusted if needed.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ignore": {
+    "t": "(ignore)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importComplete": {
+    "t": "Loaded {added} people, skipped {skipped}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importFailed": {
+    "t": "Load failed: {count} errors",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importFailedGeneric": {
+    "t": "Failed to load people",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importNow": {
+    "t": "Import Now",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importResults": {
+    "t": "Load results",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importStepDesc": {
+    "t": "Review the mapping, then add these people to the election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importSummary": {
+    "t": "Import Summary",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importing": {
+    "t": "Importing People...",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ineligibleDesc": {
+    "t": "Person is not eligible to vote",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.lastNameDesc": {
+    "t": "Person's last name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.loadFilesError": {
+    "t": "Failed to load import files",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.loadPeople": {
+    "t": "Load people",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.loadPeopleDesc": {
+    "t": "Review the mapping, then add these people to the election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumns": {
+    "t": "Map columns",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumnsDesc": {
+    "t": "Choose a TallyJ field for each column in your file.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapToField": {
+    "t": "TallyJ field",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappedCount": {
+    "t": "{count} fields mapped",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappingConfirmed": {
+    "t": "Mapping confirmed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappingNeedsConfirm": {
+    "t": "Confirm the mapping to continue",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapTo": {
+    "t": "Map to:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappedFields": {
+    "t": "Mapped Fields",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappingSaved": {
+    "t": "Column mapping confirmed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.noSource": {
+    "t": "(not mapped)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleInElection": {
+    "t": "People currently in this election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.pipelineFileHint": {
+    "t": "Upload or pick a file",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.pipelineLoadHint": {
+    "t": "Add people to the election",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.pipelineMapHint": {
+    "t": "Match file columns to TallyJ fields",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.requiredMapped": {
+    "t": "Mapped",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.requiredMissing": {
+    "t": "Not mapped yet",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.requiredToConfirm": {
+    "t": "Required before you can confirm",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.readyToLoad": {
+    "t": "Ready to load {count} data rows",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.rowClickToSelect": {
+    "t": "Click a file to use it",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.selectedFile": {
+    "t": "Selected file",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.sourcePreview": {
+    "t": "Sample values from the file",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.statusUploaded": {
+    "t": "Uploaded",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.unmappedRequired": {
+    "t": "First name and last name must each come from a column.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.unusedColumns": {
+    "t": "Leave a column unmapped to ignore it.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherActions": {
+    "t": "Other Actions",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherInfoDesc": {
+    "t": "Additional information",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherLastNamesDesc": {
+    "t": "Additional last names",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherNamesDesc": {
+    "t": "Additional first names",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleAdded": {
+    "t": "People Added",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleSkipped": {
+    "t": "People Skipped",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.phoneDesc": {
+    "t": "Phone number",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.preview": {
+    "t": "Preview",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reparse": {
+    "t": "Re-parse",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reviewImport": {
+    "t": "Review and Import",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.saveMapping": {
+    "t": "Save Mapping",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.select": {
+    "t": "Select",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.selected": {
+    "t": "Selected",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.size": {
+    "t": "Size",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.status": {
+    "t": "Status",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step1": {
+    "t": "Choose file",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step2": {
+    "t": "Map columns",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step3": {
+    "t": "Load people",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.showEligibilityCodes": {
+    "t": "Eligibility statuses",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.supportedFormats": {
+    "t": "Supported formats: CSV, TSV, TAB, TXT, XLSX (max 10MB)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJField": {
+    "t": "TallyJ Field",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJFields": {
+    "t": "TallyJ Fields Reference",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.timeElapsed": {
+    "t": "Time Elapsed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.title": {
+    "t": "Import People",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.underAgeDesc": {
+    "t": "Person is under voting age",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadError": {
+    "t": "Failed to upload file",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadFile": {
+    "t": "Upload File",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadTime": {
+    "t": "Upload Time",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.validationWarning": {
+    "t": "Validation Warning",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.warnings": {
+    "t": "Warnings",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importError": {
+    "t": "Failed to start import",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importFormat": {
+    "t": "Upload a CSV or Excel file with the following columns:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importInstructions": {
+    "t": "Import Instructions",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importOptionalFields": {
+    "t": "Optional: Email, Phone, Area, Baha'i ID, Eligibility",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importPeople": {
+    "t": "Import People",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importRequiredFields": {
+    "t": "Required: First Name, Last Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importStarted": {
+    "t": "Import started. Please wait for completion.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importWarning": {
+    "t": "Existing people with matching names will be updated. New people will be created.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.invalidFileType": {
+    "t": "Invalid file type. Please upload a CSV or Excel file.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastName": {
+    "t": "Last Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastNameRequired": {
+    "t": "Last name is required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.swapFirstLast": {
+    "t": "Swap",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.eligibilityRequired": {
+    "t": "Eligibility is required",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.otherLastNames": {
+    "t": "Other Last Names",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.otherNames": {
+    "t": "Other Names",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.otherInfo": {
+    "t": "Other Info",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCode": {
+    "t": "Kiosk Code",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNote": {
+    "t": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerate": {
+    "t": "Make a kiosk code",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeRenew": {
+    "t": "Renew kiosk code",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerated": {
+    "t": "Kiosk code is ready to share.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpires": {
+    "t": "Expires {time} ({minutes} min left).",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpired": {
+    "t": "This code has expired. Renew it before the voter logs in.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNone": {
+    "t": "No kiosk code yet. Generate one when the voter is at the kiosk.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.unitName": {
+    "t": "Unit Name",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canVoteInElection": {
+    "t": "Can vote in this election?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canReceiveVotesInElection": {
+    "t": "Can be voted for in this election?",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.cannotMarkCannotVoteAfterVoted": {
+    "t": "This person has already voted. Their status cannot be changed to cannot vote.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.guestCannotAddPeople": {
+    "t": "Ask a logged-in teller to add the required name.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.eligibilityLockedAfterVoted": {
+    "t": "This person has already voted. Statuses that remove the right to vote are not available.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.eligibilityYes": {
+    "t": "Yes",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.eligibilityNo": {
+    "t": "No",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.registrationHistoryWithMethod": {
+    "t": "Registration History — {method}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteNotAllowed": {
+    "t": "This person cannot be removed because they have voted or been voted for.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.onlineStatus.draft": {
+    "t": "Started an online ballot (not submitted).",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.onlineStatus.pending": {
+    "t": "Has a pending online ballot (submitted, not yet accepted).",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.onlineStatus.accepted": {
+    "t": "Has an accepted online ballot.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.votingMethod.kiosk": {
+    "t": "Kiosk",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.votingMethod.droppedOff": {
+    "t": "Dropped Off",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.votingMethod.custom1": {
+    "t": "Custom 1",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.votingMethod.custom2": {
+    "t": "Custom 2",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.votingMethod.custom3": {
+    "t": "Custom 3",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.leaveElectionGroupError": {
+    "t": "Failed to leave election group:",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.loadError": {
+    "t": "Failed to load people",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.management": {
+    "t": "People Management",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phone": {
+    "t": "Phone",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.auth": {
+    "t": "Online phone status",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.neverSeen": {
+    "t": "Never seen",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.notYetUsedForAuth": {
+    "t": "Not yet used for authentication",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.firstRegistered": {
+    "t": "First registered {time}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.lastLogin": {
+    "t": "Last login",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsStatus": {
+    "t": "SMS status",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsColumn": {
+    "t": "SMS",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.imported": {
+    "t": "Imported",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsUnchecked": {
+    "t": "Unchecked",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsOk": {
+    "t": "OK",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsBlocked": {
+    "t": "Blocked ({reason})",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.recentSms": {
+    "t": "Recent SMS",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogNoStatus": {
+    "t": "Sent",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogError": {
+    "t": "Error {code}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.setOk": {
+    "t": "Set OK",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.block": {
+    "t": "Block",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.blockReason": {
+    "t": "Block reason",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.blockReasonPlaceholder": {
+    "t": "e.g. landline, undeliverable, admin",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.setSuccess": {
+    "t": "SMS status updated",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.globalHint": {
+    "t": "This status applies to this phone for all elections.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.noPhone": {
+    "t": "This person has no phone to set SMS status on.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.noPhoneRow": {
+    "t": "This phone cannot receive an SMS status because another identifier already uses that value.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.invalidStatus": {
+    "t": "SMS status must be OK or a short block reason (max 50 characters).",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.whatsAppColumn": {
+    "t": "WhatsApp",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.whatsAppStatus": {
+    "t": "WhatsApp status",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.whatsAppUnchecked": {
+    "t": "Unchecked",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.whatsAppOk": {
+    "t": "OK",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.whatsAppReason": {
+    "t": "{reason}",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.checkWhatsApp": {
+    "t": "Check WhatsApp",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.checkWhatsAppSuccess": {
+    "t": "WhatsApp status updated",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.whatsAppNoPhone": {
+    "t": "This person has no phone to check WhatsApp on.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.whatsAppNoPhoneRow": {
+    "t": "This phone cannot receive a WhatsApp status because another identifier already uses that value.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.whatsAppNotConfigured": {
+    "t": "WhatsApp checking is not configured on this server.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.whatsAppTooMany": {
+    "t": "At most {max} people can be checked at once.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelected": {
+    "t": "Check WhatsApp ({count})",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedNone": {
+    "t": "Select people with phone numbers to check WhatsApp.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedCancel": {
+    "t": "Cancel check",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedCancelled": {
+    "t": "Check cancelled. Numbers already checked were saved.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedResults": {
+    "t": "WhatsApp check results",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedSummary": {
+    "t": "{checked} checked: {ok} OK, {noWa} no WhatsApp, {failed} failed. {skipped} skipped.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedClose": {
+    "t": "Close",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.OK": {
+    "t": "OK",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.no-wa": {
+    "t": "No WhatsApp",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.check-failed": {
+    "t": "Failed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.skipped-no-phone": {
+    "t": "Skipped (no phone)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.skipped-non-p": {
+    "t": "Skipped (not a phone row)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.skipped-other-election": {
+    "t": "Skipped (not in this election)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.cancelled": {
+    "t": "Cancelled",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppSend": {
+    "t": "Send WhatsApp ({count})",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppNone": {
+    "t": "Select people to send WhatsApp to known-OK numbers.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppAbort": {
+    "t": "Stop sending",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppResults": {
+    "t": "WhatsApp notify results",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppSummary": {
+    "t": "{sent} sent, {skipped} skipped, {failed} failed, {cancelled} cancelled.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppQueued": {
+    "t": "Sending WhatsApp to {queued} known-OK numbers. Already-sent messages stay sent if you stop.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppClose": {
+    "t": "Close",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsApp.textNotSet": {
+    "t": "Set the SMS text on the election before sending WhatsApp.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsApp.alreadyRunning": {
+    "t": "A WhatsApp notify is already sending for this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsApp.electionNotFound": {
+    "t": "Election not found.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsApp.notFound": {
+    "t": "No WhatsApp notify is running for this election.",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppOutcome.sent": {
+    "t": "Sent",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppOutcome.failed": {
+    "t": "Failed",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppOutcome.queued": {
+    "t": "Queued",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppOutcome.cancelled": {
+    "t": "Cancelled",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-no-phone": {
+    "t": "Skipped (no phone)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-non-p": {
+    "t": "Skipped (not a phone row)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-other-election": {
+    "t": "Skipped (not in this election)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-unchecked": {
+    "t": "Skipped (unchecked)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-no-wa": {
+    "t": "Skipped (no WhatsApp)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-check-failed": {
+    "t": "Skipped (check failed)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-not-ok": {
+    "t": "Skipped (not OK)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.selectedCount": {
+    "t": "{count} selected",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.registrationHistory": {
+    "t": "Registration History",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.votesReceived": {
+    "t": "Votes Received",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.saveError": {
+    "t": "Failed to save person",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.filterWhatsApp": {
+    "t": "WhatsApp",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.filterWhatsAppOption.all": {
+    "t": "All",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.filterWhatsAppOption.hasWhatsApp": {
+    "t": "Has WhatsApp",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.filterWhatsAppOption.unchecked": {
+    "t": "Unchecked",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.filterWhatsAppOption.noWhatsApp": {
+    "t": "No WhatsApp",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.search": {
+    "t": "Search by name, email, or ID",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.searchError": {
+    "t": "Failed to search people",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.supportedFormats": {
+    "t": "Supported formats: CSV, XLS, XLSX (max 10MB)",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.updateSuccess": {
+    "t": "Person updated successfully",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.voters": {
+    "t": "Voters",
+    "s": "source",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

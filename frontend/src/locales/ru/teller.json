@@ -1,17 +1,77 @@
 {
-  "teller.form.cancel": "Отмена",
-  "teller.form.computerCode": "Код компьютера",
-  "teller.form.computerCodeHelp": "Две прописные буквы (АА-ЗЗ) или оставьте пустым",
-  "teller.form.computerCodeInvalid": "Код компьютера должен быть 2 прописными буквами (АА-ЗЗ)",
-  "teller.form.computerCodePlaceholder": "например, АА",
-  "teller.form.create": "Создать",
-  "teller.form.headTeller": "Старший кассир",
-  "teller.form.headTellerHelp": "Старшие кассиры имеют дополнительные разрешения",
-  "teller.form.name": "Имя кассира",
-  "teller.form.nameMaxLength": "Имя кассира не может превышать 50 символов",
-  "teller.form.namePlaceholder": "Введите имя кассира",
-  "teller.form.nameRequired": "Имя кассира обязательно",
-  "teller.form.save": "Сохранить",
-  "teller.form.titleAdd": "Добавить кассира",
-  "teller.form.titleEdit": "Редактировать кассира"
+  "teller.form.cancel": {
+    "t": "Отмена",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCode": {
+    "t": "Код компьютера",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeHelp": {
+    "t": "Две прописные буквы (АА-ЗЗ) или оставьте пустым",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeInvalid": {
+    "t": "Код компьютера должен быть 2 прописными буквами (АА-ЗЗ)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodePlaceholder": {
+    "t": "например, АА",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.create": {
+    "t": "Создать",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTeller": {
+    "t": "Старший кассир",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTellerHelp": {
+    "t": "Старшие кассиры имеют дополнительные разрешения",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.name": {
+    "t": "Имя кассира",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "Имя кассира не может превышать 50 символов",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "Введите имя кассира",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "Имя кассира обязательно",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.save": {
+    "t": "Сохранить",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "Добавить кассира",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "Редактировать кассира",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

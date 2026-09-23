@@ -1,36 +1,172 @@
 {
-  "audit.dialog.computerCode": "कंप्यूटर कोड",
-  "audit.dialog.dateTime": "दिनांक/समय",
-  "audit.dialog.details": "विवरण",
-  "audit.dialog.electionGuid": "चुनाव GUID",
-  "audit.dialog.hostAndVersion": "होस्ट और संस्करण",
-  "audit.dialog.locationGuid": "स्थान GUID",
-  "audit.dialog.rowId": "पंक्ति ID",
-  "audit.dialog.title": "ऑडिट लॉग विवरण",
-  "audit.dialog.userId": "उपयोगकर्ता ID",
-  "audit.filters.apply": "फ़िल्टर लागू करें",
-  "audit.filters.clear": "फ़िल्टर साफ़ करें",
-  "audit.filters.computerCode": "कंप्यूटर कोड",
-  "audit.filters.computerCodePlaceholder": "कंप्यूटर कोड द्वारा फ़िल्टर करें",
-  "audit.filters.electionGuid": "चुनाव GUID",
-  "audit.filters.electionGuidPlaceholder": "चुनाव GUID द्वारा फ़िल्टर करें",
-  "audit.filters.endDate": "समाप्ति तिथि",
-  "audit.filters.endDatePlaceholder": "समाप्ति तिथि",
-  "audit.filters.locationGuid": "स्थान GUID",
-  "audit.filters.locationGuidPlaceholder": "स्थान GUID द्वारा फ़िल्टर करें",
-  "audit.filters.search": "खोजें",
-  "audit.filters.searchPlaceholder": "सभी क्षेत्रों में खोजें",
-  "audit.filters.startDate": "प्रारंभ तिथि",
-  "audit.filters.startDatePlaceholder": "प्रारंभ तिथि",
-  "audit.filters.voterId": "मतदाता ID",
-  "audit.filters.voterIdPlaceholder": "मतदाता ID द्वारा फ़िल्टर करें",
-  "audit.table.actions": "क्रियाएँ",
-  "audit.table.computer": "कंप्यूटर",
-  "audit.table.dateTime": "दिनांक/समय",
-  "audit.table.details": "विवरण",
-  "audit.table.election": "चुनाव",
-  "audit.table.userId": "उपयोगकर्ता ID",
-  "audit.table.view": "देखें",
-  "audit.table.yes": "हाँ",
-  "audit.title": "ऑडिट लॉग"
+  "audit.dialog.computerCode": {
+    "t": "कंप्यूटर कोड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.dateTime": {
+    "t": "दिनांक/समय",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.details": {
+    "t": "विवरण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.electionGuid": {
+    "t": "चुनाव GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.hostAndVersion": {
+    "t": "होस्ट और संस्करण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.locationGuid": {
+    "t": "स्थान GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.rowId": {
+    "t": "पंक्ति ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.title": {
+    "t": "ऑडिट लॉग विवरण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.dialog.userId": {
+    "t": "उपयोगकर्ता ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.apply": {
+    "t": "फ़िल्टर लागू करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.clear": {
+    "t": "फ़िल्टर साफ़ करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCode": {
+    "t": "कंप्यूटर कोड",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.computerCodePlaceholder": {
+    "t": "कंप्यूटर कोड द्वारा फ़िल्टर करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuid": {
+    "t": "चुनाव GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.electionGuidPlaceholder": {
+    "t": "चुनाव GUID द्वारा फ़िल्टर करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDate": {
+    "t": "समाप्ति तिथि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.endDatePlaceholder": {
+    "t": "समाप्ति तिथि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuid": {
+    "t": "स्थान GUID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.locationGuidPlaceholder": {
+    "t": "स्थान GUID द्वारा फ़िल्टर करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.search": {
+    "t": "खोजें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.searchPlaceholder": {
+    "t": "सभी क्षेत्रों में खोजें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDate": {
+    "t": "प्रारंभ तिथि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.startDatePlaceholder": {
+    "t": "प्रारंभ तिथि",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterId": {
+    "t": "मतदाता ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.filters.voterIdPlaceholder": {
+    "t": "मतदाता ID द्वारा फ़िल्टर करें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.actions": {
+    "t": "क्रियाएँ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.computer": {
+    "t": "कंप्यूटर",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.dateTime": {
+    "t": "दिनांक/समय",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.details": {
+    "t": "विवरण",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.election": {
+    "t": "चुनाव",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.userId": {
+    "t": "उपयोगकर्ता ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.view": {
+    "t": "देखें",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.table.yes": {
+    "t": "हाँ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "audit.title": {
+    "t": "ऑडिट लॉग",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

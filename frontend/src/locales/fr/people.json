@@ -1,133 +1,657 @@
 {
-  "people.addPerson": "Ajouter une personne",
-  "people.ageGroup.adult": "Adulte",
-  "people.ageGroup.youth": "Jeune",
-  "people.ageGroupLabel": "Groupe d'âge",
-  "people.allPeople": "Toutes les personnes",
-  "people.area": "Secteur",
-  "people.bahaiId": "ID Baha'i",
-  "people.bulkActions": "Actions groupées",
-  "people.bulkDeleteError": "Échec de la suppression de certaines personnes",
-  "people.bulkDeleteMessage": "Êtes-vous sûr de vouloir supprimer les {count} personnes sélectionnées ?",
-  "people.bulkDeleteSuccess": "{count} personnes supprimées avec succès",
-  "people.canReceiveVotes": "Peut recevoir des voix",
-  "people.canVote": "Peut voter",
-  "people.candidates": "Candidats éligibles",
-  "people.confirmBulkDelete": "Confirmer la suppression groupée",
-  "people.createSuccess": "Personne ajoutée avec succès",
-  "people.deleteConfirm": "Êtes-vous sûr de vouloir supprimer {name} ?",
-  "people.deleteError": "Échec de la suppression de la personne",
-  "people.deleteSelected": "Supprimer la sélection ({count})",
-  "people.deleteSuccess": "Personne supprimée avec succès",
-  "people.dropFileHere": "Déposez le fichier ici ou cliquez pour télécharger",
-  "people.editPerson": "Modifier la personne",
-  "people.email": "Courriel",
-  "people.emailInvalid": "Veuillez entrer un email valide",
-  "people.exportError": "Échec de l'exportation des personnes",
-  "people.exportPeople": "Exporter des personnes",
-  "people.exportSuccess": "Personnes exportées avec succès",
-  "people.fileTooLarge": "Fichier trop volumineux. Veuillez télécharger un fichier de moins de 10 Mo.",
-  "people.firstName": "Prénom",
-  "people.fullName": "Nom complet",
-  "people.import.action": "Action",
-  "people.import.areaDesc": "Secteur géographique",
-  "people.import.bahaiIdDesc": "Numéro d'ID Baha'i",
-  "people.import.clickToUpload": "cliquer pour télécharger",
-  "people.import.confirmDeleteAllPeople": "Confirmer la suppression de toutes les personnes",
-  "people.import.confirmDeleteFile": "Êtes-vous sûr de vouloir supprimer ce fichier ?",
-  "people.import.contentEncoding": "Encodage du contenu",
-  "people.import.currentPeopleCount": "Nombre actuel de personnes",
-  "people.import.dataRows": "Lignes de données",
-  "people.import.deleteAllPeople": "Supprimer toutes les personnes",
-  "people.import.deleteAllPeopleError": "Échec de la suppression de toutes les personnes",
-  "people.import.deleteAllPeopleMessage": "Êtes-vous sûr de vouloir supprimer toutes les personnes de cette élection ? Cette action ne peut pas être annulée.",
-  "people.import.deleteFileError": "Échec de la suppression du fichier",
-  "people.import.dropFile": "Déposer le fichier ici ou",
-  "people.import.duplicateDesc": "La personne est une entrée en double",
-  "people.import.eligibilityDesc": "Statut d'éligibilité",
-  "people.import.eligibilityValues": "Valeurs du statut d'éligibilité",
-  "people.import.eligibleDesc": "La personne est éligible pour voter",
-  "people.import.emailDesc": "Adresse email",
-  "people.import.fileName": "Nom du fichier",
-  "people.import.filesOnServer": "Fichiers sur le serveur",
-  "people.import.firstNameDesc": "Prénom de la personne",
-  "people.import.firstNameLastNameRequired": "Les champs Prénom et Nom de famille doivent être mappés pour procéder à l'importation.",
-  "people.import.headerAutoDetected": "En-têtes automatiquement détectés sur la ligne {row}",
-  "people.import.headersOnLine": "En-têtes sur la ligne",
-  "people.import.headersOnLineTooltip": "Spécifiez quelle ligne contient les en-têtes de colonnes. Détecté automatiquement pour les fichiers Excel, mais peut être ajusté si nécessaire.",
-  "people.import.ignore": "(ignorer)",
-  "people.import.importNow": "Importer maintenant",
-  "people.import.importResults": "Résultats de l'importation",
-  "people.import.importStepDesc": "L'étape d'importation sera implémentée dans la prochaine phase",
-  "people.import.importSummary": "Résumé de l'importation",
-  "people.import.importing": "Importation des personnes...",
-  "people.import.ineligibleDesc": "La personne n'est pas éligible pour voter",
-  "people.import.lastNameDesc": "Nom de famille de la personne",
-  "people.import.loadFilesError": "Échec du chargement des fichiers d'importation",
-  "people.import.mapColumns": "Mapper les colonnes",
-  "people.import.mapColumnsDesc": "Mapper les colonnes de votre fichier vers les champs TallyJ",
-  "people.import.mapTo": "Mapper vers :",
-  "people.import.mappedFields": "Champs mappés",
-  "people.import.mappingSaved": "Mappage de colonnes enregistré avec succès",
-  "people.import.otherActions": "Autres actions",
-  "people.import.otherInfoDesc": "Informations supplémentaires",
-  "people.import.otherLastNamesDesc": "Noms de famille supplémentaires",
-  "people.import.otherNamesDesc": "Prénoms supplémentaires",
-  "people.import.peopleAdded": "Personnes ajoutées",
-  "people.import.peopleSkipped": "Personnes ignorées",
-  "people.import.phoneDesc": "Numéro de téléphone",
-  "people.import.preview": "Aperçu",
-  "people.import.reparse": "Re-analyser",
-  "people.import.reviewImport": "Examiner et importer",
-  "people.import.saveMapping": "Enregistrer le mappage",
-  "people.import.select": "Sélectionner",
-  "people.import.selected": "Sélectionné",
-  "people.import.size": "Taille",
-  "people.import.status": "Statut",
-  "people.import.step1": "Télécharger le fichier",
-  "people.import.step2": "Mapper les colonnes",
-  "people.import.step3": "Importer",
-  "people.import.supportedFormats": "Formats supportés : CSV, TSV, TAB, TXT, XLSX (max 10 Mo)",
-  "people.import.tallyJField": "Champ TallyJ",
-  "people.import.tallyJFields": "Référence des champs TallyJ",
-  "people.import.timeElapsed": "Temps écoulé",
-  "people.import.title": "Importer des personnes",
-  "people.import.underAgeDesc": "La personne est en dessous de l'âge de vote",
-  "people.import.uploadError": "Échec du téléchargement du fichier",
-  "people.import.uploadFile": "Télécharger le fichier",
-  "people.import.uploadTime": "Heure de téléchargement",
-  "people.import.validationWarning": "Avertissement de validation",
-  "people.import.warnings": "Avertissements",
-  "people.importError": "Échec du démarrage de l'importation",
-  "people.importFormat": "Téléchargez un fichier CSV ou Excel avec les colonnes suivantes :",
-  "people.importInstructions": "Instructions d'importation",
-  "people.importOptionalFields": "Optionnel : Email, Téléphone, Secteur, ID Baha'i, Éligibilité",
-  "people.importPeople": "Importer des personnes",
-  "people.importRequiredFields": "Requis : Prénom, Nom de famille",
-  "people.importStarted": "Importation démarrée. Veuillez patienter.",
-  "people.importWarning": "Les personnes existantes avec des noms correspondants seront mises à jour. Les nouvelles personnes seront créées.",
-  "people.invalidFileType": "Type de fichier invalide. Veuillez télécharger un fichier CSV ou Excel.",
-  "people.kioskCode": "Kiosk Code",
-  "people.kioskCodeExpired": "This code has expired. Renew it before the voter logs in.",
-  "people.kioskCodeExpires": "Expires {time} ({minutes} min left).",
-  "people.kioskCodeGenerate": "Make a kiosk code",
-  "people.kioskCodeGenerated": "Kiosk code is ready to share.",
-  "people.kioskCodeNone": "No kiosk code yet. Generate one when the voter is at the kiosk.",
-  "people.kioskCodeNote": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
-  "people.kioskCodeRenew": "Renew kiosk code",
-  "people.lastName": "Nom de famille",
-  "people.lastNameRequired": "Le nom de famille est requis",
-  "people.leaveElectionGroupError": "Échec de quitter le groupe d'élection :",
-  "people.loadError": "Échec du chargement des personnes",
-  "people.management": "Gestion des personnes",
-  "people.phone": "Téléphone",
-  "people.phoneOnlineVoter.recentSms": "Recent SMS",
-  "people.phoneOnlineVoter.smsLogNoStatus": "Sent",
-  "people.phoneOnlineVoter.smsLogError": "Error {code}",
-  "people.saveError": "Échec de l'enregistrement de la personne",
-  "people.search": "Rechercher par nom, email ou ID",
-  "people.searchError": "Échec de la recherche de personnes",
-  "people.supportedFormats": "Formats supportés : CSV, XLS, XLSX (max 10 Mo)",
-  "people.updateSuccess": "Personne mise à jour avec succès",
-  "people.voters": "Électeurs"
+  "people.addPerson": {
+    "t": "Ajouter une personne",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.adult": {
+    "t": "Adulte",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroup.youth": {
+    "t": "Jeune",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.ageGroupLabel": {
+    "t": "Groupe d'âge",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.allPeople": {
+    "t": "Toutes les personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.area": {
+    "t": "Secteur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bahaiId": {
+    "t": "ID Baha'i",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkActions": {
+    "t": "Actions groupées",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteError": {
+    "t": "Échec de la suppression de certaines personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteMessage": {
+    "t": "Êtes-vous sûr de vouloir supprimer les {count} personnes sélectionnées ?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.bulkDeleteSuccess": {
+    "t": "{count} personnes supprimées avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canReceiveVotes": {
+    "t": "Peut recevoir des voix",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.canVote": {
+    "t": "Peut voter",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.candidates": {
+    "t": "Candidats éligibles",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.confirmBulkDelete": {
+    "t": "Confirmer la suppression groupée",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.createSuccess": {
+    "t": "Personne ajoutée avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteConfirm": {
+    "t": "Êtes-vous sûr de vouloir supprimer {name} ?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteError": {
+    "t": "Échec de la suppression de la personne",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSelected": {
+    "t": "Supprimer la sélection ({count})",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.deleteSuccess": {
+    "t": "Personne supprimée avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.dropFileHere": {
+    "t": "Déposez le fichier ici ou cliquez pour télécharger",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.editPerson": {
+    "t": "Modifier la personne",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.email": {
+    "t": "Courriel",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.emailInvalid": {
+    "t": "Veuillez entrer un email valide",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportError": {
+    "t": "Échec de l'exportation des personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportPeople": {
+    "t": "Exporter des personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.exportSuccess": {
+    "t": "Personnes exportées avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fileTooLarge": {
+    "t": "Fichier trop volumineux. Veuillez télécharger un fichier de moins de 10 Mo.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.firstName": {
+    "t": "Prénom",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.fullName": {
+    "t": "Nom complet",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.action": {
+    "t": "Action",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.areaDesc": {
+    "t": "Secteur géographique",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.bahaiIdDesc": {
+    "t": "Numéro d'ID Baha'i",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.clickToUpload": {
+    "t": "cliquer pour télécharger",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteAllPeople": {
+    "t": "Confirmer la suppression de toutes les personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.confirmDeleteFile": {
+    "t": "Êtes-vous sûr de vouloir supprimer ce fichier ?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.contentEncoding": {
+    "t": "Encodage du contenu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.currentPeopleCount": {
+    "t": "Nombre actuel de personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dataRows": {
+    "t": "Lignes de données",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeople": {
+    "t": "Supprimer toutes les personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleError": {
+    "t": "Échec de la suppression de toutes les personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteAllPeopleMessage": {
+    "t": "Êtes-vous sûr de vouloir supprimer toutes les personnes de cette élection ? Cette action ne peut pas être annulée.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.deleteFileError": {
+    "t": "Échec de la suppression du fichier",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.dropFile": {
+    "t": "Déposer le fichier ici ou",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.duplicateDesc": {
+    "t": "La personne est une entrée en double",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityDesc": {
+    "t": "Statut d'éligibilité",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibilityValues": {
+    "t": "Valeurs du statut d'éligibilité",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.eligibleDesc": {
+    "t": "La personne est éligible pour voter",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.emailDesc": {
+    "t": "Adresse email",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.fileName": {
+    "t": "Nom du fichier",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.filesOnServer": {
+    "t": "Fichiers sur le serveur",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameDesc": {
+    "t": "Prénom de la personne",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.firstNameLastNameRequired": {
+    "t": "Les champs Prénom et Nom de famille doivent être mappés pour procéder à l'importation.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headerAutoDetected": {
+    "t": "En-têtes automatiquement détectés sur la ligne {row}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLine": {
+    "t": "En-têtes sur la ligne",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.headersOnLineTooltip": {
+    "t": "Spécifiez quelle ligne contient les en-têtes de colonnes. Détecté automatiquement pour les fichiers Excel, mais peut être ajusté si nécessaire.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ignore": {
+    "t": "(ignorer)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importNow": {
+    "t": "Importer maintenant",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importResults": {
+    "t": "Résultats de l'importation",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importStepDesc": {
+    "t": "L'étape d'importation sera implémentée dans la prochaine phase",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importSummary": {
+    "t": "Résumé de l'importation",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.importing": {
+    "t": "Importation des personnes...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.ineligibleDesc": {
+    "t": "La personne n'est pas éligible pour voter",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.lastNameDesc": {
+    "t": "Nom de famille de la personne",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.loadFilesError": {
+    "t": "Échec du chargement des fichiers d'importation",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumns": {
+    "t": "Mapper les colonnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapColumnsDesc": {
+    "t": "Mapper les colonnes de votre fichier vers les champs TallyJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mapTo": {
+    "t": "Mapper vers :",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappedFields": {
+    "t": "Champs mappés",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.mappingSaved": {
+    "t": "Mappage de colonnes enregistré avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherActions": {
+    "t": "Autres actions",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherInfoDesc": {
+    "t": "Informations supplémentaires",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherLastNamesDesc": {
+    "t": "Noms de famille supplémentaires",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.otherNamesDesc": {
+    "t": "Prénoms supplémentaires",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleAdded": {
+    "t": "Personnes ajoutées",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.peopleSkipped": {
+    "t": "Personnes ignorées",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.phoneDesc": {
+    "t": "Numéro de téléphone",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.preview": {
+    "t": "Aperçu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reparse": {
+    "t": "Re-analyser",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.reviewImport": {
+    "t": "Examiner et importer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.saveMapping": {
+    "t": "Enregistrer le mappage",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.select": {
+    "t": "Sélectionner",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.selected": {
+    "t": "Sélectionné",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.size": {
+    "t": "Taille",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.status": {
+    "t": "Statut",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step1": {
+    "t": "Télécharger le fichier",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step2": {
+    "t": "Mapper les colonnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.step3": {
+    "t": "Importer",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.supportedFormats": {
+    "t": "Formats supportés : CSV, TSV, TAB, TXT, XLSX (max 10 Mo)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJField": {
+    "t": "Champ TallyJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.tallyJFields": {
+    "t": "Référence des champs TallyJ",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.timeElapsed": {
+    "t": "Temps écoulé",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.title": {
+    "t": "Importer des personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.underAgeDesc": {
+    "t": "La personne est en dessous de l'âge de vote",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadError": {
+    "t": "Échec du téléchargement du fichier",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadFile": {
+    "t": "Télécharger le fichier",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.uploadTime": {
+    "t": "Heure de téléchargement",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.validationWarning": {
+    "t": "Avertissement de validation",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.import.warnings": {
+    "t": "Avertissements",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importError": {
+    "t": "Échec du démarrage de l'importation",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importFormat": {
+    "t": "Téléchargez un fichier CSV ou Excel avec les colonnes suivantes :",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importInstructions": {
+    "t": "Instructions d'importation",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importOptionalFields": {
+    "t": "Optionnel : Email, Téléphone, Secteur, ID Baha'i, Éligibilité",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importPeople": {
+    "t": "Importer des personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importRequiredFields": {
+    "t": "Requis : Prénom, Nom de famille",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importStarted": {
+    "t": "Importation démarrée. Veuillez patienter.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.importWarning": {
+    "t": "Les personnes existantes avec des noms correspondants seront mises à jour. Les nouvelles personnes seront créées.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.invalidFileType": {
+    "t": "Type de fichier invalide. Veuillez télécharger un fichier CSV ou Excel.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCode": {
+    "t": "Kiosk Code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpired": {
+    "t": "This code has expired. Renew it before the voter logs in.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeExpires": {
+    "t": "Expires {time} ({minutes} min left).",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerate": {
+    "t": "Make a kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeGenerated": {
+    "t": "Kiosk code is ready to share.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNone": {
+    "t": "No kiosk code yet. Generate one when the voter is at the kiosk.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeNote": {
+    "t": "Share this code with the voter at the kiosk. It expires after 15 minutes; generate or renew when they are ready.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.kioskCodeRenew": {
+    "t": "Renew kiosk code",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastName": {
+    "t": "Nom de famille",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.lastNameRequired": {
+    "t": "Le nom de famille est requis",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.leaveElectionGroupError": {
+    "t": "Échec de quitter le groupe d'élection :",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.loadError": {
+    "t": "Échec du chargement des personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.management": {
+    "t": "Gestion des personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phone": {
+    "t": "Téléphone",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.recentSms": {
+    "t": "Recent SMS",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogNoStatus": {
+    "t": "Sent",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.phoneOnlineVoter.smsLogError": {
+    "t": "Error {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.saveError": {
+    "t": "Échec de l'enregistrement de la personne",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.search": {
+    "t": "Rechercher par nom, email ou ID",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.searchError": {
+    "t": "Échec de la recherche de personnes",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.supportedFormats": {
+    "t": "Formats supportés : CSV, XLS, XLSX (max 10 Mo)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.updateSuccess": {
+    "t": "Personne mise à jour avec succès",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "people.voters": {
+    "t": "Électeurs",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

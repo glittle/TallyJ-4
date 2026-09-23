@@ -1,74 +1,362 @@
 {
-  "ballots.addBallot": "Dodaj glasački listić",
-  "ballots.addNewPerson": "Dodaj novu osobu",
-  "ballots.addVote": "Dodaj glas",
-  "ballots.cacheLoadError": "Učitavanje kandidata nije uspjelo",
-  "ballots.cacheLoading": "Učitavanje kandidata...",
-  "ballots.candidate": "Kandidat",
-  "ballots.candidateRequired": "Kandidat je obavezan",
-  "ballots.cdnImport.ballotsCreated": "Stvoreni glasački listići",
-  "ballots.cdnImport.button": "Uvezi CDN glasačke listiće",
-  "ballots.cdnImport.description": "Prenesite XML datoteku izvezenu iz CDN-a (Kanadska nacionalna baza podataka) za uvoz glasačkih listića i odgovarajućih glasova u ove izbore. Datoteka će biti analizirana i glasački listići će biti stvoreni za svaki valjani unos, zajedno sa svim povezanim zapisima glasova.",
-  "ballots.cdnImport.errors": "Pogreške",
-  "ballots.cdnImport.failed": "Uvoz nije uspio",
-  "ballots.cdnImport.importing": "Uvoz u tijeku...",
-  "ballots.cdnImport.skippedRows": "Preskočeni redovi",
-  "ballots.cdnImport.success": "Uvoz uspješno završen",
-  "ballots.cdnImport.title": "Uvezi CDN glasačke listiće",
-  "ballots.cdnImport.totalRows": "Ukupno obrađenih redova",
-  "ballots.cdnImport.uploadPrompt": "Kliknite ili povucite XML datoteku ovdje za prijenos",
-  "ballots.cdnImport.votesCreated": "Stvoreni glasovi",
-  "ballots.cdnImport.warnings": "Upozorenja",
-  "ballots.cdnImport.xmlOnly": "Podržane su samo XML datoteke",
-  "ballots.checkSpelling": "Provjerite pravopis ili pokušajte s drugim imenom",
-  "ballots.clearAll": "Očisti sve",
-  "ballots.code": "Kôd glasačkog listića",
-  "ballots.computer": "Računalo",
-  "ballots.computerRequired": "Kôd računala je obavezan",
-  "ballots.createSuccess": "Glasački listić uspješno stvoren",
-  "ballots.deleteConfirm": "Jeste li sigurni da želite izbrisati ovaj glasački listić?",
-  "ballots.deleteError": "Brisanje glasačkog listića nije uspjelo",
-  "ballots.deleteSuccess": "Glasački listić uspješno obrisan",
-  "ballots.deleteVoteConfirm": "Jeste li sigurni da želite izbrisati ovaj glas?",
-  "ballots.deleteVoteError": "Brisanje glasa nije uspjelo",
-  "ballots.deleteVoteSuccess": "Glas uspješno obrisan",
-  "ballots.duplicateWarning": "Duplikat: Ova je osoba već odabrana",
-  "ballots.enterVotes": "Unesi glasove",
-  "ballots.entry": "Unos glasačkog listića - {code}",
-  "ballots.entryPage": "Unos glasačkog listića",
-  "ballots.ineligible": "Nije prihvatljiv/a",
-  "ballots.loadError": "Učitavanje glasačkih listića nije uspjelo",
-  "ballots.location": "Lokacija",
-  "ballots.locationRequired": "Lokacija je obavezna",
-  "ballots.management": "Upravljanje glasačkim listićima",
-  "ballots.noMatchesFound": "Nisu pronađena podudaranja",
-  "ballots.personUpdated": "{name} je ažuriran/a",
-  "ballots.position": "Pozicija",
-  "ballots.positionRequired": "Pozicija je obavezna",
-  "ballots.saveBallot": "Spremi glasački listić",
-  "ballots.saveError": "Spremanje glasačkog listića nije uspjelo",
-  "ballots.status": "Stanje",
-  "ballots.statusValue.Dup": "Duplikat",
-  "ballots.statusValue.Empty": "Prazan",
-  "ballots.statusValue.New": "Novi",
-  "ballots.statusValue.Ok": "U redu",
-  "ballots.statusValue.Raw": "Neobrađen",
-  "ballots.statusValue.Review": "Pregled",
-  "ballots.statusValue.TooFew": "Premalo",
-  "ballots.statusValue.TooMany": "Previše",
-  "ballots.statusValue.Verify": "Provjeri",
-  "ballots.teller1": "Brojač glasova 1",
-  "ballots.teller2": "Brojač glasova 2",
-  "ballots.viewVotes": "Pogledaj glasove",
-  "ballots.voteAddedError": "Dodavanje glasa nije uspjelo",
-  "ballots.voteAddedSuccess": "Glas uspješno dodan",
-  "ballots.voteCount": "Glasovi",
-  "ballots.voteCreateSuccess": "Glas uspješno dodan",
-  "ballots.voteRemovedError": "Uklanjanje glasa nije uspjelo",
-  "ballots.voteRemovedSuccess": "Glas uspješno uklonjen",
-  "ballots.voteSaveError": "Spremanje glasa nije uspjelo",
-  "ballots.voteSpoiledSuccess": "Glas dodan kao nevažeći ({code} – osoba nije prihvatljiva)",
-  "ballots.votes": "Glasovi - {code}",
-  "ballots.votesEntered": "{count} od {max} glasova uneseno",
-  "ballots.votesList": "Popis glasova"
+  "ballots.addBallot": {
+    "t": "Dodaj glasački listić",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addNewPerson": {
+    "t": "Dodaj novu osobu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addVote": {
+    "t": "Dodaj glas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoadError": {
+    "t": "Učitavanje kandidata nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoading": {
+    "t": "Učitavanje kandidata...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidate": {
+    "t": "Kandidat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidateRequired": {
+    "t": "Kandidat je obavezan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.ballotsCreated": {
+    "t": "Stvoreni glasački listići",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.button": {
+    "t": "Uvezi CDN glasačke listiće",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.description": {
+    "t": "Prenesite XML datoteku izvezenu iz CDN-a (Kanadska nacionalna baza podataka) za uvoz glasačkih listića i odgovarajućih glasova u ove izbore. Datoteka će biti analizirana i glasački listići će biti stvoreni za svaki valjani unos, zajedno sa svim povezanim zapisima glasova.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.errors": {
+    "t": "Pogreške",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.failed": {
+    "t": "Uvoz nije uspio",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.importing": {
+    "t": "Uvoz u tijeku...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.skippedRows": {
+    "t": "Preskočeni redovi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.success": {
+    "t": "Uvoz uspješno završen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.title": {
+    "t": "Uvezi CDN glasačke listiće",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.totalRows": {
+    "t": "Ukupno obrađenih redova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.uploadPrompt": {
+    "t": "Kliknite ili povucite XML datoteku ovdje za prijenos",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.votesCreated": {
+    "t": "Stvoreni glasovi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.warnings": {
+    "t": "Upozorenja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.xmlOnly": {
+    "t": "Podržane su samo XML datoteke",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.checkSpelling": {
+    "t": "Provjerite pravopis ili pokušajte s drugim imenom",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.clearAll": {
+    "t": "Očisti sve",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.code": {
+    "t": "Kôd glasačkog listića",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computer": {
+    "t": "Računalo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computerRequired": {
+    "t": "Kôd računala je obavezan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.createSuccess": {
+    "t": "Glasački listić uspješno stvoren",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteConfirm": {
+    "t": "Jeste li sigurni da želite izbrisati ovaj glasački listić?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteError": {
+    "t": "Brisanje glasačkog listića nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteSuccess": {
+    "t": "Glasački listić uspješno obrisan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteConfirm": {
+    "t": "Jeste li sigurni da želite izbrisati ovaj glas?",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteError": {
+    "t": "Brisanje glasa nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteSuccess": {
+    "t": "Glas uspješno obrisan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.duplicateWarning": {
+    "t": "Duplikat: Ova je osoba već odabrana",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.enterVotes": {
+    "t": "Unesi glasove",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entry": {
+    "t": "Unos glasačkog listića - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entryPage": {
+    "t": "Unos glasačkog listića",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.ineligible": {
+    "t": "Nije prihvatljiv/a",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.loadError": {
+    "t": "Učitavanje glasačkih listića nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.location": {
+    "t": "Lokacija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.locationRequired": {
+    "t": "Lokacija je obavezna",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.management": {
+    "t": "Upravljanje glasačkim listićima",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.noMatchesFound": {
+    "t": "Nisu pronađena podudaranja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.personUpdated": {
+    "t": "{name} je ažuriran/a",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.position": {
+    "t": "Pozicija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.positionRequired": {
+    "t": "Pozicija je obavezna",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveBallot": {
+    "t": "Spremi glasački listić",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveError": {
+    "t": "Spremanje glasačkog listića nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.status": {
+    "t": "Stanje",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Dup": {
+    "t": "Duplikat",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Empty": {
+    "t": "Prazan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.New": {
+    "t": "Novi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Ok": {
+    "t": "U redu",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Raw": {
+    "t": "Neobrađen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Review": {
+    "t": "Pregled",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooFew": {
+    "t": "Premalo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooMany": {
+    "t": "Previše",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Verify": {
+    "t": "Provjeri",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller1": {
+    "t": "Brojač glasova 1",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller2": {
+    "t": "Brojač glasova 2",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.viewVotes": {
+    "t": "Pogledaj glasove",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedError": {
+    "t": "Dodavanje glasa nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedSuccess": {
+    "t": "Glas uspješno dodan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCount": {
+    "t": "Glasovi",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCreateSuccess": {
+    "t": "Glas uspješno dodan",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedError": {
+    "t": "Uklanjanje glasa nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedSuccess": {
+    "t": "Glas uspješno uklonjen",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSaveError": {
+    "t": "Spremanje glasa nije uspjelo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSpoiledSuccess": {
+    "t": "Glas dodan kao nevažeći ({code} – osoba nije prihvatljiva)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votes": {
+    "t": "Glasovi - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesEntered": {
+    "t": "{count} od {max} glasova uneseno",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesList": {
+    "t": "Popis glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

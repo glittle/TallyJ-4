@@ -1,10 +1,42 @@
 {
-  "nav.auditLogs": "Zapisnici revizije",
-  "nav.dashboard": "Nadzorna ploča",
-  "nav.elections": "Izbori",
-  "nav.frontDesk": "Recepcija",
-  "nav.profile": "Profil",
-  "nav.superAdmin": "Super administrator",
-  "nav.tellers": "Brojači glasova",
-  "nav.votingLocations": "Mjesta glasanja"
+  "nav.auditLogs": {
+    "t": "Zapisnici revizije",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.dashboard": {
+    "t": "Nadzorna ploča",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.elections": {
+    "t": "Izbori",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.frontDesk": {
+    "t": "Recepcija",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.profile": {
+    "t": "Profil",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.superAdmin": {
+    "t": "Super administrator",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.tellers": {
+    "t": "Brojači glasova",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.votingLocations": {
+    "t": "Mjesta glasanja",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

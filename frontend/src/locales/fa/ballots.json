@@ -1,74 +1,362 @@
 {
-  "ballots.addBallot": "افزودن رأی",
-  "ballots.addNewPerson": "افزودن شخص جدید",
-  "ballots.addVote": "افزودن رأی",
-  "ballots.cacheLoadError": "بارگذاری نامزدها ناموفق بود",
-  "ballots.cacheLoading": "در حال بارگذاری نامزدها...",
-  "ballots.candidate": "نامزد",
-  "ballots.candidateRequired": "نامزد الزامی است",
-  "ballots.cdnImport.ballotsCreated": "برگه‌های رای ایجاد شد",
-  "ballots.cdnImport.button": "وارد کردن برگه‌های رای CDN",
-  "ballots.cdnImport.description": "یک فایل XML صادر شده از CDN (پایگاه داده ملی کانادا) را برای وارد کردن برگه‌های رای و آراء مربوطه به این انتخابات آپلود کنید. فایل تجزیه خواهد شد و برگه‌های رای برای هر ورودی معتبر ایجاد خواهد شد، همراه با تمام رکوردهای رأی مرتبط.",
-  "ballots.cdnImport.errors": "خطاها",
-  "ballots.cdnImport.failed": "وارد کردن ناموفق بود",
-  "ballots.cdnImport.importing": "در حال وارد کردن...",
-  "ballots.cdnImport.skippedRows": "ردیف‌های رد شده",
-  "ballots.cdnImport.success": "وارد کردن با موفقیت تکمیل شد",
-  "ballots.cdnImport.title": "وارد کردن برگه‌های رای CDN",
-  "ballots.cdnImport.totalRows": "کل ردیف‌های پردازش شده",
-  "ballots.cdnImport.uploadPrompt": "برای آپلود اینجا کلیک کنید یا فایل XML را بکشید",
-  "ballots.cdnImport.votesCreated": "آراء ایجاد شد",
-  "ballots.cdnImport.warnings": "هشدارها",
-  "ballots.cdnImport.xmlOnly": "فقط فایل‌های XML پشتیبانی می‌شوند",
-  "ballots.checkSpelling": "املای نام را بررسی کنید یا نام دیگری امتحان کنید",
-  "ballots.clearAll": "پاک کردن همه",
-  "ballots.code": "کد برگه رای",
-  "ballots.computer": "کامپیوتر",
-  "ballots.computerRequired": "کد کامپیوتر الزامی است",
-  "ballots.createSuccess": "برگه رای با موفقیت ایجاد شد",
-  "ballots.deleteConfirm": "آیا مطمئن هستید که می‌خواهید این برگه رای را حذف کنید؟",
-  "ballots.deleteError": "حذف برگه رای ناموفق بود",
-  "ballots.deleteSuccess": "رأی با موفقیت حذف شد",
-  "ballots.deleteVoteConfirm": "آیا مطمئن هستید که می‌خواهید این رأی را حذف کنید؟",
-  "ballots.deleteVoteError": "حذف رأی ناموفق بود",
-  "ballots.deleteVoteSuccess": "رأی با موفقیت حذف شد",
-  "ballots.duplicateWarning": "تکراری: این شخص قبلاً انتخاب شده است",
-  "ballots.enterVotes": "ورود آراء",
-  "ballots.entry": "ورود برگه رای - {code}",
-  "ballots.entryPage": "ورود برگه رای",
-  "ballots.ineligible": "فاقد شرایط",
-  "ballots.loadError": "بارگذاری برگه‌های رای ناموفق بود",
-  "ballots.location": "مکان",
-  "ballots.locationRequired": "مکان الزامی است",
-  "ballots.management": "مدیریت برگه‌های رای",
-  "ballots.noMatchesFound": "هیچ نتیجه‌ای یافت نشد",
-  "ballots.personUpdated": "{name} به‌روزرسانی شد",
-  "ballots.position": "موقعیت",
-  "ballots.positionRequired": "موقعیت الزامی است",
-  "ballots.saveBallot": "ذخیره برگه رای",
-  "ballots.saveError": "ذخیره برگه رای ناموفق بود",
-  "ballots.status": "وضعیت",
-  "ballots.statusValue.Dup": "تکراری",
-  "ballots.statusValue.Empty": "خالی",
-  "ballots.statusValue.New": "جدید",
-  "ballots.statusValue.Ok": "تأیید",
-  "ballots.statusValue.Raw": "خام",
-  "ballots.statusValue.Review": "بررسی",
-  "ballots.statusValue.TooFew": "خیلی کم",
-  "ballots.statusValue.TooMany": "خیلی زیاد",
-  "ballots.statusValue.Verify": "تأیید اعتبار",
-  "ballots.teller1": "شمارنده ۱",
-  "ballots.teller2": "شمارنده ۲",
-  "ballots.viewVotes": "مشاهده آراء",
-  "ballots.voteAddedError": "افزودن رأی ناموفق بود",
-  "ballots.voteAddedSuccess": "رأی با موفقیت اضافه شد",
-  "ballots.voteCount": "آراء",
-  "ballots.voteCreateSuccess": "رأی با موفقیت اضافه شد",
-  "ballots.voteRemovedError": "حذف رأی ناموفق بود",
-  "ballots.voteRemovedSuccess": "رأی با موفقیت حذف شد",
-  "ballots.voteSaveError": "ذخیره رأی ناموفق بود",
-  "ballots.voteSpoiledSuccess": "رأی به عنوان باطل اضافه شد ({code} – شخص فاقد شرایط است)",
-  "ballots.votes": "آراء - {code}",
-  "ballots.votesEntered": "{count} از {max} رأی وارد شده",
-  "ballots.votesList": "لیست آراء"
+  "ballots.addBallot": {
+    "t": "افزودن رأی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addNewPerson": {
+    "t": "افزودن شخص جدید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.addVote": {
+    "t": "افزودن رأی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoadError": {
+    "t": "بارگذاری نامزدها ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cacheLoading": {
+    "t": "در حال بارگذاری نامزدها...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidate": {
+    "t": "نامزد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.candidateRequired": {
+    "t": "نامزد الزامی است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.ballotsCreated": {
+    "t": "برگه‌های رای ایجاد شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.button": {
+    "t": "وارد کردن برگه‌های رای CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.description": {
+    "t": "یک فایل XML صادر شده از CDN (پایگاه داده ملی کانادا) را برای وارد کردن برگه‌های رای و آراء مربوطه به این انتخابات آپلود کنید. فایل تجزیه خواهد شد و برگه‌های رای برای هر ورودی معتبر ایجاد خواهد شد، همراه با تمام رکوردهای رأی مرتبط.",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.errors": {
+    "t": "خطاها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.failed": {
+    "t": "وارد کردن ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.importing": {
+    "t": "در حال وارد کردن...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.skippedRows": {
+    "t": "ردیف‌های رد شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.success": {
+    "t": "وارد کردن با موفقیت تکمیل شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.title": {
+    "t": "وارد کردن برگه‌های رای CDN",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.totalRows": {
+    "t": "کل ردیف‌های پردازش شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.uploadPrompt": {
+    "t": "برای آپلود اینجا کلیک کنید یا فایل XML را بکشید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.votesCreated": {
+    "t": "آراء ایجاد شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.warnings": {
+    "t": "هشدارها",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.cdnImport.xmlOnly": {
+    "t": "فقط فایل‌های XML پشتیبانی می‌شوند",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.checkSpelling": {
+    "t": "املای نام را بررسی کنید یا نام دیگری امتحان کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.clearAll": {
+    "t": "پاک کردن همه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.code": {
+    "t": "کد برگه رای",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computer": {
+    "t": "کامپیوتر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.computerRequired": {
+    "t": "کد کامپیوتر الزامی است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.createSuccess": {
+    "t": "برگه رای با موفقیت ایجاد شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteConfirm": {
+    "t": "آیا مطمئن هستید که می‌خواهید این برگه رای را حذف کنید؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteError": {
+    "t": "حذف برگه رای ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteSuccess": {
+    "t": "رأی با موفقیت حذف شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteConfirm": {
+    "t": "آیا مطمئن هستید که می‌خواهید این رأی را حذف کنید؟",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteError": {
+    "t": "حذف رأی ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.deleteVoteSuccess": {
+    "t": "رأی با موفقیت حذف شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.duplicateWarning": {
+    "t": "تکراری: این شخص قبلاً انتخاب شده است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.enterVotes": {
+    "t": "ورود آراء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entry": {
+    "t": "ورود برگه رای - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.entryPage": {
+    "t": "ورود برگه رای",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.ineligible": {
+    "t": "فاقد شرایط",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.loadError": {
+    "t": "بارگذاری برگه‌های رای ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.location": {
+    "t": "مکان",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.locationRequired": {
+    "t": "مکان الزامی است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.management": {
+    "t": "مدیریت برگه‌های رای",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.noMatchesFound": {
+    "t": "هیچ نتیجه‌ای یافت نشد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.personUpdated": {
+    "t": "{name} به‌روزرسانی شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.position": {
+    "t": "موقعیت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.positionRequired": {
+    "t": "موقعیت الزامی است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveBallot": {
+    "t": "ذخیره برگه رای",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.saveError": {
+    "t": "ذخیره برگه رای ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.status": {
+    "t": "وضعیت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Dup": {
+    "t": "تکراری",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Empty": {
+    "t": "خالی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.New": {
+    "t": "جدید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Ok": {
+    "t": "تأیید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Raw": {
+    "t": "خام",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Review": {
+    "t": "بررسی",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooFew": {
+    "t": "خیلی کم",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.TooMany": {
+    "t": "خیلی زیاد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.statusValue.Verify": {
+    "t": "تأیید اعتبار",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller1": {
+    "t": "شمارنده ۱",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.teller2": {
+    "t": "شمارنده ۲",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.viewVotes": {
+    "t": "مشاهده آراء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedError": {
+    "t": "افزودن رأی ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteAddedSuccess": {
+    "t": "رأی با موفقیت اضافه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCount": {
+    "t": "آراء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteCreateSuccess": {
+    "t": "رأی با موفقیت اضافه شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedError": {
+    "t": "حذف رأی ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteRemovedSuccess": {
+    "t": "رأی با موفقیت حذف شد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSaveError": {
+    "t": "ذخیره رأی ناموفق بود",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.voteSpoiledSuccess": {
+    "t": "رأی به عنوان باطل اضافه شد ({code} – شخص فاقد شرایط است)",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votes": {
+    "t": "آراء - {code}",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesEntered": {
+    "t": "{count} از {max} رأی وارد شده",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "ballots.votesList": {
+    "t": "لیست آراء",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

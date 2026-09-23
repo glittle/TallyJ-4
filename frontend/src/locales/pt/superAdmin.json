@@ -1,28 +1,132 @@
 {
-  "superAdmin.detail.electionMode": "Modo da Eleição",
-  "superAdmin.detail.locations": "Locais",
-  "superAdmin.detail.numberToElect": "Número a Eleger",
-  "superAdmin.detail.owners": "Administradores",
-  "superAdmin.detail.percentComplete": "Percentual Concluído",
-  "superAdmin.detail.title": "Detalhes da Eleição",
-  "superAdmin.elections.ballots": "Cédulas",
-  "superAdmin.elections.convenor": "Convocador",
-  "superAdmin.elections.date": "Data",
-  "superAdmin.elections.filterStatus": "Filtrar por status",
-  "superAdmin.elections.filterType": "Filtrar por tipo",
-  "superAdmin.elections.name": "Nome da Eleição",
-  "superAdmin.elections.noResults": "Nenhuma eleição encontrada",
-  "superAdmin.elections.owner": "Proprietário",
-  "superAdmin.elections.search": "Pesquisar eleições...",
-  "superAdmin.elections.status": "Estado",
-  "superAdmin.elections.type": "Tipo",
-  "superAdmin.elections.voters": "Eleitores",
-  "superAdmin.error.accessDenied": "Você não tem acesso de super admin",
-  "superAdmin.error.loadFailed": "Falha ao carregar os dados do super admin",
-  "superAdmin.summary.archivedElections": "Arquivadas",
-  "superAdmin.summary.completedElections": "Concluídas",
-  "superAdmin.summary.openElections": "Abertas",
-  "superAdmin.summary.totalElections": "Total de Eleições",
-  "superAdmin.summary.upcomingElections": "Próximas",
-  "superAdmin.title": "Painel do Super Admin"
+  "superAdmin.detail.electionMode": {
+    "t": "Modo da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.locations": {
+    "t": "Locais",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.numberToElect": {
+    "t": "Número a Eleger",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.owners": {
+    "t": "Administradores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.percentComplete": {
+    "t": "Percentual Concluído",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.detail.title": {
+    "t": "Detalhes da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.ballots": {
+    "t": "Cédulas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.convenor": {
+    "t": "Convocador",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.date": {
+    "t": "Data",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterStatus": {
+    "t": "Filtrar por status",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.filterType": {
+    "t": "Filtrar por tipo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.name": {
+    "t": "Nome da Eleição",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.noResults": {
+    "t": "Nenhuma eleição encontrada",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.owner": {
+    "t": "Proprietário",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.search": {
+    "t": "Pesquisar eleições...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.status": {
+    "t": "Estado",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.type": {
+    "t": "Tipo",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.elections.voters": {
+    "t": "Eleitores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.accessDenied": {
+    "t": "Você não tem acesso de super admin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.error.loadFailed": {
+    "t": "Falha ao carregar os dados do super admin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.archivedElections": {
+    "t": "Arquivadas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.completedElections": {
+    "t": "Concluídas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.openElections": {
+    "t": "Abertas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.totalElections": {
+    "t": "Total de Eleições",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.summary.upcomingElections": {
+    "t": "Próximas",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.title": {
+    "t": "Painel do Super Admin",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

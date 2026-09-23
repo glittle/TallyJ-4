@@ -1,10 +1,42 @@
 {
-  "nav.auditLogs": "Registros de Auditoria",
-  "nav.dashboard": "Painel de Controle",
-  "nav.elections": "Eleições",
-  "nav.frontDesk": "Recepção",
-  "nav.profile": "Perfil",
-  "nav.superAdmin": "Super Administrador",
-  "nav.tellers": "Escrutinadores",
-  "nav.votingLocations": "Locais de Votação"
+  "nav.auditLogs": {
+    "t": "Registros de Auditoria",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.dashboard": {
+    "t": "Painel de Controle",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.elections": {
+    "t": "Eleições",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.frontDesk": {
+    "t": "Recepção",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.profile": {
+    "t": "Perfil",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.superAdmin": {
+    "t": "Super Administrador",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.tellers": {
+    "t": "Escrutinadores",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.votingLocations": {
+    "t": "Locais de Votação",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

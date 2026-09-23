@@ -1,17 +1,77 @@
 {
-  "teller.form.cancel": "لغو",
-  "teller.form.computerCode": "کد رایانه",
-  "teller.form.computerCodeHelp": "دو حرف بزرگ (AA-ZZ) یا خالی بگذارید",
-  "teller.form.computerCodeInvalid": "کد رایانه باید ۲ حرف بزرگ (AA-ZZ) باشد",
-  "teller.form.computerCodePlaceholder": "مثلاً AA",
-  "teller.form.create": "ایجاد",
-  "teller.form.headTeller": "شمارشگر ارشد",
-  "teller.form.headTellerHelp": "شمارشگران ارشد دسترسی‌های اضافی دارند",
-  "teller.form.name": "نام شمارشگر",
-  "teller.form.nameMaxLength": "نام شمارشگر نمی‌تواند بیش از ۵۰ کاراکتر باشد",
-  "teller.form.namePlaceholder": "نام شمارشگر را وارد کنید",
-  "teller.form.nameRequired": "نام شمارشگر الزامی است",
-  "teller.form.save": "ذخیره",
-  "teller.form.titleAdd": "افزودن شمارشگر",
-  "teller.form.titleEdit": "ویرایش شمارشگر"
+  "teller.form.cancel": {
+    "t": "لغو",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCode": {
+    "t": "کد رایانه",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeHelp": {
+    "t": "دو حرف بزرگ (AA-ZZ) یا خالی بگذارید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodeInvalid": {
+    "t": "کد رایانه باید ۲ حرف بزرگ (AA-ZZ) باشد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.computerCodePlaceholder": {
+    "t": "مثلاً AA",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.create": {
+    "t": "ایجاد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTeller": {
+    "t": "شمارشگر ارشد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.headTellerHelp": {
+    "t": "شمارشگران ارشد دسترسی‌های اضافی دارند",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.name": {
+    "t": "نام شمارشگر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "نام شمارشگر نمی‌تواند بیش از ۵۰ کاراکتر باشد",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "نام شمارشگر را وارد کنید",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "نام شمارشگر الزامی است",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.save": {
+    "t": "ذخیره",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "افزودن شمارشگر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "ویرایش شمارشگر",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }

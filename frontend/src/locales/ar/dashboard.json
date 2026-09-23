@@ -1,24 +1,112 @@
 {
-  "dashboard.active": "نشط",
-  "dashboard.activeElections": "الانتخابات النشطة",
-  "dashboard.ballotsEntered": "الأصوات المدخلة",
-  "dashboard.canVote": "يمكنه التصويت",
-  "dashboard.closed": "مغلق",
-  "dashboard.closes": "يغلق",
-  "dashboard.electionDetails": "تفاصيل الانتخابات",
-  "dashboard.noElections": "لم يتم العثور على انتخابات",
-  "dashboard.noTellers": "لم يتم تعيين مراقبين",
-  "dashboard.onlineVoting": "التصويت عبر الإنترنت",
-  "dashboard.open": "فتح",
-  "dashboard.opens": "يفتح",
-  "dashboard.otherActions": "إجراءات أخرى...",
-  "dashboard.recentElections": "الانتخابات الأخيرة",
-  "dashboard.registered": "مسجل",
-  "dashboard.statistics": "الإحصائيات",
-  "dashboard.tellerCount": "عدد المراقبين",
-  "dashboard.tellers": "المراقبون",
-  "dashboard.tellersStatus": "المراقبون",
-  "dashboard.totalBallots": "إجمالي الأصوات",
-  "dashboard.totalElections": "إجمالي الانتخابات",
-  "dashboard.totalVoters": "إجمالي الناخبين"
+  "dashboard.active": {
+    "t": "نشط",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.activeElections": {
+    "t": "الانتخابات النشطة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "الأصوات المدخلة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.canVote": {
+    "t": "يمكنه التصويت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closed": {
+    "t": "مغلق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.closes": {
+    "t": "يغلق",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "تفاصيل الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noElections": {
+    "t": "لم يتم العثور على انتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.noTellers": {
+    "t": "لم يتم تعيين مراقبين",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "التصويت عبر الإنترنت",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.open": {
+    "t": "فتح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.opens": {
+    "t": "يفتح",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.otherActions": {
+    "t": "إجراءات أخرى...",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.recentElections": {
+    "t": "الانتخابات الأخيرة",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.registered": {
+    "t": "مسجل",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.statistics": {
+    "t": "الإحصائيات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "عدد المراقبين",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellers": {
+    "t": "المراقبون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "المراقبون",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "إجمالي الأصوات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalElections": {
+    "t": "إجمالي الانتخابات",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "إجمالي الناخبين",
+    "s": "ai",
+    "w": "2026-09-23T17:47:03Z"
+  }
 }
