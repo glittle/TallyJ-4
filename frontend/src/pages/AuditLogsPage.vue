@@ -416,7 +416,7 @@ function formatValue(value: unknown) {
   }
 
   .text-muted {
-    color: #909399;
+    color: var(--el-text-color-secondary);
   }
 
   .log-details {

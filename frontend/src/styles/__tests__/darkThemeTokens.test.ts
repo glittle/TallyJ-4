@@ -148,4 +148,16 @@ describe("dark theme tokens (dashboard/setup polish)", () => {
     expect(tokenValue(light, "--color-qr-pad")).toBe("#ffffff");
     expect(dark).not.toMatch(/--color-qr-pad:/);
   });
+
+  it("keeps the badge fill and secondary text off a bright dark-mode chip", () => {
+    expect(tokenValue(light, "--el-fill-color-light")).toBe(
+      "var(--color-gray-50)",
+    );
+    expect(tokenValue(dark, "--el-fill-color-light")).toBe(
+      "var(--color-gray-800)",
+    );
+    expect(tokenValue(dark, "--el-text-color-secondary")).toBe(
+      "var(--color-gray-400)",
+    );
+  });
 });
