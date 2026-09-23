@@ -51,10 +51,10 @@ watch(locale, () => {
   bottom: 0;
   left: 0;
 
-  background-color: #f0f0f0;
+  background-color: var(--el-fill-color-light);
   padding: 1px 0.5em;
   font-size: 0.75em;
-  color: #666;
+  color: var(--el-text-color-secondary);
   cursor: pointer;
 }
 </style>

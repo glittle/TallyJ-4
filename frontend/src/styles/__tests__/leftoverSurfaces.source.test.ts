@@ -73,6 +73,20 @@ describe("leftover dark-theme surfaces (#285 follow-up)", () => {
     expect(source).not.toContain("#f5f7fa");
   });
 
+  it("dev branch badge uses shared fill and secondary text", () => {
+    const source = readSrc("App.vue");
+    expect(source).toContain("background-color: var(--el-fill-color-light)");
+    expect(source).toContain("color: var(--el-text-color-secondary)");
+    expect(source).not.toContain("#f0f0f0");
+    expect(source).not.toContain("#666");
+  });
+
+  it("audit log empty-value dashes use secondary text, not #909399", () => {
+    const source = readSrc("pages/AuditLogsPage.vue");
+    expect(source).toContain("color: var(--el-text-color-secondary)");
+    expect(source).not.toContain("#909399");
+  });
+
   it("teller inverse text on solid fills uses the inverse token", () => {
     const panel = readSrc("components/ballots/BallotVotesPanel.vue");
     expect(panel).toContain("color: var(--color-text-inverse)");

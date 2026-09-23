@@ -106,4 +106,23 @@ Audit-log filters use `--el-fill-color-light` (light gray-50 `#f9fafb`, dark gra
 
 **Rejected alternative:** keep the `:root.dark` hex override. It missed LanguageFlagsSelector and the sidebar status link, and it fought the shared warning scale.
 
-**Still deferred:** designer’s-eye pass; Facebook/Kakao brand hex (white-on-Facebook and brown-on-Kakao stay brand colors); Element Plus official `dark/css-vars.css`; the dev branch badge in `App.vue` (`#f0f0f0`, not teller chrome); AuditLogs `.text-muted` `#909399` (readable gray text, not a fill); #192 / #182 / #168 / #336 product work. QR pads stay `--color-qr-pad`.
+**Follow-up:** the dev branch badge and Audit Logs muted dashes are in the section below.
+
+**Still deferred from this slice:** designer’s-eye pass; Facebook/Kakao brand hex (white-on-Facebook and brown-on-Kakao stay brand colors); Element Plus official `dark/css-vars.css`; #192 / #182 / #168 / #336 product work. QR pads stay `--color-qr-pad`.
+
+## Branch badge and audit muted dashes use shared tokens
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #285 follow-up after the warning/fill/inverse slice (`81eda682`); `App.vue` `.bottomCorner` was `#f0f0f0` / `#666`; Audit Logs `.text-muted` was `#909399`  
+**Revisit when:** a designer pass retunes small chrome, or Element Plus official `dark/css-vars.css` is adopted
+
+The dev/branch badge fill is `--el-fill-color-light` (light gray-50 `#f9fafb`, dark gray-800). Light stays a light chip. Dark is not a `#f0f0f0` chip on navy. The label was `#666`, about 2.5:1 on gray-800, so it uses `--el-text-color-secondary` too.
+
+Audit Logs empty-value dashes (`.text-muted`) use the same `--el-text-color-secondary`. There is no `--color-text-muted`. In light, `element-plus.less` reassigns that variable to `--color-text-tertiary` (gray-500) after `tokens.less` set gray-600, so the dash is gray-500. Dark `html.dark` sets gray-400 (`#9ca3af`), readable on gray-900. Neither surface got a `:root.dark` hex.
+
+**Rejected alternative:** change only the badge background and leave `#666`. On gray-800 that label is about 2.5:1, under WCAG AA for the 12px badge.
+
+**Rejected alternative:** a `:root.dark` hex for the badge and the dashes. The shared fill and secondary-text tokens already flip.
+
+**Still deferred:** designer’s-eye pass; Facebook/Kakao brand hex (white-on-Facebook and brown-on-Kakao stay brand colors); Element Plus official `dark/css-vars.css`; #192 / #182 / #168 / #336 product work. QR pads stay `--color-qr-pad`.

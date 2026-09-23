@@ -17,5 +17,5 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [people-import.md](people-import.md) — three-action import pipeline (not a Next/Previous wizard)
 - [sms-eligibility.md](sms-eligibility.md) — reject reserved/fictional/malformed phones before paid SMS/voice/WhatsApp; OnlineVoter.SmsStatus; ensure phone row on Person write; person detail phone status and recent SmsLog; Twilio callback auto-learn and delivered OK; send-side SmsLog + StatusCallback; teller manual SmsStatus; Front Desk / people list SMS hint; OnlineVoter.WhatsAppStatus (GreenAPI checkWhatsapp); People list Has WhatsApp filter
 - [test-elections.md](test-elections.md) — duplicate as test copy (`ShowAsTest`); teller test banner; test-only runtime reset
-- [theme.md](theme.md) — dark hairlines, stage chips, name links, and leftover warning/fill/inverse surfaces (#285)
+- [theme.md](theme.md) — dark hairlines, stage chips, name links, leftover warning/fill/inverse surfaces, branch badge, and audit muted text (#285)
 - [i18n.md](i18n.md) — html `dir` with locale; version label is one string (Persian uses بتا); public/voter RTL vs Element Plus RTL CSS
