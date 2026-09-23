@@ -438,26 +438,14 @@ function getSectionLabel(section: string) {
   background: var(--color-success-50);
 }
 
-.dark .elected-card {
-  background: rgba(34, 197, 94, 0.1);
-}
-
 .extra-card {
   border-color: var(--color-warning-500);
   background: var(--color-warning-50);
 }
 
-.dark .extra-card {
-  background: rgba(245, 158, 11, 0.1);
-}
-
 .tied-person {
   border-color: var(--color-error-500) !important;
   background: var(--color-error-50) !important;
-}
-
-.dark .tied-person {
-  background: rgba(239, 68, 68, 0.1) !important;
 }
 
 .person-rank {
@@ -518,17 +506,9 @@ function getSectionLabel(section: string) {
   padding: 20px;
 }
 
-.dark .tie-card {
-  background: rgba(239, 68, 68, 0.1);
-}
-
 .tie-break-required {
   border-color: var(--color-error-600);
   background: var(--color-error-50);
-}
-
-.dark .tie-break-required {
-  background: rgba(239, 68, 68, 0.2);
 }
 
 .tie-header {

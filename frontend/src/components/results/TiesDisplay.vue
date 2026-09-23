@@ -105,7 +105,7 @@ function getSectionLabel(section: string) {
   }
 
   .tie-card.tie-break-required {
-    border: 2px solid #f56c6c;
+    border: 2px solid var(--el-color-danger);
   }
 
   .tie-header {

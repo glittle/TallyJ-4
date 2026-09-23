@@ -103,4 +103,23 @@ describe("dark theme tokens (dashboard/setup polish)", () => {
     );
     expect(tokenValue(light, "--el-border-color")).toBe("var(--color-gray-300)");
   });
+
+  it("remaps pale orange and EP light-9 fills so leftover screens are not cream on navy", () => {
+    expect(tokenValue(light, "--color-orange-50")).toBe("#fff5eb");
+    expect(tokenValue(dark, "--color-orange-50")).toBe("#3a2706");
+    expect(tokenValue(dark, "--el-color-success-light-9")).toBe(
+      "var(--color-success-50)",
+    );
+    expect(tokenValue(dark, "--el-color-warning-light-9")).toBe(
+      "var(--color-warning-50)",
+    );
+    expect(tokenValue(dark, "--el-color-danger-light-9")).toBe(
+      "var(--color-error-50)",
+    );
+  });
+
+  it("keeps the QR pad white in both themes so scanners can read the code", () => {
+    expect(tokenValue(light, "--color-qr-pad")).toBe("#ffffff");
+    expect(dark).not.toMatch(/--color-qr-pad:/);
+  });
 });

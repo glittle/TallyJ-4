@@ -22,10 +22,10 @@ import LoadingSkeleton from "./LoadingSkeleton.vue";
 
 <style lang="less">
 .card-skeleton {
-  background: white;
+  background: var(--el-fill-color-blank);
   border-radius: 8px;
   padding: 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--el-box-shadow);
 
   .card-header {
     margin-bottom: 16px;

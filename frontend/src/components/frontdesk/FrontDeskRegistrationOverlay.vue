@@ -391,7 +391,7 @@ defineExpose({
   .pending-button.el-button {
     background-color: var(--el-color-primary) !important;
     border-color: var(--el-color-primary) !important;
-    color: #fff !important;
+    color: var(--color-text-inverse) !important;
     box-shadow: 0 0 0 2px var(--el-color-primary-light-5);
   }
 
@@ -399,7 +399,7 @@ defineExpose({
   .pending-button.el-button:focus {
     background-color: var(--el-color-primary-dark-2) !important;
     border-color: var(--el-color-primary-dark-2) !important;
-    color: #fff !important;
+    color: var(--color-text-inverse) !important;
   }
 
   .check-in-pending .el-button:not(.pending-button) {

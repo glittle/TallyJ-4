@@ -292,7 +292,7 @@ const columns = computed<Column<FrontDeskVoterDto>[]>(() => {
                 size: "small",
                 style: {
                   backgroundColor: getFlagColor(flagName, props.electionFlags),
-                  color: "#ffffff",
+                  color: "var(--color-text-inverse)",
                   borderColor: getFlagColor(flagName, props.electionFlags),
                 },
               },

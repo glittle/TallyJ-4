@@ -629,7 +629,7 @@ onMounted(() => {
         border: 1px solid var(--el-border-color);
         border-radius: 8px;
         padding: 8px;
-        background: #fff;
+        background: var(--color-qr-pad);
         max-width: 220px;
       }
     }
