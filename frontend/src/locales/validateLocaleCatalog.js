@@ -1,18 +1,13 @@
 import { readFileSync, readdirSync, statSync } from "fs";
 import { join } from "path";
+import { isLocaleDirectoryName } from "./localeDirectory.js";
 import { isRichEntry } from "./richEntries.js";
+
+export { isLocaleDirectoryName };
 
 const SOURCE_STATUS = "source";
 const TRANSLATION_STATUSES = new Set(["ai", "human", "approved"]);
 const ISO_UTC_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/;
-
-/**
- * Top-level catalog folders. `merge-locales.js` uses the same rule, so a
- * folder such as `__tests__` is neither validated as a locale nor bundled.
- */
-export function isLocaleDirectoryName(name) {
-  return /^[a-z]{2}(?:-[A-Z]{2})?$/.test(name);
-}
 
 export class ValidationError {
   constructor(type, message, details = {}) {
@@ -31,6 +26,8 @@ function getAllJsonFiles(dir, baseDir = dir, topLevel = true) {
     const stat = statSync(fullPath);
 
     if (stat.isDirectory()) {
+      // Same folder rule as merge-locales. A typo directory with JSON is not
+      // a locale here; merge-locales exits non-zero instead of skipping it.
       if (topLevel && !isLocaleDirectoryName(entry)) {
         continue;
       }
