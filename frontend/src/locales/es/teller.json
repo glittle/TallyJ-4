@@ -4,38 +4,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "teller.form.computerCode": {
-    "t": "Código de Computadora",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodeHelp": {
-    "t": "Dos letras mayúsculas (AA-ZZ) o dejar vacío",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodeInvalid": {
-    "t": "El código de computadora debe ser 2 letras mayúsculas (AA-ZZ)",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodePlaceholder": {
-    "t": "p. ej., AA",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "teller.form.create": {
     "t": "Crear",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.headTeller": {
-    "t": "Escrutador Principal",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.headTellerHelp": {
-    "t": "Los escrutadores principales tienen permisos adicionales",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

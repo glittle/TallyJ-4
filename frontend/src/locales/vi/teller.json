@@ -4,38 +4,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "teller.form.computerCode": {
-    "t": "Mã Máy Tính",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodeHelp": {
-    "t": "Hai chữ hoa (AA-ZZ) hoặc để trống",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodeInvalid": {
-    "t": "Mã máy tính phải là 2 chữ hoa (AA-ZZ)",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodePlaceholder": {
-    "t": "ví dụ: AA",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "teller.form.create": {
     "t": "Tạo",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.headTeller": {
-    "t": "Trưởng Ban Kiểm Phiếu",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.headTellerHelp": {
-    "t": "Trưởng ban kiểm phiếu có thêm quyền hạn",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

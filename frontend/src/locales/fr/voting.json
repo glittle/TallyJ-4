@@ -164,11 +164,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "voting.confirmation.noChange": {
-    "t": "Veuillez noter que vous ne pouvez pas modifier ou soumettre à nouveau votre bulletin.",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "voting.confirmation.recorded": {
     "t": "Votre bulletin a été enregistré en toute sécurité.",
     "s": "ai",

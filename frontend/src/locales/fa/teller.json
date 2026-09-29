@@ -4,38 +4,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "teller.form.computerCode": {
-    "t": "کد رایانه",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodeHelp": {
-    "t": "دو حرف بزرگ (AA-ZZ) یا خالی بگذارید",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodeInvalid": {
-    "t": "کد رایانه باید ۲ حرف بزرگ (AA-ZZ) باشد",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodePlaceholder": {
-    "t": "مثلاً AA",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "teller.form.create": {
     "t": "ایجاد",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.headTeller": {
-    "t": "شمارشگر ارشد",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.headTellerHelp": {
-    "t": "شمارشگران ارشد دسترسی‌های اضافی دارند",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

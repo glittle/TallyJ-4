@@ -19,11 +19,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "results.candidate": {
-    "t": "Ứng Viên",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "results.closeToNext": {
     "t": "Gần Vị Trí Tiếp Theo",
     "s": "ai",
@@ -126,11 +121,6 @@
   },
   "results.tied": {
     "t": "Hòa",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "results.tiedCandidates": {
-    "t": "Ứng Viên Hòa",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

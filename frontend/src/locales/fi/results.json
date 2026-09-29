@@ -19,11 +19,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "results.candidate": {
-    "t": "Ehdokas",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "results.closeToNext": {
     "t": "Lähellä seuraavaa",
     "s": "ai",
@@ -126,11 +121,6 @@
   },
   "results.tied": {
     "t": "Tasapeli",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "results.tiedCandidates": {
-    "t": "Tasapeli ehdokkaat",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

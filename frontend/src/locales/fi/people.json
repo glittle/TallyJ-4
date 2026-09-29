@@ -4,21 +4,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "people.ageGroup.adult": {
-    "t": "Aikuinen",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "people.ageGroup.youth": {
-    "t": "Nuori",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "people.ageGroupLabel": {
-    "t": "Ikäryhmä",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "people.allPeople": {
     "t": "Kaikki ihmiset",
     "s": "ai",
@@ -61,11 +46,6 @@
   },
   "people.canVote": {
     "t": "Voi äänestää",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "people.candidates": {
-    "t": "Kelpoiset ehdokkaat",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

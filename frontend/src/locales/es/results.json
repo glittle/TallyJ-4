@@ -19,11 +19,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "results.candidate": {
-    "t": "Candidato",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "results.closeToNext": {
     "t": "Cerca del Siguiente",
     "s": "ai",
@@ -126,11 +121,6 @@
   },
   "results.tied": {
     "t": "Empatado",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "results.tiedCandidates": {
-    "t": "Candidatos Empatados",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

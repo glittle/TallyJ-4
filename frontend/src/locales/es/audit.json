@@ -1,9 +1,4 @@
 {
-  "audit.dialog.computerCode": {
-    "t": "Código de Computadora",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "audit.dialog.dateTime": {
     "t": "Fecha/Hora",
     "s": "ai",
@@ -16,21 +11,6 @@
   },
   "audit.dialog.electionGuid": {
     "t": "GUID de Elección",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.dialog.hostAndVersion": {
-    "t": "Host y Versión",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.dialog.locationGuid": {
-    "t": "GUID de Ubicación",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.dialog.rowId": {
-    "t": "ID de Fila",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -54,16 +34,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "audit.filters.computerCode": {
-    "t": "Código de Computadora",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.computerCodePlaceholder": {
-    "t": "Filtrar por Código de Computadora",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "audit.filters.electionGuid": {
     "t": "GUID de Elección",
     "s": "ai",
@@ -81,16 +51,6 @@
   },
   "audit.filters.endDatePlaceholder": {
     "t": "Fecha de Fin",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.locationGuid": {
-    "t": "GUID de Ubicación",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.locationGuidPlaceholder": {
-    "t": "Filtrar por GUID de Ubicación",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -114,23 +74,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "audit.filters.voterId": {
-    "t": "ID de Votante",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.voterIdPlaceholder": {
-    "t": "Filtrar por ID de Votante",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "audit.table.actions": {
     "t": "Acciones",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.table.computer": {
-    "t": "Computadora",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

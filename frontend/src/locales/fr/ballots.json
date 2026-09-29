@@ -24,16 +24,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "ballots.candidate": {
-    "t": "Candidat",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "ballots.candidateRequired": {
-    "t": "Le candidat est requis",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "ballots.cdnImport.ballotsCreated": {
     "t": "Bulletins créés",
     "s": "ai",
@@ -121,11 +111,6 @@
   },
   "ballots.computer": {
     "t": "Ordinateur",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "ballots.computerRequired": {
-    "t": "Le code de l'ordinateur est requis",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -336,11 +321,6 @@
   },
   "ballots.voteSaveError": {
     "t": "Échec de l'enregistrement de la voix",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "ballots.voteSpoiledSuccess": {
-    "t": "Vote ajouté comme nul ({code} – personne inéligible)",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

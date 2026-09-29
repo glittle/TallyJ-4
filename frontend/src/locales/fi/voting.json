@@ -164,11 +164,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "voting.confirmation.noChange": {
-    "t": "Huomaa, että et voi muuttaa tai lähettää äänestyslipukettasi uudelleen.",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "voting.confirmation.recorded": {
     "t": "Äänestyslipukkeesi on tallennettu turvallisesti.",
     "s": "ai",

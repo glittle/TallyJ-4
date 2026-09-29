@@ -2,7 +2,7 @@
 
 import { readFileSync, readdirSync, statSync } from "fs";
 import { join, dirname } from "path";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 import { isRichEntry } from "./richEntries.js";
 
 const SOURCE_STATUS = "source";
@@ -361,52 +361,88 @@ function checkPrefixCollisionsInLocale(localeFiles) {
   return errors;
 }
 
-function checkKeyConsistency(localeFiles) {
-  const errors = [];
-  const locales = Array.from(localeFiles.keys());
-
-  if (locales.length < 2) {
-    return errors;
+/**
+ * English is the reference catalog. `fallbackLocale` is `en`, and new strings
+ * are added to `en/` only, so a key that other locales have not translated yet
+ * is expected.
+ *
+ * - awaiting: keys in `en` missing from another locale (including files that
+ *   exist only in English). Non-failing per-locale counts.
+ * - stale: keys present in a non-en locale but absent from `en`. These fail.
+ *
+ * @param {Map<string, Iterable<string>>} keysByLocale
+ * @returns {{
+ *   stale: { locale: string, key: string }[],
+ *   awaiting: { locale: string, count: number }[],
+ *   missingReference: boolean
+ * }}
+ */
+export function diffKeysAgainstEnglish(keysByLocale) {
+  const enKeys = keysByLocale.get("en");
+  if (!enKeys) {
+    return { stale: [], awaiting: [], missingReference: true };
   }
 
-  const keysByLocale = new Map();
+  const enSet = enKeys instanceof Set ? enKeys : new Set(enKeys);
+  const stale = [];
+  const awaiting = [];
+  const locales = [...keysByLocale.keys()]
+    .filter((locale) => locale !== "en")
+    .sort();
+
   for (const locale of locales) {
+    const raw = keysByLocale.get(locale);
+    const keys = raw instanceof Set ? raw : new Set(raw);
+    let count = 0;
+    for (const key of enSet) {
+      if (!keys.has(key)) {
+        count++;
+      }
+    }
+    if (count > 0) {
+      awaiting.push({ locale, count });
+    }
+
+    const extras = [...keys].filter((key) => !enSet.has(key)).sort();
+    for (const key of extras) {
+      stale.push({ locale, key });
+    }
+  }
+
+  return { stale, awaiting, missingReference: false };
+}
+
+function checkKeyConsistency(localeFiles) {
+  const errors = [];
+  const keysByLocale = new Map();
+
+  for (const locale of localeFiles.keys()) {
     const allKeys = getAllKeysInLocale(localeFiles, locale);
     keysByLocale.set(locale, new Set(allKeys.keys()));
   }
 
-  const allKeys = new Set();
-  for (const keys of keysByLocale.values()) {
-    for (const key of keys) {
-      allKeys.add(key);
-    }
+  const diff = diffKeysAgainstEnglish(keysByLocale);
+  if (diff.missingReference) {
+    errors.push(
+      new ValidationError(
+        "MISSING_REFERENCE_LOCALE",
+        'Reference locale "en" was not found. Key checks use English as the source of truth.',
+      ),
+    );
+    return { errors, warnings: [] };
   }
 
-  for (const key of allKeys) {
-    const presentIn = [];
-    const missingIn = [];
-
-    for (const locale of locales) {
-      const keys = keysByLocale.get(locale);
-      if (keys && keys.has(key)) {
-        presentIn.push(locale);
-      } else {
-        missingIn.push(locale);
-      }
-    }
-
-    if (missingIn.length > 0 && presentIn.length > 0) {
-      errors.push(
-        new ValidationError(
-          "MISSING_KEY",
-          `Key "${key}" is missing in locales: ${missingIn.join(", ")} (present in: ${presentIn.join(", ")})`,
-          { key, missingIn, presentIn },
-        ),
-      );
-    }
+  for (const { locale, key } of diff.stale) {
+    errors.push(
+      new ValidationError(
+        "STALE_KEY",
+        `Key "${key}" is present in locale "${locale}" but absent from en. Remove it, or add it to en if it is still used.`,
+        { key, locale },
+      ),
+    );
   }
 
-  return errors;
+  return { errors, warnings: diff.awaiting };
 }
 
 function validateRootFiles(rootFiles) {
@@ -440,14 +476,30 @@ function validateLocaleFiles(localeFiles) {
 
   errors.push(...checkDuplicateKeysInLocale(localeFiles));
   errors.push(...checkPrefixCollisionsInLocale(localeFiles));
-  errors.push(...checkKeyConsistency(localeFiles));
+  const consistency = checkKeyConsistency(localeFiles);
+  errors.push(...consistency.errors);
 
-  return errors;
+  return { errors, warnings: consistency.warnings };
 }
 
-function printResults(errors) {
+function printWarnings(warnings) {
+  if (!warnings || warnings.length === 0) {
+    return;
+  }
+
+  console.log(
+    "\nKeys awaiting translation (en is the reference; these do not fail the check):",
+  );
+  for (const { locale, count } of warnings) {
+    console.log(`  ${locale}: ${count} keys awaiting translation`);
+  }
+}
+
+function printResults(errors, warnings = []) {
+  printWarnings(warnings);
+
   if (errors.length === 0) {
-    console.log("✅ All translation files are valid!");
+    console.log("\n✅ All translation files are valid!");
     return true;
   }
 
@@ -493,9 +545,10 @@ function main() {
 
     const errors = [];
     errors.push(...validateRootFiles(rootFiles));
-    errors.push(...validateLocaleFiles(localeFiles));
+    const localeResult = validateLocaleFiles(localeFiles);
+    errors.push(...localeResult.errors);
 
-    const isValid = printResults(errors);
+    const isValid = printResults(errors, localeResult.warnings);
     process.exit(isValid ? 0 : 1);
   } catch (error) {
     if (error instanceof ValidationError) {
@@ -506,4 +559,14 @@ function main() {
   }
 }
 
-main();
+function isDirectRun() {
+  const entry = process.argv[1];
+  if (!entry) {
+    return false;
+  }
+  return import.meta.url === pathToFileURL(entry).href;
+}
+
+if (isDirectRun()) {
+  main();
+}

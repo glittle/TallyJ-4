@@ -19,11 +19,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "results.candidate": {
-    "t": "Kandidat",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "results.closeToNext": {
     "t": "Blizu sljedećeg",
     "s": "ai",
@@ -126,11 +121,6 @@
   },
   "results.tied": {
     "t": "Izjednačeni",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "results.tiedCandidates": {
-    "t": "Izjednačeni kandidati",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
