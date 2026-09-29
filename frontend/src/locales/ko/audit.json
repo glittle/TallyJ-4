@@ -1,9 +1,4 @@
 {
-  "audit.dialog.computerCode": {
-    "t": "컴퓨터 코드",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "audit.dialog.dateTime": {
     "t": "날짜/시간",
     "s": "ai",
@@ -16,21 +11,6 @@
   },
   "audit.dialog.electionGuid": {
     "t": "선거 GUID",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.dialog.hostAndVersion": {
-    "t": "호스트 및 버전",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.dialog.locationGuid": {
-    "t": "위치 GUID",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.dialog.rowId": {
-    "t": "행 ID",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -54,16 +34,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "audit.filters.computerCode": {
-    "t": "컴퓨터 코드",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.computerCodePlaceholder": {
-    "t": "컴퓨터 코드로 필터링",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "audit.filters.electionGuid": {
     "t": "선거 GUID",
     "s": "ai",
@@ -81,16 +51,6 @@
   },
   "audit.filters.endDatePlaceholder": {
     "t": "종료 날짜",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.locationGuid": {
-    "t": "위치 GUID",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.locationGuidPlaceholder": {
-    "t": "위치 GUID로 필터링",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -114,23 +74,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "audit.filters.voterId": {
-    "t": "투표자 ID",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.voterIdPlaceholder": {
-    "t": "투표자 ID로 필터링",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "audit.table.actions": {
     "t": "작업",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.table.computer": {
-    "t": "컴퓨터",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

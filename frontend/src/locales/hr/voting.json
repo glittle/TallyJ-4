@@ -164,11 +164,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "voting.confirmation.noChange": {
-    "t": "Napominjemo da ne možete promijeniti ni ponovo predati glasački listić.",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "voting.confirmation.recorded": {
     "t": "Vaš glasački listić je sigurno zabilježen.",
     "s": "ai",

@@ -159,16 +159,13 @@ A node script (`validate:i18n`) that:
 - Requires each message leaf to be `{ t, s, w }` with a non-empty `t`, an allowed `s`, and an ISO-8601 UTC `w`
 - Rejects bare strings in source files
 - Rejects duplicate keys in a file and across files in one locale
-- Checks key-set equality across locales (keys, not `t` text)
+- Treats `en` as the reference key set (keys, not `t` text):
+  - A key in `en` that another locale does not have yet, including a file that exists only in English, is a non-failing per-locale count (`fr: 733 keys awaiting translation`). `fallbackLocale` is `en`, so the UI still shows English.
+  - A key present in a non-English locale but absent from `en` is stale and fails the check.
 
-Run it locally when you touch locales. Decide whether CI should fail on missing keys in other languages.
+Run it locally when you touch locales. The frontend Azure pipeline runs it before the production build.
 
-TallyJ’s **policy** is English-only adds; its **validator** wants every locale to have the same keys. Those two rules fight. Pick one:
-
-- **A.** English-only until a translation pass: validator must allow extra English keys (and extra English files).
-- **B.** Every locale gets the key immediately (empty value or copy-from-en as an explicit “needs translation” marker). Then key-set equality is fair.
-
-Do not document A and enforce B.
+TallyJ adds new strings to English only. Other languages are filled in a later translation pass. The validator follows that rule: it does not demand identical key sets, and it does not want English copied into `fr` / `es` / … as a placeholder.
 
 ---
 
@@ -181,7 +178,7 @@ For a new .NET  + Vue repo:
 3. C#: `JsonStringLocalizer` reading `Localization:ResourcesPath`, `UseRequestLocalization`, **non-empty `SupportedCultures`**, English fallback on miss.
 4. Two call patterns: lookup vs return-the-key. Default to return-the-key for UI.
 5. Unparameterized strings if both sides translate the same key.
-6. `validate:i18n` aligned with whether non-English files must stay in lockstep.
+6. `validate:i18n` with English as the reference: missing translations are a non-failing count, and keys absent from English fail.
 7. Prod: merge-locales for Vue chunks; **copy or mount** the locale folder onto the API host.
 8. Never edit generated `bundled/` output.
 
@@ -192,7 +189,7 @@ For a new .NET  + Vue repo:
 | Path | Why |
 |------|-----|
 | `frontend/src/locales/index.ts` | vue-i18n setup, `flatToNested`, lazy locales |
-| `frontend/src/locales/validate-translations.js` | validator |
+| `frontend/src/locales/validateLocaleCatalog.js` | locale checks (`en` is the reference); the CLI is `validate-translations.js` |
 | `frontend/merge-locales.js` | prod bundle |
 | `frontend/src/api/config.ts` | `Accept-Language` |
 | `backend/Localization/*.cs` | custom JSON localizer |

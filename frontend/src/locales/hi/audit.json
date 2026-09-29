@@ -1,9 +1,4 @@
 {
-  "audit.dialog.computerCode": {
-    "t": "कंप्यूटर कोड",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "audit.dialog.dateTime": {
     "t": "दिनांक/समय",
     "s": "ai",
@@ -16,21 +11,6 @@
   },
   "audit.dialog.electionGuid": {
     "t": "चुनाव GUID",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.dialog.hostAndVersion": {
-    "t": "होस्ट और संस्करण",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.dialog.locationGuid": {
-    "t": "स्थान GUID",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.dialog.rowId": {
-    "t": "पंक्ति ID",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -54,16 +34,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "audit.filters.computerCode": {
-    "t": "कंप्यूटर कोड",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.computerCodePlaceholder": {
-    "t": "कंप्यूटर कोड द्वारा फ़िल्टर करें",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "audit.filters.electionGuid": {
     "t": "चुनाव GUID",
     "s": "ai",
@@ -81,16 +51,6 @@
   },
   "audit.filters.endDatePlaceholder": {
     "t": "समाप्ति तिथि",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.locationGuid": {
-    "t": "स्थान GUID",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.locationGuidPlaceholder": {
-    "t": "स्थान GUID द्वारा फ़िल्टर करें",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -114,23 +74,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "audit.filters.voterId": {
-    "t": "मतदाता ID",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.voterIdPlaceholder": {
-    "t": "मतदाता ID द्वारा फ़िल्टर करें",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "audit.table.actions": {
     "t": "क्रियाएँ",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.table.computer": {
-    "t": "कंप्यूटर",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

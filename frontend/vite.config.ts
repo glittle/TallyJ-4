@@ -8,6 +8,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import devtoolsJson from "vite-plugin-devtools-json";
 import mkcert from "vite-plugin-mkcert";
+import { LOCALE_DIRECTORY_SOURCE } from "./src/locales/localeDirectory.js";
 
 // ---------------------------------------------------------------------------
 // Build-time guard for language support
@@ -206,12 +207,18 @@ function getManualChunks(id: string): string | undefined {
     return matchChunkRule(n, vendorChunkRules) ?? "vendor";
   }
 
-  const bundledLocale = /\/locales\/bundled\/(\w+)\.json/.exec(n);
+  // Same BCP-47 folder rule as merge-locales (en, fil, zh-Hans, pt-BR).
+  // `\w+` stops at the hyphen, so zh-Hans would not become locale-zh-Hans.
+  const bundledLocale = new RegExp(
+    `/locales/bundled/(${LOCALE_DIRECTORY_SOURCE})\\.json`,
+  ).exec(n);
   if (bundledLocale) {
     return `locale-${bundledLocale[1]}`;
   }
 
-  const individualLocale = /\/locales\/([a-z]{2})\/\w+\.json/.exec(n);
+  const individualLocale = new RegExp(
+    `/locales/(${LOCALE_DIRECTORY_SOURCE})/[^/]+\\.json`,
+  ).exec(n);
   if (individualLocale && individualLocale[1] !== "en") {
     return `locale-${individualLocale[1]}-dev`;
   }

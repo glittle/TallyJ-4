@@ -399,16 +399,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.form.onlineAnnounced": {
-    "t": "Online rezultati objavljeni",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.form.onlineAnnouncedPlaceholder": {
-    "t": "Odaberite vrijeme objave",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.form.onlineCloseIsEstimate": {
     "t": "Vrijeme zatvaranja je procjena",
     "s": "ai",
@@ -629,18 +619,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.stageChangeError": {
-    "t": "Promjena faze izbora nije uspjela",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.stageProgression": {
     "t": "Faza izbora",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.stageReverted": {
-    "t": "Izbori vraćeni na {stage}",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -724,18 +704,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.tellerAccessClosed": {
-    "t": "Pristup brojačima glasova je zatvoren",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.tellerAccessCode": {
     "t": "Pristupni kôd",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.tellerAccessOpen": {
-    "t": "Pristup brojačima glasova je otvoren",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

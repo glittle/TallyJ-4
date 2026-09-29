@@ -4,38 +4,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "teller.form.computerCode": {
-    "t": "컴퓨터 코드",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodeHelp": {
-    "t": "대문자 2자 (AA-ZZ) 또는 비워두기",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodeInvalid": {
-    "t": "컴퓨터 코드는 대문자 2자 (AA-ZZ)여야 합니다",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodePlaceholder": {
-    "t": "예: AA",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "teller.form.create": {
     "t": "만들기",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.headTeller": {
-    "t": "수석 개표원",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.headTellerHelp": {
-    "t": "수석 개표원은 추가 권한을 가집니다",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

@@ -164,11 +164,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "voting.confirmation.noChange": {
-    "t": "Observe que você não pode alterar nem reenviar sua cédula.",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "voting.confirmation.recorded": {
     "t": "Sua cédula foi registrada com segurança.",
     "s": "ai",

@@ -4,21 +4,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "people.ageGroup.adult": {
-    "t": "Người Lớn",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "people.ageGroup.youth": {
-    "t": "Thanh Niên",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "people.ageGroupLabel": {
-    "t": "Nhóm Tuổi",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "people.allPeople": {
     "t": "Tất Cả Mọi Người",
     "s": "ai",
@@ -61,11 +46,6 @@
   },
   "people.canVote": {
     "t": "Có Thể Bỏ Phiếu",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "people.candidates": {
-    "t": "Ứng Viên Đủ Điều Kiện",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

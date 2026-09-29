@@ -89,31 +89,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.candidate": {
-    "t": "Mgombea",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidateName": {
-    "t": "Jina la Mgombea",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidatePerformance": {
-    "t": "Utendaji wa Mgombea",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidateVotes": {
-    "t": "Kura za Mgombea",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidates": {
-    "t": "Wagombea",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.category": {
     "t": "Kategoria",
     "s": "ai",
@@ -219,11 +194,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.electedCandidates": {
-    "t": "Wagombea Waliochaguliwa",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.electedPersons": {
     "t": "Kuchaguliwa",
     "s": "ai",
@@ -289,16 +259,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.enterCandidateName": {
-    "t": "Ingiza Jina la Mgombea",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.enterDescription": {
-    "t": "Ingiza Maelezo",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.enterReportName": {
     "t": "Ingiza Jina la Ripoti",
     "s": "ai",
@@ -331,11 +291,6 @@
   },
   "reporting.extra": {
     "t": "Ziada",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.extraCandidates": {
-    "t": "Wagombea wa Ziada",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -791,11 +746,6 @@
   },
   "reporting.to": {
     "t": "hadi",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.topCandidates": {
-    "t": "Wagombea Bora",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

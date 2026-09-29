@@ -4,38 +4,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "teller.form.computerCode": {
-    "t": "Tietokoneen koodi",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodeHelp": {
-    "t": "Kaksi isoa kirjainta (AA-ZZ) tai jätä tyhjäksi",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodeInvalid": {
-    "t": "Tietokoneen koodin on oltava 2 isoa kirjainta (AA-ZZ)",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.computerCodePlaceholder": {
-    "t": "esim. AA",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "teller.form.create": {
     "t": "Luo",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.headTeller": {
-    "t": "Pää-ääntenlaskija",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "teller.form.headTellerHelp": {
-    "t": "Pää-ääntenlaskijoilla on lisäoikeuksia",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

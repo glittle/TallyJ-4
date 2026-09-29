@@ -164,11 +164,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "voting.confirmation.noChange": {
-    "t": "투표 용지를 변경하거나 다시 제출할 수 없습니다.",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "voting.confirmation.recorded": {
     "t": "귀하의 투표 용지가 안전하게 기록되었습니다.",
     "s": "ai",

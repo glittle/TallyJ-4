@@ -24,16 +24,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "ballots.candidate": {
-    "t": "Ehdokas",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "ballots.candidateRequired": {
-    "t": "Ehdokas vaaditaan",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "ballots.cdnImport.ballotsCreated": {
     "t": "Äänestysliput luotu",
     "s": "ai",
@@ -121,11 +111,6 @@
   },
   "ballots.computer": {
     "t": "Tietokone",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "ballots.computerRequired": {
-    "t": "Tietokonekoodi vaaditaan",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -336,11 +321,6 @@
   },
   "ballots.voteSaveError": {
     "t": "Äänen tallentaminen epäonnistui",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "ballots.voteSpoiledSuccess": {
-    "t": "Ääni lisätty mitättömänä ({code} – henkilö ei ole kelpoinen)",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

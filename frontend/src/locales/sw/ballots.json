@@ -24,16 +24,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "ballots.candidate": {
-    "t": "Mgombea",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "ballots.candidateRequired": {
-    "t": "Mgombea ni muhimu",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "ballots.cdnImport.ballotsCreated": {
     "t": "Kura ziliyoundwa",
     "s": "ai",
@@ -121,11 +111,6 @@
   },
   "ballots.computer": {
     "t": "Kompyuta",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "ballots.computerRequired": {
-    "t": "Nambari ya kompyuta ni muhimu",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -336,11 +321,6 @@
   },
   "ballots.voteSaveError": {
     "t": "Imeshindwa kuhifadhi kura",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "ballots.voteSpoiledSuccess": {
-    "t": "Kura imeongezwa kama iliyooza ({code} – mtu si sahihi)",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

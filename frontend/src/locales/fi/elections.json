@@ -399,16 +399,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.form.onlineAnnounced": {
-    "t": "Online-tulokset julkistettu",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.form.onlineAnnouncedPlaceholder": {
-    "t": "Valitse julkistusaika",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.form.onlineCloseIsEstimate": {
     "t": "Sulkemisaika on arvio",
     "s": "ai",
@@ -629,18 +619,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.stageChangeError": {
-    "t": "Vaalien vaiheen muuttaminen epäonnistui",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.stageProgression": {
     "t": "Vaalien vaihe",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.stageReverted": {
-    "t": "Vaalit palautettu vaiheeseen {stage}",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -724,18 +704,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.tellerAccessClosed": {
-    "t": "Laskijan pääsy on suljettu",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.tellerAccessCode": {
     "t": "Pääsykoodi",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.tellerAccessOpen": {
-    "t": "Laskijan pääsy on avoin",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

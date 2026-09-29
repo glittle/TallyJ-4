@@ -89,31 +89,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.candidate": {
-    "t": "उम्मीदवार",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidateName": {
-    "t": "उम्मीदवार नाम",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidatePerformance": {
-    "t": "उम्मीदवार प्रदर्शन",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidateVotes": {
-    "t": "उम्मीदवार मत",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidates": {
-    "t": "उम्मीदवार",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.category": {
     "t": "श्रेणी",
     "s": "ai",
@@ -219,11 +194,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.electedCandidates": {
-    "t": "निर्वाचित उम्मीदवार",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.electedPersons": {
     "t": "निर्वाचित",
     "s": "ai",
@@ -289,16 +259,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.enterCandidateName": {
-    "t": "उम्मीदवार नाम दर्ज करें",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.enterDescription": {
-    "t": "विवरण दर्ज करें",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.enterReportName": {
     "t": "रिपोर्ट का नाम दर्ज करें",
     "s": "ai",
@@ -331,11 +291,6 @@
   },
   "reporting.extra": {
     "t": "अतिरिक्त",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.extraCandidates": {
-    "t": "अतिरिक्त उम्मीदवार",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -791,11 +746,6 @@
   },
   "reporting.to": {
     "t": "तक",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.topCandidates": {
-    "t": "शीर्ष उम्मीदवार",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

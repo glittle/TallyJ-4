@@ -399,16 +399,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.form.onlineAnnounced": {
-    "t": "온라인 결과 발표",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.form.onlineAnnouncedPlaceholder": {
-    "t": "발표 시간 선택",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.form.onlineCloseIsEstimate": {
     "t": "마감 시간은 예상치",
     "s": "ai",
@@ -629,18 +619,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.stageChangeError": {
-    "t": "선거 단계 변경 실패",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.stageProgression": {
     "t": "선거 단계",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.stageReverted": {
-    "t": "선거가 {stage}로 되돌려졌습니다",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -724,18 +704,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.tellerAccessClosed": {
-    "t": "개표원 접근이 닫혀 있습니다",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.tellerAccessCode": {
     "t": "접근 코드",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.tellerAccessOpen": {
-    "t": "개표원 접근이 열려 있습니다",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

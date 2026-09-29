@@ -164,11 +164,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "voting.confirmation.noChange": {
-    "t": "Xin lưu ý rằng bạn không thể thay đổi hoặc nộp lại phiếu bầu.",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "voting.confirmation.recorded": {
     "t": "Phiếu bầu của bạn đã được ghi lại an toàn.",
     "s": "ai",

@@ -4,21 +4,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "people.ageGroup.adult": {
-    "t": "Adulte",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "people.ageGroup.youth": {
-    "t": "Jeune",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "people.ageGroupLabel": {
-    "t": "Groupe d'âge",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "people.allPeople": {
     "t": "Toutes les personnes",
     "s": "ai",
@@ -61,11 +46,6 @@
   },
   "people.canVote": {
     "t": "Peut voter",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "people.candidates": {
-    "t": "Candidats éligibles",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

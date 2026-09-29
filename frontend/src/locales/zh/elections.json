@@ -399,16 +399,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.form.onlineAnnounced": {
-    "t": "在线结果公布",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.form.onlineAnnouncedPlaceholder": {
-    "t": "选择公布时间",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.form.onlineCloseIsEstimate": {
     "t": "结束时间为估计值",
     "s": "ai",
@@ -629,18 +619,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.stageChangeError": {
-    "t": "更改选举阶段失败",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.stageProgression": {
     "t": "选举阶段",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.stageReverted": {
-    "t": "选举已回退到 {stage}",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -724,18 +704,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.tellerAccessClosed": {
-    "t": "计票员访问已关闭",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.tellerAccessCode": {
     "t": "访问码",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.tellerAccessOpen": {
-    "t": "计票员访问已开启",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

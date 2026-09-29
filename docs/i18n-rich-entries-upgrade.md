@@ -102,7 +102,7 @@ Comparing `w` is intentional and simple. A content hash of English is an optiona
    - English (and root shared message leaves) must use `s: "source"`. Other locales must use `ai`, `human`, or `approved`.
    - Reject bare string leaves in source files.
    - Skip generated `bundled/` output; it is text-only on purpose.
-   - Key parity across locales still compares keys, not `t` text. A rich entry is one key, not three (`t`, `s`, `w`).
+   - English is the reference key set. Keys in English that another locale does not have yet are a non-failing awaiting-translation count (whole English-only files included). Keys present in a translation but absent from English fail as stale. Compare keys, not `t` text. A rich entry is one key, not three (`t`, `s`, `w`).
 7. **Tests**: any fixture locale JSON used by Vitest/Jest must either be converted or go through unwrap. Assert `$t('some.key')` still returns a string.
 8. **Docs**: short project note describing the schema, status codes, unwrap, and “AI must not overwrite human/approved”.
 9. **Do not** change call sites (`$t('…')`, `t('…')`) — only storage and load/bundle.

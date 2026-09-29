@@ -89,31 +89,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.candidate": {
-    "t": "نامزد",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidateName": {
-    "t": "نام نامزد",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidatePerformance": {
-    "t": "عملکرد نامزد",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidateVotes": {
-    "t": "آرای نامزد",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidates": {
-    "t": "نامزدها",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.category": {
     "t": "دسته",
     "s": "ai",
@@ -219,11 +194,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.electedCandidates": {
-    "t": "نامزدهای منتخب",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.electedPersons": {
     "t": "انتخاب‌شدگان",
     "s": "ai",
@@ -289,16 +259,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.enterCandidateName": {
-    "t": "نام نامزد را وارد کنید",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.enterDescription": {
-    "t": "توضیحات را وارد کنید",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.enterReportName": {
     "t": "نام گزارش را وارد کنید",
     "s": "ai",
@@ -331,11 +291,6 @@
   },
   "reporting.extra": {
     "t": "اضافی",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.extraCandidates": {
-    "t": "نامزدهای اضافی",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -791,11 +746,6 @@
   },
   "reporting.to": {
     "t": "به",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.topCandidates": {
-    "t": "نامزدهای برتر",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

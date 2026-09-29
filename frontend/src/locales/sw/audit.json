@@ -1,9 +1,4 @@
 {
-  "audit.dialog.computerCode": {
-    "t": "Msimbo wa Kompyuta",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "audit.dialog.dateTime": {
     "t": "Tarehe/Muda",
     "s": "ai",
@@ -16,21 +11,6 @@
   },
   "audit.dialog.electionGuid": {
     "t": "GUID ya Uchaguzi",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.dialog.hostAndVersion": {
-    "t": "Mwenyeji na Toleo",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.dialog.locationGuid": {
-    "t": "GUID ya Mahali",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.dialog.rowId": {
-    "t": "ID ya Safu",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -54,16 +34,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "audit.filters.computerCode": {
-    "t": "Msimbo wa Kompyuta",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.computerCodePlaceholder": {
-    "t": "Chuja kwa Msimbo wa Kompyuta",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "audit.filters.electionGuid": {
     "t": "GUID ya Uchaguzi",
     "s": "ai",
@@ -81,16 +51,6 @@
   },
   "audit.filters.endDatePlaceholder": {
     "t": "Tarehe ya Mwisho",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.locationGuid": {
-    "t": "GUID ya Mahali",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.locationGuidPlaceholder": {
-    "t": "Chuja kwa GUID ya Mahali",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -114,23 +74,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "audit.filters.voterId": {
-    "t": "ID ya Mpiga Kura",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.filters.voterIdPlaceholder": {
-    "t": "Chuja kwa ID ya Mpiga Kura",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "audit.table.actions": {
     "t": "Vitendo",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "audit.table.computer": {
-    "t": "Kompyuta",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

@@ -89,31 +89,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.candidate": {
-    "t": "Ehdokas",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidateName": {
-    "t": "Ehdokkaan nimi",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidatePerformance": {
-    "t": "Ehdokkaiden suoritus",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidateVotes": {
-    "t": "Ehdokkaiden äänet",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidates": {
-    "t": "Ehdokkaat",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.category": {
     "t": "Kategoria",
     "s": "ai",
@@ -219,11 +194,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.electedCandidates": {
-    "t": "Valitut ehdokkaat",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.electedPersons": {
     "t": "Valitut",
     "s": "ai",
@@ -289,16 +259,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.enterCandidateName": {
-    "t": "Syötä ehdokkaan nimi",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.enterDescription": {
-    "t": "Syötä kuvaus",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.enterReportName": {
     "t": "Syötä raportin nimi",
     "s": "ai",
@@ -331,11 +291,6 @@
   },
   "reporting.extra": {
     "t": "Lisä",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.extraCandidates": {
-    "t": "Lisäehdokkaat",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -791,11 +746,6 @@
   },
   "reporting.to": {
     "t": "asti",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.topCandidates": {
-    "t": "Parhaat ehdokkaat",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

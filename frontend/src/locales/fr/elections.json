@@ -399,16 +399,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.form.onlineAnnounced": {
-    "t": "Résultats en ligne annoncés",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.form.onlineAnnouncedPlaceholder": {
-    "t": "Sélectionnez l'heure d'annonce",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.form.onlineCloseIsEstimate": {
     "t": "L'heure de fermeture est une estimation",
     "s": "ai",
@@ -629,18 +619,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.stageChangeError": {
-    "t": "Impossible de modifier l'étape de l'élection",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.stageProgression": {
     "t": "Étape de l'élection",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.stageReverted": {
-    "t": "L'élection est revenue à {stage}",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -724,18 +704,8 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "elections.tellerAccessClosed": {
-    "t": "L'accès scrutateur est fermé",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "elections.tellerAccessCode": {
     "t": "Code d'accès",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "elections.tellerAccessOpen": {
-    "t": "L'accès scrutateur est ouvert",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },

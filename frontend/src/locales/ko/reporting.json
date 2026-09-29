@@ -89,31 +89,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.candidate": {
-    "t": "후보자",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidateName": {
-    "t": "후보자 이름",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidatePerformance": {
-    "t": "후보자 성과",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidateVotes": {
-    "t": "후보자 투표 수",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.candidates": {
-    "t": "후보자",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.category": {
     "t": "범주",
     "s": "ai",
@@ -219,11 +194,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.electedCandidates": {
-    "t": "당선자",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.electedPersons": {
     "t": "당선자",
     "s": "ai",
@@ -289,16 +259,6 @@
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
-  "reporting.enterCandidateName": {
-    "t": "후보자 이름 입력",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.enterDescription": {
-    "t": "설명 입력",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
   "reporting.enterReportName": {
     "t": "보고서 이름 입력",
     "s": "ai",
@@ -331,11 +291,6 @@
   },
   "reporting.extra": {
     "t": "추가",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.extraCandidates": {
-    "t": "여분 후보",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
@@ -791,11 +746,6 @@
   },
   "reporting.to": {
     "t": "까지",
-    "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
-  },
-  "reporting.topCandidates": {
-    "t": "상위 후보자",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
   },
