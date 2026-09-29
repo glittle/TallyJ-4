@@ -63,7 +63,7 @@
   },
   "overrides": {
     "glob": "^13.0.6",
-    "js-yaml": "4.2.0",
+    "js-yaml": "4.3.2",
     "minimatch": "^10.2.1",
     "vue-i18n": "^11.4.12",
     "vite-plugin-devtools-json": {
