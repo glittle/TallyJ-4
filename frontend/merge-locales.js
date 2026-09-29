@@ -40,15 +40,27 @@ function assertTextOnly(catalog, locale) {
   }
 }
 
-// Ensure output directory exists
+// Language folders only (en, fr, zh, en-US). Generated bundled/ output and
+// non-locale folders such as __tests__ are not catalogs. A previous build
+// may have written bundled/__tests__.json; drop every existing bundle first
+// so a skipped folder cannot linger as a locale chunk.
+const LOCALE_DIRECTORY = /^[a-z]{2}(?:-[A-Z]{2})?$/;
+
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
+} else {
+  for (const file of fs.readdirSync(outputDir)) {
+    if (file.endsWith(".json")) {
+      fs.unlinkSync(path.join(outputDir, file));
+    }
+  }
 }
 
-// Get all locale directories (exclude bundled directory)
 const localeDirs = fs
   .readdirSync(localesDir, { withFileTypes: true })
-  .filter((dirent) => dirent.isDirectory() && dirent.name !== "bundled")
+  .filter(
+    (dirent) => dirent.isDirectory() && LOCALE_DIRECTORY.test(dirent.name),
+  )
   .map((dirent) => dirent.name);
 
 // Process each locale directory

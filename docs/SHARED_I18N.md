@@ -189,7 +189,7 @@ For a new .NET  + Vue repo:
 | Path | Why |
 |------|-----|
 | `frontend/src/locales/index.ts` | vue-i18n setup, `flatToNested`, lazy locales |
-| `frontend/src/locales/validate-translations.js` | validator |
+| `frontend/src/locales/validateLocaleCatalog.js` | locale checks (`en` is the reference); the CLI is `validate-translations.js` |
 | `frontend/merge-locales.js` | prod bundle |
 | `frontend/src/api/config.ts` | `Accept-Language` |
 | `backend/Localization/*.cs` | custom JSON localizer |
