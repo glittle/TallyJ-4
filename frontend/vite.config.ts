@@ -232,7 +232,7 @@ export default defineConfig(() => {
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
-        vue: path.resolve(__dirname, "node_modules/vue"),
+        vue: path.resolve(__dirnameForConfig, "node_modules/vue"),
       },
     },
     server: {
