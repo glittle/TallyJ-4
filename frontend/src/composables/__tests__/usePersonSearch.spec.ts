@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ref } from "vue";
+import { ref, type Ref } from "vue";
 import { usePersonSearch } from "../usePersonSearch";
 import type { SearchablePersonDto } from "@/types/Person";
 
@@ -474,7 +474,43 @@ describe("usePersonSearch", () => {
   });
 
   describe("performance", () => {
-    it("should search 1000 people in less than 50ms", () => {
+    // A single performance.now() sample is not a stable signal when Vitest
+    // runs files in parallel on a loaded machine. The 1000-person case used
+    // to require "less than 50ms" (later loosened to 150ms) and still failed
+    // when one GC or scheduler stall landed inside that sample. Take the
+    // median of several cold searches so one outlier does not fail the suite,
+    // and compare it to a generous budget. 1000ms is still tight enough that
+    // an accidental quadratic scan or a search that does real I/O misses it.
+    // The match set is asserted on its own, so a fast empty result cannot pass.
+    const performanceRuns = 5;
+    const searchBudgetMs = 1000;
+
+    function medianDurationMs(samples: number[]): number {
+      const sorted = [...samples].sort((a, b) => a - b);
+      return sorted[Math.floor(sorted.length / 2)];
+    }
+
+    function medianSearchMs(
+      searchQuery: Ref<string>,
+      searchablePeople: Ref<SearchablePersonDto[]>,
+    ): { medianMs: number; results: SearchablePersonDto[] } {
+      const durations: number[] = [];
+      let results: SearchablePersonDto[] = [];
+
+      for (let run = 0; run < performanceRuns; run++) {
+        const startedAt = performance.now();
+        const { searchResults } = usePersonSearch(
+          searchQuery,
+          searchablePeople,
+        );
+        results = searchResults.value;
+        durations.push(performance.now() - startedAt);
+      }
+
+      return { medianMs: medianDurationMs(durations), results };
+    }
+
+    it("finds every LastName50 among 1000 people within a CI-safe budget", () => {
       const largeSearchablePeople = ref(
         Array.from({ length: 1000 }, (_, i) =>
           createMockPerson(`FirstName${i}`, `LastName${i % 100}`, [
@@ -485,20 +521,27 @@ describe("usePersonSearch", () => {
       );
       const searchQuery = ref("LastName50");
 
-      const startTime = performance.now();
-      const { searchResults } = usePersonSearch(
+      const { medianMs, results } = medianSearchMs(
         searchQuery,
         largeSearchablePeople,
       );
-      const results = searchResults.value;
-      const endTime = performance.now();
-      const duration = endTime - startTime;
 
-      expect(results.length).toBeGreaterThan(0);
-      expect(duration).toBeLessThan(150);
+      // Substring hits are exactly the 10 LastName50 rows. Near spellings can
+      // also fuzzy-match, so the list may be longer than 10, but those 10
+      // outrank the fuzzy neighbors and stay inside maxResults (20).
+      expect(
+        results.filter((person) => person.lastName === "LastName50"),
+      ).toHaveLength(10);
+      expect(
+        results
+          .slice(0, 10)
+          .every((person) => person.lastName === "LastName50"),
+      ).toBe(true);
+      expect(results.length).toBeLessThanOrEqual(20);
+      expect(medianMs).toBeLessThan(searchBudgetMs);
     });
 
-    it("should handle complex searches efficiently", () => {
+    it("returns the alias matches from 500 people within a CI-safe budget", () => {
       const largeSearchablePeople = ref(
         Array.from({ length: 500 }, (_, i) =>
           createMockPerson(
@@ -511,38 +554,55 @@ describe("usePersonSearch", () => {
       );
       const searchQuery = ref("AliasName");
 
-      const startTime = performance.now();
-      const { searchResults } = usePersonSearch(
+      const { medianMs, results } = medianSearchMs(
         searchQuery,
         largeSearchablePeople,
       );
-      const results = searchResults.value;
-      const endTime = performance.now();
-      const duration = endTime - startTime;
 
-      expect(results.length).toBeGreaterThan(0);
-      expect(duration).toBeLessThan(150);
+      // 100 alias rows, capped by the default maxResults of 20.
+      expect(results).toHaveLength(20);
+      expect(
+        results.every((person) => person.otherNames?.startsWith("AliasName")),
+      ).toBe(true);
+      expect(medianMs).toBeLessThan(searchBudgetMs);
     });
   });
 
   describe("caching", () => {
     it("should cache search results", () => {
       const searchQuery = ref("John");
-      const searchablePeople = ref(mockSearchablePeople);
+      const searchablePeople = ref(
+        mockSearchablePeople.map((person) => ({ ...person })),
+      );
       const { performSearch } = usePersonSearch(searchQuery, searchablePeople, {
         enableCache: true,
       });
 
-      const startTime1 = performance.now();
       const results1 = performSearch("John", searchablePeople.value);
-      const duration1 = performance.now() - startTime1;
+      expect(results1.some((person) => person.firstName === "John")).toBe(true);
 
-      const startTime2 = performance.now();
+      // Rename a hit without changing the cache key (list length, endpoint
+      // guids, or voteCount sum). Comparing the two calls with performance.now()
+      // is meaningless here: both finish near the timer resolution, so the
+      // cached call is often slower on a loaded machine. A rescan would drop
+      // this person; a cache hit returns the original result set.
+      const john = searchablePeople.value.find(
+        (person) => person.firstName === "John",
+      );
+      expect(john).toBeDefined();
+      john!.firstName = "Xavier";
+      john!.lastName = "Changed";
+      john!.fullName = "Xavier Changed";
+      john!._searchText = "xavier changed";
+
       const results2 = performSearch("John", searchablePeople.value);
-      const duration2 = performance.now() - startTime2;
 
-      expect(results1).toEqual(results2);
-      expect(duration2).toBeLessThan(duration1);
+      expect(results2.map((person) => person.personGuid)).toEqual(
+        results1.map((person) => person.personGuid),
+      );
+      expect(
+        results2.some((person) => person.personGuid === john!.personGuid),
+      ).toBe(true);
     });
 
     it("should clear cache when searchable people change", () => {
