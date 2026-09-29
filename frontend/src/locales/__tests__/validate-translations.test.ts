@@ -100,7 +100,7 @@ describe("validateLocaleCatalog", () => {
     });
   });
 
-  it("returns STALE_KEY for a key in a translation file that also exists in en", () => {
+  it("returns STALE_KEY for an extra key when the translation file also exists in en", () => {
     withTempDir((dir) => {
       writeLocale(dir, "en", "common.json", {
         "common.keep": leaf("Keep", "source"),
@@ -117,6 +117,28 @@ describe("validateLocaleCatalog", () => {
         key: "common.old",
       });
       expect(report.warnings).toEqual([]);
+    });
+  });
+
+  it("ignores JSON under __tests__ instead of treating that folder as a locale", () => {
+    withTempDir((dir) => {
+      writeLocale(dir, "en", "common.json", {
+        "common.keep": leaf("Keep", "source"),
+      });
+      const testsDir = join(dir, "__tests__");
+      mkdirSync(testsDir);
+      writeFileSync(join(testsDir, "broken.json"), "{");
+      writeFileSync(
+        join(testsDir, "fixture.json"),
+        JSON.stringify({ "fixture.onlyInTests": leaf("Nope", "ai") }, null, 2),
+      );
+
+      const report = validateLocaleCatalog(dir);
+      expect(report.errors).toEqual([]);
+      expect([...report.localeFiles.keys()]).toEqual(["en"]);
+      expect(report.files.some((file) => file.includes("__tests__"))).toBe(
+        false,
+      );
     });
   });
 

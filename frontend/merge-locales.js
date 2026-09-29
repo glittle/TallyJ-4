@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { isRichEntry, unwrapMessages } from "./src/locales/richEntries.js";
+import { isLocaleDirectoryName } from "./src/locales/validateLocaleCatalog.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const localesDir = path.join(__dirname, "src", "locales");
@@ -40,11 +41,10 @@ function assertTextOnly(catalog, locale) {
   }
 }
 
-// Language folders only (en, fr, zh, en-US). Generated bundled/ output and
-// non-locale folders such as __tests__ are not catalogs. A previous build
-// may have written bundled/__tests__.json; drop every existing bundle first
-// so a skipped folder cannot linger as a locale chunk.
-const LOCALE_DIRECTORY = /^[a-z]{2}(?:-[A-Z]{2})?$/;
+// Language folders only, via isLocaleDirectoryName (en, fr, zh, en-US).
+// Generated bundled/ output and non-locale folders such as __tests__ are not
+// catalogs. A previous build may have written bundled/__tests__.json; drop
+// every existing bundle first so a skipped folder cannot linger as a chunk.
 
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
@@ -59,7 +59,7 @@ if (!fs.existsSync(outputDir)) {
 const localeDirs = fs
   .readdirSync(localesDir, { withFileTypes: true })
   .filter(
-    (dirent) => dirent.isDirectory() && LOCALE_DIRECTORY.test(dirent.name),
+    (dirent) => dirent.isDirectory() && isLocaleDirectoryName(dirent.name),
   )
   .map((dirent) => dirent.name);
 

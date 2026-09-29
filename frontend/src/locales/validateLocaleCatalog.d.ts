@@ -1,3 +1,6 @@
+/** Top-level catalog folders (`en`, `fr`, `en-US`). Not `__tests__` or `bundled`. */
+export function isLocaleDirectoryName(name: string): boolean;
+
 export class ValidationError {
   type: string;
   message: string;

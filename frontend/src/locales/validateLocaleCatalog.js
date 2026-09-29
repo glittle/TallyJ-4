@@ -6,6 +6,14 @@ const SOURCE_STATUS = "source";
 const TRANSLATION_STATUSES = new Set(["ai", "human", "approved"]);
 const ISO_UTC_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z$/;
 
+/**
+ * Top-level catalog folders. `merge-locales.js` uses the same rule, so a
+ * folder such as `__tests__` is neither validated as a locale nor bundled.
+ */
+export function isLocaleDirectoryName(name) {
+  return /^[a-z]{2}(?:-[A-Z]{2})?$/.test(name);
+}
+
 export class ValidationError {
   constructor(type, message, details = {}) {
     this.type = type;
@@ -14,7 +22,7 @@ export class ValidationError {
   }
 }
 
-function getAllJsonFiles(dir, baseDir = dir) {
+function getAllJsonFiles(dir, baseDir = dir, topLevel = true) {
   const files = [];
   const entries = readdirSync(dir);
 
@@ -23,10 +31,10 @@ function getAllJsonFiles(dir, baseDir = dir) {
     const stat = statSync(fullPath);
 
     if (stat.isDirectory()) {
-      if (entry === "bundled" || entry === "node_modules") {
+      if (topLevel && !isLocaleDirectoryName(entry)) {
         continue;
       }
-      files.push(...getAllJsonFiles(fullPath, baseDir));
+      files.push(...getAllJsonFiles(fullPath, baseDir, false));
     } else if (entry.endsWith(".json") && entry !== "package.json") {
       const relativePath = fullPath
         .substring(baseDir.length + 1)
