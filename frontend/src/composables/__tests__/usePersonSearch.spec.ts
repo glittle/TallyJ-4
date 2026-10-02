@@ -3,6 +3,26 @@ import { ref, type Ref } from "vue";
 import { usePersonSearch } from "../usePersonSearch";
 import type { SearchablePersonDto } from "@/types/Person";
 
+const { strategyCalls } = vi.hoisted(() => ({
+  strategyCalls: { count: 0 },
+}));
+
+// Count work in usePersonSearch. The wrapper calls the real strategies, so
+// match behavior stays the same; only the number of person scans is observed.
+vi.mock("@/utils/searchStrategies", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/utils/searchStrategies")>();
+  return {
+    ...actual,
+    applyAllStrategies: (
+      ...args: Parameters<typeof actual.applyAllStrategies>
+    ) => {
+      strategyCalls.count += 1;
+      return actual.applyAllStrategies(...args);
+    },
+  };
+});
+
 function createMockPerson(
   firstName: string,
   lastName: string,
@@ -30,6 +50,7 @@ describe("usePersonSearch", () => {
   let mockSearchablePeople: SearchablePersonDto[];
 
   beforeEach(() => {
+    strategyCalls.count = 0;
     mockSearchablePeople = [
       createMockPerson("John", "Doe", ["J500", "D000"]),
       createMockPerson("Jane", "Smith", ["J500", "S530"]),
@@ -474,30 +495,37 @@ describe("usePersonSearch", () => {
   });
 
   describe("performance", () => {
-    // A single performance.now() sample is not a stable signal when Vitest
-    // runs files in parallel on a loaded machine. The 1000-person case used
-    // to require "less than 50ms" (later loosened to 150ms) and still failed
-    // when one GC or scheduler stall landed inside that sample. Take the
-    // median of several cold searches so one outlier does not fail the suite,
-    // and compare it to a generous budget. 1000ms is still tight enough that
-    // an accidental quadratic scan or a search that does real I/O misses it.
-    // The match set is asserted on its own, so a fast empty result cannot pass.
+    // Call count is the real guard: each cold search must invoke
+    // applyAllStrategies once per person. That fails if the scan skips
+    // people, walks them twice, or otherwise does work that is not one
+    // strategy pass over the list. It says nothing about speed.
+    // The median of five cold runs is only a loose wall-clock bound.
+    // Quiet-machine medians are about 28–58ms for 1000 people and 11–17ms
+    // for 500 alias rows. 250ms and 100ms fail when the median is several
+    // times slower than that (roughly a 4–9× slowdown), not a small regression.
     const performanceRuns = 5;
-    const searchBudgetMs = 1000;
+    const thousandPersonBudgetMs = 250;
+    const aliasBudgetMs = 100;
 
     function medianDurationMs(samples: number[]): number {
       const sorted = [...samples].sort((a, b) => a - b);
       return sorted[Math.floor(sorted.length / 2)];
     }
 
-    function medianSearchMs(
+    function measureColdSearches(
       searchQuery: Ref<string>,
       searchablePeople: Ref<SearchablePersonDto[]>,
-    ): { medianMs: number; results: SearchablePersonDto[] } {
+    ): {
+      medianMs: number;
+      results: SearchablePersonDto[];
+      callsPerRun: number[];
+    } {
       const durations: number[] = [];
+      const callsPerRun: number[] = [];
       let results: SearchablePersonDto[] = [];
 
       for (let run = 0; run < performanceRuns; run++) {
+        strategyCalls.count = 0;
         const startedAt = performance.now();
         const { searchResults } = usePersonSearch(
           searchQuery,
@@ -505,12 +533,17 @@ describe("usePersonSearch", () => {
         );
         results = searchResults.value;
         durations.push(performance.now() - startedAt);
+        callsPerRun.push(strategyCalls.count);
       }
 
-      return { medianMs: medianDurationMs(durations), results };
+      return {
+        medianMs: medianDurationMs(durations),
+        results,
+        callsPerRun,
+      };
     }
 
-    it("finds every LastName50 among 1000 people within a CI-safe budget", () => {
+    it("scans each of 1000 people once and ranks every LastName50 match first", () => {
       const largeSearchablePeople = ref(
         Array.from({ length: 1000 }, (_, i) =>
           createMockPerson(`FirstName${i}`, `LastName${i % 100}`, [
@@ -521,11 +554,14 @@ describe("usePersonSearch", () => {
       );
       const searchQuery = ref("LastName50");
 
-      const { medianMs, results } = medianSearchMs(
+      const { medianMs, results, callsPerRun } = measureColdSearches(
         searchQuery,
         largeSearchablePeople,
       );
 
+      expect(callsPerRun).toEqual(
+        Array.from({ length: performanceRuns }, () => 1000),
+      );
       // Substring hits are exactly the 10 LastName50 rows. Near spellings can
       // also fuzzy-match, so the list may be longer than 10, but those 10
       // outrank the fuzzy neighbors and stay inside maxResults (20).
@@ -538,10 +574,10 @@ describe("usePersonSearch", () => {
           .every((person) => person.lastName === "LastName50"),
       ).toBe(true);
       expect(results.length).toBeLessThanOrEqual(20);
-      expect(medianMs).toBeLessThan(searchBudgetMs);
+      expect(medianMs).toBeLessThan(thousandPersonBudgetMs);
     });
 
-    it("returns the alias matches from 500 people within a CI-safe budget", () => {
+    it("scans 500 people once and returns the first 20 of 100 alias rows", () => {
       const largeSearchablePeople = ref(
         Array.from({ length: 500 }, (_, i) =>
           createMockPerson(
@@ -554,22 +590,25 @@ describe("usePersonSearch", () => {
       );
       const searchQuery = ref("AliasName");
 
-      const { medianMs, results } = medianSearchMs(
+      const { medianMs, results, callsPerRun } = measureColdSearches(
         searchQuery,
         largeSearchablePeople,
       );
 
+      expect(callsPerRun).toEqual(
+        Array.from({ length: performanceRuns }, () => 500),
+      );
       // 100 alias rows, capped by the default maxResults of 20.
       expect(results).toHaveLength(20);
       expect(
         results.every((person) => person.otherNames?.startsWith("AliasName")),
       ).toBe(true);
-      expect(medianMs).toBeLessThan(searchBudgetMs);
+      expect(medianMs).toBeLessThan(aliasBudgetMs);
     });
   });
 
   describe("caching", () => {
-    it("should cache search results", () => {
+    it("returns the cached array without scanning again", () => {
       const searchQuery = ref("John");
       const searchablePeople = ref(
         mockSearchablePeople.map((person) => ({ ...person })),
@@ -578,31 +617,19 @@ describe("usePersonSearch", () => {
         enableCache: true,
       });
 
+      strategyCalls.count = 0;
       const results1 = performSearch("John", searchablePeople.value);
-      expect(results1.some((person) => person.firstName === "John")).toBe(true);
+      expect(strategyCalls.count).toBe(searchablePeople.value.length);
 
-      // Rename a hit without changing the cache key (list length, endpoint
-      // guids, or voteCount sum). Comparing the two calls with performance.now()
-      // is meaningless here: both finish near the timer resolution, so the
-      // cached call is often slower on a loaded machine. A rescan would drop
-      // this person; a cache hit returns the original result set.
-      const john = searchablePeople.value.find(
-        (person) => person.firstName === "John",
-      );
-      expect(john).toBeDefined();
-      john!.firstName = "Xavier";
-      john!.lastName = "Changed";
-      john!.fullName = "Xavier Changed";
-      john!._searchText = "xavier changed";
-
+      strategyCalls.count = 0;
       const results2 = performSearch("John", searchablePeople.value);
 
-      expect(results2.map((person) => person.personGuid)).toEqual(
-        results1.map((person) => person.personGuid),
-      );
-      expect(
-        results2.some((person) => person.personGuid === john!.personGuid),
-      ).toBe(true);
+      // A cache hit returns the stored array. Matching ids would also pass
+      // after a rescan: renaming a row leaves _soundexCodes, so a sound-alike
+      // search still finds that person. The same array instance and zero
+      // strategy calls are what show the second call did not search.
+      expect(results2).toBe(results1);
+      expect(strategyCalls.count).toBe(0);
     });
 
     it("should clear cache when searchable people change", () => {
