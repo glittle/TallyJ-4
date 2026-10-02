@@ -233,11 +233,18 @@ After a deploy, refresh each network's cache before judging the card:
 
 ## Validation workflow
 
-For frontend changes, the expected validation commands are:
+Pull requests into `main` that change `frontend/**`, `version.json` (imported by the SPA and its tests), or `.github/workflows/frontend-pr.yml` run the **Frontend (i18n, tests, build)** check. The workflow is `.github/workflows/frontend-pr.yml`. It uses Node.js **22.x**, the same range as `NodeTool` `versionSpec: "22.x"` in `.azure/pipelines/azure-front-end-pipeline.yml`. There is no `.nvmrc`, and `package.json` has no `engines` field.
+
+From `frontend/`, that check runs:
 
 ```bash
-npm run check
+npm ci
+npm run validate:i18n
+npm run tsc
 npm run test:run
+npm run build
 ```
 
-Use `npm run build` only when you explicitly need a production build artifact or production-build verification.
+`npm run tsc` is `vue-tsc --noEmit` against the root `tsconfig.json`. Reproduce the check locally with those commands on Node.js 22. No backend, secrets, or extra environment variables are required.
+
+ESLint (`npm run lint`) and `vue-tsc -p tsconfig.app.json` are not part of the check yet. `npm run check` still runs `npm run tsc` and `npm run lint` for local use.
