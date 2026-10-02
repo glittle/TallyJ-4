@@ -211,6 +211,26 @@ The standard data flow is:
 - The authoritative current policy (including rationale) lives in `AGENTS.md` under the "Locales" section. The rules there take precedence.
 - Architecture of the shared Vue + ASP.NET Core JSON catalog is explained in [`docs/SHARED_I18N.md`](../docs/SHARED_I18N.md).
 
+## Social link previews
+
+LinkedIn, Facebook, Slack, X, and similar sites read Open Graph tags from the HTML response. They do not run the Vue app. The tags are in `index.html`.
+
+The backend serves that same file for `/` (default document) and for deep SPA routes (`MapFallbackToFile` in `backend/Program.AppPipeline.cs`). A shared link to `/`, `/login`, or an election path therefore carries the same preview head. `/og-image.png` is a file in `public/`, copied into the build without a content hash. Static files are served before authentication, and `.png` uses the `image/png` content type. The fallback route skips `og-image.png` so a missing image is not returned as HTML.
+
+`og:url` and `og:image` are absolute `https://v4.tallyj.com` URLs. That is the production v4 origin (UAT is `https://uat.v4.tallyj.com`). One Vite build is copied to both hosts, and the tags cannot be filled in by JavaScript, so the source HTML pins production. The Azure frontend pipeline, which deploys only to UAT, rewrites that origin in `dist/index.html` before it zips the site. Leave the production origin in place for a production copy of `frontend/dist`. To point some other host at itself:
+
+```bash
+node scripts/set-og-origin.mjs https://uat.v4.tallyj.com dist/index.html
+```
+
+The card image is `public/og-image.svg` rendered by `npm run og-image` (`@resvg/resvg-js`) to `public/og-image.png` (1200×627). The star is the PNG embedded in `public/assets/favicon.svg`. The picture can be replaced later with the v3 card if that artwork is preferred; keep the same path and pixel size.
+
+After a deploy, refresh each network's cache before judging the card:
+
+- [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/) — paste the page URL and inspect again. LinkedIn keeps a previous card until this runs.
+- [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/) — scrape again after tag or image changes. The debugger shows the image response, which should be `image/png` and 1200×627.
+- X reads `twitter:card=summary_large_image` from the HTML. X caches cards after the first fetch; post a new URL (or add a harmless query string) to see an update. The public card validator has moved over time, so the meta tags in the response are the check that does not depend on an X account tool.
+
 ## Validation workflow
 
 For frontend changes, the expected validation commands are:

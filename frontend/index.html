@@ -37,30 +37,46 @@
     />
     <meta name="theme-color" content="#409eff" />
 
-    <!-- Open Graph / Facebook -->
+    <!--
+      Open Graph / Facebook.
+      Absolute URLs use the production v4 origin. Crawlers do not run JS.
+      The UAT frontend pipeline rewrites https://v4.tallyj.com in dist/index.html.
+    -->
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="TallyJ" />
     <meta
       property="og:title"
       content="TallyJ v4 - Election Management System"
     />
     <meta
       property="og:description"
-      content="Modern election management and ballot tallying system for Bahá’í communities with real-time collaboration and secure voting."
+      content="TallyJ is a secure and easy-to-use election management system built primarily for Bahá'í communities. It provides a complete platform to manage elections, people, ballots, and real-time tallying."
     />
-    <meta property="og:image" content="/og-image.png" />
-    <meta property="og:url" content="https://tallyj.app" />
+    <meta property="og:url" content="https://v4.tallyj.com/" />
+    <meta property="og:image" content="https://v4.tallyj.com/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="627" />
+    <meta
+      property="og:image:alt"
+      content="TallyJ logo and the words Bahá’í Election System"
+    />
 
-    <!-- Twitter Card -->
+    <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:creator" content="@glenlittle" />
     <meta
       name="twitter:title"
       content="TallyJ v4 - Election Management System"
     />
     <meta
       name="twitter:description"
-      content="Modern election management and ballot tallying system for Bahá’í communities with real-time collaboration and secure voting."
+      content="TallyJ is a secure and easy-to-use election management system built primarily for Bahá'í communities. It provides a complete platform to manage elections, people, ballots, and real-time tallying."
     />
-    <meta name="twitter:image" content="/og-image.png" />
+    <meta name="twitter:image" content="https://v4.tallyj.com/og-image.png" />
+    <meta
+      name="twitter:image:alt"
+      content="TallyJ logo and the words Bahá’í Election System"
+    />
 
     <!-- Application meta -->
     <meta name="application-name" content="TallyJ" />

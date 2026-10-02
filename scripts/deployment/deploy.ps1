@@ -52,6 +52,12 @@ Write-Host "Step 2: Building Frontend..." -ForegroundColor Cyan
 Set-Location (Join-Path $ProjectRoot "frontend")
 npm ci
 npm run $FrontendBuildScript
+if ($Environment -eq "uat") {
+    # index.html pins Open Graph URLs at the production origin. UAT crawlers
+    # must fetch the card from the UAT host. Production builds stay as built.
+    node scripts/set-og-origin.mjs https://uat.v4.tallyj.com dist/index.html
+    Write-Host "✓ Open Graph origin set to https://uat.v4.tallyj.com" -ForegroundColor Green
+}
 Write-Host "✓ Frontend build complete ($FrontendBuildScript)" -ForegroundColor Green
 
 # Step 3: Copy frontend dist into backend publish output

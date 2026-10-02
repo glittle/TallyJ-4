@@ -2,7 +2,7 @@
 
 Lean index of project *why* knowledge. Load a topic file only when the work touches that area.
 
-- [architecture.md](architecture.md) — single backend host after domain consolidation; where code lives
+- [architecture.md](architecture.md) — single backend host after domain consolidation; where code lives; social preview URLs are static HTML pinned to production
 - [auth.md](auth.md) — JWT identity claims (`sub` / `NameIdentifier`); teller vs online-voter cookie transport; IdP-first teller signup; SuperAdmin one-time invite for local email/password
 - [realtime.md](realtime.md) — SignalR hub group naming (not a single `election-{guid}` pattern)
 - [api-contracts.md](api-contracts.md) — dual API response wrappers and OpenAPI client regeneration
