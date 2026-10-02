@@ -23,7 +23,6 @@ import type {
   OnlineVotingOnlineVoterAuthResponse,
   OnlineVotingRequestCodeDto,
   OnlineVotingSubmitOnlineBallotDto,
-  OnlineVotingTelegramAuthForVoterDto,
   OnlineVotingVerifyCodeDto,
 } from "@/api/gen/configService/types.gen";
 import type { TelegramLoginRequest } from "../types";
@@ -82,8 +81,12 @@ export const onlineVotingService = {
     data: TelegramLoginRequest,
   ): Promise<OnlineVotingOnlineVoterAuthResponse> {
     const response = await postApiOnlineVotingTelegramAuth({
-      // int64 is typed as bigint; sending BigInt would JSON-stringify as a string.
-      body: data as unknown as OnlineVotingTelegramAuthForVoterDto,
+      // hey-api types int64 as bigint; a real BigInt would JSON-stringify as a string.
+      body: {
+        ...data,
+        id: data.id as unknown as bigint,
+        authDate: data.authDate as unknown as bigint,
+      },
     });
     return requireData(response.data, "telegramAuth");
   },

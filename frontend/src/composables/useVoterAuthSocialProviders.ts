@@ -1,5 +1,6 @@
 import { getAppConfig } from "@/config/appConfig";
 import type { useOnlineVotingStore } from "@/stores/onlineVotingStore";
+import type { TelegramWidgetUser } from "@/types/Auth";
 import { ref } from "vue";
 import type { Router, RouteLocationNormalizedLoaded } from "vue-router";
 
@@ -237,15 +238,7 @@ export function useVoterAuthSocialProviders(
     }
   };
 
-  const handleTelegramLogin = async (user: {
-    id: number;
-    first_name?: string;
-    last_name?: string;
-    username?: string;
-    photo_url?: string;
-    auth_date: number;
-    hash: string;
-  }) => {
+  const handleTelegramLogin = async (user: TelegramWidgetUser) => {
     try {
       options.setLoading(true);
       await options.onlineVotingStore.telegramAuth({

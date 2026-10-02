@@ -24,7 +24,6 @@ import type {
   AccountUserProfileDto,
   AuthGoogleOneTapRequest as GoogleOneTapRequest,
   AuthLoginRequest as LoginRequest,
-  AuthTelegramLoginRequest,
 } from "@/api/gen/configService/types.gen";
 import type { TelegramLoginRequest } from "../types";
 
@@ -200,8 +199,12 @@ export const authService = {
 
   async telegramLogin(data: TelegramLoginRequest): Promise<AuthResponse> {
     const response = await postApiAuthTelegram({
-      // int64 is typed as bigint; sending BigInt would JSON-stringify as a string.
-      body: data as unknown as AuthTelegramLoginRequest,
+      // hey-api types int64 as bigint; a real BigInt would JSON-stringify as a string.
+      body: {
+        ...data,
+        id: data.id as unknown as bigint,
+        authDate: data.authDate as unknown as bigint,
+      },
       throwOnError: true,
     });
     return response.data as AuthResponse;

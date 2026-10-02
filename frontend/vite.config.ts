@@ -333,10 +333,9 @@ export default defineConfig((): UserConfig => {
       cssCodeSplit: true, // Split CSS into separate chunks
       reportCompressedSize: true, // Report compressed sizes
     },
-    esbuild: {
-      // @ts-expect-error Vite's ESBuildOptions omits esbuild's drop, which is still forwarded at build time
-      drop: ["console", "debugger"],
-    },
+    // TODO: Production builds do not strip console.* or debugger. Vite 8's
+    // convertEsbuildConfigToOxcConfig drops esbuild.drop, and the default oxc
+    // minifier leaves those calls in dist/. See frontend/README.md.
     publicDir: "public",
     define: {
       "process.env.BRANCH_NAME": JSON.stringify(branchName),

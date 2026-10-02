@@ -1,7 +1,10 @@
-/** Payload from the Telegram login widget. JSON numbers, not bigint. */
+/**
+ * Payload from the Telegram login widget. JSON numbers, not bigint.
+ * `first_name` is always present on the widget callback and is required by the API.
+ */
 export interface TelegramWidgetUser {
   id: number;
-  first_name?: string;
+  first_name: string;
   last_name?: string;
   username?: string;
   photo_url?: string;
@@ -16,7 +19,7 @@ export interface TelegramWidgetUser {
  */
 export interface TelegramLoginRequest {
   id: number;
-  firstName?: string;
+  firstName: string;
   lastName?: string;
   username?: string;
   photoUrl?: string;

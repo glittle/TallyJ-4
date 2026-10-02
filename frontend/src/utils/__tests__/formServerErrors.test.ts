@@ -1,6 +1,25 @@
 import type { FormInstance } from "element-plus";
 import { describe, expect, it } from "vitest";
-import { applyServerFieldErrors } from "../formServerErrors";
+import {
+  applyServerFieldErrors,
+  mapServerValidationErrors,
+} from "../formServerErrors";
+
+describe("mapServerValidationErrors", () => {
+  it("lowercases the first letter of ASP.NET property names", () => {
+    expect(
+      mapServerValidationErrors({
+        Name: ["Name is required"],
+        NumberToElect: ["Must be positive"],
+        SmsText: ["Too long"],
+      }),
+    ).toEqual({
+      name: ["Name is required"],
+      numberToElect: ["Must be positive"],
+      smsText: ["Too long"],
+    });
+  });
+});
 
 describe("applyServerFieldErrors", () => {
   it("sets the first server message on the matching field", () => {

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { TelegramWidgetUser } from "../types/Auth";
 import type { GoogleCredentialResponse } from "../types/google-one-tap";
 
 declare global {
@@ -206,7 +207,7 @@ const { googleReady, initGoogleOneTap, teardownGoogleOneTap } = useGoogleOneTap(
   },
 );
 
-const handleTelegramSuccess = async (user: any) => {
+const handleTelegramSuccess = async (user: TelegramWidgetUser) => {
   loading.value = true;
   try {
     await authStore.telegramLogin({

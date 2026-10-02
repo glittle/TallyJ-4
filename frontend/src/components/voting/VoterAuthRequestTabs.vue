@@ -14,6 +14,7 @@ import {
   ElTabs,
 } from "element-plus";
 import { ref } from "vue";
+import type { TelegramWidgetUser } from "@/types/Auth";
 
 const activeTab = defineModel<string>("activeTab", { required: true });
 const emailForm = defineModel<{ email: string }>("emailForm", {
@@ -47,17 +48,7 @@ const emit = defineEmits<{
   "request-code": [];
   facebook: [];
   kakao: [];
-  telegram: [
-    user: {
-      id: number;
-      first_name?: string;
-      last_name?: string;
-      username?: string;
-      photo_url?: string;
-      auth_date: number;
-      hash: string;
-    },
-  ];
+  telegram: [user: TelegramWidgetUser];
 }>();
 
 const googleButtonEl = ref<HTMLElement>();

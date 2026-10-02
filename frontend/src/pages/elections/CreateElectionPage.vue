@@ -38,7 +38,10 @@ import { useNotifications } from "@/composables/useNotifications";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useElectionStore } from "../../stores/electionStore";
 import type { CreateElectionDto, LinkedElectionOption } from "../../types";
-import { applyServerFieldErrors } from "@/utils/formServerErrors";
+import {
+  applyServerFieldErrors,
+  mapServerValidationErrors,
+} from "@/utils/formServerErrors";
 import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
 
 const router = useRouter();
@@ -145,20 +148,13 @@ async function submitForm() {
     showSuccessMessage(t("elections.createSuccess"));
     router.push(`/elections/${election.electionGuid}`);
   } catch (error: any) {
-    // Handle validation errors by setting them on form fields
-    if (error?.response?.status === 400 && error?.response?.data?.errors) {
-      const validationErrors = error.response.data.errors;
-      const fieldErrors: Record<string, string[]> = {};
-
-      // Convert server field names to camelCase for form fields
-      Object.keys(validationErrors).forEach((serverField) => {
-        const formField =
-          serverField.charAt(0).toLowerCase() + serverField.slice(1);
-        fieldErrors[formField] = validationErrors[serverField];
-      });
-
-      // Set errors on form fields
-      applyServerFieldErrors(formRef.value, fieldErrors);
+    // hey-api throwOnError throws the parsed body, not an axios response.
+    if (error?.status === 400 && error?.errors) {
+      const validationErrors = error.errors;
+      applyServerFieldErrors(
+        formRef.value,
+        mapServerValidationErrors(validationErrors),
+      );
     } else {
       handleApiError(error);
     }

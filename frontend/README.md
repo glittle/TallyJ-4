@@ -247,3 +247,5 @@ npm run build
 ```
 
 `npm run tsc` is `vue-tsc -p tsconfig.app.json --noEmit` and `vue-tsc -p tsconfig.node.json --noEmit`. `npm run lint` is ESLint on `src` without `--fix`. `npm run check` runs `npm run tsc` and `npm run lint`. Reproduce the check locally with those commands on Node.js 22. No backend, secrets, or extra environment variables are required.
+
+Production builds do not strip `console` or `debugger`. Vite 8 ignores the old `esbuild.drop` list (`convertEsbuildConfigToOxcConfig` does not forward it), and the default oxc minifier leaves `console.log`, `console.error`, `console.warn`, `console.debug`, and `debugger` in `dist/`. A follow-up can turn that on with the oxc minifier; it is intentionally not enabled here.
