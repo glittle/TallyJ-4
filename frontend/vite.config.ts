@@ -226,14 +226,26 @@ function getManualChunks(id: string): string | undefined {
   return matchChunkRule(n, srcChunkRules);
 }
 
+// Debug methods only. Oxc `compress.dropConsole` is all-or-nothing and would also
+// remove `console.error` / `console.warn`, which UAT keeps for Sentry breadcrumbs.
+const PRODUCTION_PURE_CONSOLE = [
+  "console.log",
+  "console.debug",
+  "console.info",
+  "console.trace",
+] as const;
+
 // https://vite.dev/config/
-export default defineConfig((): UserConfig => {
+export default defineConfig(({ command, mode }): UserConfig => {
   const branchName = execSync("git rev-parse --abbrev-ref HEAD", {
     encoding: "utf-8",
   }).trim();
   const commitHash = execSync("git rev-parse --short HEAD", {
     encoding: "utf-8",
   }).trim();
+  // `build.rollupOptions` is the Rolldown input for `vite build` only.
+  // Dev, preview, and Vitest (command "serve", mode "test") do not use it.
+  const stripDebugConsole = command === "build" && mode === "production";
 
   return {
     resolve: {
@@ -308,6 +320,12 @@ export default defineConfig((): UserConfig => {
     ],
     build: {
       rollupOptions: {
+        // Unused calls are removed. An argument with a side effect is kept as
+        // its own expression. `debugger` is removed separately by oxc's default
+        // `dropDebugger` while production minify is on (`minify: true`).
+        ...(stripDebugConsole
+          ? { treeshake: { manualPureFunctions: [...PRODUCTION_PURE_CONSOLE] } }
+          : {}),
         onwarn(warning, warn) {
           // Suppress only for third-party code (harmless annotation issues from vueuse, signalr, etc.).
           // Keep app-code warnings visible so they can be actioned.
@@ -333,9 +351,6 @@ export default defineConfig((): UserConfig => {
       cssCodeSplit: true, // Split CSS into separate chunks
       reportCompressedSize: true, // Report compressed sizes
     },
-    // TODO: Production builds do not strip console.* or debugger. Vite 8's
-    // convertEsbuildConfigToOxcConfig drops esbuild.drop, and the default oxc
-    // minifier leaves those calls in dist/. See frontend/README.md.
     publicDir: "public",
     define: {
       "process.env.BRANCH_NAME": JSON.stringify(branchName),

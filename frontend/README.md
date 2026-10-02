@@ -248,4 +248,8 @@ npm run build
 
 `npm run tsc` is `vue-tsc -p tsconfig.app.json --noEmit` and `vue-tsc -p tsconfig.node.json --noEmit`. `npm run lint` is ESLint on `src` without `--fix`. `npm run check` runs `npm run tsc` and `npm run lint`. Reproduce the check locally with those commands on Node.js 22. No backend, secrets, or extra environment variables are required.
 
-Production builds do not strip `console` or `debugger`. Vite 8 ignores the old `esbuild.drop` list (`convertEsbuildConfigToOxcConfig` does not forward it), and the default oxc minifier leaves `console.log`, `console.error`, `console.warn`, `console.debug`, and `debugger` in `dist/`. A follow-up can turn that on with the oxc minifier; it is intentionally not enabled here.
+Production builds (`npm run build`, which is `vite build` in production mode) strip `console.log`, `console.debug`, `console.info`, `console.trace`, and `debugger`. They keep `console.error` and `console.warn`.
+
+Vite 8 ignores the old `esbuild.drop` list (`convertEsbuildConfigToOxcConfig` does not forward it). Oxc's `compress.dropConsole` removes every `console.*` call, so it is not used. `frontend/vite.config.ts` sets Rolldown `treeshake.manualPureFunctions` to those four methods, and only when `command === "build"` and `mode === "production"`. An unused call is removed. If an argument has a side effect, the call is still removed and that expression is left in place. `debugger` is removed by the production oxc minifier (`dropDebugger` defaults to true while `minify` stays `true`). `npm run dev` and Vitest do not use this build option, so they keep every console call.
+
+Sentry (`src/main.ts`) enables browser tracing and session replay. It does not enable `captureConsoleIntegration` or `consoleLoggingIntegration`. The SDK's default breadcrumbs integration still records console calls that actually run, which after this strip means `console.error` and `console.warn`.
