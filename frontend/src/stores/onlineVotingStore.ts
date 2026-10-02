@@ -14,7 +14,7 @@ import type {
   GoogleAuthForVoterDto,
   FacebookAuthForVoterDto,
   KakaoAuthForVoterDto,
-  TelegramAuthForVoterDto,
+  TelegramLoginRequest,
   AvailableElection,
 } from "../types";
 import type {
@@ -159,7 +159,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     }
   }
 
-  async function telegramAuth(data: TelegramAuthForVoterDto) {
+  async function telegramAuth(data: TelegramLoginRequest) {
     try {
       loading.value = true;
       const response = await onlineVotingService.telegramAuth(data);

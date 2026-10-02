@@ -16,7 +16,10 @@ describe("electionStatsStore", () => {
   });
 
   it("fetches and caches stats", async () => {
-    const { electionService } = await import("../services/electionService");
+    const { electionService } = vi.mocked(
+      await import("../services/electionService"),
+      true,
+    );
     electionService.getStats.mockResolvedValue({
       voterCount: 10,
       ballotCount: 5,
@@ -36,7 +39,10 @@ describe("electionStatsStore", () => {
   });
 
   it("returns cached stats without refetching", async () => {
-    const { electionService } = await import("../services/electionService");
+    const { electionService } = vi.mocked(
+      await import("../services/electionService"),
+      true,
+    );
     electionService.getStats.mockResolvedValue({
       voterCount: 1,
       ballotCount: 2,
@@ -51,7 +57,10 @@ describe("electionStatsStore", () => {
   });
 
   it("refetches when force is true", async () => {
-    const { electionService } = await import("../services/electionService");
+    const { electionService } = vi.mocked(
+      await import("../services/electionService"),
+      true,
+    );
     electionService.getStats
       .mockResolvedValueOnce({
         voterCount: 1,
@@ -73,7 +82,10 @@ describe("electionStatsStore", () => {
   });
 
   it("invalidate clears cache so next fetch hits API", async () => {
-    const { electionService } = await import("../services/electionService");
+    const { electionService } = vi.mocked(
+      await import("../services/electionService"),
+      true,
+    );
     electionService.getStats.mockResolvedValue({
       voterCount: 1,
       ballotCount: 2,

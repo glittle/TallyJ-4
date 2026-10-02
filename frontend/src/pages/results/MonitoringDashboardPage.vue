@@ -317,7 +317,7 @@ const monitorInfo = ref<MonitorInfoDto | null>(null);
 const loading = ref(false);
 const accepting = ref(false);
 const canAcceptOnlineBallots = computed(() => isFullTeller());
-const refreshInterval = ref<number | null>(null);
+const refreshInterval = ref<ReturnType<typeof setInterval> | null>(null);
 const updatingWindow = ref(false);
 const nowTick = ref(DateTime.now());
 let closeCountdownTimer: ReturnType<typeof setInterval> | null = null;

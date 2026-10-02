@@ -27,7 +27,7 @@ vi.mock("vue-router", () => ({
 }));
 
 const { isGuestTellerMock } = vi.hoisted(() => ({
-  isGuestTellerMock: vi.fn(() => true),
+  isGuestTellerMock: vi.fn((_authData?: unknown) => true),
 }));
 
 vi.mock("@/domain/guestTellerAccess", async () => {
@@ -36,7 +36,7 @@ vi.mock("@/domain/guestTellerAccess", async () => {
   >("@/domain/guestTellerAccess");
   return {
     ...actual,
-    isGuestTeller: (...args: unknown[]) => isGuestTellerMock(...args),
+    isGuestTeller: (authData?: unknown) => isGuestTellerMock(authData),
   };
 });
 

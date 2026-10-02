@@ -38,7 +38,7 @@ function flatToNested(flat: any): any {
 
     for (let i = 0; i < keys.length - 1; i++) {
       const k = keys[i]!;
-      if (current[k] == null) {
+      if (current[k] === undefined || current[k] === null) {
         current[k] = {};
       } else if (typeof current[k] !== "object") {
         const parent = keys.slice(0, i + 1).join(".");
@@ -282,10 +282,19 @@ function getBestLocale(): SupportedLocale {
   return "en";
 }
 
+type LooseI18nSchema = {
+  [key: string]: string | LooseI18nSchema;
+};
+
 const savedLocale = getBestLocale();
 if (import.meta.env.DEV) {
   console.log("Initial locale:", savedLocale);
 }
+
+const englishMessages = deepMerge(
+  common,
+  getEnglishContent(),
+) as LooseI18nSchema;
 
 export const i18n = createI18n({
   legacy: false,
@@ -293,7 +302,7 @@ export const i18n = createI18n({
   locale: "en", // Start with English, we will switch it after loading
   fallbackLocale: "en",
   messages: {
-    en: deepMerge(common, getEnglishContent()),
+    en: englishMessages,
   },
 });
 

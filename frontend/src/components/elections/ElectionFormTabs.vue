@@ -7,7 +7,7 @@ import {
 import { computed, ref, type Ref } from "vue";
 import type {
   CreateElectionDto,
-  ElectionSummaryDto,
+  LinkedElectionOption,
   UpdateElectionDto,
 } from "../../types";
 
@@ -16,7 +16,7 @@ const model = defineModel<CreateElectionDto | UpdateElectionDto>({
 });
 
 const props = defineProps<{
-  availableElections: ElectionSummaryDto[];
+  availableElections: LinkedElectionOption[];
   formRef?: any;
   ballotCount?: number;
   /** When true (create flow), always open on the basic tab instead of the remembered one. */

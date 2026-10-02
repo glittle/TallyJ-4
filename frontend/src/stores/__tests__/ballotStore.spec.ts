@@ -256,7 +256,7 @@ describe("useBallotStore deleteVote", () => {
 
     vi.mocked(ballotService.update).mockResolvedValue(updatedBallot);
 
-    await store.updateBallot("ballot-1", { ballotCode: "A2" });
+    await store.updateBallot("ballot-1", { statusCode: "Ok" });
 
     expect(store.currentBallot?.votes).toHaveLength(2);
     expect(

@@ -1,4 +1,7 @@
-import type { ComposerTranslation } from "vue-i18n";
+type PhraseTranslator = (
+  key: string,
+  named?: Record<string, unknown>,
+) => string;
 
 const FALLBACK_KEY = "elections.stageChangeError.generic";
 
@@ -20,7 +23,7 @@ function parseMessageParams(
 
 function translateSingleMessage(
   serverMessage: string,
-  t: ComposerTranslation,
+  t: PhraseTranslator,
 ): string {
   const [key, ...paramParts] = serverMessage.split("|");
   const params = parseMessageParams(paramParts);
@@ -35,7 +38,7 @@ function translateSingleMessage(
 
 export function translateElectionStageChangeError(
   serverMessage: string,
-  t: ComposerTranslation,
+  t: PhraseTranslator,
 ): string {
   const trimmed = serverMessage?.trim();
   if (!trimmed || trimmed === "An unknown error occurred") {

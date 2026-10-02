@@ -62,7 +62,7 @@ Common variables:
 | `npm run dev`           | Start Vite dev server                      |
 | `npm run start`         | Regenerate OpenAPI client, then start Vite |
 | `npm run gen`           | Regenerate the generated API client        |
-| `npm run tsc`           | Run `vue-tsc --noEmit`                     |
+| `npm run tsc`           | Typecheck `tsconfig.app.json` and `tsconfig.node.json` with `vue-tsc --noEmit` |
 | `npm run lint`          | Run ESLint over `src/`                     |
 | `npm run check`         | Run typecheck and lint                     |
 | `npm run test`          | Start Vitest in watch mode                 |
@@ -241,10 +241,9 @@ From `frontend/`, that check runs:
 npm ci
 npm run validate:i18n
 npm run tsc
+npm run lint
 npm run test:run
 npm run build
 ```
 
-`npm run tsc` is `vue-tsc --noEmit` against the root `tsconfig.json`. Reproduce the check locally with those commands on Node.js 22. No backend, secrets, or extra environment variables are required.
-
-ESLint (`npm run lint`) and `vue-tsc -p tsconfig.app.json` are not part of the check yet. `npm run check` still runs `npm run tsc` and `npm run lint` for local use.
+`npm run tsc` is `vue-tsc -p tsconfig.app.json --noEmit` and `vue-tsc -p tsconfig.node.json --noEmit`. `npm run lint` is ESLint on `src` without `--fix`. `npm run check` runs `npm run tsc` and `npm run lint`. Reproduce the check locally with those commands on Node.js 22. No backend, secrets, or extra environment variables are required.

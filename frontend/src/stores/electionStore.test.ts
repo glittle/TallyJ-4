@@ -1,7 +1,17 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { setActivePinia, createPinia } from "pinia";
 import { useElectionStore } from "./electionStore";
-import type { ElectionDto, CreateElectionDto } from "../types";
+import type { HubConnection } from "@microsoft/signalr";
+import type {
+  ElectionDto,
+  CreateElectionDto,
+  ElectionSummaryDto,
+} from "../types";
+
+/** The store only calls `on` on these test doubles. */
+function asHubConnection(connection: { on: unknown }): HubConnection {
+  return connection as unknown as HubConnection;
+}
 import {
   getActiveElectionHubGuid,
   setActiveElectionHubGuid,
@@ -198,13 +208,18 @@ describe("Election Store", () => {
 
   describe("fetchElections", () => {
     it("should fetch elections successfully", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const mockElections: ElectionDto[] = [
         { electionGuid: "1", name: "Election 1" } as ElectionDto,
         { electionGuid: "2", name: "Election 2" } as ElectionDto,
       ];
 
-      electionService.getAll.mockResolvedValue(mockElections);
+      electionService.getAll.mockResolvedValue(
+        mockElections as unknown as ElectionSummaryDto[],
+      );
 
       await electionStore.fetchElections();
 
@@ -215,7 +230,10 @@ describe("Election Store", () => {
     });
 
     it("should handle fetch elections error", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const mockError = new Error("Network error");
 
       electionService.getAll.mockRejectedValue(mockError);
@@ -230,7 +248,10 @@ describe("Election Store", () => {
 
   describe("fetchElectionById", () => {
     it("should fetch election by id and update existing election", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const existingElection = {
         electionGuid: "1",
         name: "Old Name",
@@ -252,7 +273,10 @@ describe("Election Store", () => {
     });
 
     it("should add new election if not in list", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const newElection = {
         electionGuid: "2",
         name: "New Election",
@@ -272,7 +296,10 @@ describe("Election Store", () => {
 
   describe("duplicateElection", () => {
     it("should duplicate election and add it to the list", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const copy: ElectionDto = {
         electionGuid: "copy-id",
         name: "Copy of Source",
@@ -297,7 +324,10 @@ describe("Election Store", () => {
 
   describe("resetElection", () => {
     it("should reset the current election and update the list", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const existing = {
         electionGuid: "test-id",
         name: "Practice",
@@ -325,11 +355,14 @@ describe("Election Store", () => {
 
   describe("createElection", () => {
     it("should create election successfully", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const createDto: CreateElectionDto = {
         name: "New Election",
-        numberOfWinners: 1,
-        numberOfExtra: 0,
+        numberToElect: 1,
+        numberExtra: 0,
         electionType: "LSA",
         electionMode: "N",
       };
@@ -357,7 +390,10 @@ describe("Election Store", () => {
 
   describe("updateElection", () => {
     it("should update existing election", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const existingElection = {
         electionGuid: "1",
         name: "Old Name",
@@ -386,7 +422,10 @@ describe("Election Store", () => {
 
   describe("deleteElection", () => {
     it("should delete election and clear current election if it matches", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const election1 = {
         electionGuid: "1",
         name: "Election 1",
@@ -448,13 +487,16 @@ describe("Election Store", () => {
       const frontDeskConnection = { on: vi.fn() };
       signalrService.connectToMainHub.mockResolvedValue(mainConnection);
       signalrService.connectToFrontDeskHub.mockResolvedValue(
-        frontDeskConnection,
+        asHubConnection(frontDeskConnection),
       );
       return { mainConnection, frontDeskConnection };
     }
 
     it("should initialize SignalR connection and set up event handlers", async () => {
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
       const { mainConnection, frontDeskConnection } =
         mockHubConnections(signalrService);
 
@@ -481,7 +523,10 @@ describe("Election Store", () => {
     });
 
     it("should handle SignalR initialization errors gracefully", async () => {
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
       const consoleSpy = vi
         .spyOn(console, "error")
         .mockImplementation(() => {});
@@ -500,16 +545,21 @@ describe("Election Store", () => {
     });
 
     it("updateOnlineElection patches current election online window fields", async () => {
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
       const handlers = new Map<string, (data: unknown) => void>();
       const frontDeskConnection = {
         on: vi.fn((event: string, handler: (data: unknown) => void) => {
           handlers.set(event, handler);
         }),
       };
-      signalrService.connectToMainHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.connectToMainHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
       signalrService.connectToFrontDeskHub.mockResolvedValue(
-        frontDeskConnection,
+        asHubConnection(frontDeskConnection),
       );
 
       electionStore.currentElection = {
@@ -540,15 +590,22 @@ describe("Election Store", () => {
     });
 
     it("statusChanged notifies once with i18n stage label when list and current both match", async () => {
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
       const handlers = new Map<string, (data: unknown) => void>();
       const mockConnection = {
         on: vi.fn((event: string, handler: (data: unknown) => void) => {
           handlers.set(event, handler);
         }),
       };
-      signalrService.connectToMainHub.mockResolvedValue(mockConnection);
-      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.connectToMainHub.mockResolvedValue(
+        asHubConnection(mockConnection),
+      );
+      signalrService.connectToFrontDeskHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
 
       electionStore.elections = [
         {
@@ -594,15 +651,22 @@ describe("Election Store", () => {
     });
 
     it("statusChanged accepts PascalCase payload and case-insensitive electionGuid", async () => {
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
       const handlers = new Map<string, (data: unknown) => void>();
       const mockConnection = {
         on: vi.fn((event: string, handler: (data: unknown) => void) => {
           handlers.set(event, handler);
         }),
       };
-      signalrService.connectToMainHub.mockResolvedValue(mockConnection);
-      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.connectToMainHub.mockResolvedValue(
+        asHubConnection(mockConnection),
+      );
+      signalrService.connectToFrontDeskHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
 
       electionStore.currentElection = {
         electionGuid: "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
@@ -625,15 +689,22 @@ describe("Election Store", () => {
     });
 
     it("statusChanged to Finalized updates currentStage for other tellers", async () => {
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
       const handlers = new Map<string, (data: unknown) => void>();
       const mockConnection = {
         on: vi.fn((event: string, handler: (data: unknown) => void) => {
           handlers.set(event, handler);
         }),
       };
-      signalrService.connectToMainHub.mockResolvedValue(mockConnection);
-      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.connectToMainHub.mockResolvedValue(
+        asHubConnection(mockConnection),
+      );
+      signalrService.connectToFrontDeskHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
 
       electionStore.currentElection = {
         electionGuid: "election-1",
@@ -664,16 +735,26 @@ describe("Election Store", () => {
     });
 
     it("statusChanged does not toast when local setStage already suppressed echo", async () => {
-      const { signalrService } = await import("../services/signalrService");
-      const { electionService } = await import("../services/electionService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const handlers = new Map<string, (data: unknown) => void>();
       const mockConnection = {
         on: vi.fn((event: string, handler: (data: unknown) => void) => {
           handlers.set(event, handler);
         }),
       };
-      signalrService.connectToMainHub.mockResolvedValue(mockConnection);
-      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.connectToMainHub.mockResolvedValue(
+        asHubConnection(mockConnection),
+      );
+      signalrService.connectToFrontDeskHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
 
       electionStore.elections = [
         {
@@ -682,7 +763,7 @@ describe("Election Store", () => {
           electionStage: "SettingUp",
         } as ElectionDto,
       ];
-      electionStore.currentElection = electionStore.elections[0]!;
+      electionStore.currentElection = electionStore.elections[0] as ElectionDto;
 
       electionService.changeStage.mockImplementation(async () => {
         // Simulate SignalR arriving before HTTP response updates store
@@ -714,15 +795,22 @@ describe("Election Store", () => {
       vi.mocked(isFullTeller).mockReturnValue(false);
       vi.mocked(isGuestTeller).mockReturnValue(true);
 
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
       const handlers = new Map<string, (data: unknown) => void>();
       const mockConnection = {
         on: vi.fn((event: string, handler: (data: unknown) => void) => {
           handlers.set(event, handler);
         }),
       };
-      signalrService.connectToMainHub.mockResolvedValue(mockConnection);
-      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.connectToMainHub.mockResolvedValue(
+        asHubConnection(mockConnection),
+      );
+      signalrService.connectToFrontDeskHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
 
       electionStore.currentElection = {
         electionGuid: "election-1",
@@ -753,7 +841,10 @@ describe("Election Store", () => {
 
   describe("joinElection and leaveElection", () => {
     it("should join election group", async () => {
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
 
       await electionStore.joinElection("election-123");
 
@@ -761,7 +852,10 @@ describe("Election Store", () => {
     });
 
     it("should leave election group", async () => {
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
 
       await electionStore.leaveElection("election-123");
 
@@ -771,11 +865,18 @@ describe("Election Store", () => {
 
   describe("joinDashboardElections and leaveDashboardElections", () => {
     it("joins dashboard elections for known tellers after initializing SignalR", async () => {
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
       const { isFullTeller } = await import("@/domain/guestTellerAccess");
       vi.mocked(isFullTeller).mockReturnValue(true);
-      signalrService.connectToMainHub.mockResolvedValue({ on: vi.fn() });
-      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
+      signalrService.connectToMainHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
+      signalrService.connectToFrontDeskHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
       signalrService.joinDashboardElections.mockResolvedValue(undefined);
 
       await electionStore.joinDashboardElections(["e1", "e2"]);
@@ -788,7 +889,10 @@ describe("Election Store", () => {
     });
 
     it("skips multi-join for guest tellers", async () => {
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
       const { isFullTeller } = await import("@/domain/guestTellerAccess");
       vi.mocked(isFullTeller).mockReturnValue(false);
 
@@ -798,7 +902,10 @@ describe("Election Store", () => {
     });
 
     it("leaves dashboard election groups", async () => {
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
 
       await electionStore.leaveDashboardElections();
 
@@ -861,7 +968,10 @@ describe("Election Store", () => {
 
   describe("setStage", () => {
     it("calls electionService.changeStage with SettingUp", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const updatedElection = {
         electionGuid: "1",
         electionStage: "SettingUp",
@@ -879,7 +989,10 @@ describe("Election Store", () => {
     });
 
     it("calls electionService.changeStage with GatheringBallots", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const updatedElection = {
         electionGuid: "1",
         electionStage: "GatheringBallots",
@@ -897,7 +1010,10 @@ describe("Election Store", () => {
     });
 
     it("calls electionService.changeStage with ProcessingBallots", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const updatedElection = {
         electionGuid: "1",
         electionStage: "ProcessingBallots",
@@ -915,13 +1031,16 @@ describe("Election Store", () => {
     });
 
     it("calls electionService.changeStage with Finalized", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const updatedElection = {
         electionGuid: "1",
         electionStage: "Finalized",
       } as ElectionDto;
       electionStore.elections = [{ electionGuid: "1" } as ElectionDto];
-      electionStore.currentElection = electionStore.elections[0]!;
+      electionStore.currentElection = electionStore.elections[0] as ElectionDto;
       electionService.changeStage.mockResolvedValue(updatedElection);
 
       await electionStore.setStage("1", "Finalized");
@@ -935,7 +1054,10 @@ describe("Election Store", () => {
     });
 
     it("passes confirmLeavingFinalized through to changeStage", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const updatedElection = {
         electionGuid: "1",
         electionStage: "ProcessingBallots",
@@ -943,7 +1065,7 @@ describe("Election Store", () => {
       electionStore.elections = [
         { electionGuid: "1", electionStage: "Finalized" } as ElectionDto,
       ];
-      electionStore.currentElection = electionStore.elections[0]!;
+      electionStore.currentElection = electionStore.elections[0] as ElectionDto;
       electionService.changeStage.mockResolvedValue(updatedElection);
 
       await electionStore.setStage("1", "ProcessingBallots", true);
@@ -961,7 +1083,10 @@ describe("Election Store", () => {
 
   describe("toggleTellerAccess", () => {
     it("calls electionService.toggleTellerAccess and updates current election", async () => {
-      const { electionService } = await import("../services/electionService");
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
       const updatedElection = {
         electionGuid: "1",
         isTellerAccessOpen: true,
@@ -969,7 +1094,7 @@ describe("Election Store", () => {
       electionStore.elections = [
         { electionGuid: "1", isTellerAccessOpen: false } as ElectionDto,
       ];
-      electionStore.currentElection = electionStore.elections[0]!;
+      electionStore.currentElection = electionStore.elections[0] as ElectionDto;
       electionService.toggleTellerAccess.mockResolvedValue(updatedElection);
 
       const result = await electionStore.toggleTellerAccess("1", true);
@@ -986,9 +1111,16 @@ describe("Election Store", () => {
 
   describe("setActiveElectionHub", () => {
     it("stores the election guid and joins the main hub", async () => {
-      const { signalrService } = await import("../services/signalrService");
-      signalrService.connectToMainHub.mockResolvedValue({ on: vi.fn() });
-      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
+      signalrService.connectToMainHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
+      signalrService.connectToFrontDeskHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
       signalrService.joinElection.mockResolvedValue("A");
 
       await electionStore.setActiveElectionHub("1");
@@ -998,9 +1130,16 @@ describe("Election Store", () => {
     });
 
     it("leaves the previous election before joining a new one", async () => {
-      const { signalrService } = await import("../services/signalrService");
-      signalrService.connectToMainHub.mockResolvedValue({ on: vi.fn() });
-      signalrService.connectToFrontDeskHub.mockResolvedValue({ on: vi.fn() });
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
+      signalrService.connectToMainHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
+      signalrService.connectToFrontDeskHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
       signalrService.joinElection.mockResolvedValue("A");
       setActiveElectionHubGuid("1");
 
@@ -1014,7 +1153,10 @@ describe("Election Store", () => {
 
   describe("clearActiveElectionHubConnection", () => {
     it("leaves the hub and clears stored guid", async () => {
-      const { signalrService } = await import("../services/signalrService");
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
       setActiveElectionHubGuid("1");
 
       await electionStore.clearActiveElectionHubConnection();

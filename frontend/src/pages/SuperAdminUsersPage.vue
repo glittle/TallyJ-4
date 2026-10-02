@@ -7,6 +7,7 @@ import { useI18n } from "vue-i18n";
 import {
   superAdminService,
   type SuperAdminUser,
+  type AccountInviteCreated,
   type SuperAdminUserDetail,
 } from "../services/superAdminService";
 
@@ -27,7 +28,7 @@ const saving = ref(false);
 
 const inviteDialogVisible = ref(false);
 const issuingInvite = ref(false);
-const issuedInvite = ref<{ inviteUrl: string; expiresAt: string } | null>(null);
+const issuedInvite = ref<AccountInviteCreated | null>(null);
 
 async function fetchUsers() {
   loading.value = true;
@@ -86,7 +87,7 @@ async function saveUser() {
   }
 }
 
-function formatWhen(value?: string) {
+function formatWhen(value?: string | Date) {
   if (!value) {
     return "-";
   }
@@ -139,11 +140,7 @@ onMounted(fetchUsers);
           :placeholder="$t('superAdmin.users.search')"
           @input="debouncedSearch"
         />
-        <el-button
-          type="primary"
-          :loading="issuingInvite"
-          @click="issueInvite"
-        >
+        <el-button type="primary" :loading="issuingInvite" @click="issueInvite">
           {{ $t("superAdmin.users.issueInvite") }}
         </el-button>
       </div>

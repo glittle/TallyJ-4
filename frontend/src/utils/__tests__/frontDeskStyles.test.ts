@@ -1,8 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  getFlagFilterStyle,
-  getMethodFilterStyle,
-} from "../frontDeskStyles";
+import { getFlagFilterStyle, getMethodFilterStyle } from "../frontDeskStyles";
 
 describe("frontDeskStyles theme tokens", () => {
   it("paints inactive method chips with the blank fill, not frozen white", () => {

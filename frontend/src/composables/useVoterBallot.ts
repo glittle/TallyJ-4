@@ -27,7 +27,7 @@ export function getEffectiveVoteName(
   selectionMode: string,
 ): string {
   if (slot.person) {
-    return slot.person.fullName;
+    return slot.person.fullName ?? "";
   }
   if (selectionMode === "B") {
     return slot.freeText;
@@ -112,7 +112,7 @@ export function autosaveAsDraft(alreadySubmitted: boolean): boolean {
 
 /** Draft restores have hasVoted but no whenSubmitted. */
 export function isSubmittedOnlineVoteStatus(
-  status: Pick<OnlineVoteStatus, "whenSubmitted"> | null | undefined,
+  status: OnlineVoteStatus | null | undefined,
 ): boolean {
   return status?.whenSubmitted !== undefined && status?.whenSubmitted !== null;
 }
@@ -161,7 +161,9 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
 
   function addPoolEntry(entry: OnlinePoolEntry) {
     const exists = poolEntries.value.some(
-      (p) => p.fullName.toLowerCase() === entry.fullName.toLowerCase(),
+      (p) =>
+        (p.fullName ?? "").toLowerCase() ===
+        (entry.fullName ?? "").toLowerCase(),
     );
     if (!exists) {
       poolEntries.value.push(entry);
@@ -196,7 +198,7 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
       );
       if (matched) {
         slot.person = matched;
-        slot.searchText = matched.fullName;
+        slot.searchText = matched.fullName ?? "";
       } else if (prior.voteName) {
         slot.freeText = prior.voteName;
         slot.searchText = prior.voteName;
@@ -249,17 +251,18 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
     }
 
     addPoolEntry(entry);
+    const entryName = entry.fullName ?? "";
     const poolPerson = poolAsVotablePeople().find(
-      (p) => p.fullName.toLowerCase() === entry.fullName.toLowerCase(),
+      (p) => (p.fullName ?? "").toLowerCase() === entryName.toLowerCase(),
     );
 
     empty.person = poolPerson ?? {
-      personGuid: `pool-${entry.fullName}`,
-      fullName: entry.fullName,
+      personGuid: `pool-${entryName}`,
+      fullName: entryName,
       otherInfo: entry.otherInfo,
     };
-    empty.searchText = entry.fullName;
-    empty.freeText = entry.fullName;
+    empty.searchText = entryName;
+    empty.freeText = entryName;
     return empty.position;
   }
 

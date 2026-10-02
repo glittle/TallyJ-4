@@ -101,7 +101,9 @@ describe("dark theme tokens (dashboard/setup polish)", () => {
     expect(elementPlus).not.toMatch(
       /--el-border-color-lighter:\s*var\(--color-gray-100\)/,
     );
-    expect(tokenValue(light, "--el-border-color")).toBe("var(--color-gray-300)");
+    expect(tokenValue(light, "--el-border-color")).toBe(
+      "var(--color-gray-300)",
+    );
   });
 
   it("remaps pale orange and EP light-9 fills so leftover screens are not cream on navy", () => {

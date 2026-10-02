@@ -12,7 +12,7 @@ export interface ElectionDto {
   numberExtra?: number;
   showFullReport?: boolean;
   listForPublic?: boolean;
-  showAsTest?: boolean;
+  showAsTest?: boolean | null;
   useOnlineVoting?: boolean;
   onlineWhenOpen?: string;
   onlineWhenClose?: string;
@@ -51,7 +51,7 @@ export interface CreateElectionDto {
   numberExtra?: number;
   showFullReport?: boolean;
   listForPublic?: boolean;
-  showAsTest?: boolean;
+  showAsTest?: boolean | null;
   electionPasscode?: string;
   linkedElectionGuid?: string;
   linkedElectionKind?: string;
@@ -84,7 +84,7 @@ export interface UpdateElectionDto {
   numberExtra?: number;
   showFullReport?: boolean;
   listForPublic?: boolean;
-  showAsTest?: boolean;
+  showAsTest?: boolean | null;
   electionStage?: ElectionStage;
   useOnlineVoting?: boolean;
   onlineWhenOpen?: string;
@@ -126,6 +126,12 @@ export interface ElectionStatus {
   ballotsSubmitted: number;
 }
 
+/** Linked-election dropdown only reads the guid and name. */
+export interface LinkedElectionOption {
+  electionGuid: string;
+  name: string;
+}
+
 export interface ElectionSummaryDto {
   electionGuid: string;
   name: string;
@@ -136,7 +142,7 @@ export interface ElectionSummaryDto {
   ballotCount: number;
   isTellerAccessOpen?: boolean;
   isOnlineVotingEnabled?: boolean;
-  showAsTest?: boolean;
+  showAsTest?: boolean | null;
   /** Positions to elect; mapped from API summary field `toElect`. */
   numberToElect?: number;
 }

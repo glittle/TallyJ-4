@@ -19,9 +19,10 @@ onMounted(async () => {
     return;
   }
 
-  if (onlineVotingStore.voterId && onlineVotingStore.electionInfo) {
+  const electionGuid = onlineVotingStore.electionInfo?.electionGuid;
+  if (onlineVotingStore.voterId && electionGuid) {
     voteStatus.value = await onlineVotingStore.checkVoteStatus(
-      onlineVotingStore.electionInfo.electionGuid,
+      electionGuid,
       onlineVotingStore.voterId,
     );
   }

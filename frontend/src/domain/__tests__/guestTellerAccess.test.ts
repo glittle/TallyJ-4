@@ -87,7 +87,9 @@ describe("guestTellerAccess", () => {
       for (const stage of stages) {
         const keys = getGuestTellerMenuPages(stage, GUID).map((p) => p.key);
         for (const hidden of hiddenKeys) {
-          expect(keys, `${stage} must not show ${hidden}`).not.toContain(hidden);
+          expect(keys, `${stage} must not show ${hidden}`).not.toContain(
+            hidden,
+          );
         }
       }
     });

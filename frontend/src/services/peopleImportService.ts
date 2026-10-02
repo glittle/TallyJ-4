@@ -19,6 +19,23 @@ import type {
   DeleteAllPeopleResult,
 } from "../types";
 
+/**
+ * People-count is declared as a bare integer in OpenAPI (`ActionResult<int>`)
+ * but the controller returns `{ count }`. Accept both so the page can read `.count`.
+ */
+export function peopleCountFromBody(data: unknown): number {
+  if (typeof data === "number" && Number.isFinite(data)) {
+    return data;
+  }
+  if (data !== null && typeof data === "object" && "count" in data) {
+    const count = (data as { count: unknown }).count;
+    if (typeof count === "number" && Number.isFinite(count)) {
+      return count;
+    }
+  }
+  return 0;
+}
+
 export const peopleImportService = {
   async uploadFile(electionGuid: string, file: File): Promise<ImportFileInfo> {
     const response = await postApiPeopleImportByElectionGuidUpload({
@@ -114,6 +131,6 @@ export const peopleImportService = {
     const response = await getApiPeopleImportByElectionGuidPeopleCount({
       path: { electionGuid },
     });
-    return response.data as { count: number };
+    return { count: peopleCountFromBody(response.data) };
   },
 };

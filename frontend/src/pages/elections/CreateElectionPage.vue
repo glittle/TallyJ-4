@@ -37,7 +37,8 @@ import { type FormInstance, type FormRules } from "element-plus";
 import { useNotifications } from "@/composables/useNotifications";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useElectionStore } from "../../stores/electionStore";
-import type { CreateElectionDto, ElectionSummaryDto } from "../../types";
+import type { CreateElectionDto, LinkedElectionOption } from "../../types";
+import { applyServerFieldErrors } from "@/utils/formServerErrors";
 import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
 
 const router = useRouter();
@@ -48,7 +49,7 @@ const { handleApiError } = useApiErrorHandler();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
-const availableElections = ref<ElectionSummaryDto[]>([]);
+const availableElections = ref<LinkedElectionOption[]>([]);
 
 // `let` is required here so the Vue compiler does not emit
 // "`v-model` cannot update a `const` reactive binding" for <ElectionFormTabs v-model="form">
@@ -157,7 +158,7 @@ async function submitForm() {
       });
 
       // Set errors on form fields
-      formRef.value?.setFields(fieldErrors);
+      applyServerFieldErrors(formRef.value, fieldErrors);
     } else {
       handleApiError(error);
     }

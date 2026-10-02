@@ -1,7 +1,8 @@
 export interface TallyResultDto {
   electionGuid: string;
   electionName: string;
-  calculatedAt: string;
+  /** ISO string from older callers, or Date from the hey-api date transformer. */
+  calculatedAt: string | Date;
   statistics: TallyStatisticsDto;
   results: PersonResultDto[];
   ties: TieInfoDto[];
@@ -67,7 +68,7 @@ export interface TallyStatisticsDto {
 // Election Report DTOs
 export interface ElectionReportDto {
   electionName: string;
-  electionDate?: string;
+  electionDate?: string | Date;
   numToElect: number;
   totalBallots: number;
   spoiledBallots: number;
@@ -109,7 +110,7 @@ export interface VoterReportDto {
   fullName: string;
   locationName: string;
   voted: boolean;
-  voteTime?: string;
+  voteTime?: string | Date;
 }
 
 export interface LocationReportDto {
@@ -179,7 +180,7 @@ export interface SaveTieCountsResponseDto {
 // Presentation DTOs
 export interface PresentationDto {
   electionName: string;
-  electionDate?: string;
+  electionDate?: string | Date;
   numToElect: number;
   totalBallots: number;
   totalVotes: number;
@@ -222,14 +223,14 @@ export interface MonitorInfoDto {
   ballotsByMethod?: VotingMethodBreakdownDto;
   totalBallots: number;
   totalVotes: number;
-  lastUpdated: string;
+  lastUpdated: string | Date;
 }
 
 export interface ComputerInfoDto {
   computerCode: string;
   locationName: string;
   ballotCount: number;
-  lastContact: string;
+  lastContact: string | Date;
   status: string;
 }
 
@@ -243,7 +244,7 @@ export interface LocationInfoDto {
 }
 
 export interface AcceptAllOnlineBallotsRunDto {
-  when: string;
+  when: string | Date;
   acceptedByUserId?: string | null;
   acceptedBy?: string | null;
   pendingBefore: number;
@@ -260,8 +261,8 @@ export interface OnlineVotingInfoDto {
   submittedOnlineBallots?: number;
   processingOnlineBallots?: number;
   onlineVotingEnabled: boolean;
-  onlineVotingStart?: string | null;
-  onlineVotingEnd?: string | null;
+  onlineVotingStart?: string | Date | null;
+  onlineVotingEnd?: string | Date | null;
   connectedOnlineVoterSessions?: number;
   acceptAllRuns?: AcceptAllOnlineBallotsRunDto[];
 }
@@ -277,7 +278,7 @@ export interface DetailedStatisticsDto {
 
 export interface ElectionOverviewDto {
   electionName: string;
-  electionDate?: string;
+  electionDate?: string | Date;
   totalRegisteredVoters: number;
   totalBallotsCast: number;
   validBallots: number;
@@ -331,7 +332,7 @@ export interface DemographicTurnoutDto {
 }
 
 export interface TimeBasedTurnoutDto {
-  timePeriod: string;
+  timePeriod: string | Date;
   periodType: string;
   ballotsCast: number;
   cumulativeTurnout: number;

@@ -156,7 +156,7 @@ onBeforeUnmount(async () => {
   }
 });
 
-function formatDateTime(date: string) {
+function formatDateTime(date: string | Date) {
   if (!date) {
     return "-";
   }

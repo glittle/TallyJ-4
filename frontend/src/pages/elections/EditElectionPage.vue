@@ -45,7 +45,8 @@ import { useRoute, useRouter } from "vue-router";
 import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
 import { useElectionStatsStore } from "../../stores/electionStatsStore";
 import { useElectionStore } from "../../stores/electionStore";
-import type { ElectionSummaryDto, UpdateElectionDto } from "../../types";
+import type { LinkedElectionOption, UpdateElectionDto } from "../../types";
+import { applyServerFieldErrors } from "@/utils/formServerErrors";
 
 const router = useRouter();
 const route = useRoute();
@@ -65,7 +66,7 @@ const election = computed(() => electionStore.currentElection);
 const ballotCount = computed(
   () => electionStatsStore.getCached(electionGuid)?.ballotCount,
 );
-const availableElections = ref<ElectionSummaryDto[]>([]);
+const availableElections = ref<LinkedElectionOption[]>([]);
 
 // `let` is required here so the Vue compiler does not emit
 // "`v-model` cannot update a `const` reactive binding" for <ElectionFormTabs v-model="form">
@@ -81,7 +82,6 @@ let form = reactive<UpdateElectionDto>({
   showFullReport: undefined,
   listForPublic: undefined,
   showAsTest: undefined,
-  tallyStatus: undefined,
   useOnlineVoting: undefined,
   onlineWhenOpen: undefined,
   onlineWhenClose: undefined,
@@ -157,7 +157,6 @@ onMounted(async () => {
         showFullReport: election.value.showFullReport,
         listForPublic: election.value.listForPublic,
         showAsTest: election.value.showAsTest,
-        tallyStatus: election.value.tallyStatus,
         useOnlineVoting: election.value.useOnlineVoting ?? false,
         onlineWhenOpen: election.value.onlineWhenOpen,
         onlineWhenClose: election.value.onlineWhenClose,
@@ -216,7 +215,7 @@ async function submitForm() {
       });
 
       // Set errors on form fields
-      formRef.value?.setFields(fieldErrors);
+      applyServerFieldErrors(formRef.value, fieldErrors);
     } else {
       handleApiError(error);
     }

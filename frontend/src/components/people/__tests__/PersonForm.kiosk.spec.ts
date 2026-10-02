@@ -150,7 +150,9 @@ describe("PersonForm kiosk generate", () => {
   });
 
   it("surfaces the API error on generate failure, not the share/expiry note", async () => {
-    const apiError = new Error("Cannot generate a kiosk code for a person who has already voted.");
+    const apiError = new Error(
+      "Cannot generate a kiosk code for a person who has already voted.",
+    );
     mockGenerateKioskCode.mockRejectedValue(apiError);
 
     const wrapper = mount(PersonForm, {

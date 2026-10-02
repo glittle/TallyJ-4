@@ -20,7 +20,7 @@ function flatToNested(flat: Record<string, string>): Record<string, unknown> {
 
     for (let i = 0; i < parts.length - 1; i++) {
       const part = parts[i]!;
-      if (current[part] == null) {
+      if (current[part] === undefined || current[part] === null) {
         current[part] = {};
       } else if (typeof current[part] !== "object") {
         const parent = parts.slice(0, i + 1).join(".");
@@ -98,13 +98,17 @@ const testRouter = createRouter({
   history: createWebHistory(),
   routes: [],
 });
+type LooseI18nSchema = {
+  [key: string]: string | LooseI18nSchema;
+};
+
 const testI18n = createI18n({
   legacy: false,
   globalInjection: true,
   locale: "en",
   fallbackLocale: "en",
   messages: {
-    en: buildEnglishMessages(),
+    en: buildEnglishMessages() as unknown as LooseI18nSchema,
   },
 });
 

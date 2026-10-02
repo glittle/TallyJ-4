@@ -1,7 +1,7 @@
 import { mount } from "@vue/test-utils";
 import { ElButton } from "element-plus";
 import { describe, expect, it, vi } from "vitest";
-import { h } from "vue";
+import { h, type Component, type VNode, type VNodeChild } from "vue";
 import type { PersonListDto } from "../../../types";
 import PeopleTable from "../PeopleTable.vue";
 
@@ -40,7 +40,9 @@ const TableStub = {
         props.columns
           .filter((col) => col.cellRenderer)
           .map((col, index) =>
-            h("div", { key: index }, [col.cellRenderer!({ rowData: row })]),
+            h("div", { key: index }, [
+              col.cellRenderer!({ rowData: row }) as VNodeChild,
+            ]),
           ),
       );
     };
@@ -59,7 +61,12 @@ const AutoResizerStub = {
       };
     },
   ) {
-    return () => h("div", slots.default?.({ height: 400, width: 800 }));
+    return () =>
+      h(
+        "div",
+        {},
+        slots.default?.({ height: 400, width: 800 }) as VNode | undefined,
+      );
   },
 };
 
@@ -79,8 +86,8 @@ describe("PeopleTable", () => {
         },
         directives: { loading: () => undefined },
         stubs: {
-          ElAutoResizer: AutoResizerStub,
-          ElTableV2: TableStub,
+          ElAutoResizer: AutoResizerStub as unknown as Component,
+          ElTableV2: TableStub as unknown as Component,
           ElIcon: { template: "<span />" },
         },
       },
@@ -128,8 +135,8 @@ describe("PeopleTable", () => {
         },
         directives: { loading: () => undefined },
         stubs: {
-          ElAutoResizer: AutoResizerStub,
-          ElTableV2: TableStub,
+          ElAutoResizer: AutoResizerStub as unknown as Component,
+          ElTableV2: TableStub as unknown as Component,
           ElIcon: { template: "<span />" },
           ElTag: {
             props: ["type", "size"],
@@ -162,8 +169,8 @@ describe("PeopleTable", () => {
         },
         directives: { loading: () => undefined },
         stubs: {
-          ElAutoResizer: AutoResizerStub,
-          ElTableV2: TableStub,
+          ElAutoResizer: AutoResizerStub as unknown as Component,
+          ElTableV2: TableStub as unknown as Component,
           ElIcon: { template: "<span />" },
         },
       },
@@ -199,8 +206,8 @@ describe("PeopleTable", () => {
         },
         directives: { loading: () => undefined },
         stubs: {
-          ElAutoResizer: AutoResizerStub,
-          ElTableV2: TableStub,
+          ElAutoResizer: AutoResizerStub as unknown as Component,
+          ElTableV2: TableStub as unknown as Component,
           ElIcon: { template: "<span />" },
           ElTag: {
             props: ["type", "size"],
@@ -226,8 +233,8 @@ describe("PeopleTable", () => {
         components: { ElButton },
         directives: { loading: () => undefined },
         stubs: {
-          ElAutoResizer: AutoResizerStub,
-          ElTableV2: TableStub,
+          ElAutoResizer: AutoResizerStub as unknown as Component,
+          ElTableV2: TableStub as unknown as Component,
           ElIcon: { template: "<span />" },
           ElCheckbox: {
             props: ["modelValue"],

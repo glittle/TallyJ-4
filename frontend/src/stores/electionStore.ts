@@ -9,6 +9,7 @@ import type {
   CreateElectionDto,
   DuplicateElectionDto,
   ElectionDto,
+  ElectionSummaryDto,
   UpdateElectionDto,
 } from "../types";
 import type {
@@ -68,7 +69,7 @@ function parseElectionUpdatePayload(data: unknown): ElectionUpdateEvent | null {
 }
 
 export const useElectionStore = defineStore("election", () => {
-  const elections = ref<ElectionDto[]>([]);
+  const elections = ref<Array<ElectionDto | ElectionSummaryDto>>([]);
   const currentElection = ref<ElectionDto | null>(null);
   const loading = ref(false);
   const error = ref<string | null>(null);

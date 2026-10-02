@@ -1,7 +1,7 @@
 import { createTestingPinia } from "@pinia/testing";
 import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
-import { h } from "vue";
+import { h, type VNode } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { i18n } from "../test/setup";
 import DashboardPage from "./DashboardPage.vue";
@@ -47,13 +47,27 @@ const dashboardStubs = {
   ElOption: { template: "<option />" },
   ElTable: { template: "<table><slot /></table>" },
   ElTableColumn: {
-    setup(_, { slots }) {
-      return () => h("th", slots.default?.({ row: seededElection }));
+    setup(
+      _props: unknown,
+      {
+        slots,
+      }: {
+        slots: { default?: (arg: { row: typeof seededElection }) => VNode };
+      },
+    ) {
+      return () => h("th", {}, slots.default?.({ row: seededElection }));
     },
   },
   "el-table-column": {
-    setup(_, { slots }) {
-      return () => h("th", slots.default?.({ row: seededElection }));
+    setup(
+      _props: unknown,
+      {
+        slots,
+      }: {
+        slots: { default?: (arg: { row: typeof seededElection }) => VNode };
+      },
+    ) {
+      return () => h("th", {}, slots.default?.({ row: seededElection }));
     },
   },
   ElPagination: { template: "<div />" },

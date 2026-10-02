@@ -21,9 +21,10 @@ import {
   postApiAuthRegisterWithInvite,
 } from "@/api/gen/configService";
 import type {
-  LoginRequest,
-  GoogleOneTapRequest,
   AccountUserProfileDto,
+  AuthGoogleOneTapRequest as GoogleOneTapRequest,
+  AuthLoginRequest as LoginRequest,
+  AuthTelegramLoginRequest,
 } from "@/api/gen/configService/types.gen";
 import type { TelegramLoginRequest } from "../types";
 
@@ -199,7 +200,8 @@ export const authService = {
 
   async telegramLogin(data: TelegramLoginRequest): Promise<AuthResponse> {
     const response = await postApiAuthTelegram({
-      body: data,
+      // int64 is typed as bigint; sending BigInt would JSON-stringify as a string.
+      body: data as unknown as AuthTelegramLoginRequest,
       throwOnError: true,
     });
     return response.data as AuthResponse;
@@ -239,4 +241,4 @@ export const authService = {
   },
 };
 
-export { type LoginRequest } from "@/api/gen/configService/types.gen";
+export type { LoginRequest };

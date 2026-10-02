@@ -1,12 +1,9 @@
 # Pull-request gate for the Vue app. The Azure front-end pipeline is push-to-main
 # only (`pr: none`), so this is what runs before a human reviews a frontend PR.
 #
-# Planned follow-ups (not failing steps yet):
-# - ESLint (`npm run lint`). Main has known lint errors.
-# - `vue-tsc -p tsconfig.app.json`. That project has a large set of known type
-#   errors on main and is a later slice.
-# This job runs the root typecheck that already passes: `npm run tsc`
-# (`vue-tsc --noEmit`, root tsconfig.json).
+# `npm run tsc` typechecks tsconfig.app.json (the SPA, including tests) and
+# tsconfig.node.json (Vite and Vitest config). `npm run lint` is ESLint without
+# --fix.
 name: Frontend PR
 
 on:
@@ -57,6 +54,9 @@ jobs:
 
       - name: Typecheck
         run: npm run tsc
+
+      - name: Lint
+        run: npm run lint
 
       - name: Test
         run: npm run test:run

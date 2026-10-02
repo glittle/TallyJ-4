@@ -113,7 +113,8 @@ describe("BallotAddPersonPanel", () => {
 
   it("copies first and last into the person form for a normal vote", async () => {
     const wrapper = mountPanel();
-    (wrapper.vm as { voteEntryType: string }).voteEntryType = "normal";
+    (wrapper.vm as unknown as { voteEntryType: string }).voteEntryType =
+      "normal";
     await nextTick();
     await nextTick();
 
@@ -132,7 +133,8 @@ describe("BallotAddPersonPanel", () => {
     isGuestTellerMock.mockReturnValue(true);
     currentElection.guestTellersCanAddPeople = false;
     const wrapper = mountPanel();
-    (wrapper.vm as { voteEntryType: string }).voteEntryType = "normal";
+    (wrapper.vm as unknown as { voteEntryType: string }).voteEntryType =
+      "normal";
     await nextTick();
 
     expect(wrapper.text()).toContain("(Ask head teller to add required name)");
@@ -147,7 +149,8 @@ describe("BallotAddPersonPanel", () => {
     isGuestTellerMock.mockReturnValue(true);
     currentElection.guestTellersCanAddPeople = true;
     const wrapper = mountPanel();
-    (wrapper.vm as { voteEntryType: string }).voteEntryType = "normal";
+    (wrapper.vm as unknown as { voteEntryType: string }).voteEntryType =
+      "normal";
     await nextTick();
 
     expect(wrapper.findComponent({ name: "PersonForm" }).exists()).toBe(true);
