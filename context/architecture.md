@@ -13,6 +13,25 @@ The previous `Backend.Domain` and `Backend.Application` projects were fully merg
 
 **Rejected alternative:** keep or reintroduce separate Domain/Application class libraries. Rejected for this codebase’s current size and ownership model — the split had become dead weight and produced duplicate or stale guidance.
 
+## Social preview URLs are static and pinned to production
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** production host in `ClientEnvResolver` tests (`https://v4.tallyj.com`); UAT host `https://uat.v4.tallyj.com`; `MapFallbackToFile` serves `index.html` for unknown routes  
+**Revisit when:** v4 production moves off `v4.tallyj.com`, or UAT and production stop sharing one frontend build
+
+Link previews (LinkedIn, Facebook, Slack, X) read `frontend/index.html`. They do not run the SPA. `/` is that file via static files; deep links are the same file via `MapFallbackToFile`, so the head does not vary by route. `og:url` and `og:image` are absolute `https://v4.tallyj.com` URLs in source. The Azure frontend pipeline rewrites that origin to the UAT host only in the UAT zip.
+
+The rewrite (`frontend/scripts/set-og-origin.mjs`) changes `og:url`, `og:image`, `twitter:url`, and `twitter:image` only when `new URL(content).origin` is exactly `https://v4.tallyj.com`. A second run whose tags are already the target origin leaves the file unchanged.
+
+**Reason:** one Vite build is copied to UAT and production, and a relative image URL is not reliable for those crawlers. Pinning production means an unmodified `frontend/dist` is correct for production. UAT still previews, because the pipeline that actually deploys there substitutes the origin before packaging. Comparing parsed origins keeps a comment, a non-URL meta value, and a lookalike host (one that only begins with the production origin) out of the substitution. A substring check of the raw origin is the CodeQL incomplete-URL-sanitization finding.
+
+**Rejected alternative:** set the tags from Vue after load. Crawlers would publish an empty card.
+
+**Rejected alternative:** bake the UAT origin into source. Production shares would point crawlers at UAT.
+
+**Rejected alternative:** replace every occurrence of the production origin string. That rewrites comments and lookalike hosts, and the presence check is a URL substring test.
+
 ### Practical layout (where to look)
 
 - **Data / persistence:** `backend/Context/MainDbContext.cs`, `Entities/`, `Enumerations/`, `Identity/`, `Interfaces/`

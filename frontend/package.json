@@ -17,7 +17,8 @@
     "test:run": "vitest run",
     "test:failures": "vitest run --reporter=verbose --hideSkippedTests",
     "test:coverage": "vitest run --coverage",
-    "validate:i18n": "node src/locales/validate-translations.js"
+    "validate:i18n": "node src/locales/validate-translations.js",
+    "og-image": "node scripts/render-og-image.mjs"
   },
   "dependencies": {
     "@intlify/unplugin-vue-i18n": "^11.2.5",
@@ -38,6 +39,7 @@
     "@eslint/js": "^10.0.1",
     "@hey-api/openapi-ts": "^0.97.3",
     "@pinia/testing": "^1.0.3",
+    "@resvg/resvg-js": "^2.6.2",
     "@types/luxon": "^3.7.6",
     "@types/node": "^25.9.8",
     "@types/qrcode": "^1.5.6",

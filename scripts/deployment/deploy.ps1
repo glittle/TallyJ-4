@@ -28,12 +28,11 @@ if (Test-Path $EnvFile) {
     Write-Host "⚠ Warning: .env.$Environment not found" -ForegroundColor Yellow
 }
 
-# Determine frontend build mode and backend wwwroot folder from the environment name
+# Determine the backend wwwroot folder from the environment name.
+# The frontend has one build script. UAT then rewrites Open Graph URLs in dist.
 if ($Environment -eq "uat") {
-    $FrontendBuildScript = "build-uat"
     $WwwrootFolder = "wwwroot-uat"
 } else {
-    $FrontendBuildScript = "build-production"
     $WwwrootFolder = "wwwroot-prod"
 }
 
@@ -51,8 +50,14 @@ Write-Host ""
 Write-Host "Step 2: Building Frontend..." -ForegroundColor Cyan
 Set-Location (Join-Path $ProjectRoot "frontend")
 npm ci
-npm run $FrontendBuildScript
-Write-Host "✓ Frontend build complete ($FrontendBuildScript)" -ForegroundColor Green
+npm run build
+if ($Environment -eq "uat") {
+    # index.html pins Open Graph URLs at the production origin. UAT crawlers
+    # must fetch the card from the UAT host. Production builds stay as built.
+    node scripts/set-og-origin.mjs https://uat.v4.tallyj.com dist/index.html
+    Write-Host "✓ Open Graph origin set to https://uat.v4.tallyj.com" -ForegroundColor Green
+}
+Write-Host "✓ Frontend build complete" -ForegroundColor Green
 
 # Step 3: Copy frontend dist into backend publish output
 # The backend serves static files from wwwroot-{env}/ relative to its working directory.

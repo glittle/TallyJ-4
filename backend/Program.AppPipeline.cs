@@ -93,6 +93,8 @@ public static class ProgramAppPipeline
         app.UseHttpsRedirection();
         app.UseDefaultFiles();
         app.UseMiddleware<ClientEnvMiddleware>();
+        // Static files run before authentication. /og-image.png (and the rest of the
+        // SPA public folder) is anonymous. The default MIME map sends .png as image/png.
         app.UseStaticFiles(new StaticFileOptions
         {
             OnPrepareResponse = ctx =>
@@ -137,8 +139,10 @@ public static class ProgramAppPipeline
 
         app.MapControllers();
 
-        // Add SPA fallback for web history routing - exclude systemhealth and hub routes
-        app.MapFallbackToFile("{*path:regex(^(?!api/|systemhealth|hubs/|assets/|config\\.json).*$)}", "index.html").AllowAnonymous();
+        // SPA history fallback. `/` is index.html via UseDefaultFiles; unknown routes
+        // (deep links) return that same file, so the social-preview head is identical.
+        // og-image.png is excluded so a missing card is not served back as text/html.
+        app.MapFallbackToFile("{*path:regex(^(?!api/|systemhealth|hubs/|assets/|config\\.json|og-image\\.(png|svg)).*$)}", "index.html").AllowAnonymous();
 
         app.MapHub<Backend.Hubs.MainHub>("/hubs/main");
         app.MapHub<Backend.Hubs.AnalyzeHub>("/hubs/analyze");
