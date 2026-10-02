@@ -1,7 +1,27 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ref } from "vue";
+import { ref, type Ref } from "vue";
 import { usePersonSearch } from "../usePersonSearch";
 import type { SearchablePersonDto } from "@/types/Person";
+
+const { strategyCalls } = vi.hoisted(() => ({
+  strategyCalls: { count: 0 },
+}));
+
+// Count work in usePersonSearch. The wrapper calls the real strategies, so
+// match behavior stays the same; only the number of person scans is observed.
+vi.mock("@/utils/searchStrategies", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/utils/searchStrategies")>();
+  return {
+    ...actual,
+    applyAllStrategies: (
+      ...args: Parameters<typeof actual.applyAllStrategies>
+    ) => {
+      strategyCalls.count += 1;
+      return actual.applyAllStrategies(...args);
+    },
+  };
+});
 
 function createMockPerson(
   firstName: string,
@@ -30,6 +50,7 @@ describe("usePersonSearch", () => {
   let mockSearchablePeople: SearchablePersonDto[];
 
   beforeEach(() => {
+    strategyCalls.count = 0;
     mockSearchablePeople = [
       createMockPerson("John", "Doe", ["J500", "D000"]),
       createMockPerson("Jane", "Smith", ["J500", "S530"]),
@@ -474,7 +495,55 @@ describe("usePersonSearch", () => {
   });
 
   describe("performance", () => {
-    it("should search 1000 people in less than 50ms", () => {
+    // Call count is the real guard: each cold search must invoke
+    // applyAllStrategies once per person. That fails if the scan skips
+    // people, walks them twice, or otherwise does work that is not one
+    // strategy pass over the list. It says nothing about speed.
+    // The median of five cold runs is only a loose wall-clock bound.
+    // Quiet-machine medians are about 28–58ms for 1000 people and 11–17ms
+    // for 500 alias rows. 250ms and 100ms fail when the median is several
+    // times slower than that (roughly a 4–9× slowdown), not a small regression.
+    const performanceRuns = 5;
+    const thousandPersonBudgetMs = 250;
+    const aliasBudgetMs = 100;
+
+    function medianDurationMs(samples: number[]): number {
+      const sorted = [...samples].sort((a, b) => a - b);
+      return sorted[Math.floor(sorted.length / 2)];
+    }
+
+    function measureColdSearches(
+      searchQuery: Ref<string>,
+      searchablePeople: Ref<SearchablePersonDto[]>,
+    ): {
+      medianMs: number;
+      results: SearchablePersonDto[];
+      callsPerRun: number[];
+    } {
+      const durations: number[] = [];
+      const callsPerRun: number[] = [];
+      let results: SearchablePersonDto[] = [];
+
+      for (let run = 0; run < performanceRuns; run++) {
+        strategyCalls.count = 0;
+        const startedAt = performance.now();
+        const { searchResults } = usePersonSearch(
+          searchQuery,
+          searchablePeople,
+        );
+        results = searchResults.value;
+        durations.push(performance.now() - startedAt);
+        callsPerRun.push(strategyCalls.count);
+      }
+
+      return {
+        medianMs: medianDurationMs(durations),
+        results,
+        callsPerRun,
+      };
+    }
+
+    it("scans each of 1000 people once and ranks every LastName50 match first", () => {
       const largeSearchablePeople = ref(
         Array.from({ length: 1000 }, (_, i) =>
           createMockPerson(`FirstName${i}`, `LastName${i % 100}`, [
@@ -485,20 +554,30 @@ describe("usePersonSearch", () => {
       );
       const searchQuery = ref("LastName50");
 
-      const startTime = performance.now();
-      const { searchResults } = usePersonSearch(
+      const { medianMs, results, callsPerRun } = measureColdSearches(
         searchQuery,
         largeSearchablePeople,
       );
-      const results = searchResults.value;
-      const endTime = performance.now();
-      const duration = endTime - startTime;
 
-      expect(results.length).toBeGreaterThan(0);
-      expect(duration).toBeLessThan(150);
+      expect(callsPerRun).toEqual(
+        Array.from({ length: performanceRuns }, () => 1000),
+      );
+      // Substring hits are exactly the 10 LastName50 rows. Near spellings can
+      // also fuzzy-match, so the list may be longer than 10, but those 10
+      // outrank the fuzzy neighbors and stay inside maxResults (20).
+      expect(
+        results.filter((person) => person.lastName === "LastName50"),
+      ).toHaveLength(10);
+      expect(
+        results
+          .slice(0, 10)
+          .every((person) => person.lastName === "LastName50"),
+      ).toBe(true);
+      expect(results.length).toBeLessThanOrEqual(20);
+      expect(medianMs).toBeLessThan(thousandPersonBudgetMs);
     });
 
-    it("should handle complex searches efficiently", () => {
+    it("scans 500 people once and returns the first 20 of 100 alias rows", () => {
       const largeSearchablePeople = ref(
         Array.from({ length: 500 }, (_, i) =>
           createMockPerson(
@@ -511,38 +590,46 @@ describe("usePersonSearch", () => {
       );
       const searchQuery = ref("AliasName");
 
-      const startTime = performance.now();
-      const { searchResults } = usePersonSearch(
+      const { medianMs, results, callsPerRun } = measureColdSearches(
         searchQuery,
         largeSearchablePeople,
       );
-      const results = searchResults.value;
-      const endTime = performance.now();
-      const duration = endTime - startTime;
 
-      expect(results.length).toBeGreaterThan(0);
-      expect(duration).toBeLessThan(150);
+      expect(callsPerRun).toEqual(
+        Array.from({ length: performanceRuns }, () => 500),
+      );
+      // 100 alias rows, capped by the default maxResults of 20.
+      expect(results).toHaveLength(20);
+      expect(
+        results.every((person) => person.otherNames?.startsWith("AliasName")),
+      ).toBe(true);
+      expect(medianMs).toBeLessThan(aliasBudgetMs);
     });
   });
 
   describe("caching", () => {
-    it("should cache search results", () => {
+    it("returns the cached array without scanning again", () => {
       const searchQuery = ref("John");
-      const searchablePeople = ref(mockSearchablePeople);
+      const searchablePeople = ref(
+        mockSearchablePeople.map((person) => ({ ...person })),
+      );
       const { performSearch } = usePersonSearch(searchQuery, searchablePeople, {
         enableCache: true,
       });
 
-      const startTime1 = performance.now();
+      strategyCalls.count = 0;
       const results1 = performSearch("John", searchablePeople.value);
-      const duration1 = performance.now() - startTime1;
+      expect(strategyCalls.count).toBe(searchablePeople.value.length);
 
-      const startTime2 = performance.now();
+      strategyCalls.count = 0;
       const results2 = performSearch("John", searchablePeople.value);
-      const duration2 = performance.now() - startTime2;
 
-      expect(results1).toEqual(results2);
-      expect(duration2).toBeLessThan(duration1);
+      // A cache hit returns the stored array. Matching ids would also pass
+      // after a rescan: renaming a row leaves _soundexCodes, so a sound-alike
+      // search still finds that person. The same array instance and zero
+      // strategy calls are what show the second call did not search.
+      expect(results2).toBe(results1);
+      expect(strategyCalls.count).toBe(0);
     });
 
     it("should clear cache when searchable people change", () => {

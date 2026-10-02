@@ -151,6 +151,20 @@ vi.mock("@/stores/locationStore", () => ({
   useLocationStore: () => mockLocationStore,
 }));
 
+// BallotAddPersonPanel calls useElectionStore() inside <script setup> to
+// decide whether a guest teller may add a name. That call is valid Pinia
+// usage. This spec mocks the other stores the entry panel uses and does not
+// install an active Pinia, so the add-person drawer needs this store too.
+const mockElectionStore = {
+  currentElection: {
+    guestTellersCanAddPeople: true,
+  } as { guestTellersCanAddPeople: boolean } | null,
+};
+
+vi.mock("@/stores/electionStore", () => ({
+  useElectionStore: () => mockElectionStore,
+}));
+
 vi.mock("@/composables/useApiErrorHandler", () => ({
   useApiErrorHandler: () => ({
     handleApiError: vi.fn(),
