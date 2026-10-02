@@ -34,7 +34,11 @@ const registerForm = reactive({
   confirmPassword: "",
 });
 
-const validatePassword = (_rule: unknown, value: string, callback: (error?: Error) => void) => {
+const validatePassword = (
+  _rule: unknown,
+  value: string,
+  callback: (error?: Error) => void,
+) => {
   if (!value) {
     callback(new Error(t("auth.passwordRequired")));
     return;
@@ -64,7 +68,11 @@ const validatePassword = (_rule: unknown, value: string, callback: (error?: Erro
   }
 };
 
-const validatePass2 = (_rule: unknown, value: string, callback: (error?: Error) => void) => {
+const validatePass2 = (
+  _rule: unknown,
+  value: string,
+  callback: (error?: Error) => void,
+) => {
   if (!value) {
     callback(new Error(t("auth.confirmPasswordRequired")));
   } else if (value !== registerForm.password) {
@@ -199,7 +207,11 @@ onMounted(async () => {
         </p>
 
         <div class="register-actions">
-          <el-button type="primary" class="submit-btn" @click="handleGoogleLogin">
+          <el-button
+            type="primary"
+            class="submit-btn"
+            @click="handleGoogleLogin"
+          >
             {{ t("auth.googleLogin") }}
           </el-button>
           <el-button class="submit-btn" @click="goToLogin">
@@ -224,7 +236,11 @@ onMounted(async () => {
           {{ t("auth.errors.invalidInvite") }}
         </p>
         <div class="register-actions">
-          <el-button type="primary" class="submit-btn" @click="handleGoogleLogin">
+          <el-button
+            type="primary"
+            class="submit-btn"
+            @click="handleGoogleLogin"
+          >
             {{ t("auth.googleLogin") }}
           </el-button>
           <el-button class="submit-btn" @click="goToLogin">

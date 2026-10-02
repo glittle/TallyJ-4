@@ -97,7 +97,10 @@ const stubs = {
     template:
       "<div><input class='tie-count' :value='modelValue' /><button type='button' class='input-clear' @click='onClear'>clear-input</button></div>",
     methods: {
-      onClear() {
+      onClear(this: {
+        valueOnClear: unknown;
+        $emit: (event: string, value?: unknown) => void;
+      }) {
         this.$emit("update:modelValue", this.valueOnClear);
         this.$emit("change", this.valueOnClear);
       },

@@ -5,7 +5,7 @@ import { type FormInstance, type FormRules } from "element-plus";
 import { useNotifications } from "@/composables/useNotifications";
 import { useBallotStore } from "../../stores/ballotStore";
 import { usePeopleStore } from "../../stores/peopleStore";
-import type { CreateVoteDto, PersonDto } from "../../types";
+import type { CreateVoteDto, PersonListDto } from "../../types";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 
 const props = defineProps<{
@@ -29,7 +29,7 @@ const { handleApiError } = useApiErrorHandler();
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
 const searching = ref(false);
-const votablePeople = ref<PersonDto[]>([]);
+const votablePeople = ref<PersonListDto[]>([]);
 
 const form = reactive({
   positionOnBallot: props.nextPosition,
@@ -88,7 +88,6 @@ async function handleSubmit() {
           ballotGuid: props.ballotGuid,
           positionOnBallot: form.positionOnBallot,
           personGuid: form.personGuid,
-          statusCode: "Ok",
         };
         await ballotStore.createVote(dto);
         showSuccessMessage(t("ballots.voteCreateSuccess"));

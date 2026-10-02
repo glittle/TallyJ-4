@@ -210,6 +210,16 @@ const runAutosave = debounce(async () => {
   }
 }, 800);
 
+function filterVotablePersonOptions(queryString: string) {
+  const query = queryString.toLowerCase();
+  if (!query) {
+    return allVotablePersonOptions.value;
+  }
+  return allVotablePersonOptions.value.filter((opt) =>
+    (opt.value ?? "").toLowerCase().includes(query),
+  );
+}
+
 function handlePersonSelect(
   position: number,
   item: { value: string; person: OnlinePerson },
@@ -224,15 +234,16 @@ function handlePersonSelect(
   runAutosave();
 }
 
-function handleSearchInput(position: number, value: string) {
+function handleSearchInput(position: number, value: string | number) {
+  const text = String(value);
   const slot = votes.value.find((v) => v.position === position);
   if (!slot) {
     return;
   }
-  if (slot.person && slot.person.fullName !== value) {
+  if (slot.person && slot.person.fullName !== text) {
     slot.person = null;
   }
-  slot.searchText = value;
+  slot.searchText = text;
   runAutosave();
 }
 
@@ -439,7 +450,10 @@ function backToElections() {
             <div v-if="poolEntries.length > 0" class="pool-list">
               <h4>{{ $t("voting.ballot.yourPool") }}</h4>
               <ul>
-                <li v-for="entry in poolEntries" :key="entry.fullName">
+                <li
+                  v-for="(entry, index) in poolEntries"
+                  :key="entry.fullName || index"
+                >
                   {{ entry.fullName }}
                 </li>
               </ul>
@@ -515,14 +529,7 @@ function backToElections() {
                   v-model="vote.searchText"
                   :fetch-suggestions="
                     (queryString: string, cb: Function) => {
-                      const results = queryString
-                        ? allVotablePersonOptions.filter((opt) =>
-                            opt.value
-                              .toLowerCase()
-                              .includes(queryString.toLowerCase()),
-                          )
-                        : allVotablePersonOptions;
-                      cb(results);
+                      cb(filterVotablePersonOptions(queryString));
                     }
                   "
                   :placeholder="$t('voting.ballot.searchPlaceholder')"
@@ -533,7 +540,8 @@ function backToElections() {
                     (item: any) => handlePersonSelect(vote.position, item)
                   "
                   @input="
-                    (val: string) => handleSearchInput(vote.position, val)
+                    (val: string | number) =>
+                      handleSearchInput(vote.position, val)
                   "
                 />
 

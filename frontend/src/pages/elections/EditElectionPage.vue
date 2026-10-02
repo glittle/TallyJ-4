@@ -45,7 +45,11 @@ import { useRoute, useRouter } from "vue-router";
 import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
 import { useElectionStatsStore } from "../../stores/electionStatsStore";
 import { useElectionStore } from "../../stores/electionStore";
-import type { ElectionSummaryDto, UpdateElectionDto } from "../../types";
+import type { LinkedElectionOption, UpdateElectionDto } from "../../types";
+import {
+  applyServerFieldErrors,
+  mapServerValidationErrors,
+} from "@/utils/formServerErrors";
 
 const router = useRouter();
 const route = useRoute();
@@ -65,7 +69,7 @@ const election = computed(() => electionStore.currentElection);
 const ballotCount = computed(
   () => electionStatsStore.getCached(electionGuid)?.ballotCount,
 );
-const availableElections = ref<ElectionSummaryDto[]>([]);
+const availableElections = ref<LinkedElectionOption[]>([]);
 
 // `let` is required here so the Vue compiler does not emit
 // "`v-model` cannot update a `const` reactive binding" for <ElectionFormTabs v-model="form">
@@ -81,7 +85,6 @@ let form = reactive<UpdateElectionDto>({
   showFullReport: undefined,
   listForPublic: undefined,
   showAsTest: undefined,
-  tallyStatus: undefined,
   useOnlineVoting: undefined,
   onlineWhenOpen: undefined,
   onlineWhenClose: undefined,
@@ -157,7 +160,6 @@ onMounted(async () => {
         showFullReport: election.value.showFullReport,
         listForPublic: election.value.listForPublic,
         showAsTest: election.value.showAsTest,
-        tallyStatus: election.value.tallyStatus,
         useOnlineVoting: election.value.useOnlineVoting ?? false,
         onlineWhenOpen: election.value.onlineWhenOpen,
         onlineWhenClose: election.value.onlineWhenClose,
@@ -203,20 +205,13 @@ async function submitForm() {
     showSuccessMessage(t("elections.updateSuccess"));
     router.push(`/elections/${electionGuid}`);
   } catch (error: any) {
-    // Handle validation errors by setting them on form fields
-    if (error?.response?.status === 400 && error?.response?.data?.errors) {
-      const validationErrors = error.response.data.errors;
-      const fieldErrors: Record<string, string[]> = {};
-
-      // Convert server field names to camelCase for form fields
-      Object.keys(validationErrors).forEach((serverField) => {
-        const formField =
-          serverField.charAt(0).toLowerCase() + serverField.slice(1);
-        fieldErrors[formField] = validationErrors[serverField];
-      });
-
-      // Set errors on form fields
-      formRef.value?.setFields(fieldErrors);
+    // hey-api throwOnError throws the parsed body, not an axios response.
+    if (error?.status === 400 && error?.errors) {
+      const validationErrors = error.errors;
+      applyServerFieldErrors(
+        formRef.value,
+        mapServerValidationErrors(validationErrors),
+      );
     } else {
       handleApiError(error);
     }

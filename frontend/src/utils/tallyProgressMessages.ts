@@ -1,12 +1,16 @@
-import type { ComposerTranslation } from "vue-i18n";
 import type { TallyProgressEvent } from "@/types/SignalREvents";
+
+type PhraseTranslator = (
+  key: string,
+  named?: Record<string, unknown>,
+) => string;
 
 const FALLBACK_KEY = "tally.progress.processingBallots";
 
 export function translateTallyProgressMessage(
   messageKey: string,
   progress: Pick<TallyProgressEvent, "processedBallots" | "totalBallots">,
-  t: ComposerTranslation,
+  t: PhraseTranslator,
 ): string {
   const key = messageKey?.trim() || FALLBACK_KEY;
   const translated = t(key, {

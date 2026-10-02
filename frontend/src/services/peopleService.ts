@@ -110,7 +110,7 @@ export const peopleService = {
       path: { electionGuid },
       query: { q: query },
     });
-    return response.data?.data ?? [];
+    return (response.data?.data ?? []) as PersonDto[];
   },
 
   async getVotablePeople(electionGuid: string): Promise<PersonDto[]> {

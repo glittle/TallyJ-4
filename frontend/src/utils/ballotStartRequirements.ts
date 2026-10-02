@@ -47,23 +47,17 @@ export function getBallotStartBlockReason(input: {
 }
 
 /** True when LocationType is Online (API enum), not when the location is named "Online". */
-export function isOnlineLocationType(
-  locationType?: string | null,
-): boolean {
+export function isOnlineLocationType(locationType?: string | null): boolean {
   return locationType?.trim().toLowerCase() === "online";
 }
 
 /** True when LocationType is Imported (API enum), not when named "Imported". */
-export function isImportedLocationType(
-  locationType?: string | null,
-): boolean {
+export function isImportedLocationType(locationType?: string | null): boolean {
   return locationType?.trim().toLowerCase() === "imported";
 }
 
 /** Online and Imported are system-managed: i18n label, sort-only edit, no delete. */
-export function isReservedLocationType(
-  locationType?: string | null,
-): boolean {
+export function isReservedLocationType(locationType?: string | null): boolean {
   return (
     isOnlineLocationType(locationType) || isImportedLocationType(locationType)
   );

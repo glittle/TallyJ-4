@@ -67,7 +67,7 @@ export function buildTellerJoinUrl(
  */
 export function parseTellerJoinRoute(route: {
   params: Record<string, string | string[] | undefined>;
-  query: Record<string, string | string[] | undefined | null>;
+  query: Record<string, string | null | Array<string | null> | undefined>;
 }): { electionGuid: string | null; accessCode: string | null } {
   // Route is defined as :accessCode?/:electionGuid? — a single path segment
   // lands in accessCode. Detect whether that segment is a GUID.
@@ -107,7 +107,7 @@ function firstParam(value: string | string[] | undefined): string | null {
 }
 
 function firstQuery(
-  value: string | string[] | undefined | null,
+  value: string | null | Array<string | null> | undefined,
 ): string | null {
   if (value === null || value === undefined) {
     return null;

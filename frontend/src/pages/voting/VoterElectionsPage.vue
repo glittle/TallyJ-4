@@ -26,25 +26,28 @@ onMounted(async () => {
   }
 });
 
-function selectElection(electionGuid: string) {
+function selectElection(electionGuid: string | undefined) {
+  if (!electionGuid) {
+    return;
+  }
   router.push(`/vote/${electionGuid}`);
 }
 
-function formatDate(dateStr: string | undefined): string {
+function formatDate(dateStr: string | Date | null | undefined): string {
   if (!dateStr) {
     return "";
   }
   return new Date(dateStr).toLocaleString();
 }
 
-function formatDateOnly(dateStr: string | undefined): string {
+function formatDateOnly(dateStr: string | Date | null | undefined): string {
   if (!dateStr) {
     return "";
   }
   return new Date(dateStr).toLocaleDateString();
 }
 
-function closedAgo(closeDate: string | undefined): string {
+function closedAgo(closeDate: string | Date | null | undefined): string {
   if (!closeDate) {
     return t("voting.elections.status.closed");
   }
@@ -68,8 +71,8 @@ function closedAgo(closeDate: string | undefined): string {
 }
 
 function timeUntilClose(
-  closeDate: string | undefined,
-  isEstimate: boolean,
+  closeDate: string | Date | null | undefined,
+  isEstimate: boolean | undefined,
 ): string {
   if (!closeDate) {
     return t("voting.elections.status.open");

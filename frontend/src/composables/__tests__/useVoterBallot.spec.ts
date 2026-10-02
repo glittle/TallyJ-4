@@ -28,6 +28,13 @@ describe("useVoterBallot", () => {
     expect(getEffectiveVoteName(slot, "A")).toBe("Jane Doe");
   });
 
+  it("treats a missing person name as empty instead of throwing", () => {
+    const slots = createEmptyVoteSlots(1);
+    slots[0].person = { personGuid: "abc", fullName: null };
+    expect(getEffectiveVoteName(slots[0], "A")).toBe("");
+    expect(() => getDuplicateVotePositions(slots, "A")).not.toThrow();
+  });
+
   it("buildOnlineVotes filters empty slots in random mode", () => {
     const slots = createEmptyVoteSlots(2);
     slots[0].freeText = "Alice";

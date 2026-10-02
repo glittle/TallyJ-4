@@ -204,7 +204,7 @@ async function loadPresentationData() {
   }
 }
 
-function formatDate(date: string) {
+function formatDate(date: string | Date) {
   if (!date) {
     return "";
   }

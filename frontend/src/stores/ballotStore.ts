@@ -326,7 +326,8 @@ export const useBallotStore = defineStore("ballot", () => {
       (ballotMutationGeneration.get(ballotGuid) ?? 0) + 1,
     );
 
-    const isCurrentBallot = currentBallot.value?.ballotGuid === ballotGuid;
+    const current = currentBallot.value;
+    const isCurrentBallot = current?.ballotGuid === ballotGuid;
 
     const normalizedVotes = resolveVoteMutationVotes(
       ballotGuid,
@@ -355,13 +356,13 @@ export const useBallotStore = defineStore("ballot", () => {
       patchBallotSummaryByGuid(ballotGuid, summaryPatch);
     }
 
-    if (!isCurrentBallot) {
+    if (!isCurrentBallot || !current) {
       return;
     }
 
     const existingSummary =
       ballots.value.find((b) => b.ballotGuid === ballotGuid) ??
-      summaryFromFullBallot(currentBallot.value);
+      summaryFromFullBallot(current);
 
     currentBallot.value = {
       ...existingSummary,

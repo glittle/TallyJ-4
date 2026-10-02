@@ -92,7 +92,7 @@ function viewDetails(log: AuditLog) {
   detailsDialogVisible.value = true;
 }
 
-function formatDate(dateString: string) {
+function formatDate(dateString: string | Date) {
   if (!dateString) {
     return "-";
   }

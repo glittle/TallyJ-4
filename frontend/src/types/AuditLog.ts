@@ -1,6 +1,6 @@
 export interface AuditLog {
   id: number;
-  timestamp: string;
+  timestamp: string | Date;
   eventType: number | string;
   userId?: string | null;
   onlineVoterId?: string | null;

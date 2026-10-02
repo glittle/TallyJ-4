@@ -5,6 +5,7 @@ import {
   postApiBallotsCreateBallot,
   putApiBallotsByGuidUpdateBallot,
 } from "@/api/gen/configService";
+import type { EnumerationsBallotStatus } from "@/api/gen/configService/types.gen";
 import type { BallotDto, CreateBallotDto, UpdateBallotDto } from "../types";
 import { normalizeVoteList } from "../utils/voteDtoNormalization";
 
@@ -35,7 +36,10 @@ export const ballotService = {
   async update(ballotGuid: string, dto: UpdateBallotDto): Promise<BallotDto> {
     const response = await putApiBallotsByGuidUpdateBallot({
       path: { guid: ballotGuid },
-      body: dto,
+      body: {
+        ...dto,
+        statusCode: dto.statusCode as EnumerationsBallotStatus | undefined,
+      },
     });
     const ballot = response.data?.data as BallotDto;
     return {
@@ -46,12 +50,5 @@ export const ballotService = {
 
   async delete(ballotGuid: string): Promise<void> {
     await deleteApiBallotsByGuidDeleteBallot({ path: { guid: ballotGuid } });
-  },
-
-  async getByLocation(locationGuid: string): Promise<BallotDto[]> {
-    const response = await getApiBallotsByElectionGuidBallots({
-      path: { electionGuid: locationGuid },
-    });
-    return (response.data?.data?.items ?? []) as BallotDto[];
   },
 };

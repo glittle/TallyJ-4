@@ -37,7 +37,11 @@ import { type FormInstance, type FormRules } from "element-plus";
 import { useNotifications } from "@/composables/useNotifications";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useElectionStore } from "../../stores/electionStore";
-import type { CreateElectionDto, ElectionSummaryDto } from "../../types";
+import type { CreateElectionDto, LinkedElectionOption } from "../../types";
+import {
+  applyServerFieldErrors,
+  mapServerValidationErrors,
+} from "@/utils/formServerErrors";
 import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
 
 const router = useRouter();
@@ -48,7 +52,7 @@ const { handleApiError } = useApiErrorHandler();
 
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
-const availableElections = ref<ElectionSummaryDto[]>([]);
+const availableElections = ref<LinkedElectionOption[]>([]);
 
 // `let` is required here so the Vue compiler does not emit
 // "`v-model` cannot update a `const` reactive binding" for <ElectionFormTabs v-model="form">
@@ -144,20 +148,13 @@ async function submitForm() {
     showSuccessMessage(t("elections.createSuccess"));
     router.push(`/elections/${election.electionGuid}`);
   } catch (error: any) {
-    // Handle validation errors by setting them on form fields
-    if (error?.response?.status === 400 && error?.response?.data?.errors) {
-      const validationErrors = error.response.data.errors;
-      const fieldErrors: Record<string, string[]> = {};
-
-      // Convert server field names to camelCase for form fields
-      Object.keys(validationErrors).forEach((serverField) => {
-        const formField =
-          serverField.charAt(0).toLowerCase() + serverField.slice(1);
-        fieldErrors[formField] = validationErrors[serverField];
-      });
-
-      // Set errors on form fields
-      formRef.value?.setFields(fieldErrors);
+    // hey-api throwOnError throws the parsed body, not an axios response.
+    if (error?.status === 400 && error?.errors) {
+      const validationErrors = error.errors;
+      applyServerFieldErrors(
+        formRef.value,
+        mapServerValidationErrors(validationErrors),
+      );
     } else {
       handleApiError(error);
     }

@@ -6,8 +6,12 @@ import {
 
 describe("formatLocationLabel", () => {
   const t = (key: string) => {
-    if (key === "locations.typeOnline") return "آنلاین";
-    if (key === "locations.typeImported") return "وارداتی";
+    if (key === "locations.typeOnline") {
+      return "آنلاین";
+    }
+    if (key === "locations.typeImported") {
+      return "وارداتی";
+    }
     return key;
   };
 
@@ -44,8 +48,12 @@ describe("formatLocationLabel", () => {
 
 describe("formatLocationLabelForGuid", () => {
   const t = (key: string) => {
-    if (key === "locations.typeOnline") return "آنلاین";
-    if (key === "locations.typeImported") return "وارداتی";
+    if (key === "locations.typeOnline") {
+      return "آنلاین";
+    }
+    if (key === "locations.typeImported") {
+      return "وارداتی";
+    }
     return key;
   };
 

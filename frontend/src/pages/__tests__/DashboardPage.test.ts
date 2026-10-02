@@ -16,8 +16,19 @@ vi.mock("vue-router", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
 
-const mockElections = vi.fn(() => []);
-const mockActiveElections = vi.fn(() => []);
+const mockElections = vi.fn(
+  (): Array<{
+    electionGuid: string;
+    name: string;
+    dateOfElection?: string;
+    voterCount?: number;
+    ballotCount?: number;
+    tallyStatus?: string;
+  }> => [],
+);
+const mockActiveElections = vi.fn(
+  (): Array<{ electionGuid: string; name: string }> => [],
+);
 
 vi.mock("@/stores/electionStore", () => ({
   useElectionStore: () => ({

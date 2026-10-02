@@ -1,6 +1,6 @@
 import { mount } from "@vue/test-utils";
 import { describe, expect, it, vi } from "vitest";
-import { h } from "vue";
+import { h, type Component, type VNode, type VNodeChild } from "vue";
 import type { FrontDeskVoterDto } from "@/types/FrontDesk";
 import FrontDeskVotersTable from "../FrontDeskVotersTable.vue";
 
@@ -42,7 +42,7 @@ const TableStub = {
           .filter((col) => col.cellRenderer)
           .map((col, index) =>
             h("div", { key: col.key ?? index, class: `cell-${col.key}` }, [
-              col.cellRenderer!({ rowData: row }),
+              col.cellRenderer!({ rowData: row }) as VNodeChild,
             ]),
           ),
       );
@@ -62,7 +62,12 @@ const AutoResizerStub = {
       };
     },
   ) {
-    return () => h("div", slots.default?.({ height: 400, width: 800 }));
+    return () =>
+      h(
+        "div",
+        {},
+        slots.default?.({ height: 400, width: 800 }) as VNode | undefined,
+      );
   },
 };
 
@@ -95,8 +100,8 @@ function mountTable(row: FrontDeskVoterDto) {
     global: {
       directives: { loading: () => undefined },
       stubs: {
-        ElAutoResizer: AutoResizerStub,
-        ElTableV2: TableStub,
+        ElAutoResizer: AutoResizerStub as unknown as Component,
+        ElTableV2: TableStub as unknown as Component,
         ElTag: {
           props: ["type", "size"],
           template: '<span class="sms-tag"><slot /></span>',

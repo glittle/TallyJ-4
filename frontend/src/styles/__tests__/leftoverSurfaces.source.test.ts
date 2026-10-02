@@ -12,7 +12,9 @@ function readSrc(rel: string): string {
 
 describe("leftover dark-theme surfaces (#285 follow-up)", () => {
   it("Front Desk registration overlay uses tokens, not frozen white", () => {
-    const source = readSrc("components/frontdesk/FrontDeskRegistrationOverlay.vue");
+    const source = readSrc(
+      "components/frontdesk/FrontDeskRegistrationOverlay.vue",
+    );
     expect(source).toContain("background: var(--color-orange-50)");
     expect(source).toContain("color: var(--color-text-inverse) !important");
     expect(source).not.toMatch(/color:\s*#fff\b/);
@@ -35,7 +37,9 @@ describe("leftover dark-theme surfaces (#285 follow-up)", () => {
     expect(readSrc("components/common/GuestTellerAccessToggle.vue")).toContain(
       "background: var(--color-qr-pad)",
     );
-    expect(readSrc("pages/ProfilePage.vue")).not.toMatch(/background:\s*#fff\b/);
+    expect(readSrc("pages/ProfilePage.vue")).not.toMatch(
+      /background:\s*#fff\b/,
+    );
   });
 
   it("Teller join and CardSkeleton drop frozen light chrome", () => {

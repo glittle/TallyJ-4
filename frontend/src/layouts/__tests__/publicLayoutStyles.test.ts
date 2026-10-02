@@ -18,6 +18,6 @@ describe("PublicLayout styles", () => {
   it("does not special-case Beta with a separate mark span", () => {
     expect(source).not.toContain("version-beta");
     expect(source).not.toContain("splitVersionDisplay");
-    expect(source).toContain("$t(\"common.versionDisplay\")");
+    expect(source).toContain('$t("common.versionDisplay")');
   });
 });

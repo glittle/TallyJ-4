@@ -149,13 +149,13 @@ export interface SuperAdminUser {
   authMethod?: string;
   emailConfirmed?: boolean;
   pendingEmail?: string | null;
-  lockoutEnd?: string | null;
+  lockoutEnd?: string | Date | null;
 }
 
 export interface SuperAdminEmailChangeEntry {
   oldEmail: string;
   newEmail: string;
-  changedAt: string;
+  changedAt: string | Date;
   source: string;
   changedByUserId?: string | null;
 }
@@ -167,5 +167,5 @@ export interface SuperAdminUserDetail extends SuperAdminUser {
 export interface AccountInviteCreated {
   token: string;
   inviteUrl: string;
-  expiresAt: string;
+  expiresAt: string | Date;
 }

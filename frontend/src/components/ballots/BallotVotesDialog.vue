@@ -37,11 +37,7 @@ const ballotLocationLabel = computed(() =>
 
 watch(
   () =>
-    [
-      props.modelValue,
-      props.electionGuid,
-      props.ballot?.locationGuid,
-    ] as const,
+    [props.modelValue, props.electionGuid, props.ballot?.locationGuid] as const,
   async ([open, electionGuid, locationGuid]) => {
     if (
       !open ||

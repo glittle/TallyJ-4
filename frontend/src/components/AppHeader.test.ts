@@ -39,14 +39,20 @@ describe("AppHeader", () => {
         {
           path: "/dashboard",
           name: "Dashboard",
+          component: { template: "<div />" },
           meta: { titleKey: "nav.dashboard" },
         },
         {
           path: "/elections",
           name: "Elections",
+          component: { template: "<div />" },
           meta: { titleKey: "nav.elections" },
         },
-        { path: "/profile", name: "Profile" },
+        {
+          path: "/profile",
+          name: "Profile",
+          component: { template: "<div />" },
+        },
       ],
     });
   });
@@ -105,7 +111,11 @@ describe("AppHeader", () => {
       },
     });
 
-    await wrapper.vm.handleCommand("logout");
+    await (
+      wrapper.vm as unknown as {
+        handleCommand: (command: string) => Promise<void>;
+      }
+    ).handleCommand("logout");
 
     expect(mockLogout).toHaveBeenCalled();
     expect(mockRouterPush).toHaveBeenCalledWith("/");
@@ -121,7 +131,11 @@ describe("AppHeader", () => {
       },
     });
 
-    await wrapper.vm.handleCommand("profile");
+    await (
+      wrapper.vm as unknown as {
+        handleCommand: (command: string) => Promise<void>;
+      }
+    ).handleCommand("profile");
 
     expect(mockRouterPush).toHaveBeenCalledWith("/profile");
   });

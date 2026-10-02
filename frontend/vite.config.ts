@@ -5,7 +5,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, URL } from "node:url";
 import { visualizer } from "rollup-plugin-visualizer";
-import { defineConfig } from "vite";
+import { defineConfig, type UserConfig } from "vite";
 import devtoolsJson from "vite-plugin-devtools-json";
 import mkcert from "vite-plugin-mkcert";
 import { LOCALE_DIRECTORY_SOURCE } from "./src/locales/localeDirectory.js";
@@ -227,7 +227,7 @@ function getManualChunks(id: string): string | undefined {
 }
 
 // https://vite.dev/config/
-export default defineConfig(() => {
+export default defineConfig((): UserConfig => {
   const branchName = execSync("git rev-parse --abbrev-ref HEAD", {
     encoding: "utf-8",
   }).trim();
@@ -245,6 +245,7 @@ export default defineConfig(() => {
     server: {
       // HTTPS so Secure identity cookies work in local dev.
       // Certs come from vite-plugin-mkcert (local CA trusted by Chrome/OS).
+      // @ts-expect-error Vite's HttpsServerOptions type rejects boolean true; any truthy value still enables HTTPS
       https: true,
       port: 8095,
       hmr: {
@@ -269,6 +270,7 @@ export default defineConfig(() => {
       },
     },
     preview: {
+      // @ts-expect-error Vite's HttpsServerOptions type rejects boolean true; any truthy value still enables HTTPS
       https: true,
       port: 4173,
       proxy: {
@@ -331,9 +333,9 @@ export default defineConfig(() => {
       cssCodeSplit: true, // Split CSS into separate chunks
       reportCompressedSize: true, // Report compressed sizes
     },
-    esbuild: {
-      drop: ["console", "debugger"],
-    },
+    // TODO: Production builds do not strip console.* or debugger. Vite 8's
+    // convertEsbuildConfigToOxcConfig drops esbuild.drop, and the default oxc
+    // minifier leaves those calls in dist/. See frontend/README.md.
     publicDir: "public",
     define: {
       "process.env.BRANCH_NAME": JSON.stringify(branchName),

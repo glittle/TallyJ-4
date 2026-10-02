@@ -1,4 +1,4 @@
-import type { LocationTallyStatus } from "@/api/gen/configService";
+import type { EnumerationsLocationTallyStatus as LocationTallyStatus } from "@/api/gen/configService";
 
 export type LocationTypeCode = "Manual" | "Online" | "Imported";
 

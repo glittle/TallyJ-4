@@ -134,8 +134,17 @@ const pagination = ref({
   total: 0,
 });
 
+/** Fields the dashboard list sort and search read from full or summary rows. */
+type DashboardElection = Pick<
+  ElectionDto,
+  "electionGuid" | "name" | "dateOfElection"
+> &
+  Partial<Pick<ElectionSummaryDto, "electionStage" | "electionType">> & {
+    convenor?: string;
+  };
+
 /** Epoch ms for dateOfElection; null/invalid → 0 so they sort last when descending. */
-function electionDateMs(election: ElectionDto): number {
+function electionDateMs(election: DashboardElection): number {
   if (!election.dateOfElection) {
     return 0;
   }
@@ -150,7 +159,9 @@ function electionDateMs(election: ElectionDto): number {
  *    former ResumeElectionCard used.
  * 2. Remaining elections by Election Date descending (future/recent first).
  */
-function applyDefaultElectionOrder(list: ElectionDto[]): ElectionDto[] {
+function applyDefaultElectionOrder<T extends DashboardElection>(
+  list: T[],
+): T[] {
   const byDateDesc = [...list].sort(
     (a, b) => electionDateMs(b) - electionDateMs(a),
   );
@@ -186,11 +197,13 @@ const filteredElectionsUnpaginated = computed(() => {
 
   if (filters.value.search) {
     const search = filters.value.search.toLowerCase();
-    filtered = filtered.filter(
-      (election) =>
+    filtered = filtered.filter((election) => {
+      const convenor = "convenor" in election ? election.convenor : undefined;
+      return (
         election.name.toLowerCase().includes(search) ||
-        election.convenor?.toLowerCase().includes(search),
-    );
+        convenor?.toLowerCase().includes(search)
+      );
+    });
   }
 
   if (filters.value.status) {
