@@ -1,0 +1,65 @@
+# Pull-request gate for the Vue app. The Azure front-end pipeline is push-to-main
+# only (`pr: none`), so this is what runs before a human reviews a frontend PR.
+#
+# Planned follow-ups (not failing steps yet):
+# - ESLint (`npm run lint`). Main has known lint errors.
+# - `vue-tsc -p tsconfig.app.json`. That project has a large set of known type
+#   errors on main and is a later slice.
+# This job runs the root typecheck that already passes: `npm run tsc`
+# (`vue-tsc --noEmit`, root tsconfig.json).
+name: Frontend PR
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "frontend/**"
+      - "version.json" # imported by the SPA and PublicLayout tests
+      - ".github/workflows/frontend-pr.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: frontend-pr-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend (i18n, tests, build)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          # Same range as NodeTool versionSpec "22.x" in
+          # .azure/pipelines/azure-front-end-pipeline.yml.
+          # No .nvmrc, and frontend/package.json has no engines field.
+          node-version: "22.x"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate i18n
+        run: npm run validate:i18n
+
+      - name: Typecheck
+        run: npm run tsc
+
+      - name: Test
+        run: npm run test:run
+
+      - name: Build
+        run: npm run build
