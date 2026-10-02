@@ -1,4 +1,4 @@
-import { computed, ref, watch, type Ref } from "vue";
+import { computed, watch, type Ref } from "vue";
 import { useDebounceFn } from "@/utils/debounce";
 import type { SearchablePersonDto } from "@/types/Person";
 import {
@@ -54,7 +54,9 @@ export function usePersonSearch(
 ) {
   const { debounceDelay = 150, maxResults = 20, enableCache = true } = options;
 
-  const cache = ref<Map<string, SearchCache>>(new Map());
+  // Plain Map, not a ref. A ref would deeply proxy each stored result array,
+  // so a cache hit would not be the same instance the search just returned.
+  const cache = new Map<string, SearchCache>();
 
   const getPeopleHash = (people: SearchablePersonDto[]): string => {
     // Include a cheap popularity fingerprint so voteCount updates invalidate cache order
@@ -73,13 +75,13 @@ export function usePersonSearch(
     const now = Date.now();
     const keysToDelete: string[] = [];
 
-    cache.value.forEach((entry, key) => {
+    cache.forEach((entry, key) => {
       if (now - entry.timestamp > CACHE_TTL) {
         keysToDelete.push(key);
       }
     });
 
-    keysToDelete.forEach((key) => cache.value.delete(key));
+    keysToDelete.forEach((key) => cache.delete(key));
   };
 
   const performSearch = (
@@ -95,7 +97,7 @@ export function usePersonSearch(
     if (enableCache) {
       const peopleHash = getPeopleHash(people);
       const cacheKey = getCacheKey(trimmedQuery, peopleHash);
-      const cachedResult = cache.value.get(cacheKey);
+      const cachedResult = cache.get(cacheKey);
 
       if (cachedResult && Date.now() - cachedResult.timestamp < CACHE_TTL) {
         return cachedResult.results;
@@ -156,7 +158,7 @@ export function usePersonSearch(
     if (enableCache) {
       const peopleHash = getPeopleHash(people);
       const cacheKey = getCacheKey(trimmedQuery, peopleHash);
-      cache.value.set(cacheKey, {
+      cache.set(cacheKey, {
         query: trimmedQuery,
         peopleHash,
         results: finalResults,
@@ -179,13 +181,13 @@ export function usePersonSearch(
   });
 
   watch(searchablePeople, () => {
-    cache.value.clear();
+    cache.clear();
   });
 
   return {
     searchResults,
     performSearch,
     debouncedSearch,
-    clearCache: () => cache.value.clear(),
+    clearCache: () => cache.clear(),
   };
 }
