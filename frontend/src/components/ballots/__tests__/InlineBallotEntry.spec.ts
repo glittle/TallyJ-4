@@ -3,7 +3,6 @@ import type { SearchablePersonDto } from "@/types/Person";
 import type { VoteDto } from "@/types/Vote";
 import { flushPromises, mount } from "@vue/test-utils";
 import { ElAlert, ElButton, ElIcon, ElInput } from "element-plus";
-import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { nextTick } from "vue";
 import InlineBallotEntry from "../InlineBallotEntry.vue";
@@ -262,8 +261,6 @@ describe("InlineBallotEntry", () => {
   let mockSearchablePeople: SearchablePersonDto[];
 
   beforeEach(() => {
-    // BallotAddPersonPanel reads the real election store when the drawer opens.
-    setActivePinia(createPinia());
     vi.clearAllMocks();
     mockLocationStore.selectedLocationGuid = "location-1";
     mockLocationStore.locations = [
