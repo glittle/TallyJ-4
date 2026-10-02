@@ -79,30 +79,90 @@ describe("Open Graph and Twitter card tags", () => {
     );
   });
 
-  it("rewrites only the production origin for a UAT deploy", () => {
+  it("rewrites only social URL attributes whose origin is production", () => {
     const dir = mkdtempSync(join(tmpdir(), "tallyj-og-"));
     const file = join(dir, "index.html");
+    const lookalike = "https://v4.tallyj.com.evil.example/og-image.png";
     writeFileSync(
       file,
-      `<meta property="og:url" content="${PRODUCTION_ORIGIN}/" />\n<meta property="og:image" content="${IMAGE_URL}" />\n`,
+      `<!doctype html>
+<html><head>
+  <!-- production origin stays in this comment: ${PRODUCTION_ORIGIN} -->
+  <meta name="description" content="Bahá'í elections at ${PRODUCTION_ORIGIN}" />
+  <meta property="og:title" content="${TITLE}" />
+  <meta property="og:url" content="${PRODUCTION_ORIGIN}/" />
+  <meta property="og:image" content="${IMAGE_URL}" />
+  <meta name="twitter:image" content="${IMAGE_URL}" />
+  <meta name="twitter:url" content="${PRODUCTION_ORIGIN}/login" />
+  <meta property="og:image" content="${lookalike}" />
+  <p>See ${PRODUCTION_ORIGIN}/og-image.png</p>
+</head></html>
+`,
       "utf8",
     );
     const script = resolve(frontendRoot, "scripts/set-og-origin.mjs");
     execFileSync(
       process.execPath,
       [script, "https://uat.v4.tallyj.com", file],
-      { encoding: "utf8" },
+      {
+        encoding: "utf8",
+      },
     );
     const rewritten = readFileSync(file, "utf8");
-    expect(rewritten).toContain("https://uat.v4.tallyj.com/");
-    expect(rewritten).toContain("https://uat.v4.tallyj.com/og-image.png");
-    expect(rewritten).not.toContain(`${PRODUCTION_ORIGIN}/`);
-    expect(rewritten).not.toContain(`${PRODUCTION_ORIGIN}/og-image.png`);
+    const doc = new DOMParser().parseFromString(rewritten, "text/html");
+    const contents = (attr: "property" | "name", key: string) =>
+      [...doc.querySelectorAll(`meta[${attr}="${key}"]`)].map((el) =>
+        el.getAttribute("content"),
+      );
+
+    expect(contents("property", "og:url")).toEqual([
+      "https://uat.v4.tallyj.com/",
+    ]);
+    expect(contents("property", "og:image")).toEqual([
+      "https://uat.v4.tallyj.com/og-image.png",
+      lookalike,
+    ]);
+    expect(contents("name", "twitter:image")).toEqual([
+      "https://uat.v4.tallyj.com/og-image.png",
+    ]);
+    expect(contents("name", "twitter:url")).toEqual([
+      "https://uat.v4.tallyj.com/login",
+    ]);
+    expect(contents("name", "description")).toEqual([
+      `Bahá'í elections at ${PRODUCTION_ORIGIN}`,
+    ]);
+    expect(contents("property", "og:title")).toEqual([TITLE]);
+    expect(rewritten).toContain(
+      `<!-- production origin stays in this comment: ${PRODUCTION_ORIGIN} -->`,
+    );
+    expect(rewritten).toContain(`<p>See ${PRODUCTION_ORIGIN}/og-image.png</p>`);
 
     execFileSync(
       process.execPath,
       [script, "https://uat.v4.tallyj.com/", file],
       { encoding: "utf8" },
     );
+    expect(readFileSync(file, "utf8")).toBe(rewritten);
+  });
+
+  it("fails when no social URL uses the production or target origin", () => {
+    const dir = mkdtempSync(join(tmpdir(), "tallyj-og-"));
+    const file = join(dir, "index.html");
+    writeFileSync(
+      file,
+      `<meta property="og:title" content="${TITLE}" />\n<!-- ${PRODUCTION_ORIGIN} -->\n`,
+      "utf8",
+    );
+    const script = resolve(frontendRoot, "scripts/set-og-origin.mjs");
+    expect(() =>
+      execFileSync(
+        process.execPath,
+        [script, "https://uat.v4.tallyj.com", file],
+        {
+          encoding: "utf8",
+        },
+      ),
+    ).toThrow();
+    expect(readFileSync(file, "utf8")).toContain(PRODUCTION_ORIGIN);
   });
 });

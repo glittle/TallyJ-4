@@ -114,8 +114,9 @@ npm run build
 After building, copy the contents of `frontend/dist/` into the corresponding webroot folder inside the backend publish directory **before** deploying:
 
 ```bash
+# From the repository root.
 # UAT example — point the preview card at the UAT origin first
-node scripts/set-og-origin.mjs https://uat.v4.tallyj.com dist/index.html
+node frontend/scripts/set-og-origin.mjs https://uat.v4.tallyj.com frontend/dist/index.html
 cp -r frontend/dist/ backend/publish/wwwroot-uat/
 
 # Production example — leave https://v4.tallyj.com in index.html
@@ -126,7 +127,7 @@ Then deploy `backend/publish/` to the server.  The backend detects the environme
 
 ### Social preview origin
 
-`frontend/index.html` pins `og:url` and `og:image` at `https://v4.tallyj.com` (production). UAT is `https://uat.v4.tallyj.com`. Crawlers do not run JavaScript, so the origin is not chosen in the browser. A production publish of `frontend/dist` should keep those production URLs. The Azure frontend pipeline deploys only to UAT and rewrites the origin in `dist/index.html` before it zips the site (`node scripts/set-og-origin.mjs`). Do not deploy that UAT zip to production. See `frontend/README.md` (Social link previews) for how to refresh LinkedIn, Facebook, and X caches.
+`frontend/index.html` pins `og:url` and `og:image` at `https://v4.tallyj.com` (production). UAT is `https://uat.v4.tallyj.com`. Crawlers do not run JavaScript, so the origin is not chosen in the browser. A production publish of `frontend/dist` should keep those production URLs. The Azure frontend pipeline deploys only to UAT and, from the `frontend` directory, rewrites those URL attributes in `dist/index.html` before it zips the site (`node scripts/set-og-origin.mjs`). Do not deploy that UAT zip to production. See `frontend/README.md` (Social link previews) for how to refresh LinkedIn, Facebook, and X caches.
 
 > **Why this matters:** if the frontend files are missing from `wwwroot-{env}/`, or are placed in a different directory, the backend will serve `index.html` as a fallback for all asset requests (`.js`, `.css`, etc.), which causes the application to fail silently in the browser.
 

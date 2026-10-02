@@ -223,7 +223,7 @@ The backend serves that same file for `/` (default document) and for deep SPA ro
 node scripts/set-og-origin.mjs https://uat.v4.tallyj.com dist/index.html
 ```
 
-The card image is `public/og-image.svg` rendered by `npm run og-image` (`@resvg/resvg-js`) to `public/og-image.png` (1200×627). The star is the PNG embedded in `public/assets/favicon.svg`. The picture can be replaced later with the v3 card if that artwork is preferred; keep the same path and pixel size.
+The card image is `public/og-image.svg` rendered by `npm run og-image` (`@resvg/resvg-js`) to `public/og-image.png` (1200×627). The ballot/sheet logo is the PNG embedded in `public/assets/favicon.svg`. The picture can be replaced later with the v3 card if that artwork is preferred; keep the same path and pixel size.
 
 After a deploy, refresh each network's cache before judging the card:
 

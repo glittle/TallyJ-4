@@ -40,7 +40,8 @@
     <!--
       Open Graph / Facebook.
       Absolute URLs use the production v4 origin. Crawlers do not run JS.
-      The UAT frontend pipeline rewrites https://v4.tallyj.com in dist/index.html.
+      The UAT frontend pipeline rewrites og:url, og:image, and twitter:image
+      in dist/index.html so those absolute URLs use the UAT origin.
     -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="TallyJ" />
