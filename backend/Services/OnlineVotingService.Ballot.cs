@@ -24,12 +24,29 @@ public partial class OnlineVotingService
 
         try
         {
+            // dto.VoterId is the authenticated session id. The controller overwrites
+            // any client value before this call. A person who is not on this election
+            // is refused for every id type — do not insert a row under a new PersonGuid.
             var election = await _context.Elections
                 .FirstOrDefaultAsync(e => e.ElectionGuid == dto.ElectionGuid);
 
             if (election == null)
             {
                 return (false, "voting.submit.electionNotFound");
+            }
+
+            var onlineVoter = await FindOnlineVoterForBallotAsync(dto.ElectionGuid, dto.VoterId);
+
+            if (onlineVoter == null)
+            {
+                return (false, "voting.submit.voterNotFound");
+            }
+
+            var person = await FindPersonForVoterAsync(dto.ElectionGuid, dto.VoterId);
+            if (person == null)
+            {
+                await transaction.RollbackAsync();
+                return (false, "voting.submit.voterNotFound");
             }
 
             if (ElectionFinalizedWriteGuard.IsLocked(election.ElectionStage))
@@ -46,30 +63,10 @@ public partial class OnlineVotingService
                 return (false, "voting.submit.notOpen");
             }
 
-            var onlineVoter = await FindOnlineVoterForBallotAsync(dto.ElectionGuid, dto.VoterId);
-
-            if (onlineVoter == null)
-            {
-                return (false, "voting.submit.voterNotFound");
-            }
-
-            var person = await FindPersonForVoterAsync(dto.ElectionGuid, dto.VoterId);
-            if (person == null &&
-                (onlineVoter.VoterIdType == KioskCodeLifetime.VoterIdType ||
-                 KioskCodeLifetime.TryParseVoterId(dto.VoterId, out _, out _)))
-            {
-                await transaction.RollbackAsync();
-                return (false, "voting.submit.voterNotFound");
-            }
-
-            OnlineVotingInfo? existingVotingInfo = null;
-            if (person != null)
-            {
-                existingVotingInfo = await _context.OnlineVotingInfos
-                    .Where(ovi => ovi.ElectionGuid == dto.ElectionGuid && ovi.PersonGuid == person.PersonGuid)
-                    .OrderByDescending(ovi => ovi.WhenStatus ?? ovi.WhenBallotCreated)
-                    .FirstOrDefaultAsync();
-            }
+            var existingVotingInfo = await _context.OnlineVotingInfos
+                .Where(ovi => ovi.ElectionGuid == dto.ElectionGuid && ovi.PersonGuid == person.PersonGuid)
+                .OrderByDescending(ovi => ovi.WhenStatus ?? ovi.WhenBallotCreated)
+                .FirstOrDefaultAsync();
 
             if (existingVotingInfo != null && CannotChangeOnlineVote(existingVotingInfo))
             {
@@ -77,7 +74,7 @@ public partial class OnlineVotingService
                 return (false, "voting.submit.alreadyProcessed");
             }
 
-            if (VotingMethodCodes.IsRecordedOtherThanOnline(person?.VotingMethod))
+            if (VotingMethodCodes.IsRecordedOtherThanOnline(person.VotingMethod))
             {
                 await transaction.RollbackAsync();
                 return (false, "voting.submit.alreadyVotedAnotherWay");
@@ -100,7 +97,7 @@ public partial class OnlineVotingService
                 _context.OnlineVotingInfos.Add(new OnlineVotingInfo
                 {
                     ElectionGuid = dto.ElectionGuid,
-                    PersonGuid = person?.PersonGuid ?? Guid.NewGuid(),
+                    PersonGuid = person.PersonGuid,
                     WhenBallotCreated = now,
                     Status = OnlineBallotStatus.StatusAfterWrite(null, dto.IsDraft),
                     WhenStatus = now,
@@ -109,10 +106,7 @@ public partial class OnlineVotingService
                 });
             }
 
-            if (person != null)
-            {
-                person.HasOnlineBallot = true;
-            }
+            person.HasOnlineBallot = true;
 
             if (!dto.IsDraft && onlineVoter.VoterIdType == KioskCodeLifetime.VoterIdType)
             {
