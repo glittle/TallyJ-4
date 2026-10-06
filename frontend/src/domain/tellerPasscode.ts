@@ -1,3 +1,8 @@
+/**
+ * Fixed at 6, the server default for TellerLoginProtection:MinimumPasscodeLength.
+ * The SPA does not read that setting, and elections.form.electionPasscodeMinLength
+ * states the same 6.
+ */
 export const TELLER_PASSCODE_MIN_LENGTH = 6;
 
 /**

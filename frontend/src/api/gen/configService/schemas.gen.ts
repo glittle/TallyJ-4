@@ -1450,7 +1450,8 @@ export const Backend_SecurityEventTypeSchema = {
         37,
         38,
         39,
-        40
+        40,
+        41
     ],
     type: 'integer',
     format: 'int32'

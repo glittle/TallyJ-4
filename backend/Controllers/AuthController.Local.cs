@@ -191,7 +191,8 @@ public partial class AuthController
 
     /// <summary>
     /// Authenticates a GuestTeller using an election access code.
-    /// Unknown elections and wrong passcodes return the same body.
+    /// Unknown elections and wrong passcodes on an open election return the same body.
+    /// Closed elections and elections with no main teller are rejected before the passcode is compared.
     /// An active per-election lockout rejects every passcode attempt.
     /// </summary>
     /// <param name="request">The teller login request containing election GUID and access code.</param>
@@ -219,6 +220,30 @@ public partial class AuthController
                 isSuspicious: false,
                 severity: SecurityEventSeverity.Info);
             return InvalidElectionOrPasscode();
+        }
+
+        if (!ElectionTellerAccessHelper.IsGuestTellerAccessOpen(election.ListedForPublicAsOf))
+        {
+            await LogTellerLoginFailureAsync(
+                clientIp,
+                userAgent,
+                election.ElectionGuid,
+                details: $"Teller login failed: election not open for tellers ({request.ElectionGuid})",
+                isSuspicious: false,
+                severity: SecurityEventSeverity.Info);
+            return BadRequest(new { error = TellerLoginNotOpenKey });
+        }
+
+        if (!_assignmentService.HasActiveMainTeller(request.ElectionGuid))
+        {
+            await LogTellerLoginFailureAsync(
+                clientIp,
+                userAgent,
+                election.ElectionGuid,
+                details: $"Teller login failed: no main teller connected ({request.ElectionGuid})",
+                isSuspicious: false,
+                severity: SecurityEventSeverity.Info);
+            return BadRequest(new { error = TellerLoginNoMainTellerKey });
         }
 
         var passcodeMatches = TellerPasscodeComparer.EqualsUtf8(
@@ -263,30 +288,6 @@ public partial class AuthController
             }
 
             return InvalidElectionOrPasscode();
-        }
-
-        if (!ElectionTellerAccessHelper.IsGuestTellerAccessOpen(election.ListedForPublicAsOf))
-        {
-            await LogTellerLoginFailureAsync(
-                clientIp,
-                userAgent,
-                election.ElectionGuid,
-                details: $"Teller login failed: election not open for tellers ({request.ElectionGuid})",
-                isSuspicious: false,
-                severity: SecurityEventSeverity.Info);
-            return BadRequest(new { error = "This election is not currently open for teller access" });
-        }
-
-        if (!_assignmentService.HasActiveMainTeller(request.ElectionGuid))
-        {
-            await LogTellerLoginFailureAsync(
-                clientIp,
-                userAgent,
-                election.ElectionGuid,
-                details: $"Teller login failed: no main teller connected ({request.ElectionGuid})",
-                isSuspicious: false,
-                severity: SecurityEventSeverity.Info);
-            return BadRequest(new { error = "No main teller is currently connected to this election" });
         }
 
         await _tellerLoginLockoutService.ResetAsync(election.ElectionGuid);

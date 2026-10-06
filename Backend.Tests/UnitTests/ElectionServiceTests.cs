@@ -959,6 +959,22 @@ public class ElectionServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task DuplicateElectionAsync_ClearsAShortTellerPasscode()
+    {
+        var source = await SeedSourceElectionForDuplicateAsync();
+        var election = Context.Elections.Single(item => item.ElectionGuid == source.ElectionGuid);
+        election.ElectionPasscode = "abc";
+        await Context.SaveChangesAsync();
+
+        var result = await _service.DuplicateElectionAsync(source.ElectionGuid, new DuplicateElectionDto());
+
+        Assert.True(result.IsSuccess);
+        Assert.Equal(Backend.Helpers.TellerPasscodeRules.ClearedShortPasscodeWarningKey, result.Warning);
+        var copy = Context.Elections.Single(item => item.ElectionGuid == result.Election!.ElectionGuid);
+        Assert.Null(copy.ElectionPasscode);
+    }
+
+    [Fact]
     public async Task DuplicateElectionAsync_UsesSuppliedName()
     {
         var source = await SeedSourceElectionForDuplicateAsync();

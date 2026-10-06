@@ -74,7 +74,12 @@ public enum SecurityEventType
     /// <summary>
     /// Shared-passcode guest teller login locked for one election after consecutive failures.
     /// </summary>
-    TellerLoginLocked
+    TellerLoginLocked,
+
+    /// <summary>
+    /// An owner or admin cleared the guest teller login lockout, or changed the passcode.
+    /// </summary>
+    TellerLoginUnlocked
 }
 
 /// <summary>

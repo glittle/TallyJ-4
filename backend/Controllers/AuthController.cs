@@ -71,6 +71,18 @@ public partial class AuthController : ControllerBase
     public const string InvalidElectionOrPasscodeKey = "auth.tellerJoin.invalidElection";
 
     /// <summary>
+    /// Phrase key when the election is not open for guest tellers.
+    /// Returned before the passcode is compared.
+    /// </summary>
+    public const string TellerLoginNotOpenKey = "auth.tellerJoin.notOpen";
+
+    /// <summary>
+    /// Phrase key when no main teller is connected.
+    /// Returned before the passcode is compared.
+    /// </summary>
+    public const string TellerLoginNoMainTellerKey = "auth.tellerJoin.noMainTeller";
+
+    /// <summary>
     /// Shared-passcode guest teller login is inside the election lockout window.
     /// </summary>
     public const string TellerLoginLockedKey = "auth.tellerJoin.locked";

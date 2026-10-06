@@ -148,22 +148,26 @@ public class TellerLoginProtectionTests : IntegrationTestBase
         var missing = await PostTellerLoginAsync(Guid.NewGuid(), "whatever", NextIp());
         var wrong = await PostTellerLoginAsync(electionGuid, "wrong-code", NextIp());
         var wrongOnClosed = await PostTellerLoginAsync(closedGuid, "wrong-code", NextIp());
+        var correctOnClosed = await PostTellerLoginAsync(closedGuid, "secret-code", NextIp());
 
         var missingBody = await missing.Content.ReadAsStringAsync();
         var wrongBody = await wrong.Content.ReadAsStringAsync();
         var wrongOnClosedBody = await wrongOnClosed.Content.ReadAsStringAsync();
+        var correctOnClosedBody = await correctOnClosed.Content.ReadAsStringAsync();
 
         missing.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         wrong.StatusCode.Should().Be(missing.StatusCode);
-        wrongOnClosed.StatusCode.Should().Be(missing.StatusCode);
         wrongBody.Should().Be(missingBody);
-        wrongOnClosedBody.Should().Be(missingBody);
         missingBody.Should().Contain(AuthController.InvalidElectionOrPasscodeKey);
 
-        var correctOnClosed = await PostTellerLoginAsync(closedGuid, "secret-code", NextIp());
-        var correctOnClosedBody = await correctOnClosed.Content.ReadAsStringAsync();
-        correctOnClosedBody.Should().NotBe(missingBody);
-        correctOnClosedBody.Should().Contain("not currently open for teller access");
+        wrongOnClosed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        correctOnClosed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        wrongOnClosedBody.Should().Be(correctOnClosedBody);
+        wrongOnClosedBody.Should().Contain(AuthController.TellerLoginNotOpenKey);
+        wrongOnClosedBody.Should().NotContain(AuthController.InvalidElectionOrPasscodeKey);
+
+        var closedLock = await ReadLockoutAsync(closedGuid);
+        (closedLock?.ConsecutiveFailures ?? 0).Should().Be(0);
     }
 
     [Fact]
@@ -299,6 +303,100 @@ public class TellerLoginProtectionTests : IntegrationTestBase
         }
     }
 
+    [Fact]
+    public async Task TellerLogin_ParallelFailures_WriteOneAuditRow_AndDoNotExceedProcessedCount()
+    {
+        ResetRateLimit();
+        var electionGuid = await CreateOpenElectionAsync("secret-code", "Parallel Lockout Election");
+        const int attempts = 30;
+        var tasks = new List<Task<HttpResponseMessage>>(attempts);
+        for (var i = 1; i <= attempts; i++)
+        {
+            tasks.Add(PostTellerLoginAsync(electionGuid, "wrong-code", $"198.51.100.{i}"));
+        }
+
+        var responses = await Task.WhenAll(tasks);
+        var processed = 0;
+        foreach (var response in responses)
+        {
+            if (response.StatusCode != HttpStatusCode.TooManyRequests)
+            {
+                processed++;
+            }
+
+            response.Dispose();
+        }
+
+        processed.Should().BeGreaterThan(0);
+        var lockout = await ReadLockoutAsync(electionGuid);
+        lockout.Should().NotBeNull();
+        lockout!.ConsecutiveFailures.Should().BeLessThanOrEqualTo(processed);
+        lockout.LockedUntil.Should().NotBeNull();
+        (await CountLockoutAuditsAsync(electionGuid)).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task PasscodeChange_ClearsActiveLock_AndGuestCanLogInWithTheNewPasscode()
+    {
+        ResetRateLimit();
+        Client.DefaultRequestHeaders.Authorization = null;
+        var token = await GetAuthTokenAsync();
+        SetAuthToken(token);
+
+        var electionGuid = await CreateOwnedOpenElectionAsync(token, "secret-code", "Passcode Clears Lock");
+        Client.DefaultRequestHeaders.Authorization = null;
+        await FailUntilLockedAsync(electionGuid);
+        SetAuthToken(token);
+
+        var update = await PutJsonAsync($"/api/elections/{electionGuid}/updateElection", new UpdateElectionDto
+        {
+            Name = "Passcode Clears Lock",
+            ElectionPasscode = "new-secret",
+            NumberToElect = 9,
+            DateOfElection = DateTime.UtcNow.AddDays(1)
+        });
+        update.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var lockout = await ReadLockoutAsync(electionGuid);
+        (lockout?.ConsecutiveFailures ?? 0).Should().Be(0);
+        lockout?.LockedUntil.Should().BeNull();
+        (await CountAuditAsync(electionGuid, Backend.SecurityEventType.TellerLoginUnlocked)).Should().Be(1);
+
+        Client.DefaultRequestHeaders.Authorization = null;
+        var login = await PostTellerLoginAsync(electionGuid, "new-secret", NextIp());
+        login.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    [Fact]
+    public async Task UnlockTellerLogin_ClearsLockForOwner_AndRejectsOtherUsers()
+    {
+        ResetRateLimit();
+        Client.DefaultRequestHeaders.Authorization = null;
+        var ownerToken = await GetAuthTokenAsync();
+        SetAuthToken(ownerToken);
+
+        var electionGuid = await CreateOwnedOpenElectionAsync(ownerToken, "secret-code", "Owner Unlock Election");
+        Client.DefaultRequestHeaders.Authorization = null;
+        await FailUntilLockedAsync(electionGuid);
+
+        Client.DefaultRequestHeaders.Authorization = null;
+        var otherToken = await GetAuthTokenAsync("test@tallyj.com", "Tester1234!X");
+        SetAuthToken(otherToken);
+        var denied = await PostJsonAsync($"/api/elections/{electionGuid}/teller-login-unlock", new { });
+        denied.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        (await ReadLockoutAsync(electionGuid))!.LockedUntil.Should().NotBeNull();
+
+        SetAuthToken(ownerToken);
+        var unlocked = await PostJsonAsync($"/api/elections/{electionGuid}/teller-login-unlock", new { });
+        unlocked.StatusCode.Should().Be(HttpStatusCode.OK);
+        (await ReadLockoutAsync(electionGuid))!.LockedUntil.Should().BeNull();
+        (await CountAuditAsync(electionGuid, Backend.SecurityEventType.TellerLoginUnlocked)).Should().Be(1);
+
+        Client.DefaultRequestHeaders.Authorization = null;
+        var login = await PostTellerLoginAsync(electionGuid, "secret-code", NextIp());
+        login.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
     private string NextIp()
     {
         var host = _ipHost++;
@@ -375,10 +473,54 @@ public class TellerLoginProtectionTests : IntegrationTestBase
 
     private async Task<int> CountLockoutAuditsAsync(Guid electionGuid)
     {
+        return await CountAuditAsync(electionGuid, Backend.SecurityEventType.TellerLoginLocked);
+    }
+
+    private async Task<int> CountAuditAsync(Guid electionGuid, Backend.SecurityEventType eventType)
+    {
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
         return await context.SecurityAuditLogs.CountAsync(row =>
             row.ElectionGuid == electionGuid &&
-            row.EventType == Backend.SecurityEventType.TellerLoginLocked);
+            row.EventType == eventType);
+    }
+
+    private async Task<Guid> CreateOwnedOpenElectionAsync(string token, string passcode, string name)
+    {
+        SetAuthToken(token);
+        var createResponse = await PostJsonAsync("/api/elections/createElection", new CreateElectionDto
+        {
+            Name = name,
+            DateOfElection = DateTime.UtcNow.AddDays(30),
+            ElectionType = ElectionTypeCode.LSA,
+            NumberToElect = 9
+        });
+        createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var created = await createResponse.Content.ReadFromJsonAsync<ApiResponse<ElectionDto>>(JsonOptions);
+        var electionGuid = created!.Data!.ElectionGuid;
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+            var election = await context.Elections.SingleAsync(item => item.ElectionGuid == electionGuid);
+            election.ElectionPasscode = passcode;
+            election.ListedForPublicAsOf = DateTimeOffset.UtcNow.AddMinutes(-5);
+            await context.SaveChangesAsync();
+        }
+
+        Factory.Services.GetRequiredService<IComputerAssignmentService>()
+            .AssignCode(electionGuid, $"main-{electionGuid}", $"conn-{electionGuid}", isMainTeller: true);
+        return electionGuid;
+    }
+
+    private async Task FailUntilLockedAsync(Guid electionGuid)
+    {
+        for (var i = 0; i < 10; i++)
+        {
+            await PostTellerLoginAsync(electionGuid, "wrong-code", NextIp());
+        }
+
+        var locked = await PostTellerLoginAsync(electionGuid, "secret-code", NextIp());
+        (await locked.Content.ReadAsStringAsync()).Should().Contain(AuthController.TellerLoginLockedKey);
     }
 }

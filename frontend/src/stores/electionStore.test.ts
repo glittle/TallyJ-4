@@ -30,6 +30,7 @@ vi.mock("../services/electionService", () => ({
     delete: vi.fn(),
     changeStage: vi.fn(),
     toggleTellerAccess: vi.fn(),
+    unlockTellerLogin: vi.fn(),
   },
 }));
 

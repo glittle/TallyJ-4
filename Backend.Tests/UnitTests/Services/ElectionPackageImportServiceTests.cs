@@ -100,14 +100,52 @@ public class ElectionPackageImportServiceTests : ServiceTestBase
         var service = new JsonElectionImportExportService(Context, _electionServiceMock.Object, _signalRMock.Object);
         await using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
 
-        var election = await service.ImportElectionFromJsonAsync(stream);
+        var imported = await service.ImportElectionFromJsonAsync(stream);
 
-        var person = await Context.People.SingleAsync(p => p.ElectionGuid == election.ElectionGuid);
+        var person = await Context.People.SingleAsync(p => p.ElectionGuid == imported.Election.ElectionGuid);
 
         Assert.Equal("Roel [Smith], Diego [D]", person.FullName);
         Assert.Equal("Diego Roel [D] [Smith]", person.FullNameFl);
         Assert.True(person.CanVote);
         Assert.True(person.CanReceiveVotes);
+    }
+
+    [Fact]
+    public async Task ImportElectionFromJsonAsync_ClearsAShortTellerPasscode()
+    {
+        var json = $$"""
+            {
+              "format": "TallyJ4",
+              "version": "4.0",
+              "exportedAt": "2026-01-01T00:00:00Z",
+              "election": {
+                "ElectionGuid": "{{Guid.NewGuid()}}",
+                "Name": "Short Passcode Import",
+                "ElectionType": "Con",
+                "ElectionMode": "N",
+                "NumberToElect": 1,
+                "ElectionPasscode": "abc"
+              },
+              "locations": [],
+              "people": [],
+              "ballots": [],
+              "tellers": [],
+              "results": [],
+              "resultSummaries": [],
+              "resultTies": [],
+              "onlineVotingInfos": [],
+              "logs": []
+            }
+            """;
+
+        var service = new JsonElectionImportExportService(Context, _electionServiceMock.Object, _signalRMock.Object);
+        await using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
+
+        var imported = await service.ImportElectionFromJsonAsync(stream);
+
+        Assert.Contains(Backend.Helpers.TellerPasscodeRules.ClearedShortPasscodeWarningKey, imported.Warnings);
+        var stored = await Context.Elections.SingleAsync(election => election.ElectionGuid == imported.Election.ElectionGuid);
+        Assert.Null(stored.ElectionPasscode);
     }
 
     [Fact]

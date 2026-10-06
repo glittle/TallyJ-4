@@ -62,7 +62,7 @@ public class ElectionExportImportService : ElectionImportExportBase
     }
 
     // Job 3: Import from new JSON format
-    public async Task<ElectionDto> ImportElectionFromJsonAsync(Stream jsonStream, Guid? userId = null)
+    public async Task<JsonElectionImportResult> ImportElectionFromJsonAsync(Stream jsonStream, Guid? userId = null)
     {
         return await _jsonElectionImportExportService.ImportElectionFromJsonAsync(jsonStream, userId);
     }

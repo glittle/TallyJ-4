@@ -19,6 +19,7 @@ import {
   getApiImportExportElectionToJsonByElectionGuid,
   postApiElectionsByGuidDuplicateElection,
   postApiElectionsByGuidResetElection,
+  postApiElectionsByGuidTellerLoginUnlock,
   postApiElectionsCreateElection,
   postApiImportImportCdnBallotsByElectionGuid,
   postApiImportImportElectionFromJson,
@@ -305,6 +306,17 @@ export const electionService = {
     const data = envelope?.data;
     if (!envelope?.success || !data) {
       throw new Error(envelope?.message || "Failed to change election stage");
+    }
+    return mapElectionDto(data);
+  },
+
+  async unlockTellerLogin(electionGuid: string): Promise<ElectionDto> {
+    const response = await postApiElectionsByGuidTellerLoginUnlock({
+      path: { guid: electionGuid },
+    });
+    const data = response.data?.data;
+    if (!data) {
+      throw new Error("Failed to unlock guest teller login");
     }
     return mapElectionDto(data);
   },

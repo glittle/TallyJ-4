@@ -12,6 +12,11 @@ public static class TellerPasscodeRules
     public const string MinLengthMessageKey = "elections.form.electionPasscodeMinLength";
 
     /// <summary>
+    /// i18n key when JSON import or duplicate drops a passcode that is shorter than the minimum.
+    /// </summary>
+    public const string ClearedShortPasscodeWarningKey = "elections.form.electionPasscodeNotCopied";
+
+    /// <summary>
     /// True when <paramref name="submitted"/> may be saved.
     /// Null or empty means the passcode is not being set. A value equal to
     /// <paramref name="stored"/> is allowed on update even when it is shorter
