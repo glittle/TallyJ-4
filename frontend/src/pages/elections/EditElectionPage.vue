@@ -140,10 +140,8 @@ const rules = reactive<FormRules>({
     {
       validator: (_rule, value, callback) => {
         if (
-          tellerPasscodeLengthError(
-            value,
-            election.value?.electionPasscode,
-          ) === "too-short"
+          tellerPasscodeLengthError(value, election.value?.electionPasscode) ===
+          "too-short"
         ) {
           callback(new Error(t("elections.form.electionPasscodeMinLength")));
           return;
