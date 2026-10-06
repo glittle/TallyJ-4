@@ -1,13 +1,40 @@
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
+import { ElMessageBox } from "element-plus";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import electionsEn from "@/locales/en/elections.json";
 import DashboardPage from "../DashboardPage.vue";
+
+const passcodeNotCopiedKey = "elections.form.electionPasscodeNotCopied";
+const passcodeNotCopiedText = (electionsEn as Record<string, { t: string }>)[
+  passcodeNotCopiedKey
+].t;
+
+const {
+  mockDuplicateElection,
+  mockShowSuccessMessage,
+  mockShowWarningMessage,
+  mockShowErrorMessage,
+  mockImportElectionFromFile,
+} = vi.hoisted(() => ({
+  mockDuplicateElection: vi.fn(),
+  mockShowSuccessMessage: vi.fn(),
+  mockShowWarningMessage: vi.fn(),
+  mockShowErrorMessage: vi.fn(),
+  mockImportElectionFromFile: vi.fn(),
+}));
 
 vi.mock("vue-i18n", async (importOriginal) => {
   const actual = await importOriginal<typeof import("vue-i18n")>();
   return {
     ...actual,
-    useI18n: () => ({ t: (key: string) => key }),
+    useI18n: () => ({
+      t: (key: string) =>
+        key === "elections.form.electionPasscodeNotCopied"
+          ? "The teller passcode was shorter than 6 characters and was not copied."
+          : key,
+      te: (key: string) => key === "elections.form.electionPasscodeNotCopied",
+    }),
   };
 });
 
@@ -43,8 +70,27 @@ vi.mock("@/stores/electionStore", () => ({
     initializeSignalR: vi.fn().mockResolvedValue(undefined),
     joinDashboardElections: vi.fn().mockResolvedValue(undefined),
     leaveDashboardElections: vi.fn().mockResolvedValue(undefined),
-    duplicateElection: vi.fn().mockResolvedValue(undefined),
+    duplicateElection: mockDuplicateElection,
   }),
+}));
+
+vi.mock("@/services/electionService", () => ({
+  electionService: {
+    importElectionFromFile: mockImportElectionFromFile,
+    importTallyJv3ElectionFromFile: vi.fn(),
+  },
+}));
+
+vi.mock("@/services/signalrService", () => ({
+  signalrService: {
+    connectToElectionPackageImportHub: vi.fn().mockResolvedValue({
+      on: vi.fn(),
+      off: vi.fn(),
+    }),
+    joinElectionPackageImportSession: vi.fn().mockResolvedValue(undefined),
+    leaveElectionPackageImportSession: vi.fn().mockResolvedValue(undefined),
+    getConnection: vi.fn(() => null),
+  },
 }));
 
 vi.mock("@/composables/useApiErrorHandler", () => ({
@@ -53,8 +99,9 @@ vi.mock("@/composables/useApiErrorHandler", () => ({
 
 vi.mock("@/composables/useNotifications", () => ({
   useNotifications: () => ({
-    showSuccessMessage: vi.fn(),
-    showErrorMessage: vi.fn(),
+    showSuccessMessage: mockShowSuccessMessage,
+    showWarningMessage: mockShowWarningMessage,
+    showErrorMessage: mockShowErrorMessage,
   }),
 }));
 
@@ -114,6 +161,12 @@ describe("DashboardPage", () => {
     mockPush.mockReset();
     mockElections.mockReturnValue([]);
     mockActiveElections.mockReturnValue([]);
+    mockDuplicateElection.mockReset();
+    mockDuplicateElection.mockResolvedValue({ warning: null });
+    mockShowSuccessMessage.mockReset();
+    mockShowWarningMessage.mockReset();
+    mockShowErrorMessage.mockReset();
+    mockImportElectionFromFile.mockReset();
   });
 
   it("does not render the removed Resume or Setup Tips dashboard rail", () => {
@@ -151,5 +204,83 @@ describe("DashboardPage", () => {
     ]);
     const wrapper = mount(DashboardPage, { global: globalConfig });
     expect(wrapper.html()).toContain("elections.duplicate.action");
+  });
+
+  it("shows the translated warning when duplicate drops a short passcode", async () => {
+    mockElections.mockReturnValue([
+      {
+        electionGuid: "abc",
+        name: "Test",
+        dateOfElection: "2026-01-01",
+        voterCount: 10,
+        ballotCount: 5,
+      },
+    ]);
+    mockDuplicateElection.mockResolvedValue({
+      election: { electionGuid: "copy-id" },
+      warning: passcodeNotCopiedKey,
+    });
+    vi.spyOn(ElMessageBox, "prompt").mockResolvedValue({
+      value: "Copy of Test",
+      action: "confirm",
+    } as never);
+
+    const wrapper = mount(DashboardPage, { global: globalConfig });
+    await flushPromises();
+    await wrapper
+      .find("[aria-label='elections.duplicate.action']")
+      .trigger("click");
+    await flushPromises();
+
+    expect(mockShowSuccessMessage).toHaveBeenCalledWith(
+      "elections.duplicate.success",
+    );
+    expect(passcodeNotCopiedText).not.toBe(passcodeNotCopiedKey);
+    expect(mockShowWarningMessage).toHaveBeenCalledWith(passcodeNotCopiedText);
+  });
+
+  it("shows the translated warning when JSON import drops a short passcode", async () => {
+    mockImportElectionFromFile.mockResolvedValue({
+      election: { electionGuid: "imported-id" },
+      warnings: [passcodeNotCopiedKey],
+    });
+    const created: HTMLElement[] = [];
+    const originalCreate = document.createElement.bind(document);
+    vi.spyOn(document, "createElement").mockImplementation(
+      (tagName, options) => {
+        const element = originalCreate(
+          tagName as keyof HTMLElementTagNameMap,
+          options,
+        );
+        if (tagName === "input") {
+          created.push(element);
+        }
+        return element;
+      },
+    );
+
+    const wrapper = mount(DashboardPage, { global: globalConfig });
+    await flushPromises();
+    const importButton = wrapper
+      .findAll("button")
+      .find((button) => button.text().includes("elections.importElection"));
+    expect(importButton).toBeTruthy();
+    await importButton!.trigger("click");
+
+    const input = created.at(-1) as HTMLInputElement;
+    const file = new File(["{}"], "election.json", {
+      type: "application/json",
+    });
+    Object.defineProperty(input, "files", { value: [file] });
+    input.dispatchEvent(new Event("change"));
+    await flushPromises();
+
+    expect(mockImportElectionFromFile).toHaveBeenCalledWith(file);
+    expect(mockShowSuccessMessage).toHaveBeenCalledWith(
+      "elections.importElectionSuccess",
+    );
+    expect(mockShowWarningMessage).toHaveBeenCalledWith(passcodeNotCopiedText);
+    expect(mockPush).toHaveBeenCalledWith("/elections/imported-id");
+    vi.mocked(document.createElement).mockRestore();
   });
 });

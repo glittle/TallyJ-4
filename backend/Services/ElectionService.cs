@@ -493,7 +493,8 @@ public class ElectionService : IElectionService
         {
             await ClearTellerLoginLockoutAsync(
                 electionGuid,
-                "Guest teller login lockout was cleared because the teller passcode changed.");
+                "Guest teller login lockout was cleared because the teller passcode changed.",
+                auditWhenNothingToClear: false);
         }
 
         await OnlineLocationHelper.SyncAsync(_context, electionGuid, election.UseOnlineVoting);
@@ -544,18 +545,23 @@ public class ElectionService : IElectionService
 
         await ClearTellerLoginLockoutAsync(
             electionGuid,
-            "Guest teller login lockout was cleared by an owner or admin.");
+            "Guest teller login lockout was cleared by an owner or admin.",
+            auditWhenNothingToClear: true);
         return await GetElectionByGuidAsync(electionGuid);
     }
 
-    private async Task ClearTellerLoginLockoutAsync(Guid electionGuid, string details)
+    private async Task ClearTellerLoginLockoutAsync(
+        Guid electionGuid,
+        string details,
+        bool auditWhenNothingToClear)
     {
+        var cleared = false;
         if (_tellerLoginLockoutService != null)
         {
-            await _tellerLoginLockoutService.ResetAsync(electionGuid);
+            cleared = await _tellerLoginLockoutService.ResetAsync(electionGuid);
         }
 
-        if (_securityAuditService == null)
+        if (_securityAuditService == null || (!cleared && !auditWhenNothingToClear))
         {
             return;
         }

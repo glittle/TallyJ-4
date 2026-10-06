@@ -134,9 +134,12 @@ export const useElectionStore = defineStore("election", () => {
     loading.value = true;
     error.value = null;
     try {
-      const election = await electionService.duplicate(electionGuid, dto);
+      const { election, warning } = await electionService.duplicate(
+        electionGuid,
+        dto,
+      );
       elections.value.push(election);
-      return election;
+      return { election, warning };
     } catch (e: any) {
       error.value = extractApiErrorMessage(e);
       throw e;

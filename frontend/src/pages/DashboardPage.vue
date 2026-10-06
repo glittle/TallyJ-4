@@ -27,10 +27,11 @@ import { useRouter } from "vue-router";
 import { STAGES } from "../domain/electionStages";
 
 const router = useRouter();
-const { t } = useI18n();
+const { t, te } = useI18n();
 const electionStore = useElectionStore();
 const { handleApiError } = useApiErrorHandler();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showSuccessMessage, showWarningMessage, showErrorMessage } =
+  useNotifications();
 
 /** v3 loaderStatus scrolling log for election package import. */
 const showImportLoader = ref(false);
@@ -329,8 +330,15 @@ async function duplicateElection(row: ElectionSummaryDto) {
         inputErrorMessage: t("elections.form.nameRequired"),
       },
     );
-    await electionStore.duplicateElection(row.electionGuid, { name: value });
+    const duplicated = await electionStore.duplicateElection(row.electionGuid, {
+      name: value,
+    });
     showSuccessMessage(t("elections.duplicate.success"));
+    if (duplicated.warning) {
+      showWarningMessage(
+        te(duplicated.warning) ? t(duplicated.warning) : duplicated.warning,
+      );
+    }
     await loadData();
   } catch (error: unknown) {
     if (error === "cancel" || error === "close") {
@@ -369,8 +377,11 @@ async function importElection() {
 
       try {
         let election: ElectionDto;
+        let warnings: string[] = [];
         if (file.name.toLowerCase().endsWith(".json")) {
-          election = await electionService.importElectionFromFile(file);
+          const imported = await electionService.importElectionFromFile(file);
+          election = imported.election;
+          warnings = imported.warnings;
         } else if (file.name.toLowerCase().endsWith(".xml")) {
           election = await electionService.importTallyJv3ElectionFromFile(file);
         } else {
@@ -383,6 +394,9 @@ async function importElection() {
         importLoaderSucceeded.value = true;
         importLoaderLoading.value = false;
         showSuccessMessage(t("elections.importElectionSuccess"));
+        for (const warning of warnings) {
+          showWarningMessage(te(warning) ? t(warning) : warning);
+        }
         await loadData();
         showImportLoader.value = false;
         router.push(`/elections/${election.electionGuid}`);

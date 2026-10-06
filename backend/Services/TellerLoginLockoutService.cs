@@ -64,18 +64,19 @@ public class TellerLoginLockoutService : ITellerLoginLockoutService
     }
 
     /// <inheritdoc />
-    public async Task ResetAsync(Guid electionGuid, CancellationToken cancellationToken = default)
+    public async Task<bool> ResetAsync(Guid electionGuid, CancellationToken cancellationToken = default)
     {
         var row = await _context.TellerLoginLockouts
             .FirstOrDefaultAsync(item => item.ElectionGuid == electionGuid, cancellationToken);
-        if (row == null)
+        if (row == null || (row.ConsecutiveFailures == 0 && row.LockedUntil == null))
         {
-            return;
+            return false;
         }
 
         row.ConsecutiveFailures = 0;
         row.LockedUntil = null;
         await _context.SaveChangesAsync(cancellationToken);
+        return true;
     }
 
     private async Task<TellerPasscodeFailureResult> RecordOnceAsync(

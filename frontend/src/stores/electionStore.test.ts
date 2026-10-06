@@ -308,7 +308,10 @@ describe("Election Store", () => {
         showAsTest: true,
       } as ElectionDto;
 
-      electionService.duplicate.mockResolvedValue(copy);
+      electionService.duplicate.mockResolvedValue({
+        election: copy,
+        warning: null,
+      });
 
       const result = await electionStore.duplicateElection("source-id", {
         name: "Copy of Source",
@@ -319,7 +322,7 @@ describe("Election Store", () => {
       });
       expect(electionStore.elections).toHaveLength(1);
       expect(electionStore.elections[0]).toEqual(copy);
-      expect(result).toEqual(copy);
+      expect(result).toEqual({ election: copy, warning: null });
     });
   });
 

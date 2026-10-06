@@ -141,7 +141,7 @@ export const electionService = {
   async duplicate(
     electionGuid: string,
     dto: DuplicateElectionDto = {},
-  ): Promise<ElectionDto> {
+  ): Promise<{ election: ElectionDto; warning: string | null }> {
     const response = await postApiElectionsByGuidDuplicateElection({
       path: { guid: electionGuid },
       body: { name: dto.name },
@@ -150,7 +150,14 @@ export const electionService = {
     if (!data) {
       throw new Error(response.data?.message || "Failed to duplicate election");
     }
-    return mapElectionDto(data);
+    const message = response.data?.message;
+    const warning =
+      typeof message === "string" &&
+      message.length > 0 &&
+      message !== "Election duplicated successfully"
+        ? message
+        : null;
+    return { election: mapElectionDto(data), warning };
   },
 
   async reset(electionGuid: string): Promise<ElectionDto> {
@@ -265,12 +272,22 @@ export const electionService = {
     return response.data as Blob;
   },
 
-  async importElectionFromFile(file: File): Promise<ElectionDto> {
+  async importElectionFromFile(file: File): Promise<{
+    election: ElectionDto;
+    warnings: string[];
+  }> {
     const response = await postApiImportImportElectionFromJson({
       body: { file },
     });
+    const body = response.data as {
+      election?: ElectionDto;
+      warnings?: string[];
+    };
 
-    return (response.data as any).election;
+    return {
+      election: body.election as ElectionDto,
+      warnings: body.warnings ?? [],
+    };
   },
 
   async importTallyJv3ElectionFromFile(file: File): Promise<ElectionDto> {

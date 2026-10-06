@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
 import type { ElectionPackageLoaderLogLine } from "../../types/SignalREvents";
 
 interface Props {
@@ -17,6 +18,11 @@ type Emits = (e: "update:modelValue", value: boolean) => void;
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
+const { t, te } = useI18n();
+
+function loaderLineText(message: string): string {
+  return te(message) ? t(message) : message;
+}
 
 const logContainer = ref<HTMLElement | null>(null);
 
@@ -68,7 +74,7 @@ function handleClose() {
         class="loader-log-line"
         :class="{ temporary: line.isTemporary }"
       >
-        {{ line.message }}
+        {{ loaderLineText(line.message) }}
       </div>
       <div
         v-if="loading && lines.length === 0"

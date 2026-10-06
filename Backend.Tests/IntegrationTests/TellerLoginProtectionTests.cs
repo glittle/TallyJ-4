@@ -368,6 +368,29 @@ public class TellerLoginProtectionTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task PasscodeChange_WithoutALockout_DoesNotWriteUnlockAudit()
+    {
+        ResetRateLimit();
+        Client.DefaultRequestHeaders.Authorization = null;
+        var token = await GetAuthTokenAsync();
+        var electionGuid = await CreateOwnedOpenElectionAsync(
+            token,
+            "secret-code",
+            "Passcode Change No Lock");
+
+        var update = await PutJsonAsync($"/api/elections/{electionGuid}/updateElection", new UpdateElectionDto
+        {
+            Name = "Passcode Change No Lock",
+            ElectionPasscode = "other-code",
+            NumberToElect = 9,
+            DateOfElection = DateTime.UtcNow.AddDays(30)
+        });
+        update.StatusCode.Should().Be(HttpStatusCode.OK);
+        (await ReadLockoutAsync(electionGuid)).Should().BeNull();
+        (await CountAuditAsync(electionGuid, Backend.SecurityEventType.TellerLoginUnlocked)).Should().Be(0);
+    }
+
+    [Fact]
     public async Task UnlockTellerLogin_ClearsLockForOwner_AndRejectsOtherUsers()
     {
         ResetRateLimit();

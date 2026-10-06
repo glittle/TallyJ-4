@@ -29,7 +29,8 @@ public interface ITellerLoginLockoutService
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Clears the failure count and any lock after a successful passcode login.
+    /// Clears the failure count and any lock.
+    /// Returns true when a row had failures or a lock and this call cleared them.
     /// </summary>
-    Task ResetAsync(Guid electionGuid, CancellationToken cancellationToken = default);
+    Task<bool> ResetAsync(Guid electionGuid, CancellationToken cancellationToken = default);
 }
