@@ -35,6 +35,7 @@ export interface ElectionDto {
   flags?: string;
   isTellerAccessOpen?: boolean;
   tellerAccessOpenedAt?: string;
+  tellerLoginLockedUntil?: string;
 }
 
 export interface DuplicateElectionDto {

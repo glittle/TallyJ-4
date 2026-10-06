@@ -1,6 +1,9 @@
+using Backend.Configuration;
 using Backend.Enumerations;
 using Backend.DTOs.Elections;
+using Backend.Helpers;
 using FluentValidation;
+using Microsoft.Extensions.Options;
 
 namespace Backend.Validators;
 
@@ -10,11 +13,14 @@ namespace Backend.Validators;
 /// </summary>
 public class CreateElectionDtoValidator : AbstractValidator<CreateElectionDto>
 {
+    private readonly int _minimumPasscodeLength;
+
     /// <summary>
     /// Initializes a new instance of the CreateElectionDtoValidator with validation rules.
     /// </summary>
-    public CreateElectionDtoValidator()
+    public CreateElectionDtoValidator(IOptions<TellerLoginProtectionOptions> tellerLoginProtection)
     {
+        _minimumPasscodeLength = tellerLoginProtection.Value.ResolvedMinimumPasscodeLength;
         RuleFor(x => x.Name)
             .NotEmpty()
             .WithMessage("Election name is required")
@@ -47,6 +53,14 @@ public class CreateElectionDtoValidator : AbstractValidator<CreateElectionDto>
         RuleFor(x => x.ElectionPasscode)
             .MaximumLength(50)
             .WithMessage("Election passcode cannot exceed 50 characters");
+
+        RuleFor(x => x.ElectionPasscode)
+            .Must(passcode => TellerPasscodeRules.IsAcceptableValue(
+                passcode,
+                stored: null,
+                _minimumPasscodeLength,
+                isCreate: true))
+            .WithMessage(TellerPasscodeRules.MinLengthMessageKey);
 
         RuleFor(x => x.LinkedElectionKind)
             .MaximumLength(2)

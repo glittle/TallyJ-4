@@ -57,12 +57,23 @@ public partial class AuthController : ControllerBase
     private readonly IRemoteLogService _remoteLogService;
     private readonly IComputerAssignmentService _assignmentService;
     private readonly IAccountService _accountService;
+    private readonly ITellerLoginLockoutService _tellerLoginLockoutService;
 
     /// <summary>
     /// i18n key returned when anonymous callers POST <c>/api/auth/registerAccount</c>.
     /// Open self-serve email/password signup is disabled; use Google to create a teller account.
     /// </summary>
     public const string OpenRegisterDisabledKey = "auth.errors.openRegisterDisabled";
+
+    /// <summary>
+    /// Same body for an unknown election and a wrong passcode.
+    /// </summary>
+    public const string InvalidElectionOrPasscodeKey = "auth.tellerJoin.invalidElection";
+
+    /// <summary>
+    /// Shared-passcode guest teller login is inside the election lockout window.
+    /// </summary>
+    public const string TellerLoginLockedKey = "auth.tellerJoin.locked";
 
     /// <summary>
     /// Initializes a new instance of the AuthController.
@@ -83,6 +94,7 @@ public partial class AuthController : ControllerBase
     /// <param name="securityAuditService">Service for logging security events.</param>
     /// <param name="remoteLogService">Service for sending remote log messages.</param>
     /// <param name="assignmentService">Tracks active main teller connections for guest login eligibility.</param>
+    /// <param name="tellerLoginLockoutService">Per-election shared-passcode failure count and lockout.</param>
     public AuthController(
         ILocalAuthService localAuthService,
         IAccountInviteService accountInviteService,
@@ -101,7 +113,8 @@ public partial class AuthController : ControllerBase
         ISecurityAuditService securityAuditService,
         IRemoteLogService remoteLogService,
         IComputerAssignmentService assignmentService,
-        IAccountService accountService)
+        IAccountService accountService,
+        ITellerLoginLockoutService tellerLoginLockoutService)
     {
         _localAuthService = localAuthService;
         _accountInviteService = accountInviteService;
@@ -121,6 +134,7 @@ public partial class AuthController : ControllerBase
         _securityAuditService = securityAuditService;
         _remoteLogService = remoteLogService;
         _assignmentService = assignmentService;
+        _tellerLoginLockoutService = tellerLoginLockoutService;
     }
 
 }

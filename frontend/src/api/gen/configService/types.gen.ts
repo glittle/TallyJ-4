@@ -442,7 +442,8 @@ export const BackendSecurityEventType = {
     36: 36,
     37: 37,
     38: 38,
-    39: 39
+    39: 39,
+    40: 40
 } as const;
 
 export type BackendSecurityEventType = typeof BackendSecurityEventType[keyof typeof BackendSecurityEventType];
@@ -597,6 +598,7 @@ export type ElectionsElectionDto = {
     flags?: string | null;
     isTellerAccessOpen?: boolean;
     tellerAccessOpenedAt?: Date | null;
+    tellerLoginLockedUntil?: Date | null;
 };
 
 export type ElectionsElectionStatsDto = {

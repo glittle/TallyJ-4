@@ -9476,7 +9476,8 @@
           36,
           37,
           38,
-          39
+          39,
+          40
         ],
         "type": "integer",
         "format": "int32"
@@ -10010,6 +10011,11 @@
             "type": "boolean"
           },
           "tellerAccessOpenedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "tellerLoginLockedUntil": {
             "type": "string",
             "format": "date-time",
             "nullable": true

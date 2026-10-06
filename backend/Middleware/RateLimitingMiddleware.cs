@@ -24,6 +24,11 @@ public class RateLimitingMiddleware
     public const int VoterIdentifierMaxRequests = 5;
     public const int VoterVenueIpMaxRequests = 60;
 
+    /// <summary>
+    /// Guest teller passcode attempts allowed per trusted-ingress IP per minute.
+    /// </summary>
+    public const int TellerLoginIpMaxRequests = 5;
+
     private static readonly TimeSpan OneMinute = TimeSpan.FromMinutes(1);
 
     private readonly RequestDelegate _next;
@@ -34,6 +39,7 @@ public class RateLimitingMiddleware
         new(StringComparer.OrdinalIgnoreCase)
         {
             { "/api/auth/login", (5, TimeSpan.FromMinutes(1)) },
+            { "/api/auth/teller-login", (TellerLoginIpMaxRequests, OneMinute) },
             // Endpoint is disabled (400 + i18n key); keep a tight bucket for leftover callers.
             { "/api/auth/registerAccount", (3, TimeSpan.FromHours(1)) },
             { "/api/auth/registerWithInvite", (3, TimeSpan.FromHours(1)) },

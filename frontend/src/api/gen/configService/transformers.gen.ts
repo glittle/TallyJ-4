@@ -145,6 +145,9 @@ const electionsElectionDtoSchemaResponseTransformer = (data: any) => {
     if (data.tellerAccessOpenedAt) {
         data.tellerAccessOpenedAt = new Date(data.tellerAccessOpenedAt);
     }
+    if (data.tellerLoginLockedUntil) {
+        data.tellerLoginLockedUntil = new Date(data.tellerLoginLockedUntil);
+    }
     return data;
 };
 

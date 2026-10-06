@@ -1,6 +1,12 @@
+using Backend.Configuration;
+using Backend.Context;
 using Backend.Enumerations;
 using Backend.DTOs.Elections;
+using Backend.Helpers;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Backend.Validators;
 
@@ -10,11 +16,21 @@ namespace Backend.Validators;
 /// </summary>
 public class UpdateElectionDtoValidator : AbstractValidator<UpdateElectionDto>
 {
+    private readonly MainDbContext _context;
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly int _minimumPasscodeLength;
+
     /// <summary>
     /// Initializes a new instance of the UpdateElectionDtoValidator with validation rules.
     /// </summary>
-    public UpdateElectionDtoValidator()
+    public UpdateElectionDtoValidator(
+        MainDbContext context,
+        IHttpContextAccessor httpContextAccessor,
+        IOptions<TellerLoginProtectionOptions> tellerLoginProtection)
     {
+        _context = context;
+        _httpContextAccessor = httpContextAccessor;
+        _minimumPasscodeLength = tellerLoginProtection.Value.ResolvedMinimumPasscodeLength;
         RuleFor(x => x.Name)
             .NotEmpty()
             .WithMessage("Election name is required")
@@ -58,6 +74,27 @@ public class UpdateElectionDtoValidator : AbstractValidator<UpdateElectionDto>
             .MaximumLength(50)
             .WithMessage("Election passcode cannot exceed 50 characters");
 
+        RuleFor(x => x.ElectionPasscode)
+            .Must(passcode =>
+            {
+                if (TellerPasscodeRules.IsAcceptableValue(
+                        passcode,
+                        stored: null,
+                        _minimumPasscodeLength,
+                        isCreate: true))
+                {
+                    return true;
+                }
+
+                var stored = ReadStoredPasscode();
+                return TellerPasscodeRules.IsAcceptableValue(
+                    passcode,
+                    stored,
+                    _minimumPasscodeLength,
+                    isCreate: false);
+            })
+            .WithMessage(TellerPasscodeRules.MinLengthMessageKey);
+
         RuleFor(x => x.LinkedElectionKind)
             .MaximumLength(2)
             .WithMessage("Linked election kind cannot exceed 2 characters");
@@ -92,6 +129,24 @@ public class UpdateElectionDtoValidator : AbstractValidator<UpdateElectionDto>
         RuleFor(x => x.VotingMethods)
             .MaximumLength(10)
             .WithMessage("Voting methods cannot exceed 10 characters");
+    }
+
+    private string? ReadStoredPasscode()
+    {
+        var http = _httpContextAccessor.HttpContext;
+        if (http == null ||
+            !http.Request.RouteValues.TryGetValue("guid", out var raw) ||
+            !Guid.TryParse(raw?.ToString(), out var electionGuid))
+        {
+            return null;
+        }
+
+        // Synchronous: ASP.NET automatic validation cannot run MustAsync.
+        return _context.Elections
+            .AsNoTracking()
+            .Where(election => election.ElectionGuid == electionGuid)
+            .Select(election => election.ElectionPasscode)
+            .FirstOrDefault();
     }
 }
 

@@ -36,6 +36,20 @@ const isOpen = computed(() => election.value?.isTellerAccessOpen ?? false);
 
 const passcode = computed(() => election.value?.electionPasscode ?? "");
 
+const lockoutMessage = computed(() => {
+  const untilRaw = election.value?.tellerLoginLockedUntil;
+  if (!untilRaw) {
+    return "";
+  }
+  const until = new Date(untilRaw);
+  if (Number.isNaN(until.getTime()) || until.getTime() <= Date.now()) {
+    return "";
+  }
+  return t("elections.tellerLoginLocked", {
+    until: until.toLocaleString(),
+  });
+});
+
 const shareableUrl = computed(() => {
   if (!electionGuid.value || !passcode.value) {
     return "";
@@ -135,6 +149,7 @@ function openShareDrawer() {
     v-if="showToggle"
     class="guest-teller-access-box header-status-box"
     :class="isOpen ? 'is-open' : 'is-closed'"
+    :title="lockoutMessage || undefined"
   >
     <span class="guest-teller-access-label header-status-label">
       {{ t("elections.guestTellerAccess") }}
@@ -173,6 +188,14 @@ function openShareDrawer() {
       :lock-scroll="false"
       append-to-body
     >
+      <el-alert
+        v-if="lockoutMessage"
+        type="warning"
+        :title="lockoutMessage"
+        show-icon
+        :closable="false"
+        data-testid="guest-teller-lockout"
+      />
       <div v-if="passcode" class="share-drawer-body">
         <div class="share-fields">
           <div class="share-field">
@@ -278,6 +301,10 @@ function openShareDrawer() {
 }
 
 .teller-share-drawer {
+  .el-alert {
+    margin-bottom: 16px;
+  }
+
   .share-drawer-body {
     display: flex;
     flex-wrap: nowrap;

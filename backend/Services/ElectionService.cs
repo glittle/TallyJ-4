@@ -112,7 +112,25 @@ public class ElectionService : IElectionService
             return null;
         }
 
-        return MapToElectionDto(election);
+        var dto = MapToElectionDto(election);
+        dto.TellerLoginLockedUntil = await ActiveTellerLoginLockUntilAsync(electionGuid);
+        return dto;
+    }
+
+    private async Task<DateTimeOffset?> ActiveTellerLoginLockUntilAsync(Guid electionGuid)
+    {
+        var lockedUntil = await _context.TellerLoginLockouts
+            .AsNoTracking()
+            .Where(row => row.ElectionGuid == electionGuid)
+            .Select(row => row.LockedUntil)
+            .FirstOrDefaultAsync();
+
+        if (lockedUntil is DateTimeOffset until && until > DateTimeOffset.UtcNow)
+        {
+            return until;
+        }
+
+        return null;
     }
 
     /// <summary>

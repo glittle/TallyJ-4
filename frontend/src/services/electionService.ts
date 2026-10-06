@@ -67,6 +67,7 @@ function mapElectionDto(data: any): ElectionDto {
     onlineWhenOpen: convertDateToString(data.onlineWhenOpen),
     onlineWhenClose: convertDateToString(data.onlineWhenClose),
     tellerAccessOpenedAt: convertDateToString(data.tellerAccessOpenedAt),
+    tellerLoginLockedUntil: convertDateToString(data.tellerLoginLockedUntil),
   } as ElectionDto;
 }
 

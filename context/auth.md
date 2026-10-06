@@ -102,7 +102,7 @@ Auth rate-limit keys use the IP the **trusted ingress** saw, not a client-suppli
 
 `UseForwardedHeaders` is proto-only (`X-Forwarded-Proto`) with KnownProxies / KnownIPNetworks / KnownNetworks cleared so Azure TLS termination still sets `Request.IsHttps`. It does **not** apply `X-Forwarded-For`: trust-all + ForwardLimit would rewrite `RemoteIpAddress` from the client-controlled chain and make spoofing easier. Rate-limit keying reads the headers itself under the infrastructure-peer check above.
 
-The same in-memory middleware still owns the limits. Teller `/api/auth/login` (and the disabled register endpoint / 2FA / password / teller OAuth) stay **tight per trusted-ingress IP** (5/min login). Anonymous voter `requestCode` / `verifyCode` do **not** use that 5/min IP bucket: elections often share one venue WiFi / community NAT, so a public `RemoteIp` is the whole hall. Those routes use a **5/min per VoterId** bucket (JSON body peek capped at 16 KiB even when ContentLength is missing / chunked; a fitting body is replaced with a MemoryStream at position 0 so model binding still works) plus a **60/min per trusted-ingress IP** venue ceiling. Oversized / peek-overflow bodies are **413** (`error.payloadTooLarge`) and do not continue to model binding — they must not be demoted to `missing:{ip}`, or a padded body with a real voterId would opt out of the cross-IP identifier ceiling. `missing:{ip}` is only for a genuinely empty, malformed, or absent `voterId`. Voter OAuth (`/api/online-voting/*Auth`) has no VoterId in the body — venue IP ceiling only. Teller OAuth stays on the tight IP table.
+The same in-memory middleware still owns the limits. Teller `/api/auth/login` (and the disabled register endpoint / 2FA / password / teller OAuth) stay **tight per trusted-ingress IP** (5/min login). Guest teller `POST /api/auth/teller-login` is on that same 5/min table. The per-election lockout is a database row, not another in-memory bucket; see the guest teller login lockout section. Anonymous voter `requestCode` / `verifyCode` do **not** use that 5/min IP bucket: elections often share one venue WiFi / community NAT, so a public `RemoteIp` is the whole hall. Those routes use a **5/min per VoterId** bucket (JSON body peek capped at 16 KiB even when ContentLength is missing / chunked; a fitting body is replaced with a MemoryStream at position 0 so model binding still works) plus a **60/min per trusted-ingress IP** venue ceiling. Oversized / peek-overflow bodies are **413** (`error.payloadTooLarge`) and do not continue to model binding — they must not be demoted to `missing:{ip}`, or a padded body with a real voterId would opt out of the cross-IP identifier ceiling. `missing:{ip}` is only for a genuinely empty, malformed, or absent `voterId`. Voter OAuth (`/api/online-voting/*Auth`) has no VoterId in the body — venue IP ceiling only. Teller OAuth stays on the tight IP table.
 
 429 bodies return the i18n key `error.tooManyRequests` (same pattern as voter verify keys). That string lives only in `frontend/src/locales/en/errors.json`; other locales are not given English placeholders (missing keys fall back to English). The SPA resolves those keys instead of a single generic verify message. `VerifyAttempts` on `OnlineVoter` still locks five failed codes for that row; the middleware 429 is a cheap pre-service cap. The fifth mismatch returns `tooManyAttempts` on that call so the row lock is reachable under the 5/min per-VoterId middleware ceiling (a sixth HTTP call would otherwise be 429 first).
 
@@ -164,6 +164,30 @@ List membership is a `Person` row on that election (email, phone, or kiosk code)
 **Rejected alternative:** remove `voterId` from the route and submit DTO in this slice. The server never uses a non-matching value, and the SPA already sends the session id. Dropping it is a client regen with no extra safety.
 
 **Rejected alternative:** put `electionGuid` on the voter JWT. Email and phone voters pick among every open election that lists them. Kiosk scope stays inside the voter id.
+
+## Guest teller login lockout (issue #371 slice 1)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #371 slice 1  
+**Revisit when:** shared passcodes are stored hashed, or lockout should notify the owner by email
+
+Guest tellers sign in with `POST /api/auth/teller-login` and the election's shared passcode. That path had no rate limit and no lockout. Account login for owners and admins is unchanged and still works while guest teller login is locked.
+
+- **Per trusted-ingress IP:** 5 attempts per minute, in `RateLimitingMiddleware` (`TellerLoginIpMaxRequests`). A rejected attempt is 429 with `error.tooManyRequests` and is not counted as a passcode failure. This cap is a code constant, like the other teller routes, not a config value.
+- **Per election, across IPs:** table `TellerLoginLockouts` (migration `AddTellerLoginLockouts`), one row keyed by `ElectionGuid`. After `TellerLoginProtection:MaxConsecutiveFailures` wrong passcodes in a row (default 10), guest teller login stays locked until `LockedUntil` (`CooldownMinutes`, default 15). A successful login sets the count back to 0 and clears `LockedUntil`. When `LockedUntil` is already in the past, the next wrong passcode starts the count at 1. The first attempt that starts the lock writes one `TellerLoginLocked` audit row (details include the UTC end time and the failure count). Later attempts during the lock do not write another lockout row.
+- **Who is locked:** only the shared-passcode path. While locked, every teller-login attempt for that election returns 400 `auth.tellerJoin.locked`, including a correct passcode. `GET` election sets `tellerLoginLockedUntil` when the lock is still in the future. The guest-teller share control shows `elections.tellerLoginLocked`.
+- **Same reply for unknown and wrong:** a missing election and a wrong passcode both return 400 `auth.tellerJoin.invalidElection`. "Not open for tellers" and "no main teller" are returned only after the passcode matches and the election is not locked.
+- **Compare:** `CryptographicOperations.FixedTimeEquals` on UTF-8 bytes. Unequal lengths still run that compare (the stored bytes against themselves) and then return false. An empty stored passcode does not match.
+- **Minimum length:** `TellerLoginProtection:MinimumPasscodeLength` (default 6) applies when an owner creates or changes the passcode. Empty clears it. Saving the same stored value is allowed when that value is already shorter. Login still accepts a stored short passcode. The validation message is `elections.form.electionPasscodeMinLength`. The update check reads the stored passcode with a synchronous query: ASP.NET automatic validation cannot run `MustAsync`.
+
+**Rejected alternative:** an in-memory per-election bucket in `RateLimitStore` (the issue's first sketch was a fail window inside the existing limiter). That count resets on restart and is not shared by a second instance, and a per-IP bucket does not stop an attacker who rotates addresses.
+
+**Rejected alternative:** rebuild this limit on ASP.NET `RateLimiter`. The IP cap stays on the middleware that already keys teller routes; the lockout needs a row that outlives the process.
+
+**Rejected alternative:** enforce the minimum length at login. Elections that already stored a shorter passcode would be unable to sign tellers in.
+
+**Rejected alternative:** leave the failure count at the threshold after the cooldown, so the next wrong passcode locks again immediately. The cooldown is the penalty; the next run of consecutive failures starts at 1.
 
 ## Pre-auth voter-code delivery channel (issue #229)
 
