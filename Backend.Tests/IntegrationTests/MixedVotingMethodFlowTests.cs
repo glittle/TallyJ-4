@@ -83,8 +83,8 @@ public class MixedVotingMethodFlowTests : IntegrationTestBase
         Assert.Equal(1, monitor.OnlineVotingInfo.ProcessedOnlineBallots);
         Assert.Equal(4, monitor.TotalBallots);
 
-        var refused = await Client.PostAsJsonAsync(
-            $"/api/online-voting/{electionGuid}/submitBallot",
+        var refused = await SubmitBallotAsVoterAsync(
+            electionGuid,
             new SubmitOnlineBallotDto
             {
                 ElectionGuid = electionGuid,
@@ -253,8 +253,8 @@ public class MixedVotingMethodFlowTests : IntegrationTestBase
         string email,
         IReadOnlyList<Guid> candidates)
     {
-        var response = await Client.PostAsJsonAsync(
-            $"/api/online-voting/{electionGuid}/submitBallot",
+        var response = await SubmitBallotAsVoterAsync(
+            electionGuid,
             new SubmitOnlineBallotDto
             {
                 ElectionGuid = electionGuid,

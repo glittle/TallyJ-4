@@ -71,8 +71,8 @@ public class Issue191ConcurrentTellerHttpTests : IntegrationTestBase
         var personGuid = await AddPersonAsync(electionGuid, "Online", "Voter", email);
         await AddPersonAsync(electionGuid, "Paper", "Voter");
 
-        var submit = await Client.PostAsJsonAsync(
-            $"/api/online-voting/{electionGuid}/submitBallot",
+        var submit = await SubmitBallotAsVoterAsync(
+            electionGuid,
             new SubmitOnlineBallotDto
             {
                 ElectionGuid = electionGuid,

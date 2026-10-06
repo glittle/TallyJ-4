@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Backend.Context;
+using Backend.DTOs.OnlineVoting;
 using Backend.Entities;
+using Backend.Helpers;
 using Backend.Identity;
 using Backend.Middleware;
 
@@ -113,6 +115,65 @@ public abstract class IntegrationTestBase : IClassFixture<CustomWebApplicationFa
         Client.DefaultRequestHeaders.Add(
             "Cookie",
             $"{SecureCookieMiddleware.VoterTokenCookieName}={token}");
+    }
+
+    /// <summary>
+    /// A fresh client whose only credential is the httpOnly voter JWT.
+    /// Does not carry a teller bearer token from <see cref="Client"/>.
+    /// </summary>
+    protected HttpClient CreateVoterClient(string voterId, string voterIdType = "E")
+    {
+        var client = Factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = null;
+        client.DefaultRequestHeaders.Add(
+            "Cookie",
+            $"{SecureCookieMiddleware.VoterTokenCookieName}={GenerateVoterToken(voterId, voterIdType)}");
+        return client;
+    }
+
+    /// <summary>
+    /// Submits with a voter session for <paramref name="dto"/>'s voter id.
+    /// Kiosk ids (scoped <c>letters.electionGuid</c>) use voter id type C.
+    /// The response body is buffered so the client can be disposed.
+    /// </summary>
+    protected async Task<HttpResponseMessage> SubmitBallotAsVoterAsync(
+        Guid electionGuid,
+        SubmitOnlineBallotDto dto,
+        string? voterIdType = null,
+        string? sessionVoterId = null)
+    {
+        var sessionId = sessionVoterId ?? dto.VoterId;
+        var type = voterIdType
+            ?? (KioskCodeLifetime.TryParseVoterId(sessionId, out _, out _)
+                ? KioskCodeLifetime.VoterIdType
+                : "E");
+        using var voter = CreateVoterClient(sessionId, type);
+        var response = await voter.PostAsJsonAsync(
+            $"/api/online-voting/{electionGuid}/submitBallot",
+            dto);
+        await response.Content.LoadIntoBufferAsync();
+        return response;
+    }
+
+    /// <summary>
+    /// Reads vote status with a voter session for <paramref name="voterId"/>.
+    /// The response body is buffered so the client can be disposed.
+    /// </summary>
+    protected async Task<HttpResponseMessage> GetVoteStatusAsVoterAsync(
+        Guid electionGuid,
+        string voterId,
+        string voterIdType = "E",
+        string? sessionVoterId = null)
+    {
+        var sessionId = sessionVoterId ?? voterId;
+        var type = voterIdType == "E" && KioskCodeLifetime.TryParseVoterId(sessionId, out _, out _)
+            ? KioskCodeLifetime.VoterIdType
+            : voterIdType;
+        using var voter = CreateVoterClient(sessionId, type);
+        var response = await voter.GetAsync(
+            $"/api/online-voting/{electionGuid}/{voterId}/voteStatus");
+        await response.Content.LoadIntoBufferAsync();
+        return response;
     }
 
     protected void SetCookies(params (string Name, string Value)[] cookies)

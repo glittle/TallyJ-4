@@ -37,16 +37,19 @@ public interface IOnlineVotingService
 
     /// <summary>
     /// Submits an online ballot for an election.
+    /// <paramref name="dto"/>'s voter id must be the authenticated session id.
+    /// The HTTP action overwrites any client-supplied id before calling this.
     /// </summary>
     /// <param name="dto">The ballot submission data.</param>
     /// <returns>A task containing a success flag and optional error message.</returns>
     Task<(bool Success, string? Error)> SubmitBallotAsync(SubmitOnlineBallotDto dto);
 
     /// <summary>
-    /// Retrieves the voting status for a specific voter in an election.
+    /// Retrieves the voting status for the authenticated voter in an election.
+    /// Callers must pass the session voter id, not an unverified client value.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="voterId">The voter's identifier.</param>
+    /// <param name="voterId">The authenticated voter's identifier.</param>
     /// <returns>A task containing the voter's status information.</returns>
     Task<OnlineVoteStatusDto> GetVoteStatusAsync(Guid electionGuid, string voterId);
 

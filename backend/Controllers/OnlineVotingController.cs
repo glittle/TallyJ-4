@@ -193,24 +193,41 @@ public class OnlineVotingController : ControllerBase
     }
 
     /// <summary>
-    /// Submits an online ballot for an election.
+    /// Submits an online ballot for the authenticated voter.
+    /// The voter id is the <c>voterId</c> claim. A body id that differs is rejected.
     /// </summary>
     /// <param name="electionGuid">The election GUID.</param>
     /// <param name="dto">The ballot submission data.</param>
     /// <returns>A success message if the ballot was submitted.</returns>
     [HttpPost("{electionGuid}/submitBallot")]
-    [AllowAnonymous]
+    [Authorize(Policy = "OnlineVoter")]
     public async Task<ActionResult<SubmitBallotResponseDto>> SubmitBallot(Guid electionGuid, [FromBody] SubmitOnlineBallotDto dto)
     {
+        if (!TryGetAuthenticatedVoterId(out var voterId))
+        {
+            return Unauthorized();
+        }
+
+        if (!SuppliedVoterIdMatches(dto.VoterId, voterId))
+        {
+            return VoterAccessForbidden();
+        }
+
         if (dto.ElectionGuid != electionGuid)
         {
             return BadRequest(new { error = "Election GUID mismatch." });
         }
 
+        dto.VoterId = voterId;
         var (success, error) = await _onlineVotingService.SubmitBallotAsync(dto);
 
         if (!success)
         {
+            if (IsVoterElectionMismatch(error))
+            {
+                return VoterAccessForbidden();
+            }
+
             return BadRequest(new { error });
         }
 
@@ -218,23 +235,64 @@ public class OnlineVotingController : ControllerBase
     }
 
     /// <summary>
-    /// Gets the voting status for a specific voter in an election.
+    /// Gets the voting status for the authenticated voter.
+    /// The route id must match the <c>voterId</c> claim; it is not used to choose a person.
     /// </summary>
     /// <param name="electionGuid">The election GUID.</param>
-    /// <param name="voterId">The voter ID.</param>
+    /// <param name="voterId">Ignored unless it differs from the session, which is forbidden.</param>
     /// <returns>The vote status information.</returns>
     [HttpGet("{electionGuid}/{voterId}/voteStatus")]
-    [AllowAnonymous]
+    [Authorize(Policy = "OnlineVoter")]
     public async Task<ActionResult<OnlineVoteStatusDto>> GetVoteStatus(Guid electionGuid, string voterId)
     {
-        if (string.IsNullOrWhiteSpace(voterId))
+        if (!TryGetAuthenticatedVoterId(out var authenticatedVoterId))
         {
-            return BadRequest(new { error = "Voter ID is required." });
+            return Unauthorized();
         }
 
-        var status = await _onlineVotingService.GetVoteStatusAsync(electionGuid, voterId);
+        if (!SuppliedVoterIdMatches(voterId, authenticatedVoterId))
+        {
+            return VoterAccessForbidden();
+        }
+
+        var status = await _onlineVotingService.GetVoteStatusAsync(electionGuid, authenticatedVoterId);
+        if (status.Message == "voting.status.voterNotFound")
+        {
+            return VoterAccessForbidden();
+        }
+
         return Ok(status);
     }
+
+    /// <summary>
+    /// Reads the online-voter id from the validated JWT. Missing claim is not a voter session.
+    /// </summary>
+    private bool TryGetAuthenticatedVoterId(out string voterId)
+    {
+        voterId = User.FindFirst("voterId")?.Value ?? string.Empty;
+        return !string.IsNullOrWhiteSpace(voterId);
+    }
+
+    /// <summary>
+    /// An omitted client id is ignored. A present id must be the session id (ordinal).
+    /// </summary>
+    private static bool SuppliedVoterIdMatches(string? suppliedVoterId, string authenticatedVoterId)
+    {
+        return string.IsNullOrWhiteSpace(suppliedVoterId)
+            || string.Equals(suppliedVoterId, authenticatedVoterId, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Same body for id mismatch, unknown election, and not on the list.
+    /// No phrase key and no voter id — those distinguish the cases.
+    /// </summary>
+    private ObjectResult VoterAccessForbidden()
+    {
+        return StatusCode(StatusCodes.Status403Forbidden, new { error = "forbidden" });
+    }
+
+    private static bool IsVoterElectionMismatch(string? error) =>
+        error is "voting.submit.voterNotFound" or "voting.submit.electionNotFound";
 
     /// <summary>
     /// Issues httpOnly voter cookies and omits the JWT from the JSON body.

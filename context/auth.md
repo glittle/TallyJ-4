@@ -148,6 +148,23 @@ The voter login page runs those keys through `resolveUserFacingApiError` (and un
 
 **Rejected alternative:** store a used-code hash so a later `requestCode` can still say “already used” for the old code. After a new code is issued the old one is simply a mismatch; only a replay with no new request is `alreadyUsed`.
 
+## Online ballot identity is the voter session (issue #371 slice 0)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #371; product rule that a pending online ballot stays editable until a teller Accept-all (#188)  
+**Revisit when:** voter JWTs are pinned to one election, or `submitBallot` / `voteStatus` drop the client voter id from the contract
+
+`POST /api/online-voting/{electionGuid}/submitBallot` and `GET /api/online-voting/{electionGuid}/{voterId}/voteStatus` require policy `OnlineVoter`. The person is the `voterId` claim on the httpOnly `voter_token` (or a Bearer voter JWT in tests). A body or route id that is present and not exactly that claim is 403. Unknown election and “not on this election’s list” are the same 403 body (`error: forbidden`) — no phrase key and no id. No voter session is 401. A teller JWT is authenticated but fails `OnlineVoter` (403); it is not a voter session.
+
+List membership is a `Person` row on that election (email, phone, or kiosk code). A missing person does not create an `OnlineVotingInfo` under a new guid. Email and phone sessions are not pinned to one election: one login may submit on every open election that lists that address (`availableElections`). A kiosk id already embeds its election; using it on another election is the same 403. Window, Finalized, and “already processed” still apply only after the person is on the list. Vote status for that person stays readable when the window is closed. Accept-all stays a teller action and does not take a voter id.
+
+**Rejected alternative:** ignore a mismatched client id and silently write the session’s ballot. A wrong id must fail, so a buggy client cannot look like success while the request named someone else.
+
+**Rejected alternative:** remove `voterId` from the route and submit DTO in this slice. The server never uses a non-matching value, and the SPA already sends the session id. Dropping it is a client regen with no extra safety.
+
+**Rejected alternative:** put `electionGuid` on the voter JWT. Email and phone voters pick among every open election that lists them. Kiosk scope stays inside the voter id.
+
 ## Pre-auth voter-code delivery channel (issue #229)
 
 **Status:** active  
