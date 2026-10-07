@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using Backend.DTOs.Auth;
 using Backend.Context;
 using Backend.Identity;
+using Backend.Middleware;
 
 namespace Backend.Services.Auth;
 
@@ -14,6 +16,7 @@ public class LocalAuthService : ILocalAuthService
     private readonly IStringLocalizer<LocalAuthService> _localizer;
     private readonly EmailService _emailService;
     private readonly ITwoFactorService _twoFactorService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public LocalAuthService(
         UserManager<AppUser> userManager,
@@ -21,7 +24,8 @@ public class LocalAuthService : ILocalAuthService
         MainDbContext context,
         IStringLocalizer<LocalAuthService> localizer,
         EmailService emailService,
-        ITwoFactorService twoFactorService)
+        ITwoFactorService twoFactorService,
+        IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
@@ -29,6 +33,7 @@ public class LocalAuthService : ILocalAuthService
         _localizer = localizer;
         _emailService = emailService;
         _twoFactorService = twoFactorService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     /// <summary>
@@ -97,6 +102,7 @@ public class LocalAuthService : ILocalAuthService
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
         {
+            MarkInvalidCredential();
             return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
 
@@ -126,16 +132,18 @@ public class LocalAuthService : ILocalAuthService
                 return (false, _localizer["auth.errors.accountLocked"], null);
             }
 
+            MarkInvalidCredential();
             return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
-
-        // Reset access failed count on successful password check
-        await _userManager.ResetAccessFailedCountAsync(user);
 
         if (user.TwoFactorEnabled)
         {
             if (string.IsNullOrEmpty(request.TwoFactorCode))
             {
+                // Password matched and no code was offered. This is the prompt, not a guess,
+                // so it does not count as a failure. It also does not clear the access-failed
+                // count. Only a full success does. Resetting here would let a password holder
+                // zero the count between TOTP guesses and never lock the account.
                 return (true, null, new AuthResponse
                 {
                     Token = "",
@@ -150,9 +158,19 @@ public class LocalAuthService : ILocalAuthService
             var (codeValid, codeError) = await _twoFactorService.VerifyAsync(user.Id, request.TwoFactorCode);
             if (!codeValid)
             {
+                await _userManager.AccessFailedAsync(user);
+                if (await _userManager.IsLockedOutAsync(user))
+                {
+                    return (false, _localizer["auth.errors.accountLocked"], null);
+                }
+
+                MarkInvalidCredential();
                 return (false, codeError ?? _localizer["auth.errors.invalid2FACode"], null);
             }
         }
+
+        // Password matched, and the two-factor code matched when one was required.
+        await _userManager.ResetAccessFailedCountAsync(user);
 
         var token = _jwtTokenService.GenerateToken(user);
         var refreshToken = _jwtTokenService.GenerateRefreshToken();
@@ -170,6 +188,14 @@ public class LocalAuthService : ILocalAuthService
             AuthMethod = user.AuthMethod,
             Requires2FA = false
         });
+    }
+
+    private void MarkInvalidCredential()
+    {
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            RateLimitingMiddleware.MarkIpFailure(_httpContextAccessor.HttpContext);
+        }
     }
 }
 

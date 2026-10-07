@@ -75,6 +75,13 @@ public interface IElectionService
     Task<ElectionDto?> UpdateElectionAsync(Guid electionGuid, UpdateElectionDto updateDto);
 
     /// <summary>
+    /// Clears the shared-passcode guest teller lockout for an election.
+    /// </summary>
+    /// <param name="electionGuid">The election whose lockout row is reset.</param>
+    /// <returns>The election, or null if it does not exist.</returns>
+    Task<ElectionDto?> UnlockTellerLoginAsync(Guid electionGuid);
+
+    /// <summary>
     /// Changes the stage of an existing election.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election to update.</param>

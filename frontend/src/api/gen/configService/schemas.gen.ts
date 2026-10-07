@@ -1449,7 +1449,9 @@ export const Backend_SecurityEventTypeSchema = {
         36,
         37,
         38,
-        39
+        39,
+        40,
+        41
     ],
     type: 'integer',
     format: 'int32'
@@ -1997,6 +1999,11 @@ export const Elections_ElectionDtoSchema = {
             type: 'boolean'
         },
         tellerAccessOpenedAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        tellerLoginLockedUntil: {
             type: 'string',
             format: 'date-time',
             nullable: true

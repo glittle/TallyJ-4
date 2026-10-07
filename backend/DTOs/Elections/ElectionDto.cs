@@ -179,6 +179,12 @@ public class ElectionDto
     /// </summary>
     public DateTimeOffset? TellerAccessOpenedAt { get; set; }
 
+    /// <summary>
+    /// When set and still in the future, shared-passcode guest teller login is locked.
+    /// Owners and admins sign in with their accounts and are not locked by this time.
+    /// </summary>
+    public DateTimeOffset? TellerLoginLockedUntil { get; set; }
+
 }
 
 

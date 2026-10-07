@@ -1,13 +1,16 @@
 using System.Security.Claims;
+using Backend.Configuration;
 using Backend.Context;
 using Backend.Helpers;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.DTOs.Elections;
+using Backend.DTOs.Security;
 using Backend.DTOs.SignalR;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Options;
 
 namespace Backend.Services;
 
@@ -21,16 +24,30 @@ public class ElectionService : IElectionService
     private readonly ILogger<ElectionService> _logger;
     private readonly ISignalRNotificationService _signalRNotificationService;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ITellerLoginLockoutService? _tellerLoginLockoutService;
+    private readonly ISecurityAuditService? _securityAuditService;
+    private readonly int _minimumPasscodeLength;
 
     /// <summary>
     /// Initializes a new instance of the ElectionService.
     /// </summary>
-    public ElectionService(MainDbContext context, ILogger<ElectionService> logger, ISignalRNotificationService signalRNotificationService, IHttpContextAccessor httpContextAccessor)
+    public ElectionService(
+        MainDbContext context,
+        ILogger<ElectionService> logger,
+        ISignalRNotificationService signalRNotificationService,
+        IHttpContextAccessor httpContextAccessor,
+        ITellerLoginLockoutService? tellerLoginLockoutService = null,
+        ISecurityAuditService? securityAuditService = null,
+        IOptions<TellerLoginProtectionOptions>? tellerLoginProtection = null)
     {
         _context = context;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
         _httpContextAccessor = httpContextAccessor;
+        _tellerLoginLockoutService = tellerLoginLockoutService;
+        _securityAuditService = securityAuditService;
+        _minimumPasscodeLength = tellerLoginProtection?.Value.ResolvedMinimumPasscodeLength
+            ?? TellerLoginProtectionOptions.DefaultMinimumPasscodeLength;
     }
 
     /// <summary>
@@ -112,7 +129,25 @@ public class ElectionService : IElectionService
             return null;
         }
 
-        return MapToElectionDto(election);
+        var dto = MapToElectionDto(election);
+        dto.TellerLoginLockedUntil = await ActiveTellerLoginLockUntilAsync(electionGuid);
+        return dto;
+    }
+
+    private async Task<DateTimeOffset?> ActiveTellerLoginLockUntilAsync(Guid electionGuid)
+    {
+        var lockedUntil = await _context.TellerLoginLockouts
+            .AsNoTracking()
+            .Where(row => row.ElectionGuid == electionGuid)
+            .Select(row => row.LockedUntil)
+            .FirstOrDefaultAsync();
+
+        if (lockedUntil is DateTimeOffset until && until > DateTimeOffset.UtcNow)
+        {
+            return until;
+        }
+
+        return null;
     }
 
     /// <summary>
@@ -251,7 +286,9 @@ public class ElectionService : IElectionService
             .Where(p => p.ElectionGuid == sourceElectionGuid)
             .ToListAsync();
 
-        var copy = CopyElectionSettings(source);
+        var copy = CopyElectionSettings(source, _minimumPasscodeLength);
+        var passcodeCleared = !string.IsNullOrEmpty(source.ElectionPasscode)
+            && string.IsNullOrEmpty(copy.ElectionPasscode);
         copy.ElectionGuid = Guid.NewGuid();
         copy.Name = ResolveDuplicateName(dto.Name, source.Name);
         copy.ShowAsTest = true;
@@ -297,7 +334,9 @@ public class ElectionService : IElectionService
             copy.Name);
 
         var dtoResult = await GetElectionByGuidAsync(copy.ElectionGuid) ?? MapToElectionDto(copy);
-        return DuplicateElectionResult.Success(dtoResult);
+        return DuplicateElectionResult.Success(
+            dtoResult,
+            passcodeCleared ? TellerPasscodeRules.ClearedShortPasscodeWarningKey : null);
     }
 
     /// <summary>
@@ -442,11 +481,22 @@ public class ElectionService : IElectionService
         var previousOnlineWhenClose = election.OnlineWhenClose;
         var previousOnlineCloseIsEstimate = election.OnlineCloseIsEstimate;
         var previousOnlineSelectionProcess = election.OnlineSelectionProcess;
+        var previousPasscode = election.ElectionPasscode;
 
         var listForPublic = updateDto.ListForPublic;
         updateDto.CopyMatchingPropertiesTo(election, ignoreNulls: true);
+        var passcodeChanged = updateDto.ElectionPasscode != null
+            && !string.Equals(previousPasscode, election.ElectionPasscode, StringComparison.Ordinal);
         ElectionTellerAccessHelper.ApplyListForPublicFlag(election, listForPublic);
         await _context.SaveChangesAsync();
+        if (passcodeChanged)
+        {
+            await ClearTellerLoginLockoutAsync(
+                electionGuid,
+                "Guest teller login lockout was cleared because the teller passcode changed.",
+                auditWhenNothingToClear: false);
+        }
+
         await OnlineLocationHelper.SyncAsync(_context, electionGuid, election.UseOnlineVoting);
 
         _logger.LogInformation("Updated election {ElectionGuid}", electionGuid);
@@ -480,6 +530,56 @@ public class ElectionService : IElectionService
         }
 
         return await GetElectionByGuidAsync(electionGuid);
+    }
+
+    /// <summary>
+    /// Clears the shared-passcode lockout for an election. Account login is unchanged.
+    /// </summary>
+    public async Task<ElectionDto?> UnlockTellerLoginAsync(Guid electionGuid)
+    {
+        var exists = await _context.Elections.AnyAsync(election => election.ElectionGuid == electionGuid);
+        if (!exists)
+        {
+            return null;
+        }
+
+        await ClearTellerLoginLockoutAsync(
+            electionGuid,
+            "Guest teller login lockout was cleared by an owner or admin.",
+            auditWhenNothingToClear: true);
+        return await GetElectionByGuidAsync(electionGuid);
+    }
+
+    private async Task ClearTellerLoginLockoutAsync(
+        Guid electionGuid,
+        string details,
+        bool auditWhenNothingToClear)
+    {
+        var cleared = false;
+        if (_tellerLoginLockoutService != null)
+        {
+            cleared = await _tellerLoginLockoutService.ResetAsync(electionGuid);
+        }
+
+        if (_securityAuditService == null || (!cleared && !auditWhenNothingToClear))
+        {
+            return;
+        }
+
+        var http = _httpContextAccessor.HttpContext;
+        var userId = http?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            ?? http?.User.FindFirst("sub")?.Value;
+        await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.TellerLoginUnlocked,
+            ElectionGuid = electionGuid,
+            UserId = userId,
+            IpAddress = http?.GetClientIpAddress(),
+            UserAgent = http?.Request.Headers.UserAgent.ToString(),
+            Details = details,
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
+        });
     }
 
     /// <summary>
@@ -797,8 +897,16 @@ public class ElectionService : IElectionService
     /// online window, UseOnlineVoting, envelope numbering, and ownership are set
     /// by the caller.
     /// </summary>
-    private static Election CopyElectionSettings(Election source)
+    private static Election CopyElectionSettings(Election source, int minimumPasscodeLength)
     {
+        var passcode = TellerPasscodeRules.IsAcceptableValue(
+            source.ElectionPasscode,
+            stored: null,
+            minimumPasscodeLength,
+            isCreate: true)
+            ? source.ElectionPasscode
+            : null;
+
         return new Election
         {
             Convenor = source.Convenor,
@@ -810,7 +918,7 @@ public class ElectionService : IElectionService
             ShowFullReport = source.ShowFullReport,
             LinkedElectionGuid = source.LinkedElectionGuid,
             LinkedElectionKind = source.LinkedElectionKind,
-            ElectionPasscode = source.ElectionPasscode,
+            ElectionPasscode = passcode,
             UseCallInButton = source.UseCallInButton,
             HidePreBallotPages = source.HidePreBallotPages,
             MaskVotingMethod = source.MaskVotingMethod,

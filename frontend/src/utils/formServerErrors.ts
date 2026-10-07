@@ -1,4 +1,5 @@
 import type { FormInstance } from "element-plus";
+import { translateIfPhraseKey } from "./errorHandler";
 
 /**
  * ASP.NET ValidationProblemDetails keys are PascalCase (`Name`, `NumberToElect`).
@@ -34,6 +35,6 @@ export function applyServerFieldErrors(
       continue;
     }
     field.validateState = "error";
-    field.validateMessage = messages[0] ?? "";
+    field.validateMessage = translateIfPhraseKey(messages[0] ?? "");
   }
 }

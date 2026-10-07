@@ -191,6 +191,9 @@ public partial class AuthController
 
     /// <summary>
     /// Authenticates a GuestTeller using an election access code.
+    /// Unknown elections and wrong passcodes on an open election return the same body.
+    /// Closed elections and elections with no main teller are rejected before the passcode is compared.
+    /// An active per-election lockout rejects every passcode attempt.
     /// </summary>
     /// <param name="request">The teller login request containing election GUID and access code.</param>
     /// <returns>A teller authentication response with a limited JWT if successful.</returns>
@@ -198,7 +201,7 @@ public partial class AuthController
     [HttpPost("teller-login")]
     public async Task<IActionResult> TellerLogin([FromBody] TellerLoginRequest request)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         var election = await _context.Elections
@@ -206,60 +209,88 @@ public partial class AuthController
 
         if (election == null)
         {
-            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
-            {
-                EventType = SecurityEventType.TellerLoginFailure,
-                IpAddress = clientIp,
-                UserAgent = userAgent,
-                Details = $"Teller login failed: election not found ({request.ElectionGuid})",
-                IsSuspicious = false,
-                Severity = SecurityEventSeverity.Info
-            });
-            return BadRequest(new { error = "Invalid election or access code" });
+            TellerPasscodeComparer.EqualsUtf8(
+                TellerPasscodeComparer.MissingElectionPlaceholder,
+                request.AccessCode);
+            await LogTellerLoginFailureAsync(
+                clientIp,
+                userAgent,
+                electionGuid: null,
+                details: $"Teller login failed: election not found ({request.ElectionGuid})",
+                isSuspicious: false,
+                severity: SecurityEventSeverity.Info);
+            return InvalidElectionOrPasscode();
         }
 
         if (!ElectionTellerAccessHelper.IsGuestTellerAccessOpen(election.ListedForPublicAsOf))
         {
-            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
-            {
-                EventType = SecurityEventType.TellerLoginFailure,
-                IpAddress = clientIp,
-                UserAgent = userAgent,
-                Details = $"Teller login failed: election not open for tellers ({request.ElectionGuid})",
-                IsSuspicious = false,
-                Severity = SecurityEventSeverity.Info
-            });
-            return BadRequest(new { error = "This election is not currently open for teller access" });
+            await LogTellerLoginFailureAsync(
+                clientIp,
+                userAgent,
+                election.ElectionGuid,
+                details: $"Teller login failed: election not open for tellers ({request.ElectionGuid})",
+                isSuspicious: false,
+                severity: SecurityEventSeverity.Info);
+            return BadRequest(new { error = TellerLoginNotOpenKey });
         }
 
         if (!_assignmentService.HasActiveMainTeller(request.ElectionGuid))
         {
-            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
-            {
-                EventType = SecurityEventType.TellerLoginFailure,
-                IpAddress = clientIp,
-                UserAgent = userAgent,
-                Details = $"Teller login failed: no main teller connected ({request.ElectionGuid})",
-                IsSuspicious = false,
-                Severity = SecurityEventSeverity.Info
-            });
-            return BadRequest(new { error = "No main teller is currently connected to this election" });
+            await LogTellerLoginFailureAsync(
+                clientIp,
+                userAgent,
+                election.ElectionGuid,
+                details: $"Teller login failed: no main teller connected ({request.ElectionGuid})",
+                isSuspicious: false,
+                severity: SecurityEventSeverity.Info);
+            return BadRequest(new { error = TellerLoginNoMainTellerKey });
         }
 
-        if (string.IsNullOrEmpty(election.ElectionPasscode) ||
-            !string.Equals(election.ElectionPasscode, request.AccessCode, StringComparison.Ordinal))
+        var passcodeMatches = TellerPasscodeComparer.EqualsUtf8(
+            election.ElectionPasscode,
+            request.AccessCode);
+
+        if (await _tellerLoginLockoutService.IsLockedAsync(election.ElectionGuid))
         {
-            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
-            {
-                EventType = SecurityEventType.TellerLoginFailure,
-                IpAddress = clientIp,
-                UserAgent = userAgent,
-                Details = $"Teller login failed: invalid access code for election ({request.ElectionGuid})",
-                IsSuspicious = true,
-                Severity = SecurityEventSeverity.Warning
-            });
-            return BadRequest(new { error = "Invalid election or access code" });
+            return TellerLoginLocked();
         }
+
+        if (!passcodeMatches)
+        {
+            var failure = await _tellerLoginLockoutService.RecordPasscodeFailureAsync(election.ElectionGuid);
+            await LogTellerLoginFailureAsync(
+                clientIp,
+                userAgent,
+                election.ElectionGuid,
+                details: $"Teller login failed: invalid access code for election ({request.ElectionGuid})",
+                isSuspicious: true,
+                severity: SecurityEventSeverity.Warning);
+
+            if (failure.LockoutStarted)
+            {
+                var lockedUntil = failure.LockedUntil?.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss") ?? "";
+                await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+                {
+                    EventType = SecurityEventType.TellerLoginLocked,
+                    ElectionGuid = election.ElectionGuid,
+                    IpAddress = clientIp,
+                    UserAgent = userAgent,
+                    Details =
+                        $"Guest teller login for this election is locked until {lockedUntil} UTC after {failure.ConsecutiveFailures} consecutive failed passcodes.",
+                    IsSuspicious = true,
+                    Severity = SecurityEventSeverity.Warning
+                });
+            }
+
+            if (failure.IsLocked)
+            {
+                return TellerLoginLocked();
+            }
+
+            return InvalidElectionOrPasscode();
+        }
+
+        await _tellerLoginLockoutService.ResetAsync(election.ElectionGuid);
 
         var token = _jwtTokenService.GenerateTellerToken(election.ElectionGuid);
 
@@ -277,6 +308,7 @@ public partial class AuthController
         await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
             EventType = SecurityEventType.TellerLoginSuccess,
+            ElectionGuid = election.ElectionGuid,
             IpAddress = clientIp,
             UserAgent = userAgent,
             Details = $"Teller login successful for election ({request.ElectionGuid})",
@@ -288,6 +320,37 @@ public partial class AuthController
         {
             ElectionGuid = election.ElectionGuid,
             ElectionName = election.Name
+        });
+    }
+
+    private IActionResult InvalidElectionOrPasscode()
+    {
+        RateLimitingMiddleware.MarkIpFailure(HttpContext);
+        return BadRequest(new { error = InvalidElectionOrPasscodeKey });
+    }
+
+    private IActionResult TellerLoginLocked()
+    {
+        return BadRequest(new { error = TellerLoginLockedKey });
+    }
+
+    private Task LogTellerLoginFailureAsync(
+        string clientIp,
+        string userAgent,
+        Guid? electionGuid,
+        string details,
+        bool isSuspicious,
+        SecurityEventSeverity severity)
+    {
+        return _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+        {
+            EventType = SecurityEventType.TellerLoginFailure,
+            ElectionGuid = electionGuid,
+            IpAddress = clientIp,
+            UserAgent = userAgent,
+            Details = details,
+            IsSuspicious = isSuspicious,
+            Severity = severity
         });
     }
 

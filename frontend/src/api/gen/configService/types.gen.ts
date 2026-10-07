@@ -442,7 +442,9 @@ export const BackendSecurityEventType = {
     36: 36,
     37: 37,
     38: 38,
-    39: 39
+    39: 39,
+    40: 40,
+    41: 41
 } as const;
 
 export type BackendSecurityEventType = typeof BackendSecurityEventType[keyof typeof BackendSecurityEventType];
@@ -597,6 +599,7 @@ export type ElectionsElectionDto = {
     flags?: string | null;
     isTellerAccessOpen?: boolean;
     tellerAccessOpenedAt?: Date | null;
+    tellerLoginLockedUntil?: Date | null;
 };
 
 export type ElectionsElectionStatsDto = {
@@ -3262,6 +3265,24 @@ export type PostApiElectionsByGuidDuplicateElectionResponses = {
 };
 
 export type PostApiElectionsByGuidDuplicateElectionResponse = PostApiElectionsByGuidDuplicateElectionResponses[keyof PostApiElectionsByGuidDuplicateElectionResponses];
+
+export type PostApiElectionsByGuidTellerLoginUnlockData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/teller-login-unlock';
+};
+
+export type PostApiElectionsByGuidTellerLoginUnlockResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseElectionsElectionDto;
+};
+
+export type PostApiElectionsByGuidTellerLoginUnlockResponse = PostApiElectionsByGuidTellerLoginUnlockResponses[keyof PostApiElectionsByGuidTellerLoginUnlockResponses];
 
 export type PostApiElectionsByGuidResetElectionData = {
     body?: never;

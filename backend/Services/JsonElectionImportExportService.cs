@@ -1,4 +1,5 @@
 using Backend;
+using Backend.Configuration;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Context;
@@ -7,6 +8,7 @@ using Backend.DTOs.Import;
 using Backend.DTOs.Elections;
 using Backend.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System.Globalization;
 using System.Text.Json;
 using System.Xml;
@@ -17,14 +19,18 @@ namespace Backend.Services;
 public class JsonElectionImportExportService : ElectionImportExportBase
 {
     private readonly ISignalRNotificationService _signalRNotificationService;
+    private readonly int _minimumPasscodeLength;
 
     public JsonElectionImportExportService(
         MainDbContext context,
         IElectionService electionService,
-        ISignalRNotificationService signalRNotificationService)
+        ISignalRNotificationService signalRNotificationService,
+        IOptions<TellerLoginProtectionOptions>? tellerLoginProtection = null)
         : base(context, electionService)
     {
         _signalRNotificationService = signalRNotificationService;
+        _minimumPasscodeLength = tellerLoginProtection?.Value.ResolvedMinimumPasscodeLength
+            ?? TellerLoginProtectionOptions.DefaultMinimumPasscodeLength;
     }
 
     private Task ReportStatusAsync(Guid? userId, string message, bool isTemporary = false)
@@ -253,7 +259,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
     }
 
     // Job 3: Import from new JSON format
-    public async Task<ElectionDto> ImportElectionFromJsonAsync(Stream jsonStream, Guid? userId = null)
+    public async Task<JsonElectionImportResult> ImportElectionFromJsonAsync(Stream jsonStream, Guid? userId = null)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
         try
@@ -277,6 +283,19 @@ public class JsonElectionImportExportService : ElectionImportExportBase
             var guidMap = new Dictionary<Guid, Guid>();
             var newElectionGuid = Guid.NewGuid();
 
+            var warnings = new List<string>();
+            var passcode = importData.election.ElectionPasscode;
+            if (!TellerPasscodeRules.IsAcceptableValue(
+                    passcode,
+                    stored: null,
+                    _minimumPasscodeLength,
+                    isCreate: true))
+            {
+                passcode = null;
+                warnings.Add(TellerPasscodeRules.ClearedShortPasscodeWarningKey);
+                await ReportStatusAsync(userId, TellerPasscodeRules.ClearedShortPasscodeWarningKey);
+            }
+
             var election = new Election
             {
                 ElectionGuid = newElectionGuid,
@@ -287,7 +306,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 ElectionMode = importData.election.ElectionMode,
                 NumberToElect = importData.election.NumberToElect,
                 NumberExtra = importData.election.NumberExtra,
-                ElectionPasscode = importData.election.ElectionPasscode,
+                ElectionPasscode = passcode,
                 LastEnvNum = importData.election.LastEnvNum,
                 ShowFullReport = importData.election.ShowFullReport,
                 UseOnlineVoting = importData.election.UseOnlineVoting
@@ -350,7 +369,13 @@ public class JsonElectionImportExportService : ElectionImportExportBase
             await transaction.CommitAsync();
             await ReportStatusAsync(userId, "Election package loaded successfully");
 
-            return await _electionService.GetElectionByGuidAsync(election.ElectionGuid) ?? throw new InvalidOperationException("Failed to create election");
+            var created = await _electionService.GetElectionByGuidAsync(election.ElectionGuid)
+                ?? throw new InvalidOperationException("Failed to create election");
+            return new JsonElectionImportResult
+            {
+                Election = created,
+                Warnings = warnings
+            };
         }
         catch (Exception ex)
         {
@@ -614,4 +639,20 @@ public class JsonElectionImportExportService : ElectionImportExportBase
             _context.SecurityAuditLogs.Add(l);
         }
     }
+}
+
+/// <summary>
+/// Election created from a TallyJ4 JSON package, plus passcode warnings.
+/// </summary>
+public sealed class JsonElectionImportResult
+{
+    /// <summary>
+    /// The imported election.
+    /// </summary>
+    public required ElectionDto Election { get; init; }
+
+    /// <summary>
+    /// Phrase keys for values that were dropped, such as a too-short teller passcode.
+    /// </summary>
+    public List<string> Warnings { get; init; } = new();
 }

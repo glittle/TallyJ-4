@@ -163,6 +163,9 @@ void ConfigureServices(WebApplicationBuilder builder)
     services.Configure<Backend.Authorization.SuperAdminSettings>(
         builderConfiguration.GetSection(Backend.Authorization.SuperAdminSettings.SectionName));
 
+    services.Configure<TellerLoginProtectionOptions>(
+        builderConfiguration.GetSection(TellerLoginProtectionOptions.SectionName));
+
     ProgramAuthSetup.ConfigureAuthorization(services);
 
     services.Configure<JsonLocalizationOptions>(builderConfiguration.GetSection(JsonLocalizationOptions.SectionName));

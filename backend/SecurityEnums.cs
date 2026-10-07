@@ -69,7 +69,17 @@ public enum SecurityEventType
     /// <summary>
     /// General application / election operational activity (replaces the former Logs table).
     /// </summary>
-    OperationalActivity
+    OperationalActivity,
+
+    /// <summary>
+    /// Shared-passcode guest teller login locked for one election after consecutive failures.
+    /// </summary>
+    TellerLoginLocked,
+
+    /// <summary>
+    /// An owner or admin cleared the guest teller login lockout, or changed the passcode.
+    /// </summary>
+    TellerLoginUnlocked
 }
 
 /// <summary>

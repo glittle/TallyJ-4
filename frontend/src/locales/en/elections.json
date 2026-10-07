@@ -344,6 +344,16 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "elections.form.electionPasscodeMinLength": {
+    "t": "Passcode must be at least 6 characters.",
+    "s": "source",
+    "w": "2026-10-06T19:00:00Z"
+  },
+  "elections.form.electionPasscodeNotCopied": {
+    "t": "The teller passcode was shorter than 6 characters and was not copied.",
+    "s": "source",
+    "w": "2026-10-06T20:00:00Z"
+  },
   "elections.form.guestTellersCanAddPeople": {
     "t": "Can Add People?",
     "s": "source",
@@ -1083,6 +1093,21 @@
     "t": "Guest tellers",
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.tellerLoginLocked": {
+    "t": "Guest teller login is locked until {until}.",
+    "s": "source",
+    "w": "2026-10-06T19:00:00Z"
+  },
+  "elections.tellerLoginUnlock": {
+    "t": "Unlock",
+    "s": "source",
+    "w": "2026-10-06T20:00:00Z"
+  },
+  "elections.tellerLoginUnlocked": {
+    "t": "Guest teller login is unlocked.",
+    "s": "source",
+    "w": "2026-10-06T20:00:00Z"
   },
   "elections.testElectionBanner": {
     "t": "Test Election",

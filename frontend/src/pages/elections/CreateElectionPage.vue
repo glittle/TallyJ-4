@@ -43,6 +43,7 @@ import {
   mapServerValidationErrors,
 } from "@/utils/formServerErrors";
 import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
+import { tellerPasscodeLengthError } from "@/domain/tellerPasscode";
 
 const router = useRouter();
 const { t } = useI18n();
@@ -106,6 +107,18 @@ const rules = reactive<FormRules>({
     {
       type: "email",
       message: t("elections.form.emailInvalid"),
+      trigger: "blur",
+    },
+  ],
+  electionPasscode: [
+    {
+      validator: (_rule, value, callback) => {
+        if (tellerPasscodeLengthError(value) === "too-short") {
+          callback(new Error(t("elections.form.electionPasscodeMinLength")));
+          return;
+        }
+        callback();
+      },
       trigger: "blur",
     },
   ],

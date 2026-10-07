@@ -177,10 +177,29 @@ public class ElectionsController : ControllerBase
                 ApiResponse<ElectionDto>.ErrorResponse("Not authorized to duplicate this election"));
         }
 
+        var message = result.Warning ?? "Election duplicated successfully";
         return CreatedAtAction(
             nameof(GetElection),
             new { guid = result.Election!.ElectionGuid },
-            ApiResponse<ElectionDto>.SuccessResponse(result.Election, "Election duplicated successfully"));
+            ApiResponse<ElectionDto>.SuccessResponse(result.Election, message));
+    }
+
+    /// <summary>
+    /// Clears the shared-passcode guest teller lockout. Owners and admins only.
+    /// </summary>
+    /// <param name="guid">The election whose lockout is cleared.</param>
+    /// <returns>The election, with no active lockout.</returns>
+    [HttpPost("{guid}/teller-login-unlock")]
+    [Authorize(Policy = "FullTellerAccess")]
+    public async Task<ActionResult<ApiResponse<ElectionDto>>> UnlockTellerLogin(Guid guid)
+    {
+        var election = await _electionService.UnlockTellerLoginAsync(guid);
+        if (election == null)
+        {
+            return NotFound(ApiResponse<ElectionDto>.ErrorResponse("Election not found"));
+        }
+
+        return Ok(ApiResponse<ElectionDto>.SuccessResponse(election, "Guest teller login unlocked"));
     }
 
     /// <summary>

@@ -68,6 +68,7 @@ public static class ProgramServiceRegistration
         services.AddScoped<EncryptionService>();
 
         services.AddScoped<ISecurityAuditService, SecurityAuditService>();
+        services.AddScoped<ITellerLoginLockoutService, TellerLoginLockoutService>();
     }
 
     public static void RegisterBackgroundServices(

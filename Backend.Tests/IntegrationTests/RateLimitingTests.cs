@@ -1,14 +1,21 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using FluentAssertions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.DependencyInjection;
+using Backend.Context;
 using Backend.Controllers;
 using Backend.DTOs.Auth;
 using Backend.DTOs.OnlineVoting;
+using Backend.Entities;
 using Backend.Helpers;
+using Backend.Identity;
 using Backend.Middleware;
+using Backend.Services.Auth;
 using Xunit;
 
 namespace Backend.Tests.IntegrationTests;
@@ -53,9 +60,9 @@ public class RateLimitingTests : IntegrationTestBase
             Password = "WrongPassword"
         };
 
-        // Act - Make 6 login attempts (exceeds 5 per minute limit)
+        // Act - one more bad-credential attempt than the per-IP failure cap
         HttpResponseMessage? lastResponse = null;
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < RateLimitingMiddleware.LoginIpMaxRequests + 1; i++)
         {
             lastResponse = await PostJsonWithForwardedFor(
                 "/api/auth/login",
@@ -81,7 +88,7 @@ public class RateLimitingTests : IntegrationTestBase
         };
 
         HttpResponseMessage? lastForFirstClient = null;
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < RateLimitingMiddleware.LoginIpMaxRequests + 1; i++)
         {
             lastForFirstClient = await PostJsonWithForwardedFor(
                 "/api/auth/login",
@@ -110,7 +117,7 @@ public class RateLimitingTests : IntegrationTestBase
         };
 
         HttpResponseMessage? lastResponse = null;
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < RateLimitingMiddleware.LoginIpMaxRequests + 1; i++)
         {
             lastResponse = await PostJsonWithForwardedFor(
                 "/api/auth/login",
@@ -122,6 +129,172 @@ public class RateLimitingTests : IntegrationTestBase
         lastResponse!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
         var body = await lastResponse.Content.ReadAsStringAsync();
         body.Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
+    }
+
+    [Fact]
+    public async Task Login_SameIp_ThirtySuccesses_AllSucceed()
+    {
+        var loginRequest = new LoginRequest
+        {
+            Email = "admin@tallyj.test",
+            Password = "TestPass123!"
+        };
+
+        for (var i = 0; i < 30; i++)
+        {
+            var response = await PostJsonWithForwardedFor(
+                "/api/auth/login",
+                loginRequest,
+                "192.0.2.20");
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+    }
+
+    [Fact]
+    public async Task Login_SameIp_SuccessAfterFailures_DoesNotConsumeTheBucket()
+    {
+        var bad = new LoginRequest
+        {
+            Email = "rate-limit-mixed@example.com",
+            Password = "WrongPassword"
+        };
+        var good = new LoginRequest
+        {
+            Email = "admin@tallyj.test",
+            Password = "TestPass123!"
+        };
+        const string ip = "192.0.2.21";
+
+        for (var i = 0; i < 5; i++)
+        {
+            var failed = await PostJsonWithForwardedFor("/api/auth/login", bad, ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        var success = await PostJsonWithForwardedFor("/api/auth/login", good, ip);
+        success.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        for (var i = 0; i < RateLimitingMiddleware.LoginIpMaxRequests - 5; i++)
+        {
+            var failed = await PostJsonWithForwardedFor("/api/auth/login", bad, ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        var limited = await PostJsonWithForwardedFor("/api/auth/login", bad, ip);
+        limited.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+        (await limited.Content.ReadAsStringAsync()).Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
+    }
+
+    [Fact]
+    public async Task Login_SameIp_RepeatedBadTwoFactorCodes_Reach429()
+    {
+        const string ip = "192.0.2.40";
+        const string password = "TestPass123!";
+        // One account locks at 5. The locking reply does not consume the IP bucket,
+        // so each account contributes 4 counted invalid-code replies.
+        var accounts = new List<(string Email, string WrongCode)>();
+        for (var i = 0; i < 5; i++)
+        {
+            var email = $"2fa-ip-{i}-{Guid.NewGuid():N}@example.com";
+            var secret = await EnableTwoFactorAsync(email, password);
+            accounts.Add((email, WrongTotp(secret)));
+        }
+
+        foreach (var (email, wrongCode) in accounts)
+        {
+            for (var attempt = 0; attempt < 4; attempt++)
+            {
+                var failed = await PostLoginAsync(email, password, wrongCode, ip);
+                failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+                (await failed.Content.ReadAsStringAsync()).Should().Contain("auth.errors.invalid2FACode");
+            }
+        }
+
+        var limited = await PostLoginAsync(accounts[0].Email, password, accounts[0].WrongCode, ip);
+        limited.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+        (await limited.Content.ReadAsStringAsync()).Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
+    }
+
+    [Fact]
+    public async Task Login_BadTwoFactorCode_LocksTheAccount()
+    {
+        const string ip = "192.0.2.41";
+        const string password = "TestPass123!";
+        var email = $"2fa-lock-{Guid.NewGuid():N}@example.com";
+        var secret = await EnableTwoFactorAsync(email, password);
+        var wrongCode = WrongTotp(secret);
+
+        for (var attempt = 0; attempt < 4; attempt++)
+        {
+            var failed = await PostLoginAsync(email, password, wrongCode, ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var body = await failed.Content.ReadAsStringAsync();
+            body.Should().Contain("auth.errors.invalid2FACode");
+            body.Should().NotContain("auth.errors.accountLocked");
+        }
+
+        var locking = await PostLoginAsync(email, password, wrongCode, ip);
+        locking.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        (await locking.Content.ReadAsStringAsync()).Should().Contain("auth.errors.accountLocked");
+
+        var correctCode = new OtpNet.Totp(OtpNet.Base32Encoding.ToBytes(secret)).ComputeTotp();
+        var stillLocked = await PostLoginAsync(email, password, correctCode, ip);
+        stillLocked.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        (await stillLocked.Content.ReadAsStringAsync()).Should().Contain("auth.errors.accountLocked");
+    }
+
+    [Fact]
+    public async Task Login_EmptyTwoFactorPrompt_DoesNotResetTheAccessFailedCount()
+    {
+        const string ip = "192.0.2.43";
+        const string password = "TestPass123!";
+        var email = $"2fa-prompt-{Guid.NewGuid():N}@example.com";
+        var secret = await EnableTwoFactorAsync(email, password);
+        var wrongCode = WrongTotp(secret);
+
+        for (var attempt = 0; attempt < 4; attempt++)
+        {
+            var failed = await PostLoginAsync(email, password, wrongCode, ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            (await failed.Content.ReadAsStringAsync()).Should().Contain("auth.errors.invalid2FACode");
+        }
+
+        var prompt = await PostLoginAsync(email, password, "", ip);
+        prompt.StatusCode.Should().Be(HttpStatusCode.OK);
+        var promptBody = await prompt.Content.ReadFromJsonAsync<AuthResponse>(JsonOptions);
+        promptBody!.Requires2FA.Should().BeTrue();
+
+        var locking = await PostLoginAsync(email, password, wrongCode, ip);
+        locking.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        (await locking.Content.ReadAsStringAsync()).Should().Contain("auth.errors.accountLocked");
+    }
+
+    [Fact]
+    public async Task Login_WithoutTwoFactor_SuccessfulLogin_ResetsTheAccessFailedCount()
+    {
+        const string ip = "192.0.2.42";
+        const string password = "TestPass123!";
+        const string wrongPassword = "WrongPassword123!";
+        var email = $"lock-reset-{Guid.NewGuid():N}@example.com";
+        await CreateTestUserAsync(email, password, email);
+
+        for (var attempt = 0; attempt < 4; attempt++)
+        {
+            var failed = await PostLoginAsync(email, wrongPassword, null, ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var body = await failed.Content.ReadAsStringAsync();
+            body.Should().NotContain("auth.errors.accountLocked");
+        }
+
+        var success = await PostLoginAsync(email, password, null, ip);
+        success.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        for (var attempt = 0; attempt < 4; attempt++)
+        {
+            var failed = await PostLoginAsync(email, wrongPassword, null, ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            (await failed.Content.ReadAsStringAsync()).Should().NotContain("auth.errors.accountLocked");
+        }
     }
 
     [Fact]
@@ -507,6 +680,56 @@ public class RateLimitingTests : IntegrationTestBase
 
         // Assert - Last request should be rate limited
         lastResponse!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+    }
+
+    private async Task<string> EnableTwoFactorAsync(string email, string password)
+    {
+        await CreateTestUserAsync(email, password, email);
+
+        using var scope = Factory.Services.CreateScope();
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var encryption = scope.ServiceProvider.GetRequiredService<EncryptionService>();
+        var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var user = await userManager.FindByEmailAsync(email);
+        user.Should().NotBeNull();
+
+        var secretBytes = new byte[20];
+        RandomNumberGenerator.Fill(secretBytes);
+        var secret = OtpNet.Base32Encoding.ToString(secretBytes);
+
+        var enabled = await userManager.SetTwoFactorEnabledAsync(user!, true);
+        enabled.Succeeded.Should().BeTrue();
+
+        db.TwoFactorTokens.Add(new TwoFactorToken
+        {
+            TokenGuid = Guid.NewGuid(),
+            UserId = user!.Id,
+            Secret = encryption.Encrypt(secret),
+            IsEnabled = true,
+            CreatedAt = DateTimeOffset.UtcNow,
+            RowVersion = new byte[8]
+        });
+        await db.SaveChangesAsync();
+        return secret;
+    }
+
+    private static string WrongTotp(string secret)
+    {
+        var valid = new OtpNet.Totp(OtpNet.Base32Encoding.ToBytes(secret)).ComputeTotp();
+        return valid == "000000" ? "111111" : "000000";
+    }
+
+    private Task<HttpResponseMessage> PostLoginAsync(string email, string password, string? twoFactorCode, string forwardedFor)
+    {
+        return PostJsonWithForwardedFor(
+            "/api/auth/login",
+            new LoginRequest
+            {
+                Email = email,
+                Password = password,
+                TwoFactorCode = twoFactorCode
+            },
+            forwardedFor);
     }
 
     private async Task<HttpResponseMessage> PostJsonWithForwardedFor<T>(

@@ -15,6 +15,7 @@ const electionStore = useElectionStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
 const toggling = ref(false);
+const unlocking = ref(false);
 const shareDrawerOpen = ref(false);
 const qrCodeUrl = ref("");
 
@@ -35,6 +36,20 @@ const election = computed(() => {
 const isOpen = computed(() => election.value?.isTellerAccessOpen ?? false);
 
 const passcode = computed(() => election.value?.electionPasscode ?? "");
+
+const lockoutMessage = computed(() => {
+  const untilRaw = election.value?.tellerLoginLockedUntil;
+  if (!untilRaw) {
+    return "";
+  }
+  const until = new Date(untilRaw);
+  if (Number.isNaN(until.getTime()) || until.getTime() <= Date.now()) {
+    return "";
+  }
+  return t("elections.tellerLoginLocked", {
+    until: until.toLocaleString(),
+  });
+});
 
 const shareableUrl = computed(() => {
   if (!electionGuid.value || !passcode.value) {
@@ -77,6 +92,24 @@ watch([shareableUrl, shareDrawerOpen], async ([url, drawerOpen]) => {
   }
   await generateQrCode(url);
 });
+
+async function unlockTellerLogin() {
+  const guid = electionGuid.value;
+  if (!guid || unlocking.value) {
+    return;
+  }
+
+  unlocking.value = true;
+  try {
+    await electionStore.unlockTellerLogin(guid);
+    showSuccessMessage(t("elections.tellerLoginUnlocked"));
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    showErrorMessage(`${t("common.error")} ${message}`);
+  } finally {
+    unlocking.value = false;
+  }
+}
 
 async function handleToggle(nextValue: string | number | boolean) {
   const guid = electionGuid.value;
@@ -135,6 +168,7 @@ function openShareDrawer() {
     v-if="showToggle"
     class="guest-teller-access-box header-status-box"
     :class="isOpen ? 'is-open' : 'is-closed'"
+    :title="lockoutMessage || undefined"
   >
     <span class="guest-teller-access-label header-status-label">
       {{ t("elections.guestTellerAccess") }}
@@ -173,6 +207,23 @@ function openShareDrawer() {
       :lock-scroll="false"
       append-to-body
     >
+      <div v-if="lockoutMessage" class="teller-lockout-row">
+        <el-alert
+          type="warning"
+          :title="lockoutMessage"
+          show-icon
+          :closable="false"
+          data-testid="guest-teller-lockout"
+        />
+        <el-button
+          type="warning"
+          :loading="unlocking"
+          data-testid="guest-teller-unlock"
+          @click="unlockTellerLogin"
+        >
+          {{ t("elections.tellerLoginUnlock") }}
+        </el-button>
+      </div>
       <div v-if="passcode" class="share-drawer-body">
         <div class="share-fields">
           <div class="share-field">
@@ -278,6 +329,22 @@ function openShareDrawer() {
 }
 
 .teller-share-drawer {
+  .el-alert {
+    margin-bottom: 16px;
+  }
+
+  .teller-lockout-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    .el-alert {
+      flex: 1;
+      margin-bottom: 0;
+    }
+  }
+
   .share-drawer-body {
     display: flex;
     flex-wrap: nowrap;

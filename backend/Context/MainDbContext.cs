@@ -46,6 +46,8 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<Teller> Tellers { get; set; }
 
+    public virtual DbSet<TellerLoginLockout> TellerLoginLockouts { get; set; }
+
     public virtual DbSet<TwoFactorToken> TwoFactorTokens { get; set; }
 
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }

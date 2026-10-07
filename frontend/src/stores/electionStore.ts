@@ -134,9 +134,12 @@ export const useElectionStore = defineStore("election", () => {
     loading.value = true;
     error.value = null;
     try {
-      const election = await electionService.duplicate(electionGuid, dto);
+      const { election, warning } = await electionService.duplicate(
+        electionGuid,
+        dto,
+      );
       elections.value.push(election);
-      return election;
+      return { election, warning };
     } catch (e: any) {
       error.value = extractApiErrorMessage(e);
       throw e;
@@ -545,6 +548,32 @@ export const useElectionStore = defineStore("election", () => {
     }
   }
 
+  async function unlockTellerLogin(electionGuid: string) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const election = await electionService.unlockTellerLogin(electionGuid);
+
+      const index = elections.value.findIndex(
+        (e) => e.electionGuid === electionGuid,
+      );
+      if (index !== -1) {
+        elections.value[index] = election;
+      }
+
+      if (currentElection.value?.electionGuid === electionGuid) {
+        currentElection.value = election;
+      }
+
+      return election;
+    } catch (e: any) {
+      error.value = extractApiErrorMessage(e);
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   async function toggleTellerAccess(electionGuid: string, isOpen: boolean) {
     loading.value = true;
     error.value = null;
@@ -602,5 +631,6 @@ export const useElectionStore = defineStore("election", () => {
     clearActiveElectionHubConnection,
     setStage,
     toggleTellerAccess,
+    unlockTellerLogin,
   };
 });

@@ -9,6 +9,7 @@ import { getApiPublicElections } from "@/api/gen/configService";
 import { getGuestTellerRedirectPath } from "@/domain/guestTellerAccess";
 import type { ElectionStage } from "@/domain/electionStages";
 import { parseTellerJoinRoute } from "@/utils/tellerJoinUrl";
+import { resolveUserFacingApiError } from "@/utils/errorHandler";
 import { electionService } from "../services/electionService";
 import { signalrService } from "../services/signalrService";
 import { useAuthStore } from "../stores/authStore";
@@ -155,7 +156,9 @@ const handleJoin = async () => {
       router.push(redirectPath);
     } catch (error) {
       console.error("Teller join failed:", error);
-      showErrorMessage(t("auth.tellerJoin.invalidElection"));
+      showErrorMessage(
+        resolveUserFacingApiError(error, t("auth.tellerJoin.invalidElection")),
+      );
     } finally {
       loading.value = false;
     }

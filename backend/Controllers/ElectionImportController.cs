@@ -90,13 +90,20 @@ public class ElectionImportController : ControllerBase
             }
 
             using var stream = file.OpenReadStream();
-            var election = await _electionExportImportService.ImportElectionFromJsonAsync(stream, GetCurrentUserId());
+            var imported = await _electionExportImportService.ImportElectionFromJsonAsync(stream, GetCurrentUserId());
 
             return CreatedAtAction(
                 "GetElection",
                 "Elections",
-                new { guid = election.ElectionGuid },
-                new { message = "Election imported successfully", election });
+                new { guid = imported.Election.ElectionGuid },
+                new
+                {
+                    message = imported.Warnings.Count == 0
+                        ? "Election imported successfully"
+                        : imported.Warnings[0],
+                    election = imported.Election,
+                    warnings = imported.Warnings
+                });
         }
         catch (Exception ex)
         {

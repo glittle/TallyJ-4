@@ -50,6 +50,7 @@ import {
   applyServerFieldErrors,
   mapServerValidationErrors,
 } from "@/utils/formServerErrors";
+import { tellerPasscodeLengthError } from "@/domain/tellerPasscode";
 
 const router = useRouter();
 const route = useRoute();
@@ -132,6 +133,21 @@ const rules = reactive<FormRules>({
     {
       type: "email",
       message: t("elections.form.emailInvalid"),
+      trigger: "blur",
+    },
+  ],
+  electionPasscode: [
+    {
+      validator: (_rule, value, callback) => {
+        if (
+          tellerPasscodeLengthError(value, election.value?.electionPasscode) ===
+          "too-short"
+        ) {
+          callback(new Error(t("elections.form.electionPasscodeMinLength")));
+          return;
+        }
+        callback();
+      },
       trigger: "blur",
     },
   ],

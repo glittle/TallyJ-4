@@ -97,7 +97,8 @@ public class AuthControllerTests : ServiceTestBase
             _securityAuditServiceMock.Object,
             _remoteLogServiceMock.Object,
             assignmentServiceMock.Object,
-            accountServiceMock.Object);
+            accountServiceMock.Object,
+            new Mock<ITellerLoginLockoutService>().Object);
 
         // Setup HttpContext for cookie middleware
         var httpContext = new DefaultHttpContext();
