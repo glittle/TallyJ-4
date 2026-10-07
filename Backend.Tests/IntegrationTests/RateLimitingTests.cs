@@ -244,6 +244,60 @@ public class RateLimitingTests : IntegrationTestBase
     }
 
     [Fact]
+    public async Task Login_EmptyTwoFactorPrompt_DoesNotResetTheAccessFailedCount()
+    {
+        const string ip = "192.0.2.43";
+        const string password = "TestPass123!";
+        var email = $"2fa-prompt-{Guid.NewGuid():N}@example.com";
+        var secret = await EnableTwoFactorAsync(email, password);
+        var wrongCode = WrongTotp(secret);
+
+        for (var attempt = 0; attempt < 4; attempt++)
+        {
+            var failed = await PostLoginAsync(email, password, wrongCode, ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            (await failed.Content.ReadAsStringAsync()).Should().Contain("auth.errors.invalid2FACode");
+        }
+
+        var prompt = await PostLoginAsync(email, password, "", ip);
+        prompt.StatusCode.Should().Be(HttpStatusCode.OK);
+        var promptBody = await prompt.Content.ReadFromJsonAsync<AuthResponse>(JsonOptions);
+        promptBody!.Requires2FA.Should().BeTrue();
+
+        var locking = await PostLoginAsync(email, password, wrongCode, ip);
+        locking.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        (await locking.Content.ReadAsStringAsync()).Should().Contain("auth.errors.accountLocked");
+    }
+
+    [Fact]
+    public async Task Login_WithoutTwoFactor_SuccessfulLogin_ResetsTheAccessFailedCount()
+    {
+        const string ip = "192.0.2.42";
+        const string password = "TestPass123!";
+        const string wrongPassword = "WrongPassword123!";
+        var email = $"lock-reset-{Guid.NewGuid():N}@example.com";
+        await CreateTestUserAsync(email, password, email);
+
+        for (var attempt = 0; attempt < 4; attempt++)
+        {
+            var failed = await PostLoginAsync(email, wrongPassword, null, ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            var body = await failed.Content.ReadAsStringAsync();
+            body.Should().NotContain("auth.errors.accountLocked");
+        }
+
+        var success = await PostLoginAsync(email, password, null, ip);
+        success.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        for (var attempt = 0; attempt < 4; attempt++)
+        {
+            var failed = await PostLoginAsync(email, wrongPassword, null, ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            (await failed.Content.ReadAsStringAsync()).Should().NotContain("auth.errors.accountLocked");
+        }
+    }
+
+    [Fact]
     public async Task RequestCode_SameVoterId_ExceedsIdentifierLimit_Returns429()
     {
         var request = new RequestCodeDto
@@ -665,7 +719,7 @@ public class RateLimitingTests : IntegrationTestBase
         return valid == "000000" ? "111111" : "000000";
     }
 
-    private Task<HttpResponseMessage> PostLoginAsync(string email, string password, string twoFactorCode, string forwardedFor)
+    private Task<HttpResponseMessage> PostLoginAsync(string email, string password, string? twoFactorCode, string forwardedFor)
     {
         return PostJsonWithForwardedFor(
             "/api/auth/login",

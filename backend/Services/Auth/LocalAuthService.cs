@@ -140,10 +140,10 @@ public class LocalAuthService : ILocalAuthService
         {
             if (string.IsNullOrEmpty(request.TwoFactorCode))
             {
-                // Password matched and no code was offered. This is the prompt, not a guess.
-                // Clear earlier password failures here. A supplied code is checked below
-                // without this reset, or a wrong code would start from zero every time.
-                await _userManager.ResetAccessFailedCountAsync(user);
+                // Password matched and no code was offered. This is the prompt, not a guess,
+                // so it does not count as a failure. It also does not clear the access-failed
+                // count. Only a full success does. Resetting here would let a password holder
+                // zero the count between TOTP guesses and never lock the account.
                 return (true, null, new AuthResponse
                 {
                     Token = "",
