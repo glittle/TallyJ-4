@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Backend.Helpers;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +43,11 @@ public class ElectionImportController : ControllerBase
     [HttpPost("importTallyJv3Election")]
     public async Task<IActionResult> ImportTallyJv3Election(IFormFile file)
     {
+        if (GuestTellerClaims.IsGuestTeller(User))
+        {
+            return Forbid();
+        }
+
         try
         {
             if (file == null || file.Length == 0)
@@ -77,6 +83,11 @@ public class ElectionImportController : ControllerBase
     [HttpPost("importElectionFromJson")]
     public async Task<IActionResult> ImportElectionFromJson(IFormFile file)
     {
+        if (GuestTellerClaims.IsGuestTeller(User))
+        {
+            return Forbid();
+        }
+
         try
         {
             if (file == null || file.Length == 0)

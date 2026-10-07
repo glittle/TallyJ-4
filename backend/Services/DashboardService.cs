@@ -47,13 +47,14 @@ public class DashboardService : IDashboardService
     public async Task<DashboardSummaryDto> GetDashboardSummaryAsync()
     {
         var userId = GetCurrentUserId();
-        var baseQuery = _context.Elections.AsQueryable();
-
-        if (userId.HasValue)
+        if (!userId.HasValue)
         {
-            baseQuery = baseQuery.Where(e =>
-                _context.JoinElectionUsers.Any(jeu => jeu.ElectionGuid == e.ElectionGuid && jeu.UserId == userId.Value));
+            return new DashboardSummaryDto();
         }
+
+        var baseQuery = _context.Elections.AsQueryable()
+            .Where(e => _context.JoinElectionUsers.Any(jeu =>
+                jeu.ElectionGuid == e.ElectionGuid && jeu.UserId == userId.Value));
 
         var activeCount = await baseQuery
             .Where(e => e.ElectionStage != ElectionStage.ProcessingBallots)
@@ -84,13 +85,14 @@ public class DashboardService : IDashboardService
     public async Task<List<ElectionCardDto>> GetRecentElectionsAsync(int limit = 10)
     {
         var userId = GetCurrentUserId();
-        var baseQuery = _context.Elections.AsQueryable();
-
-        if (userId.HasValue)
+        if (!userId.HasValue)
         {
-            baseQuery = baseQuery.Where(e =>
-                _context.JoinElectionUsers.Any(jeu => jeu.ElectionGuid == e.ElectionGuid && jeu.UserId == userId.Value));
+            return [];
         }
+
+        var baseQuery = _context.Elections.AsQueryable()
+            .Where(e => _context.JoinElectionUsers.Any(jeu =>
+                jeu.ElectionGuid == e.ElectionGuid && jeu.UserId == userId.Value));
 
         var elections = await baseQuery
             .Include(e => e.People)

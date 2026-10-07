@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Backend.Authorization;
 using Backend.DTOs.Import;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -51,6 +52,7 @@ public class BallotImportController : ControllerBase
     /// </summary>
     /// <param name="request">The ballot import request.</param>
     /// <returns>The import result including created ballots and votes.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BodyElectionGuid, Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("importBallots")]
     public async Task<IActionResult> ImportBallots([FromBody] ImportBallotRequestDto request)
     {

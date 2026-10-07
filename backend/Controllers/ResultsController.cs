@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Results;
+﻿using Backend.Authorization;
+using Backend.DTOs.Results;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,7 @@ namespace Backend.Controllers;
 /// Controller for managing election results and tally operations.
 /// Provides endpoints for calculating tallies, retrieving results, monitoring elections, and managing tie-breaking.
 /// </summary>
-[Authorize]
+[Authorize(Policy = ElectionAccessPolicies.ElectionAccess)]
 [ApiController]
 [Route("api/[controller]")]
 public class ResultsController : ControllerBase
@@ -40,6 +41,7 @@ public class ResultsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election to calculate results for.</param>
     /// <param name="electionType">The type of election calculation ("normal" or "singlename").</param>
     /// <returns>The calculated tally results.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("election/{electionGuid:guid}/calculate")]
     public async Task<ActionResult<TallyResultDto>> CalculateTally(
         Guid electionGuid,
@@ -205,6 +207,7 @@ public class ResultsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election being monitored.</param>
     /// <param name="computerCode">The computer code identifier (defaults to "Unknown").</param>
     /// <returns>The updated monitor information.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("{electionGuid:guid}/refreshMonitor")]
     public async Task<ActionResult<MonitorInfoDto>> RefreshMonitor(Guid electionGuid, [FromQuery] string computerCode = "Unknown")
     {
@@ -306,6 +309,7 @@ public class ResultsController : ControllerBase
     /// <summary>
     /// v3 SaveManual: persist ResultType M overrides (Eligible Voters / method counts).
     /// </summary>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("election/{electionGuid:guid}/manual-counts")]
     public async Task<ActionResult<AnalyzeCountSummariesDto>> SaveManualCounts(
         Guid electionGuid,
@@ -333,6 +337,7 @@ public class ResultsController : ControllerBase
     /// <param name="electionGuid">The GUID of the election.</param>
     /// <param name="request">The tie counts request data.</param>
     /// <returns>The response indicating the result of saving tie counts.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("election/{electionGuid:guid}/ties/save")]
     public async Task<ActionResult<SaveTieCountsResponseDto>> SaveTieCounts(Guid electionGuid, [FromBody] SaveTieCountsRequestDto request)
     {

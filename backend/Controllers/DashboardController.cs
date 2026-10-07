@@ -1,4 +1,6 @@
-﻿using Backend.DTOs.Dashboard;
+﻿using Backend.Authorization;
+using Backend.DTOs.Dashboard;
+using Backend.Helpers;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -91,6 +93,7 @@ public class DashboardController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get information for.</param>
     /// <returns>An API response containing static election information.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BodyElectionGuid)]
     [HttpPost("moreInfoStatic")]
     public async Task<ActionResult<ApiResponse<object>>> GetElectionStaticInfo([FromBody] Guid electionGuid)
     {
@@ -103,6 +106,7 @@ public class DashboardController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election to get live statistics for.</param>
     /// <returns>An API response containing live election statistics.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BodyElectionGuid)]
     [HttpPost("moreInfoLive")]
     public async Task<ActionResult<ApiResponse<object>>> GetElectionLiveStats([FromBody] Guid electionGuid)
     {
@@ -127,6 +131,7 @@ public class DashboardController : ControllerBase
     /// <param name="electionGuid">The GUID of the election to update.</param>
     /// <param name="isListed">Whether guest tellers may discover and join the election.</param>
     /// <returns>An API response indicating success or failure of the update.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("{electionGuid:guid}/updateListing")]
     public async Task<ActionResult<ApiResponse<bool>>> UpdateElectionListing(
         Guid electionGuid,
@@ -144,6 +149,11 @@ public class DashboardController : ControllerBase
     [HttpPost("loadV3Election")]
     public async Task<ActionResult<ApiResponse<object>>> LoadV3Election([FromBody] string v3ElectionData)
     {
+        if (GuestTellerClaims.IsGuestTeller(User))
+        {
+            return Forbid();
+        }
+
         // This would be a complex migration operation
         // For now, return not implemented
         return StatusCode(501, ApiResponse<object>.ErrorResponse("V3 election import not yet implemented"));
@@ -154,6 +164,7 @@ public class DashboardController : ControllerBase
     /// </summary>
     /// <param name="request">The request containing computer code and location GUID.</param>
     /// <returns>An API response indicating success or failure of the location assignment.</returns>
+    [RequireElectionAccess(ElectionResourceKind.LocationGuid, Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("chooseLocation")]
     public async Task<ActionResult<ApiResponse<bool>>> ChooseLocation(
         [FromBody] ChooseLocationRequest request)
@@ -167,6 +178,7 @@ public class DashboardController : ControllerBase
     /// </summary>
     /// <param name="request">The request containing election GUID and teller name.</param>
     /// <returns>An API response indicating success or failure of the teller assignment.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BodyElectionGuid, Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("chooseTeller")]
     public async Task<ActionResult<ApiResponse<bool>>> ChooseTeller(
         [FromBody] ChooseTellerRequest request)
@@ -180,6 +192,7 @@ public class DashboardController : ControllerBase
     /// </summary>
     /// <param name="request">The request containing election GUID and teller name to remove.</param>
     /// <returns>An API response indicating success or failure of the teller removal.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BodyElectionGuid, Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("deleteTeller")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteTeller(
         [FromBody] DeleteTellerRequest request)

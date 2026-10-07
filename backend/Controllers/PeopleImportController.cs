@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Import;
+﻿using Backend.Authorization;
+using Backend.DTOs.Import;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace Backend.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
 public class PeopleImportController : ControllerBase
 {
     private readonly IPeopleImportService _peopleImportService;

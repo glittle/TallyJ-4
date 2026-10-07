@@ -260,3 +260,16 @@ ASP.NET Core SignalR **event names are case-sensitive**. SPA listeners use **cam
 **Rejected alternative:** dual path — loaders calling `IHubContext` directly while people/ballot import use the notification service. Rejected — same case-sensitive / producer-drift lesson as #226.
 
 **Rejected alternative:** dual path — `ImportService` / `PeopleImportService` calling `IHubContext` directly while `SendImportProgressAsync` used different PascalCase names (`ImportProgress` / `ImportComplete`). Rejected — case-sensitive mismatch would miss SPA listeners; two producers drift. **Chosen:** one producer (`ISignalRNotificationService`) with camelCase event names matching the SPA.
+
+## Election hub joins require election access
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** same election-scoped authorization pass as teller APIs; `MainHub.JoinElections` already filtered `JoinElectionUsers`  
+**Revisit when:** a new election-scoped hub is added
+
+`JoinElection` / `JoinTallySession` / `JoinImportSession` on Main, Front Desk, Analyze, People Import, and Ballot Import call `IElectionAccessEvaluator.CanJoinElectionAsync` before adding the connection to the group. A guest teller can join only the election on the token. An online-voter token cannot join. A missing election is not joinable. Denial throws `HubException("Access denied.")`.
+
+`ElectionPackageImportHub` stays user-scoped and also rejects `voterType=online`. AllVoters and VoterPersonal stay `OnlineVoter`. Public and VoterCode stay anonymous.
+
+**Rejected alternative:** rely on the HTTP API check alone. A connection that already holds any teller JWT could join another election's group and receive people, ballot, and tally events.

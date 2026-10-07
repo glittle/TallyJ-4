@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Votes;
+﻿using Backend.Authorization;
+using Backend.DTOs.Votes;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -33,6 +34,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="ballotGuid">The GUID of the ballot.</param>
     /// <returns>A list of votes for the specified ballot.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BallotGuid, Argument = "ballotGuid")]
     [HttpGet("{ballotGuid}/getVotesByBallot")]
     public async Task<ActionResult<ApiResponse<List<VoteDto>>>> GetVotesByBallot(Guid ballotGuid)
     {
@@ -45,6 +47,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election.</param>
     /// <returns>A list of votes for the specified election.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.ElectionAccess)]
     [HttpGet("{electionGuid}/getVotesByElection")]
     public async Task<ActionResult<ApiResponse<List<VoteDto>>>> GetVotesByElection(Guid electionGuid)
     {
@@ -57,6 +60,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="id">The ID of the vote.</param>
     /// <returns>The vote information.</returns>
+    [RequireElectionAccess(ElectionResourceKind.VoteId)]
     [HttpGet("{id}/getVote")]
     public async Task<ActionResult<ApiResponse<VoteDto>>> GetVote(int id)
     {
@@ -75,6 +79,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="createDto">The vote creation data.</param>
     /// <returns>The created vote and the ballot's current status.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BodyBallotGuid)]
     [HttpPost("createVote")]
     public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> CreateVote(CreateVoteDto createDto)
     {
@@ -98,6 +103,7 @@ public class VotesController : ControllerBase
     /// <param name="id">The ID of the vote to update.</param>
     /// <param name="updateDto">The updated vote data.</param>
     /// <returns>The updated vote information and the ballot's current status.</returns>
+    [RequireElectionAccess(ElectionResourceKind.VoteId)]
     [HttpPut("{id}/updateVote")]
     public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> UpdateVote(int id, CreateVoteDto updateDto)
     {
@@ -123,6 +129,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="reorderDto">The ballot GUID and ordered vote row IDs.</param>
     /// <returns>The updated ballot votes and status.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BodyBallotGuid)]
     [HttpPut("reorderVotes")]
     public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> ReorderVotes(ReorderVotesDto reorderDto)
     {
@@ -149,6 +156,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="id">The ID of the vote to delete.</param>
     /// <returns>A success response if the vote was deleted, or not found if the vote doesn't exist.</returns>
+    [RequireElectionAccess(ElectionResourceKind.VoteId)]
     [HttpDelete("{id}/deleteVote")]
     public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> DeleteVote(int id)
     {

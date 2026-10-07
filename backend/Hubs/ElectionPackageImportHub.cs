@@ -91,6 +91,11 @@ public class ElectionPackageImportHub : Hub
             return false;
         }
 
+        if (string.Equals(user.FindFirst("voterType")?.Value, "online", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
         var isTellerClaim = user.FindFirst("isTeller")?.Value;
         return !bool.TryParse(isTellerClaim, out var isGuestTeller) || !isGuestTeller;
     }

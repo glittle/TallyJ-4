@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Locations;
+﻿using Backend.Authorization;
+using Backend.DTOs.Locations;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ namespace Backend.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/{electionGuid}/locations")]
-[Authorize]
+[Authorize(Policy = ElectionAccessPolicies.ElectionAccess)]
 public class LocationsController : ControllerBase
 {
     private readonly ILocationService _locationService;

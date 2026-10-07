@@ -1,90 +1,52 @@
-using Backend.Context;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Authorization;
 
 /// <summary>
-/// Authorization handler that verifies if a user has election administration access.
+/// Any signed-in member of the election (JoinElectionUser). Guest tellers and
+/// online voters are denied. Despite the name, this is not a separate head-teller role.
 /// </summary>
 public class HeadTellerAccessHandler : AuthorizationHandler<HeadTellerAccessRequirement>
 {
-    private readonly MainDbContext _context;
-    private readonly ILogger<HeadTellerAccessHandler> _logger;
+    private readonly IElectionAccessEvaluator _evaluator;
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="HeadTellerAccessHandler"/> class.
-    /// </summary>
-    /// <param name="context">The database context.</param>
-    /// <param name="logger">The logger.</param>
-    public HeadTellerAccessHandler(MainDbContext context, ILogger<HeadTellerAccessHandler> logger)
+    public HeadTellerAccessHandler(IElectionAccessEvaluator evaluator)
     {
-        _context = context;
-        _logger = logger;
+        _evaluator = evaluator;
     }
 
-    /// <summary>
-    /// Handles the authorization requirement by checking if the user is linked to the election.
-    /// </summary>
-    /// <param name="context">The authorization handler context.</param>
-    /// <param name="requirement">The head teller access requirement.</param>
-    /// <returns>A task representing the asynchronous operation.</returns>
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         HeadTellerAccessRequirement requirement)
     {
         var user = context.User;
-        if (user == null || !user.Identity?.IsAuthenticated == true)
+        if (user?.Identity?.IsAuthenticated != true || _evaluator.IsOnlineVoter(user))
         {
-            _logger.LogWarning("HeadTellerAccess: User not authenticated");
             context.Fail();
             return;
         }
 
-        var userIdString = user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
-                         ?? user.FindFirst("sub")?.Value;
-        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+        if (context.Resource is not Guid electionGuid)
         {
-            _logger.LogWarning("HeadTellerAccess: Could not parse user ID from claims");
-            context.Fail();
-            return;
+            var httpContext = context.Resource as HttpContext;
+            var routeData = context.Resource as RouteData ?? httpContext?.GetRouteData();
+            if (!ElectionAccessEvaluator.TryGetElectionGuid(routeData, out electionGuid))
+            {
+                context.Fail();
+                return;
+            }
         }
 
-        var httpContext = context.Resource as HttpContext;
-        var routeData = httpContext?.GetRouteData();
-
-        if (routeData == null)
+        var outcome = await _evaluator.EvaluateAsync(
+            user,
+            electionGuid,
+            ElectionAccessPolicies.HeadTellerAccess);
+        if (outcome.Allowed)
         {
-            _logger.LogWarning("HeadTellerAccess: No route data available");
-            context.Fail();
-            return;
-        }
-
-        if (!routeData.Values.TryGetValue("electionGuid", out var guidValue) ||
-            !Guid.TryParse(guidValue?.ToString(), out var electionGuid))
-        {
-            _logger.LogWarning("HeadTellerAccess: Could not parse election GUID from route");
-            context.Fail();
-            return;
-        }
-
-        var hasElectionAccess = await _context.JoinElectionUsers
-            .AnyAsync(j => j.ElectionGuid == electionGuid && j.UserId == userId);
-
-        if (hasElectionAccess)
-        {
-            _logger.LogInformation(
-                "HeadTellerAccess: User {UserId} has election access for {ElectionGuid}",
-                userId,
-                electionGuid);
             context.Succeed(requirement);
         }
         else
         {
-            _logger.LogWarning(
-                "HeadTellerAccess: User {UserId} does not have election access for {ElectionGuid}",
-                userId,
-                electionGuid);
             context.Fail();
         }
     }

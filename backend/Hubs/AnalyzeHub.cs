@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Backend.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Backend.Hubs;
@@ -11,14 +12,17 @@ namespace Backend.Hubs;
 public class AnalyzeHub : Hub
 {
     private readonly ILogger<AnalyzeHub> _logger;
+    private readonly IElectionAccessEvaluator _electionAccess;
 
     /// <summary>
     /// Initializes a new instance of the AnalyzeHub.
     /// </summary>
     /// <param name="logger">Logger for recording hub operations and analysis progress.</param>
-    public AnalyzeHub(ILogger<AnalyzeHub> logger)
+    /// <param name="electionAccess">Election membership check for group joins.</param>
+    public AnalyzeHub(ILogger<AnalyzeHub> logger, IElectionAccessEvaluator electionAccess)
     {
         _logger = logger;
+        _electionAccess = electionAccess;
     }
 
     /// <summary>
@@ -28,6 +32,8 @@ public class AnalyzeHub : Hub
     /// <param name="electionGuid">The unique identifier of the election being analyzed.</param>
     public async Task JoinTallySession(Guid electionGuid)
     {
+        await ElectionHubAuthorization.EnsureCanJoinAsync(_electionAccess, Context.User, electionGuid);
+
         var groupName = GetGroupName(electionGuid);
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         _logger.LogInformation("Client {ConnectionId} joined tally session for election {ElectionGuid}",

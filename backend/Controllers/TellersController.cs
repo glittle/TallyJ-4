@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Tellers;
+﻿using Backend.Authorization;
+using Backend.DTOs.Tellers;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ namespace Backend.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/{electionGuid}/tellers")]
-[Authorize]
+[Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
 public class TellersController : ControllerBase
 {
     private readonly ITellerService _tellerService;

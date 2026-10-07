@@ -137,6 +137,13 @@ public static class ProgramAuthSetup
     {
         services.AddAuthorization(options =>
         {
+            // Bare [Authorize] is a teller session. Online-voter JWTs stay on
+            // the OnlineVoter policy and must not call teller APIs.
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .RequireAssertion(context => !Backend.Authorization.ElectionAccessEvaluator.IsOnlineVoter(context.User))
+                .Build();
+
             options.AddPolicy("ElectionAccess", policy =>
                 policy.Requirements.Add(new Backend.Authorization.ElectionAccessRequirement()));
 
@@ -158,6 +165,7 @@ public static class ProgramAuthSetup
                       .RequireClaim("voterId"));
         });
 
+        services.AddScoped<Backend.Authorization.IElectionAccessEvaluator, Backend.Authorization.ElectionAccessEvaluator>();
         services.AddScoped<IAuthorizationHandler, Backend.Authorization.ElectionAccessHandler>();
         services.AddScoped<IAuthorizationHandler, Backend.Authorization.TellerAccessHandler>();
         services.AddScoped<IAuthorizationHandler, Backend.Authorization.HeadTellerAccessHandler>();
