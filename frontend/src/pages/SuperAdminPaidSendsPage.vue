@@ -55,7 +55,7 @@ function draftValue(kind: string, id: string, current: number) {
 }
 
 function setDraft(kind: string, id: string, value: number | undefined) {
-  if (value == null) {
+  if (value === undefined) {
     return;
   }
   raiseDrafts.value[draftKey(kind, id)] = value;
@@ -103,7 +103,10 @@ onMounted(load);
           :label="$t('superAdmin.paidSends.elections')"
           width="110"
         />
-        <el-table-column :label="$t('superAdmin.paidSends.approve')" width="280">
+        <el-table-column
+          :label="$t('superAdmin.paidSends.approve')"
+          width="280"
+        >
           <template #default="{ row }">
             <el-button
               type="primary"
@@ -139,7 +142,10 @@ onMounted(load);
         {{ $t("superAdmin.paidSends.capHitsEmpty") }}
       </p>
       <el-table v-else :data="overview.capHits" stripe>
-        <el-table-column :label="$t('superAdmin.paidSends.scope')" min-width="160">
+        <el-table-column
+          :label="$t('superAdmin.paidSends.scope')"
+          min-width="160"
+        >
           <template #default="{ row }">
             {{
               row.scope === "election"
@@ -148,13 +154,24 @@ onMounted(load);
             }}
           </template>
         </el-table-column>
-        <el-table-column :label="$t('superAdmin.paidSends.name')" min-width="180">
+        <el-table-column
+          :label="$t('superAdmin.paidSends.name')"
+          min-width="180"
+        >
           <template #default="{ row }">
             {{ row.electionName || row.ownerEmail || row.ownerUserId }}
           </template>
         </el-table-column>
-        <el-table-column prop="used" :label="$t('superAdmin.paidSends.used')" width="80" />
-        <el-table-column prop="cap" :label="$t('superAdmin.paidSends.cap')" width="80" />
+        <el-table-column
+          prop="used"
+          :label="$t('superAdmin.paidSends.used')"
+          width="80"
+        />
+        <el-table-column
+          prop="cap"
+          :label="$t('superAdmin.paidSends.cap')"
+          width="80"
+        />
         <el-table-column :label="$t('superAdmin.paidSends.raise')" width="240">
           <template #default="{ row }">
             <el-input-number
@@ -232,8 +249,14 @@ onMounted(load);
         {{ $t("superAdmin.paidSends.frozenEmpty") }}
       </p>
       <el-table v-else :data="overview.frozenOwners" stripe>
-        <el-table-column prop="email" :label="$t('superAdmin.paidSends.email')" />
-        <el-table-column prop="displayName" :label="$t('superAdmin.paidSends.name')" />
+        <el-table-column
+          prop="email"
+          :label="$t('superAdmin.paidSends.email')"
+        />
+        <el-table-column
+          prop="displayName"
+          :label="$t('superAdmin.paidSends.name')"
+        />
         <el-table-column width="140">
           <template #default="{ row }">
             <el-button
@@ -307,7 +330,8 @@ onMounted(load);
             type="primary"
             @click="
               run(
-                () => superAdminService.clearElectionFlag(election.electionGuid),
+                () =>
+                  superAdminService.clearElectionFlag(election.electionGuid),
                 'superAdmin.paidSends.flagCleared',
               )
             "
@@ -326,7 +350,10 @@ onMounted(load);
             :label="$t('superAdmin.paidSends.value')"
             min-width="160"
           />
-          <el-table-column :label="$t('superAdmin.paidSends.reason')" min-width="160">
+          <el-table-column
+            :label="$t('superAdmin.paidSends.reasonLabel')"
+            min-width="160"
+          >
             <template #default="{ row }">
               {{ reasonLabel(row.reason) }}
             </template>

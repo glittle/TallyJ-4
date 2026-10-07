@@ -409,10 +409,10 @@
     "s": "source",
     "w": "2026-10-07T05:30:00Z"
   },
-  "superAdmin.paidSends.reason": {
+  "superAdmin.paidSends.reasonLabel": {
     "t": "Reason",
     "s": "source",
-    "w": "2026-10-07T05:30:00Z"
+    "w": "2026-10-07T05:45:00Z"
   },
   "superAdmin.paidSends.reason.invalid-phone": {
     "t": "Invalid phone",
