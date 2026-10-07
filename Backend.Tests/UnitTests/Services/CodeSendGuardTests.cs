@@ -192,6 +192,102 @@ public class CodeSendGuardTests : IDisposable
     }
 
     [Fact]
+    public async Task FrozenCoOwner_BlocksEmailAndSms_WhenTheOtherAdminIsApproved()
+    {
+        var coOwner = Guid.NewGuid();
+        await using (var context = new MainDbContext(_options))
+        {
+            context.JoinElectionUsers.Add(new JoinElectionUser
+            {
+                ElectionGuid = _electionId,
+                UserId = coOwner,
+                Role = "Owner"
+            });
+            context.OwnerSendControls.AddRange(
+                new OwnerSendControl
+                {
+                    UserId = _ownerId,
+                    PaidSendsApproved = true,
+                    ApprovedAt = _clock.UtcNow
+                },
+                new OwnerSendControl
+                {
+                    UserId = coOwner,
+                    PaidSendsApproved = true,
+                    ApprovedAt = _clock.UtcNow,
+                    SendsFrozen = true
+                });
+            await context.SaveChangesAsync();
+        }
+
+        var email = await ReserveAsync("email", "ada@example.com");
+        Assert.False(email.Allowed);
+        Assert.Equal(CodeSendBlockReason.Frozen, email.BlockReason);
+        Assert.Equal(CodeSendBlockReason.Frozen, (await ReserveAsync("sms", "+14165550100")).BlockReason);
+        Assert.Equal(0, await PaidSendsUsedAsync());
+    }
+
+    [Fact]
+    public async Task UnapprovedCoOwner_BlocksSms_AndStillAllowsEmail()
+    {
+        var coOwner = Guid.NewGuid();
+        await using (var context = new MainDbContext(_options))
+        {
+            context.JoinElectionUsers.Add(new JoinElectionUser
+            {
+                ElectionGuid = _electionId,
+                UserId = coOwner,
+                Role = "Admin"
+            });
+            context.OwnerSendControls.Add(new OwnerSendControl
+            {
+                UserId = _ownerId,
+                PaidSendsApproved = true,
+                ApprovedAt = _clock.UtcNow
+            });
+            await context.SaveChangesAsync();
+        }
+
+        Assert.True((await ReserveAsync("email", "ada@example.com")).Allowed);
+        var sms = await ReserveAsync("sms", "+14165550100");
+        Assert.False(sms.Allowed);
+        Assert.Equal(CodeSendBlockReason.NotApproved, sms.BlockReason);
+        Assert.Equal(0, await PaidSendsUsedAsync());
+    }
+
+    [Fact]
+    public async Task Sms_IsSent_WhenEveryCoOwnerIsApproved()
+    {
+        var coOwner = Guid.NewGuid();
+        await using (var context = new MainDbContext(_options))
+        {
+            context.JoinElectionUsers.Add(new JoinElectionUser
+            {
+                ElectionGuid = _electionId,
+                UserId = coOwner,
+                Role = "Owner"
+            });
+            context.OwnerSendControls.AddRange(
+                new OwnerSendControl
+                {
+                    UserId = _ownerId,
+                    PaidSendsApproved = true,
+                    ApprovedAt = _clock.UtcNow
+                },
+                new OwnerSendControl
+                {
+                    UserId = coOwner,
+                    PaidSendsApproved = true,
+                    ApprovedAt = _clock.UtcNow
+                });
+            await context.SaveChangesAsync();
+        }
+
+        Assert.True((await ReserveAsync("sms", "+14165550100")).Allowed);
+        Assert.Equal(1, await PaidSendsUsedAsync());
+    }
+
+    [Fact]
     public async Task FreezeOwner_BlocksEmailWhenThatOwnerIsTheOnlyAdmin()
     {
         await using (var context = new MainDbContext(_options))

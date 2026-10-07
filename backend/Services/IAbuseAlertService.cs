@@ -17,7 +17,7 @@ public interface IAbuseAlertService
     Task NotifyFirstPaidSendAsync(AbuseFirstPaidSendAlert alert, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Alerts that an election was flagged and online voting is blocked.
+    /// Alerts that an election was flagged. Online voting and every login code are stopped.
     /// </summary>
     Task NotifyElectionFlaggedAsync(AbuseElectionFlaggedAlert alert, CancellationToken cancellationToken = default);
 }
@@ -50,7 +50,7 @@ public sealed record AbuseFirstPaidSendAlert(
 public sealed record AbuseFlaggedRow(int? RowNumber, string MaskedValue, string Reason);
 
 /// <summary>
-/// Flag alert. Online voting is blocked until a super admin clears the flag.
+/// Flag alert. Online voting and every login code are stopped until a super admin clears the flag.
 /// </summary>
 public sealed record AbuseElectionFlaggedAlert(
     Guid ElectionGuid,

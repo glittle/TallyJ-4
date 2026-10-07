@@ -68,19 +68,15 @@ public class PaidChannelStatusService : IPaidChannelStatusService
                 .ToListAsync(cancellationToken);
 
         if (control?.SendsFrozen == true
-            || (ownerIds.Count > 0 && ownerIds.All(id => owners.Any(owner => owner.UserId == id && owner.SendsFrozen))))
+            || ownerIds.Any(id => owners.Any(owner => owner.UserId == id && owner.SendsFrozen)))
         {
             dto.PaidChannelBlockReason = PaidChannelStatus.Frozen;
             return;
         }
 
-        var unfrozen = ownerIds
-            .Where(id => !owners.Any(owner => owner.UserId == id && owner.SendsFrozen))
-            .ToList();
-        var approved = unfrozen
-            .Where(id => owners.Any(owner => owner.UserId == id && owner.PaidSendsApproved))
-            .ToList();
-        if (approved.Count == 0)
+        var everyOwnerApproved = ownerIds.Count > 0
+            && ownerIds.All(id => owners.Any(owner => owner.UserId == id && owner.PaidSendsApproved));
+        if (!everyOwnerApproved)
         {
             dto.PaidChannelBlockReason = PaidChannelStatus.NotApproved;
             return;
@@ -95,10 +91,10 @@ public class PaidChannelStatusService : IPaidChannelStatusService
         var today = _clock.UtcDate;
         var counts = await _context.OwnerDailyPaidSends
             .AsNoTracking()
-            .Where(row => approved.Contains(row.UserId) && row.UtcDate == today)
+            .Where(row => ownerIds.Contains(row.UserId) && row.UtcDate == today)
             .ToDictionaryAsync(row => row.UserId, row => row.SendCount, cancellationToken);
 
-        var anyUnderCap = approved.Any(id =>
+        var anyUnderCap = ownerIds.Any(id =>
         {
             var cap = owners.First(owner => owner.UserId == id).DailyCapOverride
                 ?? _options.ResolvedOwnerDailyPaidSendCap;

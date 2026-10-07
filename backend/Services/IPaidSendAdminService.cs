@@ -18,7 +18,9 @@ public interface IPaidSendAdminService
     Task<bool> ApproveOwnerAsync(Guid userId, string adminUserId, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Freezes or lifts the freeze on every login code for one owner.
+    /// Freezes or lifts the freeze for one owner or admin.
+    /// A frozen account stops every login code, including email, on each election it belongs to,
+    /// even when another owner or admin on that election is not frozen.
     /// </summary>
     Task<bool> SetOwnerFrozenAsync(Guid userId, bool frozen, string adminUserId, CancellationToken cancellationToken = default);
 
@@ -47,7 +49,7 @@ public interface IPaidSendAdminService
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Clears the voter-list flag so SMS, voice, WhatsApp, and online voting can run again.
+    /// Clears the voter-list flag so online voting and every login code can run again.
     /// Returns false when the election is not flagged.
     /// </summary>
     Task<bool> ClearElectionFlagAsync(

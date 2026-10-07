@@ -189,7 +189,8 @@ public class SuperAdminController : ControllerBase
     }
 
     /// <summary>
-    /// Stops every login code for one owner, including email.
+    /// Stops every login code, including email, on each election where this account is an owner or admin.
+    /// One frozen owner or admin stops those elections even when a co-owner is not frozen.
     /// </summary>
     [HttpPost("paid-sends/owners/{userId:guid}/freeze")]
     [Authorize(Policy = "SuperAdmin")]
@@ -197,7 +198,8 @@ public class SuperAdminController : ControllerBase
         SetOwnerFrozen(userId, true);
 
     /// <summary>
-    /// Allows login codes for one owner again. Paid channels still need approval and caps.
+    /// Lifts the freeze for one owner or admin. An election stays frozen while any other owner or admin on it is frozen.
+    /// Paid channels still need every owner and admin approved, and the caps.
     /// </summary>
     [HttpPost("paid-sends/owners/{userId:guid}/unfreeze")]
     [Authorize(Policy = "SuperAdmin")]

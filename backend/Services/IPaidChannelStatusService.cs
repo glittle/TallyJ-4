@@ -17,7 +17,7 @@ public interface IPaidChannelStatusService
 public static class PaidChannelStatus
 {
     /// <summary>
-    /// No owner or admin is approved for paid sends.
+    /// An owner or admin is not approved for paid sends, or the election has none.
     /// </summary>
     public const string NotApproved = "not-approved";
 
@@ -27,17 +27,17 @@ public static class PaidChannelStatus
     public const string ElectionCap = "election-cap";
 
     /// <summary>
-    /// Every approved owner is at today's cap.
+    /// Every owner and admin is at today's cap.
     /// </summary>
     public const string OwnerDailyCap = "owner-daily-cap";
 
     /// <summary>
-    /// A super admin froze this election or every owner on it.
+    /// A super admin froze this election or an owner or admin on it.
     /// </summary>
     public const string Frozen = "frozen";
 
     /// <summary>
-    /// The voter list flagged this election.
+    /// Online voting and every login code are stopped.
     /// </summary>
     public const string Flagged = "flagged";
 }

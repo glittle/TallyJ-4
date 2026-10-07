@@ -34,8 +34,8 @@ public class ElectionSendControl
     public bool SendsFrozen { get; set; }
 
     /// <summary>
-    /// When true, SMS and WhatsApp are stopped and online voting is suspended
-    /// until a super admin clears the flag.
+    /// When true, online voting and every login code (email, SMS, voice, and WhatsApp)
+    /// are stopped until a super admin clears the flag.
     /// </summary>
     public bool Flagged { get; set; }
 

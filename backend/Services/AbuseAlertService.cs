@@ -4,6 +4,7 @@ using Backend.Context;
 using Backend.Entities;
 using Backend.Services.Auth;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
@@ -18,6 +19,7 @@ public class AbuseAlertService : IAbuseAlertService
     private readonly IEmailSender _emailSender;
     private readonly ISentryWarningCapture _sentry;
     private readonly ILogger<AbuseAlertService> _logger;
+    private readonly IConfiguration _configuration;
     private readonly AntiAbuseOptions _options;
     private readonly SuperAdminSettings _superAdmin;
 
@@ -29,6 +31,7 @@ public class AbuseAlertService : IAbuseAlertService
         IEmailSender emailSender,
         ISentryWarningCapture sentry,
         ILogger<AbuseAlertService> logger,
+        IConfiguration configuration,
         IOptions<AntiAbuseOptions> options,
         IOptions<SuperAdminSettings> superAdmin)
     {
@@ -36,6 +39,7 @@ public class AbuseAlertService : IAbuseAlertService
         _emailSender = emailSender;
         _sentry = sentry;
         _logger = logger;
+        _configuration = configuration;
         _options = options.Value;
         _superAdmin = superAdmin.Value;
     }
@@ -102,7 +106,7 @@ public class AbuseAlertService : IAbuseAlertService
                 alert.Rows.Select(row =>
                     $"row {row.RowNumber?.ToString() ?? "-"}: {row.MaskedValue} ({row.Reason})"));
         var body = $"""
-            An election was flagged. SMS and WhatsApp are stopped. Online voting is blocked until a super admin clears the flag.
+            An election was flagged. Online voting is blocked and every login code is stopped (email, SMS, voice, and WhatsApp) until a super admin clears the flag.
             Election: {alert.ElectionName ?? "(none)"} ({alert.ElectionGuid})
             Flagged entries: {alert.FlaggedEntryCount}
             {rows}
@@ -122,6 +126,24 @@ public class AbuseAlertService : IAbuseAlertService
     }
 
     private async Task SendOnceAsync(
+        string alertKey,
+        string subject,
+        string body,
+        Dictionary<string, string> fields,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            await SendOnceWithinThrottleAsync(alertKey, subject, body, fields, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            DetachAddedAlert(alertKey);
+            _logger.LogError(ex, "Abuse alert failed for {AlertKey}", alertKey);
+        }
+    }
+
+    private async Task SendOnceWithinThrottleAsync(
         string alertKey,
         string subject,
         string body,
@@ -149,20 +171,9 @@ public class AbuseAlertService : IAbuseAlertService
         var recipients = AlertRecipients();
         if (recipients.Count > 0)
         {
-            var message = new MimeMessage();
-            message.From.Add(new MailboxAddress(
-                "TallyJ",
-                "noreply@tallyj.local"));
-            foreach (var recipient in recipients)
-            {
-                message.To.Add(MailboxAddress.Parse(recipient));
-            }
-
-            message.Subject = subject;
-            message.Body = new TextPart("plain") { Text = body };
             try
             {
-                await _emailSender.SendAsync(message);
+                await SendAlertEmailAsync(alertKey, subject, body, recipients);
             }
             catch (Exception ex)
             {
@@ -170,13 +181,15 @@ public class AbuseAlertService : IAbuseAlertService
             }
         }
 
+        AbuseAlertState? inserted = null;
         if (state == null)
         {
-            _context.AbuseAlertStates.Add(new AbuseAlertState
+            inserted = new AbuseAlertState
             {
                 AlertKey = alertKey,
                 LastSentAt = now
-            });
+            };
+            _context.AbuseAlertStates.Add(inserted);
         }
         else
         {
@@ -187,9 +200,68 @@ public class AbuseAlertService : IAbuseAlertService
         {
             await _context.SaveChangesAsync(cancellationToken);
         }
-        catch (DbUpdateException ex) when (state == null)
+        catch (DbUpdateException ex) when (inserted != null)
         {
+            // A concurrent insert already stored this key. Detach the failed Added row so a
+            // later SaveChanges in this request (the code-send log) does not retry the insert.
+            _context.Entry(inserted).State = EntityState.Detached;
             _logger.LogInformation(ex, "Abuse alert throttle row already stored for {AlertKey}", alertKey);
+        }
+    }
+
+    private async Task SendAlertEmailAsync(
+        string alertKey,
+        string subject,
+        string body,
+        List<string> recipients)
+    {
+        var fromAddress = _configuration["Email:FromAddress"];
+        if (string.IsNullOrWhiteSpace(fromAddress))
+        {
+            fromAddress = "noreply@tallyj.com";
+        }
+
+        var fromName = _configuration["Email:FromName"];
+        if (string.IsNullOrWhiteSpace(fromName))
+        {
+            fromName = "TallyJ4";
+        }
+
+        var message = new MimeMessage();
+        message.From.Add(new MailboxAddress(fromName, fromAddress));
+        foreach (var recipient in recipients)
+        {
+            if (!MailboxAddress.TryParse(recipient, out var mailbox))
+            {
+                _logger.LogWarning(
+                    "Abuse alert {AlertKey} skipped a recipient that is not an email address: {Recipient}",
+                    alertKey,
+                    recipient);
+                continue;
+            }
+
+            message.To.Add(mailbox);
+        }
+
+        if (message.To.Count == 0)
+        {
+            _logger.LogWarning("Abuse alert {AlertKey} has no valid recipients", alertKey);
+            return;
+        }
+
+        message.Subject = subject;
+        message.Body = new TextPart("plain") { Text = body };
+        await _emailSender.SendAsync(message);
+    }
+
+    private void DetachAddedAlert(string alertKey)
+    {
+        foreach (var entry in _context.ChangeTracker.Entries<AbuseAlertState>().ToList())
+        {
+            if (entry.State == EntityState.Added && entry.Entity.AlertKey == alertKey)
+            {
+                entry.State = EntityState.Detached;
+            }
         }
     }
 

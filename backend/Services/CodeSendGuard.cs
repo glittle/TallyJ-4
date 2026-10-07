@@ -114,11 +114,12 @@ public class CodeSendGuard : ICodeSendGuard
                 .Select(userId => ToOwner(userId, ownerControls, dailyCounts))
                 .ToList();
 
-            var unfrozen = owners.Where(owner => !owner.SendsFrozen).ToList();
-            if (owners.Count > 0 && unfrozen.Count == 0)
+            // One frozen owner or admin stops the election. A second account must not keep sending.
+            var frozenOwner = owners.FirstOrDefault(owner => owner.SendsFrozen);
+            if (frozenOwner != null)
             {
                 lastReason = CodeSendBlockReason.Frozen;
-                lastOwner = owners[0].UserId;
+                lastOwner = frozenOwner.UserId;
                 continue;
             }
 
@@ -128,14 +129,16 @@ public class CodeSendGuard : ICodeSendGuard
                     true,
                     null,
                     electionGuid,
-                    unfrozen.FirstOrDefault()?.UserId,
+                    owners.FirstOrDefault()?.UserId,
                     false);
             }
 
-            var approved = unfrozen.Where(owner => owner.PaidSendsApproved).ToList();
-            if (approved.Count == 0)
+            // Every owner and admin must be approved. One approved account must not carry the others.
+            var unapproved = owners.FirstOrDefault(owner => !owner.PaidSendsApproved);
+            if (owners.Count == 0 || unapproved != null)
             {
                 lastReason = CodeSendBlockReason.NotApproved;
+                lastOwner = unapproved?.UserId;
                 continue;
             }
 
@@ -148,7 +151,7 @@ public class CodeSendGuard : ICodeSendGuard
             }
 
             var ownerBlocked = false;
-            foreach (var owner in approved)
+            foreach (var owner in owners)
             {
                 lastOwner = owner.UserId;
                 var cap = owner.DailyCapOverride ?? _options.ResolvedOwnerDailyPaidSendCap;

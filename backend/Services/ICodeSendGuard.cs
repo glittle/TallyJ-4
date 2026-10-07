@@ -2,9 +2,11 @@ namespace Backend.Services;
 
 /// <summary>
 /// Decides whether a login code may be sent for the elections that list the voter.
-/// SMS, voice, and WhatsApp require an approved owner and stay inside the caps.
+/// SMS, voice, and WhatsApp require every owner and admin on the election to be approved,
+/// and stay inside the caps.
 /// Email skips the approval and the caps.
-/// A freeze or a flagged election stops every channel.
+/// Freezing the election, or any owner or admin on it, stops every channel.
+/// A flagged election stops online voting and every channel.
 /// </summary>
 public interface ICodeSendGuard
 {

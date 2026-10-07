@@ -100,8 +100,9 @@ namespace Backend.Migrations
                 table: "CodeSendLogs",
                 columns: new[] { "OwnerUserId", "SentAt" });
 
-            // One-time approval for accounts that already have an election with online voting.
-            // Owner and Admin join rows are both included because creating an election stores Admin.
+            // One-time approval for every Owner and Admin on an election that already uses online voting.
+            // Creating an election stores Admin, so both roles are included. A co-owned election is
+            // approved for each of those accounts, not only one of them.
             // OwnerLoginId is matched to a login email when the id is a GUID.
             // An existing control row is not updated.
             migrationBuilder.Sql("""

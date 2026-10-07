@@ -19,7 +19,8 @@ public class OwnerSendControl
     public Guid UserId { get; set; }
 
     /// <summary>
-    /// When true, this account's elections may send SMS, voice, and WhatsApp codes.
+    /// When true, this account is approved for SMS, voice, and WhatsApp codes.
+    /// An election may send those codes only when every owner and admin on it is approved.
     /// Email codes do not read this flag.
     /// </summary>
     public bool PaidSendsApproved { get; set; }
@@ -42,8 +43,9 @@ public class OwnerSendControl
     public int? DailyCapOverride { get; set; }
 
     /// <summary>
-    /// When true, no login code (email, SMS, voice, or WhatsApp) is sent for this account's elections
-    /// unless another unfrozen owner or admin on that election can send.
+    /// When true, no login code (email, SMS, voice, or WhatsApp) is sent for any election
+    /// where this account is an owner or admin. One frozen owner or admin stops that election
+    /// even when another owner or admin on it is not frozen.
     /// </summary>
     public bool SendsFrozen { get; set; }
 
