@@ -3,6 +3,14 @@ import { createApp } from "vue";
 
 import ElementPlus from "element-plus";
 import "element-plus/dist/index.css";
+import "@fontsource/lora/400.css";
+import "@fontsource/lora/500.css";
+import "@fontsource/lora/600.css";
+import "@fontsource/lora/700.css";
+import "@fontsource/lora/400-italic.css";
+import "@fontsource/lora/500-italic.css";
+import "@fontsource/lora/600-italic.css";
+import "@fontsource/lora/700-italic.css";
 import "./style.less";
 
 import App from "./App.vue";
@@ -38,13 +46,12 @@ async function init() {
       config.sentryDsn ||
       "https://placeholder@example.ingest.sentry.io/placeholder",
     environment: config.env || "production",
-    integrations: [
-      Sentry.browserTracingIntegration({ router }),
-      Sentry.replayIntegration(),
-    ],
+    integrations: [Sentry.browserTracingIntegration({ router })],
     tracesSampleRate: config.env === "development" ? 1 : 0.1,
-    replaysSessionSampleRate: config.env === "development" ? 1 : 0.1,
-    replaysOnErrorSampleRate: 1,
+    // Replay is installed on the first teller/admin navigation. Rates stay 0
+    // here so a voter URL cannot auto-start a session or an error buffer.
+    replaysSessionSampleRate: 0,
+    replaysOnErrorSampleRate: 0,
   });
 
   app.config.errorHandler = (error, instance, info) => {

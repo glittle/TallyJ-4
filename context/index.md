@@ -21,3 +21,4 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [theme.md](theme.md) — dark hairlines, stage chips, name links, leftover warning/fill/inverse surfaces, branch badge, and audit muted text (#285)
 - [i18n.md](i18n.md) — html `dir` with locale; version label is one string (Persian uses بتا); public/voter RTL vs Element Plus RTL CSS
 - [i18n-rich-entries.md](i18n-rich-entries.md) — locale leaves are `{ t, s, w }`; runtime and bundles see text only; AI must not overwrite human or approved
+- [privacy.md](privacy.md) — self-hosted Lora (no Google Fonts); Session Replay stays off online-voter routes
