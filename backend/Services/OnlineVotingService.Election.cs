@@ -81,6 +81,12 @@ public partial class OnlineVotingService
             var personGuids = personElections.Select(x => x.Person.PersonGuid).ToList();
             var electionGuids = personElections.Select(x => x.Election.ElectionGuid).ToList();
 
+            var flaggedElections = await _context.ElectionSendControls
+                .AsNoTracking()
+                .Where(row => electionGuids.Contains(row.ElectionGuid) && row.Flagged)
+                .Select(row => row.ElectionGuid)
+                .ToListAsync();
+
             var votingInfos = await _context.OnlineVotingInfos
                 .Where(ovi => personGuids.Contains(ovi.PersonGuid) && electionGuids.Contains(ovi.ElectionGuid))
                 .ToListAsync();
@@ -89,6 +95,7 @@ public partial class OnlineVotingService
             {
                 var hasOnlineVoting = x.Election.UseOnlineVoting;
                 var isOpen = hasOnlineVoting &&
+                             !flaggedElections.Contains(x.Election.ElectionGuid) &&
                              (x.Election.OnlineWhenOpen == null || x.Election.OnlineWhenOpen <= now) &&
                              (x.Election.OnlineWhenClose == null || x.Election.OnlineWhenClose > now);
 

@@ -162,6 +162,11 @@ public class UpdateElectionDto
     /// Additional flags and settings (JSON).
     /// </summary>
     public string? Flags { get; set; }
+
+    /// <summary>
+    /// Comma-separated ISO regions whose phone numbers are expected. Empty uses the configured default.
+    /// </summary>
+    public string? ExpectedPhoneRegions { get; set; }
 }
 
 

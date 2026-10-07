@@ -72,6 +72,7 @@ let form = reactive<CreateElectionDto>({
   guestTellersCanAddPeople: false,
   useOnlineVoting: false,
   onlineSelectionProcess: "A",
+  expectedPhoneRegions: "",
 });
 
 const rules = reactive<FormRules>({

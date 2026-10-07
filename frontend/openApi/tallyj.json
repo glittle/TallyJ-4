@@ -10318,6 +10318,10 @@
           "flags": {
             "type": "string",
             "nullable": true
+          },
+          "expectedPhoneRegions": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -10491,6 +10495,10 @@
           },
           "onlineVotingSuspended": {
             "type": "boolean"
+          },
+          "expectedPhoneRegions": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -10741,6 +10749,10 @@
             "nullable": true
           },
           "flags": {
+            "type": "string",
+            "nullable": true
+          },
+          "expectedPhoneRegions": {
             "type": "string",
             "nullable": true
           }

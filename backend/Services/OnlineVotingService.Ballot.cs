@@ -35,6 +35,14 @@ public partial class OnlineVotingService
                 return (false, "voting.submit.electionNotFound");
             }
 
+            var electionFlagged = await _context.ElectionSendControls
+                .AnyAsync(row => row.ElectionGuid == election.ElectionGuid && row.Flagged);
+            if (electionFlagged)
+            {
+                await transaction.RollbackAsync();
+                return (false, "voting.submit.notOpen");
+            }
+
             var onlineVoter = await FindOnlineVoterForBallotAsync(dto.ElectionGuid, dto.VoterId);
 
             if (onlineVoter == null)

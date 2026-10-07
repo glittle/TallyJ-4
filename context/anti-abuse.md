@@ -47,11 +47,17 @@ A flagged election, a cap hit, and an owner's first paid send email `AntiAbuse:A
 
 **Rejected alternative:** set the global Sentry minimum event level to Warning. Ordinary warnings would become events.
 
-## Voter-list flag (column only until the import checks land)
+## Voter-list flag
 
 **Status:** active  
 **Evidence:** confirmed  
-**Source:** issue #371 slice 3a; import checks are the following change  
-**Revisit when:** the import reviewer starts setting `Flagged`
+**Source:** issue #371 slice 3a  
+**Revisit when:** send-time prefix limits are added, or the disposable-domain file is refreshed
 
-`ElectionSendControls.Flagged` stops online voting and every login code (email, SMS, voice, and WhatsApp). A super admin clears it with `POST /api/superadmin/paid-sends/elections/{guid}/clear-flag`, which writes `ElectionFlagCleared`. The import checks that set the flag, the online-voting block, and the stored flagged rows are the next change. `FlaggedElections` on the super-admin page is empty until then. Config for that change is already present: `FlaggedEntryThreshold` (default 3, the election flags when the count is greater than this), `ConsecutivePhoneRunLength` (default 4), `DefaultPhoneRegionCode` (default `CA`), `MxLookupTimeoutSeconds` (default 3), `MxLookupParallelism` (default 8).
+Every path that writes people rechecks the election's phones and emails: CSV/Excel import, JSON import, v2/v3 package import, Duplicate, and manual add or edit. `libphonenumber` flags a number that does not parse, and a valid number whose region is not in `Elections.ExpectedPhoneRegions`. When that column is empty the check uses `AntiAbuse:DefaultPhoneRegionCode` (default `CA`). A run of `AntiAbuse:ConsecutivePhoneRunLength` sequential valid numbers (default 4) flags each number in the run. An email is flagged when its domain is in `backend/Data/disposable-email-domains.txt` (source note is the first lines of that file) or when the domain has no MX or only the Null MX from RFC 7505. An MX timeout or DNS failure is unknown and is not flagged. Domains are looked up once per review, at most `AntiAbuse:MxLookupParallelism` at a time (default 8), and successful answers are cached for six hours.
+
+Active rows are stored in `VoterContactFlags` (masked value, reason, file row number). The election is flagged when the number of distinct contacts is greater than `AntiAbuse:FlaggedEntryThreshold` (default 3). Flagging writes `ElectionFlagged`, emails the super admin with the masked rows, and sets `ElectionSendControls.Flagged`. That stops online voting and every login code (email, SMS, voice, and WhatsApp). The owner cannot turn `UseOnlineVoting` on or save an open online window (`elections.onlineVotingSuspended`). A window that is already open stays on the row, but `requestCode` sends nothing, sign-in is refused with `voting.auth.noOpenElections` when every matching open election is flagged, and ballot submit returns `voting.submit.notOpen`. Teller ballot entry is unchanged. Ballots already stored are not deleted. Clearing the flag deactivates the rows and writes `ElectionFlagCleared`. The next review flags the election again if the list is still over the threshold.
+
+**Rejected alternative:** treat a DNS timeout as no MX. A slow resolver would flag real addresses.
+
+**Rejected alternative:** auto-clear the flag when a later review is under the threshold. Only a super admin clears it.

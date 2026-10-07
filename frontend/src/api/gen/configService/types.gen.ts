@@ -571,6 +571,7 @@ export type ElectionsCreateElectionDto = {
     customMethods?: string | null;
     votingMethods?: string | null;
     flags?: string | null;
+    expectedPhoneRegions?: string | null;
 };
 
 export type ElectionsDuplicateElectionDto = {
@@ -617,6 +618,7 @@ export type ElectionsElectionDto = {
     paidSendsUsed?: number;
     paidSendAllowance?: number;
     onlineVotingSuspended?: boolean;
+    expectedPhoneRegions?: string | null;
 };
 
 export type ElectionsElectionStatsDto = {
@@ -687,6 +689,7 @@ export type ElectionsUpdateElectionDto = {
     customMethods?: string | null;
     votingMethods?: string | null;
     flags?: string | null;
+    expectedPhoneRegions?: string | null;
 };
 
 export type ElectionsUpdateOnlineVotingWindowDto = {

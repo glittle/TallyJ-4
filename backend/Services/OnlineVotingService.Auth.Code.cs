@@ -246,6 +246,11 @@ public partial class OnlineVotingService
                 return (false, VoterVerifyError.InvalidCodeWithAttempts(remaining), null);
             }
 
+            if (await VoterOpenElectionsAreAllFlaggedAsync(onlineVoter.VoterId))
+            {
+                return (false, "voting.auth.noOpenElections", null);
+            }
+
             onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;
             onlineVoter.VerifyCode = null;
             onlineVoter.VerifyAttempts = 0;
@@ -516,6 +521,53 @@ public partial class OnlineVotingService
                 .ToListAsync(),
             _ => new List<Guid>()
         };
+    }
+
+    private async Task<List<Guid>> ExceptFlaggedElectionsAsync(List<Guid> electionIds)
+    {
+        if (electionIds.Count == 0)
+        {
+            return electionIds;
+        }
+
+        var flagged = await _context.ElectionSendControls
+            .AsNoTracking()
+            .Where(row => electionIds.Contains(row.ElectionGuid) && row.Flagged)
+            .Select(row => row.ElectionGuid)
+            .ToListAsync();
+        if (flagged.Count == 0)
+        {
+            return electionIds;
+        }
+
+        return electionIds.Where(id => !flagged.Contains(id)).ToList();
+    }
+
+    /// <summary>
+    /// True when this voter matches at least one open election and every one of those is flagged.
+    /// </summary>
+    private async Task<bool> VoterOpenElectionsAreAllFlaggedAsync(string voterId)
+    {
+        var now = DateTimeOffset.UtcNow;
+        var openIds = await _context.People
+            .Where(person => person.Email == voterId || person.Phone == voterId)
+            .Join(
+                _context.Elections.Where(election =>
+                    election.UseOnlineVoting
+                    && (election.OnlineWhenOpen == null || election.OnlineWhenOpen <= now)
+                    && (election.OnlineWhenClose == null || election.OnlineWhenClose > now)),
+                person => person.ElectionGuid,
+                election => election.ElectionGuid,
+                (person, election) => election.ElectionGuid)
+            .Distinct()
+            .ToListAsync();
+        if (openIds.Count == 0)
+        {
+            return false;
+        }
+
+        var stillOpen = await ExceptFlaggedElectionsAsync(openIds);
+        return stillOpen.Count == 0;
     }
 
     private static string NormalizeVoterCode(string code)

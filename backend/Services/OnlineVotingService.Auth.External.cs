@@ -51,6 +51,7 @@ public partial class OnlineVotingService
                            e.OnlineWhenClose >= now)
                 .Select(e => e.ElectionGuid)
                 .ToListAsync();
+            openElections = await ExceptFlaggedElectionsAsync(openElections);
 
             if (!openElections.Any())
             {
@@ -148,6 +149,7 @@ public partial class OnlineVotingService
                            e.OnlineWhenClose >= now)
                 .Select(e => e.ElectionGuid)
                 .ToListAsync();
+            openElections = await ExceptFlaggedElectionsAsync(openElections);
 
             if (!openElections.Any())
             {
@@ -247,6 +249,7 @@ public partial class OnlineVotingService
                            e.OnlineWhenClose >= now)
                 .Select(e => e.ElectionGuid)
                 .ToListAsync();
+            openElections = await ExceptFlaggedElectionsAsync(openElections);
 
             if (!openElections.Any())
             {
@@ -342,6 +345,7 @@ public partial class OnlineVotingService
                            e.OnlineWhenClose >= now)
                 .Select(e => e.ElectionGuid)
                 .ToListAsync();
+            openElections = await ExceptFlaggedElectionsAsync(openElections);
 
             if (!openElections.Any())
             {

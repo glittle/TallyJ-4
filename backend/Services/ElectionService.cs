@@ -27,6 +27,7 @@ public class ElectionService : IElectionService
     private readonly ITellerLoginLockoutService? _tellerLoginLockoutService;
     private readonly ISecurityAuditService? _securityAuditService;
     private readonly IPaidChannelStatusService? _paidChannelStatus;
+    private readonly IVoterContactReviewer? _voterContactReviewer;
     private readonly int _minimumPasscodeLength;
 
     /// <summary>
@@ -40,7 +41,8 @@ public class ElectionService : IElectionService
         ITellerLoginLockoutService? tellerLoginLockoutService = null,
         ISecurityAuditService? securityAuditService = null,
         IOptions<TellerLoginProtectionOptions>? tellerLoginProtection = null,
-        IPaidChannelStatusService? paidChannelStatus = null)
+        IPaidChannelStatusService? paidChannelStatus = null,
+        IVoterContactReviewer? voterContactReviewer = null)
     {
         _context = context;
         _logger = logger;
@@ -49,6 +51,7 @@ public class ElectionService : IElectionService
         _tellerLoginLockoutService = tellerLoginLockoutService;
         _securityAuditService = securityAuditService;
         _paidChannelStatus = paidChannelStatus;
+        _voterContactReviewer = voterContactReviewer;
         _minimumPasscodeLength = tellerLoginProtection?.Value.ResolvedMinimumPasscodeLength
             ?? TellerLoginProtectionOptions.DefaultMinimumPasscodeLength;
     }
@@ -334,6 +337,10 @@ public class ElectionService : IElectionService
             sourcePeople.Select(p => p.Phone));
 
         await _context.SaveChangesAsync();
+        if (_voterContactReviewer != null && sourcePeople.Count > 0)
+        {
+            await _voterContactReviewer.ReviewElectionAsync(copy.ElectionGuid);
+        }
 
         _logger.LogInformation(
             "Duplicated election {SourceElectionGuid} to test copy {ElectionGuid} - {Name}",
@@ -490,6 +497,8 @@ public class ElectionService : IElectionService
         var previousOnlineCloseIsEstimate = election.OnlineCloseIsEstimate;
         var previousOnlineSelectionProcess = election.OnlineSelectionProcess;
         var previousPasscode = election.ElectionPasscode;
+
+        await ThrowIfOpeningOnlineVotingWhileFlaggedAsync(election, updateDto);
 
         var listForPublic = updateDto.ListForPublic;
         updateDto.CopyMatchingPropertiesTo(election, ignoreNulls: true);
@@ -745,6 +754,13 @@ public class ElectionService : IElectionService
         var previousOpen = election.OnlineWhenOpen;
         var previousClose = election.OnlineWhenClose;
         var previousCloseIsEstimate = election.OnlineCloseIsEstimate;
+
+        if (election.UseOnlineVoting
+            && await IsElectionFlaggedAsync(electionGuid)
+            && OnlineVotingWindow.IsCurrentlyOpen(true, dto.OnlineWhenOpen, dto.OnlineWhenClose))
+        {
+            throw new OnlineVotingSuspendedException();
+        }
 
         election.OnlineWhenOpen = dto.OnlineWhenOpen;
         election.OnlineWhenClose = dto.OnlineWhenClose;
@@ -1113,6 +1129,39 @@ public class ElectionService : IElectionService
             KioskCode = source.KioskCode,
             RowVersion = new byte[8]
         };
+    }
+
+    private async Task ThrowIfOpeningOnlineVotingWhileFlaggedAsync(Election election, UpdateElectionDto updateDto)
+    {
+        var turningOn = updateDto.UseOnlineVoting == true && election.UseOnlineVoting != true;
+        var settingWindow = updateDto.OnlineWhenOpen != null || updateDto.OnlineWhenClose != null;
+        if (!turningOn && !settingWindow)
+        {
+            return;
+        }
+
+        if (!await IsElectionFlaggedAsync(election.ElectionGuid))
+        {
+            return;
+        }
+
+        if (turningOn)
+        {
+            throw new OnlineVotingSuspendedException();
+        }
+
+        var open = updateDto.OnlineWhenOpen ?? election.OnlineWhenOpen;
+        var close = updateDto.OnlineWhenClose ?? election.OnlineWhenClose;
+        if (OnlineVotingWindow.IsCurrentlyOpen(election.UseOnlineVoting, open, close))
+        {
+            throw new OnlineVotingSuspendedException();
+        }
+    }
+
+    private Task<bool> IsElectionFlaggedAsync(Guid electionGuid)
+    {
+        return _context.ElectionSendControls
+            .AnyAsync(row => row.ElectionGuid == electionGuid && row.Flagged);
     }
 }
 

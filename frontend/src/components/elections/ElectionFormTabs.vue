@@ -269,6 +269,13 @@ function onUseOnlineVotingChange(enabled: string | number | boolean) {
         "
       />
 
+      <el-form-item :label="$t('elections.form.expectedPhoneRegions')">
+        <el-input
+          v-model="model.expectedPhoneRegions"
+          :placeholder="$t('elections.form.expectedPhoneRegionsHelp')"
+        />
+      </el-form-item>
+
       <el-form-item :label="$t('elections.form.useOnlineVoting')">
         <el-switch
           v-model="model.useOnlineVoting"

@@ -108,6 +108,7 @@ let form = reactive<UpdateElectionDto>({
   customMethods: undefined,
   votingMethods: undefined,
   flags: undefined,
+  expectedPhoneRegions: undefined,
 });
 
 const rules = reactive<FormRules>({
@@ -199,6 +200,7 @@ onMounted(async () => {
         customMethods: election.value.customMethods,
         votingMethods: election.value.votingMethods,
         flags: election.value.flags,
+        expectedPhoneRegions: election.value.expectedPhoneRegions ?? undefined,
       });
     }
   } catch (error) {

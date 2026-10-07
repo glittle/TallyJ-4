@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Backend.DTOs.Elections;
 using Backend.DTOs.OnlineVoting;
 using Backend.Models;
@@ -242,7 +243,15 @@ public class ElectionsController : ControllerBase
     [Authorize(Policy = "ElectionAccess")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> UpdateElection(Guid guid, UpdateElectionDto updateDto)
     {
-        var election = await _electionService.UpdateElectionAsync(guid, updateDto);
+        ElectionDto? election;
+        try
+        {
+            election = await _electionService.UpdateElectionAsync(guid, updateDto);
+        }
+        catch (OnlineVotingSuspendedException ex)
+        {
+            return BadRequest(ApiResponse<ElectionDto>.ErrorResponse(ex.Message));
+        }
 
         if (election == null)
         {
@@ -327,7 +336,15 @@ public class ElectionsController : ControllerBase
         Guid guid,
         UpdateOnlineVotingWindowDto dto)
     {
-        var election = await _electionService.UpdateOnlineVotingWindowAsync(guid, dto);
+        ElectionDto? election;
+        try
+        {
+            election = await _electionService.UpdateOnlineVotingWindowAsync(guid, dto);
+        }
+        catch (OnlineVotingSuspendedException ex)
+        {
+            return BadRequest(ApiResponse<ElectionDto>.ErrorResponse(ex.Message));
+        }
 
         if (election == null)
         {
