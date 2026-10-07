@@ -1,0 +1,74 @@
+# Pull-request gate for the ASP.NET Core API. The Azure back-end pipeline is
+# push-to-main only (`pr: none`) and runs on windows-latest, so this is what
+# runs before a human reviews a backend PR.
+#
+# Tests use SQLite (CustomWebApplicationFactory) or EF Core InMemory
+# (ServiceTestBase). No SQL Server is required.
+#
+# Release build keeps the repo's current warning settings. The SDK pin is
+# global.json. Projects target net10.0.
+name: Backend PR
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "backend/**"
+      - "Backend.Tests/**"
+      - "repo.sln"
+      - "global.json"
+      - "Directory.*"
+      - ".github/workflows/backend-pr.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # Failure-only TRX upload. A permissions block drops every unlisted scope.
+  actions: write
+
+concurrency:
+  group: backend-pr-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    name: Backend (build, tests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          # Same SDK as UseDotNet useGlobalJson: true in
+          # .azure/pipelines/azure-back-end-pipeline.yml.
+          # global.json pins 10.0.103 (rollForward: latestFeature).
+          # There is no packages.lock.json, so the NuGet cache key is the
+          # project files that declare PackageReference items.
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: |
+            backend/Backend.csproj
+            Backend.Tests/Backend.Tests.csproj
+
+      - name: Restore
+        run: dotnet restore repo.sln
+
+      - name: Build
+        run: dotnet build repo.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test Backend.Tests/Backend.Tests.csproj --configuration Release --no-build --results-directory TestResults --logger "trx;LogFileName=backend-tests.trx" --logger "console;verbosity=normal"
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: backend-test-results
+          path: TestResults/**/*.trx
+          retention-days: 7
+          if-no-files-found: warn

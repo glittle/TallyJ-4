@@ -116,6 +116,22 @@ dotnet test Backend.Tests/Backend.Tests.csproj
 
 v3 vs v4 analysis comparison (issue #168): `dotnet test Backend.Tests/Backend.Tests.csproj --filter FullyQualifiedName~V3AnalysisComparison`. Fixture format and what to drop in: `docs/V3_ANALYSIS_COMPARISON.md`. Local InMemory/SQLite only — do not use Azure SQL.
 
+## Validation workflow
+
+Pull requests into `main` that change `backend/**`, `Backend.Tests/**`, `repo.sln`, `global.json`, `Directory.*` (for example `Directory.Build.props`), or `.github/workflows/backend-pr.yml` run the **Backend (build, tests)** check. The workflow is `.github/workflows/backend-pr.yml`. It uses the .NET SDK from `global.json` (**10.0.103**, `rollForward: latestFeature`) via `actions/setup-dotnet`, the same pin as `UseDotNet` `useGlobalJson: true` in `.azure/pipelines/azure-back-end-pipeline.yml`. `backend/Backend.csproj` and `Backend.Tests/Backend.Tests.csproj` target **net10.0**.
+
+The Azure back-end pipeline is push-to-main only (`pr: none`) and runs on `windows-latest`. This check runs on `ubuntu-latest`. Tests use SQLite (`Backend.Tests/IntegrationTests/CustomWebApplicationFactory.cs`) or EF Core InMemory (`Backend.Tests/UnitTests/ServiceTestBase.cs`), so SQL Server is not required.
+
+From the repository root, that check runs:
+
+```bash
+dotnet restore repo.sln
+dotnet build repo.sln --configuration Release --no-restore
+dotnet test Backend.Tests/Backend.Tests.csproj --configuration Release --no-build --results-directory TestResults --logger "trx;LogFileName=backend-tests.trx" --logger "console;verbosity=normal"
+```
+
+Release builds keep the repo's current warning settings. NuGet packages are cached from `backend/Backend.csproj` and `Backend.Tests/Backend.Tests.csproj` (there is no `packages.lock.json`). A failed run uploads `TestResults/**/*.trx`. Reproduce the check locally with those commands and the SDK in `global.json`. No SQL Server, secrets, or extra environment variables are required.
+
 ### EF Core commands
 
 ```bash
