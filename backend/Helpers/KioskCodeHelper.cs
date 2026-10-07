@@ -47,22 +47,23 @@ public static class KioskCodeHelper
         return letter is >= 'A' and <= 'Z' ? letter : 'A';
     }
 
-    public static string GenerateCode(string? lastName, Random random)
+    public static string GenerateCode(string? lastName, Func<int, int>? next = null)
     {
+        next ??= SecureCode.NextInt32;
         var initial = GetLastNameInitial(lastName);
         var suffix = new char[4];
 
         for (var i = 0; i < suffix.Length; i++)
         {
-            suffix[i] = DistinctLetters[random.Next(DistinctLetters.Length)];
+            suffix[i] = DistinctLetters[next(DistinctLetters.Length)];
         }
 
         return $"{initial}{new string(suffix)}";
     }
 
-    public static string GenerateUniqueCode(string? lastName, IEnumerable<string?> existingCodes, Random? random = null)
+    public static string GenerateUniqueCode(string? lastName, IEnumerable<string?> existingCodes, Func<int, int>? next = null)
     {
-        random ??= Random.Shared;
+        next ??= SecureCode.NextInt32;
         var used = new HashSet<string>(
             existingCodes
                 .Where(code => !string.IsNullOrWhiteSpace(code))
@@ -71,7 +72,7 @@ public static class KioskCodeHelper
 
         for (var attempt = 0; attempt < 500; attempt++)
         {
-            var possibleCode = GenerateCode(lastName, random);
+            var possibleCode = GenerateCode(lastName, next);
             if (used.Add(possibleCode))
             {
                 return possibleCode;

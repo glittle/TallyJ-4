@@ -61,7 +61,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 
         var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(phone));
 
-        Assert.Equal("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         Assert.Null(result.DevVerificationCode);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         _paidSender.Verify(s => s.SendVoiceAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -84,7 +84,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
             DeliveryMethod = deliveryMethod
         });
 
-        Assert.Equal("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         _paidSender.Verify(s => s.SendVoiceAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -97,7 +97,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 
         var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
 
-        Assert.Equal("voting.auth.requestCode.notRegistered", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         Assert.False(await Context.OnlineVoters.AnyAsync(ov => ov.VoterId == ValidPhone));
     }
@@ -112,7 +112,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 
         var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
 
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         Assert.False(string.IsNullOrWhiteSpace(result.DevVerificationCode));
         _paidSender.Verify(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()), Times.Once);
     }
@@ -127,7 +127,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 
         var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
 
-        Assert.Equal("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         Assert.Null(result.DevVerificationCode);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         _paidSender.Verify(s => s.SendVoiceAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -149,7 +149,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
             DeliveryMethod = deliveryMethod
         });
 
-        Assert.Equal("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         _paidSender.Verify(s => s.SendVoiceAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -183,7 +183,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 
         var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
 
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()), Times.Once);
     }
 
@@ -198,7 +198,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 
         var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
 
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         Assert.False(string.IsNullOrWhiteSpace(result.DevVerificationCode));
         _paidSender.Verify(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()), Times.Once);
     }
@@ -214,7 +214,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 
         var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
 
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()), Times.Once);
     }
 
@@ -269,7 +269,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 
         var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
 
-        Assert.Equal("voting.auth.requestCode.notRegistered", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
@@ -281,8 +281,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 
         var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
 
-        Assert.Equal("voting.auth.requestCode.invalidPhone", result.MessageKey);
-        Assert.NotEqual("voting.auth.requestCode.notRegistered", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         Assert.Null(result.DevVerificationCode);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         _paidSender.Verify(s => s.SendVoiceAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -304,7 +303,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
             DeliveryMethod = "whatsapp"
         });
 
-        Assert.Equal("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         Assert.Null(result.DevVerificationCode);
         _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -321,7 +320,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
 
         var result = await _service.RequestVerificationCodeAsync(PaidSmsRequest(ValidPhone));
 
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(ValidPhone, It.IsAny<string>()), Times.Once);
         _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
@@ -344,7 +343,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
             DeliveryMethod = "whatsapp"
         });
 
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         _paidSender.Verify(s => s.SendWhatsAppAsync(ValidPhone, It.IsAny<string>()), Times.Once);
     }
 
@@ -361,7 +360,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
             DeliveryMethod = "email"
         });
 
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         _paidSender.Verify(s => s.SendVoiceAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         _paidSender.Verify(s => s.SendWhatsAppAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
@@ -381,8 +380,8 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
             DeliveryMethod = "email"
         });
 
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
-        Assert.NotEqual("voting.auth.requestCode.invalidPhone", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
+        Assert.False(string.IsNullOrWhiteSpace(result.DevVerificationCode));
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
@@ -403,8 +402,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
             DeliveryMethod = "sms"
         });
 
-        Assert.NotEqual("voting.auth.requestCode.invalidPhone", result.MessageKey);
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(email, It.IsAny<string>()), Times.Once);
     }
 
@@ -453,7 +451,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
             new SetPersonPhoneSmsStatusDto { SmsStatus = "admin" });
 
         var blocked = await _service.RequestVerificationCodeAsync(PaidSmsRequest(phone));
-        Assert.Equal("voting.auth.requestCode.invalidPhone", blocked.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", blocked.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
 
         await peopleService.SetPersonPhoneSmsStatusAsync(
@@ -464,7 +462,7 @@ public class OnlineVotingServiceRequestCodePaidPhoneTests : ServiceTestBase
             .ReturnsAsync(true);
 
         var allowed = await _service.RequestVerificationCodeAsync(PaidSmsRequest(phone));
-        Assert.Equal("voting.auth.requestCode.sent", allowed.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", allowed.MessageKey);
         _paidSender.Verify(s => s.SendSmsAsync(phone, It.IsAny<string>()), Times.Once);
     }
 

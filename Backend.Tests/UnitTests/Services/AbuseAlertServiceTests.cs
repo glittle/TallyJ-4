@@ -50,6 +50,27 @@ public class AbuseAlertServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task PrefixLimit_EmailsOnce_AndDoesNotIncludeTheFullNumber()
+    {
+        MimeMessage? sent = null;
+        _email.Setup(sender => sender.SendAsync(It.IsAny<MimeMessage>()))
+            .Callback<MimeMessage>(message => sent = message)
+            .Returns(Task.CompletedTask);
+        var service = CreateService(throttleHours: 24);
+        var alert = new AbusePrefixLimitAlert("141689", "sms", "+14*****71", 100, 60);
+
+        await service.NotifyPrefixLimitAsync(alert);
+        await service.NotifyPrefixLimitAsync(alert);
+
+        _email.Verify(sender => sender.SendAsync(It.IsAny<MimeMessage>()), Times.Once);
+        Assert.NotNull(sent);
+        Assert.Contains("141689", sent!.TextBody);
+        Assert.Contains("+14*****71", sent.TextBody);
+        Assert.DoesNotContain("+14168972671", sent.TextBody);
+        Assert.Contains("Email codes are not affected", sent.TextBody);
+    }
+
+    [Fact]
     public async Task FirstPaidSend_UsesTheConfiguredAlertAddress()
     {
         MimeMessage? sent = null;

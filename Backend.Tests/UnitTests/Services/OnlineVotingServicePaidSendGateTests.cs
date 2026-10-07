@@ -73,7 +73,7 @@ public class OnlineVotingServicePaidSendGateTests : ServiceTestBase
             DeliveryMethod = "sms"
         });
 
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         Assert.Null(result.DevVerificationCode);
         paid.Verify(sender => sender.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
@@ -137,7 +137,7 @@ public class OnlineVotingServicePaidSendGateTests : ServiceTestBase
             DeliveryMethod = "email"
         });
 
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         Assert.False(string.IsNullOrWhiteSpace(result.DevVerificationCode));
         guard.Verify(item => item.LogOutcomeAsync(
             It.Is<CodeSendReservation>(reservation => reservation.Allowed),

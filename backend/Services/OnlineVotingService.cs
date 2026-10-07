@@ -24,6 +24,7 @@ public partial class OnlineVotingService : IOnlineVotingService
     private readonly IOnlineBallotAcceptLock _acceptLock;
     private readonly IVoterCodeDeliveryChannelService? _voterCodeChannels;
     private readonly ICodeSendGuard? _codeSendGuard;
+    private readonly IRequestCodePacer? _requestCodePacer;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OnlineVotingService"/> class.
@@ -51,7 +52,8 @@ public partial class OnlineVotingService : IOnlineVotingService
         ISignalRNotificationService signalRNotificationService,
         IOnlineBallotAcceptLock acceptLock,
         IVoterCodeDeliveryChannelService? voterCodeChannels = null,
-        ICodeSendGuard? codeSendGuard = null)
+        ICodeSendGuard? codeSendGuard = null,
+        IRequestCodePacer? requestCodePacer = null)
     {
         _context = context;
         _configuration = configuration;
@@ -65,5 +67,6 @@ public partial class OnlineVotingService : IOnlineVotingService
         _acceptLock = acceptLock;
         _voterCodeChannels = voterCodeChannels;
         _codeSendGuard = codeSendGuard;
+        _requestCodePacer = requestCodePacer;
     }
 }

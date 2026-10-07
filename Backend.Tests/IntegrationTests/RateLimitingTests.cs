@@ -323,6 +323,42 @@ public class RateLimitingTests : IntegrationTestBase
     }
 
     [Fact]
+    public void VoterCodeIpCeiling_IsLooseComparedWithTheIdentifierBucket()
+    {
+        Assert.Equal(5, RateLimitingMiddleware.VoterIdentifierMaxRequests);
+        Assert.True(RateLimitingMiddleware.VoterVenueIpMaxRequests >= 60);
+    }
+
+    [Fact]
+    public async Task RequestCode_AndVerifyCode_SameVenueIp_ManyVoters_StayUnderTheLooseCeiling()
+    {
+        const string venueIp = "203.0.113.77";
+        for (var i = 0; i < 24; i++)
+        {
+            var requestCode = await PostJsonWithForwardedFor(
+                "/api/online-voting/requestCode",
+                new RequestCodeDto
+                {
+                    VoterId = $"loose-ceiling-{i}@example.com",
+                    VoterIdType = "E",
+                    DeliveryMethod = "email"
+                },
+                $"198.51.100.{i + 1}, {venueIp}");
+            requestCode.StatusCode.Should().NotBe(HttpStatusCode.TooManyRequests);
+
+            var verifyCode = await PostJsonWithForwardedFor(
+                "/api/online-voting/verifyCode",
+                new VerifyCodeDto
+                {
+                    VoterId = $"loose-verify-{i}@example.com",
+                    VerifyCode = "XXXXXX"
+                },
+                $"198.51.100.{i + 1}, {venueIp}");
+            verifyCode.StatusCode.Should().NotBe(HttpStatusCode.TooManyRequests);
+        }
+    }
+
+    [Fact]
     public async Task RequestCode_SameVenueIp_DifferentVoterIds_DoesNotRateLimitAtSixth()
     {
         HttpResponseMessage? lastResponse = null;

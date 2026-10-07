@@ -54,6 +54,28 @@ public class AntiAbuseOptions
     public const int DefaultMxLookupParallelism = 8;
 
     /// <summary>
+    /// Default SMS, voice, and WhatsApp sends allowed per destination prefix in one sliding hour,
+    /// across every election. Email is not counted.
+    /// </summary>
+    public const int DefaultPhonePrefixSendLimit = 100;
+
+    /// <summary>
+    /// Default length of the sliding window for <see cref="DefaultPhonePrefixSendLimit"/>.
+    /// </summary>
+    public const int DefaultPhonePrefixWindowMinutes = 60;
+
+    /// <summary>
+    /// Default number of leading E.164 digits (after <c>+</c>) that form a destination prefix.
+    /// Six digits is the country code plus the next digits.
+    /// </summary>
+    public const int DefaultPhonePrefixDigits = 6;
+
+    /// <summary>
+    /// Default minimum time for a <c>requestCode</c> reply, so a fast reject is not instant.
+    /// </summary>
+    public const int DefaultRequestCodeMinimumMilliseconds = 200;
+
+    /// <summary>
     /// SMS, voice, and WhatsApp sends one election may make before a super admin raises the allowance.
     /// </summary>
     public int ElectionPaidSendAllowance { get; set; } = DefaultElectionPaidSendAllowance;
@@ -99,6 +121,28 @@ public class AntiAbuseOptions
     public int MxLookupParallelism { get; set; } = DefaultMxLookupParallelism;
 
     /// <summary>
+    /// SMS, voice, and WhatsApp login codes allowed per destination prefix in the sliding window,
+    /// across the whole site. Email codes are not limited by this number.
+    /// </summary>
+    public int PhonePrefixSendLimit { get; set; } = DefaultPhonePrefixSendLimit;
+
+    /// <summary>
+    /// Length of the sliding window for <see cref="PhonePrefixSendLimit"/>, in minutes.
+    /// </summary>
+    public int PhonePrefixWindowMinutes { get; set; } = DefaultPhonePrefixWindowMinutes;
+
+    /// <summary>
+    /// How many leading E.164 digits, after <c>+</c>, identify a destination prefix.
+    /// </summary>
+    public int PhonePrefixDigits { get; set; } = DefaultPhonePrefixDigits;
+
+    /// <summary>
+    /// Minimum milliseconds before <c>requestCode</c> returns.
+    /// Zero returns as soon as the work is done. A negative value uses the default.
+    /// </summary>
+    public int RequestCodeMinimumMilliseconds { get; set; } = DefaultRequestCodeMinimumMilliseconds;
+
+    /// <summary>
     /// Allowance after applying the default when the configured value is below zero.
     /// </summary>
     public int ResolvedElectionPaidSendAllowance =>
@@ -139,4 +183,31 @@ public class AntiAbuseOptions
     /// </summary>
     public int ResolvedMxLookupParallelism =>
         MxLookupParallelism < 1 ? DefaultMxLookupParallelism : MxLookupParallelism;
+
+    /// <summary>
+    /// Prefix cap after applying the default when the configured value is below 1.
+    /// </summary>
+    public int ResolvedPhonePrefixSendLimit =>
+        PhonePrefixSendLimit < 1 ? DefaultPhonePrefixSendLimit : PhonePrefixSendLimit;
+
+    /// <summary>
+    /// Prefix window after applying the default when the configured value is below 1.
+    /// </summary>
+    public int ResolvedPhonePrefixWindowMinutes =>
+        PhonePrefixWindowMinutes < 1 ? DefaultPhonePrefixWindowMinutes : PhonePrefixWindowMinutes;
+
+    /// <summary>
+    /// Prefix length after applying the default when the configured value is outside 1–15.
+    /// </summary>
+    public int ResolvedPhonePrefixDigits =>
+        PhonePrefixDigits is < 1 or > 15 ? DefaultPhonePrefixDigits : PhonePrefixDigits;
+
+    /// <summary>
+    /// Reply floor after applying the default when the configured value is below zero.
+    /// Zero is kept, so tests can turn the wait off.
+    /// </summary>
+    public int ResolvedRequestCodeMinimumMilliseconds =>
+        RequestCodeMinimumMilliseconds < 0
+            ? DefaultRequestCodeMinimumMilliseconds
+            : RequestCodeMinimumMilliseconds;
 }

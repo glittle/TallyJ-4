@@ -52,7 +52,7 @@ Pre-Twilio gate order in `RequestVerificationCodeAsync` (issue #254):
 3. Existing open-election registration check (unchanged)
 4. Then the provider
 
-Skip logs method + status only (no raw phone or email). Voter-facing message reuses `voting.auth.requestCode.invalidPhone`. Email / OAuth / kiosk unchanged. `WhenRegistered` semantics unchanged.
+Skip logs method + status only (no raw phone or email). The voter-facing `requestCode` reply is the neutral key in `context/anti-abuse.md`. Email / OAuth / kiosk unchanged. `WhenRegistered` semantics unchanged.
 
 **Rejected alternative (this slice):** rename the column to `Status` so email/kiosk rows could share it later. The issue field spec and this slice’s contract are `SmsStatus`; a generic rename can be a later migration if other identifier types need a status.
 

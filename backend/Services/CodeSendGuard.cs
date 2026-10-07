@@ -19,6 +19,7 @@ public class CodeSendGuard : ICodeSendGuard
     private readonly ICodeSendClock _clock;
     private readonly AntiAbuseOptions _options;
     private readonly ILogger<CodeSendGuard> _logger;
+    private readonly IPhonePrefixSendLimiter? _prefixLimits;
 
     /// <summary>
     /// Initializes the guard.
@@ -29,7 +30,8 @@ public class CodeSendGuard : ICodeSendGuard
         IAbuseAlertService alerts,
         ICodeSendClock clock,
         IOptions<AntiAbuseOptions> options,
-        ILogger<CodeSendGuard> logger)
+        ILogger<CodeSendGuard> logger,
+        IPhonePrefixSendLimiter? prefixLimits = null)
     {
         _context = context;
         _counters = counters;
@@ -37,6 +39,7 @@ public class CodeSendGuard : ICodeSendGuard
         _clock = clock;
         _options = options.Value;
         _logger = logger;
+        _prefixLimits = prefixLimits;
     }
 
     /// <inheritdoc />
@@ -90,6 +93,8 @@ public class CodeSendGuard : ICodeSendGuard
         string? lastReason = null;
         Guid? lastElection = electionGuids[0];
         Guid? lastOwner = null;
+        var prefixBlocked = false;
+        string? blockedPrefix = null;
 
         foreach (var electionGuid in electionGuids.Distinct())
         {
@@ -180,6 +185,20 @@ public class CodeSendGuard : ICodeSendGuard
                     continue;
                 }
 
+                if (_prefixLimits != null)
+                {
+                    var prefix = await _prefixLimits.TryConsumeAsync(channel, destination, cancellationToken);
+                    if (!prefix.Allowed)
+                    {
+                        await _counters.RefundElectionAsync(electionGuid, cancellationToken);
+                        await _counters.RefundOwnerDayAsync(owner.UserId, today, cancellationToken);
+                        lastReason = prefix.BlockReason ?? CodeSendBlockReason.PrefixLimit;
+                        blockedPrefix = prefix.Prefix;
+                        prefixBlocked = true;
+                        break;
+                    }
+                }
+
                 var first = await _counters.TryStampFirstPaidSendAsync(owner.UserId, _clock.UtcNow, cancellationToken);
                 if (first)
                 {
@@ -203,6 +222,11 @@ public class CodeSendGuard : ICodeSendGuard
                 return new CodeSendReservation(true, null, electionGuid, owner.UserId, first);
             }
 
+            if (prefixBlocked)
+            {
+                break;
+            }
+
             if (!ownerBlocked && lastReason == null)
             {
                 lastReason = CodeSendBlockReason.NotApproved;
@@ -211,10 +235,23 @@ public class CodeSendGuard : ICodeSendGuard
 
         lastReason ??= CodeSendBlockReason.NotApproved;
         _logger.LogInformation(
-            "Login code not sent ({BlockReason}) channel {Channel} election {ElectionGuid}",
+            "Login code not sent ({BlockReason}) channel {Channel} election {ElectionGuid} destination {MaskedDestination}",
             lastReason,
             channel,
-            lastElection);
+            lastElection,
+            DestinationMask.MaskForLog(destination));
+
+        if (lastReason == CodeSendBlockReason.PrefixLimit && blockedPrefix != null)
+        {
+            await _alerts.NotifyPrefixLimitAsync(
+                new AbusePrefixLimitAlert(
+                    blockedPrefix,
+                    channel,
+                    DestinationMask.Mask(destination),
+                    _options.ResolvedPhonePrefixSendLimit,
+                    _options.ResolvedPhonePrefixWindowMinutes),
+                cancellationToken);
+        }
 
         var blocked = new CodeSendReservation(false, lastReason, lastElection, lastOwner, false);
         await LogOutcomeAsync(blocked, channel, destination, sent: false, cancellationToken);

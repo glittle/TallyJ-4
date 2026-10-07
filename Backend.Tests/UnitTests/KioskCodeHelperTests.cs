@@ -18,11 +18,9 @@ public class KioskCodeHelperTests
     [Fact]
     public void GenerateCode_UsesLastInitialPlusFourDistinctLetters()
     {
-        var code = KioskCodeHelper.GenerateCode("Johnson", new Random(7));
+        var code = KioskCodeHelper.GenerateCode("Johnson", _ => 0);
 
-        Assert.Equal(5, code.Length);
-        Assert.Equal('J', code[0]);
-        Assert.All(code[1..], c => Assert.Contains(c, KioskCodeHelper.DistinctLetters));
+        Assert.Equal("JAAAA", code);
     }
 
     [Fact]
@@ -30,7 +28,8 @@ public class KioskCodeHelperTests
     {
         var existing = new[] { "SMART", "SMARS" };
 
-        var code = KioskCodeHelper.GenerateUniqueCode("Smith", existing, new Random(3));
+        var n = 0;
+        var code = KioskCodeHelper.GenerateUniqueCode("Smith", existing, _ => n++);
 
         Assert.DoesNotContain(code, existing, StringComparer.OrdinalIgnoreCase);
         Assert.StartsWith("S", code);

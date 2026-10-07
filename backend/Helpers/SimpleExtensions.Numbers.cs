@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Security.Cryptography;
 
 namespace Backend.Helpers;
 
@@ -137,7 +138,7 @@ public static partial class ExtensionsSimple
 
         var min = Math.Pow(10, input - 1).AsInt();
         var max = Math.Pow(10, input).AsInt();
-        return new Random().Next(min, max).ToString();
+        return RandomNumberGenerator.GetInt32(min, max).ToString();
     }
 
     /// <summary>

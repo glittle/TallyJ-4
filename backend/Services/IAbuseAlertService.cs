@@ -20,6 +20,12 @@ public interface IAbuseAlertService
     /// Alerts that an election was flagged. Online voting and every login code are stopped.
     /// </summary>
     Task NotifyElectionFlaggedAsync(AbuseElectionFlaggedAlert alert, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Alerts that a destination prefix hit the system-wide paid-send cap.
+    /// The same prefix is not emailed again until the throttle window passes.
+    /// </summary>
+    Task NotifyPrefixLimitAsync(AbusePrefixLimitAlert alert, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -48,6 +54,16 @@ public sealed record AbuseFirstPaidSendAlert(
 /// One flagged voter-list row included in the flag alert.
 /// </summary>
 public sealed record AbuseFlaggedRow(int? RowNumber, string MaskedValue, string Reason);
+
+/// <summary>
+/// Prefix-cap details. The destination is already masked. The prefix is the leading digits only.
+/// </summary>
+public sealed record AbusePrefixLimitAlert(
+    string Prefix,
+    string Channel,
+    string MaskedDestination,
+    int Limit,
+    int WindowMinutes);
 
 /// <summary>
 /// Flag alert. Online voting and every login code are stopped until a super admin clears the flag.

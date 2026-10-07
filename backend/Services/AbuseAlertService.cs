@@ -97,6 +97,33 @@ public class AbuseAlertService : IAbuseAlertService
     }
 
     /// <inheritdoc />
+    public Task NotifyPrefixLimitAsync(AbusePrefixLimitAlert alert, CancellationToken cancellationToken = default)
+    {
+        var body = $"""
+            A phone-prefix paid-send limit was hit.
+            Prefix: {alert.Prefix}
+            Channel: {alert.Channel}
+            Destination: {alert.MaskedDestination}
+            Limit: {alert.Limit} sends per {alert.WindowMinutes} minutes, across the whole site.
+            No SMS, voice, or WhatsApp code was sent. Email codes are not affected.
+            The counter slides forward on its own. It does not wait for a super admin to raise a cap.
+            """;
+        return SendOnceAsync(
+            "cap:prefix:" + alert.Prefix,
+            "TallyJ phone-prefix paid-send limit hit",
+            body,
+            new Dictionary<string, string>
+            {
+                ["prefix"] = alert.Prefix,
+                ["channel"] = alert.Channel,
+                ["maskedDestination"] = alert.MaskedDestination,
+                ["limit"] = alert.Limit.ToString(),
+                ["windowMinutes"] = alert.WindowMinutes.ToString()
+            },
+            cancellationToken);
+    }
+
+    /// <inheritdoc />
     public Task NotifyElectionFlaggedAsync(AbuseElectionFlaggedAlert alert, CancellationToken cancellationToken = default)
     {
         var rows = alert.Rows.Count == 0

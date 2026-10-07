@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Backend.Entities;
 using Backend.DTOs.OnlineVoting;
 using Backend.DTOs.SignalR;
@@ -13,6 +14,7 @@ public partial class OnlineVotingService
     /// <inheritdoc/>
     public async Task<RequestCodeResponseDto> RequestVerificationCodeAsync(RequestCodeDto dto)
     {
+        var started = Stopwatch.GetTimestamp();
         try
         {
             var paidChannel = PaidDestinationPhone.IsPaidChannel(dto.DeliveryMethod);
@@ -25,7 +27,7 @@ public partial class OnlineVotingService
                     _logger.LogWarning(
                         "Login code request rejected: paid destination blocked ({Reason})",
                         reason);
-                    return BuildRequestCodeResponse("voting.auth.requestCode.invalidPhone");
+                    return await FinishRequestCodeAsync(started, BuildRequestCodeResponse(RequestCodeReply.NeutralMessageKey));
                 }
             }
 
@@ -44,7 +46,7 @@ public partial class OnlineVotingService
                         "Login code request skipped: SmsStatus blocks paid send ({Method}, {SmsStatus})",
                         KnownDeliveryMethod(dto.DeliveryMethod),
                         SanitizeForLog(onlineVoter.SmsStatus));
-                    return BuildRequestCodeResponse("voting.auth.requestCode.invalidPhone");
+                    return await FinishRequestCodeAsync(started, BuildRequestCodeResponse(RequestCodeReply.NeutralMessageKey));
                 }
 
                 // WhatsApp presence is separate from SmsStatus. Skip WhatsApp send only.
@@ -55,7 +57,7 @@ public partial class OnlineVotingService
                     _logger.LogWarning(
                         "Login code request skipped: WhatsAppStatus blocks WhatsApp send ({WhatsAppStatus})",
                         SanitizeForLog(onlineVoter.WhatsAppStatus));
-                    return BuildRequestCodeResponse("voting.auth.requestCode.invalidPhone");
+                    return await FinishRequestCodeAsync(started, BuildRequestCodeResponse(RequestCodeReply.NeutralMessageKey));
                 }
             }
 
@@ -71,7 +73,7 @@ public partial class OnlineVotingService
             if (!openElections.Any())
             {
                 _logger.LogWarning("Login code request rejected: No elections currently open for online voting");
-                return BuildRequestCodeResponse("voting.auth.requestCode.noOpenElections");
+                return await FinishRequestCodeAsync(started, BuildRequestCodeResponse(RequestCodeReply.NeutralMessageKey));
             }
 
             // 4. Check if voter is registered in ANY of the open elections
@@ -90,13 +92,13 @@ public partial class OnlineVotingService
             {
                 _logger.LogWarning("Login code request rejected: voter not found in any open election (type: {VoterIdType})",
                     KnownVoterIdType(dto.VoterIdType));
-                return BuildRequestCodeResponse("voting.auth.requestCode.notRegistered");
+                return await FinishRequestCodeAsync(started, BuildRequestCodeResponse(RequestCodeReply.NeutralMessageKey));
             }
 
             // Kiosk login is teller-stamped and election-scoped; do not create a global row here.
             if (dto.VoterIdType == KioskCodeLifetime.VoterIdType)
             {
-                return BuildRequestCodeResponse("voting.auth.requestCode.sent");
+                return await FinishRequestCodeAsync(started, BuildRequestCodeResponse(RequestCodeReply.NeutralMessageKey));
             }
 
             var matchingElections = await MatchingOpenElectionGuidsAsync(dto, openElections);
@@ -110,7 +112,7 @@ public partial class OnlineVotingService
                 if (!reservation.Allowed)
                 {
                     // Same key as a successful send. The block reason stays in the server log.
-                    return BuildRequestCodeResponse("voting.auth.requestCode.sent");
+                    return await FinishRequestCodeAsync(started, BuildRequestCodeResponse(RequestCodeReply.NeutralMessageKey));
                 }
             }
 
@@ -179,18 +181,18 @@ public partial class OnlineVotingService
             }
 
             var messageKey = sent
-                ? "voting.auth.requestCode.sent"
+                ? RequestCodeReply.NeutralMessageKey
                 : "voting.auth.requestCode.sendFailed";
 
             _logger.LogInformation("Verification code sent via {Method} (registered in {Count} open election(s))",
                 KnownDeliveryMethod(dto.DeliveryMethod), openElections.Count);
 
-            return BuildRequestCodeResponse(messageKey, verifyCode, channel?.RawToken);
+            return await FinishRequestCodeAsync(started, BuildRequestCodeResponse(messageKey, verifyCode, channel?.RawToken));
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error requesting verification code");
-            return BuildRequestCodeResponse("voting.auth.requestCode.error");
+            return await FinishRequestCodeAsync(started, BuildRequestCodeResponse("voting.auth.requestCode.error"));
         }
     }
 
@@ -232,7 +234,7 @@ public partial class OnlineVotingService
                 return (false, VoterVerifyError.TooManyAttempts, null);
             }
 
-            if (onlineVoter.VerifyCode != dto.VerifyCode)
+            if (!VoterCodeComparer.FixedTimeEquals(onlineVoter.VerifyCode, dto.VerifyCode))
             {
                 onlineVoter.VerifyAttempts = (onlineVoter.VerifyAttempts ?? 0) + 1;
                 await _context.SaveChangesAsync();
@@ -286,9 +288,23 @@ public partial class OnlineVotingService
     private string GenerateVerificationCode()
     {
         const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-        var random = new Random();
-        return new string(Enumerable.Repeat(chars, 6)
-            .Select(s => s[random.Next(s.Length)]).ToArray());
+        return SecureCode.FromAlphabet(chars, 6);
+    }
+
+    /// <summary>
+    /// Returns the reply after the configured minimum time, so a fast reject
+    /// is not obviously quicker than a listed voter.
+    /// </summary>
+    private async Task<RequestCodeResponseDto> FinishRequestCodeAsync(
+        long started,
+        RequestCodeResponseDto response)
+    {
+        if (_requestCodePacer != null)
+        {
+            await _requestCodePacer.PaceAsync(started);
+        }
+
+        return response;
     }
 
     /// <summary>

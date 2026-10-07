@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Backend.Context;
 using Backend.Entities;
 using Backend.DTOs.OnlineVoting;
+using Backend.Helpers;
 using Xunit;
 
 namespace Backend.Tests.IntegrationTests;
@@ -67,8 +68,50 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<RequestCodeResponseDto>(JsonOptions);
         Assert.NotNull(body);
-        Assert.Contains("voting.auth.requestCode.notRegistered", body!.MessageKey);
+        Assert.Equal(RequestCodeReply.NeutralMessageKey, body!.MessageKey);
         Assert.True(string.IsNullOrEmpty(body.ChannelToken));
+        Assert.True(string.IsNullOrEmpty(body.DevVerificationCode));
+    }
+
+    [Fact]
+    public async Task RequestCode_ListedAndUnlisted_ReturnTheSameSuccessShape_AndUnlistedSendsNothing()
+    {
+        var listedEmail = $"listed_{Guid.NewGuid():N}@example.com";
+        var unlistedEmail = $"unlisted_{Guid.NewGuid():N}@example.com";
+        await SetupOpenElectionWithVoter(listedEmail);
+
+        var listed = await Client.PostAsJsonAsync("/api/online-voting/requestCode", new RequestCodeDto
+        {
+            VoterId = listedEmail,
+            VoterIdType = "E",
+            DeliveryMethod = "email"
+        });
+        var unlisted = await Client.PostAsJsonAsync("/api/online-voting/requestCode", new RequestCodeDto
+        {
+            VoterId = unlistedEmail,
+            VoterIdType = "E",
+            DeliveryMethod = "email"
+        });
+
+        Assert.Equal(HttpStatusCode.OK, listed.StatusCode);
+        Assert.Equal(unlisted.StatusCode, listed.StatusCode);
+
+        var listedBody = await listed.Content.ReadFromJsonAsync<RequestCodeResponseDto>(JsonOptions);
+        var unlistedBody = await unlisted.Content.ReadFromJsonAsync<RequestCodeResponseDto>(JsonOptions);
+        Assert.NotNull(listedBody);
+        Assert.NotNull(unlistedBody);
+        Assert.Equal(RequestCodeReply.NeutralMessageKey, listedBody!.MessageKey);
+        Assert.Equal(listedBody.MessageKey, unlistedBody!.MessageKey);
+        Assert.False(string.IsNullOrWhiteSpace(listedBody.DevVerificationCode));
+        Assert.True(string.IsNullOrEmpty(unlistedBody.DevVerificationCode));
+        Assert.False(string.IsNullOrWhiteSpace(listedBody.ChannelToken));
+        Assert.True(string.IsNullOrEmpty(unlistedBody.ChannelToken));
+
+        using var scope = Factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        Assert.False(await context.OnlineVoters.AnyAsync(voter => voter.VoterId == unlistedEmail));
+        var listedRow = await context.OnlineVoters.SingleAsync(voter => voter.VoterId == listedEmail);
+        Assert.False(string.IsNullOrWhiteSpace(listedRow.VerifyCode));
     }
 
     [Fact]
@@ -90,8 +133,7 @@ public class VoterAuthenticationFlowTests : IntegrationTestBase
         // Assert - voter is not in any open election (other open elections may exist from prior tests)
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var content = await response.Content.ReadAsStringAsync();
-        Assert.True(content.Contains("voting.auth.requestCode.noOpenElections") || content.Contains("voting.auth.requestCode.notRegistered"),
-            $"Expected message about no open elections or voter not registered, got: {content}");
+        Assert.Contains(RequestCodeReply.NeutralMessageKey, content);
     }
 
     [Fact]

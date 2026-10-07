@@ -73,6 +73,8 @@ public static class ProgramServiceRegistration
         services.AddScoped<ICodeSendClock, SystemCodeSendClock>();
         services.AddSingleton<ISentryWarningCapture, SentryWarningCapture>();
         services.AddScoped<IAbuseAlertService, AbuseAlertService>();
+        services.AddScoped<IPhonePrefixSendLimiter, PhonePrefixSendLimiter>();
+        services.AddScoped<IRequestCodePacer, RequestCodePacer>();
         services.AddScoped<ICodeSendGuard, CodeSendGuard>();
         services.AddScoped<IPaidChannelStatusService, PaidChannelStatusService>();
         services.AddScoped<IPaidSendAdminService, PaidSendAdminService>();
