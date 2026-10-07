@@ -136,13 +136,14 @@ public class LocalAuthService : ILocalAuthService
             return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
 
-        // Reset access failed count on successful password check
-        await _userManager.ResetAccessFailedCountAsync(user);
-
         if (user.TwoFactorEnabled)
         {
             if (string.IsNullOrEmpty(request.TwoFactorCode))
             {
+                // Password matched and no code was offered. This is the prompt, not a guess.
+                // Clear earlier password failures here. A supplied code is checked below
+                // without this reset, or a wrong code would start from zero every time.
+                await _userManager.ResetAccessFailedCountAsync(user);
                 return (true, null, new AuthResponse
                 {
                     Token = "",
@@ -157,9 +158,19 @@ public class LocalAuthService : ILocalAuthService
             var (codeValid, codeError) = await _twoFactorService.VerifyAsync(user.Id, request.TwoFactorCode);
             if (!codeValid)
             {
+                await _userManager.AccessFailedAsync(user);
+                if (await _userManager.IsLockedOutAsync(user))
+                {
+                    return (false, _localizer["auth.errors.accountLocked"], null);
+                }
+
+                MarkInvalidCredential();
                 return (false, codeError ?? _localizer["auth.errors.invalid2FACode"], null);
             }
         }
+
+        // Password matched, and the two-factor code matched when one was required.
+        await _userManager.ResetAccessFailedCountAsync(user);
 
         var token = _jwtTokenService.GenerateToken(user);
         var refreshToken = _jwtTokenService.GenerateRefreshToken();

@@ -11,9 +11,11 @@ namespace Backend.Middleware;
 /// <summary>
 /// In-memory rate limiting for anonymous teller and voter authentication endpoints.
 /// Account login and guest teller login count failed attempts only, 20 per minute
-/// per trusted-ingress IP. Venues often put many tellers behind one public NAT, so
-/// a successful join must not fill that bucket; the per-election lockout is the
-/// guessing guard. Other teller routes stay tight per IP and count every request.
+/// per trusted-ingress IP. An invalid two-factor code on account login counts as
+/// one of those failures. Venues often put many tellers behind one public NAT, so
+/// a successful join must not fill that bucket; the per-election lockout and the
+/// account lockout are the guessing guards. Other teller routes stay tight per IP
+/// and count every request.
 /// Voter code routes use a per-VoterId bucket (capped JSON peek) plus a loose per-IP
 /// venue ceiling so a hall behind one public NAT is not locked after a few people.
 /// Oversized bodies are rejected (413); they are not demoted to missing:{ip}.
@@ -36,9 +38,10 @@ public class RateLimitingMiddleware
     public const int TellerLoginIpMaxRequests = 20;
 
     /// <summary>
-    /// Failed account-login attempts (bad credentials) allowed per trusted-ingress IP
-    /// per minute. Successful logins do not consume the bucket. Account-locked,
-    /// unverified-email, and invalid two-factor replies do not count. Venues behind
+    /// Failed account-login attempts (bad credentials or an invalid two-factor code)
+    /// allowed per trusted-ingress IP per minute. Successful logins do not consume
+    /// the bucket. Account-locked and unverified-email replies do not count. The
+    /// attempt that locks the account is the account-locked reply. Venues behind
     /// one NAT share this IP.
     /// </summary>
     public const int LoginIpMaxRequests = 20;
