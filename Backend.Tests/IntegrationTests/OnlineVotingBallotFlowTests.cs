@@ -10,8 +10,10 @@ using Backend.DTOs.Results;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Helpers;
+using Backend.Identity;
 using Backend.Middleware;
 using Backend.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
@@ -1111,6 +1113,19 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
                 WhenRegistered = DateTimeOffset.UtcNow,
                 VerifyCode = kioskCode,
                 VerifyCodeDate = DateTimeOffset.UtcNow
+            });
+        }
+
+        // Teller calls such as generateKioskCode require election membership.
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+        var admin = await userManager.FindByEmailAsync("admin@tallyj.com");
+        if (admin != null)
+        {
+            context.JoinElectionUsers.Add(new JoinElectionUser
+            {
+                ElectionGuid = electionGuid,
+                UserId = Guid.Parse(admin.Id),
+                Role = "Admin"
             });
         }
 

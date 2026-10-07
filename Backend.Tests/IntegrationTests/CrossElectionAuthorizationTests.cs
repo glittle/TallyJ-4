@@ -59,7 +59,8 @@ public class CrossElectionAuthorizationTests : IntegrationTestBase
         Assert.Equal(HttpStatusCode.NotFound, (await PostJsonAsync("/api/Votes/createVote", new CreateVoteDto
         {
             BallotGuid = seeded.BallotA,
-            PersonGuid = seeded.PersonA
+            PersonGuid = seeded.PersonA,
+            PositionOnBallot = 1
         })).StatusCode);
 
         Assert.Equal(HttpStatusCode.Forbidden, (await GetAsync($"/api/Results/election/{seeded.ElectionA}")).StatusCode);

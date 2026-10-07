@@ -263,6 +263,7 @@ A signed-in principal is not enough. Teller and owner endpoints authorize the el
 - Online-voter tokens (`voterType=online`) fail the default `[Authorize]` policy and every election policy. Online voting endpoints stay on `OnlineVoter`.
 - Site-wide `GET /api/security-audit-logs` (no election) is super admin only (403). An `electionGuid` filter requires membership (`HeadTellerAccess`: any join, not a guest). A log row the caller cannot see returns the same not-found body as a missing id.
 - An existing election the caller cannot access is 403 on route policies (same as duplicate/reset). Entity and body checks return 404 `{ error: "error.notFound" }` so the guid does not confirm that the row exists. A route policy still succeeds when the election row is absent, so the action can return 404 (or 400 when validation runs first).
+- `RequireElectionAccessAttribute` implements `IOrderedFilter` at -2500. The MVC pipeline orders the attribute, not the filter instance created later, and that has to run before `ModelStateInvalidFilter` (-2000). Otherwise an invalid body returns 400 and confirms the caller reached the action.
 
 The unused `Backend.Services.Auth` election-access handler was a second requirement type and was not registered. The live handlers are `Backend.Authorization` and share `IElectionAccessEvaluator`.
 

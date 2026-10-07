@@ -39,8 +39,15 @@ public enum ElectionResourceKind
 /// response matches "not found" and does not confirm the guid.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-public sealed class RequireElectionAccessAttribute : Attribute, IFilterFactory
+public sealed class RequireElectionAccessAttribute : Attribute, IFilterFactory, IOrderedFilter
 {
+    /// <summary>
+    /// Before <c>ModelStateInvalidFilter</c> (-2000) so a cross-election body
+    /// is 404 even when other fields would have been 400. The pipeline orders
+    /// by this attribute, not by the filter instance created later.
+    /// </summary>
+    public int Order => -2500;
+
     public RequireElectionAccessAttribute(ElectionResourceKind kind)
     {
         Kind = kind;
