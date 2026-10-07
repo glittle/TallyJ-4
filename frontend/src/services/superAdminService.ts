@@ -6,6 +6,15 @@ import {
   getApiSuperadminUsersByUserId,
   putApiSuperadminUsersByUserId,
   postApiSuperadminAccountInvites,
+  getApiSuperadminPaidSends,
+  postApiSuperadminPaidSendsOwnersByUserIdApprove,
+  postApiSuperadminPaidSendsOwnersByUserIdFreeze,
+  postApiSuperadminPaidSendsOwnersByUserIdUnfreeze,
+  postApiSuperadminPaidSendsOwnersByUserIdDailyCap,
+  postApiSuperadminPaidSendsElectionsByGuidFreeze,
+  postApiSuperadminPaidSendsElectionsByGuidUnfreeze,
+  postApiSuperadminPaidSendsElectionsByGuidAllowance,
+  postApiSuperadminPaidSendsElectionsByGuidClearFlag,
 } from "@/api/gen/configService";
 import type { PaginatedResponse } from "@/types/ApiResponse";
 
@@ -129,6 +138,85 @@ export const superAdminService = {
     return response.data?.data as AccountInviteCreated;
   },
 
+  async getPaidSends(): Promise<PaidSendOverview> {
+    const response = await getApiSuperadminPaidSends({ throwOnError: true });
+    const data = response.data?.data;
+    return {
+      pendingOwners: (data?.pendingOwners ?? []) as PendingPaidSendOwner[],
+      capHits: (data?.capHits ?? []) as PaidSendCapHit[],
+      frozenElections: (data?.frozenElections ?? []) as FrozenSendElection[],
+      frozenOwners: (data?.frozenOwners ?? []) as FrozenSendOwner[],
+      flaggedElections: (data?.flaggedElections ?? []).map((election) => ({
+        electionGuid: election.electionGuid || "",
+        name: election.name || "",
+        flaggedAt: election.flaggedAt,
+        rows: (election.rows ?? []).map((row) => ({
+          rowNumber: row.rowNumber,
+          maskedValue: row.maskedValue || "",
+          reason: row.reason || "",
+        })),
+      })),
+    };
+  },
+
+  async approvePaidSends(userId: string): Promise<void> {
+    await postApiSuperadminPaidSendsOwnersByUserIdApprove({
+      path: { userId },
+      throwOnError: true,
+    });
+  },
+
+  async freezeOwner(userId: string): Promise<void> {
+    await postApiSuperadminPaidSendsOwnersByUserIdFreeze({
+      path: { userId },
+      throwOnError: true,
+    });
+  },
+
+  async unfreezeOwner(userId: string): Promise<void> {
+    await postApiSuperadminPaidSendsOwnersByUserIdUnfreeze({
+      path: { userId },
+      throwOnError: true,
+    });
+  },
+
+  async raiseOwnerDailyCap(userId: string, dailyCap: number): Promise<void> {
+    await postApiSuperadminPaidSendsOwnersByUserIdDailyCap({
+      path: { userId },
+      body: { dailyCap },
+      throwOnError: true,
+    });
+  },
+
+  async freezeElection(guid: string): Promise<void> {
+    await postApiSuperadminPaidSendsElectionsByGuidFreeze({
+      path: { guid },
+      throwOnError: true,
+    });
+  },
+
+  async unfreezeElection(guid: string): Promise<void> {
+    await postApiSuperadminPaidSendsElectionsByGuidUnfreeze({
+      path: { guid },
+      throwOnError: true,
+    });
+  },
+
+  async raiseElectionAllowance(guid: string, allowance: number): Promise<void> {
+    await postApiSuperadminPaidSendsElectionsByGuidAllowance({
+      path: { guid },
+      body: { allowance },
+      throwOnError: true,
+    });
+  },
+
+  async clearElectionFlag(guid: string): Promise<void> {
+    await postApiSuperadminPaidSendsElectionsByGuidClearFlag({
+      path: { guid },
+      throwOnError: true,
+    });
+  },
+
   async updateUser(
     userId: string,
     body: { displayName?: string; email?: string },
@@ -168,4 +256,53 @@ export interface AccountInviteCreated {
   token: string;
   inviteUrl: string;
   expiresAt: string | Date;
+}
+
+export interface PendingPaidSendOwner {
+  userId: string;
+  email?: string | null;
+  displayName?: string | null;
+  electionCount: number;
+}
+
+export interface PaidSendCapHit {
+  scope: string;
+  electionGuid?: string | null;
+  electionName?: string | null;
+  ownerUserId?: string | null;
+  ownerEmail?: string | null;
+  used: number;
+  cap: number;
+}
+
+export interface FrozenSendElection {
+  electionGuid: string;
+  name: string;
+}
+
+export interface FrozenSendOwner {
+  userId: string;
+  email?: string | null;
+  displayName?: string | null;
+}
+
+export interface FlaggedVoterContact {
+  rowNumber?: number | null;
+  maskedValue: string;
+  reason: string;
+}
+
+export interface FlaggedElection {
+  electionGuid: string;
+  name: string;
+  flaggedAt?: string | Date | null;
+  rows: FlaggedVoterContact[];
+}
+
+export interface PaidSendOverview {
+  pendingOwners: PendingPaidSendOwner[];
+  capHits: PaidSendCapHit[];
+  frozenElections: FrozenSendElection[];
+  frozenOwners: FrozenSendOwner[];
+  flaggedElections: FlaggedElection[];
 }

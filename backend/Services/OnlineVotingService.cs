@@ -23,6 +23,7 @@ public partial class OnlineVotingService : IOnlineVotingService
     private readonly ISignalRNotificationService _signalRNotificationService;
     private readonly IOnlineBallotAcceptLock _acceptLock;
     private readonly IVoterCodeDeliveryChannelService? _voterCodeChannels;
+    private readonly ICodeSendGuard? _codeSendGuard;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OnlineVotingService"/> class.
@@ -49,7 +50,8 @@ public partial class OnlineVotingService : IOnlineVotingService
         IGoogleIdTokenValidator googleIdTokenValidator,
         ISignalRNotificationService signalRNotificationService,
         IOnlineBallotAcceptLock acceptLock,
-        IVoterCodeDeliveryChannelService? voterCodeChannels = null)
+        IVoterCodeDeliveryChannelService? voterCodeChannels = null,
+        ICodeSendGuard? codeSendGuard = null)
     {
         _context = context;
         _configuration = configuration;
@@ -62,5 +64,6 @@ public partial class OnlineVotingService : IOnlineVotingService
         _signalRNotificationService = signalRNotificationService;
         _acceptLock = acceptLock;
         _voterCodeChannels = voterCodeChannels;
+        _codeSendGuard = codeSendGuard;
     }
 }

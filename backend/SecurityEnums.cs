@@ -79,7 +79,37 @@ public enum SecurityEventType
     /// <summary>
     /// An owner or admin cleared the guest teller login lockout, or changed the passcode.
     /// </summary>
-    TellerLoginUnlocked
+    TellerLoginUnlocked,
+
+    /// <summary>
+    /// A super admin approved an owner for SMS, voice, and WhatsApp login codes.
+    /// </summary>
+    PaidSendOwnerApproved,
+
+    /// <summary>
+    /// A super admin froze login codes for an election or an owner.
+    /// </summary>
+    PaidSendFrozen,
+
+    /// <summary>
+    /// A super admin lifted a login-code freeze.
+    /// </summary>
+    PaidSendUnfrozen,
+
+    /// <summary>
+    /// A super admin raised an election allowance or an owner daily cap.
+    /// </summary>
+    PaidSendCapRaised,
+
+    /// <summary>
+    /// A voter-list upload flagged an election. Online voting is suspended.
+    /// </summary>
+    ElectionFlagged,
+
+    /// <summary>
+    /// A super admin cleared an election flag. Online voting can be used again.
+    /// </summary>
+    ElectionFlagCleared
 }
 
 /// <summary>

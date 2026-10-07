@@ -69,6 +69,13 @@ public static class ProgramServiceRegistration
 
         services.AddScoped<ISecurityAuditService, SecurityAuditService>();
         services.AddScoped<ITellerLoginLockoutService, TellerLoginLockoutService>();
+        services.AddScoped<PaidSendCounters>();
+        services.AddScoped<ICodeSendClock, SystemCodeSendClock>();
+        services.AddSingleton<ISentryWarningCapture, SentryWarningCapture>();
+        services.AddScoped<IAbuseAlertService, AbuseAlertService>();
+        services.AddScoped<ICodeSendGuard, CodeSendGuard>();
+        services.AddScoped<IPaidChannelStatusService, PaidChannelStatusService>();
+        services.AddScoped<IPaidSendAdminService, PaidSendAdminService>();
     }
 
     public static void RegisterBackgroundServices(

@@ -99,6 +99,21 @@ public partial class OnlineVotingService
                 return BuildRequestCodeResponse("voting.auth.requestCode.sent");
             }
 
+            var matchingElections = await MatchingOpenElectionGuidsAsync(dto, openElections);
+            CodeSendReservation? reservation = null;
+            if (_codeSendGuard != null)
+            {
+                reservation = await _codeSendGuard.ReserveAsync(
+                    matchingElections,
+                    dto.DeliveryMethod,
+                    dto.VoterId);
+                if (!reservation.Allowed)
+                {
+                    // Same key as a successful send. The block reason stays in the server log.
+                    return BuildRequestCodeResponse("voting.auth.requestCode.sent");
+                }
+            }
+
             // 5. Create or update OnlineVoter record for tracking (reuse the phone+paid load when present)
             if (onlineVoter == null)
             {
@@ -151,6 +166,15 @@ public partial class OnlineVotingService
                     channel.ChannelId,
                     dto.VoterId,
                     dto.DeliveryMethod,
+                    sent);
+            }
+
+            if (reservation != null)
+            {
+                await _codeSendGuard!.LogOutcomeAsync(
+                    reservation,
+                    dto.DeliveryMethod,
+                    dto.VoterId,
                     sent);
             }
 
@@ -474,6 +498,24 @@ public partial class OnlineVotingService
     {
         _voterCodeChannels?.RecordStatus(channelId, status);
         await _signalRNotificationService.SendVoterCodeDeliveryStatusAsync(channelId, status);
+    }
+
+    private async Task<List<Guid>> MatchingOpenElectionGuidsAsync(RequestCodeDto dto, List<Guid> openElections)
+    {
+        return dto.VoterIdType switch
+        {
+            "E" => await _context.People
+                .Where(person => openElections.Contains(person.ElectionGuid) && person.Email == dto.VoterId)
+                .Select(person => person.ElectionGuid)
+                .Distinct()
+                .ToListAsync(),
+            "P" => await _context.People
+                .Where(person => openElections.Contains(person.ElectionGuid) && person.Phone == dto.VoterId)
+                .Select(person => person.ElectionGuid)
+                .Distinct()
+                .ToListAsync(),
+            _ => new List<Guid>()
+        };
     }
 
     private static string NormalizeVoterCode(string code)

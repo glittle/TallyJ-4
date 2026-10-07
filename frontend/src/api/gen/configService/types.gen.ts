@@ -240,6 +240,13 @@ export type ApiResponseSetupElectionSetupStatusDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponseSuperAdminPaidSendAdminOverviewDto = {
+    success?: boolean;
+    data?: SuperAdminPaidSendAdminOverviewDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponseSuperAdminSuperAdminElectionDetailDto = {
     success?: boolean;
     data?: SuperAdminSuperAdminElectionDetailDto;
@@ -444,7 +451,13 @@ export const BackendSecurityEventType = {
     38: 38,
     39: 39,
     40: 40,
-    41: 41
+    41: 41,
+    42: 42,
+    43: 43,
+    44: 44,
+    45: 45,
+    46: 46,
+    47: 47
 } as const;
 
 export type BackendSecurityEventType = typeof BackendSecurityEventType[keyof typeof BackendSecurityEventType];
@@ -600,6 +613,10 @@ export type ElectionsElectionDto = {
     isTellerAccessOpen?: boolean;
     tellerAccessOpenedAt?: Date | null;
     tellerLoginLockedUntil?: Date | null;
+    paidChannelBlockReason?: string | null;
+    paidSendsUsed?: number;
+    paidSendAllowance?: number;
+    onlineVotingSuspended?: boolean;
 };
 
 export type ElectionsElectionStatsDto = {
@@ -2044,6 +2061,63 @@ export type SetupElectionStep2Dto = {
     numberToElect?: number;
     electionType?: EnumerationsElectionTypeCode;
     electionMode?: EnumerationsElectionModeCode;
+};
+
+export type SuperAdminFlaggedElectionDto = {
+    electionGuid?: string;
+    name?: string | null;
+    flaggedAt?: Date | null;
+    rows?: Array<SuperAdminFlaggedVoterContactDto> | null;
+};
+
+export type SuperAdminFlaggedVoterContactDto = {
+    rowNumber?: number | null;
+    maskedValue?: string | null;
+    reason?: string | null;
+};
+
+export type SuperAdminFrozenSendElectionDto = {
+    electionGuid?: string;
+    name?: string | null;
+};
+
+export type SuperAdminFrozenSendOwnerDto = {
+    userId?: string;
+    email?: string | null;
+    displayName?: string | null;
+};
+
+export type SuperAdminPaidSendAdminOverviewDto = {
+    pendingOwners?: Array<SuperAdminPendingPaidSendOwnerDto> | null;
+    capHits?: Array<SuperAdminPaidSendCapHitDto> | null;
+    frozenElections?: Array<SuperAdminFrozenSendElectionDto> | null;
+    frozenOwners?: Array<SuperAdminFrozenSendOwnerDto> | null;
+    flaggedElections?: Array<SuperAdminFlaggedElectionDto> | null;
+};
+
+export type SuperAdminPaidSendCapHitDto = {
+    scope?: string | null;
+    electionGuid?: string | null;
+    electionName?: string | null;
+    ownerUserId?: string | null;
+    ownerEmail?: string | null;
+    used?: number;
+    cap?: number;
+};
+
+export type SuperAdminPendingPaidSendOwnerDto = {
+    userId?: string;
+    email?: string | null;
+    displayName?: string | null;
+    electionCount?: number;
+};
+
+export type SuperAdminRaiseElectionAllowanceDto = {
+    allowance?: number;
+};
+
+export type SuperAdminRaiseOwnerDailyCapDto = {
+    dailyCap?: number;
 };
 
 export type SuperAdminSuperAdminElectionDetailDto = {
@@ -5366,6 +5440,166 @@ export type PostApiSuperadminAccountInvitesResponses = {
 };
 
 export type PostApiSuperadminAccountInvitesResponse = PostApiSuperadminAccountInvitesResponses[keyof PostApiSuperadminAccountInvitesResponses];
+
+export type GetApiSuperadminPaidSendsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/superadmin/paid-sends';
+};
+
+export type GetApiSuperadminPaidSendsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSuperAdminPaidSendAdminOverviewDto;
+};
+
+export type GetApiSuperadminPaidSendsResponse = GetApiSuperadminPaidSendsResponses[keyof GetApiSuperadminPaidSendsResponses];
+
+export type PostApiSuperadminPaidSendsOwnersByUserIdApproveData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/api/superadmin/paid-sends/owners/{userId}/approve';
+};
+
+export type PostApiSuperadminPaidSendsOwnersByUserIdApproveResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemBoolean;
+};
+
+export type PostApiSuperadminPaidSendsOwnersByUserIdApproveResponse = PostApiSuperadminPaidSendsOwnersByUserIdApproveResponses[keyof PostApiSuperadminPaidSendsOwnersByUserIdApproveResponses];
+
+export type PostApiSuperadminPaidSendsOwnersByUserIdFreezeData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/api/superadmin/paid-sends/owners/{userId}/freeze';
+};
+
+export type PostApiSuperadminPaidSendsOwnersByUserIdFreezeResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemBoolean;
+};
+
+export type PostApiSuperadminPaidSendsOwnersByUserIdFreezeResponse = PostApiSuperadminPaidSendsOwnersByUserIdFreezeResponses[keyof PostApiSuperadminPaidSendsOwnersByUserIdFreezeResponses];
+
+export type PostApiSuperadminPaidSendsOwnersByUserIdUnfreezeData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/api/superadmin/paid-sends/owners/{userId}/unfreeze';
+};
+
+export type PostApiSuperadminPaidSendsOwnersByUserIdUnfreezeResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemBoolean;
+};
+
+export type PostApiSuperadminPaidSendsOwnersByUserIdUnfreezeResponse = PostApiSuperadminPaidSendsOwnersByUserIdUnfreezeResponses[keyof PostApiSuperadminPaidSendsOwnersByUserIdUnfreezeResponses];
+
+export type PostApiSuperadminPaidSendsOwnersByUserIdDailyCapData = {
+    body?: SuperAdminRaiseOwnerDailyCapDto;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/api/superadmin/paid-sends/owners/{userId}/daily-cap';
+};
+
+export type PostApiSuperadminPaidSendsOwnersByUserIdDailyCapResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemBoolean;
+};
+
+export type PostApiSuperadminPaidSendsOwnersByUserIdDailyCapResponse = PostApiSuperadminPaidSendsOwnersByUserIdDailyCapResponses[keyof PostApiSuperadminPaidSendsOwnersByUserIdDailyCapResponses];
+
+export type PostApiSuperadminPaidSendsElectionsByGuidFreezeData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/superadmin/paid-sends/elections/{guid}/freeze';
+};
+
+export type PostApiSuperadminPaidSendsElectionsByGuidFreezeResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemBoolean;
+};
+
+export type PostApiSuperadminPaidSendsElectionsByGuidFreezeResponse = PostApiSuperadminPaidSendsElectionsByGuidFreezeResponses[keyof PostApiSuperadminPaidSendsElectionsByGuidFreezeResponses];
+
+export type PostApiSuperadminPaidSendsElectionsByGuidUnfreezeData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/superadmin/paid-sends/elections/{guid}/unfreeze';
+};
+
+export type PostApiSuperadminPaidSendsElectionsByGuidUnfreezeResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemBoolean;
+};
+
+export type PostApiSuperadminPaidSendsElectionsByGuidUnfreezeResponse = PostApiSuperadminPaidSendsElectionsByGuidUnfreezeResponses[keyof PostApiSuperadminPaidSendsElectionsByGuidUnfreezeResponses];
+
+export type PostApiSuperadminPaidSendsElectionsByGuidClearFlagData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/superadmin/paid-sends/elections/{guid}/clear-flag';
+};
+
+export type PostApiSuperadminPaidSendsElectionsByGuidClearFlagResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemBoolean;
+};
+
+export type PostApiSuperadminPaidSendsElectionsByGuidClearFlagResponse = PostApiSuperadminPaidSendsElectionsByGuidClearFlagResponses[keyof PostApiSuperadminPaidSendsElectionsByGuidClearFlagResponses];
+
+export type PostApiSuperadminPaidSendsElectionsByGuidAllowanceData = {
+    body?: SuperAdminRaiseElectionAllowanceDto;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/superadmin/paid-sends/elections/{guid}/allowance';
+};
+
+export type PostApiSuperadminPaidSendsElectionsByGuidAllowanceResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemBoolean;
+};
+
+export type PostApiSuperadminPaidSendsElectionsByGuidAllowanceResponse = PostApiSuperadminPaidSendsElectionsByGuidAllowanceResponses[keyof PostApiSuperadminPaidSendsElectionsByGuidAllowanceResponses];
 
 export type GetApiByElectionGuidTellersData = {
     body?: never;

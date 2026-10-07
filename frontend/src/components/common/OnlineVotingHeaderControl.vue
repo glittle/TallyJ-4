@@ -3,6 +3,7 @@ import { useNotifications } from "@/composables/useNotifications";
 import { isFullTeller } from "@/domain/guestTellerAccess";
 import { useElectionStore } from "@/stores/electionStore";
 import { extractApiErrorMessage } from "@/utils/errorHandler";
+import { paidChannelMessageKey } from "@/utils/paidChannelMessage";
 import { buildOnlineWindowSummary } from "@/utils/onlineVotingWindowSummary";
 import { DateTime } from "luxon";
 import { computed, onBeforeUnmount, reactive, ref, watch } from "vue";
@@ -99,6 +100,10 @@ const windowSummary = computed(() =>
     String(locale.value),
     form.onlineCloseIsEstimate,
   ),
+);
+
+const paidChannelKey = computed(() =>
+  paidChannelMessageKey(election.value?.paidChannelBlockReason),
 );
 
 const hasSummary = computed(() =>
@@ -236,6 +241,19 @@ async function saveDates() {
       append-to-body
     >
       <div class="online-window-body">
+        <el-alert
+          v-if="paidChannelKey"
+          class="paid-channel-alert"
+          type="warning"
+          :closable="false"
+          show-icon
+          :title="
+            t(paidChannelKey, {
+              used: election?.paidSendsUsed ?? 0,
+              allowance: election?.paidSendAllowance ?? 0,
+            })
+          "
+        />
         <div class="online-window-field">
           <label>{{ t("elections.form.onlineWhenOpen") }}</label>
           <el-date-picker

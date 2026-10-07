@@ -26,6 +26,7 @@ public class ElectionService : IElectionService
     private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ITellerLoginLockoutService? _tellerLoginLockoutService;
     private readonly ISecurityAuditService? _securityAuditService;
+    private readonly IPaidChannelStatusService? _paidChannelStatus;
     private readonly int _minimumPasscodeLength;
 
     /// <summary>
@@ -38,7 +39,8 @@ public class ElectionService : IElectionService
         IHttpContextAccessor httpContextAccessor,
         ITellerLoginLockoutService? tellerLoginLockoutService = null,
         ISecurityAuditService? securityAuditService = null,
-        IOptions<TellerLoginProtectionOptions>? tellerLoginProtection = null)
+        IOptions<TellerLoginProtectionOptions>? tellerLoginProtection = null,
+        IPaidChannelStatusService? paidChannelStatus = null)
     {
         _context = context;
         _logger = logger;
@@ -46,6 +48,7 @@ public class ElectionService : IElectionService
         _httpContextAccessor = httpContextAccessor;
         _tellerLoginLockoutService = tellerLoginLockoutService;
         _securityAuditService = securityAuditService;
+        _paidChannelStatus = paidChannelStatus;
         _minimumPasscodeLength = tellerLoginProtection?.Value.ResolvedMinimumPasscodeLength
             ?? TellerLoginProtectionOptions.DefaultMinimumPasscodeLength;
     }
@@ -131,6 +134,11 @@ public class ElectionService : IElectionService
 
         var dto = MapToElectionDto(election);
         dto.TellerLoginLockedUntil = await ActiveTellerLoginLockUntilAsync(electionGuid);
+        if (_paidChannelStatus != null)
+        {
+            await _paidChannelStatus.ApplyAsync(electionGuid, dto);
+        }
+
         return dto;
     }
 

@@ -832,6 +832,30 @@ export const ApiResponseSetup_ElectionSetupStatusDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ApiResponseSuperAdmin_PaidSendAdminOverviewDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            $ref: '#/components/schemas/SuperAdmin_PaidSendAdminOverviewDto'
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ApiResponseSuperAdmin_SuperAdminElectionDetailDtoSchema = {
     type: 'object',
     properties: {
@@ -1451,7 +1475,13 @@ export const Backend_SecurityEventTypeSchema = {
         38,
         39,
         40,
-        41
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47
     ],
     type: 'integer',
     format: 'int32'
@@ -2007,6 +2037,21 @@ export const Elections_ElectionDtoSchema = {
             type: 'string',
             format: 'date-time',
             nullable: true
+        },
+        paidChannelBlockReason: {
+            type: 'string',
+            nullable: true
+        },
+        paidSendsUsed: {
+            type: 'integer',
+            format: 'int32'
+        },
+        paidSendAllowance: {
+            type: 'integer',
+            format: 'int32'
+        },
+        onlineVotingSuspended: {
+            type: 'boolean'
         }
     },
     additionalProperties: false
@@ -7034,6 +7079,211 @@ export const Setup_ElectionStep2DtoSchema = {
         },
         electionMode: {
             $ref: '#/components/schemas/Enumerations_ElectionModeCode'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdmin_FlaggedElectionDtoSchema = {
+    type: 'object',
+    properties: {
+        electionGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        name: {
+            type: 'string',
+            nullable: true
+        },
+        flaggedAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        rows: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/SuperAdmin_FlaggedVoterContactDto'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdmin_FlaggedVoterContactDtoSchema = {
+    type: 'object',
+    properties: {
+        rowNumber: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
+        },
+        maskedValue: {
+            type: 'string',
+            nullable: true
+        },
+        reason: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdmin_FrozenSendElectionDtoSchema = {
+    type: 'object',
+    properties: {
+        electionGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        name: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdmin_FrozenSendOwnerDtoSchema = {
+    type: 'object',
+    properties: {
+        userId: {
+            type: 'string',
+            format: 'uuid'
+        },
+        email: {
+            type: 'string',
+            nullable: true
+        },
+        displayName: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdmin_PaidSendAdminOverviewDtoSchema = {
+    type: 'object',
+    properties: {
+        pendingOwners: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/SuperAdmin_PendingPaidSendOwnerDto'
+            },
+            nullable: true
+        },
+        capHits: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/SuperAdmin_PaidSendCapHitDto'
+            },
+            nullable: true
+        },
+        frozenElections: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/SuperAdmin_FrozenSendElectionDto'
+            },
+            nullable: true
+        },
+        frozenOwners: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/SuperAdmin_FrozenSendOwnerDto'
+            },
+            nullable: true
+        },
+        flaggedElections: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/SuperAdmin_FlaggedElectionDto'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdmin_PaidSendCapHitDtoSchema = {
+    type: 'object',
+    properties: {
+        scope: {
+            type: 'string',
+            nullable: true
+        },
+        electionGuid: {
+            type: 'string',
+            format: 'uuid',
+            nullable: true
+        },
+        electionName: {
+            type: 'string',
+            nullable: true
+        },
+        ownerUserId: {
+            type: 'string',
+            format: 'uuid',
+            nullable: true
+        },
+        ownerEmail: {
+            type: 'string',
+            nullable: true
+        },
+        used: {
+            type: 'integer',
+            format: 'int32'
+        },
+        cap: {
+            type: 'integer',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdmin_PendingPaidSendOwnerDtoSchema = {
+    type: 'object',
+    properties: {
+        userId: {
+            type: 'string',
+            format: 'uuid'
+        },
+        email: {
+            type: 'string',
+            nullable: true
+        },
+        displayName: {
+            type: 'string',
+            nullable: true
+        },
+        electionCount: {
+            type: 'integer',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdmin_RaiseElectionAllowanceDtoSchema = {
+    type: 'object',
+    properties: {
+        allowance: {
+            type: 'integer',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const SuperAdmin_RaiseOwnerDailyCapDtoSchema = {
+    type: 'object',
+    properties: {
+        dailyCap: {
+            type: 'integer',
+            format: 'int32'
         }
     },
     additionalProperties: false

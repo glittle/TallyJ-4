@@ -4,6 +4,7 @@ import {
   electionSupportsKiosk,
   setElectionKioskEnabled,
 } from "@/utils/votingMethodLabels";
+import { paidChannelMessageKey } from "@/utils/paidChannelMessage";
 import { computed, ref, type Ref } from "vue";
 import type {
   CreateElectionDto,
@@ -21,7 +22,14 @@ const props = defineProps<{
   ballotCount?: number;
   /** When true (create flow), always open on the basic tab instead of the remembered one. */
   forceBasicTab?: boolean;
+  paidChannelBlockReason?: string | null;
+  paidSendsUsed?: number;
+  paidSendAllowance?: number;
 }>();
+
+const paidChannelKey = computed(() =>
+  paidChannelMessageKey(props.paidChannelBlockReason),
+);
 
 const hasBallotsEntered = computed(() => (props.ballotCount ?? 0) > 0);
 
@@ -247,6 +255,20 @@ function onUseOnlineVotingChange(enabled: string | number | boolean) {
       :label="tabLabel('online-voting', $t('elections.tabs.onlineVoting'))"
       name="online-voting"
     >
+      <el-alert
+        v-if="paidChannelKey"
+        class="paid-channel-alert"
+        type="warning"
+        :closable="false"
+        show-icon
+        :title="
+          $t(paidChannelKey, {
+            used: paidSendsUsed ?? 0,
+            allowance: paidSendAllowance ?? 0,
+          })
+        "
+      />
+
       <el-form-item :label="$t('elections.form.useOnlineVoting')">
         <el-switch
           v-model="model.useOnlineVoting"

@@ -20,6 +20,7 @@ public class SuperAdminAuthorizationTests : IntegrationTestBase
     [InlineData("/api/superadmin/dashboard/summary")]
     [InlineData("/api/superadmin/dashboard/elections")]
     [InlineData("/api/superadmin/users")]
+    [InlineData("/api/superadmin/paid-sends")]
     public async Task SuperAdminEndpoints_ReturnForbidden_ForAuthenticatedNonSuperAdmin(string path)
     {
         var cookies = await LoginAndGetCookiesAsync("test@tallyj.com", "Tester1234!X");
@@ -87,6 +88,28 @@ public class SuperAdminAuthorizationTests : IntegrationTestBase
         var response = await Client.SendAsync(request);
 
         response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+
+    [Fact]
+    public async Task PaidSendActions_ReturnForbidden_ForAuthenticatedNonSuperAdmin()
+    {
+        var cookies = await LoginAndGetCookiesAsync("test@tallyj.com", "Tester1234!X");
+        var ownerId = Guid.NewGuid();
+
+        foreach (var path in new[]
+        {
+            $"/api/superadmin/paid-sends/owners/{ownerId}/approve",
+            $"/api/superadmin/paid-sends/owners/{ownerId}/freeze",
+            $"/api/superadmin/paid-sends/owners/{ownerId}/unfreeze",
+            $"/api/superadmin/paid-sends/elections/{Guid.NewGuid()}/freeze",
+            $"/api/superadmin/paid-sends/elections/{Guid.NewGuid()}/clear-flag"
+        })
+        {
+            var request = new HttpRequestMessage(HttpMethod.Post, path);
+            AttachCookies(request, cookies);
+            var response = await Client.SendAsync(request);
+            response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+        }
     }
 
     private async Task<Dictionary<string, string>> LoginAndGetCookiesAsync(string email, string password)

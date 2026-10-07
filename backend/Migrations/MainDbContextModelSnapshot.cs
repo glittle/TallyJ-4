@@ -22,6 +22,22 @@ namespace Backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Backend.Entities.AbuseAlertState", b =>
+                {
+                    b.Property<string>("AlertKey")
+                        .HasMaxLength(160)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(160)");
+
+                    b.Property<DateTimeOffset>("LastSentAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.HasKey("AlertKey");
+
+                    b.ToTable("AbuseAlertStates");
+                });
+
             modelBuilder.Entity("Backend.Entities.AccountInvite", b =>
                 {
                     b.Property<Guid>("Id")
@@ -131,6 +147,52 @@ namespace Backend.Migrations
                     b.HasIndex(new[] { "LocationGuid" }, "IX_Ballot_Location");
 
                     b.ToTable("Ballots");
+                });
+
+            modelBuilder.Entity("Backend.Entities.CodeSendLog", b =>
+                {
+                    b.Property<int>("RowId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("_RowId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RowId"));
+
+                    b.Property<string>("Channel")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<Guid?>("ElectionGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("MaskedDestination")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(80)");
+
+                    b.Property<string>("Outcome")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(40)");
+
+                    b.Property<Guid?>("OwnerUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset>("SentAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.HasKey("RowId");
+
+                    b.HasIndex(new[] { "ElectionGuid", "SentAt" }, "IX_CodeSendLog_Election_SentAt");
+
+                    b.HasIndex(new[] { "OwnerUserId", "SentAt" }, "IX_CodeSendLog_Owner_SentAt");
+
+                    b.ToTable("CodeSendLogs");
                 });
 
             modelBuilder.Entity("Backend.Entities.Computer", b =>
@@ -344,6 +406,43 @@ namespace Backend.Migrations
                         .IsUnique();
 
                     b.ToTable("Elections");
+                });
+
+            modelBuilder.Entity("Backend.Entities.ElectionSendControl", b =>
+                {
+                    b.Property<Guid>("ElectionGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("AllowanceOverride")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("ClearedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.Property<string>("ClearedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<bool>("Flagged")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("FlaggedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.Property<int>("FlaggedEntryCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaidSendsUsed")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("SendsFrozen")
+                        .HasColumnType("bit");
+
+                    b.HasKey("ElectionGuid");
+
+                    b.ToTable("ElectionSendControls");
                 });
 
             modelBuilder.Entity("Backend.Entities.ImportFile", b =>
@@ -675,6 +774,53 @@ namespace Backend.Migrations
                     b.HasIndex(new[] { "PersonGuid" }, "IX_OnlineVotingInfo_Person");
 
                     b.ToTable("OnlineVotingInfos");
+                });
+
+            modelBuilder.Entity("Backend.Entities.OwnerDailyPaidSend", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("UtcDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("SendCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "UtcDate");
+
+                    b.ToTable("OwnerDailyPaidSends");
+                });
+
+            modelBuilder.Entity("Backend.Entities.OwnerSendControl", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("ApprovedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.Property<string>("ApprovedByUserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int?>("DailyCapOverride")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("FirstPaidSendAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.Property<bool>("PaidSendsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("SendsFrozen")
+                        .HasColumnType("bit");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("OwnerSendControls");
                 });
 
             modelBuilder.Entity("Backend.Entities.Person", b =>

@@ -7527,6 +7527,393 @@
         }
       }
     },
+    "/api/superadmin/paid-sends": {
+      "get": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSuperAdmin_PaidSendAdminOverviewDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSuperAdmin_PaidSendAdminOverviewDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSuperAdmin_PaidSendAdminOverviewDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/paid-sends/owners/{userId}/approve": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/paid-sends/owners/{userId}/freeze": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/paid-sends/owners/{userId}/unfreeze": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/paid-sends/owners/{userId}/daily-cap": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuperAdmin_RaiseOwnerDailyCapDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuperAdmin_RaiseOwnerDailyCapDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuperAdmin_RaiseOwnerDailyCapDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/paid-sends/elections/{guid}/freeze": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/paid-sends/elections/{guid}/unfreeze": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/paid-sends/elections/{guid}/clear-flag": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/paid-sends/elections/{guid}/allowance": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "guid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuperAdmin_RaiseElectionAllowanceDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuperAdmin_RaiseElectionAllowanceDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuperAdmin_RaiseElectionAllowanceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/{electionGuid}/tellers": {
       "get": {
         "tags": [
@@ -8926,6 +9313,29 @@
         },
         "additionalProperties": false
       },
+      "ApiResponseSuperAdmin_PaidSendAdminOverviewDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/SuperAdmin_PaidSendAdminOverviewDto"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApiResponseSuperAdmin_SuperAdminElectionDetailDto": {
         "type": "object",
         "properties": {
@@ -9518,7 +9928,13 @@
           38,
           39,
           40,
-          41
+          41,
+          42,
+          43,
+          44,
+          45,
+          46,
+          47
         ],
         "type": "integer",
         "format": "int32"
@@ -10060,6 +10476,21 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          },
+          "paidChannelBlockReason": {
+            "type": "string",
+            "nullable": true
+          },
+          "paidSendsUsed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "paidSendAllowance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "onlineVotingSuspended": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -14927,6 +15358,202 @@
           },
           "electionMode": {
             "$ref": "#/components/schemas/Enumerations_ElectionModeCode"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdmin_FlaggedElectionDto": {
+        "type": "object",
+        "properties": {
+          "electionGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "flaggedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperAdmin_FlaggedVoterContactDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdmin_FlaggedVoterContactDto": {
+        "type": "object",
+        "properties": {
+          "rowNumber": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "maskedValue": {
+            "type": "string",
+            "nullable": true
+          },
+          "reason": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdmin_FrozenSendElectionDto": {
+        "type": "object",
+        "properties": {
+          "electionGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdmin_FrozenSendOwnerDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdmin_PaidSendAdminOverviewDto": {
+        "type": "object",
+        "properties": {
+          "pendingOwners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperAdmin_PendingPaidSendOwnerDto"
+            },
+            "nullable": true
+          },
+          "capHits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperAdmin_PaidSendCapHitDto"
+            },
+            "nullable": true
+          },
+          "frozenElections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperAdmin_FrozenSendElectionDto"
+            },
+            "nullable": true
+          },
+          "frozenOwners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperAdmin_FrozenSendOwnerDto"
+            },
+            "nullable": true
+          },
+          "flaggedElections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuperAdmin_FlaggedElectionDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdmin_PaidSendCapHitDto": {
+        "type": "object",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "nullable": true
+          },
+          "electionGuid": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "electionName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ownerUserId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "ownerEmail": {
+            "type": "string",
+            "nullable": true
+          },
+          "used": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cap": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdmin_PendingPaidSendOwnerDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "electionCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdmin_RaiseElectionAllowanceDto": {
+        "type": "object",
+        "properties": {
+          "allowance": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SuperAdmin_RaiseOwnerDailyCapDto": {
+        "type": "object",
+        "properties": {
+          "dailyCap": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

@@ -1,6 +1,7 @@
 using Backend.Context;
 using Backend.Helpers;
 using Backend.Identity;
+using Backend.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,6 +36,7 @@ public static partial class DbSeeder
             await EnsureOnlineVotersForSeededPhonesAsync(context);
             await context.SaveChangesAsync();
             await EnsureOnlineLocationsForEnabledElectionsAsync(context);
+            await ApproveSeededPaidSendOwnersAsync(context);
             return;
         }
 
@@ -49,7 +51,23 @@ public static partial class DbSeeder
         await EnsureOnlineVotersForSeededPhonesAsync(context);
         await context.SaveChangesAsync();
         await EnsureOnlineLocationsForEnabledElectionsAsync(context);
+        await ApproveSeededPaidSendOwnersAsync(context);
         logger.LogInformation("Database seeding complete");
+    }
+
+    /// <summary>
+    /// Approves paid sends for the built-in sample elections when that account has no control row yet.
+    /// Does not change a row a super admin already wrote.
+    /// </summary>
+    private static Task ApproveSeededPaidSendOwnersAsync(MainDbContext context)
+    {
+        Guid[] seededOnlineElections =
+        [
+            CreateGuid("SpringfieldLSA2024"),
+            CreateGuid("OnlineVotingRandom2024"),
+            CreateGuid("OnlineVotingBoth2024")
+        ];
+        return OwnerPaidSendGrandfather.ApproveSeededOnlineOwnersIfMissingAsync(context, seededOnlineElections);
     }
 
     private static async Task EnsureOnlineLocationsForEnabledElectionsAsync(MainDbContext context)
