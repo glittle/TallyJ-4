@@ -41,7 +41,7 @@ public class VoterContactFlag
     public string MaskedValue { get; set; } = null!;
 
     /// <summary>
-    /// invalid-phone, unexpected-country, consecutive-run, disposable-domain, or no-mx.
+    /// invalid-phone, unexpected-country, consecutive-run, disposable-domain, no-mx, or review-failed.
     /// </summary>
     [StringLength(40)]
     public string Reason { get; set; } = null!;

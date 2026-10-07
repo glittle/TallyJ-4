@@ -185,7 +185,8 @@ public class PeopleService : IPeopleService
         _context.People.Add(person);
         await OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync(_context, person.Phone);
         await _context.SaveChangesAsync();
-        if (_voterContactReviewer != null)
+        if (_voterContactReviewer != null
+            && (!string.IsNullOrWhiteSpace(person.Phone) || !string.IsNullOrWhiteSpace(person.Email)))
         {
             await _voterContactReviewer.ReviewElectionAsync(person.ElectionGuid);
         }
@@ -247,6 +248,7 @@ public class PeopleService : IPeopleService
         }
 
         var previousPhone = person.Phone;
+        var previousEmail = person.Email;
 
         if (!string.IsNullOrWhiteSpace(updateDto.Phone) && updateDto.Phone != person.Phone)
         {
@@ -287,8 +289,8 @@ public class PeopleService : IPeopleService
         }
 
         await _context.SaveChangesAsync();
-        if (_voterContactReviewer != null
-            && (!string.IsNullOrWhiteSpace(person.Phone) || !string.IsNullOrWhiteSpace(person.Email)))
+        var emailChanged = !string.Equals(previousEmail, person.Email, StringComparison.Ordinal);
+        if (_voterContactReviewer != null && (phoneChanged || emailChanged))
         {
             await _voterContactReviewer.ReviewElectionAsync(person.ElectionGuid);
         }

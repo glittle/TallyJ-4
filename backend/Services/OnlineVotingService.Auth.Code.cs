@@ -246,7 +246,7 @@ public partial class OnlineVotingService
                 return (false, VoterVerifyError.InvalidCodeWithAttempts(remaining), null);
             }
 
-            if (await VoterOpenElectionsAreAllFlaggedAsync(onlineVoter.VoterId))
+            if (await VoterOpenElectionsAreAllFlaggedAsync(onlineVoter.VoterId, onlineVoter.VoterIdType))
             {
                 return (false, "voting.auth.noOpenElections", null);
             }
@@ -545,16 +545,28 @@ public partial class OnlineVotingService
 
     /// <summary>
     /// True when this voter matches at least one open election and every one of those is flagged.
+    /// The match uses the same voter-id type and open-window rule as <see cref="MatchingOpenElectionGuidsAsync"/>.
     /// </summary>
-    private async Task<bool> VoterOpenElectionsAreAllFlaggedAsync(string voterId)
+    private async Task<bool> VoterOpenElectionsAreAllFlaggedAsync(string voterId, string? voterIdType)
     {
+        if (voterIdType is not ("E" or "P" or "C"))
+        {
+            return false;
+        }
+
         var now = DateTimeOffset.UtcNow;
-        var openIds = await _context.People
-            .Where(person => person.Email == voterId || person.Phone == voterId)
+        var people = voterIdType switch
+        {
+            "E" => _context.People.Where(person => person.Email == voterId),
+            "P" => _context.People.Where(person => person.Phone == voterId),
+            _ => _context.People.Where(person => person.KioskCode == voterId)
+        };
+        var openIds = await people
             .Join(
                 _context.Elections.Where(election =>
                     election.UseOnlineVoting
-                    && (election.OnlineWhenOpen == null || election.OnlineWhenOpen <= now)
+                    && election.OnlineWhenOpen != null
+                    && election.OnlineWhenOpen <= now
                     && (election.OnlineWhenClose == null || election.OnlineWhenClose > now)),
                 person => person.ElectionGuid,
                 election => election.ElectionGuid,

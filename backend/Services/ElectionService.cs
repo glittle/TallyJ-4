@@ -956,7 +956,8 @@ public class ElectionService : IElectionService
             EmailSubject = source.EmailSubject,
             CustomMethods = source.CustomMethods,
             VotingMethods = source.VotingMethods,
-            Flags = source.Flags
+            Flags = source.Flags,
+            ExpectedPhoneRegions = source.ExpectedPhoneRegions
         };
     }
 

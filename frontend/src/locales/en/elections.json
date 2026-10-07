@@ -815,9 +815,19 @@
     "w": "2026-10-07T05:45:00Z"
   },
   "elections.form.expectedPhoneRegionsHelp": {
-    "t": "ISO country codes, separated by commas. Phone numbers from other countries are flagged. Leave blank to use the site default (Canada).",
+    "t": "ISO country codes, for example CA, US. Phone numbers from other countries are flagged. Leave blank to use the site default (Canada).",
     "s": "source",
-    "w": "2026-10-07T05:45:00Z"
+    "w": "2026-10-07T06:20:00Z"
+  },
+  "elections.form.expectedPhoneRegionsInvalid": {
+    "t": "Use ISO country codes such as CA, US. USA, UK, and Canada are not codes.",
+    "s": "source",
+    "w": "2026-10-07T06:20:00Z"
+  },
+  "elections.form.expectedPhoneRegionsTooLong": {
+    "t": "Expected phone countries cannot be longer than 80 characters.",
+    "s": "source",
+    "w": "2026-10-07T06:20:00Z"
   },
   "elections.form.useOnlineVoting": {
     "t": "Use online voting",

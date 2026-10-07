@@ -107,8 +107,8 @@ public class VoterContactReviewerTests : ServiceTestBase
         await CreateReviewer(threshold: 10).ReviewElectionAsync(_electionId);
 
         var flagged = Context.VoterContactFlags.Where(row => row.Active).Select(row => row.ContactKey).ToList();
-        Assert.Contains("email:a@nomail.example", flagged);
-        Assert.DoesNotContain("email:b@slow.example", flagged);
+        Assert.Contains(VoterContactReviewer.HashContactKey("email:a@nomail.example"), flagged);
+        Assert.DoesNotContain(VoterContactReviewer.HashContactKey("email:b@slow.example"), flagged);
     }
 
     [Fact]
@@ -143,6 +143,43 @@ public class VoterContactReviewerTests : ServiceTestBase
             new Dictionary<Guid, int> { [personId] = 12 });
 
         Assert.Equal(12, Context.VoterContactFlags.Single(row => row.Active).SourceRowNumber);
+    }
+
+    [Fact]
+    public async Task LongEmail_FitsTheFlagColumns()
+    {
+        var domain = new string('x', 243) + ".test";
+        var email = "a@" + domain;
+        Assert.Equal(250, email.Length);
+        AddPerson(null, email);
+        await Context.SaveChangesAsync();
+        _mx.Results[domain] = MxLookupResult.NoMx;
+
+        await CreateReviewer(threshold: 10).ReviewElectionAsync(_electionId);
+
+        var flag = Context.VoterContactFlags.Single(row => row.Active);
+        Assert.Equal(VoterContactFlagReason.NoMx, flag.Reason);
+        Assert.InRange(flag.MaskedValue.Length, 1, 80);
+        Assert.Equal(64, flag.ContactKey.Length);
+        Assert.Equal(VoterContactReviewer.HashContactKey("email:" + email), flag.ContactKey);
+    }
+
+    [Fact]
+    public async Task ReviewFailure_FlagsTheElection_AndKeepsThePeople()
+    {
+        AddPerson(null, "a@boom.example");
+        await Context.SaveChangesAsync();
+        _mx.Failure = new InvalidOperationException("dns client failed");
+
+        var thrown = await Record.ExceptionAsync(() => CreateReviewer(threshold: 10).ReviewElectionAsync(_electionId));
+
+        Assert.Null(thrown);
+        Assert.Single(Context.People);
+        var control = Context.ElectionSendControls.Single();
+        Assert.True(control.Flagged);
+        Assert.Contains(Context.VoterContactFlags, row => row.Active && row.Reason == VoterContactFlagReason.ReviewFailed);
+        Assert.Single(_alerts.Flagged);
+        Assert.Contains(_alerts.Flagged[0].Rows, row => row.Reason == VoterContactFlagReason.ReviewFailed);
     }
 
     private void AddPerson(string? phone, string? email)
@@ -233,9 +270,16 @@ public class VoterContactReviewerTests : ServiceTestBase
 
         public List<string> LookedUp { get; } = new();
 
+        public Exception? Failure { get; set; }
+
         public Task<MxLookupResult> LookupAsync(string domain, CancellationToken cancellationToken = default)
         {
             LookedUp.Add(domain);
+            if (Failure != null)
+            {
+                throw Failure;
+            }
+
             return Task.FromResult(Results.TryGetValue(domain, out var result) ? result : MxLookupResult.HasMx);
         }
     }

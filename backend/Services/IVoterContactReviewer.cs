@@ -45,6 +45,11 @@ public static class VoterContactFlagReason
     /// The email domain has no MX record, or its MX is the Null MX in RFC 7505.
     /// </summary>
     public const string NoMx = "no-mx";
+
+    /// <summary>
+    /// The review threw. The election is flagged so codes and online voting stay stopped.
+    /// </summary>
+    public const string ReviewFailed = "review-failed";
 }
 
 /// <summary>

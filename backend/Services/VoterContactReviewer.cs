@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Security.Cryptography;
+using System.Text;
 using Backend.Configuration;
 using Backend.Context;
 using Backend.DTOs.Security;
@@ -51,6 +53,23 @@ public class VoterContactReviewer : IVoterContactReviewer
         Guid electionGuid,
         IReadOnlyDictionary<Guid, int>? sourceRowNumbers = null,
         CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            await ReviewStoredPeopleAsync(electionGuid, sourceRowNumbers, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            // People are already saved. Flag the election so a review bug cannot leave sending open.
+            _logger.LogError(ex, "Voter list review failed for election {ElectionGuid}", electionGuid);
+            await FlagBecauseReviewFailedAsync(electionGuid, cancellationToken);
+        }
+    }
+
+    private async Task ReviewStoredPeopleAsync(
+        Guid electionGuid,
+        IReadOnlyDictionary<Guid, int>? sourceRowNumbers,
+        CancellationToken cancellationToken)
     {
         var election = await _context.Elections
             .AsNoTracking()
@@ -315,10 +334,112 @@ public class VoterContactReviewer : IVoterContactReviewer
         {
             PersonGuid = personGuid,
             SourceRowNumber = rowNumber,
-            MaskedValue = masked,
+            MaskedValue = FitColumn(masked, 80),
             Reason = reason,
-            ContactKey = contactKey
+            ContactKey = HashContactKey(contactKey)
         };
+    }
+
+    /// <summary>
+    /// SHA-256 of the normalized phone or email. The same contact stays one key, and the key fits the column.
+    /// </summary>
+    internal static string HashContactKey(string contactKey)
+    {
+        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(contactKey));
+        return Convert.ToHexString(bytes).ToLowerInvariant();
+    }
+
+    private static string FitColumn(string value, int maxLength)
+    {
+        if (string.IsNullOrEmpty(value) || value.Length <= maxLength)
+        {
+            return value ?? "";
+        }
+
+        return value[..maxLength];
+    }
+
+    private async Task FlagBecauseReviewFailedAsync(Guid electionGuid, CancellationToken cancellationToken)
+    {
+        try
+        {
+            foreach (var entry in _context.ChangeTracker.Entries<VoterContactFlag>().ToList())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.State = EntityState.Detached;
+                }
+            }
+
+            var electionName = await _context.Elections
+                .AsNoTracking()
+                .Where(item => item.ElectionGuid == electionGuid)
+                .Select(item => item.Name)
+                .FirstOrDefaultAsync(cancellationToken);
+            if (electionName == null)
+            {
+                return;
+            }
+
+            var now = DateTimeOffset.UtcNow;
+            _context.VoterContactFlags.Add(new VoterContactFlag
+            {
+                ElectionGuid = electionGuid,
+                MaskedValue = "review failed",
+                Reason = VoterContactFlagReason.ReviewFailed,
+                ContactKey = HashContactKey(VoterContactFlagReason.ReviewFailed),
+                Active = true,
+                FlaggedAt = now
+            });
+
+            var control = await _context.ElectionSendControls
+                .FirstOrDefaultAsync(row => row.ElectionGuid == electionGuid, cancellationToken);
+            var alreadyFlagged = control?.Flagged == true;
+            if (control == null)
+            {
+                control = new ElectionSendControl { ElectionGuid = electionGuid };
+                _context.ElectionSendControls.Add(control);
+            }
+
+            if (control.FlaggedEntryCount < 1)
+            {
+                control.FlaggedEntryCount = 1;
+            }
+
+            if (!alreadyFlagged)
+            {
+                control.Flagged = true;
+                control.FlaggedAt = now;
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
+            if (alreadyFlagged)
+            {
+                return;
+            }
+
+            await _audit.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.ElectionFlagged,
+                ElectionGuid = electionGuid,
+                Details = "Flagged election " + electionGuid + " because the voter-list review failed",
+                Severity = SecurityEventSeverity.Warning
+            });
+            await _alerts.NotifyElectionFlaggedAsync(
+                new AbuseElectionFlaggedAlert(
+                    electionGuid,
+                    electionName,
+                    control.FlaggedEntryCount,
+                    new[]
+                    {
+                        new AbuseFlaggedRow(null, "review failed", VoterContactFlagReason.ReviewFailed)
+                    }),
+                cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Could not flag election {ElectionGuid} after the voter-list review failed", electionGuid);
+        }
     }
 
     private (string DefaultRegion, HashSet<string> Regions) ExpectedRegions(string? stored)
@@ -327,8 +448,13 @@ public class VoterContactReviewer : IVoterContactReviewer
         string? first = null;
         if (!string.IsNullOrWhiteSpace(stored))
         {
-            foreach (var part in stored.Split(new[] { ',', ';', ' ' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+            foreach (var part in ExpectedPhoneRegions.Split(stored))
             {
+                if (!ExpectedPhoneRegions.IsSupported(part))
+                {
+                    continue;
+                }
+
                 var code = part.ToUpperInvariant();
                 first ??= code;
                 regions.Add(code);
@@ -338,6 +464,10 @@ public class VoterContactReviewer : IVoterContactReviewer
         var fallback = string.IsNullOrWhiteSpace(_options.DefaultPhoneRegionCode)
             ? AntiAbuseOptions.DefaultPhoneRegion
             : _options.DefaultPhoneRegionCode.Trim().ToUpperInvariant();
+        if (!ExpectedPhoneRegions.IsSupported(fallback))
+        {
+            fallback = AntiAbuseOptions.DefaultPhoneRegion;
+        }
         if (regions.Count == 0)
         {
             regions.Add(fallback);

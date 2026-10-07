@@ -129,6 +129,12 @@ public class UpdateElectionDtoValidator : AbstractValidator<UpdateElectionDto>
         RuleFor(x => x.VotingMethods)
             .MaximumLength(10)
             .WithMessage("Voting methods cannot exceed 10 characters");
+
+        RuleFor(x => x.ExpectedPhoneRegions)
+            .MaximumLength(ExpectedPhoneRegions.MaxLength)
+            .WithMessage(ExpectedPhoneRegions.TooLongMessageKey)
+            .Must(ExpectedPhoneRegions.AreSupported)
+            .WithMessage(ExpectedPhoneRegions.InvalidMessageKey);
     }
 
     private string? ReadStoredPasscode()
