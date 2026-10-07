@@ -10,11 +10,14 @@ namespace Backend.Middleware;
 
 /// <summary>
 /// In-memory rate limiting for anonymous teller and voter authentication endpoints.
-/// Teller routes stay tight per trusted-ingress IP. Voter code routes use a per-VoterId
-/// bucket (capped JSON peek) plus a loose per-IP venue ceiling so a hall
-/// behind one public NAT is not locked after a few people. Oversized bodies are
-/// rejected (413); they are not demoted to missing:{ip}. Leftmost XFF is never used
-/// to split venue clients (see GetClientIpAddress).
+/// Account login and guest teller login count failed attempts only, 20 per minute
+/// per trusted-ingress IP. Venues often put many tellers behind one public NAT, so
+/// a successful join must not fill that bucket; the per-election lockout is the
+/// guessing guard. Other teller routes stay tight per IP and count every request.
+/// Voter code routes use a per-VoterId bucket (capped JSON peek) plus a loose per-IP
+/// venue ceiling so a hall behind one public NAT is not locked after a few people.
+/// Oversized bodies are rejected (413); they are not demoted to missing:{ip}.
+/// Leftmost XFF is never used to split venue clients (see GetClientIpAddress).
 /// </summary>
 public class RateLimitingMiddleware
 {
@@ -25,9 +28,22 @@ public class RateLimitingMiddleware
     public const int VoterVenueIpMaxRequests = 60;
 
     /// <summary>
-    /// Guest teller passcode attempts allowed per trusted-ingress IP per minute.
+    /// Failed guest-teller attempts (unknown election or wrong passcode) allowed per
+    /// trusted-ingress IP per minute. Successes do not consume the bucket, and neither
+    /// do not-open, no-main-teller, or locked replies. Venues behind one NAT share
+    /// this IP; the per-election lockout is the guessing guard.
     /// </summary>
-    public const int TellerLoginIpMaxRequests = 5;
+    public const int TellerLoginIpMaxRequests = 20;
+
+    /// <summary>
+    /// Failed account-login attempts (bad credentials) allowed per trusted-ingress IP
+    /// per minute. Successful logins do not consume the bucket. Account-locked,
+    /// unverified-email, and invalid two-factor replies do not count. Venues behind
+    /// one NAT share this IP.
+    /// </summary>
+    public const int LoginIpMaxRequests = 20;
+
+    internal const string IpFailureItemKey = "RateLimitCountFailure";
 
     private static readonly TimeSpan OneMinute = TimeSpan.FromMinutes(1);
 
@@ -38,7 +54,7 @@ public class RateLimitingMiddleware
     private static readonly Dictionary<string, (int MaxRequests, TimeSpan Window)> TellerIpLimits =
         new(StringComparer.OrdinalIgnoreCase)
         {
-            { "/api/auth/login", (5, TimeSpan.FromMinutes(1)) },
+            { "/api/auth/login", (LoginIpMaxRequests, OneMinute) },
             { "/api/auth/teller-login", (TellerLoginIpMaxRequests, OneMinute) },
             // Endpoint is disabled (400 + i18n key); keep a tight bucket for leftover callers.
             { "/api/auth/registerAccount", (3, TimeSpan.FromHours(1)) },
@@ -52,6 +68,16 @@ public class RateLimitingMiddleware
             { "/api/auth/kakao", (5, TimeSpan.FromMinutes(1)) },
             { "/api/auth/telegram", (5, TimeSpan.FromMinutes(1)) }
         };
+
+    /// <summary>
+    /// These routes reject up front when the bucket is full, then record a timestamp
+    /// only after the endpoint runs and only when it reports a counted failure.
+    /// </summary>
+    private static readonly HashSet<string> FailureOnlyIpPaths = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "/api/auth/login",
+        "/api/auth/teller-login"
+    };
 
     private static readonly HashSet<string> VoterCodePaths = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -135,16 +161,38 @@ public class RateLimitingMiddleware
             ];
         }
 
+        var failureOnly = FailureOnlyIpPaths.Contains(path);
         if (buckets != null)
         {
             var userAgent = context.Request.Headers.UserAgent.ToString();
-            if (await TryRejectIfLimitedAsync(context, securityAuditService, path, clientIp!, userAgent, buckets))
+            if (await TryRejectIfLimitedAsync(
+                    context,
+                    securityAuditService,
+                    path,
+                    clientIp!,
+                    userAgent,
+                    buckets,
+                    recordAttempts: !failureOnly))
             {
                 return;
             }
         }
 
         await _next(context);
+
+        if (failureOnly && buckets != null && context.Items.ContainsKey(IpFailureItemKey))
+        {
+            RecordAttempts(buckets);
+        }
+    }
+
+    /// <summary>
+    /// Marks this request as a counted per-IP failure. The middleware records it
+    /// after the endpoint returns. A 429 that never reached the endpoint is not marked.
+    /// </summary>
+    public static void MarkIpFailure(HttpContext context)
+    {
+        context.Items[IpFailureItemKey] = true;
     }
 
     internal static string GetClientKey(string path, string clientIp)
@@ -177,7 +225,8 @@ public class RateLimitingMiddleware
         string path,
         string clientIp,
         string userAgent,
-        IReadOnlyList<(string Key, int MaxRequests, TimeSpan Window, string Bucket)> buckets)
+        IReadOnlyList<(string Key, int MaxRequests, TimeSpan Window, string Bucket)> buckets,
+        bool recordAttempts)
     {
         foreach (var (key, maxRequests, window, bucket) in buckets)
         {
@@ -206,13 +255,22 @@ public class RateLimitingMiddleware
             return true;
         }
 
+        if (recordAttempts)
+        {
+            RecordAttempts(buckets);
+        }
+
+        return false;
+    }
+
+    private void RecordAttempts(
+        IReadOnlyList<(string Key, int MaxRequests, TimeSpan Window, string Bucket)> buckets)
+    {
         var now = DateTime.UtcNow;
         foreach (var (key, _, _, _) in buckets)
         {
             _store.RequestLog.GetOrAdd(key, _ => new List<DateTime>()).Add(now);
         }
-
-        return false;
     }
 
     private async Task WritePayloadTooLargeAsync(HttpContext context, string path, string clientIp)

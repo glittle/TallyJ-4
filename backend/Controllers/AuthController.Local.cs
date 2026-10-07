@@ -325,6 +325,7 @@ public partial class AuthController
 
     private IActionResult InvalidElectionOrPasscode()
     {
+        RateLimitingMiddleware.MarkIpFailure(HttpContext);
         return BadRequest(new { error = InvalidElectionOrPasscodeKey });
     }
 

@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using Backend.DTOs.Auth;
 using Backend.Context;
 using Backend.Identity;
+using Backend.Middleware;
 
 namespace Backend.Services.Auth;
 
@@ -14,6 +16,7 @@ public class LocalAuthService : ILocalAuthService
     private readonly IStringLocalizer<LocalAuthService> _localizer;
     private readonly EmailService _emailService;
     private readonly ITwoFactorService _twoFactorService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public LocalAuthService(
         UserManager<AppUser> userManager,
@@ -21,7 +24,8 @@ public class LocalAuthService : ILocalAuthService
         MainDbContext context,
         IStringLocalizer<LocalAuthService> localizer,
         EmailService emailService,
-        ITwoFactorService twoFactorService)
+        ITwoFactorService twoFactorService,
+        IHttpContextAccessor httpContextAccessor)
     {
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
@@ -29,6 +33,7 @@ public class LocalAuthService : ILocalAuthService
         _localizer = localizer;
         _emailService = emailService;
         _twoFactorService = twoFactorService;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     /// <summary>
@@ -97,6 +102,7 @@ public class LocalAuthService : ILocalAuthService
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
         {
+            MarkInvalidCredential();
             return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
 
@@ -126,6 +132,7 @@ public class LocalAuthService : ILocalAuthService
                 return (false, _localizer["auth.errors.accountLocked"], null);
             }
 
+            MarkInvalidCredential();
             return (false, _localizer["auth.errors.invalidCredentials"], null);
         }
 
@@ -170,6 +177,14 @@ public class LocalAuthService : ILocalAuthService
             AuthMethod = user.AuthMethod,
             Requires2FA = false
         });
+    }
+
+    private void MarkInvalidCredential()
+    {
+        if (_httpContextAccessor.HttpContext != null)
+        {
+            RateLimitingMiddleware.MarkIpFailure(_httpContextAccessor.HttpContext);
+        }
     }
 }
 

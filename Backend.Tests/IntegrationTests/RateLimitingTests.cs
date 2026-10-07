@@ -53,9 +53,9 @@ public class RateLimitingTests : IntegrationTestBase
             Password = "WrongPassword"
         };
 
-        // Act - Make 6 login attempts (exceeds 5 per minute limit)
+        // Act - one more bad-credential attempt than the per-IP failure cap
         HttpResponseMessage? lastResponse = null;
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < RateLimitingMiddleware.LoginIpMaxRequests + 1; i++)
         {
             lastResponse = await PostJsonWithForwardedFor(
                 "/api/auth/login",
@@ -81,7 +81,7 @@ public class RateLimitingTests : IntegrationTestBase
         };
 
         HttpResponseMessage? lastForFirstClient = null;
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < RateLimitingMiddleware.LoginIpMaxRequests + 1; i++)
         {
             lastForFirstClient = await PostJsonWithForwardedFor(
                 "/api/auth/login",
@@ -110,7 +110,7 @@ public class RateLimitingTests : IntegrationTestBase
         };
 
         HttpResponseMessage? lastResponse = null;
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < RateLimitingMiddleware.LoginIpMaxRequests + 1; i++)
         {
             lastResponse = await PostJsonWithForwardedFor(
                 "/api/auth/login",
@@ -122,6 +122,60 @@ public class RateLimitingTests : IntegrationTestBase
         lastResponse!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
         var body = await lastResponse.Content.ReadAsStringAsync();
         body.Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
+    }
+
+    [Fact]
+    public async Task Login_SameIp_ThirtySuccesses_AllSucceed()
+    {
+        var loginRequest = new LoginRequest
+        {
+            Email = "admin@tallyj.test",
+            Password = "TestPass123!"
+        };
+
+        for (var i = 0; i < 30; i++)
+        {
+            var response = await PostJsonWithForwardedFor(
+                "/api/auth/login",
+                loginRequest,
+                "192.0.2.20");
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+    }
+
+    [Fact]
+    public async Task Login_SameIp_SuccessAfterFailures_DoesNotConsumeTheBucket()
+    {
+        var bad = new LoginRequest
+        {
+            Email = "rate-limit-mixed@example.com",
+            Password = "WrongPassword"
+        };
+        var good = new LoginRequest
+        {
+            Email = "admin@tallyj.test",
+            Password = "TestPass123!"
+        };
+        const string ip = "192.0.2.21";
+
+        for (var i = 0; i < 5; i++)
+        {
+            var failed = await PostJsonWithForwardedFor("/api/auth/login", bad, ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        var success = await PostJsonWithForwardedFor("/api/auth/login", good, ip);
+        success.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        for (var i = 0; i < RateLimitingMiddleware.LoginIpMaxRequests - 5; i++)
+        {
+            var failed = await PostJsonWithForwardedFor("/api/auth/login", bad, ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        var limited = await PostJsonWithForwardedFor("/api/auth/login", bad, ip);
+        limited.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+        (await limited.Content.ReadAsStringAsync()).Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
     }
 
     [Fact]

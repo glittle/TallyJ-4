@@ -31,26 +31,64 @@ public class TellerLoginProtectionTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task TellerLogin_SameIp_SixthAttempt_Returns429_AndDoesNotCountTheRejectedAttempt()
+    public async Task TellerLogin_SameIp_ThirtySuccesses_AllSucceed()
+    {
+        ResetRateLimit();
+        var electionGuid = await CreateOpenElectionAsync("secret-code", "Many Successful Tellers");
+        const string ip = "192.0.2.10";
+
+        for (var i = 0; i < 30; i++)
+        {
+            var response = await PostTellerLoginAsync(electionGuid, "secret-code", ip);
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+    }
+
+    [Fact]
+    public async Task TellerLogin_SameIp_TwentyFirstFailure_Returns429_AndDoesNotCountTheRejectedAttempt()
     {
         ResetRateLimit();
         var electionGuid = await CreateOpenElectionAsync("secret-code", "Rate Limited Teller Election");
-        const string ip = "203.0.113.80";
+        const string ip = "192.0.2.11";
 
-        HttpResponseMessage? last = null;
-        for (var i = 0; i < 6; i++)
+        for (var i = 0; i < RateLimitingMiddleware.TellerLoginIpMaxRequests; i++)
         {
-            last = await PostTellerLoginAsync(electionGuid, "wrong-code", ip);
+            var failed = await PostTellerLoginAsync(Guid.NewGuid(), "wrong-code", ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            (await failed.Content.ReadAsStringAsync()).Should().Contain(AuthController.InvalidElectionOrPasscodeKey);
         }
 
-        last!.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
-        var body = await last.Content.ReadAsStringAsync();
-        body.Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
+        var limited = await PostTellerLoginAsync(electionGuid, "wrong-code", ip);
+        limited.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+        (await limited.Content.ReadAsStringAsync()).Should().Contain(RateLimitingMiddleware.TooManyRequestsKey);
 
-        var failures = await ReadLockoutAsync(electionGuid);
-        failures.Should().NotBeNull();
-        failures!.ConsecutiveFailures.Should().Be(RateLimitingMiddleware.TellerLoginIpMaxRequests);
-        failures.LockedUntil.Should().BeNull();
+        (await ReadLockoutAsync(electionGuid)).Should().BeNull();
+    }
+
+    [Fact]
+    public async Task TellerLogin_SameIp_SuccessAfterFailures_DoesNotConsumeTheBucket()
+    {
+        ResetRateLimit();
+        var electionGuid = await CreateOpenElectionAsync("secret-code", "Success Does Not Count");
+        const string ip = "192.0.2.12";
+
+        for (var i = 0; i < 5; i++)
+        {
+            var failed = await PostTellerLoginAsync(Guid.NewGuid(), "wrong-code", ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        var success = await PostTellerLoginAsync(electionGuid, "secret-code", ip);
+        success.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        for (var i = 0; i < RateLimitingMiddleware.TellerLoginIpMaxRequests - 5; i++)
+        {
+            var failed = await PostTellerLoginAsync(Guid.NewGuid(), "wrong-code", ip);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        var limited = await PostTellerLoginAsync(Guid.NewGuid(), "wrong-code", ip);
+        limited.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
     }
 
     [Fact]
