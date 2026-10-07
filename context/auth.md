@@ -258,8 +258,9 @@ A signed-in principal is not enough. Teller and owner endpoints authorize the el
 - Route `electionGuid` / `guid` / `electionId` / `id` (when that value is the election) uses `ElectionAccess` or `FullTellerAccess`.
 - A person, ballot, vote, location, or teller guid is resolved to its election first (`RequireElectionAccess`). Body `ElectionGuid` (create person, create ballot, dashboard more-info) is checked the same way.
 - `ElectionAccess` allows a guest teller only for the election on the token, plus any `JoinElectionUsers` row, plus the `SuperAdmin:Emails` list and Identity role `Admin`.
-- `FullTellerAccess` is Owner/Admin join, Identity Admin, or super admin. Guests are denied. Used for the teller roster, people import, setup step 2, results writes, and dashboard listing/teller assignment.
-- Operational reads and writes that the guest teller UI already performs (people, ballots, votes, locations, result reads, reports, exports) stay on `ElectionAccess`.
+- `FullTellerAccess` is Owner/Admin join, Identity Admin, or super admin. Guests are denied. Used for teller update/delete, people import, setup step 2, results writes, and dashboard listing/teller assignment.
+- Operational reads and writes that the guest teller UI already performs stay on `ElectionAccess`. That includes people, ballots, votes, locations, result reads, reports, exports, and the teller name list plus create. `ActiveTellerSelector` lists and adds names from Front Desk and ballot entry, which guests are allowed to open. The tellers admin page (update and delete) stays `FullTellerAccess`.
+- A vote's body `BallotGuid` must belong to the same election as the vote. `PersonGuid` is loaded only from that election. A mismatch returns 404 `{ error: "error.notFound" }` and does not copy the other person's `CombinedInfo` or move the vote. Reorder only updates votes already on the authorized ballot. Create-ballot already requires the location to be in the body election.
 - Online-voter tokens (`voterType=online`) fail the default `[Authorize]` policy and every election policy. Online voting endpoints stay on `OnlineVoter`.
 - Site-wide `GET /api/security-audit-logs` (no election) is super admin only (403). An `electionGuid` filter requires membership (`HeadTellerAccess`: any join, not a guest). A log row the caller cannot see returns the same not-found body as a missing id.
 - An existing election the caller cannot access is 403 on route policies (same as duplicate/reset). Entity and body checks return 404 `{ error: "error.notFound" }` so the guid does not confirm that the row exists. A route policy still succeeds when the election row is absent, so the action can return 404 (or 400 when validation runs first).
@@ -270,3 +271,7 @@ The unused `Backend.Services.Auth` election-access handler was a second requirem
 **Rejected alternative:** class-level `ElectionAccess` on People, Ballots, and Votes. The route key `guid` would be treated as an election guid, and a person or ballot guid that is not an election would pass the missing-election exception.
 
 **Rejected alternative:** 404 for every election the caller cannot access, including route policies. Existing owner-only election actions already return 403 when the election exists.
+
+**Rejected alternative:** `FullTellerAccess` on the whole teller controller. Guest ballot entry would get 403 on the name list and could not add a teller name.
+
+**Rejected alternative:** allow `UpdateVote` to retarget `BallotGuid` and look up `PersonGuid` globally. That moves a vote onto another election and copies that person's combined info.

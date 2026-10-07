@@ -104,11 +104,18 @@ public class CrossElectionAuthorizationTests : IntegrationTestBase
         Assert.Equal(HttpStatusCode.OK, (await GetAsync($"/api/Ballots/{seeded.ElectionA}/ballots")).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await GetAsync($"/api/Results/election/{seeded.ElectionA}")).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await GetAsync($"/api/{seeded.ElectionA}/locations/getLocations")).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await GetAsync($"/api/{seeded.ElectionA}/tellers")).StatusCode);
+        Assert.Equal(HttpStatusCode.Created, (await PostJsonAsync($"/api/{seeded.ElectionA}/tellers/createTeller", new CreateTellerDto
+        {
+            ElectionGuid = seeded.ElectionA,
+            Name = "Guest Desk"
+        })).StatusCode);
 
         Assert.Equal(HttpStatusCode.Forbidden, (await GetAsync($"/api/People/{seeded.ElectionB}/getPeople")).StatusCode);
         Assert.Equal(HttpStatusCode.Forbidden, (await GetAsync($"/api/Ballots/{seeded.ElectionB}/ballots")).StatusCode);
-        Assert.Equal(HttpStatusCode.Forbidden, (await GetAsync($"/api/{seeded.ElectionA}/tellers")).StatusCode);
         Assert.Equal(HttpStatusCode.Forbidden, (await GetAsync($"/api/{seeded.ElectionB}/tellers")).StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, (await PutJsonAsync($"/api/{seeded.ElectionA}/tellers/{seeded.TellerA}/updateTeller", new { name = "Renamed" })).StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, (await DeleteAsync($"/api/{seeded.ElectionA}/tellers/{seeded.TellerA}/deleteTeller")).StatusCode);
         Assert.Equal(HttpStatusCode.Forbidden, (await PostJsonAsync($"/api/Results/election/{seeded.ElectionA}/calculate", new { })).StatusCode);
         Assert.Equal(HttpStatusCode.Forbidden, (await GetAsync($"/api/PeopleImport/{seeded.ElectionA}/files")).StatusCode);
     }
@@ -189,6 +196,53 @@ public class CrossElectionAuthorizationTests : IntegrationTestBase
         Assert.Equal(HttpStatusCode.OK, (await GetAsync($"/api/security-audit-logs/{seeded.SiteAudit}")).StatusCode);
     }
 
+    [Fact]
+    public async Task VoteBodyIds_MustBelongToTheAuthorizedElection()
+    {
+        var seeded = await CreateTwoOwnedElectionsAsync();
+        SetAuthToken(seeded.OwnerAToken);
+
+        var moved = await PutJsonAsync($"/api/Votes/{seeded.VoteA}/updateVote", new CreateVoteDto
+        {
+            BallotGuid = seeded.BallotB,
+            PersonGuid = seeded.PersonA,
+            PositionOnBallot = 1
+        });
+        Assert.Equal(HttpStatusCode.NotFound, moved.StatusCode);
+
+        var otherPerson = await PutJsonAsync($"/api/Votes/{seeded.VoteA}/updateVote", new CreateVoteDto
+        {
+            BallotGuid = seeded.BallotA,
+            PersonGuid = seeded.PersonB,
+            PositionOnBallot = 1
+        });
+        Assert.Equal(HttpStatusCode.NotFound, otherPerson.StatusCode);
+
+        var created = await PostJsonAsync("/api/Votes/createVote", new CreateVoteDto
+        {
+            BallotGuid = seeded.BallotA,
+            PersonGuid = seeded.PersonB,
+            PositionOnBallot = 1
+        });
+        Assert.Equal(HttpStatusCode.NotFound, created.StatusCode);
+
+        var kept = await PutJsonAsync($"/api/Votes/{seeded.VoteA}/updateVote", new CreateVoteDto
+        {
+            BallotGuid = seeded.BallotA,
+            PersonGuid = seeded.PersonA,
+            PositionOnBallot = 1
+        });
+        Assert.Equal(HttpStatusCode.OK, kept.StatusCode);
+
+        using var scope = Factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var vote = await db.Votes.SingleAsync(v => v.RowId == seeded.VoteA);
+        Assert.Equal(seeded.BallotA, vote.BallotGuid);
+        Assert.Equal(seeded.PersonA, vote.PersonGuid);
+        Assert.NotEqual("from-election-b", vote.PersonCombinedInfo);
+        Assert.Equal(1, await db.Votes.CountAsync(v => v.BallotGuid == seeded.BallotA));
+    }
+
     private async Task<SeededElections> CreateTwoOwnedElectionsAsync()
     {
         var suffix = Guid.NewGuid().ToString("N")[..8];
@@ -201,9 +255,13 @@ public class CrossElectionAuthorizationTests : IntegrationTestBase
         var electionB = await CreateElectionAsync($"Election B {suffix}");
 
         var personA = Guid.NewGuid();
+        var personB = Guid.NewGuid();
         var locationA = Guid.NewGuid();
+        var locationB = Guid.NewGuid();
         var ballotA = Guid.NewGuid();
+        var ballotB = Guid.NewGuid();
         int voteA;
+        int tellerA;
         int auditForA;
         int siteAudit;
 
@@ -216,6 +274,12 @@ public class CrossElectionAuthorizationTests : IntegrationTestBase
                 ElectionGuid = electionA,
                 Name = "Main Hall"
             });
+            db.Locations.Add(new Location
+            {
+                LocationGuid = locationB,
+                ElectionGuid = electionB,
+                Name = "Other Hall"
+            });
             db.People.Add(new Person
             {
                 PersonGuid = personA,
@@ -224,6 +288,18 @@ public class CrossElectionAuthorizationTests : IntegrationTestBase
                 LastName = "Lovelace",
                 Email = "ada@example.test",
                 Phone = "555-0100",
+                CombinedInfo = "from-election-a",
+                RowVersion = new byte[8]
+            });
+            db.People.Add(new Person
+            {
+                PersonGuid = personB,
+                ElectionGuid = electionB,
+                FirstName = "Grace",
+                LastName = "Hopper",
+                Email = "grace@example.test",
+                Phone = "555-0199",
+                CombinedInfo = "from-election-b",
                 RowVersion = new byte[8]
             });
             db.Ballots.Add(new Ballot
@@ -232,6 +308,14 @@ public class CrossElectionAuthorizationTests : IntegrationTestBase
                 LocationGuid = locationA,
                 StatusCode = BallotStatus.Ok,
                 ComputerCode = "A",
+                RowVersion = new byte[8]
+            });
+            db.Ballots.Add(new Ballot
+            {
+                BallotGuid = ballotB,
+                LocationGuid = locationB,
+                StatusCode = BallotStatus.Ok,
+                ComputerCode = "B",
                 RowVersion = new byte[8]
             });
             var vote = new Vote
@@ -243,12 +327,13 @@ public class CrossElectionAuthorizationTests : IntegrationTestBase
                 RowVersion = new byte[8]
             };
             db.Votes.Add(vote);
-            db.Tellers.Add(new Teller
+            var teller = new Teller
             {
                 ElectionGuid = electionA,
                 Name = "Head",
                 RowVersion = new byte[8]
-            });
+            };
+            db.Tellers.Add(teller);
             var electionLog = new SecurityAuditLog
             {
                 Timestamp = DateTimeOffset.UtcNow,
@@ -270,11 +355,12 @@ public class CrossElectionAuthorizationTests : IntegrationTestBase
             db.SecurityAuditLogs.Add(siteLog);
             await db.SaveChangesAsync();
             voteA = vote.RowId;
+            tellerA = teller.RowId;
             auditForA = electionLog.Id;
             siteAudit = siteLog.Id;
         }
 
-        return new SeededElections(ownerAToken, ownerBToken, electionA, electionB, personA, locationA, ballotA, voteA, auditForA, siteAudit);
+        return new SeededElections(ownerAToken, ownerBToken, electionA, electionB, personA, personB, locationA, ballotA, ballotB, voteA, tellerA, auditForA, siteAudit);
     }
 
     private async Task<Guid> CreateElectionAsync(string name)
@@ -298,9 +384,12 @@ public class CrossElectionAuthorizationTests : IntegrationTestBase
         Guid ElectionA,
         Guid ElectionB,
         Guid PersonA,
+        Guid PersonB,
         Guid LocationA,
         Guid BallotA,
+        Guid BallotB,
         int VoteA,
+        int TellerA,
         int AuditForA,
         int SiteAudit);
 }

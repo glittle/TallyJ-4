@@ -91,6 +91,10 @@ public class VotesController : ControllerBase
                 new { id = result.Vote!.RowId },
                 ApiResponse<VoteWithBallotStatusDto>.SuccessResponse(result));
         }
+        catch (ElectionScopeMismatchException)
+        {
+            return NotFound(new { error = "error.notFound" });
+        }
         catch (InvalidOperationException ex)
         {
             return BadRequest(ApiResponse<VoteWithBallotStatusDto>.ErrorResponse(ex.Message));
@@ -117,6 +121,10 @@ public class VotesController : ControllerBase
             }
 
             return Ok(ApiResponse<VoteWithBallotStatusDto>.SuccessResponse(result));
+        }
+        catch (ElectionScopeMismatchException)
+        {
+            return NotFound(new { error = "error.notFound" });
         }
         catch (InvalidOperationException ex)
         {
