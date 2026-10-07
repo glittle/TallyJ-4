@@ -545,22 +545,23 @@ public partial class OnlineVotingService
 
     /// <summary>
     /// True when this voter matches at least one open election and every one of those is flagged.
-    /// The match uses the same voter-id type and open-window rule as <see cref="MatchingOpenElectionGuidsAsync"/>.
+    /// An email voter (<c>E</c>) matches <c>Person.Email</c>. A phone voter (<c>P</c>) matches <c>Person.Phone</c>.
+    /// Any other type, including a kiosk code, returns false. Kiosk sign-in uses
+    /// <see cref="TryAuthenticateWithDirectCodeAsync"/> and does not call this method.
+    /// An election counts as open only when online voting is on, <c>OnlineWhenOpen</c> is set and not in the future,
+    /// and <c>OnlineWhenClose</c> is unset or still ahead — the same window <c>requestCode</c> uses.
     /// </summary>
     private async Task<bool> VoterOpenElectionsAreAllFlaggedAsync(string voterId, string? voterIdType)
     {
-        if (voterIdType is not ("E" or "P" or "C"))
+        if (voterIdType is not ("E" or "P"))
         {
             return false;
         }
 
         var now = DateTimeOffset.UtcNow;
-        var people = voterIdType switch
-        {
-            "E" => _context.People.Where(person => person.Email == voterId),
-            "P" => _context.People.Where(person => person.Phone == voterId),
-            _ => _context.People.Where(person => person.KioskCode == voterId)
-        };
+        var people = voterIdType == "E"
+            ? _context.People.Where(person => person.Email == voterId)
+            : _context.People.Where(person => person.Phone == voterId);
         var openIds = await people
             .Join(
                 _context.Elections.Where(election =>

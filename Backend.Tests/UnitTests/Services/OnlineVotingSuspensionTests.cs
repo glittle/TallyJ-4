@@ -159,24 +159,14 @@ public class OnlineVotingSuspensionTests : ServiceTestBase
     [Fact]
     public async Task VerifyCode_IgnoresAPhoneMatch_WhenTheVoterIdIsAnEmail()
     {
-        var openId = Guid.NewGuid();
-        Context.Elections.Add(new Election
-        {
-            ElectionGuid = openId,
-            Name = "Open",
-            UseOnlineVoting = true,
-            OnlineWhenOpen = DateTimeOffset.UtcNow.AddHours(-1),
-            OnlineWhenClose = DateTimeOffset.UtcNow.AddHours(2),
-            ElectionStage = ElectionStage.GatheringBallots,
-            RowVersion = new byte[8]
-        });
+        var openId = AddUnflaggedOpenElection();
         Context.People.Add(new Person
         {
             ElectionGuid = _electionId,
             PersonGuid = Guid.NewGuid(),
-            FirstName = "Phone",
-            LastName = "Only",
-            Phone = "ada@example.com",
+            FirstName = "Ada",
+            LastName = "Voter",
+            Email = "ada@example.com",
             CanVote = true,
             RowVersion = new byte[8]
         });
@@ -184,9 +174,9 @@ public class OnlineVotingSuspensionTests : ServiceTestBase
         {
             ElectionGuid = openId,
             PersonGuid = Guid.NewGuid(),
-            FirstName = "Ada",
-            LastName = "Voter",
-            Email = "ada@example.com",
+            FirstName = "Phone",
+            LastName = "Only",
+            Phone = "ada@example.com",
             CanVote = true,
             RowVersion = new byte[8]
         });
@@ -206,7 +196,55 @@ public class OnlineVotingSuspensionTests : ServiceTestBase
             VerifyCode = "123456"
         });
 
-        Assert.True(result.Success);
+        Assert.False(result.Success);
+        Assert.Equal("voting.auth.noOpenElections", result.Error);
+        Assert.Null(result.Response);
+    }
+
+    [Fact]
+    public async Task VerifyCode_IgnoresAnEmailMatch_WhenTheVoterIdIsAPhone()
+    {
+        const string phone = "+14165550100";
+        var openId = AddUnflaggedOpenElection();
+        Context.People.Add(new Person
+        {
+            ElectionGuid = _electionId,
+            PersonGuid = Guid.NewGuid(),
+            FirstName = "Ada",
+            LastName = "Voter",
+            Phone = phone,
+            CanVote = true,
+            RowVersion = new byte[8]
+        });
+        Context.People.Add(new Person
+        {
+            ElectionGuid = openId,
+            PersonGuid = Guid.NewGuid(),
+            FirstName = "Email",
+            LastName = "Only",
+            Email = phone,
+            CanVote = true,
+            RowVersion = new byte[8]
+        });
+        Context.OnlineVoters.Add(new OnlineVoter
+        {
+            VoterId = phone,
+            VoterIdType = "P",
+            VerifyCode = "123456",
+            VerifyCodeDate = DateTimeOffset.UtcNow,
+            VerifyAttempts = 0
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await CreateVotingService().VerifyCodeAsync(new VerifyCodeDto
+        {
+            VoterId = phone,
+            VerifyCode = "123456"
+        });
+
+        Assert.False(result.Success);
+        Assert.Equal("voting.auth.noOpenElections", result.Error);
+        Assert.Null(result.Response);
     }
 
     [Fact]
@@ -261,6 +299,22 @@ public class OnlineVotingSuspensionTests : ServiceTestBase
 
         Assert.False(result.Success);
         Assert.Equal("voting.auth.noOpenElections", result.Error);
+    }
+
+    private Guid AddUnflaggedOpenElection()
+    {
+        var openId = Guid.NewGuid();
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = openId,
+            Name = "Open",
+            UseOnlineVoting = true,
+            OnlineWhenOpen = DateTimeOffset.UtcNow.AddHours(-1),
+            OnlineWhenClose = DateTimeOffset.UtcNow.AddHours(2),
+            ElectionStage = ElectionStage.GatheringBallots,
+            RowVersion = new byte[8]
+        });
+        return openId;
     }
 
     private ElectionService CreateElectionService()
