@@ -4,6 +4,7 @@ import {
   Expand,
   Fold,
   HomeFilled,
+  Message,
   Setting,
   User,
 } from "@element-plus/icons-vue";
@@ -216,6 +217,16 @@ function dockSidebar() {
           <User />
         </el-icon>
         <span>{{ $t("nav.superAdminUsers") }}</span>
+      </el-menu-item>
+      <el-menu-item
+        v-if="isSuperAdmin"
+        index="/super-admin/paid-sends"
+        role="menuitem"
+      >
+        <el-icon aria-hidden="true">
+          <Message />
+        </el-icon>
+        <span>{{ $t("nav.superAdminPaidSends") }}</span>
       </el-menu-item>
     </el-menu>
 

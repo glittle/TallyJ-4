@@ -19,6 +19,7 @@ public class SuperAdminController : ControllerBase
 {
     private readonly ISuperAdminService _superAdminService;
     private readonly IAccountInviteService _accountInviteService;
+    private readonly IPaidSendAdminService _paidSendAdminService;
     private readonly ILogger<SuperAdminController> _logger;
 
     /// <summary>
@@ -29,10 +30,12 @@ public class SuperAdminController : ControllerBase
     public SuperAdminController(
         ISuperAdminService superAdminService,
         IAccountInviteService accountInviteService,
+        IPaidSendAdminService paidSendAdminService,
         ILogger<SuperAdminController> logger)
     {
         _superAdminService = superAdminService;
         _accountInviteService = accountInviteService;
+        _paidSendAdminService = paidSendAdminService;
         _logger = logger;
     }
 
@@ -151,6 +154,178 @@ public class SuperAdminController : ControllerBase
         var created = await _accountInviteService.CreateAsync(adminId);
         return Ok(ApiResponse<AccountInviteCreatedDto>.SuccessResponse(created));
     }
+
+    /// <summary>
+    /// Lists owners waiting for paid-send approval, cap hits, freezes, and flagged elections.
+    /// </summary>
+    [HttpGet("paid-sends")]
+    [Authorize(Policy = "SuperAdmin")]
+    public async Task<ActionResult<ApiResponse<PaidSendAdminOverviewDto>>> GetPaidSends()
+    {
+        var overview = await _paidSendAdminService.GetOverviewAsync();
+        return Ok(ApiResponse<PaidSendAdminOverviewDto>.SuccessResponse(overview));
+    }
+
+    /// <summary>
+    /// Approves one owner for SMS, voice, and WhatsApp login codes.
+    /// </summary>
+    [HttpPost("paid-sends/owners/{userId:guid}/approve")]
+    [Authorize(Policy = "SuperAdmin")]
+    public async Task<ActionResult<ApiResponse<bool>>> ApprovePaidSends(Guid userId)
+    {
+        var adminId = CurrentAdminId();
+        if (adminId == null)
+        {
+            return Unauthorized(ApiResponse<bool>.ErrorResponse("Not authenticated"));
+        }
+
+        var approved = await _paidSendAdminService.ApproveOwnerAsync(userId, adminId);
+        if (!approved)
+        {
+            return NotFound(ApiResponse<bool>.ErrorResponse("Owner not found"));
+        }
+
+        return Ok(ApiResponse<bool>.SuccessResponse(true));
+    }
+
+    /// <summary>
+    /// Stops every login code for one owner, including email.
+    /// </summary>
+    [HttpPost("paid-sends/owners/{userId:guid}/freeze")]
+    [Authorize(Policy = "SuperAdmin")]
+    public Task<ActionResult<ApiResponse<bool>>> FreezeOwner(Guid userId) =>
+        SetOwnerFrozen(userId, true);
+
+    /// <summary>
+    /// Allows login codes for one owner again. Paid channels still need approval and caps.
+    /// </summary>
+    [HttpPost("paid-sends/owners/{userId:guid}/unfreeze")]
+    [Authorize(Policy = "SuperAdmin")]
+    public Task<ActionResult<ApiResponse<bool>>> UnfreezeOwner(Guid userId) =>
+        SetOwnerFrozen(userId, false);
+
+    /// <summary>
+    /// Raises the owner's daily SMS, voice, and WhatsApp cap.
+    /// </summary>
+    [HttpPost("paid-sends/owners/{userId:guid}/daily-cap")]
+    [Authorize(Policy = "SuperAdmin")]
+    public async Task<ActionResult<ApiResponse<bool>>> RaiseOwnerDailyCap(
+        Guid userId,
+        [FromBody] RaiseOwnerDailyCapDto dto)
+    {
+        var adminId = CurrentAdminId();
+        if (adminId == null)
+        {
+            return Unauthorized(ApiResponse<bool>.ErrorResponse("Not authenticated"));
+        }
+
+        var raised = await _paidSendAdminService.RaiseOwnerDailyCapAsync(userId, dto.DailyCap, adminId);
+        if (!raised)
+        {
+            return BadRequest(ApiResponse<bool>.ErrorResponse("Daily cap was not raised"));
+        }
+
+        return Ok(ApiResponse<bool>.SuccessResponse(true));
+    }
+
+    /// <summary>
+    /// Stops every login code for one election, including email.
+    /// </summary>
+    [HttpPost("paid-sends/elections/{guid:guid}/freeze")]
+    [Authorize(Policy = "SuperAdmin")]
+    public Task<ActionResult<ApiResponse<bool>>> FreezeElection(Guid guid) =>
+        SetElectionFrozen(guid, true);
+
+    /// <summary>
+    /// Allows login codes for one election again.
+    /// </summary>
+    [HttpPost("paid-sends/elections/{guid:guid}/unfreeze")]
+    [Authorize(Policy = "SuperAdmin")]
+    public Task<ActionResult<ApiResponse<bool>>> UnfreezeElection(Guid guid) =>
+        SetElectionFrozen(guid, false);
+
+    /// <summary>
+    /// Clears the voter-list flag so paid channels and online voting can run again.
+    /// </summary>
+    [HttpPost("paid-sends/elections/{guid:guid}/clear-flag")]
+    [Authorize(Policy = "SuperAdmin")]
+    public async Task<ActionResult<ApiResponse<bool>>> ClearElectionFlag(Guid guid)
+    {
+        var adminId = CurrentAdminId();
+        if (adminId == null)
+        {
+            return Unauthorized(ApiResponse<bool>.ErrorResponse("Not authenticated"));
+        }
+
+        var cleared = await _paidSendAdminService.ClearElectionFlagAsync(guid, adminId);
+        if (!cleared)
+        {
+            return NotFound(ApiResponse<bool>.ErrorResponse("Flagged election not found"));
+        }
+
+        return Ok(ApiResponse<bool>.SuccessResponse(true));
+    }
+
+    /// <summary>
+    /// Raises the election SMS, voice, and WhatsApp allowance.
+    /// </summary>
+    [HttpPost("paid-sends/elections/{guid:guid}/allowance")]
+    [Authorize(Policy = "SuperAdmin")]
+    public async Task<ActionResult<ApiResponse<bool>>> RaiseElectionAllowance(
+        Guid guid,
+        [FromBody] RaiseElectionAllowanceDto dto)
+    {
+        var adminId = CurrentAdminId();
+        if (adminId == null)
+        {
+            return Unauthorized(ApiResponse<bool>.ErrorResponse("Not authenticated"));
+        }
+
+        var raised = await _paidSendAdminService.RaiseElectionAllowanceAsync(guid, dto.Allowance, adminId);
+        if (!raised)
+        {
+            return BadRequest(ApiResponse<bool>.ErrorResponse("Allowance was not raised"));
+        }
+
+        return Ok(ApiResponse<bool>.SuccessResponse(true));
+    }
+
+    private async Task<ActionResult<ApiResponse<bool>>> SetOwnerFrozen(Guid userId, bool frozen)
+    {
+        var adminId = CurrentAdminId();
+        if (adminId == null)
+        {
+            return Unauthorized(ApiResponse<bool>.ErrorResponse("Not authenticated"));
+        }
+
+        var updated = await _paidSendAdminService.SetOwnerFrozenAsync(userId, frozen, adminId);
+        if (!updated)
+        {
+            return NotFound(ApiResponse<bool>.ErrorResponse("Owner not found"));
+        }
+
+        return Ok(ApiResponse<bool>.SuccessResponse(true));
+    }
+
+    private async Task<ActionResult<ApiResponse<bool>>> SetElectionFrozen(Guid electionGuid, bool frozen)
+    {
+        var adminId = CurrentAdminId();
+        if (adminId == null)
+        {
+            return Unauthorized(ApiResponse<bool>.ErrorResponse("Not authenticated"));
+        }
+
+        var updated = await _paidSendAdminService.SetElectionFrozenAsync(electionGuid, frozen, adminId);
+        if (!updated)
+        {
+            return NotFound(ApiResponse<bool>.ErrorResponse("Election not found"));
+        }
+
+        return Ok(ApiResponse<bool>.SuccessResponse(true));
+    }
+
+    private string? CurrentAdminId() =>
+        User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirst("sub")?.Value;
 }
 
 

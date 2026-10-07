@@ -230,3 +230,18 @@ Live delivery status for SMS/voice/email login uses an **anonymous** SignalR hub
 **Why 10 minutes, not 15:** the OTP window is 15 minutes; the status channel only needs to cover send + Twilio callbacks + a reconnect. A leaked token should die before the code does.
 
 See `context/realtime.md` for hub groups, replay-on-join, and provider wiring.
+
+## Site-wide super admin is an email list (issue #371)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** existing `SuperAdmin:Emails` policy; issue #371 slice 3a  
+**Revisit when:** super admin should be a database role instead of a config list
+
+A site-wide super admin is an account whose email is in `SuperAdmin:Emails`. `SuperAdminHandler` compares that list to the email claim. The policy name is `SuperAdmin`. Paid-send approval, cap raises, freeze, and clearing a voter-list flag use that policy. Other authenticated users get 403.
+
+`appsettings.json` lists `admin@tallyj.test` so local and test hosts have one super admin. Production and UAT set the real addresses outside the repo (user secrets or the host config file).
+
+**Rejected alternative:** add a new `SuperAdmin` Identity role. The email list and handler already decide who can call `/api/superadmin/*`.
+
+Paid-send caps, the kill switch, and voter-list flags are in `context/anti-abuse.md`.

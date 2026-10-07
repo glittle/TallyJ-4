@@ -328,6 +328,16 @@ const routes = [
 
         meta: { titleKey: "nav.superAdminUsers", requiresSuperAdmin: true },
       },
+
+      {
+        path: "super-admin/paid-sends",
+
+        name: "super-admin-paid-sends",
+
+        component: () => import("../pages/SuperAdminPaidSendsPage.vue"),
+
+        meta: { titleKey: "nav.superAdminPaidSends", requiresSuperAdmin: true },
+      },
     ],
   },
 ];

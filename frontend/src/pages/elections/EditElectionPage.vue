@@ -18,6 +18,9 @@
           :available-elections="availableElections"
           :ballot-count="ballotCount"
           :form-ref="formRef"
+          :paid-channel-block-reason="election.paidChannelBlockReason"
+          :paid-sends-used="election.paidSendsUsed"
+          :paid-send-allowance="election.paidSendAllowance"
         />
 
         <el-form-item style="margin-top: 20px">

@@ -819,6 +819,31 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "elections.paidChannels.notApproved": {
+    "t": "SMS, voice, and WhatsApp login codes are waiting for a site administrator to approve this account. Email codes still work.",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "elections.paidChannels.electionCap": {
+    "t": "This election has used its SMS, voice, and WhatsApp allowance ({used} of {allowance}). A site administrator can raise it. Email codes still work.",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "elections.paidChannels.ownerDailyCap": {
+    "t": "Today's SMS, voice, and WhatsApp limit for this account is used. It resets at midnight UTC, or a site administrator can raise it. Email codes still work.",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "elections.paidChannels.frozen": {
+    "t": "A site administrator has stopped login codes for this election or account, including email.",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "elections.paidChannels.flagged": {
+    "t": "Online voting and login codes are stopped until a site administrator reviews this election. In-person and teller entry still work.",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
   "elections.participation": {
     "t": "Participation",
     "s": "source",

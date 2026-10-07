@@ -48,6 +48,16 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<TellerLoginLockout> TellerLoginLockouts { get; set; }
 
+    public virtual DbSet<OwnerSendControl> OwnerSendControls { get; set; }
+
+    public virtual DbSet<ElectionSendControl> ElectionSendControls { get; set; }
+
+    public virtual DbSet<OwnerDailyPaidSend> OwnerDailyPaidSends { get; set; }
+
+    public virtual DbSet<CodeSendLog> CodeSendLogs { get; set; }
+
+    public virtual DbSet<AbuseAlertState> AbuseAlertStates { get; set; }
+
     public virtual DbSet<TwoFactorToken> TwoFactorTokens { get; set; }
 
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }

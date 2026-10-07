@@ -185,6 +185,28 @@ public class ElectionDto
     /// </summary>
     public DateTimeOffset? TellerLoginLockedUntil { get; set; }
 
+    /// <summary>
+    /// Why SMS, voice, and WhatsApp codes cannot be sent for this election.
+    /// Null when those channels can send. Email codes are not described here.
+    /// </summary>
+    public string? PaidChannelBlockReason { get; set; }
+
+    /// <summary>
+    /// Paid sends already counted against <see cref="PaidSendAllowance"/>.
+    /// </summary>
+    public int PaidSendsUsed { get; set; }
+
+    /// <summary>
+    /// Paid sends this election may make before a super admin raises the allowance.
+    /// </summary>
+    public int PaidSendAllowance { get; set; }
+
+    /// <summary>
+    /// When true, online voting is suspended because the election is flagged.
+    /// Teller and in-person entry are unchanged.
+    /// </summary>
+    public bool OnlineVotingSuspended { get; set; }
+
 }
 
 

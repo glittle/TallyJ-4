@@ -258,5 +258,210 @@
     "t": "Could not issue invite",
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.paidSends.title": {
+    "t": "Paid sends",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.pendingTitle": {
+    "t": "Waiting for approval",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.pendingEmpty": {
+    "t": "No accounts are waiting for paid-send approval.",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.email": {
+    "t": "Email",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.name": {
+    "t": "Name",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.elections": {
+    "t": "Elections",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.approve": {
+    "t": "Approve paid sends",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.freeze": {
+    "t": "Freeze",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.unfreeze": {
+    "t": "Unfreeze",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.approved": {
+    "t": "Paid sends approved",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.frozen": {
+    "t": "Login codes frozen",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.unfrozen": {
+    "t": "Login codes allowed again",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.capHitsTitle": {
+    "t": "Caps in effect",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.capHitsEmpty": {
+    "t": "No election or owner is at its cap.",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.scope": {
+    "t": "Scope",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.scopeElection": {
+    "t": "Election allowance",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.scopeOwner": {
+    "t": "Owner daily cap",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.used": {
+    "t": "Used",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.cap": {
+    "t": "Cap",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.raise": {
+    "t": "Raise",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.raised": {
+    "t": "Cap raised",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.frozenElectionsTitle": {
+    "t": "Frozen elections",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.frozenOwnersTitle": {
+    "t": "Frozen accounts",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.frozenEmpty": {
+    "t": "None",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.flaggedTitle": {
+    "t": "Flagged elections",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.flaggedEmpty": {
+    "t": "No elections are flagged.",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.clearFlag": {
+    "t": "Clear flag",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.flagCleared": {
+    "t": "Flag cleared",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.row": {
+    "t": "Row",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.value": {
+    "t": "Value",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.reason": {
+    "t": "Reason",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.reason.invalid-phone": {
+    "t": "Invalid phone",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.reason.unexpected-country": {
+    "t": "Unexpected country",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.reason.consecutive-run": {
+    "t": "Consecutive numbers",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.reason.disposable-domain": {
+    "t": "Disposable email domain",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.reason.no-mx": {
+    "t": "No mail server",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.freezeByIdTitle": {
+    "t": "Freeze by id",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.electionId": {
+    "t": "Election id",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.ownerId": {
+    "t": "Account id",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.freezeElection": {
+    "t": "Freeze election",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
+  },
+  "superAdmin.paidSends.freezeOwner": {
+    "t": "Freeze account",
+    "s": "source",
+    "w": "2026-10-07T05:30:00Z"
   }
 }

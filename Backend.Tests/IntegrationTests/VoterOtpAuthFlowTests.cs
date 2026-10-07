@@ -297,6 +297,20 @@ public class VoterOtpAuthFlowTests : IntegrationTestBase
             RowVersion = new byte[8]
         });
 
+        var ownerId = Guid.NewGuid();
+        context.JoinElectionUsers.Add(new JoinElectionUser
+        {
+            ElectionGuid = electionGuid,
+            UserId = ownerId,
+            Role = "Admin"
+        });
+        context.OwnerSendControls.Add(new OwnerSendControl
+        {
+            UserId = ownerId,
+            PaidSendsApproved = true,
+            ApprovedAt = DateTimeOffset.UtcNow
+        });
+
         await context.SaveChangesAsync();
         return electionGuid;
     }

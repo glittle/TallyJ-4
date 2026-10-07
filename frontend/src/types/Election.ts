@@ -36,6 +36,10 @@ export interface ElectionDto {
   isTellerAccessOpen?: boolean;
   tellerAccessOpenedAt?: string;
   tellerLoginLockedUntil?: string;
+  paidChannelBlockReason?: string | null;
+  paidSendsUsed?: number;
+  paidSendAllowance?: number;
+  onlineVotingSuspended?: boolean;
 }
 
 export interface DuplicateElectionDto {

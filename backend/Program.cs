@@ -166,6 +166,9 @@ void ConfigureServices(WebApplicationBuilder builder)
     services.Configure<TellerLoginProtectionOptions>(
         builderConfiguration.GetSection(TellerLoginProtectionOptions.SectionName));
 
+    services.Configure<AntiAbuseOptions>(
+        builderConfiguration.GetSection(AntiAbuseOptions.SectionName));
+
     ProgramAuthSetup.ConfigureAuthorization(services);
 
     services.Configure<JsonLocalizationOptions>(builderConfiguration.GetSection(JsonLocalizationOptions.SectionName));
