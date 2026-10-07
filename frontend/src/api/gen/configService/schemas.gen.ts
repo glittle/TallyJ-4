@@ -1877,6 +1877,10 @@ export const Elections_CreateElectionDtoSchema = {
         flags: {
             type: 'string',
             nullable: true
+        },
+        expectedPhoneRegions: {
+            type: 'string',
+            nullable: true
         }
     },
     additionalProperties: false
@@ -2052,6 +2056,10 @@ export const Elections_ElectionDtoSchema = {
         },
         onlineVotingSuspended: {
             type: 'boolean'
+        },
+        expectedPhoneRegions: {
+            type: 'string',
+            nullable: true
         }
     },
     additionalProperties: false
@@ -2307,6 +2315,10 @@ export const Elections_UpdateElectionDtoSchema = {
             nullable: true
         },
         flags: {
+            type: 'string',
+            nullable: true
+        },
+        expectedPhoneRegions: {
             type: 'string',
             nullable: true
         }

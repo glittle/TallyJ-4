@@ -120,6 +120,7 @@ public partial class PeopleImportService
             // Process in batches
             const int batchSize = 100;
             var peopleToAdd = new List<Person>();
+            var sourceRowNumbers = new Dictionary<Guid, int>();
             var errorsFound = false;
 
             for (int i = 0; i < dataRows.Count; i++)
@@ -146,6 +147,7 @@ public partial class PeopleImportService
                     if (person != null)
                     {
                         peopleToAdd.Add(person);
+                        sourceRowNumbers[person.PersonGuid] = rowNumber;
                     }
                     else if (result.PeopleSkipped == skippedBefore)
                     {
@@ -214,6 +216,10 @@ public partial class PeopleImportService
                 // Open front desk / people / ballot-entry sessions re-fetch lists
                 // (parity with single-person PersonAdded/Updated from People Management).
                 await _signalRNotificationService.RequestFrontDeskReloadAsync(electionGuid);
+                if (_voterContactReviewer != null)
+                {
+                    await _voterContactReviewer.ReviewElectionAsync(electionGuid, sourceRowNumbers);
+                }
             }
             else
             {

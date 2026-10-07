@@ -988,6 +988,21 @@ public class ElectionServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task DuplicateElectionAsync_CopiesExpectedPhoneRegions()
+    {
+        var source = await SeedSourceElectionForDuplicateAsync();
+        var election = Context.Elections.Single(item => item.ElectionGuid == source.ElectionGuid);
+        election.ExpectedPhoneRegions = "CA, US";
+        await Context.SaveChangesAsync();
+
+        var result = await _service.DuplicateElectionAsync(source.ElectionGuid, new DuplicateElectionDto());
+
+        Assert.True(result.IsSuccess);
+        var copy = Context.Elections.Single(item => item.ElectionGuid == result.Election!.ElectionGuid);
+        Assert.Equal("CA, US", copy.ExpectedPhoneRegions);
+    }
+
+    [Fact]
     public async Task DuplicateElectionAsync_DoesNotCopyBallotsResultsOrRuntimeRows()
     {
         var source = await SeedSourceElectionForDuplicateAsync();

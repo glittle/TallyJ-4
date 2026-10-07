@@ -246,6 +246,11 @@ public partial class OnlineVotingService
                 return (false, VoterVerifyError.InvalidCodeWithAttempts(remaining), null);
             }
 
+            if (await VoterOpenElectionsAreAllFlaggedAsync(onlineVoter.VoterId, onlineVoter.VoterIdType))
+            {
+                return (false, "voting.auth.noOpenElections", null);
+            }
+
             onlineVoter.WhenLastLogin = DateTimeOffset.UtcNow;
             onlineVoter.VerifyCode = null;
             onlineVoter.VerifyAttempts = 0;
@@ -516,6 +521,66 @@ public partial class OnlineVotingService
                 .ToListAsync(),
             _ => new List<Guid>()
         };
+    }
+
+    private async Task<List<Guid>> ExceptFlaggedElectionsAsync(List<Guid> electionIds)
+    {
+        if (electionIds.Count == 0)
+        {
+            return electionIds;
+        }
+
+        var flagged = await _context.ElectionSendControls
+            .AsNoTracking()
+            .Where(row => electionIds.Contains(row.ElectionGuid) && row.Flagged)
+            .Select(row => row.ElectionGuid)
+            .ToListAsync();
+        if (flagged.Count == 0)
+        {
+            return electionIds;
+        }
+
+        return electionIds.Where(id => !flagged.Contains(id)).ToList();
+    }
+
+    /// <summary>
+    /// True when this voter matches at least one open election and every one of those is flagged.
+    /// An email voter (<c>E</c>) matches <c>Person.Email</c>. A phone voter (<c>P</c>) matches <c>Person.Phone</c>.
+    /// Any other type, including a kiosk code, returns false. Kiosk sign-in uses
+    /// <see cref="TryAuthenticateWithDirectCodeAsync"/> and does not call this method.
+    /// An election counts as open only when online voting is on, <c>OnlineWhenOpen</c> is set and not in the future,
+    /// and <c>OnlineWhenClose</c> is unset or still ahead — the same window <c>requestCode</c> uses.
+    /// </summary>
+    private async Task<bool> VoterOpenElectionsAreAllFlaggedAsync(string voterId, string? voterIdType)
+    {
+        if (voterIdType is not ("E" or "P"))
+        {
+            return false;
+        }
+
+        var now = DateTimeOffset.UtcNow;
+        var people = voterIdType == "E"
+            ? _context.People.Where(person => person.Email == voterId)
+            : _context.People.Where(person => person.Phone == voterId);
+        var openIds = await people
+            .Join(
+                _context.Elections.Where(election =>
+                    election.UseOnlineVoting
+                    && election.OnlineWhenOpen != null
+                    && election.OnlineWhenOpen <= now
+                    && (election.OnlineWhenClose == null || election.OnlineWhenClose > now)),
+                person => person.ElectionGuid,
+                election => election.ElectionGuid,
+                (person, election) => election.ElectionGuid)
+            .Distinct()
+            .ToListAsync();
+        if (openIds.Count == 0)
+        {
+            return false;
+        }
+
+        var stillOpen = await ExceptFlaggedElectionsAsync(openIds);
+        return stillOpen.Count == 0;
     }
 
     private static string NormalizeVoterCode(string code)

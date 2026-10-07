@@ -19,16 +19,20 @@ namespace Backend.Services;
 public class JsonElectionImportExportService : ElectionImportExportBase
 {
     private readonly ISignalRNotificationService _signalRNotificationService;
+    private readonly IVoterContactReviewer? _voterContactReviewer;
     private readonly int _minimumPasscodeLength;
+    private Dictionary<Guid, int>? _importRowNumbers;
 
     public JsonElectionImportExportService(
         MainDbContext context,
         IElectionService electionService,
         ISignalRNotificationService signalRNotificationService,
-        IOptions<TellerLoginProtectionOptions>? tellerLoginProtection = null)
+        IOptions<TellerLoginProtectionOptions>? tellerLoginProtection = null,
+        IVoterContactReviewer? voterContactReviewer = null)
         : base(context, electionService)
     {
         _signalRNotificationService = signalRNotificationService;
+        _voterContactReviewer = voterContactReviewer;
         _minimumPasscodeLength = tellerLoginProtection?.Value.ResolvedMinimumPasscodeLength
             ?? TellerLoginProtectionOptions.DefaultMinimumPasscodeLength;
     }
@@ -106,6 +110,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 election.CustomMethods,
                 election.VotingMethods,
                 election.Flags,
+                election.ExpectedPhoneRegions,
                 election.GuestTellersCanAddPeople
             },
             locations = election.Locations.Select(l => new
@@ -324,6 +329,7 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 CustomMethods = importData.election.CustomMethods,
                 VotingMethods = importData.election.VotingMethods,
                 Flags = importData.election.Flags,
+                ExpectedPhoneRegions = importData.election.ExpectedPhoneRegions,
                 GuestTellersCanAddPeople = importData.election.GuestTellersCanAddPeople,
                 RowVersion = new byte[8]
             };
@@ -360,6 +366,10 @@ public class JsonElectionImportExportService : ElectionImportExportBase
 
             await ReportStatusAsync(userId, "Saving to database…", isTemporary: true);
             await _context.SaveChangesAsync();
+            if (_voterContactReviewer != null)
+            {
+                await _voterContactReviewer.ReviewElectionAsync(newElectionGuid, _importRowNumbers);
+            }
 
             if (userId.HasValue)
             {
@@ -414,11 +424,14 @@ public class JsonElectionImportExportService : ElectionImportExportBase
 
     private void ImportPeople(JsonImportData importData, Guid electionGuid, Dictionary<Guid, Guid> guidMap)
     {
+        _importRowNumbers = new Dictionary<Guid, int>();
+        var rowNumber = 1;
         foreach (var person in importData.people)
         {
             var oldGuid = person.PersonGuid;
             var newGuid = Guid.NewGuid();
             guidMap[oldGuid] = newGuid;
+            _importRowNumbers[newGuid] = rowNumber++;
 
             var p = new Person
             {

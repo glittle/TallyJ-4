@@ -157,6 +157,7 @@ public class ElectionPackageImportServiceTests : ServiceTestBase
         {
             ElectionGuid = electionGuid,
             Name = "People export test",
+            ExpectedPhoneRegions = "CA, US",
             NumberToElect = 3,
             ElectionType = "LSA",
             ElectionStage = Backend.Enumerations.ElectionStage.SettingUp,
@@ -190,5 +191,43 @@ public class ElectionPackageImportServiceTests : ServiceTestBase
         Assert.Equal("ada@example.com", exported.GetProperty("Email").GetString());
         Assert.Equal("+15550001111", exported.GetProperty("Phone").GetString());
         Assert.Equal("North", exported.GetProperty("Area").GetString());
+        Assert.Equal("CA, US", doc.RootElement.GetProperty("election").GetProperty("ExpectedPhoneRegions").GetString());
+    }
+
+    [Fact]
+    public async Task ImportElectionFromJsonAsync_CopiesExpectedPhoneRegions()
+    {
+        var json = $$"""
+            {
+              "format": "TallyJ4",
+              "version": "4.0",
+              "exportedAt": "2026-01-01T00:00:00Z",
+              "election": {
+                "ElectionGuid": "{{Guid.NewGuid()}}",
+                "Name": "Regions import",
+                "ElectionType": "Con",
+                "ElectionMode": "N",
+                "NumberToElect": 1,
+                "ExpectedPhoneRegions": "CA, US"
+              },
+              "locations": [],
+              "people": [],
+              "ballots": [],
+              "tellers": [],
+              "results": [],
+              "resultSummaries": [],
+              "resultTies": [],
+              "onlineVotingInfos": [],
+              "logs": []
+            }
+            """;
+
+        var service = new JsonElectionImportExportService(Context, _electionServiceMock.Object, _signalRMock.Object);
+        await using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
+
+        var imported = await service.ImportElectionFromJsonAsync(stream);
+
+        var stored = await Context.Elections.SingleAsync(election => election.ElectionGuid == imported.Election.ElectionGuid);
+        Assert.Equal("CA, US", stored.ExpectedPhoneRegions);
     }
 }

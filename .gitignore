@@ -38,6 +38,7 @@ x86/
 *.DotSettings.user
 _ReSharper.*
 *.txt
+!backend/Data/disposable-email-domains.txt
 
 ###############################
 # Database Files

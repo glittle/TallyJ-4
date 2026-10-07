@@ -94,6 +94,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "voting.auth.noOpenElections": {
+    "t": "There are no elections currently open for online voting.",
+    "s": "source",
+    "w": "2026-10-07T05:45:00Z"
+  },
   "voting.auth.facebook.noOpenElections": {
     "t": "There are no elections currently open for online voting.",
     "s": "source",

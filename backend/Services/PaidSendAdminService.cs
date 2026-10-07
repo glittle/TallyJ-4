@@ -157,6 +157,13 @@ public class PaidSendAdminService : IPaidSendAdminService
             })
             .ToList();
 
+        var flaggedIds = electionControls.Where(row => row.Flagged).Select(row => row.ElectionGuid).ToList();
+        var flagRows = flaggedIds.Count == 0
+            ? new List<VoterContactFlag>()
+            : await _context.VoterContactFlags
+                .AsNoTracking()
+                .Where(row => flaggedIds.Contains(row.ElectionGuid) && row.Active)
+                .ToListAsync(cancellationToken);
         var flagged = electionControls
             .Where(row => row.Flagged)
             .Select(row =>
@@ -166,7 +173,16 @@ public class PaidSendAdminService : IPaidSendAdminService
                 {
                     ElectionGuid = row.ElectionGuid,
                     Name = name ?? row.ElectionGuid.ToString(),
-                    FlaggedAt = row.FlaggedAt
+                    FlaggedAt = row.FlaggedAt,
+                    Rows = flagRows
+                        .Where(flag => flag.ElectionGuid == row.ElectionGuid)
+                        .Select(flag => new FlaggedVoterContactDto
+                        {
+                            RowNumber = flag.SourceRowNumber,
+                            MaskedValue = flag.MaskedValue,
+                            Reason = flag.Reason
+                        })
+                        .ToList()
                 };
             })
             .ToList();
@@ -343,6 +359,14 @@ public class PaidSendAdminService : IPaidSendAdminService
         row.FlaggedEntryCount = 0;
         row.ClearedAt = _clock.UtcNow;
         row.ClearedByUserId = adminUserId;
+        var activeFlags = await _context.VoterContactFlags
+            .Where(flag => flag.ElectionGuid == electionGuid && flag.Active)
+            .ToListAsync(cancellationToken);
+        foreach (var flag in activeFlags)
+        {
+            flag.Active = false;
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
         await AuditAsync(
             SecurityEventType.ElectionFlagCleared,

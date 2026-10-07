@@ -20,14 +20,18 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
     private const string PersonGuidAttribute = "PersonGuid";
 
     private readonly ISignalRNotificationService _signalRNotificationService;
+    private readonly IVoterContactReviewer? _voterContactReviewer;
+    private Dictionary<Guid, int>? _importRowNumbers;
 
     public TallyJv3ElectionImportService(
         MainDbContext context,
         IElectionService electionService,
-        ISignalRNotificationService signalRNotificationService)
+        ISignalRNotificationService signalRNotificationService,
+        IVoterContactReviewer? voterContactReviewer = null)
         : base(context, electionService)
     {
         _signalRNotificationService = signalRNotificationService;
+        _voterContactReviewer = voterContactReviewer;
     }
 
     private Task ReportStatusAsync(Guid? userId, string message, bool isTemporary = false)
@@ -181,6 +185,8 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
     private void ImportPeopleFromXml(XmlElement root, XmlNamespaceManager nsm, Guid electionGuid, Dictionary<Guid, Guid> guidMap)
     {
         var personNodes = root.SelectNodes("t:person", nsm);
+        _importRowNumbers = new Dictionary<Guid, int>();
+        var rowNumber = 1;
         if (personNodes != null)
         {
             foreach (XmlElement personNode in personNodes)
@@ -192,6 +198,7 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
                 }
                 var newGuid = Guid.NewGuid();
                 guidMap[oldGuid] = newGuid;
+                _importRowNumbers[newGuid] = rowNumber++;
 
                 var person = new Person
                 {
@@ -503,6 +510,10 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
 
             await ReportStatusAsync(userId, "Saving to database…", isTemporary: true);
             await _context.SaveChangesAsync();
+            if (_voterContactReviewer != null)
+            {
+                await _voterContactReviewer.ReviewElectionAsync(election.ElectionGuid, _importRowNumbers);
+            }
 
             if (userId.HasValue)
             {

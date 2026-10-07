@@ -40,6 +40,7 @@ export interface ElectionDto {
   paidSendsUsed?: number;
   paidSendAllowance?: number;
   onlineVotingSuspended?: boolean;
+  expectedPhoneRegions?: string | null;
 }
 
 export interface DuplicateElectionDto {
@@ -77,6 +78,7 @@ export interface CreateElectionDto {
   customMethods?: string;
   votingMethods?: string;
   flags?: string;
+  expectedPhoneRegions?: string;
 }
 
 export interface UpdateElectionDto {
@@ -111,6 +113,7 @@ export interface UpdateElectionDto {
   customMethods?: string;
   votingMethods?: string;
   flags?: string;
+  expectedPhoneRegions?: string;
 }
 
 export interface ElectionStats {

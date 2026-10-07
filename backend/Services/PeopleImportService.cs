@@ -14,6 +14,7 @@ public partial class PeopleImportService : IPeopleImportService
     private readonly MainDbContext _context;
     private readonly ISignalRNotificationService _signalRNotificationService;
     private readonly IJsonLocalizationProvider _localizationProvider;
+    private readonly IVoterContactReviewer? _voterContactReviewer;
 
     // Scoring weights for header detection
     private const int TextCellScore = 2;
@@ -54,10 +55,12 @@ public partial class PeopleImportService : IPeopleImportService
     public PeopleImportService(
         MainDbContext context,
         ISignalRNotificationService signalRNotificationService,
-        IJsonLocalizationProvider localizationProvider)
+        IJsonLocalizationProvider localizationProvider,
+        IVoterContactReviewer? voterContactReviewer = null)
     {
         _context = context;
         _signalRNotificationService = signalRNotificationService;
         _localizationProvider = localizationProvider;
+        _voterContactReviewer = voterContactReviewer;
     }
 }

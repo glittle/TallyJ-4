@@ -809,6 +809,26 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "elections.form.expectedPhoneRegions": {
+    "t": "Expected phone countries",
+    "s": "source",
+    "w": "2026-10-07T05:45:00Z"
+  },
+  "elections.form.expectedPhoneRegionsHelp": {
+    "t": "ISO country codes, for example CA, US. Phone numbers from other countries are flagged. Leave blank to use the site default (Canada).",
+    "s": "source",
+    "w": "2026-10-07T06:20:00Z"
+  },
+  "elections.form.expectedPhoneRegionsInvalid": {
+    "t": "Use ISO country codes such as CA, US. USA, UK, and Canada are not codes.",
+    "s": "source",
+    "w": "2026-10-07T06:20:00Z"
+  },
+  "elections.form.expectedPhoneRegionsTooLong": {
+    "t": "Expected phone countries cannot be longer than 80 characters.",
+    "s": "source",
+    "w": "2026-10-07T06:20:00Z"
+  },
   "elections.form.useOnlineVoting": {
     "t": "Use online voting",
     "s": "source",
@@ -818,6 +838,11 @@
     "t": "Enable if voters will cast ballots online. Open/close times and whether closing is an estimate are set from the Online Voting control in the header.",
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.onlineVotingSuspended": {
+    "t": "Online voting is stopped until a site administrator reviews this election. In-person and teller entry still work.",
+    "s": "source",
+    "w": "2026-10-07T05:45:00Z"
   },
   "elections.paidChannels.notApproved": {
     "t": "SMS, voice, and WhatsApp login codes wait until a site administrator approves every owner and admin on this election. Email codes still work.",

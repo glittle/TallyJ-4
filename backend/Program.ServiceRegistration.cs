@@ -76,6 +76,9 @@ public static class ProgramServiceRegistration
         services.AddScoped<ICodeSendGuard, CodeSendGuard>();
         services.AddScoped<IPaidChannelStatusService, PaidChannelStatusService>();
         services.AddScoped<IPaidSendAdminService, PaidSendAdminService>();
+        services.AddSingleton<IDisposableDomainList, FileDisposableDomainList>();
+        services.AddSingleton<IMailExchangerLookup, DnsMailExchangerLookup>();
+        services.AddScoped<IVoterContactReviewer, VoterContactReviewer>();
     }
 
     public static void RegisterBackgroundServices(

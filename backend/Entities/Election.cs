@@ -123,6 +123,14 @@ public partial class Election
 
     public string? Flags { get; set; }
 
+    /// <summary>
+    /// Comma-separated ISO regions whose phone numbers are expected on this election.
+    /// Empty uses AntiAbuse:DefaultPhoneRegionCode.
+    /// </summary>
+    [StringLength(80)]
+    [Unicode(false)]
+    public string? ExpectedPhoneRegions { get; set; }
+
     public virtual ICollection<ImportFile> ImportFiles { get; set; } = new List<ImportFile>();
 
     public virtual ICollection<JoinElectionUser> JoinElectionUsers { get; set; } = new List<JoinElectionUser>();

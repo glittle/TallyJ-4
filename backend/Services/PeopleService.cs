@@ -23,6 +23,7 @@ public class PeopleService : IPeopleService
     private readonly ISignalRNotificationService _signalRNotificationService;
     private readonly IHttpContextAccessor? _httpContextAccessor;
     private readonly IGreenApiWhatsAppClient? _greenApiWhatsAppClient;
+    private readonly IVoterContactReviewer? _voterContactReviewer;
     private readonly Func<CancellationToken, Task> _delayBetweenProviderCalls;
 
     /// <summary>
@@ -45,13 +46,15 @@ public class PeopleService : IPeopleService
         ISignalRNotificationService signalRNotificationService,
         IHttpContextAccessor? httpContextAccessor = null,
         IGreenApiWhatsAppClient? greenApiWhatsAppClient = null,
-        Func<CancellationToken, Task>? delayBetweenProviderCalls = null)
+        Func<CancellationToken, Task>? delayBetweenProviderCalls = null,
+        IVoterContactReviewer? voterContactReviewer = null)
     {
         _context = context;
         _logger = logger;
         _signalRNotificationService = signalRNotificationService;
         _httpContextAccessor = httpContextAccessor;
         _greenApiWhatsAppClient = greenApiWhatsAppClient;
+        _voterContactReviewer = voterContactReviewer;
         _delayBetweenProviderCalls = delayBetweenProviderCalls ?? DefaultDelayBetweenProviderCalls;
     }
 
@@ -182,6 +185,11 @@ public class PeopleService : IPeopleService
         _context.People.Add(person);
         await OnlineVoterPhoneHelper.EnsureOnlineVoterForPhoneAsync(_context, person.Phone);
         await _context.SaveChangesAsync();
+        if (_voterContactReviewer != null
+            && (!string.IsNullOrWhiteSpace(person.Phone) || !string.IsNullOrWhiteSpace(person.Email)))
+        {
+            await _voterContactReviewer.ReviewElectionAsync(person.ElectionGuid);
+        }
 
         _logger.LogInformation("Created person {PersonGuid} - {FullName}", person.PersonGuid, person.FullName);
 
@@ -240,6 +248,7 @@ public class PeopleService : IPeopleService
         }
 
         var previousPhone = person.Phone;
+        var previousEmail = person.Email;
 
         if (!string.IsNullOrWhiteSpace(updateDto.Phone) && updateDto.Phone != person.Phone)
         {
@@ -280,6 +289,11 @@ public class PeopleService : IPeopleService
         }
 
         await _context.SaveChangesAsync();
+        var emailChanged = !string.Equals(previousEmail, person.Email, StringComparison.Ordinal);
+        if (_voterContactReviewer != null && (phoneChanged || emailChanged))
+        {
+            await _voterContactReviewer.ReviewElectionAsync(person.ElectionGuid);
+        }
 
         _logger.LogInformation("Updated person {PersonGuid}", personGuid);
 

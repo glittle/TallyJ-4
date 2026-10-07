@@ -58,6 +58,8 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<AbuseAlertState> AbuseAlertStates { get; set; }
 
+    public virtual DbSet<VoterContactFlag> VoterContactFlags { get; set; }
+
     public virtual DbSet<TwoFactorToken> TwoFactorTokens { get; set; }
 
     public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
