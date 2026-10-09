@@ -235,11 +235,10 @@ public class CodeSendGuard : ICodeSendGuard
 
         lastReason ??= CodeSendBlockReason.NotApproved;
         _logger.LogInformation(
-            "Login code not sent ({BlockReason}) channel {Channel} election {ElectionGuid} destination {MaskedDestination}",
+            "Login code not sent ({BlockReason}) channel {Channel} election {ElectionGuid}",
             lastReason,
             channel,
-            lastElection,
-            DestinationMask.MaskForLog(destination));
+            lastElection);
 
         if (lastReason == CodeSendBlockReason.PrefixLimit && blockedPrefix != null)
         {

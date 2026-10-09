@@ -7,7 +7,6 @@ public static class DestinationMask
 {
     /// <summary>
     /// Returns a masked destination. Email keeps the domain. Phone keeps a short prefix and the last two digits.
-    /// Stored rows and super-admin alerts use this form.
     /// </summary>
     public static string Mask(string? destination)
     {
@@ -23,17 +22,6 @@ public static class DestinationMask
         }
 
         return MaskPhone(trimmed);
-    }
-
-    /// <summary>
-    /// Mask for application logs. An email drops the domain so the log line does not name the mailbox host.
-    /// Phone masking matches <see cref="Mask"/>.
-    /// </summary>
-    public static string MaskForLog(string? destination)
-    {
-        var masked = Mask(destination);
-        var at = masked.IndexOf('@');
-        return at >= 0 ? masked[..at] : masked;
     }
 
     private static string MaskEmail(string email)

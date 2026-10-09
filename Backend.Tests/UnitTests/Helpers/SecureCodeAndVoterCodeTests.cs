@@ -50,14 +50,6 @@ public class SecureCodeAndVoterCodeTests
         Assert.Equal(expected, VoterCodeComparer.FixedTimeEquals(stored, submitted));
     }
 
-    [Fact]
-    public void MaskForLog_DropsTheEmailDomain()
-    {
-        Assert.Equal("a***@example.com", DestinationMask.Mask("ada@example.com"));
-        Assert.Equal("a***", DestinationMask.MaskForLog("ada@example.com"));
-        Assert.Equal(DestinationMask.Mask("+14168972671"), DestinationMask.MaskForLog("+14168972671"));
-    }
-
     [Theory]
     [InlineData("+14168972671", 6, "141689")]
     [InlineData("+1 416 897 2671", 6, "141689")]
