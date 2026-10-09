@@ -107,11 +107,7 @@ public class VoteService : IVoteService
 
         if (createDto.PersonGuid.HasValue)
         {
-            var person = await _context.People.FirstOrDefaultAsync(p => p.PersonGuid == createDto.PersonGuid.Value);
-            if (person == null)
-            {
-                throw new InvalidOperationException($"Person with GUID '{createDto.PersonGuid}' not found");
-            }
+            var person = await PersonInElectionAsync(createDto.PersonGuid.Value, electionGuid);
 
             if (!PersonEligibilityHelper.CanReceiveVotes(person))
             {
@@ -181,15 +177,25 @@ public class VoteService : IVoteService
             return null;
         }
 
+        var currentBallot = await _context.Ballots
+            .AsNoTracking()
+            .Include(b => b.Location)
+            .FirstOrDefaultAsync(b => b.BallotGuid == vote.BallotGuid);
+        if (currentBallot == null)
+        {
+            return null;
+        }
+
+        var electionGuid = currentBallot.Location.ElectionGuid;
         var ballot = await _context.Ballots
             .Include(b => b.Location)
             .FirstOrDefaultAsync(b => b.BallotGuid == updateDto.BallotGuid);
-        if (ballot == null)
+        if (ballot == null || ballot.Location.ElectionGuid != electionGuid)
         {
-            throw new InvalidOperationException($"Ballot with GUID '{updateDto.BallotGuid}' not found");
+            throw new ElectionScopeMismatchException();
         }
 
-        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, ballot.Location.ElectionGuid);
+        await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, electionGuid);
 
         var statusCode = VoteStatus.Ok;
         string? ineligibleReasonCode = null;
@@ -198,11 +204,7 @@ public class VoteService : IVoteService
 
         if (updateDto.PersonGuid.HasValue)
         {
-            var person = await _context.People.FirstOrDefaultAsync(p => p.PersonGuid == updateDto.PersonGuid.Value);
-            if (person == null)
-            {
-                throw new InvalidOperationException($"Person with GUID '{updateDto.PersonGuid}' not found");
-            }
+            var person = await PersonInElectionAsync(updateDto.PersonGuid.Value, electionGuid);
 
             personCombinedInfo = person.CombinedInfo;
 
@@ -370,6 +372,18 @@ public class VoteService : IVoteService
         return await BuildPositionMutationResponseAsync(ballot);
     }
 
+    private async Task<Person> PersonInElectionAsync(Guid personGuid, Guid electionGuid)
+    {
+        var person = await _context.People.FirstOrDefaultAsync(p =>
+            p.PersonGuid == personGuid && p.ElectionGuid == electionGuid);
+        if (person == null)
+        {
+            throw new ElectionScopeMismatchException();
+        }
+
+        return person;
+    }
+
     private async Task<int> GetNextVotePositionAsync(Guid ballotGuid)
     {
         var occupiedPositions = await _context.Votes
@@ -471,4 +485,13 @@ public class VoteService : IVoteService
 
         return dto;
     }
+}
+
+/// <summary>
+/// A person or ballot in the request is missing from the election already
+/// authorized for this vote. Callers return the same not-found response as a
+/// missing resource so the other election is not confirmed.
+/// </summary>
+public sealed class ElectionScopeMismatchException : Exception
+{
 }

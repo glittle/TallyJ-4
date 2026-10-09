@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Ballots;
+﻿using Backend.Authorization;
+using Backend.DTOs.Ballots;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -35,6 +36,7 @@ public class BallotsController : ControllerBase
     /// <param name="pageNumber">The page number (starting from 1).</param>
     /// <param name="pageSize">The number of items per page (1-200).</param>
     /// <returns>A paginated response containing the ballots.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.ElectionAccess)]
     [HttpGet("{electionGuid}/ballots")]
     public async Task<ActionResult<PaginatedResponse<BallotDto>>> GetBallotsByElection(
         Guid electionGuid,
@@ -55,6 +57,7 @@ public class BallotsController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the ballot.</param>
     /// <returns>The ballot information.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BallotGuid)]
     [HttpGet("{guid}/ballot")]
     public async Task<ActionResult<ApiResponse<BallotDto>>> GetBallot(Guid guid)
     {
@@ -73,6 +76,7 @@ public class BallotsController : ControllerBase
     /// </summary>
     /// <param name="createDto">The ballot creation data.</param>
     /// <returns>The created ballot information.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BodyElectionGuid)]
     [HttpPost("createBallot")]
     public async Task<ActionResult<ApiResponse<BallotDto>>> CreateBallot(CreateBallotDto createDto)
     {
@@ -97,6 +101,7 @@ public class BallotsController : ControllerBase
     /// <param name="guid">The GUID of the ballot to update.</param>
     /// <param name="updateDto">The updated ballot data.</param>
     /// <returns>The updated ballot information.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BallotGuid)]
     [HttpPut("{guid}/updateBallot")]
     public async Task<ActionResult<ApiResponse<BallotDto>>> UpdateBallot(Guid guid, UpdateBallotDto updateDto)
     {
@@ -122,6 +127,7 @@ public class BallotsController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the ballot to delete.</param>
     /// <returns>No content if successful, or not found if the ballot doesn't exist.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BallotGuid)]
     [HttpDelete("{guid}/deleteBallot")]
     public async Task<IActionResult> DeleteBallot(Guid guid)
     {

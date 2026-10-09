@@ -293,6 +293,44 @@ describe("Election Store", () => {
       expect(electionStore.elections).toHaveLength(2);
       expect(electionStore.elections[1]).toEqual(newElection);
     });
+
+    it("clears a different current election when the fetch fails", async () => {
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
+      electionStore.currentElection = {
+        electionGuid: "1",
+        name: "Still Open",
+      } as ElectionDto;
+      electionService.getById.mockRejectedValue(new Error("not found"));
+
+      await expect(electionStore.fetchElectionById("2")).rejects.toThrow(
+        "not found",
+      );
+
+      expect(electionStore.currentElection).toBeNull();
+      expect(electionStore.error).toBeTruthy();
+    });
+
+    it("keeps the current election when refreshing that same election fails", async () => {
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
+      const existing = {
+        electionGuid: "1",
+        name: "Still Open",
+      } as ElectionDto;
+      electionStore.currentElection = existing;
+      electionService.getById.mockRejectedValue(new Error("not found"));
+
+      await expect(electionStore.fetchElectionById("1")).rejects.toThrow(
+        "not found",
+      );
+
+      expect(electionStore.currentElection).toEqual(existing);
+    });
   });
 
   describe("duplicateElection", () => {

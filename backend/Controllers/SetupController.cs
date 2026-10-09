@@ -1,5 +1,7 @@
-﻿using Backend.DTOs.Elections;
+﻿using Backend.Authorization;
+using Backend.DTOs.Elections;
 using Backend.DTOs.Setup;
+using Backend.Helpers;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -37,6 +39,11 @@ public class SetupController : ControllerBase
     [HttpPost("election/step1")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> CreateElectionStep1(ElectionStep1Dto step1Dto)
     {
+        if (GuestTellerClaims.IsGuestTeller(User))
+        {
+            return Forbid();
+        }
+
         var election = await _setupService.CreateElectionStep1Async(step1Dto);
 
         return CreatedAtAction(
@@ -51,6 +58,7 @@ public class SetupController : ControllerBase
     /// <param name="guid">The GUID of the election to configure.</param>
     /// <param name="step2Dto">The additional election configuration information.</param>
     /// <returns>The updated election information.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPut("election/{guid}/step2")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> ConfigureElectionStep2(Guid guid, ElectionStep2Dto step2Dto)
     {
@@ -74,6 +82,7 @@ public class SetupController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the election to check.</param>
     /// <returns>The election setup status information.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpGet("election/{guid}/status")]
     public async Task<ActionResult<ApiResponse<ElectionSetupStatusDto>>> GetSetupStatus(Guid guid)
     {

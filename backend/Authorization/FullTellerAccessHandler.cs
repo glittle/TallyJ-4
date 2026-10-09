@@ -1,30 +1,19 @@
-using System.Security.Claims;
-using Backend.Context;
-using Backend.Identity;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Authorization;
 
 /// <summary>
-/// Authorization handler that restricts access to election administration actions
-/// to FullTellers only.
+/// Full teller: Identity Admin, super admin, or an Owner/Admin join row.
+/// Guest tellers and online voters are denied. A global admin or super admin
+/// succeeds even when the route has no election guid (existing admin bypass).
 /// </summary>
 public class FullTellerAccessHandler : AuthorizationHandler<FullTellerAccessRequirement>
 {
-    private readonly MainDbContext _context;
-    private readonly UserManager<AppUser> _userManager;
-    private readonly ILogger<FullTellerAccessHandler> _logger;
+    private readonly IElectionAccessEvaluator _evaluator;
 
-    public FullTellerAccessHandler(
-        MainDbContext context,
-        UserManager<AppUser> userManager,
-        ILogger<FullTellerAccessHandler> logger)
+    public FullTellerAccessHandler(IElectionAccessEvaluator evaluator)
     {
-        _context = context;
-        _userManager = userManager;
-        _logger = logger;
+        _evaluator = evaluator;
     }
 
     protected override async Task HandleRequirementAsync(
@@ -32,89 +21,69 @@ public class FullTellerAccessHandler : AuthorizationHandler<FullTellerAccessRequ
         FullTellerAccessRequirement requirement)
     {
         var user = context.User;
-        if (user?.Identity?.IsAuthenticated != true)
+        if (user?.Identity?.IsAuthenticated != true || _evaluator.IsOnlineVoter(user))
         {
-            _logger.LogWarning("FullTellerAccess: User not authenticated");
             context.Fail();
             return;
         }
 
-        if (IsGuestTeller(user))
+        if (context.Resource is Guid resourceElectionGuid)
         {
-            _logger.LogWarning("FullTellerAccess: GuestTeller denied");
-            context.Fail();
+            var resourceOutcome = await _evaluator.EvaluateAsync(
+                user,
+                resourceElectionGuid,
+                ElectionAccessPolicies.FullTellerAccess);
+            if (resourceOutcome.Allowed)
+            {
+                context.Succeed(requirement);
+            }
+            else
+            {
+                context.Fail();
+            }
+
             return;
         }
 
-        var userIdString = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                         ?? user.FindFirst("sub")?.Value;
-        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+        // Preserve the previous global-admin bypass for actions whose route
+        // does not carry an election guid.
+        if (_evaluator.IsSuperAdmin(user))
         {
-            _logger.LogWarning("FullTellerAccess: Could not parse user ID from claims");
-            context.Fail();
-            return;
-        }
-
-        var appUser = await _userManager.FindByIdAsync(userIdString);
-        if (appUser != null && await _userManager.IsInRoleAsync(appUser, "Admin"))
-        {
-            _logger.LogInformation("FullTellerAccess: Global Admin {UserId} authorized", userId);
             context.Succeed(requirement);
             return;
         }
 
         var httpContext = context.Resource as HttpContext;
         var routeData = context.Resource as RouteData ?? httpContext?.GetRouteData();
-        if (routeData == null || !TryGetElectionGuidFromRoute(routeData, out var electionGuid))
+        if (!ElectionAccessEvaluator.TryGetElectionGuid(routeData, out var electionGuid))
         {
-            _logger.LogWarning("FullTellerAccess: Could not parse election GUID from route");
-            context.Fail();
-            return;
-        }
-
-        var joinRecord = await _context.JoinElectionUsers
-            .FirstOrDefaultAsync(j => j.ElectionGuid == electionGuid && j.UserId == userId);
-
-        if (joinRecord is { Role: "Owner" or "Admin" })
-        {
-            _logger.LogInformation(
-                "FullTellerAccess: User {UserId} authorized for election {ElectionGuid} with role {Role}",
-                userId,
-                electionGuid,
-                joinRecord.Role);
-            context.Succeed(requirement);
-            return;
-        }
-
-        _logger.LogWarning(
-            "FullTellerAccess: User {UserId} denied for election {ElectionGuid}",
-            userId,
-            electionGuid);
-        context.Fail();
-    }
-
-    private static bool TryGetElectionGuidFromRoute(RouteData routeData, out Guid electionGuid)
-    {
-        electionGuid = Guid.Empty;
-
-        foreach (var key in new[] { "guid", "electionGuid", "id" })
-        {
-            if (routeData.Values.TryGetValue(key, out var guidValue) &&
-                Guid.TryParse(guidValue?.ToString(), out electionGuid))
+            var bypass = await _evaluator.EvaluateAsync(user, Guid.Empty, ElectionAccessPolicies.FullTellerAccess);
+            if (bypass.Allowed)
             {
-                return true;
+                context.Succeed(requirement);
             }
+            else
+            {
+                context.Fail();
+            }
+
+            return;
         }
 
-        return false;
-    }
+        var outcome = await _evaluator.EvaluateAsync(
+            user,
+            electionGuid,
+            ElectionAccessPolicies.FullTellerAccess);
 
-    private static bool IsGuestTeller(ClaimsPrincipal user)
-    {
-        var isTellerClaim = user.FindFirst("isTeller")?.Value;
-        var authMethod = user.FindFirst("authMethod")?.Value;
-
-        return bool.TryParse(isTellerClaim, out var isGuestTeller) && isGuestTeller
-               && string.Equals(authMethod, "AccessCode", StringComparison.OrdinalIgnoreCase);
+        // Same as ElectionAccess: a missing election reaches the action so it
+        // can return 404. An existing election still requires Owner/Admin.
+        if (outcome.Allowed || !outcome.ElectionExists)
+        {
+            context.Succeed(requirement);
+        }
+        else
+        {
+            context.Fail();
+        }
     }
 }

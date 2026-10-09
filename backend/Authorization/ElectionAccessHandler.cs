@@ -1,151 +1,73 @@
-using System.Security.Claims;
-using Backend.Context;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Backend.Authorization;
 
 /// <summary>
-/// Authorization handler that validates user access to elections based on the ElectionAccessRequirement.
-/// Checks if the authenticated user is associated with the election specified in the route parameter.
+/// Validates <see cref="ElectionAccessRequirement"/> from the route or from a
+/// <see cref="Guid"/> resource (resource-based <c>AuthorizeAsync</c>).
+/// Guest tellers are allowed only for the election on their token.
+/// A missing election succeeds on the route so the action can return 404.
+/// A <see cref="Guid"/> resource does not get that exception: no membership is a failure.
 /// </summary>
 public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirement>
 {
-    private readonly MainDbContext _context;
-    private readonly ILogger<ElectionAccessHandler> _logger;
+    private readonly IElectionAccessEvaluator _evaluator;
 
-    /// <summary>
-    /// Initializes a new instance of the ElectionAccessHandler.
-    /// </summary>
-    /// <param name="context">The main database context for accessing election user relationships.</param>
-    /// <param name="logger">The logger for diagnostic output.</param>
-    public ElectionAccessHandler(MainDbContext context, ILogger<ElectionAccessHandler> logger)
+    public ElectionAccessHandler(IElectionAccessEvaluator evaluator)
     {
-        _context = context;
-        _logger = logger;
+        _evaluator = evaluator;
     }
 
-    /// <summary>
-    /// Handles the authorization requirement by checking if the user has access to the specified election.
-    /// </summary>
-    /// <param name="context">The authorization handler context containing user and resource information.</param>
-    /// <param name="requirement">The ElectionAccessRequirement being evaluated.</param>
-    /// <returns>A task representing the asynchronous authorization check.</returns>
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         ElectionAccessRequirement requirement)
     {
-        _logger.LogWarning("***** ElectionAccessHandler.HandleRequirementAsync called *****");
-
-        // Get the current user
         var user = context.User;
-        if (user == null || !user.Identity?.IsAuthenticated == true)
+        if (user?.Identity?.IsAuthenticated != true || _evaluator.IsOnlineVoter(user))
         {
-            _logger.LogWarning("ElectionAccess: User not authenticated");
             context.Fail();
             return;
         }
 
-        // Extract election GUID from route parameters
-        // In ASP.NET Core, the resource can be HttpContext, RouteData, or ControllerActionDescriptor
+        if (context.Resource is Guid resourceElectionGuid)
+        {
+            var resourceOutcome = await _evaluator.EvaluateAsync(
+                user,
+                resourceElectionGuid,
+                ElectionAccessPolicies.ElectionAccess);
+            if (resourceOutcome.Allowed)
+            {
+                context.Succeed(requirement);
+            }
+            else
+            {
+                context.Fail();
+            }
+
+            return;
+        }
+
         var httpContext = context.Resource as HttpContext;
         var routeData = context.Resource as RouteData ?? httpContext?.GetRouteData();
-
-        _logger.LogWarning("***** Resource type: {ResourceType}, RouteData available: {HasRouteData}",
-            context.Resource?.GetType().Name ?? "null", routeData != null);
-
-        if (routeData == null)
+        if (!ElectionAccessEvaluator.TryGetElectionGuid(routeData, out var electionGuid))
         {
-            _logger.LogWarning("ElectionAccess: No route data available");
             context.Fail();
             return;
         }
 
-        if (!TryGetElectionGuidFromRoute(routeData, out var electionGuid))
-        {
-            _logger.LogWarning("ElectionAccess: Could not parse election GUID from route. Available route values: {RouteValues}",
-                string.Join(", ", routeData.Values.Select(kvp => $"{kvp.Key}={kvp.Value}")));
-            context.Fail();
-            return;
-        }
+        var outcome = await _evaluator.EvaluateAsync(
+            user,
+            electionGuid,
+            ElectionAccessPolicies.ElectionAccess);
 
-        if (IsGuestTellerForElection(user, electionGuid))
-        {
-            _logger.LogInformation("ElectionAccess: GuestTeller authenticated for election {ElectionGuid}", electionGuid);
-            context.Succeed(requirement);
-            return;
-        }
-
-        var userIdString = user.FindFirst(ClaimTypes.NameIdentifier)?.Value
-                         ?? user.FindFirst("sub")?.Value;
-        if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
-        {
-            _logger.LogWarning("ElectionAccess: Could not parse user ID from claims");
-            context.Fail();
-            return;
-        }
-
-        _logger.LogInformation("ElectionAccess: Checking access to election {ElectionGuid} for user {UserId}", electionGuid, userId);
-
-        // Check if the election exists
-        var electionExists = await _context.Elections
-            .AnyAsync(e => e.ElectionGuid == electionGuid);
-
-        // If election doesn't exist, allow request to proceed so controller can return 404
-        if (!electionExists)
-        {
-            _logger.LogInformation("ElectionAccess: Election {ElectionGuid} does not exist, allowing request", electionGuid);
-            context.Succeed(requirement);
-            return;
-        }
-
-        // Check if user has access to this election
-        var hasAccess = await _context.JoinElectionUsers
-            .AnyAsync(jeu => jeu.ElectionGuid == electionGuid && jeu.UserId == userId);
-
-        _logger.LogInformation("ElectionAccess: User {UserId} access to election {ElectionGuid}: {HasAccess}", userId, electionGuid, hasAccess);
-
-        if (hasAccess)
+        // Missing election: let the action return 404 instead of 403.
+        if (outcome.Allowed || !outcome.ElectionExists)
         {
             context.Succeed(requirement);
         }
         else
         {
-            _logger.LogWarning("ElectionAccess: User {UserId} denied access to election {ElectionGuid}", userId, electionGuid);
             context.Fail();
         }
     }
-
-    private static bool TryGetElectionGuidFromRoute(RouteData routeData, out Guid electionGuid)
-    {
-        electionGuid = Guid.Empty;
-
-        foreach (var key in new[] { "guid", "electionGuid", "id" })
-        {
-            if (routeData.Values.TryGetValue(key, out var guidValue) &&
-                Guid.TryParse(guidValue?.ToString(), out electionGuid))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private static bool IsGuestTellerForElection(ClaimsPrincipal user, Guid electionGuid)
-    {
-        var isTellerClaim = user.FindFirst("isTeller")?.Value;
-        var electionGuidClaim = user.FindFirst("electionGuid")?.Value;
-        var authMethod = user.FindFirst("authMethod")?.Value;
-
-        return bool.TryParse(isTellerClaim, out var isGuestTeller) && isGuestTeller &&
-               string.Equals(authMethod, "AccessCode", StringComparison.OrdinalIgnoreCase) &&
-               Guid.TryParse(electionGuidClaim, out var tokenElectionGuid) &&
-               tokenElectionGuid == electionGuid;
-    }
 }
-
-

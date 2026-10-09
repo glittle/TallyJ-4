@@ -1,3 +1,4 @@
+using Backend.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
@@ -12,14 +13,17 @@ namespace Backend.Hubs;
 public class PeopleImportHub : Hub
 {
     private readonly ILogger<PeopleImportHub> _logger;
+    private readonly IElectionAccessEvaluator _electionAccess;
 
     /// <summary>
     /// Initializes a new instance of the PeopleImportHub.
     /// </summary>
     /// <param name="logger">Logger for recording hub operations and import progress.</param>
-    public PeopleImportHub(ILogger<PeopleImportHub> logger)
+    /// <param name="electionAccess">Election membership check for group joins.</param>
+    public PeopleImportHub(ILogger<PeopleImportHub> logger, IElectionAccessEvaluator electionAccess)
     {
         _logger = logger;
+        _electionAccess = electionAccess;
     }
 
     /// <summary>
@@ -29,6 +33,8 @@ public class PeopleImportHub : Hub
     /// <param name="electionGuid">The unique identifier of the election where people are being imported.</param>
     public async Task JoinImportSession(Guid electionGuid)
     {
+        await ElectionHubAuthorization.EnsureCanJoinAsync(_electionAccess, Context.User, electionGuid);
+
         var groupName = GetGroupName(electionGuid);
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         _logger.LogInformation("Client {ConnectionId} joined people import session for election {ElectionGuid}",

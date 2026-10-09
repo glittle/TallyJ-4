@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Backend.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Backend.Hubs;
@@ -14,14 +15,17 @@ namespace Backend.Hubs;
 public class FrontDeskHub : Hub
 {
     private readonly ILogger<FrontDeskHub> _logger;
+    private readonly IElectionAccessEvaluator _electionAccess;
 
     /// <summary>
     /// Initializes a new instance of the FrontDeskHub.
     /// </summary>
     /// <param name="logger">Logger for recording hub operations and front desk activities.</param>
-    public FrontDeskHub(ILogger<FrontDeskHub> logger)
+    /// <param name="electionAccess">Election membership check for group joins.</param>
+    public FrontDeskHub(ILogger<FrontDeskHub> logger, IElectionAccessEvaluator electionAccess)
     {
         _logger = logger;
+        _electionAccess = electionAccess;
     }
 
     /// <summary>
@@ -31,6 +35,8 @@ public class FrontDeskHub : Hub
     /// <param name="electionGuid">The unique identifier of the election to join for front desk operations.</param>
     public async Task JoinElection(Guid electionGuid)
     {
+        await ElectionHubAuthorization.EnsureCanJoinAsync(_electionAccess, Context.User, electionGuid);
+
         var groupName = GetGroupName(electionGuid);
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
         _logger.LogInformation("Client {ConnectionId} joined front desk for election {ElectionGuid}",

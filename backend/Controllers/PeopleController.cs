@@ -1,3 +1,4 @@
+using Backend.Authorization;
 using Backend.DTOs.People;
 using Backend.Enumerations;
 using Backend.Models;
@@ -45,6 +46,7 @@ public class PeopleController : ControllerBase
     /// <param name="canVote">Optional filter for people who can vote.</param>
     /// <param name="canReceiveVotes">Optional filter for people who can receive votes.</param>
     /// <returns>A paginated response containing the people.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.ElectionAccess)]
     [HttpGet("{electionGuid}/getPeople")]
     public async Task<ActionResult<PaginatedResponse<PersonDto>>> GetPeopleByElection(
         Guid electionGuid,
@@ -69,6 +71,7 @@ public class PeopleController : ControllerBase
     /// <param name="electionGuid">The GUID of the election to search in.</param>
     /// <param name="q">The search query string.</param>
     /// <returns>A list of people matching the search criteria.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.ElectionAccess)]
     [HttpGet("{electionGuid}/searchPeople")]
     public async Task<ActionResult<ApiResponse<List<PersonDto>>>> SearchPeople(
         Guid electionGuid,
@@ -89,6 +92,7 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election.</param>
     /// <returns>A list of all people with live vote counts.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.ElectionAccess)]
     [HttpGet("{electionGuid}/getAllForBallotEntry")]
     public async Task<ActionResult<ApiResponse<List<PersonDto>>>> GetAllForBallotEntry(Guid electionGuid)
     {
@@ -102,6 +106,7 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="electionGuid">The GUID of the election.</param>
     /// <returns>A list of lightweight person DTOs.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.ElectionAccess)]
     [HttpGet("{electionGuid}/getAllPeople")]
     public async Task<ActionResult<ApiResponse<List<PersonListDto>>>> GetAllPeople(Guid electionGuid)
     {
@@ -115,6 +120,7 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the person.</param>
     /// <returns>Detailed person information with history.</returns>
+    [RequireElectionAccess(ElectionResourceKind.PersonGuid)]
     [HttpGet("{guid}/getPersonDetails")]
     public async Task<ActionResult<ApiResponse<PersonDetailDto>>> GetPersonDetails(Guid guid)
     {
@@ -133,6 +139,7 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the person.</param>
     /// <returns>The person information.</returns>
+    [RequireElectionAccess(ElectionResourceKind.PersonGuid)]
     [HttpGet("{guid}/getPerson")]
     public async Task<ActionResult<ApiResponse<PersonDto>>> GetPerson(Guid guid)
     {
@@ -151,6 +158,7 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="createDto">The person creation data.</param>
     /// <returns>The created person information.</returns>
+    [RequireElectionAccess(ElectionResourceKind.BodyElectionGuid)]
     [HttpPost("createPerson")]
     public async Task<ActionResult<ApiResponse<PersonDto>>> CreatePerson(CreatePersonDto createDto)
     {
@@ -175,6 +183,7 @@ public class PeopleController : ControllerBase
     /// <param name="guid">The GUID of the person to update.</param>
     /// <param name="updateDto">The updated person data.</param>
     /// <returns>The updated person information.</returns>
+    [RequireElectionAccess(ElectionResourceKind.PersonGuid)]
     [HttpPut("{guid}/updatePerson")]
     public async Task<ActionResult<ApiResponse<PersonDto>>> UpdatePerson(Guid guid, UpdatePersonDto updateDto)
     {
@@ -200,6 +209,7 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the person to delete.</param>
     /// <returns>No content if successful, or not found if the person doesn't exist.</returns>
+    [RequireElectionAccess(ElectionResourceKind.PersonGuid)]
     [HttpDelete("{guid}/deletePerson")]
     public async Task<IActionResult> DeletePerson(Guid guid)
     {
@@ -225,6 +235,7 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the person.</param>
     /// <returns>The kiosk code.</returns>
+    [RequireElectionAccess(ElectionResourceKind.PersonGuid)]
     [HttpPost("{guid}/generateKioskCode")]
     public async Task<ActionResult<ApiResponse<string>>> GenerateKioskCode(Guid guid)
     {
@@ -253,6 +264,7 @@ public class PeopleController : ControllerBase
     /// <param name="guid">The GUID of the person.</param>
     /// <param name="dto"><c>OK</c> or a short block reason.</param>
     /// <returns>The updated phone OnlineVoter SMS/auth fields.</returns>
+    [RequireElectionAccess(ElectionResourceKind.PersonGuid)]
     [HttpPut("{guid}/setPhoneSmsStatus")]
     public async Task<ActionResult<ApiResponse<PersonPhoneOnlineVoterDto>>> SetPhoneSmsStatus(
         Guid guid,
@@ -282,6 +294,7 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the person.</param>
     /// <returns>The updated phone OnlineVoter SMS/WhatsApp/auth fields.</returns>
+    [RequireElectionAccess(ElectionResourceKind.PersonGuid)]
     [HttpPost("{guid}/checkWhatsApp")]
     public async Task<ActionResult<ApiResponse<PersonPhoneOnlineVoterDto>>> CheckWhatsApp(Guid guid)
     {
@@ -308,6 +321,7 @@ public class PeopleController : ControllerBase
     /// <see cref="CheckSelectedWhatsAppDto.MaxSelectedPeople"/>. Does not
     /// convert a non-P occupant. Not a notify send queue.
     /// </summary>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("{electionGuid}/checkWhatsAppSelected")]
     public async Task<ActionResult<ApiResponse<CheckSelectedWhatsAppResultDto>>> CheckWhatsAppSelected(
         Guid electionGuid,
@@ -336,6 +350,7 @@ public class PeopleController : ControllerBase
     /// <see cref="StartWhatsAppNotifyDto.MaxSelectedPeople"/>. Does not convert
     /// a non-P occupant. Does not use <c>SmsStatus</c> as the allow rule.
     /// </summary>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("{electionGuid}/notifyWhatsApp")]
     public async Task<ActionResult<ApiResponse<WhatsAppNotifyStatusDto>>> NotifyWhatsApp(
         Guid electionGuid,
@@ -361,6 +376,7 @@ public class PeopleController : ControllerBase
     /// Abort the active WhatsApp notify queue for this election (or the given
     /// token). Already-sent messages stay sent.
     /// </summary>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("{electionGuid}/abortWhatsAppNotify")]
     public ActionResult<ApiResponse<WhatsAppNotifyStatusDto>> AbortWhatsAppNotify(
         Guid electionGuid,
@@ -380,6 +396,7 @@ public class PeopleController : ControllerBase
     /// Latest WhatsApp notify run for this election (or the given token).
     /// Poll for sent / skipped / failed / cancelled. Not live SignalR.
     /// </summary>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpGet("{electionGuid}/whatsAppNotifyStatus")]
     public ActionResult<ApiResponse<WhatsAppNotifyStatusDto>> GetWhatsAppNotifyStatus(
         Guid electionGuid,

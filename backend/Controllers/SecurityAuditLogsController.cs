@@ -1,4 +1,5 @@
 using Backend;
+using Backend.Authorization;
 using Backend.DTOs.Security;
 using Backend.Models;
 using Backend.Services;
@@ -16,6 +17,7 @@ namespace Backend.Controllers;
 public class SecurityAuditLogsController : ControllerBase
 {
     private readonly ISecurityAuditService _securityAuditService;
+    private readonly IAuthorizationService _authorization;
     private readonly ILogger<SecurityAuditLogsController> _logger;
 
     /// <summary>
@@ -23,9 +25,11 @@ public class SecurityAuditLogsController : ControllerBase
     /// </summary>
     public SecurityAuditLogsController(
         ISecurityAuditService securityAuditService,
+        IAuthorizationService authorization,
         ILogger<SecurityAuditLogsController> logger)
     {
         _securityAuditService = securityAuditService;
+        _authorization = authorization;
         _logger = logger;
     }
 
@@ -54,6 +58,24 @@ public class SecurityAuditLogsController : ControllerBase
             {
                 message = "Invalid pagination parameters. PageNumber must be >= 1, PageSize must be between 1 and 200."
             });
+        }
+
+        var superAdmin = await _authorization.AuthorizeAsync(User, "SuperAdmin");
+        if (!superAdmin.Succeeded)
+        {
+            if (electionGuid == null)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, new { error = "error.forbidden" });
+            }
+
+            var electionAccess = await _authorization.AuthorizeAsync(
+                User,
+                electionGuid.Value,
+                ElectionAccessPolicies.HeadTellerAccess);
+            if (!electionAccess.Succeeded)
+            {
+                return NotFound(new { error = "error.notFound" });
+            }
         }
 
         var filter = new SecurityAuditLogFilterDto
@@ -86,6 +108,24 @@ public class SecurityAuditLogsController : ControllerBase
         if (log == null)
         {
             return NotFound(ApiResponse<SecurityAuditLogDto>.ErrorResponse("Security audit log not found"));
+        }
+
+        var superAdmin = await _authorization.AuthorizeAsync(User, "SuperAdmin");
+        if (!superAdmin.Succeeded)
+        {
+            if (log.ElectionGuid == null)
+            {
+                return NotFound(ApiResponse<SecurityAuditLogDto>.ErrorResponse("Security audit log not found"));
+            }
+
+            var electionAccess = await _authorization.AuthorizeAsync(
+                User,
+                log.ElectionGuid.Value,
+                ElectionAccessPolicies.HeadTellerAccess);
+            if (!electionAccess.Succeeded)
+            {
+                return NotFound(ApiResponse<SecurityAuditLogDto>.ErrorResponse("Security audit log not found"));
+            }
         }
 
         return Ok(ApiResponse<SecurityAuditLogDto>.SuccessResponse(log));

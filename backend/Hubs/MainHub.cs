@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Backend.Authorization;
 using Backend.Context;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +20,7 @@ public class MainHub : Hub
     private readonly ILogger<MainHub> _logger;
     private readonly IComputerAssignmentService _assignmentService;
     private readonly MainDbContext _dbContext;
+    private readonly IElectionAccessEvaluator _electionAccess;
 
     /// <summary>
     /// Initializes a new instance of the MainHub.
@@ -26,11 +28,13 @@ public class MainHub : Hub
     public MainHub(
         ILogger<MainHub> logger,
         IComputerAssignmentService assignmentService,
-        MainDbContext dbContext)
+        MainDbContext dbContext,
+        IElectionAccessEvaluator electionAccess)
     {
         _logger = logger;
         _assignmentService = assignmentService;
         _dbContext = dbContext;
+        _electionAccess = electionAccess;
     }
 
     /// <summary>
@@ -41,6 +45,8 @@ public class MainHub : Hub
     /// <returns>The assigned computer code for this workstation.</returns>
     public async Task<string> JoinElection(Guid electionGuid, string clientId)
     {
+        await ElectionHubAuthorization.EnsureCanJoinAsync(_electionAccess, Context.User, electionGuid);
+
         var isMainTeller = IsMainTeller(Context.User);
         if (!isMainTeller && !_assignmentService.CanGuestJoin(electionGuid))
         {

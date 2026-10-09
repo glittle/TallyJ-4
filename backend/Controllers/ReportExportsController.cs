@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Results;
+﻿using Backend.Authorization;
+using Backend.DTOs.Results;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,7 +11,7 @@ namespace Backend.Controllers
     /// <summary>
     /// Controller for exporting election reports in various formats (PDF, Excel, CSV).
     /// </summary>
-    [Authorize]
+    [Authorize(Policy = ElectionAccessPolicies.ElectionAccess)]
     [ApiController]
     [Route("api/report-exports")]
     public class ReportExportsController : ControllerBase

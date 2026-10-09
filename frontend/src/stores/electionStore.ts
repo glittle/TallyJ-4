@@ -121,6 +121,12 @@ export const useElectionStore = defineStore("election", () => {
       return election;
     } catch (e: any) {
       error.value = extractApiErrorMessage(e);
+      // A failed load of a different election must not keep showing the
+      // previous one (stale link, 403, or 404). Refreshing the election
+      // already on screen leaves it in place.
+      if (currentElection.value?.electionGuid !== electionGuid) {
+        currentElection.value = null;
+      }
       throw e;
     } finally {
       loading.value = false;

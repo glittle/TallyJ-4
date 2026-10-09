@@ -1,4 +1,5 @@
-﻿using Backend.DTOs.Tellers;
+﻿using Backend.Authorization;
+using Backend.DTOs.Tellers;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ namespace Backend.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/{electionGuid}/tellers")]
-[Authorize]
+[Authorize(Policy = ElectionAccessPolicies.ElectionAccess)]
 public class TellersController : ControllerBase
 {
     private readonly ITellerService _tellerService;
@@ -56,6 +57,7 @@ public class TellersController : ControllerBase
     /// <param name="electionGuid">The election GUID.</param>
     /// <param name="rowId">The teller row ID.</param>
     /// <returns>The teller information.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpGet("{rowId}/getTeller")]
     public async Task<ActionResult<ApiResponse<TellerDto>>> GetTeller(Guid electionGuid, int rowId)
     {
@@ -110,6 +112,7 @@ public class TellersController : ControllerBase
     /// <param name="rowId">The teller row ID.</param>
     /// <param name="updateDto">The updated teller data.</param>
     /// <returns>The updated teller information.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPut("{rowId}/updateTeller")]
     public async Task<ActionResult<ApiResponse<TellerDto>>> UpdateTeller(
         Guid electionGuid,
@@ -144,6 +147,7 @@ public class TellersController : ControllerBase
     /// <param name="electionGuid">The election GUID.</param>
     /// <param name="rowId">The teller row ID.</param>
     /// <returns>A success response if the teller was deleted.</returns>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpDelete("{rowId}/deleteTeller")]
     public async Task<ActionResult<ApiResponse<bool>>> DeleteTeller(Guid electionGuid, int rowId)
     {
