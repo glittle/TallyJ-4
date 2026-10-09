@@ -36,7 +36,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
                 ["Email:FromName"] = "TallyJ Test",
                 ["Localization:ResourcesPath"] = "../frontend/src/locales",
                 ["Logging:LogLevel:Backend.Services.SecurityAuditService"] = "Error",
-                ["Twilio:AuthToken"] = TwilioAuthToken
+                ["Twilio:AuthToken"] = TwilioAuthToken,
+                ["AntiAbuse:RequestCodeMinimumMilliseconds"] = "0"
             });
         });
 

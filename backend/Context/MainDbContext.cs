@@ -56,6 +56,8 @@ public partial class MainDbContext : IdentityDbContext<AppUser>
 
     public virtual DbSet<CodeSendLog> CodeSendLogs { get; set; }
 
+    public virtual DbSet<PhonePrefixSendCounter> PhonePrefixSendCounters { get; set; }
+
     public virtual DbSet<AbuseAlertState> AbuseAlertStates { get; set; }
 
     public virtual DbSet<VoterContactFlag> VoterContactFlags { get; set; }

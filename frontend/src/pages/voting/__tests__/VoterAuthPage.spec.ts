@@ -3,10 +3,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@/test/setup";
 import VoterAuthPage from "../VoterAuthPage.vue";
 
+const showSuccessMessage = vi.fn();
 const showErrorMessage = vi.fn();
 const verifyCode = vi.fn();
 const requestVerificationCode = vi.fn().mockResolvedValue({
-  messageKey: "voting.auth.requestCode.sent",
+  messageKey: "voting.auth.requestCode.sentIfListed",
   channelToken: "channel-token",
 });
 
@@ -17,7 +18,7 @@ vi.mock("vue-router", () => ({
 
 vi.mock("@/composables/useNotifications", () => ({
   useNotifications: () => ({
-    showSuccessMessage: vi.fn(),
+    showSuccessMessage,
     showErrorMessage,
   }),
 }));
@@ -89,12 +90,23 @@ async function mountOnVerifyStep() {
   return wrapper;
 }
 
+describe("VoterAuthPage code request", () => {
+  it("says a code was sent if the person is on the voter list", async () => {
+    await mountOnVerifyStep();
+
+    expect(showSuccessMessage).toHaveBeenCalledWith(
+      "If you are on the voter list, a code has been sent.",
+    );
+  });
+});
+
 describe("VoterAuthPage verify failures", () => {
   beforeEach(() => {
+    showSuccessMessage.mockReset();
     showErrorMessage.mockReset();
     verifyCode.mockReset();
     requestVerificationCode.mockResolvedValue({
-      messageKey: "voting.auth.requestCode.sent",
+      messageKey: "voting.auth.requestCode.sentIfListed",
       channelToken: "channel-token",
     });
   });

@@ -78,6 +78,47 @@ public class PaidSendCounters
     }
 
     /// <summary>
+    /// Subtracts one from the owner-day counter after a later prefix check refused the send.
+    /// The daily cap is not left consumed when the send is refused.
+    /// </summary>
+    public async Task RefundOwnerDayAsync(
+        Guid userId,
+        DateOnly utcDate,
+        CancellationToken cancellationToken = default)
+    {
+        if (!_context.Database.IsRelational())
+        {
+            var row = await _context.OwnerDailyPaidSends
+                .FirstOrDefaultAsync(item => item.UserId == userId && item.UtcDate == utcDate, cancellationToken);
+            if (row != null && row.SendCount > 0)
+            {
+                row.SendCount -= 1;
+                await _context.SaveChangesAsync(cancellationToken);
+            }
+
+            return;
+        }
+
+        const string sql = """
+            UPDATE OwnerDailyPaidSends
+            SET SendCount = SendCount - 1
+            WHERE UserId = @userId AND UtcDate = @utcDate AND SendCount > 0
+            """;
+
+        await ExecuteNonQueryAsync(
+            sql,
+            command =>
+            {
+                command.Parameters.Add(CreateMappedParameter<OwnerDailyPaidSend>(
+                    command, nameof(OwnerDailyPaidSend.UserId), "@userId", userId));
+                command.Parameters.Add(CreateMappedParameter<OwnerDailyPaidSend>(
+                    command, nameof(OwnerDailyPaidSend.UtcDate), "@utcDate", utcDate));
+            },
+            cancellationToken);
+        DetachCounters();
+    }
+
+    /// <summary>
     /// Adds one to the owner's count for <paramref name="utcDate"/> when it is still under <paramref name="cap"/>.
     /// </summary>
     public Task<bool> TryConsumeOwnerDayAsync(

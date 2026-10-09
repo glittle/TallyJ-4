@@ -31,6 +31,16 @@ public static class CodeSendBlockReason
     public const string Flagged = "flagged";
 
     /// <summary>
+    /// This destination prefix has used the system-wide sliding paid-send cap.
+    /// </summary>
+    public const string PrefixLimit = "prefix-limit";
+
+    /// <summary>
+    /// The paid destination did not parse to an E.164 prefix.
+    /// </summary>
+    public const string PrefixUnparsed = "prefix-unparsed";
+
+    /// <summary>
     /// Stored outcome when the provider accepted the send.
     /// </summary>
     public const string Sent = "sent";

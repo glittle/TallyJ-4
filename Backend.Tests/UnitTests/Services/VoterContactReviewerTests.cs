@@ -297,5 +297,8 @@ public class VoterContactReviewerTests : ServiceTestBase
             Flagged.Add(alert);
             return Task.CompletedTask;
         }
+
+        public Task NotifyPrefixLimitAsync(AbusePrefixLimitAlert alert, CancellationToken cancellationToken = default) =>
+            Task.CompletedTask;
     }
 }

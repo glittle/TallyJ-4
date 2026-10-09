@@ -72,7 +72,7 @@ public class OnlineVotingServiceRequestCodeChannelTests : ServiceTestBase
             DeliveryMethod = "sms"
         });
 
-        Assert.Equal("voting.auth.requestCode.notRegistered", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         Assert.Null(result.ChannelToken);
         _paidSender.Verify(s => s.SendSmsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         Assert.Empty(_pushed);
@@ -90,7 +90,7 @@ public class OnlineVotingServiceRequestCodeChannelTests : ServiceTestBase
             DeliveryMethod = "sms"
         });
 
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         Assert.False(string.IsNullOrWhiteSpace(result.ChannelToken));
         Assert.True(result.ChannelToken!.Length >= 64);
         Assert.NotEqual(result.DevVerificationCode, result.ChannelToken);
@@ -125,7 +125,7 @@ public class OnlineVotingServiceRequestCodeChannelTests : ServiceTestBase
             DeliveryMethod = "email"
         });
 
-        Assert.Equal("voting.auth.requestCode.sent", result.MessageKey);
+        Assert.Equal("voting.auth.requestCode.sentIfListed", result.MessageKey);
         Assert.False(string.IsNullOrWhiteSpace(result.ChannelToken));
         Assert.Contains(_pushed, s => s.Status == VoterCodeDeliveryStatuses.Final && s.Okay == true);
     }

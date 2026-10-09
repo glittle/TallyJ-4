@@ -374,6 +374,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "voting.auth.requestCode.sentIfListed": {
+    "t": "If you are on the voter list, a code has been sent.",
+    "s": "source",
+    "w": "2026-10-07T15:00:00Z"
+  },
   "voting.auth.delivery.sending": {
     "t": "Sending your verification code…",
     "s": "source",
