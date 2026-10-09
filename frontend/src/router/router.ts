@@ -7,6 +7,7 @@ import {
   isGuestTeller,
   isGuestTellerRouteAllowed,
 } from "@/domain/guestTellerAccess";
+import { syncReplayToRoute } from "@/sentry/syncReplayToRoute";
 import { secureTokenService } from "../services/secureTokenService";
 
 // PublicLayout is static - needed immediately for all public/voting routes
@@ -351,6 +352,9 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to: RouteLocationNormalized) => {
+  // Before auth awaits, so a voter page is not painted into an active replay.
+  await syncReplayToRoute(to, window.__APP_CONFIG__?.env);
+
   const isAuthenticated = secureTokenService.isAuthenticated();
 
   if (to.meta.requiresAuth && !isAuthenticated) {
