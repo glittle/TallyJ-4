@@ -500,19 +500,19 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.importCdnBallots": {
-    "t": "Tuo CDN-liput",
+    "t": "Tuo CDN-äänestysliput",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.importCdnBallotsError": {
-    "t": "CDN-lippujen tuonti epäonnistui",
+    "t": "CDN-äänestyslippujen tuonti epäonnistui",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.importCdnBallotsSuccess": {
-    "t": "CDN-liput tuotu onnistuneesti",
+    "t": "CDN-äänestysliput tuotu onnistuneesti",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.importElection": {
     "t": "Tuo vaalit",

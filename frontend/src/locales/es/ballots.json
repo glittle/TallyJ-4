@@ -25,19 +25,19 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.cdnImport.ballotsCreated": {
-    "t": "Cédulas creadas",
+    "t": "Papeletas creadas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.cdnImport.button": {
-    "t": "Importar Cédulas de CDN",
+    "t": "Importar Papeletas de CDN",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.cdnImport.description": {
-    "t": "Cargue un archivo XML exportado de la CDN (Base de Datos Nacional Canadiense) para importar cédulas y sus votos correspondientes en esta elección. El archivo será analizado y se crearán cédulas para cada entrada válida, junto con todos los registros de voto asociados.",
+    "t": "Cargue un archivo XML exportado de la CDN (Base de Datos Nacional Canadiense) para importar papeletas y sus votos correspondientes en esta elección. El archivo será analizado y se crearán papeletas para cada entrada válida, junto con todos los registros de voto asociados.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.cdnImport.errors": {
     "t": "Errores",
@@ -65,9 +65,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.cdnImport.title": {
-    "t": "Importar Cédulas de CDN",
+    "t": "Importar Papeletas de CDN",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.cdnImport.totalRows": {
     "t": "Filas totales procesadas",

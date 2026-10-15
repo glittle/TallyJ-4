@@ -195,9 +195,9 @@
     "w": "2026-10-15T17:15:00Z"
   },
   "monitoring.connectedOnlineVoters.note": {
-    "t": "Anonymous count of online abstimmende Person sessions currently on this election's Stimmzettel page. Namen werden nicht angezeigt. Dies ist keine Zählung von Stimmzettel, die erstellt wird — das Komponieren wird erst nach dem Absenden gespeichert.",
+    "t": "Anonyme Anzahl der Sitzungen von abstimmenden Personen, die gerade auf der Stimmzettelseite dieser Wahl sind. Namen werden nicht angezeigt. Dies ist keine Zählung von Stimmzetteln, die gerade ausgefüllt werden — das Ausfüllen wird erst beim Absenden gespeichert.",
     "s": "ai",
-    "w": "2026-10-15T17:15:00Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "monitoring.ballotsByMethod.title": {
     "t": "Stimmzettel nach Wahlmethode",

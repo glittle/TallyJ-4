@@ -1,8 +1,8 @@
 {
   "voting.auth.code.description": {
-    "t": "Einige Wahlen bieten abstimmende Personen einen persönlichen Wahlcode - normalerweise vom Wahlverwalter per E-Mail, Post oder persönlich gesendet. Wenn Sie einen solchen Code erhalten haben, geben Sie ihn hier ein, um direkt zum Stimmzettel zu gehen.",
+    "t": "Einige Wahlen bieten abstimmende Personen einen persönlichen Wahlcode - normalerweise vom Administrator per E-Mail, Post oder persönlich gesendet. Wenn Sie einen solchen Code erhalten haben, geben Sie ihn hier ein, um direkt zum Stimmzettel zu gehen.",
     "s": "ai",
-    "w": "2026-10-15T17:15:00Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.auth.code.label": {
     "t": "Abstimmungscode",
@@ -120,14 +120,14 @@
     "w": "2026-10-15T17:15:00Z"
   },
   "voting.auth.faq.a2": {
-    "t": "Die von Ihnen eingegebenen Informationen müssen genau dem entsprechen, was der Wahlverwalter für Sie registriert hat. Wenn es nicht erkannt wird, wenden Sie sich bitte an den Wahlverwalter — er kann Ihre Daten überprüfen oder Ihnen stattdessen einen persönlichen Abstimmungscode zur Verfügung stellen.",
+    "t": "Die von Ihnen eingegebenen Informationen müssen genau dem entsprechen, was der Administrator für Sie registriert hat. Wenn es nicht erkannt wird, wenden Sie sich bitte an den Administrator — er kann Ihre Daten überprüfen oder Ihnen stattdessen einen persönlichen Abstimmungscode zur Verfügung stellen.",
     "s": "ai",
-    "w": "2026-10-15T17:15:00Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.auth.faq.a3": {
-    "t": "Ja, absolut. Dieser Anmeldeschritt bestätigt nur, dass Sie eine berechtigte abstimmende Person sind. Sobald Sie auf der Stimmzettel-Seite sind, sind Ihre Entscheidungen völlig privat. Das System ist so konzipiert, dass niemand — nicht einmal die Wahlverwalter — Ihren Namen mit den von Ihnen getroffenen spezifischen Entscheidungen verknüpfen kann.",
+    "t": "Ja, absolut. Dieser Anmeldeschritt bestätigt nur, dass Sie eine berechtigte abstimmende Person sind. Sobald Sie auf der Stimmzettel-Seite sind, sind Ihre Entscheidungen völlig privat. Das System ist so konzipiert, dass niemand — nicht einmal die Administratoren — Ihren Namen mit den von Ihnen getroffenen spezifischen Entscheidungen verknüpfen kann.",
     "s": "ai",
-    "w": "2026-10-15T17:15:00Z"
+    "w": "2026-10-15T18:10:00Z"
   },
   "voting.auth.faq.a4": {
     "t": "Nein. Sobald Sie Ihren Stimmzettel eingereicht haben, erfasst das System, dass Sie abgestimmt haben, und akzeptiert keine zweite Einreichung von Ihnen. Dies ist ein wichtiger Schutz für die Integrität der Wahl.",
@@ -195,9 +195,9 @@
     "w": "2026-10-15T17:15:00Z"
   },
   "voting.auth.google.description": {
-    "t": "Wenn Sie ein Google-Konto haben und Ihre bei Google registrierte E-Mail-Adresse mit dem übereinstimmt, was der Wahlverwalter hinterlegt hat, können Sie sich bei Google anmelden. Dies ist eine praktische Option, für die kein separater Code erforderlich ist.",
+    "t": "Wenn Sie ein Google-Konto haben und Ihre bei Google registrierte E-Mail-Adresse mit dem übereinstimmt, was der Administrator hinterlegt hat, können Sie sich bei Google anmelden. Dies ist eine praktische Option, für die kein separater Code erforderlich ist.",
     "s": "ai",
-    "w": "2026-10-15T17:15:00Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.auth.google.emailNotVerified": {
     "t": "Google-E-Mail muss verifiziert werden, um abstimmen zu können.",
@@ -565,9 +565,9 @@
     "w": "2026-10-15T17:15:00Z"
   },
   "voting.auth.welcome.detail": {
-    "t": "Dies ist eine einfache einmalige Überprüfung — wir erstellen kein Konto für Sie und speichern keine persönlichen Informationen, die über das hinausgehen, was der Wahlverwalter bereits hat. Nach der Bestätigung werden Sie direkt zum Stimmzettel weitergeleitet.",
+    "t": "Dies ist eine einfache einmalige Überprüfung — wir erstellen kein Konto für Sie und speichern keine persönlichen Informationen, die über das hinausgehen, was der Administrator bereits hat. Nach der Bestätigung werden Sie direkt zum Stimmzettel weitergeleitet.",
     "s": "ai",
-    "w": "2026-10-15T17:15:00Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.auth.welcome.heading": {
     "t": "Herzlich willkommen — Sie sind fast bereit zur Stimmabgabe",
@@ -575,8 +575,8 @@
     "w": "2026-10-15T17:15:00Z"
   },
   "voting.auth.welcome.intro": {
-    "t": "Um bei dieser Wahl wählen zu können, müssen wir bestätigen, wer Sie sind. Ihre Identität muss mit den Informationen übereinstimmen, die der Wahlverwalter für berechtigte abstimmende Personen hinterlegt hat.",
+    "t": "Um bei dieser Wahl wählen zu können, müssen wir bestätigen, wer Sie sind. Ihre Identität muss mit den Informationen übereinstimmen, die der Administrator für berechtigte abstimmende Personen hinterlegt hat.",
     "s": "ai",
-    "w": "2026-10-15T17:15:00Z"
+    "w": "2026-10-15T17:35:00Z"
   }
 }

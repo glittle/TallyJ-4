@@ -1,8 +1,8 @@
 {
   "ballots.addBallot": {
-    "t": "Ongeza Kura",
+    "t": "Ongeza Karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.addNewPerson": {
     "t": "Ongeza Mtu Mpya",
@@ -25,19 +25,19 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.cdnImport.ballotsCreated": {
-    "t": "Kura ziliyoundwa",
+    "t": "Karatasi za kura ziliyoundwa",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.cdnImport.button": {
-    "t": "Agiza Kura za CDN",
+    "t": "Agiza Karatasi za kura za CDN",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.cdnImport.description": {
-    "t": "Pakia faili la XML lililohamishwa kutoka CDN (Canadian National Database) ili kuagiza kura na kura zake za sambamba katika uchaguzi huu. Faili litahajiniwa na kura litaundwa kwa kila ingizo sahihi, pamoja na rekodi zote za kura zinazohusiana.",
+    "t": "Pakia faili la XML lililohamishwa kutoka CDN (Canadian National Database) ili kuagiza karatasi za kura na kura zake katika uchaguzi huu. Faili litasomwa na karatasi ya kura itaundwa kwa kila ingizo sahihi, pamoja na rekodi zote za kura zinazohusiana.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T18:10:00Z"
   },
   "ballots.cdnImport.errors": {
     "t": "Hitilafu",
@@ -65,9 +65,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.cdnImport.title": {
-    "t": "Agiza Kura za CDN",
+    "t": "Agiza Karatasi za kura za CDN",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.cdnImport.totalRows": {
     "t": "Safu mlalo jumla zilizopangiliwa",
@@ -105,9 +105,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.code": {
-    "t": "Nambari ya Kura",
+    "t": "Nambari ya Karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.computer": {
     "t": "Kompyuta",
@@ -115,24 +115,24 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.createSuccess": {
-    "t": "Kura iliyoundwa kwa mafanikio",
+    "t": "Karatasi ya kura iliyoundwa kwa mafanikio",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.deleteConfirm": {
-    "t": "Je, una uhakika unataka kufuta kura hii?",
+    "t": "Je, una uhakika unataka kufuta karatasi hii ya kura ({code})?",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.deleteError": {
-    "t": "Imeshindwa kufuta kura",
+    "t": "Imeshindwa kufuta karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.deleteSuccess": {
-    "t": "Kura imefutwa kwa mafanikio",
+    "t": "Karatasi ya kura imefutwa kwa mafanikio",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.deleteVoteConfirm": {
     "t": "Je, una uhakika unataka kufuta kura hii?",
@@ -160,14 +160,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.entry": {
-    "t": "Uingizaji wa Kura - {code}",
+    "t": "Uingizaji wa Karatasi ya kura - {code}",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.entryPage": {
-    "t": "Kuingiza Kura",
+    "t": "Kuingiza Karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.ineligible": {
     "t": "Hastahili",
@@ -175,9 +175,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.loadError": {
-    "t": "Imeshindwa kupakia kura",
+    "t": "Imeshindwa kupakia karatasi za kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.location": {
     "t": "Eneo",
@@ -190,9 +190,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.management": {
-    "t": "Usimamizi wa Kura",
+    "t": "Usimamizi wa Karatasi za kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.noMatchesFound": {
     "t": "Hakuna mechi iliyopatikana",
@@ -215,14 +215,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.saveBallot": {
-    "t": "Hifadhi Kura",
+    "t": "Hifadhi Karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.saveError": {
-    "t": "Imeshindwa kuhifadhi kura",
+    "t": "Imeshindwa kuhifadhi karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.status": {
     "t": "Hali",
@@ -275,14 +275,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.teller1": {
-    "t": "Mahesabu 1",
+    "t": "Mhesabu kura 1",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.teller2": {
-    "t": "Mahesabu 2",
+    "t": "Mhesabu kura 2",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "ballots.viewVotes": {
     "t": "Tazama Kura",

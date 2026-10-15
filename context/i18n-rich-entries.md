@@ -41,15 +41,13 @@ The portable steps for another repo with this layout are in `docs/i18n-rich-entr
 **Evidence:** confirmed  
 **Revisit when:** Officers stops publishing per-locale glossaries, or v4 adds a concept Officers does not name
 
-Where a concept exists in both this app and TallyJ Officers (election, ballot, teller, voter, Assembly, officer, candidate, vote, and the other glossary entries), v4 uses the Officers term. Officers wins when the two translations differ. French is one neutral French and uses `e-mail`, not `courriel`.
+Where a concept exists in both this app and TallyJ Officers (election, ballot, teller, voter, Assembly, officer, vote, and the other glossary entries), v4 uses the Officers term. Officers wins when the two translations differ. French is one neutral French and uses `e-mail`, not `courriel`.
 
-Officers locale files and glossaries live under `frontend/src/locales/<locale>/` in `glittle/TallyJ-Officers-v2` (`en`, `fr`, `de`, `fi`, `ko`, `es`, `pt`, `hi`, `vi`, `fa`, `sw`, `ar`, `zh`, `ru`, `hr`). Read those files on `main` before copying wording, and confirm common app-title strings there are still Latin `TallyJ`.
-
-The October 2026 alignment was supposed to copy commit `36298a3` (`#191` on Officers `main`). This environment's GitHub credentials get HTTP 404 for that private repository, so the shared terms below were taken from the deployed Officers catalog at officers.tallyj.com (assets last-modified 2026-10-09), which already uses Latin `TallyJ`. French uses `e-mail` even where that deploy still said `courriel`. German strings that Officers does not have were machine-drafted with those same terms. Re-read `36298a3` when the repo is visible and re-sync any term that differs.
+The shared-term authority is `docs/i18n/glossary.<locale>.md` in `glittle/TallyJ-Officers-v2` at commit `36298a3` (`#191` on Officers `main`), for `ar`, `de`, `es`, `fa`, `fi`, `fr`, `hi`, `hr`, `ko`, `pt`, `ru`, `sw`, `vi`, and `zh`. Where a glossary row does not name the concept (the person who votes is the usual case), use that commit's `frontend/src/locales/<locale>/*.json`. Confirm common app-title strings there are still Latin `TallyJ`. French is one neutral French and uses `e-mail`, not `courriel`, including where a glossary is silent on email. German strings that Officers does not have were machine-drafted with the German glossary terms.
 
 Re-sync:
 
-1. Read the Officers glossary and locale JSON for each shared language.
+1. Read the Officers glossary first, then the locale JSON, for each shared language.
 2. Substitute the shared term in v4. Leave the rest of a v4 sentence in place unless the Officers string is the same concept and should be copied.
 3. New or changed text is `s: ai` with a new `w`. Do not mark it `human` or `approved`. Officers text is still an AI draft even when copied verbatim.
 4. An existing v4 `human` or `approved` string stays as written unless the only edit is that shared-term substitution. If its text changes, set `s` to `ai` and list the key.

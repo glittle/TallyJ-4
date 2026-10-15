@@ -10,9 +10,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.ballots": {
-    "t": "Kura",
+    "t": "Karatasi za kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.bulkDeleteError": {
     "t": "Imeshindwa kufuta baadhi ya chaguzi",
@@ -240,9 +240,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.form.electionPasscodeHelp": {
-    "t": "Nambari ya siri inahitajika kwa kuingia kwa mhesabu.",
+    "t": "Nambari ya siri inahitajika kwa kuingia kwa mhesabu kura.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.form.electionPasscodePlaceholder": {
     "t": "Ingiza nambari ya siri",
@@ -310,9 +310,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.form.hidePreBallotPages": {
-    "t": "Ficha Kurasa za Kabla ya Kura",
+    "t": "Ficha Kurasa za Kabla ya Karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.form.linkedElection": {
     "t": "Uchaguzi Uliounganishwa",
@@ -355,9 +355,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.form.lockedByBallots": {
-    "t": "Imefungwa — kura zimeingizwa",
+    "t": "Imefungwa — karatasi za kura zimeingizwa",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.form.maskVotingMethod": {
     "t": "Ficha Mbinu ya Upigaji Kura",
@@ -500,19 +500,19 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.importCdnBallots": {
-    "t": "Ingiza Kura za CDN",
+    "t": "Ingiza Karatasi za kura za CDN",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.importCdnBallotsError": {
-    "t": "Imeshindwa kuingiza kura za CDN",
+    "t": "Imeshindwa kuingiza karatasi za kura za CDN",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.importCdnBallotsSuccess": {
-    "t": "Kura za CDN zimeingizwa kwa mafanikio",
+    "t": "Karatasi za kura za CDN zimeingizwa kwa mafanikio",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.importElection": {
     "t": "Ingiza Uchaguzi",
@@ -545,9 +545,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.manageBallots": {
-    "t": "Simamia Kura",
+    "t": "Simamia Karatasi za kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.manageLocations": {
     "t": "Simamia Maeneo",
@@ -645,9 +645,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.tabs.ballots": {
-    "t": "Kura",
+    "t": "Karatasi za kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.tabs.basicInfo": {
     "t": "Taarifa za Msingi",
@@ -690,9 +690,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.tabs.tellers": {
-    "t": "Wahesabu",
+    "t": "Wahesabu kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.tabs.votingMethods": {
     "t": "Mbinu za Upigaji Kura",
@@ -700,9 +700,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.tellerAccess": {
-    "t": "Ufikiaji wa Mhesabu",
+    "t": "Ufikiaji wa Mhesabu kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.tellerAccessCode": {
     "t": "Nambari ya Ufikiaji",
@@ -725,9 +725,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.toggleTellerAccess": {
-    "t": "Badilisha Ufikiaji wa Mhesabu",
+    "t": "Badilisha Ufikiaji wa Mhesabu kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.type": {
     "t": "Aina",

@@ -500,19 +500,19 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.importCdnBallots": {
-    "t": "Importar Cédulas de CDN",
+    "t": "Importar Papeletas de CDN",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.importCdnBallotsError": {
-    "t": "Error al importar cédulas de CDN",
+    "t": "Error al importar papeletas de CDN",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.importCdnBallotsSuccess": {
-    "t": "Cédulas de CDN importadas exitosamente",
+    "t": "Papeletas de CDN importadas exitosamente",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.importElection": {
     "t": "Importar Elección",

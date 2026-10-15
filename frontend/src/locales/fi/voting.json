@@ -30,9 +30,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.ballot.bothModeHint": {
-    "t": "Valitse alla olevasta luettelosta tai kirjoita nimi, joka ei ole luettelossa. Veloitusvirkailijat käsittelevät nimet, jotka eivät ole luettelossa.",
+    "t": "Valitse alla olevasta luettelosta tai kirjoita nimi, joka ei ole luettelossa. Ääntenlaskijat käsittelevät nimet, jotka eivät ole luettelossa.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T18:10:00Z"
   },
   "voting.ballot.duplicateError": {
     "t": "Olet valinnut saman ehdokkaan useita kertoja. Tarkista äänestyslippusi.",
@@ -115,9 +115,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.ballot.randomModeHint": {
-    "t": "Kirjoita niiden henkilöiden nimet, joita haluat äänestää. Veloitusvirkailijat yhdistävät nämä nimet rekisteröityihin äänestäjiin.",
+    "t": "Kirjoita niiden henkilöiden nimet, joita haluat äänestää. Ääntenlaskijat yhdistävät nämä nimet rekisteröityihin äänestäjiin.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.ballot.searchPlaceholder": {
     "t": "Hae ehdokasta",
@@ -210,9 +210,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.elections.footerNote": {
-    "t": "Jos jokin näyttää väärältä, lopeta TallyJ:n käyttö ja lähetä tiedot pääveloitusvirkailijalle ja/tai maailmanlaajuiseen tekniseen tukeen.",
+    "t": "Jos jokin näyttää väärältä, lopeta TallyJ:n käyttö ja lähetä tiedot johtavalle ääntenlaskijalle ja/tai maailmanlaajuiseen tekniseen tukeen.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.elections.loadError": {
     "t": "Vaalien lataaminen epäonnistui. Yritä uudelleen.",
@@ -330,9 +330,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.elections.welcomeHint": {
-    "t": "Jos tuleva vaali ei ole luettelossa, se ei ehkä ole TallyJ:ssä tai tietojasi ei ole rekisteröity siihen. Ota yhteyttä vaalin pääveloitusvirkailijaan saadaksesi apua.",
+    "t": "Jos tuleva vaali ei ole luettelossa, se ei ehkä ole TallyJ:ssä tai tietojasi ei ole rekisteröity siihen. Ota yhteyttä vaalin johtavaan ääntenlaskijaan saadaksesi apua.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.status.alreadyVoted": {
     "t": "Olet jo lähettänyt äänestyslipukkeesi tässä vaalissa.",
@@ -340,9 +340,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.status.notVoted": {
-    "t": "Et ole vielä lähettänyt äänestyslipputtasi tässä vaalissa.",
+    "t": "Et ole vielä lähettänyt äänestyslippuasi tässä vaalissa.",
     "s": "ai",
-    "w": "2026-10-15T16:59:35Z"
+    "w": "2026-10-15T18:10:00Z"
   },
   "voting.status.voterNotFound": {
     "t": "Äänestäjää ei löytynyt tässä vaalissa.",
