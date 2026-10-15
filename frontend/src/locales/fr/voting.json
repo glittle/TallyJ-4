@@ -115,9 +115,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.ballot.randomModeHint": {
-    "t": "Tapez les noms des personnes pour lesquelles vous souhaitez voter. Les scrutateurs feront correspondre ces noms aux électeurs enregistrés.",
+    "t": "Tapez les noms des personnes pour lesquelles vous souhaitez voter. Les scrutateurs feront correspondre ces noms aux votants enregistrés.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.ballot.searchPlaceholder": {
     "t": "Rechercher un candidat",
@@ -345,9 +345,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.status.voterNotFound": {
-    "t": "Électeur non trouvé dans cette élection.",
+    "t": "Votant non trouvé dans cette élection.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.submit.alreadyVoted": {
     "t": "Vous avez déjà soumis un bulletin pour cette élection.",
@@ -370,8 +370,8 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.submit.voterNotFound": {
-    "t": "Électeur non trouvé. Veuillez vous authentifier d'abord.",
+    "t": "Votant non trouvé. Veuillez vous authentifier d'abord.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   }
 }

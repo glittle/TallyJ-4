@@ -1,8 +1,8 @@
 {
   "voting.auth.code.description": {
-    "t": "Certaines élections fournissent aux électeurs un code de vote personnel — généralement envoyé par l'administrateur de l'élection par courriel, courrier ou en personne. Si vous avez reçu un tel code, entrez-le ici pour accéder directement au bulletin de vote.",
+    "t": "Certaines élections fournissent aux votants un code de vote personnel — généralement envoyé par l'administrateur de l'élection par e-mail, courrier ou en personne. Si vous avez reçu un tel code, entrez-le ici pour accéder directement au bulletin de vote.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.code.label": {
     "t": "Code de vote",
@@ -20,24 +20,24 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.email.codeSent": {
-    "t": "Code de vérification envoyé à votre courriel",
+    "t": "Code de vérification envoyé à votre e-mail",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.email.description": {
-    "t": "Si l'administrateur de l'élection a votre adresse courriel enregistrée, entrez-la ici. Nous enverrons un code à usage unique à cette adresse. Entrez le code à l'écran suivant pour confirmer votre identité et accéder au bulletin de vote.",
+    "t": "Si l'administrateur de l'élection a votre adresse e-mail enregistrée, entrez-la ici. Nous enverrons un code à usage unique à cette adresse. Entrez le code à l'écran suivant pour confirmer votre identité et accéder au bulletin de vote.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.email.label": {
-    "t": "Adresse courriel",
+    "t": "Adresse e-mail",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.email.placeholder": {
-    "t": "Entrez votre adresse courriel",
+    "t": "Entrez votre adresse e-mail",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.email.sendCode": {
     "t": "Envoyer le code de vérification",
@@ -60,9 +60,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.facebook.description": {
-    "t": "Si vous avez un compte Facebook dont l'adresse courriel correspond à celle enregistrée pour cette élection, vous pouvez vous connecter avec Facebook.",
+    "t": "Si vous avez un compte Facebook dont l'adresse e-mail correspond à celle enregistrée pour cette élection, vous pouvez vous connecter avec Facebook.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.facebook.error": {
     "t": "La connexion Facebook n'est pas disponible pour le moment. Veuillez essayer une autre méthode.",
@@ -100,9 +100,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.faq.a1": {
-    "t": "Pour protéger l'intégrité de l'élection, nous devons confirmer que chaque électeur est bien qui il prétend être et qu'il figure sur la liste des électeurs admissibles. Cela empêche quiconque de voter plus d'une fois ou au nom d'une autre personne.",
+    "t": "Pour protéger l'intégrité de l'élection, nous devons confirmer que chaque votant est bien qui il prétend être et qu'il figure sur la liste des votants admissibles. Cela empêche quiconque de voter plus d'une fois ou au nom d'une autre personne.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.faq.a2": {
     "t": "Les informations que vous saisissez doivent correspondre exactement à ce que l'administrateur de l'élection a enregistré pour vous. Si elles ne sont pas reconnues, contactez l'administrateur de l'élection — il peut vérifier vos coordonnées ou vous fournir un code de vote personnel.",
@@ -110,9 +110,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.faq.a3": {
-    "t": "Oui, absolument. Cette étape de connexion confirme uniquement que vous êtes un électeur admissible. Une fois sur la page du bulletin de vote, vos choix sont entièrement privés. Le système est conçu de sorte que personne — pas même les administrateurs de l'élection — ne puisse associer votre nom aux choix que vous avez faits.",
+    "t": "Oui, absolument. Cette étape de connexion confirme uniquement que vous êtes un votant admissible. Une fois sur la page du bulletin de vote, vos choix sont entièrement privés. Le système est conçu de sorte que personne — pas même les administrateurs de l'élection — ne puisse associer votre nom aux choix que vous avez faits.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.faq.a4": {
     "t": "Non. Une fois que vous avez soumis votre bulletin de vote, le système enregistre que vous avez voté et n'acceptera pas de deuxième soumission de votre part. C'est une mesure de protection importante pour l'intégrité électorale.",
@@ -120,14 +120,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.faq.a5": {
-    "t": "Vous pouvez utiliser n'importe laquelle des méthodes disponibles — vous n'avez pas besoin de toutes les utiliser. Si vous avez une adresse courriel enregistrée dans l'élection, utilisez l'option Courriel. Si vous avez un numéro de téléphone, utilisez l'option Téléphone. Si vous avez reçu un code personnel, utilisez l'option Code. Contactez l'administrateur de l'élection si vous ne savez pas quelle méthode vous convient.",
+    "t": "Vous pouvez utiliser n'importe laquelle des méthodes disponibles — vous n'avez pas besoin de toutes les utiliser. Si vous avez une adresse e-mail enregistrée dans l'élection, utilisez l'option E-mail. Si vous avez un numéro de téléphone, utilisez l'option Téléphone. Si vous avez reçu un code personnel, utilisez l'option Code. Contactez l'administrateur de l'élection si vous ne savez pas quelle méthode vous convient.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.faq.a6": {
-    "t": "Oui. Se connecter avec Google signifie que Google confirme votre identité auprès de nous — nous ne voyons jamais votre mot de passe Google. Nous recevons uniquement votre adresse courriel vérifiée, que nous comparons à la liste des électeurs. Google fournit ce service gratuitement.",
+    "t": "Oui. Se connecter avec Google signifie que Google confirme votre identité auprès de nous — nous ne voyons jamais votre mot de passe Google. Nous recevons uniquement votre adresse e-mail vérifiée, que nous comparons à la liste des votants. Google fournit ce service gratuitement.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.faq.a7": {
     "t": "Veuillez contacter directement votre administrateur d'élection. Il peut vérifier vos informations d'inscription, fournir un code de vote personnel ou vous aider de toute autre manière.",
@@ -140,9 +140,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.faq.q2": {
-    "t": "Que faire si mon adresse courriel ou mon numéro de téléphone n'est pas reconnu ?",
+    "t": "Que faire si mon adresse e-mail ou mon numéro de téléphone n'est pas reconnu ?",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.faq.q3": {
     "t": "Mon vote est-il privé ?",
@@ -180,9 +180,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.google.description": {
-    "t": "Si vous avez un compte Google et que votre adresse courriel Google correspond à ce que l'administrateur de l'élection a enregistré, vous pouvez vous connecter avec Google. C'est une option pratique qui ne nécessite pas de code séparé.",
+    "t": "Si vous avez un compte Google et que votre adresse e-mail Google correspond à ce que l'administrateur de l'élection a enregistré, vous pouvez vous connecter avec Google. C'est une option pratique qui ne nécessite pas de code séparé.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.google.emailNotVerified": {
     "t": "L'email Google doit être vérifié pour voter.",
@@ -235,9 +235,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.kakao.description": {
-    "t": "Si vous avez un compte Kakao (KakaoTalk) et que votre courriel ou numéro de téléphone enregistré correspond, vous pouvez vous connecter avec Kakao.",
+    "t": "Si vous avez un compte Kakao (KakaoTalk) et que votre e-mail ou numéro de téléphone enregistré correspond, vous pouvez vous connecter avec Kakao.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.kakao.error": {
     "t": "La connexion Kakao n'est pas disponible pour le moment. Veuillez essayer une autre méthode.",
@@ -360,9 +360,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.tabs.email": {
-    "t": "Courriel",
+    "t": "E-mail",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.tabs.facebook": {
     "t": "Facebook",
@@ -405,9 +405,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.title": {
-    "t": "Vote en ligne ScrutinJ",
+    "t": "Vote en ligne TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "voting.auth.verify.back": {
     "t": "Essayer une autre méthode",
@@ -465,9 +465,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.verify.voterNotFound": {
-    "t": "Électeur non trouvé. Veuillez d'abord demander un code de vérification.",
+    "t": "Votant non trouvé. Veuillez d'abord demander un code de vérification.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.welcome.choose": {
     "t": "Veuillez choisir l'une des méthodes ci-dessous :",
@@ -485,8 +485,8 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.welcome.intro": {
-    "t": "Pour voter à cette élection, nous devons confirmer votre identité. Vos informations doivent correspondre à celles que l'administrateur de l'élection a enregistrées pour les électeurs admissibles.",
+    "t": "Pour voter à cette élection, nous devons confirmer votre identité. Vos informations doivent correspondre à celles que l'administrateur de l'élection a enregistrées pour les votants admissibles.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   }
 }

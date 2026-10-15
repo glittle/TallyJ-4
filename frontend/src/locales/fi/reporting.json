@@ -30,9 +30,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.ballotCode": {
-    "t": "Lippu",
+    "t": "Äänestyslippu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.ballotCount": {
     "t": "Äänestyslipun määrä",
@@ -50,19 +50,19 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.ballotReport": {
-    "t": "Äänestyslippu raportti",
+    "t": "Äänestyslippuraportti",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.ballotReports": {
-    "t": "Lippuraporttrit",
+    "t": "Äänestyslippuraportit",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.ballotsByMethod": {
-    "t": "Liput äänestystavan mukaan",
+    "t": "Äänestysliput äänestystavan mukaan",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.ballotsCast": {
     "t": "Heitetyt äänestysliput",
@@ -435,9 +435,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.noBallots": {
-    "t": "Tälle suodattimelle ei löytynyt lippuja.",
+    "t": "Tälle suodattimelle ei löytynyt äänestyslippuja.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.noChanges": {
     "t": "Ei muuttuneita henkilötietoja löytynyt.",
@@ -445,9 +445,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.noDuplicates": {
-    "t": "Yhtään kaksinkertaista lippua ei löytynyt.",
+    "t": "Yhtään kaksinkertaista äänestyslippua ei löytynyt.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.noEmails": {
     "t": "Sähköpostia/puhelinta tietoja ei löytynyt.",
@@ -470,9 +470,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.numBallots": {
-    "t": "Lippujen lukumäärä",
+    "t": "Äänestyslippujen lukumäärä",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.numEligibleToVote": {
     "t": "Äänioikeutettuja",
@@ -685,9 +685,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.sumOfEnvelopesCollected": {
-    "t": "Liput yhteensä (ml. käsintehty laskenta)",
+    "t": "Äänestysliput yhteensä (ml. käsintehty laskenta)",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.summary": {
     "t": "Yhteenveto",
@@ -705,14 +705,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.teller1": {
-    "t": "Laskija 1",
+    "t": "Ääntenlaskija 1",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.teller2": {
-    "t": "Laskija 2",
+    "t": "Ääntenlaskija 2",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.tieGroup": {
     "t": "Tasapeliryhmä {group}",

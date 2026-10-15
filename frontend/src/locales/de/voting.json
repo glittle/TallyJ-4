@@ -1,0 +1,482 @@
+{
+  "voting.ballot.addPersonToPool": {
+    "t": "Person zu meinem Stimmzettel hinzufügen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.ballotFull": {
+    "t": "Alle Stimmzettel sind ausgefüllt. Löschen Sie einen Namen, bevor Sie einen weiteren hinzufügen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.canEdit": {
+    "t": "Sie können zurückkehren und Ihren Stimmzettel bearbeiten, während die Abstimmung geöffnet ist.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.editing": {
+    "t": "Stimmzettel bearbeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.editHint": {
+    "t": "Ihre bisherigen Entscheidungen werden unten angezeigt. Nehmen Sie alle Änderungen vor und reichen Sie sie ein, um Ihren Stimmzettel zu aktualisieren.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.notifyWhenProcessed": {
+    "t": "Senden Sie mir eine E-Mail, wenn mein Stimmzettel von Wahlhelfer bearbeitet wurde",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.poolNameRequired": {
+    "t": "Bitte geben Sie mindestens einen Vor- oder Nachnamen ein.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.resubmit": {
+    "t": "Stimmzettel aktualisieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.resubmitSuccess": {
+    "t": "Stimmzettel erfolgreich aktualisiert!",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.yourPool": {
+    "t": "Ihr Pool",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.addToPool": {
+    "t": "Zu Ihrem Stimmzettel/Pool hinzufügen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.addToPoolDescription": {
+    "t": "Füge deinem Pool für diese Wahl eine neue Person hinzu.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.alreadyVoted": {
+    "t": "Sie haben bereits an dieser Wahl teilgenommen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.authRequired": {
+    "t": "Bitte zuerst authentifizieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.backToElections": {
+    "t": "Zurück",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.bothModeHint": {
+    "t": "Wählen Sie in jedem Feld unten einen Namen aus der Liste aus. Wenn nicht gefunden, geben Sie den Vor- und Nachnamen in das Feld links ein.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.duplicateError": {
+    "t": "Eine Person wurde mehrfach eingegeben.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.electionNotFound": {
+    "t": "Wahl nicht gefunden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.extraInfo": {
+    "t": "Zusätzliche Identifizierungsinformationen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.extraInfoPlaceholder": {
+    "t": "(Optional: Verwenden Sie diese Option, wenn der Name möglicherweise nicht ausreicht)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.firstName": {
+    "t": "Vorname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.firstNamePlaceholder": {
+    "t": "Vorname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.guideline": {
+    "t": "\"Aus dem Pool derer, die die abstimmende Person für qualifiziert hält, sollte die Auswahl unter gebührender Berücksichtigung anderer Faktoren wie Altersverteilung, Vielfalt und Geschlecht getroffen werden.\" — Universales Haus der Gerechtigkeit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.lastName": {
+    "t": "Nachname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.lastNamePlaceholder": {
+    "t": "Nachname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.loading": {
+    "t": "Wahlinformationen werden geladen...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.myBallot": {
+    "t": "Mein Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.namePlaceholder": {
+    "t": "Geben Sie einen Namen ein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.notOpen": {
+    "t": "Für diese Wahl steht derzeit keine Online-Abstimmung zur Verfügung.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.onceWarning": {
+    "t": "Du kannst nur einmal abstimmen! Bitte überprüfen Sie Ihren Stimmzettel sorgfältig, bevor Sie ihn einreichen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.openNow": {
+    "t": "Jetzt öffnen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.orderNote": {
+    "t": "(Die Reihenfolge der Namen spielt keine Rolle)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.randomModeHint": {
+    "t": "Geben Sie die Namen der Personen ein, für die Sie stimmen möchten. Die Wahlhelfer werden diese Namen den registrierten abstimmende Personen zuordnen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.searchPlaceholder": {
+    "t": "Person suchen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.submit": {
+    "t": "Stimmzettel einreichen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.submitError": {
+    "t": "Stimmzettel konnte nicht eingereicht werden. Bitte versuchen Sie es erneut.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.submitSuccess": {
+    "t": "Stimmzettel erfolgreich übermittelt!",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.ballot.votingFor": {
+    "t": "Abstimmung für {count} People",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.confirmation.backToElections": {
+    "t": "Zurück zu meinen Wahlen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.confirmation.canEdit": {
+    "t": "Sie können zurückkehren, um Ihren Stimmzettel zu bearbeiten, während die Online-Abstimmung noch geöffnet ist, bis die Wahlhelfer ihn akzeptieren.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.confirmation.cannotEdit": {
+    "t": "Wahlhelfer haben Ihren Stimmzettel angenommen. Sie können es nicht ändern.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.confirmation.close": {
+    "t": "Close",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.confirmation.nextVoter": {
+    "t": "Bereit für den nächsten abstimmende Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.confirmation.kioskSubtitle": {
+    "t": "Dieser Kiosk ist für den nächsten abstimmende Person frei.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.confirmation.kioskRecorded": {
+    "t": "Ihr Stimmzettel wurde aufgezeichnet. Sie können diesen Computer verlassen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.confirmation.election": {
+    "t": "Wahl:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.confirmation.recorded": {
+    "t": "Ihr Stimmzettel wurde sicher aufgezeichnet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.confirmation.submitted": {
+    "t": "Eingereicht:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.confirmation.subtitle": {
+    "t": "Danke für Ihre Teilnahme am",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.confirmation.title": {
+    "t": "Stimmzettel erfolgreich übermittelt!",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.election.instructions": {
+    "t": "Bitte stimmen Sie für {count} Personen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.alreadyVoted": {
+    "t": "Stimmzettel bereits eingereicht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.editBallot": {
+    "t": "Meinen Stimmzettel bearbeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.processedNoEdit": {
+    "t": "Akzeptiert — kann nicht geändert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.col.election": {
+    "t": "Wahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.col.onlineVoting": {
+    "t": "Online Voting",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.col.yourNameAndBallot": {
+    "t": "Ihr Name und Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.footerNote": {
+    "t": "Wenn etwas nicht in Ordnung ist, hören Sie bitte auf, TallyJ zu verwenden, und senden Sie Details an Ihren Head Wahlhelfer und/oder an den globalen technischen Support.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.loadError": {
+    "t": "Laden ist fehlgeschlagen, bitte versuchen Sie es erneut.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.loading": {
+    "t": "Ihre Wahlen werden geladen...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.loginElsewhere": {
+    "t": "Sie haben sich auf einem anderen Browser oder Gerät angemeldet. Diese Sitzung ist immer noch aktiv. Je nach Ihren Wahleinstellungen kann nur eine Sitzung gleichzeitig abstimmen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.logout": {
+    "t": "Ausloggen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.method.online": {
+    "t": "Online",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.noElections": {
+    "t": "Keine Wahlen für Ihr Konto gefunden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.prepareBallot": {
+    "t": "Meinen Stimmzettel vorbereiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.registered": {
+    "t": "Registrierung:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.closed": {
+    "t": "Geschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.closedDaysAgo": {
+    "t": "Vor {days} Tagen geschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.closedMonthsAgo": {
+    "t": "Vor {months} Monaten geschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.closedToday": {
+    "t": "Heute geschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.closedYearsAgo": {
+    "t": "Vor {years} Jahren geschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.closedYesterday": {
+    "t": "Gestern geschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.closingAt": {
+    "t": "Es wird erwartet, dass es um {time} schließt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.closingAtWithMinutes": {
+    "t": "Schließt voraussichtlich in {hours}h {minutes}m (bei {time})",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.closingInMinutes": {
+    "t": "Schließt voraussichtlich in {minutes} Minuten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.closingSoon": {
+    "t": "Abschluss in Kürze",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.estimatedSuffix": {
+    "t": "(Schätzwert)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.noOnlineVoting": {
+    "t": "Online Voting",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.open": {
+    "t": "Offen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.status.openNow": {
+    "t": "Jetzt öffnen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.title": {
+    "t": "Ihre Wahlen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.welcome": {
+    "t": "Willkommen! Ihre Kontaktinformationen ({voterId}) wurden bei den unten gezeigten Wahlen gefunden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.elections.welcomeHint": {
+    "t": "Wenn eine bevorstehende Wahl hier nicht aufgeführt ist, existiert sie möglicherweise nicht in TallyJ oder Ihre Informationen sind nicht darin registriert. Bitte wenden Sie sich an den leitenden Wahlhelfer der Wahl, um Unterstützung zu erhalten.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.status.alreadyProcessed": {
+    "t": "Wahlhelfer haben Ihren Stimmzettel angenommen. Sie können es nicht ändern.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.status.alreadyVoted": {
+    "t": "Sie haben Ihren Stimmzettel für diese Wahl bereits eingereicht.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.status.alreadyVotedAnotherWay": {
+    "t": "Sie haben bei dieser Wahl bereits anders gewählt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.status.notVoted": {
+    "t": "Sie haben noch keinen Stimmzettel für diese Wahl eingereicht.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.status.voterNotFound": {
+    "t": "abstimmende Person bei dieser Wahl nicht gefunden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.submit.alreadyProcessed": {
+    "t": "Wahlhelfer haben Ihren Stimmzettel angenommen. Sie können es nicht ändern.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.submit.alreadyVoted": {
+    "t": "Sie haben bereits einen Stimmzettel für diese Wahl eingereicht.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.submit.alreadyVotedAnotherWay": {
+    "t": "Sie haben bereits anders abgestimmt. Sie können keinen Online-Stimmzettel abgeben.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.submit.electionNotFound": {
+    "t": "Wahl nicht gefunden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.submit.finalized": {
+    "t": "Diese Wahl ist abgeschlossen. Sie können keinen Online-Stimmzettel einreichen oder ändern.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.submit.error": {
+    "t": "Ein Fehler ist beim Einreichen Ihres Stimmzettels aufgetreten. Bitte versuchen Sie es noch einmal.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.submit.notOpen": {
+    "t": "Für diese Wahl steht derzeit keine Online-Abstimmung zur Verfügung.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.submit.voterNotFound": {
+    "t": "abstimmende Person nicht gefunden. Bitte authentifizieren Sie sich zuerst.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

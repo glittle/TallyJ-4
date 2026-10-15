@@ -135,24 +135,24 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.electionTypes.LSA": {
-    "t": "地方灵体会",
+    "t": "地方灵理会",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.electionTypes.LSA1": {
-    "t": "地方灵体会（两阶段）地方单位",
+    "t": "地方灵理会（两阶段）地方单位",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.electionTypes.LSA2": {
-    "t": "地方灵体会（两阶段）最终",
+    "t": "地方灵理会（两阶段）最终",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.electionTypes.NSA": {
-    "t": "全国灵体会",
+    "t": "全国灵理会",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.electionTypes.Oth": {
     "t": "其他",
@@ -240,9 +240,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.form.electionPasscodeHelp": {
-    "t": "计票员登录需要密码。",
+    "t": "计票人登录需要密码。",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.form.electionPasscodePlaceholder": {
     "t": "输入密码",
@@ -690,9 +690,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.tabs.tellers": {
-    "t": "计票员",
+    "t": "计票人",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.tabs.votingMethods": {
     "t": "投票方式",
@@ -700,9 +700,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.tellerAccess": {
-    "t": "计票员访问",
+    "t": "计票人访问",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.tellerAccessCode": {
     "t": "访问码",
@@ -725,9 +725,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.toggleTellerAccess": {
-    "t": "切换计票员访问",
+    "t": "切换计票人访问",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.type": {
     "t": "类型",

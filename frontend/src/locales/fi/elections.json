@@ -10,9 +10,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.ballots": {
-    "t": "Äänestyslipukkeet",
+    "t": "Äänestysliput",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.bulkDeleteError": {
     "t": "Joidenkin vaalien poistaminen epäonnistui",
@@ -135,24 +135,24 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.electionTypes.LSA": {
-    "t": "Paikallinen hengellinen kokous",
+    "t": "Paikallinen henkinen neuvosto",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.electionTypes.LSA1": {
-    "t": "Paikallinen hengellinen kokous (kaksivaiheinen) paikallinen yksikkö",
+    "t": "Paikallinen henkinen neuvosto (kaksivaiheinen) paikallinen yksikkö",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.electionTypes.LSA2": {
-    "t": "Paikallinen hengellinen kokous (kaksivaiheinen) lopullinen",
+    "t": "Paikallinen henkinen neuvosto (kaksivaiheinen) lopullinen",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.electionTypes.NSA": {
-    "t": "Kansallinen hengellinen kokous",
+    "t": "Kansallinen henkinen neuvosto",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.electionTypes.Oth": {
     "t": "Muu",
@@ -240,9 +240,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.form.electionPasscodeHelp": {
-    "t": "Koodi vaaditaan laskijan kirjautumiseen.",
+    "t": "Koodi vaaditaan ääntenlaskijan kirjautumiseen.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.form.electionPasscodePlaceholder": {
     "t": "Syötä koodi",
@@ -500,19 +500,19 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.importCdnBallots": {
-    "t": "Tuo CDN-liput",
+    "t": "Tuo CDN-äänestysliput",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.importCdnBallotsError": {
-    "t": "CDN-lippujen tuonti epäonnistui",
+    "t": "CDN-äänestyslippujen tuonti epäonnistui",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.importCdnBallotsSuccess": {
-    "t": "CDN-liput tuotu onnistuneesti",
+    "t": "CDN-äänestysliput tuotu onnistuneesti",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "elections.importElection": {
     "t": "Tuo vaalit",
@@ -545,9 +545,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.manageBallots": {
-    "t": "Hallinnoi äänestyslipukkeita",
+    "t": "Hallinnoi äänestyslippuja",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.manageLocations": {
     "t": "Hallinnoi sijainteja",
@@ -645,9 +645,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.tabs.ballots": {
-    "t": "Äänestyslipukkeet",
+    "t": "Äänestysliput",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.tabs.basicInfo": {
     "t": "Perustiedot",
@@ -690,9 +690,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.tabs.tellers": {
-    "t": "Laskijat",
+    "t": "Ääntenlaskijat",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.tabs.votingMethods": {
     "t": "Äänestysmenetelmät",
@@ -700,9 +700,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.tellerAccess": {
-    "t": "Laskijan pääsy",
+    "t": "Ääntenlaskijan pääsy",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.tellerAccessCode": {
     "t": "Pääsykoodi",
@@ -725,9 +725,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.toggleTellerAccess": {
-    "t": "Vaihda laskijan pääsyä",
+    "t": "Vaihda ääntenlaskijan pääsyä",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.type": {
     "t": "Tyyppi",

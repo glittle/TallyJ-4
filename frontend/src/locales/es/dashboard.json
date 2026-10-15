@@ -10,9 +10,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "dashboard.ballotsEntered": {
-    "t": "Boletas Ingresadas",
+    "t": "Papeletas Ingresadas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "dashboard.canVote": {
     "t": "Puede Votar",
@@ -95,9 +95,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "dashboard.totalBallots": {
-    "t": "Total de Boletas",
+    "t": "Total de Papeletas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "dashboard.totalElections": {
     "t": "Total de Elecciones",

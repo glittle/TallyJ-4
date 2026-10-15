@@ -1,0 +1,147 @@
+{
+  "dashboard.setupTipsCard.eyebrow": {
+    "t": "Setup Tipps",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.setupTipsCard.title": {
+    "t": "Erste Schritte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.setupTipsCard.tip1": {
+    "t": "Bearbeiten Sie die Auswahl, um das Datum, den Typ und die Nummer für die Auswahl festzulegen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.setupTipsCard.tip2": {
+    "t": "Fügen Sie Personen in People Management hinzu.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.setupTipsCard.tip3": {
+    "t": "Konfigurieren Sie Ihre (n) Abstimmungsort(e) und weisen Sie die Wahlhelfer zu.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.setupTipsCard.tip4": {
+    "t": "Wenn Sie bereit sind, wechseln Sie in den Modus „Stimmzettel sammeln“.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.tips.dismiss": {
+    "t": "Schließen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.active": {
+    "t": "Aktiv",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.activeElections": {
+    "t": "Aktive Wahlen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.ballotsEntered": {
+    "t": "Stimmzettel eingegeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.canVote": {
+    "t": "Kann abstimmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.closed": {
+    "t": "Geschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.closes": {
+    "t": "Schließt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.electionDetails": {
+    "t": "Wahldetails",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.noElections": {
+    "t": "Keine Wahlen gefunden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.noTellers": {
+    "t": "Keine Wahlhelfer zugewiesen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.onlineVoting": {
+    "t": "Online Voting",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.open": {
+    "t": "Offen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.opens": {
+    "t": "Öffnungen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.otherActions": {
+    "t": "Weitere Aktionen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.recentElections": {
+    "t": "Kürzliche Wahlen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.registered": {
+    "t": "Registriert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.statistics": {
+    "t": "Statistiken",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.tellerCount": {
+    "t": "Wahlhelfer Zählung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.tellers": {
+    "t": "Wahlhelfer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.tellersStatus": {
+    "t": "Wahlhelfer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.totalBallots": {
+    "t": "Gesamtzahl der Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.totalElections": {
+    "t": "Wahlen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "dashboard.totalVoters": {
+    "t": "abstimmende Personen insgesamt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

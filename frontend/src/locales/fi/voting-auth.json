@@ -110,9 +110,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.faq.a3": {
-    "t": "Kyllä, ehdottomasti. Tämä kirjautumisvaihe vahvistaa vain, että olet kelpoinen äänestäjä. Kun olet äänestyslipukkeen sivulla, valintasi ovat täysin yksityisiä. Järjestelmä on suunniteltu niin, ettei kukaan — edes vaalien järjestäjät — voi yhdistää nimeäsi tiettyihin valintoihin, jotka teit.",
+    "t": "Kyllä, ehdottomasti. Tämä kirjautumisvaihe vahvistaa vain, että olet kelpoinen äänestäjä. Kun olet äänestyslipun sivulla, valintasi ovat täysin yksityisiä. Järjestelmä on suunniteltu niin, ettei kukaan — edes vaalien järjestäjät — voi yhdistää nimeäsi tiettyihin valintoihin, jotka teit.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.faq.a4": {
     "t": "Ei. Kun olet lähettänyt äänestyslipukkeesi, järjestelmä tallentaa, että olet äänestänyt, eikä hyväksy toista lähetyksen sinulta. Tämä on tärkeä suojaus vaalien eheyden vuoksi.",
@@ -405,9 +405,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.title": {
-    "t": "LaskiJ Online-äänestys",
+    "t": "TallyJ Online-äänestys",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "voting.auth.verify.back": {
     "t": "Kokeile eri menetelmää",

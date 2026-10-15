@@ -10,14 +10,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.appName": {
-    "t": "ScrutinJ",
+    "t": "TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.appTitle": {
-    "t": "ScrutinJ Version 4",
+    "t": "TallyJ Version 4",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.back": {
     "t": "Retour",
@@ -140,9 +140,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.logoAlt": {
-    "t": "Logo ScrutinJ",
+    "t": "Logo TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.next": {
     "t": "Suivant",
@@ -195,9 +195,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.testOnlyLong": {
-    "t": "{note} Cet aperçu de ScrutinJ Version 4 est encore en développement.{br}Vous pouvez vous connecter et essayer les fonctionnalités, mais il ne devrait pas être utilisé pour des élections bahá'ís en ce moment.{br}Nous accueillons vos commentaires sur le nouveau design alors que nous continuons à améliorer le système.",
+    "t": "{note} Cet aperçu de TallyJ Version 4 est encore en développement.{br}Vous pouvez vous connecter et essayer les fonctionnalités, mais il ne devrait pas être utilisé pour des élections bahá'ís en ce moment.{br}Nous accueillons vos commentaires sur le nouveau design alors que nous continuons à améliorer le système.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.testOnlyLongNote": {
     "t": "Veuillez noter :",
@@ -205,9 +205,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.testOnlyShort": {
-    "t": "Cet aperçu de ScrutinJ Version 4 est encore en développement. Ne doit pas être utilisé pour des élections réelles en ce moment.",
+    "t": "Cet aperçu de TallyJ Version 4 est encore en développement. Ne doit pas être utilisé pour des élections réelles en ce moment.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.theme": {
     "t": "Thème",

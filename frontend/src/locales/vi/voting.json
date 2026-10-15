@@ -30,9 +30,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.ballot.bothModeHint": {
-    "t": "Chọn từ danh sách bên dưới, hoặc nhập tên không có trong danh sách. Người đếm sẽ xử lý bất kỳ tên nào không có trong danh sách.",
+    "t": "Chọn từ danh sách bên dưới, hoặc nhập tên không có trong danh sách. Người kiểm phiếu sẽ xử lý bất kỳ tên nào không có trong danh sách.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T18:10:00Z"
   },
   "voting.ballot.duplicateError": {
     "t": "Bạn đã chọn cùng một ứng cử viên nhiều lần. Vui lòng xem lại phiếu bầu của bạn.",
@@ -115,9 +115,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.ballot.randomModeHint": {
-    "t": "Nhập tên những người bạn muốn bỏ phiếu. Người đếm sẽ ghép các tên này với các cử tri đã đăng ký.",
+    "t": "Nhập tên những người bạn muốn bỏ phiếu. Người kiểm phiếu sẽ ghép các tên này với các cử tri đã đăng ký.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.ballot.searchPlaceholder": {
     "t": "Tìm kiếm ứng cử viên",
@@ -210,9 +210,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.elections.footerNote": {
-    "t": "Nếu có gì đó không đúng, vui lòng ngừng sử dụng TallyJ và gửi chi tiết đến người đếm chính của bạn và/hoặc bộ phận hỗ trợ kỹ thuật toàn cầu.",
+    "t": "Nếu có gì đó không đúng, vui lòng ngừng sử dụng TallyJ và gửi chi tiết đến người kiểm phiếu chính của bạn và/hoặc bộ phận hỗ trợ kỹ thuật toàn cầu.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.elections.loadError": {
     "t": "Tải các cuộc bầu cử thất bại. Vui lòng thử lại.",
@@ -330,9 +330,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.elections.welcomeHint": {
-    "t": "Nếu một cuộc bầu cử sắp tới không được liệt kê ở đây, có thể nó không tồn tại trong TallyJ hoặc thông tin của bạn chưa được đăng ký. Vui lòng liên hệ với người đếm chính của cuộc bầu cử để được hỗ trợ.",
+    "t": "Nếu một cuộc bầu cử sắp tới không được liệt kê ở đây, có thể nó không tồn tại trong TallyJ hoặc thông tin của bạn chưa được đăng ký. Vui lòng liên hệ với người kiểm phiếu chính của cuộc bầu cử để được hỗ trợ.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.status.alreadyVoted": {
     "t": "Bạn đã nộp phiếu bầu cho cuộc bầu cử này.",

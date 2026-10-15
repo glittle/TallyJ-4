@@ -5,9 +5,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "results.ballotsReceived": {
-    "t": "Boletas Recibidas",
+    "t": "Papeletas Recibidas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "results.calculateTally": {
     "t": "Calcular Escrutinio",
@@ -90,9 +90,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "results.spoiledBallots": {
-    "t": "Boletas Anuladas",
+    "t": "Papeletas Anuladas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "results.tieBreakAlert": {
     "t": "Atención: Algunos empates requieren desempate manual",
@@ -135,9 +135,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "results.totalBallots": {
-    "t": "Total de Boletas",
+    "t": "Total de Papeletas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "results.totalVotes": {
     "t": "Total de Votos",

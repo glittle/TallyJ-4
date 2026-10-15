@@ -1,0 +1,57 @@
+{
+  "nav.auditLogs": {
+    "t": "Auditprotokolle",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "nav.dashboard": {
+    "t": "Dashboard",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "nav.elections": {
+    "t": "Wahlen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "nav.frontDesk": {
+    "t": "Empfang",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "nav.importBallots": {
+    "t": "Stimmzettel importieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "nav.profile": {
+    "t": "Profil",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "nav.superAdmin": {
+    "t": "Super Admin",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "nav.superAdminPaidSends": {
+    "t": "Bezahlte Sendungen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "nav.superAdminUsers": {
+    "t": "Anmeldekonten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "nav.tellers": {
+    "t": "Wahlhelfer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "nav.votingLocations": {
+    "t": "Abstimmungsorte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

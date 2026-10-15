@@ -10,14 +10,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.appName": {
-    "t": "KiểmJ",
+    "t": "TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.appTitle": {
-    "t": "KiểmJ Phiên bản 4",
+    "t": "TallyJ Phiên bản 4",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.back": {
     "t": "Quay lại",
@@ -140,9 +140,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.logoAlt": {
-    "t": "Logo KiểmJ",
+    "t": "Logo TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.next": {
     "t": "Tiếp Theo",
@@ -195,9 +195,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.testOnlyLong": {
-    "t": "{note} Bản xem trước KiểmJ Phiên bản 4 này vẫn đang được phát triển.{br}Bạn có thể đăng nhập và thử các tính năng, nhưng không nên sử dụng cho các cuộc bầu cử Bahá'í vào lúc này.{br}Chúng tôi hoan nghênh phản hồi của bạn về thiết kế mới khi chúng tôi tiếp tục cải thiện hệ thống.",
+    "t": "{note} Bản xem trước TallyJ Phiên bản 4 này vẫn đang được phát triển.{br}Bạn có thể đăng nhập và thử các tính năng, nhưng không nên sử dụng cho các cuộc bầu cử Bahá'í vào lúc này.{br}Chúng tôi hoan nghênh phản hồi của bạn về thiết kế mới khi chúng tôi tiếp tục cải thiện hệ thống.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.testOnlyLongNote": {
     "t": "Vui lòng lưu ý:",
@@ -205,9 +205,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.testOnlyShort": {
-    "t": "Bản xem trước KiểmJ Phiên bản 4 này vẫn đang được phát triển. Không được sử dụng cho các cuộc bầu cử thực tế vào lúc này.",
+    "t": "Bản xem trước TallyJ Phiên bản 4 này vẫn đang được phát triển. Không được sử dụng cho các cuộc bầu cử thực tế vào lúc này.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.theme": {
     "t": "Giao Diện",

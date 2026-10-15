@@ -1,8 +1,8 @@
 {
   "voting.auth.code.description": {
-    "t": "Algunas elecciones proporcionan a los votantes un código de votación personal, generalmente enviado por el administrador de la elección por correo electrónico, correo postal o en persona. Si recibió dicho código, ingréselo aquí para ir directamente a la boleta.",
+    "t": "Algunas elecciones proporcionan a los votantes un código de votación personal, generalmente enviado por el administrador de la elección por correo electrónico, correo postal o en persona. Si recibió dicho código, ingréselo aquí para ir directamente a la papeleta.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.code.label": {
     "t": "Código de Votación",
@@ -25,9 +25,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.email.description": {
-    "t": "Si el administrador de la elección tiene su dirección de correo electrónico registrada, ingrésela aquí. Le enviaremos un código de un solo uso a esa dirección. Ingrese el código en la siguiente pantalla para confirmar su identidad y acceder a la boleta.",
+    "t": "Si el administrador de la elección tiene su dirección de correo electrónico registrada, ingrésela aquí. Le enviaremos un código de un solo uso a esa dirección. Ingrese el código en la siguiente pantalla para confirmar su identidad y acceder a la papeleta.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.email.label": {
     "t": "Dirección de Correo Electrónico",
@@ -110,14 +110,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.faq.a3": {
-    "t": "Sí, absolutamente. Este paso de inicio de sesión solo confirma que usted es un votante elegible. Una vez en la página de la boleta, sus elecciones son completamente privadas. El sistema está diseñado para que nadie — ni siquiera los administradores de la elección — pueda vincular su nombre con las opciones específicas que eligió.",
+    "t": "Sí, absolutamente. Este paso de inicio de sesión solo confirma que usted es un votante elegible. Una vez en la página de la papeleta, sus elecciones son completamente privadas. El sistema está diseñado para que nadie — ni siquiera los administradores de la elección — pueda vincular su nombre con las opciones específicas que eligió.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.faq.a4": {
-    "t": "No. Una vez que haya enviado su boleta, el sistema registra que ha votado y no aceptará una segunda presentación de su parte. Esta es una salvaguarda importante para la integridad electoral.",
+    "t": "No. Una vez que haya enviado su papeleta, el sistema registra que ha votado y no aceptará una segunda presentación de su parte. Esta es una salvaguarda importante para la integridad electoral.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.faq.a5": {
     "t": "Puede usar cualquiera de los métodos disponibles — no necesita usarlos todos. Si tiene una dirección de correo electrónico registrada con la elección, use la opción de Correo Electrónico. Si tiene un número de teléfono, use la opción de Teléfono. Si recibió un código personal, use la opción de Código. Contacte al administrador de la elección si no está seguro de qué método aplica para usted.",
@@ -405,9 +405,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.title": {
-    "t": "Votación en Línea EscrutiJ",
+    "t": "Votación en Línea TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "voting.auth.verify.back": {
     "t": "Intentar con un Método Diferente",
@@ -475,9 +475,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.auth.welcome.detail": {
-    "t": "Esta es una verificación simple de una sola vez — no estamos creando una cuenta para usted ni almacenando información personal más allá de lo que el administrador de la elección ya tiene. Una vez confirmado, será dirigido directamente a la boleta.",
+    "t": "Esta es una verificación simple de una sola vez — no estamos creando una cuenta para usted ni almacenando información personal más allá de lo que el administrador de la elección ya tiene. Una vez confirmado, será dirigido directamente a la papeleta.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.auth.welcome.heading": {
     "t": "Bienvenido — Está Casi Listo para Votar",

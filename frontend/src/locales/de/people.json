@@ -1,0 +1,1362 @@
+{
+  "people.addPerson": {
+    "t": "Person hinzufügen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.allPeople": {
+    "t": "Alle Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.area": {
+    "t": "Bereich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.bahaiId": {
+    "t": "Baha'i ID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.bulkActions": {
+    "t": "Massenverarbeitungen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.bulkDeleteError": {
+    "t": "Einige Personen konnten nicht gelöscht werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.bulkDeleteMessage": {
+    "t": "Sind Sie sicher, dass Sie {count} ausgewählte Personen löschen möchten?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.bulkDeleteSuccess": {
+    "t": "{count} Personen erfolgreich gelöscht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.canReceiveVotes": {
+    "t": "Kann Stimmen erhalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.canVote": {
+    "t": "Kann abstimmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.votablePeople": {
+    "t": "Berechtigte Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.confirmBulkDelete": {
+    "t": "Massenlöschung bestätigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.createSuccess": {
+    "t": "Person erfolgreich hinzugefügt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.deleteConfirm": {
+    "t": "Sind Sie sicher, dass Sie {name} löschen möchten?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.deleteError": {
+    "t": "Person konnte nicht gelöscht werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.deleteSelected": {
+    "t": "Ausgewählte löschen ({count})",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.deleteSuccess": {
+    "t": "Person erfolgreich gelöscht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.dropFileHere": {
+    "t": "Legen Sie die Datei hier ab oder klicken Sie auf das Feld, um sie hochzuladen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.editPerson": {
+    "t": "Mitarbeiter bearbeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.editDrawerTitle": {
+    "t": "{name} bearbeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.email": {
+    "t": "E-Mail",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.emailInvalid": {
+    "t": "Bitte geben Sie eine gültige E-Mail-Adresse an.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.exportError": {
+    "t": "Personen konnten nicht exportiert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.exportPeople": {
+    "t": "Personen exportieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.exportSuccess": {
+    "t": "Personen erfolgreich exportiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.fileTooLarge": {
+    "t": "Datei zu groß. Bitte laden Sie eine Datei hoch, die kleiner als 10 MB ist.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.firstName": {
+    "t": "Vorname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.fullName": {
+    "t": "Vollständiger Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.action": {
+    "t": "Aktion",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.areaDesc": {
+    "t": "Geografisches Gebiet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.bahaiIdDesc": {
+    "t": "Baha'i-ID-Nummer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.clickToUpload": {
+    "t": "Klicken Sie auf Upload",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.chooseFileDesc": {
+    "t": "Laden Sie eine neue Datei hoch oder wählen Sie eine Datei aus, die sich bereits auf dem Server befindet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.chooseFileFirst": {
+    "t": "Wählen Sie oben eine Datei aus, um ihre Spalten zuzuordnen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.confirmMapping": {
+    "t": "Zuordnung bestätigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.confirmMappingFirst": {
+    "t": "Bestätigen Sie die Spaltenzuordnung, bevor Sie Personen laden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.confirmDeleteAllPeople": {
+    "t": "Alle Personen löschen bestätigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.confirmDeleteFile": {
+    "t": "Soll diese Datei wirklich gelöscht werden?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.contentEncoding": {
+    "t": "Inhaltscodierung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.currentPeopleCount": {
+    "t": "Anzahl der aktuellen Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.dataRows": {
+    "t": "Datenzeilen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.deleteAllPeople": {
+    "t": "Alle Personen löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.deleteAllPeopleError": {
+    "t": "Alle Personen konnten nicht gelöscht werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.deleteAllPeopleMessage": {
+    "t": "Sind Sie sicher, dass Sie alle Personen aus dieser Wahl löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.deleteAllSuccess": {
+    "t": "{count} Personen gelöscht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.deleteFileError": {
+    "t": "Fehler beim Löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.fileDeleted": {
+    "t": "Datei gelöscht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.fileUploadedSuccessfully": {
+    "t": "Datei hochgeladen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.dropFile": {
+    "t": "Drop File hier oder",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.copyCode": {
+    "t": "Code kopieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.copyDescription": {
+    "t": "Stellenbeschreibung kopieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.duplicateDesc": {
+    "t": "Person ist eine doppelte Eingabe",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.eligibilityCodesIntro": {
+    "t": "Verwenden Sie einen Code wie V04 oder X02 oder die genaue Beschreibung wie unten gezeigt. Leere Zellen werden als teilnahmeberechtigt behandelt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.eligibilityCodesTitle": {
+    "t": "Berechtigungsstatus",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.eligibilityDesc": {
+    "t": "Beschreibung des Berechtigungsstatus",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.eligibilityValues": {
+    "t": "Akzeptierte Berechtigungswerte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.eligibleDesc": {
+    "t": "Stimmberechtigte Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.emailDesc": {
+    "t": "E-Mail",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.fileGuideEligibility": {
+    "t": "Sie können eine Berechtigungsspalte einfügen, wenn einige Personen nicht abstimmen oder keine Stimmen erhalten sollten. Verwenden Sie einen Statuscode oder die genaue Beschreibung. Wenn diese Spalte fehlt oder eine Zelle leer ist, wird diese Person als teilnahmeberechtigt behandelt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.fileGuideIntro": {
+    "t": "Die Datei benötigt eine Zeile pro Person. Spaltennamen müssen nicht genau mit TallyJ übereinstimmen — Sie werden sie im nächsten Schritt zuordnen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.fileGuideOptional": {
+    "t": "Bahá'í-ID, E-Mail, Telefon, Gebiet, andere Namen, andere Nachnamen, andere Informationen und Berechtigung.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.fileGuideOptionalLabel": {
+    "t": "Optional:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.fileGuideRequired": {
+    "t": "Vor- und Zunamen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.fileGuideRequiredLabel": {
+    "t": "Benötigt:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.fileGuideTitle": {
+    "t": "Was die Datei enthalten sollte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.fileColumn": {
+    "t": "Datei Spalte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.fileName": {
+    "t": "Dateiname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.filesOnServer": {
+    "t": "Dateien auf dem Server",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.firstNameDesc": {
+    "t": "Vorname einer Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.firstNameLastNameRequired": {
+    "t": "Vorname und Nachname müssen jeweils aus einer Spalte stammen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.fromColumn": {
+    "t": "Aus dieser Spalte kopieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.headerAutoDetected": {
+    "t": "Überschriften werden automatisch in Zeile {row} erkannt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.headersOnLine": {
+    "t": "Header on Line",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.headersOnLineTooltip": {
+    "t": "Geben Sie an, welche Zeile Spaltenüberschriften enthält. Wird für Excel-Dateien automatisch erkannt, kann aber bei Bedarf angepasst werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.ignore": {
+    "t": "ignorieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.importComplete": {
+    "t": "{added} Personen geladen, {skipped} übersprungen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.importFailed": {
+    "t": "Laden fehlgeschlagen: {count}-Fehler",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.importFailedGeneric": {
+    "t": "Personen konnten nicht geladen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.importNow": {
+    "t": "Jetzt importieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.importResults": {
+    "t": "Ergebnisse laden …",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.importStepDesc": {
+    "t": "Überprüfen Sie die Zuordnung und fügen Sie diese Personen dann der Wahl hinzu.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.importSummary": {
+    "t": "Zusammenfassung importieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.importing": {
+    "t": "Personen werden importiert...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.ineligibleDesc": {
+    "t": "Person ist nicht wahlberechtigt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.lastNameDesc": {
+    "t": "Nachname der Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.loadFilesError": {
+    "t": "Importdateien konnten nicht geladen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.loadPeople": {
+    "t": "Personen laden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.loadPeopleDesc": {
+    "t": "Überprüfen Sie die Zuordnung und fügen Sie diese Personen dann der Wahl hinzu.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.mapColumns": {
+    "t": "Rubriken zuordnen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.mapColumnsDesc": {
+    "t": "Wählen Sie ein TallyJ-Feld für jede Spalte in Ihrer Datei.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.mapToField": {
+    "t": "TallyJ-Feld",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.mappedCount": {
+    "t": "{count}-Felder zugeordnet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.mappingConfirmed": {
+    "t": "Mapping bestätigt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.mappingNeedsConfirm": {
+    "t": "Bestätigen Sie, dass das Mapping fortgesetzt wird",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.mapTo": {
+    "t": "Zuordnen zu",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.mappedFields": {
+    "t": "Nur zugeordnete Felder",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.mappingSaved": {
+    "t": "Column Mapping bestätigt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.noSource": {
+    "t": "nicht zugeordnet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.peopleInElection": {
+    "t": "Personen, die derzeit an dieser Wahl teilnehmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.pipelineFileHint": {
+    "t": "Datei hochladen oder auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.pipelineLoadHint": {
+    "t": "Personen zur Wahl hinzufügen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.pipelineMapHint": {
+    "t": "Ordnen Sie Dateispalten TallyJ-Feldern zu",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.requiredMapped": {
+    "t": "Abgebildet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.requiredMissing": {
+    "t": "Noch nicht zugeordnet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.requiredToConfirm": {
+    "t": "Erforderlich, bevor Sie bestätigen können",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.readyToLoad": {
+    "t": "Bereit zum Laden von {count}-Datenzeilen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.rowClickToSelect": {
+    "t": "Klicken Sie auf eine Datei, um sie zu verwenden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.selectedFile": {
+    "t": "Ausgewählte Datei",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.sourcePreview": {
+    "t": "Beispielwerte aus der Datei",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.statusUploaded": {
+    "t": "Hochgeladen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.unmappedRequired": {
+    "t": "Vorname und Nachname müssen jeweils aus einer Spalte stammen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.unusedColumns": {
+    "t": "Lassen Sie eine Spalte nicht zugeordnet, um sie zu ignorieren.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.otherActions": {
+    "t": "Weitere Aktionen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.otherInfoDesc": {
+    "t": "Zusatzinformationen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.otherLastNamesDesc": {
+    "t": "Zusätzliche Nachnamen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.otherNamesDesc": {
+    "t": "Zusätzliche Vornamen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.peopleAdded": {
+    "t": "Personen hinzugefügt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.peopleSkipped": {
+    "t": "Personen übersprungen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.phoneDesc": {
+    "t": "Telefonnummer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.preview": {
+    "t": "Vorschau",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.reparse": {
+    "t": "Reparse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.reviewImport": {
+    "t": "Überprüfen und importieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.saveMapping": {
+    "t": "Zuordnung speichern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.select": {
+    "t": "Auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.selected": {
+    "t": "Ausgewählt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.size": {
+    "t": "Größe",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.status": {
+    "t": "Status",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.step1": {
+    "t": "Datei wählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.step2": {
+    "t": "Rubriken zuordnen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.step3": {
+    "t": "Personen laden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.showEligibilityCodes": {
+    "t": "Berechtigungsstatus",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.supportedFormats": {
+    "t": "Unterstützte Formate: CSV, TSV, TAB, TXT, XLSX (max. 10 MB)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.tallyJField": {
+    "t": "TallyJ-Feld",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.tallyJFields": {
+    "t": "TallyJ-Feldreferenz",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.timeElapsed": {
+    "t": "Verstrichene Zeit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.title": {
+    "t": "Personen importieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.underAgeDesc": {
+    "t": "Die Person ist unter dem Wahlalter",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.uploadError": {
+    "t": "Datei konnte nicht hochgeladen werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.uploadFile": {
+    "t": "Upload File",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.uploadTime": {
+    "t": "Upload-Zeit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.validationWarning": {
+    "t": "Validierungswarnung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.import.warnings": {
+    "t": "Warnhinweise",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.importError": {
+    "t": "Import konnte nicht gestartet werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.importFormat": {
+    "t": "Laden Sie eine CSV- oder Excel-Datei mit den folgenden Spalten hoch:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.importInstructions": {
+    "t": "Importanleitung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.importOptionalFields": {
+    "t": "Optional: E-Mail, Telefon, Bereich, Bahá'í-ID, Berechtigung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.importPeople": {
+    "t": "Personen importieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.importRequiredFields": {
+    "t": "Erforderlich: Vorname, Nachname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.importStarted": {
+    "t": "Import gestartet. Bitte warten Sie auf den Abschluss.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.importWarning": {
+    "t": "Bestehende Personen mit übereinstimmenden Namen werden aktualisiert. Neue Personen werden erstellt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.invalidFileType": {
+    "t": "Ungültiger Dateityp. Bitte laden Sie eine CSV- oder Excel-Datei hoch.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.lastName": {
+    "t": "Nachname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.lastNameRequired": {
+    "t": "Nachname ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.swapFirstLast": {
+    "t": "Swap",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.eligibilityRequired": {
+    "t": "Teilnahmeberechtigung ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.otherLastNames": {
+    "t": "Andere Nachnamen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.otherNames": {
+    "t": "Weitere Namen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.otherInfo": {
+    "t": "Weitere Info",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.kioskCode": {
+    "t": "Kiosk-Code",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.kioskCodeNote": {
+    "t": "Teilen Sie diesen Code mit der abstimmenden Person am Kiosk. Sie läuft nach 15 Minuten ab. Generieren oder erneuern Sie sie, wenn sie bereit sind.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.kioskCodeGenerate": {
+    "t": "Erstellen Sie einen Kiosk-Code",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.kioskCodeRenew": {
+    "t": "Kiosk-Code erneuern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.kioskCodeGenerated": {
+    "t": "Kiosk-Code ist bereit zum Teilen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.kioskCodeExpires": {
+    "t": "Läuft ab {time} ({minutes} Min. übrig).",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.kioskCodeExpired": {
+    "t": "Dieser Code ist abgelaufen. Erneuern Sie es, bevor sich der abstimmenden Person anmeldet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.kioskCodeNone": {
+    "t": "Noch kein Kiosk-Code. Generieren Sie eine, wenn der abstimmenden Person am Kiosk ist.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.unitName": {
+    "t": "Name der Einheit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.canVoteInElection": {
+    "t": "Kann ich bei dieser Wahl abstimmen?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.canReceiveVotesInElection": {
+    "t": "Kann bei dieser Wahl gewählt werden?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.cannotMarkCannotVoteAfterVoted": {
+    "t": "Diese Person hat bereits abgestimmt. Ihr Status kann nicht geändert werden, um nicht abstimmen zu können.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.guestCannotAddPeople": {
+    "t": "Bitten Sie einen angemeldeten Wahlhelfer, den erforderlichen Namen hinzuzufügen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.eligibilityLockedAfterVoted": {
+    "t": "Diese Person hat bereits abgestimmt. Status, die das Wahlrecht entziehen, sind nicht verfügbar.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.eligibilityYes": {
+    "t": "Ja",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.eligibilityNo": {
+    "t": "Nein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.registrationHistoryWithMethod": {
+    "t": "Registrierungsverlauf - {method}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.deleteNotAllowed": {
+    "t": "Diese Person kann nicht entfernt werden, weil sie abgestimmt hat oder gewählt wurde.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.onlineStatus.draft": {
+    "t": "Online Stimmzettel gestartet (nicht eingereicht).",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.onlineStatus.pending": {
+    "t": "Hat einen ausstehenden Online-Stimmzettel (eingereicht, noch nicht akzeptiert).",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.onlineStatus.accepted": {
+    "t": "Hat einen akzeptierten Online-Stimmzettel.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.votingMethod.kiosk": {
+    "t": "Kiosk",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.votingMethod.droppedOff": {
+    "t": "Abgegeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.votingMethod.custom1": {
+    "t": "Benutzerdefiniert 1",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.votingMethod.custom2": {
+    "t": "Benutzerdefiniert 2",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.votingMethod.custom3": {
+    "t": "Custom 3",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.leaveElectionGroupError": {
+    "t": "Fehler beim Verlassen der Wahlgruppe:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.loadError": {
+    "t": "Personen konnten nicht geladen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.management": {
+    "t": "Menschenmanagement",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phone": {
+    "t": "Telefon",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.auth": {
+    "t": "Online-Telefonstatus",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.neverSeen": {
+    "t": "Nie gesehen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.notYetUsedForAuth": {
+    "t": "Noch nicht zur Authentifizierung verwendet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.firstRegistered": {
+    "t": "Erste registrierte {time}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.lastLogin": {
+    "t": "Letze Anmeldung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.smsStatus": {
+    "t": "SMS-Status",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.smsColumn": {
+    "t": "SMS",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.imported": {
+    "t": "Importiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.smsUnchecked": {
+    "t": "Nicht markiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.smsOk": {
+    "t": "OK",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.smsBlocked": {
+    "t": "Gesperrt ({reason})",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.recentSms": {
+    "t": "Neueste SMS",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.smsLogNoStatus": {
+    "t": "Sent",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.smsLogError": {
+    "t": "Fehler {code}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.setOk": {
+    "t": "SET OK",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.block": {
+    "t": "Blockieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.blockReason": {
+    "t": "Blockierungsgrund",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.blockReasonPlaceholder": {
+    "t": "z. B. Festnetz, unzustellbar, Admin",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.setSuccess": {
+    "t": "SMS-Status aktualisiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.globalHint": {
+    "t": "Dieser Status gilt für dieses Telefon für alle Wahlen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.noPhone": {
+    "t": "Diese Person hat kein Telefon, um den SMS-Status einzustellen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.noPhoneRow": {
+    "t": "Dieses Telefon kann keinen SMS-Status erhalten, da dieser Wert bereits von einer anderen Kennung verwendet wird.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.invalidStatus": {
+    "t": "Der SMS-Status muss OK oder ein kurzer Blockgrund sein (max. 50 Zeichen).",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.whatsAppColumn": {
+    "t": "WhatsApp",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.whatsAppStatus": {
+    "t": "whatsapp status",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.whatsAppUnchecked": {
+    "t": "Nicht markiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.whatsAppOk": {
+    "t": "OK",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.whatsAppReason": {
+    "t": "{reason}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.checkWhatsApp": {
+    "t": "WhatsApp überprüfen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.checkWhatsAppSuccess": {
+    "t": "WhatsApp-Status aktualisiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.whatsAppNoPhone": {
+    "t": "Diese Person hat kein Telefon, um WhatsApp zu überprüfen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.whatsAppNoPhoneRow": {
+    "t": "Dieses Telefon kann keinen WhatsApp-Status erhalten, da dieser Wert bereits von einer anderen Kennung verwendet wird.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.whatsAppNotConfigured": {
+    "t": "WhatsApp-Prüfung ist auf diesem Server nicht konfiguriert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.phoneOnlineVoter.whatsAppTooMany": {
+    "t": "Höchstens {max} Personen können auf einmal kontrolliert werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelected": {
+    "t": "WhatsApp prüfen ({count})",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedNone": {
+    "t": "Wählen Sie Personen mit Telefonnummern aus, um WhatsApp zu überprüfen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedCancel": {
+    "t": "Auschecken abbrechen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedCancelled": {
+    "t": "Prüfung abgebrochen. Bereits geprüfte Nummern wurden gespeichert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedResults": {
+    "t": "WhatsApp Check Ergebnisse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedSummary": {
+    "t": "{checked} geprüft: {ok} OK, {noWa} keine WhatsApp, {failed} fehlgeschlagen. {skipped} übersprungen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedClose": {
+    "t": "Close",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.OK": {
+    "t": "OK",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.no-wa": {
+    "t": "Kein WhatsApp",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.check-failed": {
+    "t": "Fehlgeschlagen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.skipped-no-phone": {
+    "t": "Skipped (kein Telefon)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.skipped-non-p": {
+    "t": "Skipped (keine Telefonzeile)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.skipped-other-election": {
+    "t": "Übersprungen (nicht in dieser Wahl)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.checkWhatsAppSelectedOutcome.cancelled": {
+    "t": "Abgebrochen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppSend": {
+    "t": "WhatsApp senden ({count})",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppNone": {
+    "t": "Wählen Sie Personen aus, die WhatsApp an bekannte OK-Nummern senden möchten.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppAbort": {
+    "t": "Senden beenden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppResults": {
+    "t": "WhatsApp-Benachrichtigungsergebnisse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppSummary": {
+    "t": "{sent} gesendet, {skipped} übersprungen, {failed} fehlgeschlagen, {cancelled} abgebrochen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppQueued": {
+    "t": "Senden von WhatsApp an {queued} bekannte OK-Nummern. Bereits gesendete Nachrichten bleiben gesendet, wenn Sie aufhören.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppClose": {
+    "t": "Close",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsApp.textNotSet": {
+    "t": "Legen Sie den SMS-Text für die Wahl fest, bevor Sie WhatsApp senden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsApp.alreadyRunning": {
+    "t": "Für diese Wahl wird bereits eine WhatsApp-Benachrichtigung gesendet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsApp.electionNotFound": {
+    "t": "Wahl nicht gefunden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsApp.notFound": {
+    "t": "Für diese Wahl läuft keine WhatsApp-Benachrichtigung.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppOutcome.sent": {
+    "t": "Sent",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppOutcome.failed": {
+    "t": "Fehlgeschlagen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppOutcome.queued": {
+    "t": "In Warteschlange",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppOutcome.cancelled": {
+    "t": "Abgebrochen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-no-phone": {
+    "t": "Skipped (kein Telefon)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-non-p": {
+    "t": "Skipped (keine Telefonzeile)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-other-election": {
+    "t": "Übersprungen (nicht in dieser Wahl)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-unchecked": {
+    "t": "Übersprungen (nicht markiert)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-no-wa": {
+    "t": "Übersprungen (keine WhatsApp)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-check-failed": {
+    "t": "Überspringen (Check fehlgeschlagen)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.notifyWhatsAppOutcome.skipped-not-ok": {
+    "t": "Skipped (nicht in Ordnung)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.selectedCount": {
+    "t": "{count} ausgewählt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.registrationHistory": {
+    "t": "Registrierungsverlauf",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.votesReceived": {
+    "t": "Erhaltene Stimmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.saveError": {
+    "t": "Person konnte nicht gespeichert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.filterWhatsApp": {
+    "t": "WhatsApp",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.filterWhatsAppOption.all": {
+    "t": "Alle",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.filterWhatsAppOption.hasWhatsApp": {
+    "t": "Hat WhatsApp",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.filterWhatsAppOption.unchecked": {
+    "t": "Nicht markiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.filterWhatsAppOption.noWhatsApp": {
+    "t": "Kein WhatsApp",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.search": {
+    "t": "Suche nach Namen, E-Mail, ID usw.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.searchError": {
+    "t": "Personen konnten nicht gesucht werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.supportedFormats": {
+    "t": "Unterstützte Formate: CSV, XLS, XLSX (max. 10 MB)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.updateSuccess": {
+    "t": "Person wurde erfolgreich aktualisiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "people.voters": {
+    "t": "abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

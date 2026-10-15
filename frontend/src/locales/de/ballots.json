@@ -1,0 +1,612 @@
+{
+  "ballots.addBallot": {
+    "t": "Stimmzettel hinzufügen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.addNextBallot": {
+    "t": "Starten Sie einen weiteren Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.addNewPerson": {
+    "t": "Neue Person hinzufügen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.addName": {
+    "t": "Fügen Sie einen fehlenden Namen oder eine ungültige Stimme hinzu",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.addNameDrawerTitle": {
+    "t": "Fügen Sie diesem Stimmzettel einen Namen hinzu",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.setSpoiledOrNewName": {
+    "t": "Als ungültige Abstimmung oder neuen Namen festlegen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.rawVoteNameReference": {
+    "t": "Auf dem Stimmzettel eingetragener Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.voteEntryType": {
+    "t": "Art der Abstimmung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.voteEntryNormal": {
+    "t": "Vollständiger Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.voteEntryNameNotInTheList": {
+    "t": "Name nicht in der Liste",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.addNewNameIncludingSpoiled": {
+    "t": "Neuen Namen hinzufügen (einschließlich ungültige)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.askHeadTellerToAddName": {
+    "t": "(Bitte leitender Wahlhelfer, den erforderlichen Namen hinzuzufügen)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.voteEntryUnidentifiable": {
+    "t": "Teilweise oder nicht identifizierbar",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.voteEntryUnreadable": {
+    "t": "Unlesbar",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.addNameSuccess": {
+    "t": "Name hinzugefügt und Abstimmung eingegeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.addNameError": {
+    "t": "Name konnte nicht hinzugefügt werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.personLessVoteHint": {
+    "t": "Es wird kein Personendatensatz erstellt. Für diesen nicht lesbaren oder nicht identifizierbaren Eintrag wird eine ungültige Stimme aufgezeichnet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.addVote": {
+    "t": "Abstimmung hinzufügen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.ballotFull": {
+    "t": "Stimmzettel ist voll",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.ballotNum": {
+    "t": "{code}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.onlineCode": {
+    "t": "Online {n}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.importedCode": {
+    "t": "Importierte {n}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.onlineComputer": {
+    "t": "Online",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.importedComputer": {
+    "t": "Importiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cacheLoadError": {
+    "t": "Namen konnten nicht geladen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cacheLoading": {
+    "t": "Namen werden geladen...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.person": {
+    "t": "Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.personRequired": {
+    "t": "Person ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.ballotsCreated": {
+    "t": "Stimmzettel erstellt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.button": {
+    "t": "CDN-Stimmzettel importieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.description": {
+    "t": "Laden Sie eine XML-Datei hoch, die aus dem CDN (Canadian National Database) exportiert wurde, um Stimmzettel und die entsprechenden Stimmen in diese Wahl zu importieren. Die Datei wird analysiert und für jeden gültigen Eintrag werden Stimmzettel zusammen mit allen zugehörigen Abstimmungsaufzeichnungen erstellt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.errors": {
+    "t": "Fehler",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.failed": {
+    "t": "Import fehlgeschlagen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.importing": {
+    "t": "Import...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.skippedRows": {
+    "t": "Zeilen übersprungen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.success": {
+    "t": "Import erfolgreich abgeschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.title": {
+    "t": "CDN-Stimmzettel importieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.totalRows": {
+    "t": "Verarbeitete Zeilen insgesamt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.uploadPrompt": {
+    "t": "Klicken oder ziehen Sie eine XML-Datei hierher, um sie hochzuladen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.votesCreated": {
+    "t": "Abstimmungen erstellt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.warnings": {
+    "t": "Warnhinweise",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.cdnImport.xmlOnly": {
+    "t": "Es werden nur XML-Dateien unterstützt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.checkSpelling": {
+    "t": "Überprüfen Sie die Rechtschreibung oder versuchen Sie es mit einem anderen Namen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.clearAll": {
+    "t": "Alles löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.code": {
+    "t": "Stimmzettel-Code",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.allAtLocation": {
+    "t": "Alles bei {name}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.allBallots": {
+    "t": "Alle Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.allComputers": {
+    "t": "Alle Computer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.computer": {
+    "t": "Computer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.computerCodeBadge": {
+    "t": "Der Computercode dieser Workstation",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.computerCodeRequired": {
+    "t": "Nehmen Sie an dieser Wahl teil, um einen Computercode zu erhalten, bevor Sie einen Stimmzettel erstellen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.computerCodeShort": {
+    "t": "{code}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.filterByComputer": {
+    "t": "Stimmzettel nach Computer filtern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.viewFilterLabel": {
+    "t": "Stimmzettel zum Anzeigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.viewFilterPlaceholder": {
+    "t": "Computer oder Standorte suchen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.createSuccess": {
+    "t": "Stimmzettel erfolgreich erstellt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.deleteBallot": {
+    "t": "Stimmzettel löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.deleteConfirm": {
+    "t": "Stimmzettel {code} löschen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.deleteError": {
+    "t": "Stimmzettel konnte nicht gelöscht werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.deleteSuccess": {
+    "t": "Stimmzettel erfolgreich gelöscht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.deleteVoteConfirm": {
+    "t": "Sind Sie sich sicher, dass Sie diese Bewertung löschen wollen?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.deleteVoteError": {
+    "t": "Stimmabgabe nicht gelöscht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.deleteVoteSuccess": {
+    "t": "Abstimmung erfolgreich gelöscht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.dragToReorder": {
+    "t": "Ziehen Sie Stimmen, um ihre Reihenfolge zu ändern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.duplicateWarning": {
+    "t": "Duplizieren: Diese Person ist bereits ausgewählt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.enterVotes": {
+    "t": "Stimmen eingeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.entry": {
+    "t": "Stimmzettel-Eintrag - {code}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.entryDrawerTitle": {
+    "t": "Stimmzettel — {code} — {status}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.entryPage": {
+    "t": "Stimmzettel-Eintrag",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.ineligible": {
+    "t": "Nicht teilnahmeberechtigt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.keyboardTellerRequired": {
+    "t": "Wählen Sie den Wahlhelfer an der Tastatur, bevor Sie die Stimmzettel eingeben.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.loadError": {
+    "t": "Stimmzettel konnten nicht geladen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.location": {
+    "t": "Location",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.locationRequired": {
+    "t": "Ort ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.onlineLocationNotAllowed": {
+    "t": "Es kann kein Stimmzettel am Online-Standort gestartet werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.importedLocationNotAllowed": {
+    "t": "Es kann kein Stimmzettel am importierten Standort gestartet werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.tellerRequired": {
+    "t": "Wahlhelfer ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.management": {
+    "t": "Stimmzettel eingeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.markNeedsReview": {
+    "t": "Mark As Needs Uberprufung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.clearNeedsReview": {
+    "t": "Bedarfsüberprüfung löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.needsReviewUpdated": {
+    "t": "Status der Bedarfsüberprüfung aktualisiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.needsReviewError": {
+    "t": "Status der Bedarfsüberprüfung konnte nicht aktualisiert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.namesOnBallot": {
+    "t": "Namen auf dem Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.noMatchesFound": {
+    "t": "Keine Treffer gefunden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.personUpdated": {
+    "t": "{name} wurde aktualisiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.position": {
+    "t": "Funktion",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.positionRequired": {
+    "t": "Position ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.saveBallot": {
+    "t": "Stimmzettel speichern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.saveError": {
+    "t": "Stimmzettel konnte nicht gespeichert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.searchHelp": {
+    "t": "Verwenden Sie ↑ ↓ Tasten, um sich in der Liste zu bewegen. Drücken Sie zum Hinzufügen die Eingabetaste.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.findRawName": {
+    "t": "Finde",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.findRawNameHint": {
+    "t": "Klicken Sie erneut, um den letzten Buchstaben jedes Namens abzulegen und die Suche zu erweitern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.changeRawName": {
+    "t": "Änderung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.searchHelpRaw": {
+    "t": "Finden Sie den von der abstimmenden Person eingegebenen Namen kopiert. Klicken Sie auf Erneut suchen, um es zu kürzen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.searchPerson": {
+    "t": "Fügen Sie diesem Stimmzettel einen Namen hinzu",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.searchPlaceholder": {
+    "t": "Tippen Sie für die Suche...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.status": {
+    "t": "Status",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.statusValue.Dup": {
+    "t": "Duplikat",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.statusValue.Empty": {
+    "t": "Leer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.statusValue.New": {
+    "t": "Neu",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.statusValue.Ok": {
+    "t": "Ok",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.statusValue.Raw": {
+    "t": "Raw",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.statusValue.Review": {
+    "t": "Überprüfung erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.statusValue.TooFew": {
+    "t": "Zu wenig",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.statusValue.TooMany": {
+    "t": "Zu viele.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.statusValue.Verify": {
+    "t": "Bestätigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.teller1": {
+    "t": "Wahlhelfer 1",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.teller2": {
+    "t": "Wahlhelfer 2",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.viewVotes": {
+    "t": "Abstimmung anzeigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.voteAddedError": {
+    "t": "Abstimmung konnte nicht hinzugefügt werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.voteAddedSuccess": {
+    "t": "Abstimmung erfolgreich hinzugefügt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.voteCount": {
+    "t": "Stimmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.voteCreateSuccess": {
+    "t": "Abstimmung erfolgreich hinzugefügt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.voteRemovedError": {
+    "t": "Fehlgeschlagen, Abstimmung zu entfernen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.voteRemovedSuccess": {
+    "t": "Abstimmung erfolgreich aufgehoben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.votesReorderedError": {
+    "t": "Abstimmungen konnten nicht neu geordnet werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.votesReorderedSuccess": {
+    "t": "Stimmen erfolgreich neu geordnet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.voteSaveError": {
+    "t": "Speichern fehlgeschlagen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.spoiled": {
+    "t": "ungültige Stimme",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.votes": {
+    "t": "Stimmen - {code}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.votesEntered": {
+    "t": "{count} von {max} Stimmen eingetragen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "ballots.votesList": {
+    "t": "Abstimmungsliste",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

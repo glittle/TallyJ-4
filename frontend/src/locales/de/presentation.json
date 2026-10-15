@@ -1,0 +1,97 @@
+{
+  "presentation.electionResults": {
+    "t": "Wahlergebnisse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.positionsToFill": {
+    "t": "{count} Positionen zu besetzen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.totalBallots": {
+    "t": "{count} Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.totalVotes": {
+    "t": "{count} Stimmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.electedPeople": {
+    "t": "Gewählt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.extraPeople": {
+    "t": "Extra",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.votes": {
+    "t": "{count} Stimmen | {count} Stimme | {count} Stimmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.ties": {
+    "t": "Ties",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.tieGroup": {
+    "t": "Gleichstandsgruppe #{group}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.tieBreakRequired": {
+    "t": "Stichwahl erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.noData": {
+    "t": "Keine Präsentation verfügbar",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.generatedAt": {
+    "t": "Generiert bei {time}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.statusComplete": {
+    "t": "Abschließen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.statusInProgress": {
+    "t": "In Arbeit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.statusPaused": {
+    "t": "Pausiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.statusError": {
+    "t": "Fehler",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.elected": {
+    "t": "Gewählt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.extra": {
+    "t": "Extra",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "presentation.other": {
+    "t": "Sonstiges",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

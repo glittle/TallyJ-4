@@ -310,9 +310,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "people.import.mapColumnsDesc": {
-    "t": "파일의 열을 개표J 필드에 매핑하세요",
+    "t": "파일의 열을 TallyJ 필드에 매핑하세요",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "people.import.mapTo": {
     "t": "매핑:",
@@ -425,14 +425,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "people.import.tallyJField": {
-    "t": "개표J 필드",
+    "t": "TallyJ 필드",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "people.import.tallyJFields": {
-    "t": "개표J 필드 참조",
+    "t": "TallyJ 필드 참조",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "people.import.timeElapsed": {
     "t": "경과 시간",

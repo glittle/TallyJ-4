@@ -1,13 +1,13 @@
 {
   "voting.ballot.addPersonToPool": {
-    "t": "Añadir Persona a mi Cédula",
+    "t": "Añadir Persona a mi Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.ballot.addToPool": {
-    "t": "Añadir a su Cédula/Grupo",
+    "t": "Añadir a su Papeleta/Grupo",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.ballot.addToPoolDescription": {
     "t": "Añada una nueva persona a su grupo para esta elección.",
@@ -30,14 +30,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.ballot.bothModeHint": {
-    "t": "Seleccione de la lista a continuación, o escriba un nombre que no esté en la lista. Los encargados procesarán los nombres que no estén en la lista.",
+    "t": "Seleccione de la lista a continuación, o escriba un nombre que no esté en la lista. Los escrutadores procesarán los nombres que no estén en la lista.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T18:10:00Z"
   },
   "voting.ballot.duplicateError": {
-    "t": "Ha seleccionado el mismo candidato varias veces. Por favor, revise su cédula.",
+    "t": "Ha seleccionado el mismo candidato varias veces. Por favor, revise su papeleta.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T18:10:00Z"
   },
   "voting.ballot.electionNotFound": {
     "t": "Elección no encontrada",
@@ -85,9 +85,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.ballot.myBallot": {
-    "t": "Mi Cédula",
+    "t": "Mi Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.ballot.namePlaceholder": {
     "t": "Escriba un nombre",
@@ -100,9 +100,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.ballot.onceWarning": {
-    "t": "¡Solo puede votar una vez! Por favor, revise su cédula cuidadosamente antes de presentarla.",
+    "t": "¡Solo puede votar una vez! Por favor, revise su papeleta cuidadosamente antes de presentarla.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.ballot.openNow": {
     "t": "Abrir Ahora",
@@ -115,9 +115,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.ballot.randomModeHint": {
-    "t": "Escriba los nombres de las personas por las que desea votar. Los encargados harán coincidir estos nombres con los votantes registrados.",
+    "t": "Escriba los nombres de las personas por las que desea votar. Los escrutadores harán coincidir estos nombres con los votantes registrados.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.ballot.searchPlaceholder": {
     "t": "Buscar un candidato",
@@ -125,14 +125,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.ballot.submit": {
-    "t": "Presentar Cédula",
+    "t": "Presentar Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.ballot.submitSuccess": {
-    "t": "¡Cédula presentada exitosamente!",
+    "t": "¡Papeleta presentada exitosamente!",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.ballot.votingFor": {
     "t": "Votando por {count} Personas",
@@ -165,9 +165,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.confirmation.recorded": {
-    "t": "Su boleta ha sido registrada de forma segura.",
+    "t": "Su papeleta ha sido registrada de forma segura.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.confirmation.submitted": {
     "t": "Enviado:",
@@ -180,9 +180,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.confirmation.title": {
-    "t": "¡Boleta Enviada Exitosamente!",
+    "t": "¡Papeleta Enviada Exitosamente!",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.election.instructions": {
     "t": "Por favor vote por {count} candidatos.",
@@ -190,9 +190,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.elections.alreadyVoted": {
-    "t": "Cédula ya presentada",
+    "t": "Papeleta ya presentada",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.elections.col.election": {
     "t": "Elección",
@@ -205,14 +205,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.elections.col.yourNameAndBallot": {
-    "t": "Su Nombre y Cédula",
+    "t": "Su Nombre y Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.elections.footerNote": {
-    "t": "Si algo parece incorrecto, por favor deje de usar TallyJ y envíe detalles a su encargado y/o al soporte técnico global.",
+    "t": "Si algo parece incorrecto, por favor deje de usar TallyJ y envíe detalles a su escrutador principal y/o al soporte técnico global.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.elections.loadError": {
     "t": "Error al cargar elecciones. Por favor, inténtelo de nuevo.",
@@ -240,9 +240,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.elections.prepareBallot": {
-    "t": "Preparar mi Cédula",
+    "t": "Preparar mi Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.elections.registered": {
     "t": "Registrado:",
@@ -330,19 +330,19 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.elections.welcomeHint": {
-    "t": "Si una próxima elección no se encuentra aquí, puede que no exista en TallyJ o su información no esté registrada en ella. Por favor, póngase en contacto con el encargado de la elección para obtener ayuda.",
+    "t": "Si una próxima elección no se encuentra aquí, puede que no exista en TallyJ o su información no esté registrada en ella. Por favor, póngase en contacto con el escrutador principal de la elección para obtener ayuda.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "voting.status.alreadyVoted": {
-    "t": "Ya ha enviado su boleta para esta elección.",
+    "t": "Ya ha enviado su papeleta para esta elección.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.status.notVoted": {
-    "t": "Aún no ha enviado una boleta para esta elección.",
+    "t": "Aún no ha enviado una papeleta para esta elección.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.status.voterNotFound": {
     "t": "Votante no encontrado en esta elección.",
@@ -350,9 +350,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.submit.alreadyVoted": {
-    "t": "Ya ha enviado una boleta para esta elección.",
+    "t": "Ya ha enviado una papeleta para esta elección.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.submit.electionNotFound": {
     "t": "Elección no encontrada.",
@@ -360,9 +360,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.submit.error": {
-    "t": "Ocurrió un error al enviar su boleta. Por favor intente de nuevo.",
+    "t": "Ocurrió un error al enviar su papeleta. Por favor intente de nuevo.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.submit.notOpen": {
     "t": "La votación en línea no está actualmente abierta para esta elección.",

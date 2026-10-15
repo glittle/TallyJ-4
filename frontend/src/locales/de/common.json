@@ -1,0 +1,312 @@
+{
+  "common.actionIrreversible": {
+    "t": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.actions": {
+    "t": "Aktionen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.appName": {
+    "t": "TallyJ",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.appTitle": {
+    "t": "TallyJ v4",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.back": {
+    "t": "Zurück",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.badi.monthNames": {
+    "t": "Schalttage,Pracht,Ruhm,Schönheit,Größe,Licht,Barmherzigkeit,Worte,Vollkommenheit,Namen,Macht,Wille,Wissen,Macht,Rede,Fragen,Ehre,Souveränität,Herrschaft,Erhabenheit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.cancel": {
+    "t": "Abbrechen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.clear": {
+    "t": "Leeren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.clearFilters": {
+    "t": "Filter löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.close": {
+    "t": "Close",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.confirm": {
+    "t": "Bestätigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.confirmAction": {
+    "t": "Sind Sie sicher, dass Sie {action} wollen?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.confirmActionWithItem": {
+    "t": "Sind Sie sicher, dass Sie {action} {item} wollen?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.confirmDelete": {
+    "t": "Sind Sie sicher, dass Sie {item} löschen möchten?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.copy": {
+    "t": "Kopieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.copied": {
+    "t": "Kopieren ins Clipboard",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.create": {
+    "t": "Erstellen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.dangerZone": {
+    "t": "Gefahrenzone",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.dark": {
+    "t": "Dunkel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.delete": {
+    "t": "Löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.deleteSelected": {
+    "t": "Auswahl löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.edit": {
+    "t": "Bearbeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.election": {
+    "t": "Wahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.endDate": {
+    "t": "Enddatum",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.enter": {
+    "t": "Eingeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.error": {
+    "t": "Es ist ein Fehler aufgetreten.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.language": {
+    "t": "Sprache",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.light": {
+    "t": "Licht /",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.loading": {
+    "t": "Wird geladen …",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.logoAlt": {
+    "t": "TallyJ-Logo",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.next": {
+    "t": "Weiter",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.no": {
+    "t": "Nein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.open": {
+    "t": "Offen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.or": {
+    "t": "oder",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.previous": {
+    "t": "Zurück",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.profile": {
+    "t": "Profil",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.refresh": {
+    "t": "Aktualisieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.save": {
+    "t": "Speichern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.settings": {
+    "t": "Einstellungen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.startDate": {
+    "t": "Startdatum",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.testOnlyLong": {
+    "t": "{note} Diese Vorschau von TallyJ Version 4 befindet sich noch in der Entwicklung.{br}Sie können sich anmelden und die Funktionen ausprobieren, aber sie sollte derzeit nicht für tatsächliche Bahá'í-Wahlen verwendet werden.{br}Wir freuen uns über Ihr Feedback zum neuen Design, da wir das System weiter verbessern.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.testOnlyLongNote": {
+    "t": "Bitte beachten:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.testOnlyShort": {
+    "t": "Nur Entwicklung & Testing",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.theme": {
+    "t": "Theme",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.to": {
+    "t": "zum",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.toggleTheme": {
+    "t": "Toggle-Thema",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.user": {
+    "t": "User",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.userMenu": {
+    "t": "Benutzer Account Menu",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.toggleNavigation": {
+    "t": "Navigation umschalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.hideSidebar": {
+    "t": "Seitenleiste ausblenden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.dockSidebar": {
+    "t": "Sidebar offen halten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.mainNavigation": {
+    "t": "Hauptnavigation",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.mainMenu": {
+    "t": "Hauptmenü",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.electionNavigation": {
+    "t": "Wahlnavigation",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.skipToMainContent": {
+    "t": "Zum Hauptinhalt springen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.settingsComingSoon": {
+    "t": "Einstellungsseite in Kürze verfügbar",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.statusFeedbackDoc": {
+    "t": "Status- & Feedback-Dokument V4",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.versionDisplay": {
+    "t": "Version 4 Beta",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.view": {
+    "t": "Ansehen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.warning": {
+    "t": "Warnung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.yes": {
+    "t": "Ja",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "common.goHome": {
+    "t": "Home",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

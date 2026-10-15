@@ -10,14 +10,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.appName": {
-    "t": "EscrutiJ",
+    "t": "TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.appTitle": {
-    "t": "EscrutiJ Versión 4",
+    "t": "TallyJ Versión 4",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.back": {
     "t": "Volver",
@@ -140,9 +140,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.logoAlt": {
-    "t": "Logo de EscrutiJ",
+    "t": "Logo de TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.next": {
     "t": "Siguiente",
@@ -195,9 +195,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.testOnlyLong": {
-    "t": "{note} Esta vista previa de EscrutiJ Versión 4 aún está en desarrollo.{br}Puedes iniciar sesión y probar las funciones, pero no debe usarse para elecciones bahá'ís en este momento.{br}Agradecemos tus comentarios sobre el nuevo diseño mientras continuamos mejorando el sistema.",
+    "t": "{note} Esta vista previa de TallyJ Versión 4 aún está en desarrollo.{br}Puedes iniciar sesión y probar las funciones, pero no debe usarse para elecciones bahá'ís en este momento.{br}Agradecemos tus comentarios sobre el nuevo diseño mientras continuamos mejorando el sistema.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.testOnlyLongNote": {
     "t": "Por favor, nota:",
@@ -205,9 +205,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.testOnlyShort": {
-    "t": "Esta vista previa de EscrutiJ Versión 4 aún está en desarrollo. No debe usarse para elecciones reales en este momento.",
+    "t": "Esta vista previa de TallyJ Versión 4 aún está en desarrollo. No debe usarse para elecciones reales en este momento.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.theme": {
     "t": "Tema",

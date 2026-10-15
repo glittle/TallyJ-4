@@ -10,14 +10,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.appName": {
-    "t": "HesabuJ",
+    "t": "TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.appTitle": {
-    "t": "HesabuJ Toleo 4",
+    "t": "TallyJ Toleo 4",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.back": {
     "t": "Nyuma",
@@ -140,9 +140,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.logoAlt": {
-    "t": "Nembo ya HesabuJ",
+    "t": "Nembo ya TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.next": {
     "t": "Inayofuata",
@@ -195,9 +195,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.testOnlyLong": {
-    "t": "{note} Hakikisho hili la HesabuJ Toleo 4 bado linaendelezwa.{br}Unaweza kuingia na kujaribu vipengele, lakini halistumike kwa uchaguzi wa Kibaha'i kwa sasa.{br}Tunakaribisha maoni yako kuhusu muundo mpya tunapoendelea kuboresha mfumo.",
+    "t": "{note} Hakikisho hili la TallyJ Toleo 4 bado linaendelezwa.{br}Unaweza kuingia na kujaribu vipengele, lakini halistumike kwa uchaguzi wa Kibaha'i kwa sasa.{br}Tunakaribisha maoni yako kuhusu muundo mpya tunapoendelea kuboresha mfumo.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.testOnlyLongNote": {
     "t": "Tafadhali zingatia:",
@@ -205,9 +205,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.testOnlyShort": {
-    "t": "Hakikisho hili la HesabuJ Toleo 4 bado linaendelezwa. Lisitumike kwa uchaguzi halisi kwa sasa.",
+    "t": "Hakikisho hili la TallyJ Toleo 4 bado linaendelezwa. Lisitumike kwa uchaguzi halisi kwa sasa.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.theme": {
     "t": "Mandhari",

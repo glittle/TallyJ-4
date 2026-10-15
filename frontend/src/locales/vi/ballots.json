@@ -275,14 +275,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.teller1": {
-    "t": "Kiểm Phiếu Viên 1",
+    "t": "Người kiểm phiếu 1",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.teller2": {
-    "t": "Kiểm Phiếu Viên 2",
+    "t": "Người kiểm phiếu 2",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.viewVotes": {
     "t": "Xem Phiếu",

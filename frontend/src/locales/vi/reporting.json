@@ -705,14 +705,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.teller1": {
-    "t": "Người đếm 1",
+    "t": "Người kiểm phiếu 1",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.teller2": {
-    "t": "Người đếm 2",
+    "t": "Người kiểm phiếu 2",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.tieGroup": {
     "t": "Nhóm Hòa {group}",

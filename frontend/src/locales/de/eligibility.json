@@ -1,0 +1,137 @@
+{
+  "eligibility.R01": {
+    "t": "Kein Delegierter bei dieser Wahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.R02": {
+    "t": "Rechte entfernt (kann nicht abstimmen)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.R03": {
+    "t": "Sonstiges (kann nicht abstimmen, kann aber gewählt werden)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.V01": {
+    "t": "Jugendliche im Alter von 18/19/20",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.V02": {
+    "t": "Nachwahl: Auf Institution bereits",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.V03": {
+    "t": "Über eine andere Institution (z. B. Berater)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.V04": {
+    "t": "Rechte entfernt (kann nicht gewählt werden)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.V05": {
+    "t": "Tie-Break-Wahl: Nicht unentschieden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.V06": {
+    "t": "Sonstiges (kann abstimmen, aber nicht gewählt werden)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.X01": {
+    "t": "verstorben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.X02": {
+    "t": "Kürzlich umgezogen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.X03": {
+    "t": "Nicht in dieser lokalen Einheit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.X04": {
+    "t": "Kein registrierter Bahá’í",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.X05": {
+    "t": "Unter 18 Jahren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.X06": {
+    "t": "Wohnt woanders",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.X07": {
+    "t": "Rechte (vollständig) entfernt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.X08": {
+    "t": "Kein Delegierter und auf andere Institution",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.X09": {
+    "t": "Sonstiges (kann nicht abstimmen oder gewählt werden)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.U01": {
+    "t": "Nicht identifizierbar",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.U02": {
+    "t": "Unlesbar",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.eligible": {
+    "t": "Teilnahmeberechtigt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.groupEligible": {
+    "t": "Kann abstimmen und Stimmen erhalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.groupR": {
+    "t": "Kann nur Stimmen erhalten (kann nicht abstimmen)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.groupV": {
+    "t": "Kann nur abstimmen (kann keine Stimmen erhalten)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.groupX": {
+    "t": "Kann nicht abstimmen, kann keine Stimmen erhalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.label": {
+    "t": "Berechtigungsstatus",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "eligibility.selectReason": {
+    "t": "Grund für die Teilnahmeberechtigung auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

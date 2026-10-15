@@ -20,9 +20,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.averageVotesPerBallot": {
-    "t": "Average Votes per Ballot",
+    "t": "Wastani wa kura kwa karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T18:10:00Z"
   },
   "reporting.bahaiId": {
     "t": "Kitambulisho cha Bahá'í",
@@ -30,49 +30,49 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.ballotCode": {
-    "t": "Kura",
+    "t": "Karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.ballotCount": {
-    "t": "Hesabu ya Kura",
+    "t": "Hesabu ya Karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.ballotId": {
-    "t": "Kitambulisho cha Kura",
+    "t": "Kitambulisho cha Karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.ballotLengthDistribution": {
-    "t": "Mgawanyo wa Urefu wa Kura",
+    "t": "Mgawanyo wa Urefu wa Karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.ballotReport": {
-    "t": "Ripoti ya Kura",
+    "t": "Ripoti ya Karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.ballotReports": {
-    "t": "Ripoti za Kura",
+    "t": "Ripoti za Karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.ballotsByMethod": {
-    "t": "Kura kwa Njia ya Kupiga Kura",
+    "t": "Karatasi za kura kwa Njia ya Kupiga Kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T18:10:00Z"
   },
   "reporting.ballotsCast": {
-    "t": "Kura Zilizopigwa",
+    "t": "Karatasi za kura Zilizopigwa",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.ballotsEntered": {
-    "t": "Kura Zilizowekwa",
+    "t": "Karatasi za kura Zilizowekwa",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.calledIn": {
     "t": "Kupiga Simu",
@@ -410,9 +410,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.maxVotesOnBallot": {
-    "t": "Kura Nyingi Zaidi kwenye Kura",
+    "t": "Kura Nyingi Zaidi kwenye karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.metricsToCompare": {
     "t": "Vigezo vya Kulinganisha",
@@ -420,9 +420,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.minVotesOnBallot": {
-    "t": "Kura Chache Zaidi kwenye Kura",
+    "t": "Kura Chache Zaidi kwenye karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.name": {
     "t": "Jina",
@@ -435,9 +435,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.noBallots": {
-    "t": "Hakuna kura iliyopatikana kwa kichujio hiki.",
+    "t": "Hakuna karatasi za kura iliyopatikana kwa kichujio hiki.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.noChanges": {
     "t": "Hakuna rekodi za watu zilizobadilika iliyopatikana.",
@@ -445,9 +445,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.noDuplicates": {
-    "t": "Hakuna kura zinazorudi iliyopatikana.",
+    "t": "Hakuna karatasi za kura zinazorudi iliyopatikana.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.noEmails": {
     "t": "Hakuna rekodi za barua pepe/simu iliyopatikana.",
@@ -470,9 +470,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.numBallots": {
-    "t": "Nambari ya Kura",
+    "t": "Nambari ya Karatasi za kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.numEligibleToVote": {
     "t": "Nambari ya Wasiofaa Kupiga Kura",
@@ -660,9 +660,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.spoiledBallots": {
-    "t": "Kura Zilizooza",
+    "t": "Karatasi za kura Zilizooza",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.spoiledVotes": {
     "t": "Kura Zilizooza",
@@ -685,9 +685,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.sumOfEnvelopesCollected": {
-    "t": "Kura Jumla Zilizopigiwa (ikiwa na mahesabu ya mikono)",
+    "t": "Karatasi za kura Jumla Zilizopigiwa (ikiwa na mahesabu ya mikono)",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.summary": {
     "t": "Muhtasari",
@@ -705,14 +705,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.teller1": {
-    "t": "Mahesabu 1",
+    "t": "Mhesabu kura 1",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.teller2": {
-    "t": "Mahesabu 2",
+    "t": "Mhesabu kura 2",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.tieGroup": {
     "t": "Kundi la Sare {group}",
@@ -755,14 +755,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.totalBallots": {
-    "t": "Kura Jumla",
+    "t": "Karatasi za kura Jumla",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.totalBallotsCast": {
-    "t": "Jumla ya Kura Zilizopigwa",
+    "t": "Jumla ya Karatasi za kura Zilizopigwa",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.totalEligible": {
     "t": "Msiofaa",
@@ -815,9 +815,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.validBallots": {
-    "t": "Kura Sahihi",
+    "t": "Karatasi za kura Sahihi",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:35:00Z"
   },
   "reporting.value": {
     "t": "Thamani",
@@ -875,14 +875,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.votesOnBallot": {
-    "t": "Kura kwenye kura hii",
+    "t": "Kura kwenye karatasi hii ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T18:10:00Z"
   },
   "reporting.votesPerBallot": {
-    "t": "Votes per Ballot",
+    "t": "Kura kwa karatasi ya kura",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T18:10:00Z"
   },
   "reporting.votingMethod": {
     "t": "Njia ya Kupiga Kura",
