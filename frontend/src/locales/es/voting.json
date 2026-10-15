@@ -165,9 +165,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.confirmation.recorded": {
-    "t": "Su boleta ha sido registrada de forma segura.",
+    "t": "Su papeleta ha sido registrada de forma segura.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.confirmation.submitted": {
     "t": "Enviado:",
@@ -180,9 +180,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.confirmation.title": {
-    "t": "¡Boleta Enviada Exitosamente!",
+    "t": "¡Papeleta Enviada Exitosamente!",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.election.instructions": {
     "t": "Por favor vote por {count} candidatos.",
@@ -335,14 +335,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.status.alreadyVoted": {
-    "t": "Ya ha enviado su boleta para esta elección.",
+    "t": "Ya ha enviado su papeleta para esta elección.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.status.notVoted": {
-    "t": "Aún no ha enviado una boleta para esta elección.",
+    "t": "Aún no ha enviado una papeleta para esta elección.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.status.voterNotFound": {
     "t": "Votante no encontrado en esta elección.",
@@ -350,9 +350,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.submit.alreadyVoted": {
-    "t": "Ya ha enviado una boleta para esta elección.",
+    "t": "Ya ha enviado una papeleta para esta elección.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.submit.electionNotFound": {
     "t": "Elección no encontrada.",
@@ -360,9 +360,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.submit.error": {
-    "t": "Ocurrió un error al enviar su boleta. Por favor intente de nuevo.",
+    "t": "Ocurrió un error al enviar su papeleta. Por favor intente de nuevo.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.submit.notOpen": {
     "t": "La votación en línea no está actualmente abierta para esta elección.",

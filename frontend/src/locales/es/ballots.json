@@ -1,8 +1,8 @@
 {
   "ballots.addBallot": {
-    "t": "Agregar Boleta",
+    "t": "Agregar Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.addNewPerson": {
     "t": "Agregar Nueva Persona",
@@ -105,9 +105,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.code": {
-    "t": "Código de Boleta",
+    "t": "Código de Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.computer": {
     "t": "Computadora",
@@ -115,24 +115,24 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.createSuccess": {
-    "t": "Boleta creada exitosamente",
+    "t": "Papeleta creada exitosamente",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.deleteConfirm": {
-    "t": "¿Está seguro de que desea eliminar esta boleta?",
+    "t": "¿Está seguro de que desea eliminar esta papeleta?",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.deleteError": {
-    "t": "Error al eliminar la boleta",
+    "t": "Error al eliminar la papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.deleteSuccess": {
-    "t": "Boleta eliminada exitosamente",
+    "t": "Papeleta eliminada exitosamente",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.deleteVoteConfirm": {
     "t": "¿Está seguro de que desea eliminar este voto?",
@@ -160,14 +160,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.entry": {
-    "t": "Ingreso de Boleta - {code}",
+    "t": "Ingreso de Papeleta - {code}",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.entryPage": {
-    "t": "Ingreso de Boleta",
+    "t": "Ingreso de Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.ineligible": {
     "t": "No elegible",
@@ -175,9 +175,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.loadError": {
-    "t": "Error al cargar las boletas",
+    "t": "Error al cargar las papeletas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.location": {
     "t": "Ubicación",
@@ -190,9 +190,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.management": {
-    "t": "Gestión de Boletas",
+    "t": "Gestión de Papeletas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.noMatchesFound": {
     "t": "No se encontraron coincidencias",
@@ -215,14 +215,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.saveBallot": {
-    "t": "Guardar Boleta",
+    "t": "Guardar Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.saveError": {
-    "t": "Error al guardar la boleta",
+    "t": "Error al guardar la papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.status": {
     "t": "Estado",

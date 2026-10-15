@@ -1,0 +1,472 @@
+{
+  "superAdmin.detail.electionMode": {
+    "t": "Wahlmodus",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.detail.locations": {
+    "t": "Standorte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.detail.numberToElect": {
+    "t": "Zu wählende Anzahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.detail.owners": {
+    "t": "Manager",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.detail.percentComplete": {
+    "t": "Prozent fertiggestellt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.detail.title": {
+    "t": "Wahldetails",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.elections.ballots": {
+    "t": "Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.elections.convenor": {
+    "t": "Convenor",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.elections.date": {
+    "t": "Date",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.elections.filterStatus": {
+    "t": "Nach Status filtern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.elections.filterType": {
+    "t": "Nach Typ filtern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.elections.name": {
+    "t": "Wahlbezeichnung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.elections.noResults": {
+    "t": "Keine Wahlen gefunden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.elections.owner": {
+    "t": "Eigentümer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.elections.search": {
+    "t": "Wahlen suchen...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.elections.status": {
+    "t": "Status",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.elections.type": {
+    "t": "Type",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.elections.voters": {
+    "t": "abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.error.accessDenied": {
+    "t": "Sie haben keinen Super-Admin-Zugang",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.error.loadFailed": {
+    "t": "Super-Admin-Daten konnten nicht geladen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.summary.archivedElections": {
+    "t": "Archiviert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.summary.completedElections": {
+    "t": "Abgeschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.summary.openElections": {
+    "t": "Offen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.summary.totalElections": {
+    "t": "Wahlen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.summary.upcomingElections": {
+    "t": "anstehend",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.title": {
+    "t": "Super-Admin-Dashboard",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.title": {
+    "t": "Anmeldekonten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.search": {
+    "t": "Suche Studenten nach Namen oder E-Mail...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.email": {
+    "t": "E-Mail",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.name": {
+    "t": "Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.authMethod": {
+    "t": "Login-Methode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.emailConfirmed": {
+    "t": "E-Mail bestätigt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.pendingEmail": {
+    "t": "Ausstehende E-Mail",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.noResults": {
+    "t": "Keine Benutzer gefunden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.edit": {
+    "t": "Bearbeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.editTitle": {
+    "t": "Anmeldekonto",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.save": {
+    "t": "Speichern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.emailHistory": {
+    "t": "E-Mail Change History",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.historyEmpty": {
+    "t": "Keine E-Mail-Änderungen aufgezeichnet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.historyFrom": {
+    "t": "Von",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.historyTo": {
+    "t": "An",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.historyWhen": {
+    "t": "Wann",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.historySource": {
+    "t": "Quelle",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.updateSuccess": {
+    "t": "Konto aktualisiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.manageAccounts": {
+    "t": "Anmeldekonten verwalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.issueInvite": {
+    "t": "E-Mail/Passwort-Einladung ausgeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.issueInviteTitle": {
+    "t": "Einmalige Kontoeinladung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.issueInviteHelp": {
+    "t": "Teile diesen Link einmal. Es wird ein einzelnes lokales E-Mail- und Passwort-Konto erstellt, das dann abläuft oder unbrauchbar wird.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.issueInviteCopy": {
+    "t": "Link kopieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.issueInviteCopied": {
+    "t": "Einladungslink kopiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.issueInviteExpires": {
+    "t": "läuft ab",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.users.issueInviteFailed": {
+    "t": "Einladung konnte nicht ausgestellt werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.title": {
+    "t": "Bezahlte Sendungen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.pendingTitle": {
+    "t": "Bestätigung steht noch aus",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.pendingEmpty": {
+    "t": "Keine Konten warten auf die Genehmigung des bezahlten Versands.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.email": {
+    "t": "E-Mail",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.name": {
+    "t": "Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.elections": {
+    "t": "Wahlen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.approve": {
+    "t": "Bezahlte Sendungen genehmigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.freeze": {
+    "t": "Freeze",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.unfreeze": {
+    "t": "Einfrieren aufheben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.approved": {
+    "t": "Bezahlte Sendungen genehmigt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.frozen": {
+    "t": "Login-Codes eingefroren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.unfrozen": {
+    "t": "Login-Codes wieder erlaubt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.capHitsTitle": {
+    "t": "Ist wirksam",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.capHitsEmpty": {
+    "t": "Keine Wahl oder kein Eigentümer ist am Limit.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.scope": {
+    "t": "Geltungsbereich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.scopeElection": {
+    "t": "Wahlkontingent",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.scopeOwner": {
+    "t": "Besitzer Daily Cap",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.used": {
+    "t": "Genutzt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.cap": {
+    "t": "Obergrenze",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.raise": {
+    "t": "Erhöhen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.raised": {
+    "t": "Obergrenze angehoben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.frozenElectionsTitle": {
+    "t": "Eingefrorene Wahlen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.frozenOwnersTitle": {
+    "t": "Eingefrorene Konten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.frozenEmpty": {
+    "t": "Keine",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.flaggedTitle": {
+    "t": "Gekennzeichnete Wahlen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.flaggedEmpty": {
+    "t": "Es werden keine Wahlen markiert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.clearFlag": {
+    "t": "Markierung entfernen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.flagCleared": {
+    "t": "Flaggenfreigabe",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.row": {
+    "t": "Reihe",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.value": {
+    "t": "Wert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.reasonLabel": {
+    "t": "Begründung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.reason.invalid-phone": {
+    "t": "Ungültige Telefonnummer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.reason.unexpected-country": {
+    "t": "Unerwartetes Land",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.reason.consecutive-run": {
+    "t": "Fortlaufende Nummern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.reason.disposable-domain": {
+    "t": "Einweg-E-Mail-Domain",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.reason.no-mx": {
+    "t": "Kein Mailserver",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.reason.review-failed": {
+    "t": "Prüfung gescheitert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.freezeByIdTitle": {
+    "t": "Freeze by id",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.electionId": {
+    "t": "Wahl-ID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.ownerId": {
+    "t": "Account ID Nummer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.freezeElection": {
+    "t": "Wahlen einfrieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.paidSends.freezeOwner": {
+    "t": "Konto einfrieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

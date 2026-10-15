@@ -409,6 +409,82 @@ export function diffKeysAgainstEnglish(keysByLocale) {
   return { stale, awaiting, missingReference: false };
 }
 
+const BRAND_LITERAL = "TallyJ";
+
+function collectLeafTexts(data, prefix = "") {
+  const texts = new Map();
+
+  for (const [key, value] of Object.entries(data)) {
+    const fullKey = prefix ? `${prefix}.${key}` : key;
+
+    if (isRichEntry(value) || typeof value === "string") {
+      texts.set(fullKey, isRichEntry(value) ? value.t : value);
+      continue;
+    }
+
+    if (
+      value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      Object.keys(value).length > 0
+    ) {
+      for (const [nestedKey, nestedText] of collectLeafTexts(value, fullKey)) {
+        texts.set(nestedKey, nestedText);
+      }
+    }
+  }
+
+  return texts;
+}
+
+/**
+ * The product name is Latin "TallyJ" in every locale. When the English
+ * source contains that literal, the translation must contain it too.
+ */
+function checkBrandLiteral(localesDir, localeFiles) {
+  const errors = [];
+  const enFiles = localeFiles.get("en");
+  if (!enFiles) {
+    return errors;
+  }
+
+  const enBrandKeys = new Set();
+  for (const { original } of enFiles) {
+    const data = loadJsonFile(localesDir, original);
+    for (const [key, text] of collectLeafTexts(data)) {
+      if (typeof text === "string" && text.includes(BRAND_LITERAL)) {
+        enBrandKeys.add(key);
+      }
+    }
+  }
+
+  const locales = [...localeFiles.keys()]
+    .filter((locale) => locale !== "en" && locale !== "bundled")
+    .sort();
+
+  for (const locale of locales) {
+    for (const { original } of localeFiles.get(locale)) {
+      const data = loadJsonFile(localesDir, original);
+      for (const [key, text] of collectLeafTexts(data)) {
+        if (!enBrandKeys.has(key) || typeof text !== "string") {
+          continue;
+        }
+        if (!text.includes(BRAND_LITERAL)) {
+          errors.push(
+            new ValidationError(
+              "BRAND_NOT_LITERAL",
+              `Key "${key}" in locale "${locale}" translates an English string containing "${BRAND_LITERAL}" but does not contain the literal brand.`,
+              { locale, key, filePath: original },
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  return errors;
+}
+
 function checkKeyConsistency(localesDir, localeFiles) {
   const errors = [];
   const keysByLocale = new Map();
@@ -473,6 +549,7 @@ function validateLocaleFiles(localesDir, localeFiles) {
 
   errors.push(...checkDuplicateKeysInLocale(localesDir, localeFiles));
   errors.push(...checkPrefixCollisionsInLocale(localesDir, localeFiles));
+  errors.push(...checkBrandLiteral(localesDir, localeFiles));
   const consistency = checkKeyConsistency(localesDir, localeFiles);
   errors.push(...consistency.errors);
 

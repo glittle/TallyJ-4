@@ -40,9 +40,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "dashboard.noTellers": {
-    "t": "Chưa có kiểm phiếu viên được phân công",
+    "t": "Chưa có người kiểm phiếu được phân công",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "dashboard.onlineVoting": {
     "t": "Bỏ Phiếu Trực Tuyến",
@@ -80,19 +80,19 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "dashboard.tellerCount": {
-    "t": "Số Kiểm Phiếu Viên",
+    "t": "Số Người kiểm phiếu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "dashboard.tellers": {
-    "t": "Kiểm Phiếu Viên",
+    "t": "Người kiểm phiếu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "dashboard.tellersStatus": {
-    "t": "Kiểm Phiếu Viên",
+    "t": "Người kiểm phiếu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "dashboard.totalBallots": {
     "t": "Tổng Số Phiếu Bầu",

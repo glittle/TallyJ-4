@@ -310,9 +310,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "people.import.mapColumnsDesc": {
-    "t": "Ánh xạ các cột từ tệp của bạn sang các trường KiểmJ",
+    "t": "Ánh xạ các cột từ tệp của bạn sang các trường TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "people.import.mapTo": {
     "t": "Ánh xạ tới:",
@@ -425,14 +425,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "people.import.tallyJField": {
-    "t": "Trường KiểmJ",
+    "t": "Trường TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "people.import.tallyJFields": {
-    "t": "Tham Chiếu Trường KiểmJ",
+    "t": "Tham Chiếu Trường TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "people.import.timeElapsed": {
     "t": "Thời Gian Đã Qua",

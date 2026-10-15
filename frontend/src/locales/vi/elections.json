@@ -135,24 +135,24 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.electionTypes.LSA": {
-    "t": "Hội Đồng Tinh Thần Địa Phương",
+    "t": "Hội đồng Tinh thần Địa Phương",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.electionTypes.LSA1": {
-    "t": "Hội Đồng Tinh Thần Địa Phương (Hai Giai Đoạn) Đơn Vị Địa Phương",
+    "t": "Hội đồng Tinh thần Địa Phương (Hai Giai Đoạn) Đơn Vị Địa Phương",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.electionTypes.LSA2": {
-    "t": "Hội Đồng Tinh Thần Địa Phương (Hai Giai Đoạn) Vòng Cuối",
+    "t": "Hội đồng Tinh thần Địa Phương (Hai Giai Đoạn) Vòng Cuối",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.electionTypes.NSA": {
-    "t": "Hội Đồng Tinh Thần Quốc Gia",
+    "t": "Hội đồng Tinh thần Quốc Gia",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.electionTypes.Oth": {
     "t": "Khác",
@@ -240,9 +240,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.form.electionPasscodeHelp": {
-    "t": "Cần có mật khẩu để kiểm phiếu viên đăng nhập.",
+    "t": "Cần có mật khẩu để người kiểm phiếu đăng nhập.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.form.electionPasscodePlaceholder": {
     "t": "Nhập mật khẩu",
@@ -690,9 +690,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.tabs.tellers": {
-    "t": "Kiểm Phiếu Viên",
+    "t": "Người kiểm phiếu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.tabs.votingMethods": {
     "t": "Phương Thức Bỏ Phiếu",
@@ -700,9 +700,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.tellerAccess": {
-    "t": "Quyền Truy Cập Kiểm Phiếu Viên",
+    "t": "Quyền Truy Cập Người kiểm phiếu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.tellerAccessCode": {
     "t": "Mã Truy Cập",
@@ -725,9 +725,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.toggleTellerAccess": {
-    "t": "Bật/Tắt Quyền Truy Cập Kiểm Phiếu Viên",
+    "t": "Bật/Tắt Quyền Truy Cập Người kiểm phiếu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "elections.type": {
     "t": "Loại",

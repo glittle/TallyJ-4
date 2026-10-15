@@ -1,0 +1,312 @@
+{
+  "monitoring.acceptAll.button": {
+    "t": "Alle ausstehenden Online-Stimmzettel akzeptieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.buttonShort": {
+    "t": "Annehmen ausstehend",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.complete": {
+    "t": "Akzeptiert {accepted} ausstehend online Stimmzettel.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.confirmMessage": {
+    "t": "{pending} online ausstehende Stimmzettel jetzt akzeptieren?\n\nDadurch werden regelmäßige Stimmzettel erstellt, als ob ein Wahlhelfer sie von Papier tippte und dann den Online-Abstimmungsinhalt löscht. Es kann nicht rückgängig gemacht werden. Diese abstimmende Personen werden diese Stimmen nicht ändern können.\n\nOnline-Abstimmungen können offen bleiben. Es werden nur Stimmzettel akzeptiert, die gerade ausstehen. Sie können später für alle neuen ausstehenden Stimmzettel alle erneut akzeptieren.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.confirmTitle": {
+    "t": "Ausstehendes Online-Stimmzettel akzeptieren?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.finalized": {
+    "t": "Online-Stimmzettel können nach Abschluss der Wahl nicht mehr angenommen werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.inProgress": {
+    "t": "Ein weiteres Accept all läuft bereits für diese Wahl.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.none": {
+    "t": "Es gibt keine ausstehenden Online-Stimmzettel zu akzeptieren.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.nonePending": {
+    "t": "Keine ausstehenden Online-Stimmzettel zu akzeptieren.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.history": {
+    "t": "Accept-all-Datensatz",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.when": {
+    "t": "Wann",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.who": {
+    "t": "Accepted by",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.pendingBefore": {
+    "t": "Ausstehend bis",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.pendingAfter": {
+    "t": "Ausstehend nach",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.acceptedBefore": {
+    "t": "Abgenommen vor",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.acceptedAfter": {
+    "t": "Akzeptiert nach",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.acceptAll.noHistory": {
+    "t": "Noch keine Accept-all-Läufe.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.activeComputers": {
+    "t": "Aktive Computer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.ballotsEntered": {
+    "t": "Stimmzettel eingegeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.computerCode": {
+    "t": "Computer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.computers": {
+    "t": "Computer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.lastContact": {
+    "t": "Letzter Kontakt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.lastUpdated": {
+    "t": "Zuletzt aktualisiert {time}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.location": {
+    "t": "Location",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.locations": {
+    "t": "Standorte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.noData": {
+    "t": "Keine Monitordaten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineVoting": {
+    "t": "Online Voting",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineWindow.title": {
+    "t": "Closing",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineWindow.open": {
+    "t": "Offen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineWindow.closed": {
+    "t": "Geschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineWindow.closingSoon": {
+    "t": "Schließt bald",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineWindow.noCloseTime": {
+    "t": "Keine Schließzeit eingestellt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineWindow.remainingClock": {
+    "t": "{clock} verbleibend",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineWindow.scheduleCloseIn5Minutes": {
+    "t": "Zeitplan in 5 Minuten schließen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineWindow.closeNow": {
+    "t": "Jetzt schliessen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineWindow.openFor5Minutes": {
+    "t": "5 Minuten lang vor.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineWindow.saved": {
+    "t": "Online-Abstimmungsschlusszeit gespeichert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.connectedOnlineVoters.title": {
+    "t": "Verbundene Online abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.connectedOnlineVoters.sessions": {
+    "t": "Stimmzettel-Sitzungen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.connectedOnlineVoters.note": {
+    "t": "Anonymous count of online abstimmende Person sessions currently on this election's Stimmzettel page. Namen werden nicht angezeigt. Dies ist keine Zählung von Stimmzettel, die erstellt wird — das Komponieren wird erst nach dem Absenden gespeichert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.ballotsByMethod.title": {
+    "t": "Stimmzettel nach Wahlmethode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.ballotsByMethod.note": {
+    "t": "Personen, die nach der an der Empfang aufgezeichneten Methode gezählt wurden. Online beinhaltet auch akzeptierte Online-Stimmzettel, die keine andere Methode haben. Zählt nur.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.ballotsByMethod.inPerson": {
+    "t": "Persönliche Therapie",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.ballotsByMethod.mailed": {
+    "t": "Versendet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.ballotsByMethod.droppedOff": {
+    "t": "Abgesetzt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.ballotsByMethod.kiosk": {
+    "t": "Kiosk",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.ballotsByMethod.online": {
+    "t": "Online",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineBallots.breakdownTitle": {
+    "t": "Ausstehend vs. akzeptiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineBallots.countsOnly": {
+    "t": "Nur Zählungen. Namen werden nicht angezeigt. Stimmzettelsitzungen sind Live-Verbindungen, keine Stimmzettel, die erstellt werden — das Komponieren wird erst nach dem Absenden gespeichert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineBallots.votedAnotherWay": {
+    "t": "Ausstehend, anders abgestimmt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineBallots.status.Processed": {
+    "t": "Akzeptiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineBallots.status.Processing": {
+    "t": "Verarbeitung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineBallots.status.Submitted": {
+    "t": "Noch änderbar",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.onlineBallots.status.unknown": {
+    "t": "Unbekannt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.pendingOnlineBallots": {
+    "t": "Ausstehend",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.processedOnlineBallots": {
+    "t": "Akzeptiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.registeredVoters": {
+    "t": "Eingetragene abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.status": {
+    "t": "Status",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.totalBallots": {
+    "t": "Gesamtzahl der Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.totalOnlineBallots": {
+    "t": "Online-Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.totalVotes": {
+    "t": "Stimmen insgesamt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "monitoring.turnout": {
+    "t": "Beteiligung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

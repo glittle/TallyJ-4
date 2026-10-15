@@ -1,0 +1,432 @@
+{
+  "frontDesk.page.title": {
+    "t": "Empfang - abstimmende Person-Check-in",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.stats.checkedIn": {
+    "t": "Eingecheckt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.stats.notCheckedIn": {
+    "t": "NICHT EINGECHECKT",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.section.quickCheckIn": {
+    "t": "abstimmende Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.search.placeholder": {
+    "t": "Geben Sie einen Teilnamen oder eine Bahá'í-ID ein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.filters.registrationStatus": {
+    "t": "Show:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.filters.registrationAll": {
+    "t": "Alle ({count})",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.filters.registrationNotRegistered": {
+    "t": "Nicht registriert ({count})",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.filters.registrationRegistered": {
+    "t": "Registriert ({count})",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.filters.votingMethods": {
+    "t": "Abstimmungsmethodenfilter:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.filters.ballotNotReceived": {
+    "t": "Stimmzettel nicht erhalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.filters.ballotNotReceivedWithCount": {
+    "t": "Stimmzettel nicht erhalten ({count})",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.filters.ballotNotReceivedHelp": {
+    "t": "Verbergen Sie alle, deren Stimmzettel eingegangen ist. Kombinieren Sie mit einer Flagge, um zu sehen, wer noch keinen Stimmzettel hat.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.filters.flags": {
+    "t": "Flags:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.filters.flagLegend": {
+    "t": "Kennzeichenabkürzungen:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.filters.methodWithCount": {
+    "t": "{label} ({count})",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.filters.flagWithCount": {
+    "t": "{flag} ({count})",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.table.name": {
+    "t": "Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.table.bahaiId": {
+    "t": "Bahá'í ID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.table.area": {
+    "t": "Bereich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.table.envNum": {
+    "t": "Env",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.table.method": {
+    "t": "Methode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.table.sms": {
+    "t": "SMS",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.table.whatsApp": {
+    "t": "WhatsApp",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.table.flags": {
+    "t": "Flaggen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.table.time": {
+    "t": "Wann",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.keyboardHint": {
+    "t": "Verwenden Sie die Tastatur, um zu navigieren ↑ ↓ und einzuchecken.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.dialog.checkIn": {
+    "t": "Einchecken",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.dialog.update": {
+    "t": "Aktualisierung der Registrierung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.dialog.id": {
+    "t": "ID:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.dialog.area": {
+    "t": "Fläche:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.dialog.unregister": {
+    "t": "Unregister",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.dialog.currentRegistration": {
+    "t": "Aktuelle Registrierung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.dialog.envelope": {
+    "t": "Umschlag #{num}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.dialog.votingMethod": {
+    "t": "Abstimmungsmethode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.envelope.set": {
+    "t": "+",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.envelope.editTitle": {
+    "t": "Umschlagnummer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.envelope.editPrompt": {
+    "t": "Geben Sie eine Umschlagnummer für {name} ein.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.envelope.clear": {
+    "t": "Nummer löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.envelope.saved": {
+    "t": "Umschlagnummer aktualisiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.envelope.cleared": {
+    "t": "Umschlagnummer gelöscht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.errors.updateEnvelope": {
+    "t": "Umschlagnummer konnte nicht aktualisiert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.dialog.flags": {
+    "t": "Flaggen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.dialog.registrationHistory": {
+    "t": "Registrierungsverlauf",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.dialog.checkingIn": {
+    "t": "Einchecken…",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.dialog.instructions": {
+    "t": "Verwenden Sie ← → Pfeile oder Zifferntasten, drücken Sie Enter, um zu bestätigen, Esc, um abzubrechen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.votingMethod.inPerson": {
+    "t": "persönlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.votingMethod.mail": {
+    "t": "Versendet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.votingMethod.online": {
+    "t": "Online",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.votingMethod.callIn": {
+    "t": "Call-In",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.votingMethod.imported": {
+    "t": "Importiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.onlineStatus.draft": {
+    "t": "Online Draft",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.onlineStatus.pending": {
+    "t": "Online ausstehend",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.onlineStatus.accepted": {
+    "t": "Online akzeptiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.errors.alreadyAcceptedOnline": {
+    "t": "Diese Person hat bereits einen akzeptierten Online-Stimmzettel. Sie können nicht mit einer anderen Methode eingecheckt werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.errors.alreadyProcessingOnline": {
+    "t": "Die Wahlhelfer nehmen den Online-Stimmzettel dieser Person an. Warten Sie, bis dies abgeschlossen ist, bevor Sie sie auf andere Weise überprüfen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.errors.onlineIsVoterInitiated": {
+    "t": "Online-Stimmzettel werden von der abstimmenden Person gestartet. Überprüfe diese Person stattdessen als persönlich, per Post, per Post oder am Kiosk.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.confirm.withdrawPendingOnline.title": {
+    "t": "Unfertiger Online-Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.confirm.withdrawPendingOnline.message": {
+    "t": "{name} hat einen Entwurf oder einen eingereichten Online-Stimmzettel, der noch nicht angenommen wurde. Wenn Sie sie auf diese Weise überprüfen, wird dieser Online-Stimmzettel verworfen, damit sie nicht doppelt gezählt werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.confirm.withdrawPendingOnline.confirm": {
+    "t": "Ausstehender Online-Stimmzettel verwerfen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.history.checkedIn": {
+    "t": "Eingecheckt: {method}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.history.teller1": {
+    "t": "Von: {name}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.history.teller2": {
+    "t": "Von: {name}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.history.reason": {
+    "t": "Grund: {reason}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.history.location": {
+    "t": "Ort: {name}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.history.envelope": {
+    "t": "Umschlag: #{num}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.common.dash": {
+    "t": "-",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.messages.checkInSuccess": {
+    "t": "{name} erfolgreich eingecheckt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.messages.flagsUpdated": {
+    "t": "Flaggen erfolgreich aktualisiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.messages.unregistered": {
+    "t": "abstimmende Person erfolgreich abgemeldet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.messages.invalidButton": {
+    "t": "Ungültige Schaltfläche ausgewählt: {index}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.errors.fetchVoters": {
+    "t": "Berechtigte abstimmende Personen konnten nicht abgerufen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.errors.checkIn": {
+    "t": "Fehler beim Einchecken der abstimmenden Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.errors.unregister": {
+    "t": "abstimmende Person konnte nicht abgemeldet werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.errors.updateFlags": {
+    "t": "Flags konnten nicht aktualisiert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.errors.updatePersonFlags": {
+    "t": "Personen-Flags konnten nicht aktualisiert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.errors.loadData": {
+    "t": "Daten konnten nicht geladen werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.confirm.removeFlag.title": {
+    "t": "Bestätigen Entfernen Flag",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.confirm.removeFlag.message": {
+    "t": "Flag \"{flag}\" aus {name} entfernen?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.confirm.removeFlag.confirm": {
+    "t": "Entfernen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.confirm.unregister.title": {
+    "t": "Bestätigen Sie die Abmeldung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.confirm.unregister.message": {
+    "t": "Möchten Sie die Registrierung von {name} wirklich aufheben? Dadurch wird der Check-in-Status gelöscht.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.confirm.unregister.confirm": {
+    "t": "Unregister",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.unregisterReason": {
+    "t": "Unregistriert an der Empfang",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.tellerRequired.title": {
+    "t": "Wahlhelfer Name erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "frontDesk.tellerRequired.message": {
+    "t": "Geben Sie oben Ihren Namen für \"Wahlhelfer an der Tastatur\" ein, bevor Sie abstimmende Personen einchecken, Flaggen aktualisieren oder Umschlagnummern ändern.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

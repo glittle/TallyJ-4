@@ -1,0 +1,252 @@
+{
+  "results.allResults": {
+    "t": "Alle Ergebnisse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.ballotsReceived": {
+    "t": "Stimmzettel erhalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.calculateTally": {
+    "t": "Berechnung der Tally",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.calculatedAt": {
+    "t": "Berechnet bei {date}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.person": {
+    "t": "Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.closeToNext": {
+    "t": "Knapp hinter dem Nächsten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.elected": {
+    "t": "Gewählt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.extra": {
+    "t": "Extra",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.flags": {
+    "t": "Flaggen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.loadError": {
+    "t": "Ergebnisse konnten nicht geladen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.monitor": {
+    "t": "Wahlmonitor",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.noResults": {
+    "t": "Keine Ergebnisse verfügbar. Berechnen Sie zuerst die Zählung.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.noTies": {
+    "t": "Keine Verbindungen erkannt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.numberToElect": {
+    "t": "Zu wählende Anzahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.other": {
+    "t": "Sonstiges",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.presentation": {
+    "t": "Präsentationsansicht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.rank": {
+    "t": "Rang",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.reporting": {
+    "t": "Berichte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.section": {
+    "t": "Bereich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.showFinalResults": {
+    "t": "Abschlie?ende Ergebnisse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.spoiledBallots": {
+    "t": "ungültige Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.tieBreakAlert": {
+    "t": "Achtung: Einige Stimmengleichheiten erfordern eine manuelle Stichwahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.tieBreakMessage": {
+    "t": "Für diese Gruppe ist ein Tie-Break erforderlich, da sie Abschnittsgrenzen überspannt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.tieBreakRequired": {
+    "t": "Stichwahl erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.tieGroup": {
+    "t": "Gleichstandsgruppe #{group}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.tieManagement": {
+    "t": "Verwaltung der Stimmengleichheit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.tied": {
+    "t": "Punktgleich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.tiedPeople": {
+    "t": "Unentschiedene Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.actions": {
+    "t": "Aktionen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.confirmSave": {
+    "t": "Tie-Break-Zählungen speichern? Die Zählung wird nach dem Speichern erneut analysiert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.instructions": {
+    "t": "Geben Sie die Abflusszahlen für unentschiedene Personen ein. Lassen Sie ein Feld leer, wenn noch keine Zählung eingegeben wurde. Eine explizite 0 ist ein gültiges Abflussergebnis. Beim Speichern wird die Zählung erneut analysiert, auch wenn nur einige Personen Zählungen haben.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.loadError": {
+    "t": "Verbindungsdetails konnten nicht geladen werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.noTies": {
+    "t": "Keine Verbindungen erfordern Management",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.person": {
+    "t": "Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.reAnalysisTriggered": {
+    "t": "Tie-Break-Zählungen gespeichert. Zählungswiederholungsanalyse wurde ausgelöst.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.saveChanges": {
+    "t": "Änderungen speichern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.saveError": {
+    "t": "Fehler beim Speichern der Tie-Break-Zählungen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.saveSuccess": {
+    "t": "Tie-Break-Zählungen erfolgreich gespeichert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.section": {
+    "t": "Bereich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.tieBreakCount": {
+    "t": "Tie-Break-Anzahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.tieBreakRequired": {
+    "t": "Stichwahl erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.tieGroup": {
+    "t": "Gleichstandsgruppe #{group}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.validationRequired": {
+    "t": "Für die Verbindungen zwischen den gewählten Sektionen sind immer noch Personen ohne Tie-Break-Zählung eingetragen. Eine explizite 0 ist zulässig.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tieManagement.voteCount": {
+    "t": "Stimmenauszählung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.ties": {
+    "t": "Ties",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.title": {
+    "t": "Wahlergebnisse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.totalBallots": {
+    "t": "Gesamtzahl der Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.totalVotes": {
+    "t": "Stimmen insgesamt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.validVotes": {
+    "t": "Gültige Stimmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "results.votes": {
+    "t": "Stimmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

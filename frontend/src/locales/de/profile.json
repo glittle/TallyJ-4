@@ -1,0 +1,257 @@
+{
+  "profile.changeEmail": {
+    "t": "E-Mail-Adresse ändern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.changeName": {
+    "t": "Name ändern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.changePassword": {
+    "t": "Passwort ändern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.confirmEmailChange": {
+    "t": "Mit Code bestätigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.confirmPassword": {
+    "t": "Passwort bestätigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.createdAt": {
+    "t": "Mitglied seit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.currentPassword": {
+    "t": "Aktuelles Passwort",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.currentPasswordRequired": {
+    "t": "Das aktuelle Passwort ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.emailChangeFailed": {
+    "t": "Ändern der E-Mail-Einstellungen fehlgeschlagen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.emailChangeHelp": {
+    "t": "Wir senden einen Bestätigungslink und einen 6-stelligen Code an die neue Adresse. Ihre aktuelle E-Mail-Adresse bleibt aktiv, bis Sie sie bestätigen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.emailChangeRequested": {
+    "t": "Überprüfen Sie den neuen Posteingang auf einen Bestätigungslink oder -code.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.emailChangeSuccess": {
+    "t": "E-Mail-Adresse aktualisiert. Verwenden Sie die neue E-Mail-Adresse, um sich anzumelden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.emailCodePlaceholder": {
+    "t": "6-stelliger Code",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.emailCodeRequired": {
+    "t": "Geben Sie den 6-stelligen Code aus der Bestätigungs-E-Mail ein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.emailConfirmationCode": {
+    "t": "Bestätigungscode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.emailRequired": {
+    "t": "E-Mail-Adresse ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.enterEmailCodeHelp": {
+    "t": "Oder geben Sie den an {email} gesendeten Code ein:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.loginMethod": {
+    "t": "Login-Methode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.name": {
+    "t": "Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.nameMaxLength": {
+    "t": "Name darf 254 Zeichen nicht überschreiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.nameRequired": {
+    "t": "Name ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.nameUpdateFailed": {
+    "t": "Nicht aktualisiert Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.nameUpdateSuccess": {
+    "t": "Name erfolgreich aktualisiert!",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.newEmail": {
+    "t": "Neue E-Mail",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.newName": {
+    "t": "Neuer Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.newPassword": {
+    "t": "Neues Passwort",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.passwordChangeComingSoon": {
+    "t": "Password Change Funktionalität kommt bald",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.passwordsDoNotMatch": {
+    "t": "Passwörter stimmen nicht überein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.pendingEmailNote": {
+    "t": "Ausstehende Bestätigung: {email}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.sendEmailVerification": {
+    "t": "Verifizierung senden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.superAdminEmailWarning": {
+    "t": "Sie sind ein Super-Admin. Nach dem Ändern der E-Mail-Adresse basiert der Super-Admin-Zugriff auf der neuen Adresse, die der SuperAdmin-Zulassungsliste entspricht. Ihr Zugriff soll fortgesetzt werden. Aktualisieren Sie die konfigurierte Liste, wenn die neue E-Mail nicht aufgeführt ist.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.confirmCode": {
+    "t": "Geben Sie den 6-stelligen Code aus Ihrer App ein, um die Einrichtung zu bestätigen:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.confirmPlaceholder": {
+    "t": "6-stelliger Code",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.confirmSetup": {
+    "t": "bestätigen Sie ermöglichen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.disable": {
+    "t": "Zwei-Faktor-Authentifizierung deaktivieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.disableConfirm": {
+    "t": "Geben Sie den 6-stelligen Code aus Ihrer Authentifizierungs-App ein, um 2FA zu deaktivieren:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.disableSuccess": {
+    "t": "Die Zwei-Faktor-Authentifizierung wurde deaktiviert.\",",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.disableTitle": {
+    "t": "Zwei-Faktor-Authentifizierung deaktivieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.disabled": {
+    "t": "Nicht aktiviert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.enabled": {
+    "t": "Aktiviert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.loading": {
+    "t": "2FA-Status wird geladen...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.localPasswordOnlyNote": {
+    "t": "Dies gilt nur, wenn Sie sich mit Ihrer E-Mail-Adresse und Ihrem Passwort anmelden. Die Anmeldung bei Google oder anderen Anbietern wird für einen 2FA-Code nicht angefochten.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.method": {
+    "t": "Methode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.methodTotp": {
+    "t": "Authenticator App (TOTP)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.scanQr": {
+    "t": "Scannen Sie diesen QR-Code mit Ihrer Authentifizierungs-App (Google Authenticator, Microsoft Authenticator oder Authy).",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.secretKey": {
+    "t": "Oder geben Sie diesen Schlüssel manuell ein:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.setup": {
+    "t": "2FA einrichten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.setupSuccess": {
+    "t": "Die Zwei-Faktor-Authentifizierung wurde aktiviert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.setupTitle": {
+    "t": "Nutzen Sie 2-Faktor-Authentifizierung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.status": {
+    "t": "Status",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "profile.twoFactor.title": {
+    "t": "Zwei-Faktor-Authentifizierung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

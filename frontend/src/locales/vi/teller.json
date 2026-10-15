@@ -10,24 +10,24 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "teller.form.name": {
-    "t": "Tên Kiểm Phiếu Viên",
+    "t": "Tên Người kiểm phiếu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "teller.form.nameMaxLength": {
-    "t": "Tên kiểm phiếu viên không được vượt quá 50 ký tự",
+    "t": "Tên người kiểm phiếu không được vượt quá 50 ký tự",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "teller.form.namePlaceholder": {
-    "t": "Nhập tên kiểm phiếu viên",
+    "t": "Nhập tên người kiểm phiếu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "teller.form.nameRequired": {
-    "t": "Tên kiểm phiếu viên là bắt buộc",
+    "t": "Tên người kiểm phiếu là bắt buộc",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "teller.form.save": {
     "t": "Lưu",
@@ -35,13 +35,13 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "teller.form.titleAdd": {
-    "t": "Thêm Kiểm Phiếu Viên",
+    "t": "Thêm Người kiểm phiếu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "teller.form.titleEdit": {
-    "t": "Chỉnh Sửa Kiểm Phiếu Viên",
+    "t": "Chỉnh Sửa Người kiểm phiếu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   }
 }

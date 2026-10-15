@@ -310,9 +310,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "people.import.mapColumnsDesc": {
-    "t": "将文件中的列映射到计票J字段",
+    "t": "将文件中的列映射到 TallyJ 字段",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "people.import.mapTo": {
     "t": "映射到：",
@@ -425,14 +425,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "people.import.tallyJField": {
-    "t": "计票J 字段",
+    "t": "TallyJ 字段",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "people.import.tallyJFields": {
-    "t": "计票J 字段参考",
+    "t": "TallyJ 字段参考",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "people.import.timeElapsed": {
     "t": "已用时间",

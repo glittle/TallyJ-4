@@ -250,9 +250,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.email": {
-    "t": "Courriel",
+    "t": "E-mail",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.endDate": {
     "t": "Date de fin",
@@ -305,9 +305,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.firstTimeVoters": {
-    "t": "Nouveaux électeurs",
+    "t": "Nouveaux votants",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.flags": {
     "t": "Drapeaux",
@@ -335,9 +335,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.hasSignedInEmail": {
-    "t": "Connecté (Courriel)",
+    "t": "Connecté (E-mail)",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.hasSignedInPhone": {
     "t": "Connecté (Téléphone)",
@@ -360,9 +360,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.inPersonVoters": {
-    "t": "Électeurs en personne",
+    "t": "Votants en personne",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.includeSections": {
     "t": "Inclure les sections",
@@ -450,9 +450,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.noEmails": {
-    "t": "Aucun enregistrement de courriel/téléphone trouvé.",
+    "t": "Aucun enregistrement d'e-mail/téléphone trouvé.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T17:10:00Z"
   },
   "reporting.noFlags": {
     "t": "Aucun drapeau de participation défini.",
@@ -495,9 +495,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.onlineVoters": {
-    "t": "Électeurs en ligne",
+    "t": "Votants en ligne",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.other": {
     "t": "Autre",
@@ -580,9 +580,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.registeredVoters": {
-    "t": "Électeurs inscrits",
+    "t": "Votants inscrits",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.registrationLog": {
     "t": "Journal d'enregistrement",
@@ -610,9 +610,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.returningVoters": {
-    "t": "Électeurs habituels",
+    "t": "Votants habituels",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.section": {
     "t": "Section",
@@ -775,9 +775,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.totalVotersHeader": {
-    "t": "Total des électeurs",
+    "t": "Total des votants",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.totalVotes": {
     "t": "Total des voix",
@@ -850,19 +850,19 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.voterName": {
-    "t": "Nom de l'électeur",
+    "t": "Nom de le votant",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.voterReport": {
-    "t": "Rapport des électeurs",
+    "t": "Rapport des votants",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.voterReports": {
-    "t": "Rapports sur les électeurs",
+    "t": "Rapports sur les votants",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.voterTurnout": {
     "t": "Participation électorale",
@@ -890,9 +890,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.whenEmail": {
-    "t": "Courriel envoyé",
+    "t": "E-mail envoyé",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.whenPhone": {
     "t": "Téléphone envoyé",

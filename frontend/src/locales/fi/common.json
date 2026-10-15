@@ -10,14 +10,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.appName": {
-    "t": "LaskiJ",
+    "t": "TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.appTitle": {
-    "t": "LaskiJ Versio 4",
+    "t": "TallyJ Versio 4",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.back": {
     "t": "Takaisin",
@@ -140,9 +140,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.logoAlt": {
-    "t": "LaskiJ-logo",
+    "t": "TallyJ-logo",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.next": {
     "t": "Seuraava",
@@ -195,9 +195,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.testOnlyLong": {
-    "t": "{note} LaskiJ Versio 4:n tämä esikatselu on vielä kehityksessä.{br}Voit kirjautua sisään ja kokeilla ominaisuuksia, mutta sitä ei saa käyttää bahá'í-vaaleihin tällä hetkellä.{br}Toivotamme tervetulleeksi palautteesi uudesta suunnittelusta, kun jatkamme järjestelmän parantamista.",
+    "t": "{note} TallyJ Versio 4:n tämä esikatselu on vielä kehityksessä.{br}Voit kirjautua sisään ja kokeilla ominaisuuksia, mutta sitä ei saa käyttää bahá'í-vaaleihin tällä hetkellä.{br}Toivotamme tervetulleeksi palautteesi uudesta suunnittelusta, kun jatkamme järjestelmän parantamista.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.testOnlyLongNote": {
     "t": "Huomaa:",
@@ -205,9 +205,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "common.testOnlyShort": {
-    "t": "LaskiJ Versio 4:n tämä esikatselu on vielä kehityksessä. Ei saa käyttää todellisiin vaaleihin tällä hetkellä.",
+    "t": "TallyJ Versio 4:n tämä esikatselu on vielä kehityksessä. Ei saa käyttää todellisiin vaaleihin tällä hetkellä.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "common.theme": {
     "t": "Teema",

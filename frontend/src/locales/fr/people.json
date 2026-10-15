@@ -90,9 +90,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "people.email": {
-    "t": "Courriel",
+    "t": "E-mail",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "people.emailInvalid": {
     "t": "Veuillez entrer un email valide",
@@ -630,8 +630,8 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "people.voters": {
-    "t": "Électeurs",
+    "t": "Votants",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   }
 }

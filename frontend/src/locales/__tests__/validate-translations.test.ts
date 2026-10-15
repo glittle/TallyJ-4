@@ -164,6 +164,42 @@ describe("validateLocaleCatalog", () => {
     });
   });
 
+  it("fails when a translation of a TallyJ string drops the literal brand", () => {
+    withTempDir((dir) => {
+      writeLocale(dir, "en", "common.json", {
+        "common.appName": leaf("TallyJ", "source"),
+        "common.keep": leaf("Keep", "source"),
+      });
+      writeLocale(dir, "fr", "common.json", {
+        "common.appName": leaf("ScrutinJ", "ai"),
+        "common.keep": leaf("Garder", "ai"),
+      });
+
+      const report = validateLocaleCatalog(dir);
+      expect(report.errors.map((error) => error.type)).toEqual([
+        "BRAND_NOT_LITERAL",
+      ]);
+      expect(report.errors[0]?.details).toMatchObject({
+        locale: "fr",
+        key: "common.appName",
+      });
+    });
+  });
+
+  it("accepts a translation that keeps the literal TallyJ brand", () => {
+    withTempDir((dir) => {
+      writeLocale(dir, "en", "common.json", {
+        "common.appTitle": leaf("TallyJ v4", "source"),
+      });
+      writeLocale(dir, "fr", "common.json", {
+        "common.appTitle": leaf("TallyJ version 4", "ai"),
+      });
+
+      const report = validateLocaleCatalog(dir);
+      expect(report.errors).toEqual([]);
+    });
+  });
+
   it("counts an English-only key as awaiting translation and not an error", () => {
     withTempDir((dir) => {
       writeLocale(dir, "en", "common.json", {

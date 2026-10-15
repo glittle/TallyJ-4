@@ -1,8 +1,8 @@
 {
   "ballots.addBallot": {
-    "t": "Lisää äänestyslipuke",
+    "t": "Lisää äänestyslippu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.addNewPerson": {
     "t": "Lisää uusi henkilö",
@@ -105,9 +105,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.code": {
-    "t": "Äänestyslipukkeen koodi",
+    "t": "Äänestyslipun koodi",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.computer": {
     "t": "Tietokone",
@@ -115,24 +115,24 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.createSuccess": {
-    "t": "Äänestyslipuke luotu onnistuneesti",
+    "t": "Äänestyslippu luotu onnistuneesti",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.deleteConfirm": {
-    "t": "Oletko varma, että haluat poistaa tämän äänestyslipukkeen?",
+    "t": "Oletko varma, että haluat poistaa tämän äänestyslipun?",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.deleteError": {
-    "t": "Äänestyslipukkeen poistaminen epäonnistui",
+    "t": "Äänestyslipun poistaminen epäonnistui",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.deleteSuccess": {
-    "t": "Äänestyslipuke poistettu onnistuneesti",
+    "t": "Äänestyslippu poistettu onnistuneesti",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.deleteVoteConfirm": {
     "t": "Oletko varma, että haluat poistaa tämän äänen?",
@@ -160,14 +160,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.entry": {
-    "t": "Äänestyslipukkeen syöttö - {code}",
+    "t": "Äänestyslipun syöttö - {code}",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.entryPage": {
-    "t": "Äänestyslipukkeen syöttö",
+    "t": "Äänestyslipun syöttö",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.ineligible": {
     "t": "Ei kelpoinen",
@@ -175,9 +175,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.loadError": {
-    "t": "Äänestyslipukkeiden lataaminen epäonnistui",
+    "t": "Äänestyslippujen lataaminen epäonnistui",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.location": {
     "t": "Sijainti",
@@ -190,9 +190,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.management": {
-    "t": "Äänestyslipukkeiden hallinta",
+    "t": "Äänestyslippujen hallinta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.noMatchesFound": {
     "t": "Vastaavuuksia ei löytynyt",
@@ -215,14 +215,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.saveBallot": {
-    "t": "Tallenna äänestyslipuke",
+    "t": "Tallenna äänestyslippu",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.saveError": {
-    "t": "Äänestyslipukkeen tallentaminen epäonnistui",
+    "t": "Äänestyslipun tallentaminen epäonnistui",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.status": {
     "t": "Tila",
@@ -275,14 +275,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "ballots.teller1": {
-    "t": "Laskija 1",
+    "t": "Ääntenlaskija 1",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.teller2": {
-    "t": "Laskija 2",
+    "t": "Ääntenlaskija 2",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "ballots.viewVotes": {
     "t": "Näytä äänet",

@@ -20,9 +20,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.averageVotesPerBallot": {
-    "t": "Promedio de Votos por Boleta",
+    "t": "Promedio de Votos por Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.bahaiId": {
     "t": "ID Bahá'í",
@@ -30,49 +30,49 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.ballotCode": {
-    "t": "Boleta",
+    "t": "Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.ballotCount": {
-    "t": "Cantidad de Boletas",
+    "t": "Cantidad de Papeletas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.ballotId": {
-    "t": "ID de Boleta",
+    "t": "ID de Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.ballotLengthDistribution": {
-    "t": "Distribución de Longitud de Boletas",
+    "t": "Distribución de Longitud de Papeletas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.ballotReport": {
-    "t": "Informe de Boletas",
+    "t": "Informe de Papeletas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.ballotReports": {
-    "t": "Informes de Boletas",
+    "t": "Informes de Papeletas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.ballotsByMethod": {
-    "t": "Boletas por Método de Votación",
+    "t": "Papeletas por Método de Votación",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.ballotsCast": {
-    "t": "Boletas Emitidas",
+    "t": "Papeletas Emitidas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.ballotsEntered": {
-    "t": "Boletas Ingresadas",
+    "t": "Papeletas Ingresadas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.calledIn": {
     "t": "Llamadas",
@@ -410,9 +410,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.maxVotesOnBallot": {
-    "t": "Máximo de Votos en Boleta",
+    "t": "Máximo de Votos en Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.metricsToCompare": {
     "t": "Métricas a Comparar",
@@ -420,9 +420,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.minVotesOnBallot": {
-    "t": "Mínimo de Votos en Boleta",
+    "t": "Mínimo de Votos en Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.name": {
     "t": "Nombre",
@@ -435,9 +435,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.noBallots": {
-    "t": "No se encontraron boletas para este filtro.",
+    "t": "No se encontraron papeletas para este filtro.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.noChanges": {
     "t": "No se encontraron registros de personas cambiadas.",
@@ -445,9 +445,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.noDuplicates": {
-    "t": "No se encontraron boletas duplicadas.",
+    "t": "No se encontraron papeletas duplicadas.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.noEmails": {
     "t": "No se encontraron registros de correo/teléfono.",
@@ -470,9 +470,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.numBallots": {
-    "t": "Número de Boletas",
+    "t": "Número de Papeletas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.numEligibleToVote": {
     "t": "Número Elegible para Votar",
@@ -660,9 +660,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.spoiledBallots": {
-    "t": "Boletas Anuladas",
+    "t": "Papeletas Anuladas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.spoiledVotes": {
     "t": "Votos Anulados",
@@ -685,9 +685,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.sumOfEnvelopesCollected": {
-    "t": "Total de Boletas Recogidas (incl. recuento manual)",
+    "t": "Total de Papeletas Recogidas (incl. recuento manual)",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.summary": {
     "t": "Resumen",
@@ -755,14 +755,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.totalBallots": {
-    "t": "Total de Boletas",
+    "t": "Total de Papeletas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.totalBallotsCast": {
-    "t": "Total de Boletas Emitidas",
+    "t": "Total de Papeletas Emitidas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.totalEligible": {
     "t": "Elegibles",
@@ -815,9 +815,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.validBallots": {
-    "t": "Boletas Válidas",
+    "t": "Papeletas Válidas",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.value": {
     "t": "Valor",
@@ -875,14 +875,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "reporting.votesOnBallot": {
-    "t": "Votos en esta boleta",
+    "t": "Votos en esta papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.votesPerBallot": {
-    "t": "Votos por Boleta",
+    "t": "Votos por Papeleta",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "reporting.votingMethod": {
     "t": "Método de Votación",

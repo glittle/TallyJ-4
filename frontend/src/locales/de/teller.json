@@ -1,0 +1,107 @@
+{
+  "teller.form.cancel": {
+    "t": "Abbrechen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.form.create": {
+    "t": "Erstellen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.form.name": {
+    "t": "Wahlhelfer Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.form.nameMaxLength": {
+    "t": "Wahlhelfer-Name darf 50 Zeichen nicht überschreiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.form.namePlaceholder": {
+    "t": "Wahlhelfer-Name eingeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.form.nameRequired": {
+    "t": "Wahlhelfer Name ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.form.save": {
+    "t": "Speichern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.form.saved": {
+    "t": "Wahlhelfer gespeichert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.form.titleAdd": {
+    "t": "Wahlhelfer hinzufügen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.form.titleEdit": {
+    "t": "Wahlhelfer bearbeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.editDrawerTitle": {
+    "t": "{name} bearbeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.form.delete": {
+    "t": "Löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.confirm.deleteTellerTitle": {
+    "t": "Warnung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.confirm.deleteTellerMessage": {
+    "t": "Möchten Sie den Wahlhelfer \"{name}\" wirklich löschen?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.confirm.delete": {
+    "t": "Löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.confirm.cancel": {
+    "t": "Abbrechen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.success.tellerDeleted": {
+    "t": "Wahlhelfer erfolgreich gelöscht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.active.typeToAdd": {
+    "t": "Geben Sie ein, um Ihren Namen hinzuzufügen, wenn er nicht aufgeführt ist",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.active.teller1Placeholder": {
+    "t": "Wahlhelfer an der Tastatur",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.active.teller2Placeholder": {
+    "t": "Zweiter Wahlhelfer (optional)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "teller.active.hint": {
+    "t": "Geben Sie einen neuen Namen ein oder wählen Sie aus der Liste.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

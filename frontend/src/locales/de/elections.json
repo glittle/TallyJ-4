@@ -1,0 +1,1227 @@
+{
+  "elections.advanceStage": {
+    "t": "Weiter zur nächsten Stufe",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.advanceTo": {
+    "t": "Weiter zu {stage}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.ballots": {
+    "t": "Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.bulkDeleteError": {
+    "t": "Einige Wahlen konnten nicht gelöscht werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.bulkDeleteMessage": {
+    "t": "Möchten Sie die von {count} ausgewählten Wahlen wirklich löschen?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.bulkDeleteSuccess": {
+    "t": "{count} Wahlen erfolgreich gelöscht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.calculateTally": {
+    "t": "Berechnung der Tally",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.clearFilters": {
+    "t": "Filter löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.confirmAdvance": {
+    "t": "Sind Sie sicher, dass Sie diese Wahl zu {stage} vorantreiben möchten?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.confirmBulkDelete": {
+    "t": "Massenlöschung bestätigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.confirmRevert": {
+    "t": "Sind Sie sicher, dass Sie diese Wahl auf {stage} zurücksetzen möchten?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.leaveFinalized.title": {
+    "t": "Leave Finalized?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.leaveFinalized.message": {
+    "t": "Das Verlassen von \"Abgeschlossen\" schaltet diese Wahl frei. Personen und Stimmzetteldaten können wieder geändert werden. Weiter zu {stage}?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.leaveFinalized.confirm": {
+    "t": "Urlaub abgeschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.copyAccessCode": {
+    "t": "Zugangscode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.copyUrl": {
+    "t": "URL kopieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.shareTellerAccess": {
+    "t": "Wahlhelferzugang teilen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.shareTellerAccessHint": {
+    "t": "Zeigen Sie diesen QR-Code, damit andere Wahlhelfer leicht beitreten können.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.showShareLink": {
+    "t": "Teilen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.duplicate.action": {
+    "t": "Als Testkopie duplizieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.duplicate.confirm": {
+    "t": "Duplikat",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.duplicate.defaultName": {
+    "t": "Kopie von {name}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.duplicate.error": {
+    "t": "Wahl konnte nicht dupliziert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.duplicate.prompt": {
+    "t": "Name für die Testkopie",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.duplicate.success": {
+    "t": "Testkopie erstellt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.duplicate.title": {
+    "t": "Wahl duplizieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.reset.action": {
+    "t": "Testwahldaten zurücksetzen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.reset.confirm": {
+    "t": "Zurücksetzen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.reset.confirmMessage": {
+    "t": "Dadurch werden Stimmzettel, Check-ins, Ergebnisse und andere Laufzeitdaten entfernt, sodass Sie diese Testwahl erneut durchführen können. Personen, Standorte und Einstellungen bleiben erhalten. Dies kann nicht rückgängig gemacht werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.reset.error": {
+    "t": "Wahl konnte nicht zurückgesetzt werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.reset.success": {
+    "t": "Testwahldaten zurücksetzen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.reset.title": {
+    "t": "Testwahl zurücksetzen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.createError": {
+    "t": "Wahl konnte nicht erstellt werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.createFirst": {
+    "t": "Erstellen Sie Ihre erste Wahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.createNew": {
+    "t": "Wahl erstellen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.createSuccess": {
+    "t": "Wahl erfolgreich erstellt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.date": {
+    "t": "Wahltag",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.deleteConfirm": {
+    "t": "Sind Sie sicher, dass Sie diesen Schritt löschen wollen? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.deleteError": {
+    "t": "Wahl konnte nicht gelöscht werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.deleteSelected": {
+    "t": "Ausgewählte löschen ({count})",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.deleteSuccess": {
+    "t": "Wahl erfolgreich gelöscht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.details": {
+    "t": "Wahldetails",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.edit": {
+    "t": "Wahl bearbeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.electionModes.B": {
+    "t": "Nachwahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.electionModes.N": {
+    "t": "Normale Wahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.electionModes.T": {
+    "t": "Tie Break",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.electionTypes.Con": {
+    "t": "Einheitentagung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.electionTypes.LSA": {
+    "t": "Örtlicher Geistiger Rat",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.electionTypes.LSA1": {
+    "t": "Örtlicher Geistiger Rat (zweistufig) Örtliche Einheit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.electionTypes.LSA2": {
+    "t": "Örtlicher Geistiger Rat (Zwei-Stufen-Finale)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.electionTypes.NSA": {
+    "t": "Nationaler Geistiger Rat",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.electionTypes.Oth": {
+    "t": "Sonstiges",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.electionTypes.Reg": {
+    "t": "Regionalrat",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.exportElection": {
+    "t": "Wahl exportieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.exportElectionError": {
+    "t": "Wahl konnte nicht exportiert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.exportElectionSuccess": {
+    "t": "Wahl erfolgreich exportiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.filterByStatus": {
+    "t": "Filter nach Status",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.filterByType": {
+    "t": "Filtere nach Typ",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.convenor": {
+    "t": "Convenor",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.convenorPlaceholder": {
+    "t": "Name des Einberufers eingeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.customMethods": {
+    "t": "Benutzerdefinierte Methoden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.customMethodsHelp": {
+    "t": "Geben Sie alle benutzerdefinierten oder nicht standardmäßigen Abstimmungsmethoden an, die in dieser Wahl verwendet werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.customMethodsPlaceholder": {
+    "t": "Beschreiben Sie alle benutzerdefinierten Abstimmungsmethoden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.date": {
+    "t": "Wahltag",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.datePlaceholder": {
+    "t": "Wählen Sie ein Wahldatum",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.dateRequired": {
+    "t": "Wahldatum ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.electionMode": {
+    "t": "Wahlmodus",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.electionPasscode": {
+    "t": "Wahl-Passcode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.electionPasscodeHelp": {
+    "t": "Für die Anmeldung am Wahlhelfer ist ein Passcode erforderlich.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.electionPasscodeMinLength": {
+    "t": "Der Passcode muss mindestens 6 Zeichen lang sein.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.electionPasscodeNotCopied": {
+    "t": "Der Wahlhelfer-passcode war kürzer als 6 zeichen und wurde nicht kopiert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.guestTellersCanAddPeople": {
+    "t": "Können Menschen hinzufügen?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.guestTellersCanAddPeopleHelp": {
+    "t": "Wenn ein: e Gast-Wahlhelfer: in einen Namen aufzeichnen muss, der nicht in der Liste enthalten ist (einschließlich ungültige Namen), kann er: sie diese Person hinzufügen? Wenn nicht, muss ein eingeloggter Wahlhelfer neue Namen hinzufügen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.electionPasscodePlaceholder": {
+    "t": "Zugangscode eingeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.emailFromAddress": {
+    "t": "E-Mail-Absenderadresse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.emailFromAddressPlaceholder": {
+    "t": "Geben Sie die E-Mail-Adresse des Absenders ein.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.emailFromName": {
+    "t": "E-Mail von Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.emailFromNamePlaceholder": {
+    "t": "Absendernamen eingeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.emailInvalid": {
+    "t": "Ungültige E-Mail-Adresse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.emailSubject": {
+    "t": "E-Mail-Betreff",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.emailSubjectPlaceholder": {
+    "t": "E-Mail-Betreff eingeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.emailText": {
+    "t": "E-Mail-Text",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.emailTextPlaceholder": {
+    "t": "Geben Sie den Text des E-Mail-Textes",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.flags": {
+    "t": "Flaggen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.flagsHelp": {
+    "t": "Für besondere Wahlbedingungen werden Flaggen verwendet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.flagsPlaceholder": {
+    "t": "Geben Sie alle Flags ein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.hidePreBallotPages": {
+    "t": "Pre-Stimmzettel-Seiten ausblenden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.linkedElection": {
+    "t": "Verknüpfte Wahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.linkedElectionCount": {
+    "t": "{count} verknüpfte Wahl verfügbar",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.linkedElectionCount_plural": {
+    "t": "{count} verknüpfte Wahlen verfügbar",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.linkedElectionHelp": {
+    "t": "Wählen Sie eine Wahl aus, die für einen Tie-Break oder eine Stichwahl verknüpft werden soll.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.linkedElectionKind": {
+    "t": "Linked Election Kind",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.linkedElectionKindPlaceholder": {
+    "t": "Art auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.linkedElectionPlaceholder": {
+    "t": "Verknüpfte Wahl auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.listForPublic": {
+    "t": "Liste für die Öffentlichkeit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.lockedByBallots": {
+    "t": "Gesperrt — Stimmzettel wurden eingegeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.maskVotingMethod": {
+    "t": "Maskenabstimmungsmethode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.modePlaceholder": {
+    "t": "Wahlmodus auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.name": {
+    "t": "Wahlbezeichnung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.namePlaceholder": {
+    "t": "Wahlbezeichnung eingeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.nameRequired": {
+    "t": "Wahlname ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.numberExtra": {
+    "t": "Anzahl Extra",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.numberToElect": {
+    "t": "Zu wählende Anzahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.numberToElectRequired": {
+    "t": "Die zu wählende Anzahl ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineCloseIsEstimate": {
+    "t": "Die Schließzeit ist ungefähr",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineSelectionProcess": {
+    "t": "Namensauswahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineSelectionProcessPlaceholder": {
+    "t": "Wählen Sie aus, wie abstimmende Personen Namen auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineSelectionProcessList": {
+    "t": "Liste — abstimmende Personen wählen aus der Wahlliste",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineSelectionProcessListHelp": {
+    "t": "Verwenden Sie, wenn die Liste der Personen, für die gestimmt werden kann, vollständig oder begrenzt ist (z. B. ein Tie-Break). abstimmende Personen können keine Namen hinzufügen, und Wahlhelfer müssen nicht jeden Online-Stimmzettel bearbeiten.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineSelectionProcessRandom": {
+    "t": "Zufällig — abstimmende Personentypnamen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineSelectionProcessRandomHelp": {
+    "t": "Verwenden Sie es, wenn es keine Liste gibt oder die abstimmenden Personen sie nicht sehen sollten. Die Wahlhelfer beenden jeden Stimmzettel, indem sie die vom abstimmende Personen benannten Personen finden, wie sie es bei Papierstimmzetteln tun. Ungültige Namen werden wahrscheinlich zu ungültige Stimmen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineSelectionProcessBoth": {
+    "t": "Beide — Liste plus optionale getippte Namen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineSelectionProcessBothHelp": {
+    "t": "Verwenden Sie diese Option, wenn Sie eine Liste haben, aber nicht sicher sind, ob sie alle enthält. Wenn ein abstimmende Person einen Namen eingibt, der nicht auf der Liste steht, muss der Wahlhelfer die passende Person finden und eingeben.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineWhenClose": {
+    "t": "Online-Abstimmung endet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineWhenClosePlaceholder": {
+    "t": "Schließzeit wählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineWhenOpen": {
+    "t": "Online-Abstimmung eröffnet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.onlineWhenOpenPlaceholder": {
+    "t": "Öffnungszeit wählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.showAsTest": {
+    "t": "Als Test anzeigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.showFullReport": {
+    "t": "Vollständigen Bericht anzeigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.smsText": {
+    "t": "SMS-Text",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.smsTextPlaceholder": {
+    "t": "SMS Nachricht eingeben...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.type": {
+    "t": "Wahltyp",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.typePlaceholder": {
+    "t": "Wahltyp auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.typeRequired": {
+    "t": "Wahltyp ist erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.useCallInButton": {
+    "t": "Call-In-Abstimmung aktivieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.useKiosk": {
+    "t": "Kioskmodus aktivieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.useKioskHelp": {
+    "t": "Für abstimmende Personen ohne E-Mail oder Telefon. Wahlhelfer prägen einen Kurzcode aus dem Personendatensatz; der abstimmende Personen tippt ihn an einem gemeinsamen Kiosk ein. Schaltet auch Online-Abstimmung ein, die Kiosk-Login verwendet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.votingMethods": {
+    "t": "Abstimmungsmethoden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.votingMethodsHelp": {
+    "t": "Wählen Sie die Methoden aus, nach denen die Stimmen abgegeben werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.votingMethodsPlaceholder": {
+    "t": "Wählen Sie die Abstimmungsmethoden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.importCdnBallots": {
+    "t": "CDN-Stimmzettel importieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.importCdnBallotsError": {
+    "t": "CDN-Stimmzettel konnten nicht importiert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.importCdnBallotsSuccess": {
+    "t": "CDN-Stimmzettel erfolgreich importiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.importElection": {
+    "t": "Wahl importieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.importElectionError": {
+    "t": "Wahl konnte nicht importiert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.importElectionSuccess": {
+    "t": "Wahl erfolgreich importiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.importLoaderTitle": {
+    "t": "Wahlpaket wird geladen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.importLoaderStarting": {
+    "t": "Import starten...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.importLoaderWorking": {
+    "t": "Importieren …",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.list": {
+    "t": "Wahlen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.loadError": {
+    "t": "Wahl konnte nicht geladen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.locations": {
+    "t": "Standorte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.manageBallots": {
+    "t": "Stimmzettel verwalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.manageLocations": {
+    "t": "Standorte verwalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.managePeople": {
+    "t": "Personen verwalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.name": {
+    "t": "Wahlbezeichnung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.notFound": {
+    "t": "Wahl nicht gefunden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineVoting": {
+    "t": "Online Voting",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineVotingDisabled": {
+    "t": "Online-Abstimmung ist deaktiviert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineVotingEnabled": {
+    "t": "Online-Abstimmung ist aktiviert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineVotingWindow": {
+    "t": "Online-Abstimmungszeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineVotingWindowSaved": {
+    "t": "Gespeicherte Online-Abstimmungszeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineWindow.willOpen": {
+    "t": "Öffnet {relative}.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineWindow.opened": {
+    "t": "{relative} geöffnet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineWindow.willClose": {
+    "t": "Schließt {relative}.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineWindow.expectedToClose": {
+    "t": "Es wird erwartet, {relative} zu schließen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineWindow.closed": {
+    "t": "{relative} geschlossen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineWindow.duration": {
+    "t": "Offen für {duration}.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineWindow.openBeforeClose": {
+    "t": "Die Online-Abstimmungsöffnungszeit muss vor der Schließzeit liegen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineWindow.statusOpen": {
+    "t": "Online-Abstimmung ist offen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineWindow.statusClosed": {
+    "t": "Online-Abstimmung ist geschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.setOnlineVotingWindow": {
+    "t": "Show",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.expectedPhoneRegions": {
+    "t": "Erwartete Telefonländer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.expectedPhoneRegionsHelp": {
+    "t": "ISO-Ländercodes, zum Beispiel CA, US. Telefonnummern aus anderen Ländern sind gekennzeichnet. Leer lassen, um die Standardeinstellung der Website (Kanada) zu verwenden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.expectedPhoneRegionsInvalid": {
+    "t": "Verwenden Sie ISO-Ländercodes wie CA, US. USA, Großbritannien und Kanada sind keine Codes.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.expectedPhoneRegionsTooLong": {
+    "t": "Erwartete Telefonländer dürfen nicht länger als 80 Zeichen sein.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.useOnlineVoting": {
+    "t": "Online Voting",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.form.useOnlineVotingHelp": {
+    "t": "Aktivieren Sie diese Option, wenn abstimmende Personen Stimmzettel online übertragen. Öffnungs-/Schließzeiten und ob es sich bei der Schließung um eine Schätzung handelt, werden über die Online-Abstimmungskontrolle in der Kopfzeile festgelegt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.onlineVotingSuspended": {
+    "t": "Die Online-Abstimmung wird gestoppt, bis ein Website-Administrator diese Wahl überprüft. Persönlicher und Wahlhelfer-Eintritt funktioniert immer noch.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.paidChannels.notApproved": {
+    "t": "SMS-, Sprach- und WhatsApp-Anmeldecodes warten, bis ein Website-Administrator jeden Eigentümer und Administrator dieser Wahl genehmigt. E-Mail-Codes funktionieren immer noch.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.paidChannels.electionCap": {
+    "t": "Diese Wahl hat ihre SMS-, Sprach- und WhatsApp-Zulage ({used} von {allowance}) verwendet. Ein Site-Administrator kann es erhöhen. E-Mail-Codes funktionieren immer noch.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.paidChannels.ownerDailyCap": {
+    "t": "Das heutige SMS-, Sprach- und WhatsApp-Limit für dieses Konto wird verwendet. Es wird um Mitternacht UTC zurückgesetzt, oder ein Website-Administrator kann es erhöhen. E-Mail-Codes funktionieren immer noch.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.paidChannels.frozen": {
+    "t": "Ein Website-Administrator hat die Anmeldecodes für diese Wahl oder für einen Eigentümer oder Administrator, einschließlich E-Mail, gestoppt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.paidChannels.flagged": {
+    "t": "Online-Abstimmung und Login-Codes werden gestoppt, bis ein Website-Administrator diese Wahl überprüft. Persönlicher und Wahlhelfer-Eintritt funktioniert immer noch.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.participation": {
+    "t": "Teilnahme",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.people": {
+    "t": "Menschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.quickActions": {
+    "t": "Aktionen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.revertTo": {
+    "t": "Auf {stage} zurücksetzen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.searchPlaceholder": {
+    "t": "Wahlen nach Namen oder Einberufer suchen...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.Counting": {
+    "t": "Auszählung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.Finalized": {
+    "t": "Finalisiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.Finalized_short": {
+    "t": "Endgültig",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.GatheringBallots": {
+    "t": "Stimmzettel sammeln",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.GatheringBallots_short": {
+    "t": "Sammeln im Gang",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.ProcessingBallots": {
+    "t": "Stimmzettel werden verarbeitet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.ProcessingBallots_short": {
+    "t": "Verarbeitung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.Setup": {
+    "t": "Aufbau",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.SettingUp": {
+    "t": "Aufbau",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.SettingUp_short": {
+    "t": "Aufbau",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.advanceShort": {
+    "t": "Geleistete",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.jumpTo": {
+    "t": "In den Modus springen...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.modeLabel": {
+    "t": "Wahlmodus",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stage.revertShort": {
+    "t": "Zurücksetzen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageNav.group.GatheringBallots": {
+    "t": "Stimmzettel sammeln",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageNav.group.ProcessingBallots": {
+    "t": "Stimmzettel werden verarbeitet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageNav.group.Finalized": {
+    "t": "Finalisiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageNav.group.SettingUp": {
+    "t": "Aufbau",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.goToStagePage": {
+    "t": "Geh dort hin",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageAdvanced": {
+    "t": "Wahl geändert zu {stage}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageChangeError.generic": {
+    "t": "Wahlphase konnte nicht geändert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageChangeError.alreadyInStage": {
+    "t": "Die Wahl befindet sich bereits in der gewünschten Phase",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageChangeError.analysisNotCompleted": {
+    "t": "Wahlanalyse ist nicht abgeschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageChangeError.analysisNotReady": {
+    "t": "Die Wahlanalyse ist nicht abgeschlossen oder zur Fertigstellung bereit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageChangeError.ballotsNeedReview": {
+    "t": "{count} Stimmzettel müssen noch überprüft werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageChangeError.ballotsOutstanding": {
+    "t": "{count} Stimmzettel haben offene Fragen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageChangeError.confirmLeaveFinalized": {
+    "t": "Das Zurücksetzen von Finalized erfordert eine Bestätigung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.finalizedWriteBlocked": {
+    "t": "Diese Wahl ist abgeschlossen. Personen und Stimmzetteldaten können nicht geändert werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageChangeError.invalidStage": {
+    "t": "Ungültige Wahlphase",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageChangeError.notFound": {
+    "t": "Wahl nicht gefunden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageChangeError.unresolvedTies": {
+    "t": "Ungelöste Bindungen müssen vor dem Abschluss abgebrochen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageChangeError.countsDoNotReconcile": {
+    "t": "{count}-Zählabgleich-Fehlanpassung (en) muss (müssen) vor der Analyse oder Fertigstellung behoben werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageChangeError.onlineVotingStillOpen": {
+    "t": "Schließen Sie das Online-Abstimmungsfenster, bevor Sie diese Wahl abschließen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.stageProgression": {
+    "t": "Wahlphase",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.statistics": {
+    "t": "Statistiken",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.status": {
+    "t": "Status",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.advanced": {
+    "t": "Fortgeschrittene",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.auditLogs": {
+    "t": "Auditprotokolle",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.ballots": {
+    "t": "Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.basicInfo": {
+    "t": "Basis-Informationen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.communication": {
+    "t": "Mitteilung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.displayPrivacy": {
+    "t": "Display & Privatsphäre",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.electionRules": {
+    "t": "Wahlregeln",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.locations": {
+    "t": "Standorte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.onlineVoting": {
+    "t": "Online Voting",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.people": {
+    "t": "Menschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.results": {
+    "t": "Ergebnisse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.tellers": {
+    "t": "Wahlhelfer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tabs.votingMethods": {
+    "t": "Abstimmungsmethoden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.guestTellerAccess": {
+    "t": "Gast-Wahlhelfer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tellerLoginLocked": {
+    "t": "Gast Wahlhelfer Login ist bis {until} gesperrt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tellerLoginUnlock": {
+    "t": "Freischalt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tellerLoginUnlocked": {
+    "t": "Gast Wahlhelfer Login ist entsperrt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.testElectionBanner": {
+    "t": "Testwahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tellerAccess": {
+    "t": "Wahlhelfer-Zugang",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tellerAccessCode": {
+    "t": "Access Code",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tellerAccessQrCode": {
+    "t": "QR-Code der gemeinsam nutzbaren URL",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.tellerAccessUrl": {
+    "t": "Freigabbare URL",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.toElect": {
+    "t": "Auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.toggleTellerAccess": {
+    "t": "Wahlhelfer-Zugang umschalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.type": {
+    "t": "Type",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.updateError": {
+    "t": "Wahl konnte nicht aktualisiert werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.updateSuccess": {
+    "t": "Wahl erfolgreich aktualisiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.viewReports": {
+    "t": "Berichte anzeigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.viewResults": {
+    "t": "Ergebnisse anschauen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.voters": {
+    "t": "abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

@@ -1,0 +1,237 @@
+{
+  "audit.dialog.dateTime": {
+    "t": "Datum/Zeit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.dialog.details": {
+    "t": "Details",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.dialog.electionGuid": {
+    "t": "Wahl-GUID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.dialog.email": {
+    "t": "E-Mail",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.dialog.eventType": {
+    "t": "Ereignistyp",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.dialog.id": {
+    "t": "ID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.dialog.ipAddress": {
+    "t": "IP-Adresse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.dialog.onlineVoterId": {
+    "t": "Online abstimmende Person ID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.dialog.severity": {
+    "t": "Schweregrad",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.dialog.suspicious": {
+    "t": "Verdächtig",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.dialog.title": {
+    "t": "Details zum Audit-Protokoll",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.dialog.userAgent": {
+    "t": "Benutzeragent",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.dialog.userId": {
+    "t": "Anwender-ID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.apply": {
+    "t": "Filter anwenden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.clear": {
+    "t": "Filter löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.electionGuid": {
+    "t": "Wahl-GUID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.electionGuidPlaceholder": {
+    "t": "Nach Wahl-GUID filtern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.email": {
+    "t": "E-Mail",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.emailPlaceholder": {
+    "t": "Nach E-Mail filtern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.endDate": {
+    "t": "Enddatum",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.endDatePlaceholder": {
+    "t": "Enddatum",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.ipAddress": {
+    "t": "IP-Adresse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.ipAddressPlaceholder": {
+    "t": "Filtern nach IP-Adresse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.onlineVoterId": {
+    "t": "Online abstimmende Person ID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.onlineVoterIdPlaceholder": {
+    "t": "Filtern nach Online ID der abstimmenden Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.search": {
+    "t": "Suche",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.searchPlaceholder": {
+    "t": "Details und Benutzer-Agent suchen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.startDate": {
+    "t": "Startdatum",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.startDatePlaceholder": {
+    "t": "Startdatum",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.suspicious": {
+    "t": "Verdächtig",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.suspiciousNo": {
+    "t": "Nein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.suspiciousPlaceholder": {
+    "t": "Alle",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.suspiciousYes": {
+    "t": "Ja",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.userId": {
+    "t": "Anwender-ID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.filters.userIdPlaceholder": {
+    "t": "Nach Benutzer-ID filtern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.table.actions": {
+    "t": "Aktionen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.table.dateTime": {
+    "t": "Datum/Zeit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.table.details": {
+    "t": "Details",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.table.election": {
+    "t": "Wahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.table.email": {
+    "t": "E-Mail",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.table.eventType": {
+    "t": "Ereignistyp",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.table.severity": {
+    "t": "Schweregrad",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.table.suspicious": {
+    "t": "Verdächtig",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.table.userId": {
+    "t": "Anwender-ID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.table.view": {
+    "t": "Ansehen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.table.yes": {
+    "t": "Ja",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "audit.title": {
+    "t": "Auditprotokolle",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

@@ -310,9 +310,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "people.import.mapColumnsDesc": {
-    "t": "Asigne las columnas de su archivo a los campos de EscrutiJ",
+    "t": "Asigne las columnas de su archivo a los campos de TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "people.import.mapTo": {
     "t": "Asignar a:",
@@ -425,14 +425,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "people.import.tallyJField": {
-    "t": "Campo de EscrutiJ",
+    "t": "Campo de TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "people.import.tallyJFields": {
-    "t": "Referencia de Campos de EscrutiJ",
+    "t": "Referencia de Campos de TallyJ",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:31:57Z"
   },
   "people.import.timeElapsed": {
     "t": "Tiempo Transcurrido",

@@ -1,0 +1,297 @@
+{
+  "tally.calculate": {
+    "t": "Berechnung der Tally",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.calculateError": {
+    "t": "Fehler bei der Berechnung der Tallye",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.calculateSuccess": {
+    "t": "Tallye erfolgreich berechnet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.calculatingProgress": {
+    "t": "Fortschritt wird berechnet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.normalElection": {
+    "t": "Normale Wahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.processedBallots": {
+    "t": "Verarbeitete Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.progress.complete": {
+    "t": "Tally Berechnung abgeschlossen!",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.progress.completeSingleName": {
+    "t": "Single-Name-Tally-Berechnung abgeschlossen!",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.progress.processingBallots": {
+    "t": "Bearbeitung von Stimmzetteln: {processed}/{total}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.progress.starting": {
+    "t": "Zählberechnung wird gestartet...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.progress.startingSingleName": {
+    "t": "Starten Single Name Tally Berechnung ...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.totalVotes": {
+    "t": "Stimmen insgesamt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.resultsPreview": {
+    "t": "Ergebnisvorschau (Top 10)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.section.elected": {
+    "t": "Gewählt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.section.extra": {
+    "t": "Extra",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.section.other": {
+    "t": "Sonstiges",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.singleNameElection": {
+    "t": "Einzelnamenwahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.title": {
+    "t": "Berechnung der Tally",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.viewFullResults": {
+    "t": "Alle Ergebnisse anzeigen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.warning": {
+    "t": "Warnung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.warningMessage": {
+    "t": "Bei der Berechnung der Zählung werden alle vorhandenen Ergebnisse überschrieben. Diese Aktion kann nicht rückgängig gemacht werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.section.E": {
+    "t": "Gewählt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.section.X": {
+    "t": "Extra",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.section.O": {
+    "t": "Sonstiges",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.title": {
+    "t": "Zählabgleich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.intro": {
+    "t": "Die Registrierungen an der Empfang müssen mit den eingegebenen Stimmzetteln (einschließlich ungültige Stimmzettel) übereinstimmen, bevor sie analysiert oder abgeschlossen werden können. Ausstehende Online-Abstimmungen und doppelte Registrierungen werden von der abstimmenden Person aufgelistet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.ready": {
+    "t": "Die Zählungen stimmen ab. Die Analyse und Fertigstellung kann fortgesetzt werden, wenn andere Tore frei sind.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.blocked": {
+    "t": "{count}-Fehlanpassungen müssen vor der Analyse oder Fertigstellung behoben werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.frontDeskCount": {
+    "t": "Empfang (abgerechnet)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.ballotCount": {
+    "t": "Stimmzettel eingegeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.pendingOnlineCount": {
+    "t": "Online ausstehend",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.spoiledBallotCount": {
+    "t": "Verworfene Stimmzettel (in der Eingabe enthalten)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.kindColumn": {
+    "t": "Keine Übereinstimmung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.subjectColumn": {
+    "t": "abstimmende Person oder Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.detailColumn": {
+    "t": "Detail",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.envelope": {
+    "t": "Umschlag {n}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.onlineStatus": {
+    "t": "Online: {status}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.frontDeskVsBallotsSubject": {
+    "t": "Empfang {frontDesk} gegen Stimmzettel {ballots}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.kind.FrontDeskVsBallots": {
+    "t": "Empfang vs. Stimmzettelanzahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.kind.PendingOnline": {
+    "t": "Online Stimmzettel ausstehend",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.kind.DuplicateEnvelope": {
+    "t": "Umschlagnummer duplizieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.kind.DuplicateVotingPath": {
+    "t": "Papier-Check-in und Online-Abstimmung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.loadError": {
+    "t": "Fehler beim Laden des Abstimmungsberichts",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.reconciliation.finalizeBlocked": {
+    "t": "Zählungen stimmen nicht überein. Beheben Sie die unten stehenden Unstimmigkeiten (oder auf Tally berechnen), bevor Sie den Abschluss vornehmen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.title": {
+    "t": "Anzahl der abstimmenden Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.hint": {
+    "t": "Lassen Sie ein Feld leer, um den berechneten Wert zu verwenden. Speichern führt Analyse nicht erneut aus.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.counts": {
+    "t": "Zählungen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.calculated": {
+    "t": "Berechnet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.override": {
+    "t": "Überschreiben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.final": {
+    "t": "Endgültig",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.saveValues": {
+    "t": "Werte speichern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.saveSuccess": {
+    "t": "Manuelle Zählungen gespeichert. Führen Sie Analyse aus, um sie auf die Endergebnisse anzuwenden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.useCalculated": {
+    "t": "Berechneten Wert verwenden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.eligibleVoters": {
+    "t": "Berechtigte abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.inPerson": {
+    "t": "persönlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.droppedOff": {
+    "t": "Abgegeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.mailedIn": {
+    "t": "Per Post versendet in",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.calledIn": {
+    "t": "Angerufen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "tally.manualCounts.spoiledManual": {
+    "t": "Zusätzliche ungültige Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

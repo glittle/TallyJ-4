@@ -1,0 +1,142 @@
+{
+  "import.completed": {
+    "t": "Import erfolgreich abgeschlossen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.currentStatus": {
+    "t": "Status: {status}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errorCount": {
+    "t": "Fehler: {count}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.batchSaveFailed": {
+    "t": "Stapelspeicherung fehlgeschlagen: {message}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.duplicateBahaiId": {
+    "t": "Zeile {rowNumber} übersprungen: Doppelte Bahá’í-ID '{bahaiId}' entspricht Zeile {matchedRowNumber}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.duplicateBahaiIdExisting": {
+    "t": "Zeile {rowNumber} übersprungen: Doppelte Bahá’í-ID '{bahaiId}' entspricht einer vorhandenen Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.duplicateEmail": {
+    "t": "Zeile {rowNumber} übersprungen: Doppelte E-Mail '{email}' passt zu Zeile {matchedRowNumber}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.duplicateEmailExisting": {
+    "t": "Zeile {rowNumber} übersprungen: Doppelte E-Mail '{email}' passt zu einer bestehenden Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.duplicateName": {
+    "t": "Zeile {rowNumber} übersprungen: Duplizierter Name '{firstName} {lastName}' entspricht Zeile {matchedRowNumber}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.duplicateNameExisting": {
+    "t": "Zeile {rowNumber} übersprungen: Duplizierter Name '{firstName} {lastName}' entspricht einer vorhandenen Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.duplicatePhone": {
+    "t": "Zeile {rowNumber} übersprungen: Doppeltes Telefon '{phone}' entspricht Zeile {matchedRowNumber}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.duplicatePhoneExisting": {
+    "t": "Zeile {rowNumber} übersprungen: Doppelte Telefonnummer '{phone}' entspricht einer vorhandenen Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.fileNotFound": {
+    "t": "Importdatei nicht gefunden oder hat keinen Inhalt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.importFailed": {
+    "t": "Import fehlgeschlagen: {message}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.importFailedAtLine": {
+    "t": "Import in Zeile {rowNumber}: {message} fehlgeschlagen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.invalidMappings": {
+    "t": "Ungültige Spaltenzuordnungen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.lineError": {
+    "t": "Linie {rowNumber}: {message}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.missingFirstName": {
+    "t": "Zeile {rowNumber}: Fehlender Vorname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.missingLastName": {
+    "t": "Zeile {rowNumber}: Fehlender Nachname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.missingRequiredMappings": {
+    "t": "Vorname und Nachname Zuordnungen sind erforderlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.noMappings": {
+    "t": "Keine Spalten-Mappings konfiguriert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errors.unrecognizedEligibility": {
+    "t": "Zeile {rowNumber} übersprungen: Unbekannter Berechtigungsstatus '{eligibilityValue}'",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.errorsTitle": {
+    "t": "Fehler importieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.moreErrors": {
+    "t": "und {count} weitere Fehler...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.processingRows": {
+    "t": "Verarbeitungszeilen {processed} von {total}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.progressTitle": {
+    "t": "Importvorgang läuft",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.successCount": {
+    "t": "Erfolgreich: {count}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "import.warnings.unrecognizedEligibility": {
+    "t": "Zeile {rowNumber}: Nicht anerkannter Berechtigungsstatus: '{eligibilityValue}' - als berechtigt behandelt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

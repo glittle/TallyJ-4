@@ -1,0 +1,262 @@
+{
+  "locations.currentLocation": {
+    "t": "Standort",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.actions": {
+    "t": "Aktionen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.ballots": {
+    "t": "Stimmzettel eingegeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.cancel": {
+    "t": "Abbrechen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.contactInfo": {
+    "t": "Kontaktinformationen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.contactInfoMaxLength": {
+    "t": "Kontaktinformationen dürfen 250 Zeichen nicht überschreiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.contactInfoPlaceholder": {
+    "t": "KONTAKTINFORMATIONEN EINGEBEN",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.coordinates": {
+    "t": "Koordinaten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.create": {
+    "t": "Erstellen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.created": {
+    "t": "Standort erfolgreich erstellt!",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.latitude": {
+    "t": "LATITUDE",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.latitudeHelp": {
+    "t": "Bereich: -90 bis 90",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.latitudeInvalid": {
+    "t": "Breitengrad muss eine gültige Koordinate zwischen -90 und 90 sein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.latitudePlaceholder": {
+    "t": "z.B. 37.7749",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.longitude": {
+    "t": "Längengrad",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.longitudeHelp": {
+    "t": "Bereich: -180 bis 180",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.longitudeInvalid": {
+    "t": "Längengrad muss eine gültige Koordinate zwischen -180 und 180 sein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.longitudePlaceholder": {
+    "t": "z.B. -122.4194",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.name": {
+    "t": "Ortsname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.nameMaxLength": {
+    "t": "Standortname darf 50 Zeichen nicht überschreiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.namePlaceholder": {
+    "t": "Ortsname eingeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.nameRequired": {
+    "t": "Standortname ist erforderlich.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.save": {
+    "t": "Speichern",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.sortOrder": {
+    "t": "Anordnung sortieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.sortOrderHelp": {
+    "t": "Standorte mit gleicher Sortierreihenfolge werden in alphabetischer Reihenfolge angezeigt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.sortOrderInvalid": {
+    "t": "Sortierreihenfolge muss eine Zahl sein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.titleAdd": {
+    "t": "Standort hinzufügen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.titleEdit": {
+    "t": "Standort bearbeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.editDrawerTitle": {
+    "t": "{name} bearbeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.updated": {
+    "t": "Standort erfolgreich aktualisiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.locationSelected": {
+    "t": "Standort erfolgreich ausgewählt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.selectLocation": {
+    "t": "Standort auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.typeOnline": {
+    "t": "Online",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.typeImported": {
+    "t": "Importiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.onlineVotingBadge": {
+    "t": "Online Voting",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.onlineSortOnlyHelp": {
+    "t": "Für diesen Standort kann nur die Sortierreihenfolge geändert werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.reservedSortOnlyHelp": {
+    "t": "Für diesen Standort kann nur die Sortierreihenfolge geändert werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.tallyStatus": {
+    "t": "Tally-Status",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.edit": {
+    "t": "Bearbeiten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.form.delete": {
+    "t": "Löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.page.title": {
+    "t": "Abstimmungsorte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.button.addLocation": {
+    "t": "Standort hinzufügen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.confirm.deleteLocationTitle": {
+    "t": "Warnung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.confirm.deleteLocationMessage": {
+    "t": "Sind Sie sicher, dass Sie den Standort \"{name}\" löschen möchten?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.confirm.delete": {
+    "t": "Löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.confirm.cancel": {
+    "t": "Abbrechen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.status.NotStarted": {
+    "t": "Nicht angefangen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.status.InProgress": {
+    "t": "In Arbeit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.status.Complete": {
+    "t": "Abschließen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.success.locationDeleted": {
+    "t": "Standort wurde erfolgreich gelöscht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.error.failedToLoadLocations": {
+    "t": "Standorte konnten nicht geladen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "locations.error.failedToDeleteLocation": {
+    "t": "Löschen eines Ortes fehlgeschlagen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

@@ -1,0 +1,582 @@
+{
+  "voting.auth.code.description": {
+    "t": "Einige Wahlen bieten abstimmende Personen einen persönlichen Wahlcode - normalerweise vom Wahlverwalter per E-Mail, Post oder persönlich gesendet. Wenn Sie einen solchen Code erhalten haben, geben Sie ihn hier ein, um direkt zum Stimmzettel zu gehen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.code.label": {
+    "t": "Abstimmungscode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.code.placeholder": {
+    "t": "Geben Sie Ihren vorab bereitgestellten Abstimmungscode ein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.code.failed": {
+    "t": "Mit diesem Abstimmungscode konnte keine Anmeldung erfolgen. Bitte überprüfen Sie den Code und versuchen Sie es erneut.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.code.proceed": {
+    "t": "Weiter zur Abstimmung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.email.codeSent": {
+    "t": "den Bestätigungscode ein, der an Ihre E-Mail gesendet wurde",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.email.description": {
+    "t": "Wenn der Wahladministrator Ihre E-Mail-Adresse gespeichert hat, geben Sie sie hier ein. Wir senden einen einmaligen Code an diese Adresse. Geben Sie den Code auf dem nächsten Bildschirm ein, um Ihre Identität zu bestätigen und auf den Stimmzettel zuzugreifen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.email.label": {
+    "t": "E-Mail-Adresse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.email.placeholder": {
+    "t": "Bitte gib deine E-Mail-Ad­res­se ein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.email.sendCode": {
+    "t": "Bestätigungscode senden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.email.sendFailed": {
+    "t": "Es konnte kein Bestätigungscode an diese E-Mail-Adresse gesendet werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.error.noElection": {
+    "t": "Keine Wahl angegeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.facebook.button": {
+    "t": "Mit Facebook fortfahren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.facebook.cancelled": {
+    "t": "Die Facebook-Anmeldung wurde abgebrochen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.facebook.description": {
+    "t": "Wenn Sie ein Facebook-Konto haben, dessen E-Mail-Adresse mit der für diese Wahl registrierten E-Mail-Adresse übereinstimmt, können Sie sich mit Facebook anmelden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.facebook.error": {
+    "t": "Bei der Verarbeitung deiner Facebook-Authentifizierung ist ein Fehler aufgetreten.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.facebook.invalidToken": {
+    "t": "Ungültiges Facebook-Zugriffstoken.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.facebook.loading": {
+    "t": "Facebook-Login wird geladen...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.facebook.noEmail": {
+    "t": "Ihr Facebook-Konto hat keine verifizierte E-Mail-Adresse. Bitte verwenden Sie eine andere Anmeldemethode.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.noOpenElections": {
+    "t": "Derzeit stehen keine Wahlen für Online-Abstimmungen zur Verfügung.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.facebook.noOpenElections": {
+    "t": "Derzeit stehen keine Wahlen für Online-Abstimmungen zur Verfügung.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.facebook.notRegistered": {
+    "t": "Sie sind nicht registriert, um an einer derzeit offenen Wahl teilzunehmen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.facebook.popupBlocked": {
+    "t": "Facebook-Login-Popup wurde blockiert. Bitte erlauben Sie Popups für diese Website und versuchen Sie es erneut.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.a1": {
+    "t": "Um die Integrität der Wahl zu schützen, müssen wir bestätigen, dass jeder abstimmende Personen derjenige ist, der er vorgibt zu sein, und dass er auf der Liste der wahlberechtigten abstimmende Personen steht. Dies verhindert, dass jemand mehr als einmal oder im Namen eines anderen abstimmt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.a2": {
+    "t": "Die von Ihnen eingegebenen Informationen müssen genau dem entsprechen, was der Wahlverwalter für Sie registriert hat. Wenn es nicht erkannt wird, wenden Sie sich bitte an den Wahlverwalter — er kann Ihre Daten überprüfen oder Ihnen stattdessen einen persönlichen Abstimmungscode zur Verfügung stellen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.a3": {
+    "t": "Ja, absolut. Dieser Anmeldeschritt bestätigt nur, dass Sie eine berechtigte abstimmende Person sind. Sobald Sie auf der Stimmzettel-Seite sind, sind Ihre Entscheidungen völlig privat. Das System ist so konzipiert, dass niemand — nicht einmal die Wahlverwalter — Ihren Namen mit den von Ihnen getroffenen spezifischen Entscheidungen verknüpfen kann.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.a4": {
+    "t": "Nein. Sobald Sie Ihren Stimmzettel eingereicht haben, erfasst das System, dass Sie abgestimmt haben, und akzeptiert keine zweite Einreichung von Ihnen. Dies ist ein wichtiger Schutz für die Integrität der Wahl.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.a5": {
+    "t": "Sie können eine der verfügbaren Methoden verwenden — Sie müssen nicht alle verwenden. Wenn Sie bei der Wahl eine E-Mail-Adresse gespeichert haben, verwenden Sie die Option E-Mail. Wenn Sie eine Telefonnummer haben, verwenden Sie die Option Telefon. Wenn Sie einen persönlichen Code erhalten haben, verwenden Sie die Option Code. Wenden Sie sich an den Wahladministrator, wenn Sie sich nicht sicher sind, welche Methode auf Sie zutrifft.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.a6": {
+    "t": "Ja. Wenn Sie sich bei Google anmelden, bestätigt Google uns Ihre Identität — wir sehen Ihr Google-Passwort nie. Wir erhalten nur Ihre verifizierte E-Mail-Adresse, die wir anhand der abstimmenden Personenliste überprüfen. Google stellt diesen Dienst kostenlos zur Verfügung.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.a7": {
+    "t": "Bitte wenden Sie sich direkt an Ihren Wahladministrator. Sie können Ihre Registrierungsdaten überprüfen, einen persönlichen Abstimmungscode angeben oder Sie auf andere Weise unterstützen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.q1": {
+    "t": "Warum muss ich mich vor der Abstimmung anmelden?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.q2": {
+    "t": "Was ist, wenn meine E-Mail-Adresse oder Telefonnummer nicht erkannt wird?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.q3": {
+    "t": "Ist meine Stimme privat?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.q4": {
+    "t": "Kann ich mehr als einmal abstimmen?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.q5": {
+    "t": "Was ist, wenn ich kein Google-Konto oder Telefon habe?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.q6": {
+    "t": "Ist es sicher, sich bei Google anzumelden?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.q7": {
+    "t": "Was ist, wenn ich auf ein Problem stoße?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.faq.title": {
+    "t": "Häufige Fragen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.google.buttonText": {
+    "t": "Registriere dich über Google",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.google.description": {
+    "t": "Wenn Sie ein Google-Konto haben und Ihre bei Google registrierte E-Mail-Adresse mit dem übereinstimmt, was der Wahlverwalter hinterlegt hat, können Sie sich bei Google anmelden. Dies ist eine praktische Option, für die kein separater Code erforderlich ist.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.google.emailNotVerified": {
+    "t": "Google-E-Mail muss verifiziert werden, um abstimmen zu können.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.google.error": {
+    "t": "Bei der Verarbeitung Ihrer Google-Authentifizierung ist ein Fehler aufgetreten.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.google.invalidCredential": {
+    "t": "Ungültige Google-Anmeldeinformationen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.google.loading": {
+    "t": "Google Sign-In wird geladen...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.google.noEmail": {
+    "t": "E-Mail nicht von Google bereitgestellt.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.google.noOpenElections": {
+    "t": "Derzeit stehen keine Wahlen für Online-Abstimmungen zur Verfügung.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.google.notConfigured": {
+    "t": "Die Google-Authentifizierung ist auf diesem Server nicht konfiguriert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.google.notRegistered": {
+    "t": "Sie sind nicht registriert, um an einer derzeit offenen Wahl teilzunehmen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.google.prompt": {
+    "t": "Klicken Sie auf die Schaltfläche unten, um sich mit Ihrem Google-Konto anzumelden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.kakao.button": {
+    "t": "카카오로 로그인 (Login mit Kakao)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.kakao.description": {
+    "t": "Wenn Sie ein Kakao-Konto (KakaoTalk) und Ihre registrierten E-Mail- oder Telefon-Übereinstimmungen haben, können Sie sich mit Kakao anmelden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.kakao.error": {
+    "t": "Bei der Verarbeitung Ihrer Kakao-Authentifizierung ist ein Fehler aufgetreten.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.kakao.invalidToken": {
+    "t": "Ungültiges Kakao-Zugriffstoken.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.kakao.loading": {
+    "t": "Kakao-Login wird geladen...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.kakao.noContact": {
+    "t": "Ihr Kakao-Konto hat keine E-Mail-Adresse oder Telefonnummer angegeben. Bitte verwenden Sie eine andere Anmeldemethode.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.kakao.noOpenElections": {
+    "t": "Derzeit stehen keine Wahlen für Online-Abstimmungen zur Verfügung.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.kakao.notRegistered": {
+    "t": "Sie sind nicht registriert, um an einer derzeit offenen Wahl teilzunehmen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.kakao.popupBlocked": {
+    "t": "Das Kakao-Login-Popup wurde blockiert. Bitte erlauben Sie Popups für diese Website und versuchen Sie es erneut.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.phone.codeSent": {
+    "t": "Bestätigungscode über {method} gesendet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.phone.deliveryMethod": {
+    "t": "Wie möchten Sie den Code erhalten?",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.phone.description": {
+    "t": "Wenn der Wahladministrator Ihre Telefonnummer hinterlegt hat, geben Sie sie hier ein. Wir senden dir einen einmaligen Bestätigungscode per SMS, Sprachanruf oder WhatsApp. Geben Sie den Code auf dem nächsten Bildschirm ein, um Ihre Identität zu bestätigen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.phone.label": {
+    "t": "Telefonnummer",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.phone.placeholder": {
+    "t": "+1234567890",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.phone.sendCode": {
+    "t": "Bestätigungscode senden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.phone.sendFailed": {
+    "t": "Es konnte kein Bestätigungscode an diese Telefonnummer gesendet werden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.phone.sms": {
+    "t": "SMS Text Nachricht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.phone.voice": {
+    "t": "Voiceanruf",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.phone.whatsapp": {
+    "t": "WhatsApp Nachricht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.phone.whatsappNote": {
+    "t": "An diese Nummer wird eine WhatsApp-Nachricht gesendet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.requestCode.error": {
+    "t": "Während Ihrer Anfrage ist ein Fehler aufgetreten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.requestCode.noOpenElections": {
+    "t": "Derzeit stehen keine Wahlen für Online-Abstimmungen zur Verfügung.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.requestCode.invalidPhone": {
+    "t": "Diese Telefonnummer kann nicht verwendet werden, um einen Verifizierungscode zu erhalten.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.requestCode.notRegistered": {
+    "t": "Sie sind nicht registriert, um an einer derzeit offenen Wahl teilzunehmen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.requestCode.sendFailed": {
+    "t": "Bestätigungscode konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.requestCode.sent": {
+    "t": "Wenn die angegebenen Kontaktinformationen gültig sind, wurde ein Bestätigungscode gesendet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.requestCode.sentIfListed": {
+    "t": "Wenn Sie sich auf der Liste abstimmende Personen befinden, wurde ein Code gesendet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.delivery.sending": {
+    "t": "Verifizierungscode wird gesendet...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.delivery.sent": {
+    "t": "Der Verifizierungscode wurde gesendet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.delivery.delivered": {
+    "t": "Ihr Verifizierungscode wurde geliefert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.delivery.failed": {
+    "t": "Der Bestätigungscode konnte nicht zugestellt werden. Bitte versuchen Sie es erneut oder verwenden Sie eine andere Methode.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.delivery.finalOk": {
+    "t": "Lieferung abgeschlossen. Geben Sie den Code unten ein, wenn Sie ihn haben.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.delivery.finalFailed": {
+    "t": "Lieferung mit einem Fehler beendet. Fordern Sie einen neuen Code an oder versuchen Sie es mit einer anderen Methode.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.subtitle": {
+    "t": "Bitte authentifizieren Sie sich, um Ihren Stimmzettel abzugeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.tabs.code": {
+    "t": "Code",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.tabs.email": {
+    "t": "E-Mail",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.tabs.facebook": {
+    "t": "Facebook",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.tabs.google": {
+    "t": "Google",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.tabs.kakao": {
+    "t": "Kakao",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.tabs.phone": {
+    "t": "Telefon",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.tabs.telegram": {
+    "t": "Telegram",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.telegram.description": {
+    "t": "Sichere One-Tap-Anmeldung mit Telegram.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.telegram.error": {
+    "t": "Die Telegrammanmeldung ist derzeit nicht verfügbar.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.telegram.expired": {
+    "t": "Telegramm-Login ist abgelaufen. Bitte versuchen Sie es erneut.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.telegram.invalidHash": {
+    "t": "Ungültige Telegramm-Login-Signatur.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.telegram.loading": {
+    "t": "Telegramm-Widget wird geladen...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.telegram.noOpenElections": {
+    "t": "Derzeit stehen keine Wahlen für Online-Abstimmungen zur Verfügung.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.telegram.notRegistered": {
+    "t": "Sie sind nicht registriert, um an einer derzeit offenen Wahl teilzunehmen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.title": {
+    "t": "TallyJ Online-Abstimmung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.back": {
+    "t": "Probieren Sie eine andere Methode aus",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.alreadyUsed": {
+    "t": "Dieser Verifizierungscode wurde bereits verwendet. Bitte fordern Sie einen neuen Code an.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.codeExpired": {
+    "t": "Der Verifizierungscode ist abgelaufen. Bitte fordern Sie einen neuen Code an.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.detail": {
+    "t": "Bitte überprüfen Sie Ihren Posteingang (und den Spam-Ordner, nur für den Fall) und geben Sie den folgenden Code ein. Der Code ist zeitlich begrenzt gültig.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.error": {
+    "t": "Beim Verifizieren deines Codes ist ein Fehler aufgetreten.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.invalidCode": {
+    "t": "Ungültiger Bestätigungscode. Verbleibende {attempts}-Versuche.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.label": {
+    "t": "Verifizierungscode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.message": {
+    "t": "Wir haben einen Bestätigungscode an {voterId} gesendet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.failed": {
+    "t": "Dieser Code konnte nicht verifiziert werden. Bitte überprüfen Sie es und versuchen Sie es erneut.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.noCodeFound": {
+    "t": "Kein Bestätigungscode gefunden. Bitte fordern Sie einen neuen Code an.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.placeholder": {
+    "t": "Den in der Nachricht angegebenen Bestätigungscode eingeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.submit": {
+    "t": "Verifizieren und mit der Abstimmung fortfahren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.tooManyAttempts": {
+    "t": "Zu viele fehlgeschlagene Versuche. Bitte fordern Sie einen neuen Code an.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.verify.voterNotFound": {
+    "t": "abstimmende Person nicht gefunden. Bitte fordern Sie zuerst einen Bestätigungscode an.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.welcome.choose": {
+    "t": "Bitte wählen Sie eine der folgenden Möglichkeiten:",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.welcome.detail": {
+    "t": "Dies ist eine einfache einmalige Überprüfung — wir erstellen kein Konto für Sie und speichern keine persönlichen Informationen, die über das hinausgehen, was der Wahlverwalter bereits hat. Nach der Bestätigung werden Sie direkt zum Stimmzettel weitergeleitet.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.welcome.heading": {
+    "t": "Herzlich willkommen — Sie sind fast bereit zur Stimmabgabe",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "voting.auth.welcome.intro": {
+    "t": "Um bei dieser Wahl wählen zu können, müssen wir bestätigen, wer Sie sind. Ihre Identität muss mit den Informationen übereinstimmen, die der Wahlverwalter für berechtigte abstimmende Personen hinterlegt hat.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

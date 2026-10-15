@@ -180,9 +180,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.confirmation.title": {
-    "t": "Äänestyslipuke lähetetty onnistuneesti!",
+    "t": "Äänestyslippu lähetetty onnistuneesti!",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.election.instructions": {
     "t": "Äänestä {count} ehdokasta.",
@@ -340,9 +340,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.status.notVoted": {
-    "t": "Et ole vielä lähettänyt äänestyslipukettasi tässä vaalissa.",
+    "t": "Et ole vielä lähettänyt äänestyslipputtasi tässä vaalissa.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.status.voterNotFound": {
     "t": "Äänestäjää ei löytynyt tässä vaalissa.",
@@ -350,9 +350,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.submit.alreadyVoted": {
-    "t": "Olet jo lähettänyt äänestyslipukkeen tässä vaalissa.",
+    "t": "Olet jo lähettänyt äänestyslipun tässä vaalissa.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.submit.electionNotFound": {
     "t": "Vaalia ei löytynyt.",
@@ -360,9 +360,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "voting.submit.error": {
-    "t": "Äänestyslipukkeen lähetyksessä tapahtui virhe. Yritä uudelleen.",
+    "t": "Äänestyslipun lähetyksessä tapahtui virhe. Yritä uudelleen.",
     "s": "ai",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-10-15T16:59:35Z"
   },
   "voting.submit.notOpen": {
     "t": "Online-äänestys ei ole tällä hetkellä avoinna tässä vaalissa.",

@@ -1,0 +1,1027 @@
+{
+  "reporting.advancedFilters": {
+    "t": "Erweiterte Filter",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.allCanReceive": {
+    "t": "Personen, für die abgestimmt werden kann",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.applyFilters": {
+    "t": "Filter anwenden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.area": {
+    "t": "Bereich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.averageVotesPerBallot": {
+    "t": "Durchschnittliche Stimmen pro Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.bahaiId": {
+    "t": "Bahá'í ID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotCode": {
+    "t": "Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotCount": {
+    "t": "Stimmzettelzählung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotId": {
+    "t": "Stimmzettel-ID",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotLengthDistribution": {
+    "t": "Stimmzettel-Längenverteilung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotReport": {
+    "t": "Stimmzettelbericht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotReports": {
+    "t": "Stimmzettel-Berichte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotsByMethod": {
+    "t": "Stimmzettel nach Wahlmethode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotsCast": {
+    "t": "Abgegebene Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotsCastInPerson": {
+    "t": "Persönlich abgegebene Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotsCastOnline": {
+    "t": "Online abgegebene Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotsCustomPrefix": {
+    "t": "Stimmzettel: {name}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotsEntered": {
+    "t": "Stimmzettel eingegeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotsHandDelivered": {
+    "t": "Persönlich abgegebene Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotsImported": {
+    "t": "Stimmzettel importiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotsPhonedIn": {
+    "t": "Telefonisch abgegebene Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotsReceivedByMail": {
+    "t": "Stimmzettel per Post erhalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ballotsReceivedNotVoted": {
+    "t": "Erhaltene Stimmzettel ≠ Abgestimmt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.calledIn": {
+    "t": "Angerufen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.canReceiveVotes": {
+    "t": "Kann Stimmen erhalten",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.canVote": {
+    "t": "Kann abstimmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.person": {
+    "t": "Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.personName": {
+    "t": "Person Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.personPerformance": {
+    "t": "Leistung der Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.personVotes": {
+    "t": "Personenabstimmungen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.people": {
+    "t": "Menschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.category": {
+    "t": "Kategorie",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.change": {
+    "t": "Änderung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.charts": {
+    "t": "Diagramme",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.clearFilters": {
+    "t": "Filter löschen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.comparisonSummary": {
+    "t": "Vergleichszusammenfassung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.configureReport": {
+    "t": "Bericht konfigurieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.contender": {
+    "t": "Anwärter",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.convenor": {
+    "t": "Convenor",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.count": {
+    "t": "Zählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.cumulativeTurnout": {
+    "t": "Kumulierte Wahlbeteiligung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.customReport": {
+    "t": "Benutzerdefinierter Bericht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.date": {
+    "t": "Date",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.dateOfElection": {
+    "t": "Datum der Wahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.dateRange": {
+    "t": "Datumsbereich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.demographicBreakdown": {
+    "t": "Demografische Aufschlüsselung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.description": {
+    "t": "Beschreibung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.didNotVote": {
+    "t": "Haben nicht abgestimmt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.detailedStatistics": {
+    "t": "Detaillierte Statistiken",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.age18Plus": {
+    "t": "18+",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.age18To21": {
+    "t": "18–21",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.downloadAll": {
+    "t": "Download aller Berichte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.downloadAllHint": {
+    "t": "Speichert eine ZIP jedes hier aufgeführten Berichts als CSV.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.downloadAllError": {
+    "t": "Berichte konnten nicht heruntergeladen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.droppedOff": {
+    "t": "Abgegeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.earlyVoting": {
+    "t": "Frühe Abstimmung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.earlyVotingPercentage": {
+    "t": "% Early Voting",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.elected": {
+    "t": "Gewählt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.electedPeople": {
+    "t": "Gewählte Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.electedPersons": {
+    "t": "Gewählt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.election": {
+    "t": "Wahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.electionDate": {
+    "t": "Wahltag",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.electionDayVoting": {
+    "t": "Abstimmung am Wahltag",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.electionDetails": {
+    "t": "Wahldetails",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.electionName": {
+    "t": "Wahlbezeichnung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.electionOverview": {
+    "t": "Wahlübersicht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.electionSummary": {
+    "t": "Wahlzusammenfassung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.electionType": {
+    "t": "Wahltyp",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.eligibilityReason": {
+    "t": "Grund für die Teilnahmeberechtigung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.eliminated": {
+    "t": "Eliminiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.email": {
+    "t": "E-Mail",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.endDate": {
+    "t": "Enddatum",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.enterReportName": {
+    "t": "Berichtsname eingeben",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.error": {
+    "t": "Bericht konnte nicht geladen werden",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.exportCSV": {
+    "t": "CSV exportieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.exportExcel": {
+    "t": "ins Excel exportieren",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.exportFormats": {
+    "t": "Exportformate",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.exportPDF": {
+    "t": "Export PDF",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.extra": {
+    "t": "Extra",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.extraPeople": {
+    "t": "Zusätzliche Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.firstChoice": {
+    "t": "Erste Wahl",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.firstName": {
+    "t": "Vorname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.firstTimeVoters": {
+    "t": "Erstmalige Abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.flags": {
+    "t": "Flaggen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.generateComparison": {
+    "t": "Vergleich erstellen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.generateCustomReport": {
+    "t": "Generieren des Custom Report",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.generateReport": {
+    "t": "Report erstellen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.groupN": {
+    "t": "Gruppe {n}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.hasSignedInEmail": {
+    "t": "Angemeldet (E-Mail)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.hasSignedInPhone": {
+    "t": "Angemeldet (Telefon)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.historicalComparison": {
+    "t": "Historischer Vergleich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.imported": {
+    "t": "Importiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.inPerson": {
+    "t": "persönlich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.inPersonVoters": {
+    "t": "Persönliche abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.includeSections": {
+    "t": "Abschnitte einbeziehen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.lastName": {
+    "t": "Nachname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.loading": {
+    "t": "Bericht wird geladen...",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.location": {
+    "t": "Location",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.locationReport": {
+    "t": "Standortbericht",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.locationStatistics": {
+    "t": "Standortstatistiken",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.locations": {
+    "t": "Standorte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.mailedIn": {
+    "t": "Per Post versendet in",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.matchingNames": {
+    "t": "Matching Names auf Ergebnisse",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.maxVotesOnBallot": {
+    "t": "Max. Stimmen auf dem Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.metricsToCompare": {
+    "t": "Zu vergleichende Metriken",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.minVotesOnBallot": {
+    "t": "Min. Stimmen auf dem Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.name": {
+    "t": "Name",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.no": {
+    "t": "Nein",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.noBallots": {
+    "t": "Keine Stimmzettel für diesen Filter gefunden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.noChanges": {
+    "t": "Keine geänderten Personendatensätze gefunden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.noDuplicates": {
+    "t": "Keine doppelten Stimmzettel gefunden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.noEmails": {
+    "t": "Keine E-Mail-/Telefon-Datensätze gefunden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.noFlags": {
+    "t": "Keine Anwesenheitsflaggen definiert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.noNonEligible": {
+    "t": "Keine Personen mit Berechtigungsstatus gefunden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.noSpoiledVotes": {
+    "t": "Keine ungültige Stimmen gefunden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.numBallots": {
+    "t": "Anzahl der Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.numEligibleToVote": {
+    "t": "Nummer zur Abstimmung berechtigt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.online": {
+    "t": "Online",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.onlineKiosk": {
+    "t": "Online/Kiosk",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.kiosk": {
+    "t": "Kiosk",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.onlineStatus": {
+    "t": "Status",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.onlineVoters": {
+    "t": "Online abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.other": {
+    "t": "Sonstiges",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.otherInfo": {
+    "t": "Weitere Info",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.otherLastNames": {
+    "t": "Andere Nachnamen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.otherNames": {
+    "t": "Weitere Namen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.overallTurnout": {
+    "t": "Gesamtbeteiligung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.overallTurnoutSummary": {
+    "t": "Gesamtzusammenfassung der Wahlbeteiligung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.participationRates": {
+    "t": "Höhe der Beteiligung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.percentParticipation": {
+    "t": "Teilnahme",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.percentage": {
+    "t": "Prozentsatz",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.performance": {
+    "t": "Arbeitsleistung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.phone": {
+    "t": "Telefon",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.positionsToElect": {
+    "t": "Zu wählende Positionen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.print": {
+    "t": "Drucken (STRG+P)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.printHint": {
+    "t": "Einige Browser wie Chrome können beim Drucken eine PDF-Kopie des Berichts erstellen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.rank": {
+    "t": "Rang",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.reason": {
+    "t": "Begründung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.registeredVoters": {
+    "t": "Registrierte abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.registrationLog": {
+    "t": "Registrierungsprotokoll",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.registrationTime": {
+    "t": "Registrierungszeit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.reportGenerated": {
+    "t": "Bericht erfolgreich generiert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.reportGenerationError": {
+    "t": "Fehler beim Generieren des Berichts.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.reportName": {
+    "t": "Berichtsname",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.returningVoters": {
+    "t": "Wiederkehrende abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.section": {
+    "t": "Bereich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.selectElections": {
+    "t": "Wahlen auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.selectElectionsToCompare": {
+    "t": "Zu vergleichende Wahlen auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.selectLocations": {
+    "t": "Standorte auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.selectMultipleElections": {
+    "t": "Mehrere Wahlen auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.selectReport": {
+    "t": "Bitte wählen Sie einen Bericht aus",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.selectReportType": {
+    "t": "Berichtstyp auswählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.selectSortBy": {
+    "t": "Sortierung wählen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.sortBy": {
+    "t": "Sortieren nach",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.spoiledBallots": {
+    "t": "ungültige Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.spoiledVotes": {
+    "t": "ungültige Stimmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.startDate": {
+    "t": "Startdatum",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.statistics": {
+    "t": "Statistiken",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.status": {
+    "t": "Status",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.sumOfEnvelopesCollected": {
+    "t": "Gesamtzahl der abgegebenen Stimmzettel (inkl. manueller Zählung)",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.summary": {
+    "t": "Zusammenfassung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.summaryReport": {
+    "t": "Wahlzusammenfassung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.summaryStats": {
+    "t": "Übersichtsstatistiken",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.teller1": {
+    "t": "Wahlhelfer 1",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.teller2": {
+    "t": "Wahlhelfer 2",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.tieGroup": {
+    "t": "Gleichstandsgruppe {group}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.tieNote": {
+    "t": "* Tie-Break-Zählung angezeigt nach /",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.ties": {
+    "t": "Ties",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.timeBasedTurnout": {
+    "t": "Wahlbeteiligung im Zeitverlauf",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.timePeriod": {
+    "t": "Zeitraum",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.title": {
+    "t": "Berichte",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.to": {
+    "t": "zum",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.topPeople": {
+    "t": "Top-Leute",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.total": {
+    "t": "Gesamt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.totalBallots": {
+    "t": "Gesamtzahl der Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.totalBallotsCast": {
+    "t": "Gesamtzahl der abgegebenen Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.totalEligible": {
+    "t": "Teilnahmeberechtigt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.totalVoters": {
+    "t": "Gesamt: {count}",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.totalVotersHeader": {
+    "t": "abstimmende Personen insgesamt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.totalVotes": {
+    "t": "Stimmen insgesamt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.turnout": {
+    "t": "Beteiligung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.turnoutAnalysis": {
+    "t": "Analyse der Wahlbeteiligung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.turnoutByLocation": {
+    "t": "Wahlbeteiligung nach Standort",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.turnoutOverTime": {
+    "t": "Wahlbeteiligung im Laufe der Zeit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.turnoutPercentage": {
+    "t": "Wahlbeteiligung %",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.turnoutRange": {
+    "t": "Bereich der Wahlbeteiligung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.validBallots": {
+    "t": "Gültige Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.value": {
+    "t": "Wert",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.voteDistribution": {
+    "t": "Stimmenverteilung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.votePercentage": {
+    "t": "Anzahl der Stimmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.voteRange": {
+    "t": "Abstimmungsbereich",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.voteTime": {
+    "t": "Abstimmungszeit",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.voted": {
+    "t": "Hat abgestimmt",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.voterName": {
+    "t": "Name der abstimmenden Person",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.voterReport": {
+    "t": "Bericht über abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.voterReports": {
+    "t": "Berichte über abstimmende Personen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.voterTurnout": {
+    "t": "Wahlbeteiligung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.votes": {
+    "t": "Stimmen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.votesOnBallot": {
+    "t": "Abstimmungen zu diesem Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.votesPerBallot": {
+    "t": "Stimmen pro Stimmzettel",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.votingMethod": {
+    "t": "Abstimmungsmethode",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.whenEmail": {
+    "t": "E-Mail gesendet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.whenPhone": {
+    "t": "Telefon gesendet",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.whenStatus": {
+    "t": "Wann",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "reporting.yes": {
+    "t": "Ja",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}

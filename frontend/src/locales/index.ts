@@ -219,6 +219,7 @@ async function getLocaleContent(locale: string): Promise<any> {
 export const supportedLocales = [
   { value: "en", flag: "us", name: "english" },
   { value: "fr", flag: "fr", name: "french" },
+  { value: "de", flag: "de", name: "german" },
   { value: "fi", flag: "fi", name: "finnish" },
   { value: "ko", flag: "kr", name: "korean" },
   { value: "es", flag: "es", name: "spanish" },

@@ -1,0 +1,92 @@
+{
+  "error.errorDetails": {
+    "t": "Fehlerdetails",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.forbidden": {
+    "t": "Zugriff verweigert.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.goHome": {
+    "t": "Zur Startseite",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.networkError": {
+    "t": "Netzwerkfehler. Bitte überprüfen Sie Ihre Netzwerkverbindung und versuchen Sie es erneut.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.notFound": {
+    "t": "Die angeforderte Ressource wurde nicht gefunden.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.pageError": {
+    "t": "Beim Laden der Daten ist ein Fehler aufgetreten. Bitte veruschen Sie es später nochmal.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.serverError": {
+    "t": "Serverfehler. Bitte versuchen Sie es später wieder.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.sessionExpired": {
+    "t": "Loggen Sie sich erneut ein.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.somethingWentWrong": {
+    "t": "Leider ging hier etwas schief",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.payloadTooLarge": {
+    "t": "Diese Anfrage ist zu groß.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.tooManyRequests": {
+    "t": "Zu viele Anfragen. Bitte versuchen Sie es später noch einmal.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.tryAgain": {
+    "t": "Erneut versuchen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.unauthorized": {
+    "t": "Sie sind nicht berechtigt, diese Aktion auszuführen.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "error.validationError": {
+    "t": "Bitte Ã¼berprÃ¼fen Sie Ihre Eingabe und versuchen Sie es erneut.",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "notification.error": {
+    "t": "Fehler",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "notification.info": {
+    "t": "Informationen",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "notification.success": {
+    "t": "Erfolg",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  },
+  "notification.warning": {
+    "t": "Warnung",
+    "s": "ai",
+    "w": "2026-10-15T17:15:00Z"
+  }
+}
