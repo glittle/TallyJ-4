@@ -469,6 +469,17 @@ public abstract class ElectionAnalyzerBase
                 r.TieBreakCount = null;
             }
         }
+        else if (isResolved)
+        {
+            // The runoff distinguished this group. "Tie-break required" means it is
+            // still unresolved. Keep the counts so the results table and reports can
+            // show them; a later Calculate must not put the flag back.
+            resultTie.TieBreakRequired = false;
+            foreach (var r in results)
+            {
+                r.TieBreakRequired = false;
+            }
+        }
         // Required ties keep null until a teller enters a value. Explicit 0 is stored
         // as 0; sorting and still-tied checks treat null as 0 without collapsing the two.
     }

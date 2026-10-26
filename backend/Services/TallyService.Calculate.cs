@@ -182,6 +182,7 @@ public partial class TallyService
                 IsTied = r.IsTied == true,
                 TieBreakGroup = r.TieBreakGroup,
                 TieBreakRequired = r.TieBreakRequired == true,
+                TieBreakCount = r.TieBreakCount,
                 CloseToNext = r.CloseToNext == true,
                 CloseToPrev = r.CloseToPrev == true
             }).ToList(),

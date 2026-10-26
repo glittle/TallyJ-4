@@ -1,9 +1,14 @@
+using System.Text;
+using System.Text.Json;
 using Backend.Configuration;
+using Backend.DTOs.Import;
 using Backend.Entities;
 using Backend.Enumerations;
+using Backend.Localization;
 using Backend.Services;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
+using Moq;
 using PhoneNumbers;
 
 namespace Backend.Tests.UnitTests.Services;
@@ -165,6 +170,101 @@ public class VoterContactReviewerTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task DefaultThreshold_ThreeRealisticPhonesDoNotFlag_FourDo()
+    {
+        AddPerson("000-000-0000", null);
+        AddPerson("111-111-1111", null);
+        AddPerson("222-222-2222", null);
+        await Context.SaveChangesAsync();
+
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId);
+
+        Assert.InRange(DistinctActiveKeys(), 1, 3);
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false);
+
+        AddPerson("333-333-3333", null);
+        await Context.SaveChangesAsync();
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId);
+
+        var described = DescribeActiveFlags();
+        Assert.Equal(4, DistinctActiveKeys());
+        var control = Context.ElectionSendControls.Single();
+        Assert.True(control.Flagged, described);
+        Assert.Equal(4, control.FlaggedEntryCount);
+    }
+
+    [Fact]
+    public async Task TwoPhonesAndOneDisposableEmail_DoNotFlag()
+    {
+        AddPerson("000-000-0000", null);
+        AddPerson("111-111-1111", null);
+        AddPerson(null, "a@mailinator.com");
+        await Context.SaveChangesAsync();
+
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId);
+
+        Assert.Equal(3, DistinctActiveKeys());
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+    }
+
+    [Fact]
+    public async Task ThreeUnexpectedCountryNumbers_CountOnceEach_AndDoNotFlag()
+    {
+        AddPerson("+442079460111", null);
+        AddPerson("+442079460222", null);
+        AddPerson("+442079460333", null);
+        await Context.SaveChangesAsync();
+
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId);
+
+        Assert.Equal(3, DistinctActiveKeys());
+        Assert.Equal(3, Context.VoterContactFlags.Count(row => row.Active));
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+    }
+
+    [Fact]
+    public async Task Import_ThreeBadPhones_DoNotFlag_FourDo()
+    {
+        var three = await ImportContacts(
+            "FirstName,LastName,Phone\nA,One,000-000-0000\nB,Two,111-111-1111\nC,Three,222-222-2222",
+            PhoneMappings());
+
+        Assert.True(three.Success, string.Join("; ", three.Errors.Select(error => error.Key)));
+        Assert.Equal(3, Context.People.Count(person => person.ElectionGuid == _electionId));
+        Assert.InRange(DistinctActiveKeys(), 1, 3);
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+
+        var four = await ImportContacts(
+            "FirstName,LastName,Phone\nD,Four,333-333-3333",
+            PhoneMappings());
+
+        Assert.True(four.Success, string.Join("; ", four.Errors.Select(error => error.Key)));
+        Assert.Equal(4, Context.People.Count(person => person.ElectionGuid == _electionId));
+        Assert.Equal(4, DistinctActiveKeys());
+        var control = Context.ElectionSendControls.Single();
+        Assert.True(control.Flagged, DescribeActiveFlags());
+        Assert.Equal(4, control.FlaggedEntryCount);
+    }
+
+    [Fact]
+    public async Task Import_TwoPhonesAndOneEmail_DoNotFlag()
+    {
+        var result = await ImportContacts(
+            "FirstName,LastName,Phone,Email\nA,One,000-000-0000,\nB,Two,111-111-1111,\nC,Three,,a@mailinator.com",
+            [
+                new ColumnMappingDto { FileColumn = "FirstName", TargetField = "FirstName" },
+                new ColumnMappingDto { FileColumn = "LastName", TargetField = "LastName" },
+                new ColumnMappingDto { FileColumn = "Phone", TargetField = "Phone" },
+                new ColumnMappingDto { FileColumn = "Email", TargetField = "Email" }
+            ]);
+
+        Assert.True(result.Success, string.Join("; ", result.Errors.Select(error => error.Key)));
+        Assert.Equal(3, Context.People.Count(person => person.ElectionGuid == _electionId));
+        Assert.Equal(3, DistinctActiveKeys());
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+    }
+
+    [Fact]
     public async Task ReviewFailure_FlagsTheElection_AndKeepsThePeople()
     {
         AddPerson(null, "a@boom.example");
@@ -211,6 +311,69 @@ public class VoterContactReviewerTests : ServiceTestBase
                 DefaultPhoneRegionCode = "CA"
             }),
             NullLogger<VoterContactReviewer>.Instance);
+    }
+
+    private VoterContactReviewer CreateReviewerWithDefaults()
+    {
+        return new VoterContactReviewer(
+            Context,
+            new FakeDisposableDomains(new[] { "mailinator.com" }),
+            _mx,
+            _alerts,
+            new SecurityAuditService(Context, NullLogger<SecurityAuditService>.Instance),
+            Options.Create(new AntiAbuseOptions()),
+            NullLogger<VoterContactReviewer>.Instance);
+    }
+
+    private int DistinctActiveKeys()
+    {
+        return Context.VoterContactFlags
+            .Where(row => row.Active)
+            .Select(row => row.ContactKey)
+            .Distinct()
+            .Count();
+    }
+
+    private string DescribeActiveFlags()
+    {
+        return string.Join(
+            " | ",
+            Context.VoterContactFlags
+                .Where(row => row.Active)
+                .Select(row => row.Reason + " " + row.MaskedValue + " " + row.ContactKey));
+    }
+
+    private static List<ColumnMappingDto> PhoneMappings()
+    {
+        return
+        [
+            new ColumnMappingDto { FileColumn = "FirstName", TargetField = "FirstName" },
+            new ColumnMappingDto { FileColumn = "LastName", TargetField = "LastName" },
+            new ColumnMappingDto { FileColumn = "Phone", TargetField = "Phone" }
+        ];
+    }
+
+    private async Task<ImportPeopleResult> ImportContacts(string csv, List<ColumnMappingDto> mappings)
+    {
+        var importFile = new ImportFile
+        {
+            ElectionGuid = _electionId,
+            FileType = "csv",
+            CodePage = 65001,
+            FirstDataRow = 1,
+            Contents = Encoding.UTF8.GetBytes(csv),
+            HasContent = true,
+            ColumnsToRead = JsonSerializer.Serialize(mappings)
+        };
+        Context.ImportFiles.Add(importFile);
+        await Context.SaveChangesAsync();
+
+        var service = new PeopleImportService(
+            Context,
+            new Mock<ISignalRNotificationService>().Object,
+            new Mock<IJsonLocalizationProvider>().Object,
+            CreateReviewerWithDefaults());
+        return await service.ImportPeopleAsync(_electionId, importFile.RowId);
     }
 
     private static IReadOnlyList<string> FourConsecutiveCanadianNumbers()

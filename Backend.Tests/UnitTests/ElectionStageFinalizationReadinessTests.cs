@@ -192,6 +192,57 @@ public class ElectionStageFinalizationReadinessTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task EvaluateAsync_ResolvedTie_DoesNotBlockFinalization()
+    {
+        var electionGuid = await SeedReadyElectionAsync(useOnlineVoting: false);
+        var result = Context.Results.Single(r => r.ElectionGuid == electionGuid);
+        result.IsTied = true;
+        result.TieBreakRequired = true;
+        result.IsTieResolved = true;
+        result.TieBreakCount = 3;
+        Context.ResultTies.Add(new ResultTie
+        {
+            ElectionGuid = electionGuid,
+            TieBreakGroup = 1,
+            TieBreakRequired = true,
+            IsResolved = true,
+            NumInTie = 2,
+            NumToElect = 1
+        });
+        await Context.SaveChangesAsync();
+
+        var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, electionGuid);
+
+        Assert.True(readiness.IsReady);
+        Assert.DoesNotContain(UnresolvedTies, readiness.Blockers);
+    }
+
+    [Fact]
+    public async Task EvaluateAsync_UnresolvedResultTie_BlocksFinalization()
+    {
+        var electionGuid = await SeedReadyElectionAsync(useOnlineVoting: false);
+        var result = Context.Results.Single(r => r.ElectionGuid == electionGuid);
+        result.IsTied = true;
+        result.TieBreakRequired = true;
+        result.IsTieResolved = false;
+        Context.ResultTies.Add(new ResultTie
+        {
+            ElectionGuid = electionGuid,
+            TieBreakGroup = 1,
+            TieBreakRequired = true,
+            IsResolved = true,
+            NumInTie = 2,
+            NumToElect = 1
+        });
+        await Context.SaveChangesAsync();
+
+        var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, electionGuid);
+
+        Assert.False(readiness.IsReady);
+        Assert.Contains(UnresolvedTies, readiness.Blockers);
+    }
+
+    [Fact]
     public async Task EvaluateAsync_ReadyWhenUseOnlineVotingIsFalse()
     {
         var electionGuid = await SeedReadyElectionAsync(useOnlineVoting: false);

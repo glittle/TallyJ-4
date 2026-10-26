@@ -33,7 +33,6 @@ public partial class ReportService
             BahaiId = r.Person?.BahaiId,
             VoteCountDisplay = TieBreakDisplayHelper.FormatVoteCountDisplay(
                 r.VoteCount ?? 0,
-                r.TieBreakRequired == true,
                 r.TieBreakCount),
             Section = r.Section
         }).ToList();
@@ -127,7 +126,9 @@ public partial class ReportService
             SpoiledBallotReasons = spoiledBallotReasons,
             SpoiledVoteReasons = spoiledVoteReasons,
             Elected = elected,
-            HasTies = results.Any(r => r.TieBreakRequired == true)
+            // Any unresolved required tie, including people outside the elected/extra slice.
+            HasTies = await _context.Results.AnyAsync(r =>
+                r.ElectionGuid == electionGuid && r.TieBreakRequired == true)
         };
     }
 }

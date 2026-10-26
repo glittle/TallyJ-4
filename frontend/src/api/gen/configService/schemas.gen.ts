@@ -5714,6 +5714,9 @@ export const Reports_VotesByNameDtoSchema = {
                 $ref: '#/components/schemas/Reports_VotePersonDto'
             },
             nullable: true
+        },
+        hasUnresolvedTie: {
+            type: 'boolean'
         }
     },
     additionalProperties: false
@@ -5737,6 +5740,9 @@ export const Reports_VotesByNumDtoSchema = {
                 $ref: '#/components/schemas/Reports_VotePersonDto'
             },
             nullable: true
+        },
+        hasUnresolvedTie: {
+            type: 'boolean'
         }
     },
     additionalProperties: false
@@ -6453,6 +6459,11 @@ export const Results_PersonResultDtoSchema = {
         },
         tieBreakRequired: {
             type: 'boolean'
+        },
+        tieBreakCount: {
+            type: 'integer',
+            format: 'int32',
+            nullable: true
         },
         closeToNext: {
             type: 'boolean'

@@ -877,7 +877,16 @@ public class TallyServiceTests : ServiceTestBase
             .First(rs => rs.ElectionGuid == election.ElectionGuid && rs.ResultType == "F");
         var resultTieAfter = Context.ResultTies.Single(rt => rt.ElectionGuid == election.ElectionGuid);
         Assert.Equal(true, resultTieAfter.IsResolved);
+        Assert.Equal(false, resultTieAfter.TieBreakRequired);
         Assert.Equal(true, summaryAfter.UseOnReports);
+
+        var tally = await _service.GetTallyResultsAsync(election.ElectionGuid);
+        Assert.Equal(3, tally.Results.Count);
+        Assert.All(tally.Results, row => Assert.False(row.TieBreakRequired));
+        Assert.Contains(tally.Results, row => row.TieBreakCount == 5);
+        Assert.Contains(tally.Results, row => row.TieBreakCount == 2);
+        Assert.Contains(tally.Results, row => row.TieBreakCount == 1);
+        Assert.All(tally.Ties, tie => Assert.False(tie.TieBreakRequired));
     }
 
     [Fact]

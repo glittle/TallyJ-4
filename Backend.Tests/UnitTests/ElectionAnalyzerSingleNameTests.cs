@@ -592,5 +592,10 @@ public class ElectionAnalyzerSingleNameTests : IDisposable
             .ToList();
         Assert.Single(resultTies);
         Assert.Equal(true, resultTies[0].IsResolved);
+        Assert.Equal(false, resultTies[0].TieBreakRequired);
+        Assert.True(results.All(r => r.TieBreakRequired != true));
+        Assert.Equal(5, results[0].TieBreakCount);
+        Assert.Equal(2, results[1].TieBreakCount);
+        Assert.Equal(1, results[2].TieBreakCount);
     }
 }

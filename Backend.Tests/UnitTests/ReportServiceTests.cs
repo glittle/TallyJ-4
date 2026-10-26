@@ -331,6 +331,69 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
     }
 
     [Fact]
+    public async Task GetMainReport_ResolvedTie_KeepsCountAndClearsHasTies()
+    {
+        await AddLocation("Hall");
+        await AddResultSummary();
+        var p1 = await AddPerson("Alpha", "A");
+        await AddResult(p1.PersonGuid, 1, 50, "T", tieBreakRequired: false, tieBreakCount: 3);
+
+        var report = await _service.GetMainReportAsync(_electionGuid);
+
+        Assert.False(report.HasTies);
+        Assert.Equal("50 / 3", report.Elected[0].VoteCountDisplay);
+    }
+
+    [Fact]
+    public async Task GetMainReport_UnresolvedTieOutsideElectedSlice_SetsHasTies()
+    {
+        await AddLocation("Hall");
+        await AddResultSummary();
+        var alpha = await AddPerson("Alpha", "A");
+        var beta = await AddPerson("Beta", "B");
+        var gamma = await AddPerson("Gamma", "G");
+        var delta = await AddPerson("Delta", "D");
+        var outside = await AddPerson("Zulu", "Z");
+        await AddResult(alpha.PersonGuid, 1, 50, "T");
+        await AddResult(beta.PersonGuid, 2, 40, "T");
+        await AddResult(gamma.PersonGuid, 3, 30, "T");
+        await AddResult(delta.PersonGuid, 4, 20, "X");
+        await AddResult(outside.PersonGuid, 5, 10, "O", tieBreakRequired: true);
+
+        var report = await _service.GetMainReportAsync(_electionGuid);
+
+        Assert.True(report.HasTies);
+        Assert.Equal(4, report.Elected.Count);
+        Assert.DoesNotContain(report.Elected, person => person.Name.Contains("Zulu"));
+    }
+
+    [Fact]
+    public async Task GetVotesByNum_UnresolvedTie_SetsHasUnresolvedTie()
+    {
+        var p1 = await AddPerson("Alpha", "A");
+        await AddResult(p1.PersonGuid, 1, 50, "T", tieBreakRequired: true, tieBreakCount: null);
+
+        var report = await _service.GetVotesByNumAsync(_electionGuid);
+
+        Assert.True(report.HasUnresolvedTie);
+        Assert.True(report.People[0].TieBreakRequired);
+        Assert.Null(report.People[0].TieBreakCount);
+    }
+
+    [Fact]
+    public async Task GetVotesByName_ResolvedCount_DoesNotSetHasUnresolvedTie()
+    {
+        var p1 = await AddPerson("Alpha", "A");
+        await AddResult(p1.PersonGuid, 1, 50, "T", tieBreakRequired: false, tieBreakCount: 3);
+
+        var report = await _service.GetVotesByNameAsync(_electionGuid);
+
+        Assert.False(report.HasUnresolvedTie);
+        Assert.Equal(3, report.People[0].TieBreakCount);
+        Assert.False(report.People[0].TieBreakRequired);
+    }
+
+    [Fact]
     public async Task GetMainReport_ExtraResults_ShowsNextRank()
     {
         await AddLocation("Hall");

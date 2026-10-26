@@ -80,7 +80,8 @@ public static class ElectionStageFinalizationReadiness
             || await context.Results
                 .AnyAsync(r => r.ElectionGuid == electionGuid
                                && r.TieBreakRequired == true
-                               && r.IsTied == true);
+                               && r.IsTied == true
+                               && r.IsTieResolved != true);
 
         if (hasUnresolvedTies)
         {

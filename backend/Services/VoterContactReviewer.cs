@@ -118,6 +118,7 @@ public class VoterContactReviewer : IVoterContactReviewer
         await _context.SaveChangesAsync(cancellationToken);
 
         var distinct = flags.Select(flag => flag.ContactKey).Distinct(StringComparer.OrdinalIgnoreCase).Count();
+        // More than FlaggedEntryThreshold (default 3). Exactly 3 distinct bad contacts do not flag.
         if (distinct <= _options.ResolvedFlaggedEntryThreshold)
         {
             return;

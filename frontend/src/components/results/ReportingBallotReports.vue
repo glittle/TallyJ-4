@@ -239,16 +239,16 @@ const selectedReportName = computed(() => props.selectedReportName);
 
       <div class="page-break"></div>
       <h3>{{ $t("reporting.electedPersons") }}</h3>
+      <p v-if="mainData.hasTies" class="tie-break-required">
+        {{ $t("results.tieBreakRequired") }}
+      </p>
       <table class="data-table">
         <thead>
           <tr>
             <th>#</th>
             <th>{{ $t("reporting.name") }}</th>
             <th>{{ $t("reporting.bahaiId") }}</th>
-            <th>
-              {{ $t("reporting.votes")
-              }}{{ mainData.hasTies ? " / Tie Break" : "" }}
-            </th>
+            <th>{{ $t("reporting.votes") }}</th>
           </tr>
         </thead>
         <tbody>
@@ -276,18 +276,15 @@ const selectedReportName = computed(() => props.selectedReportName);
         <div>{{ votesByNumData.electionName }}</div>
         <div>{{ formatDate(votesByNumData.dateOfElection) }}</div>
       </div>
+      <p v-if="votesByNumData.hasUnresolvedTie" class="tie-break-required">
+        {{ $t("results.tieBreakRequired") }}
+      </p>
       <div class="votes-list">
         <template v-for="(p, i) in votesByNumData.people" :key="i">
           <div v-if="p.showBreak" class="section-break"></div>
           <div class="vote-person" :class="{ elected: p.section === 'E' }">
             <span class="vote-count"
-              >{{
-                formatVoteCountWithTieBreak(
-                  p.voteCount,
-                  p.tieBreakRequired,
-                  p.tieBreakCount,
-                )
-              }}
+              >{{ formatVoteCountWithTieBreak(p.voteCount, p.tieBreakCount) }}
               -
             </span>
             <span class="vote-name">{{ p.personName }}</span>
@@ -306,6 +303,9 @@ const selectedReportName = computed(() => props.selectedReportName);
         <div>{{ votesByNameData.electionName }}</div>
         <div>{{ formatDate(votesByNameData.dateOfElection) }}</div>
       </div>
+      <p v-if="votesByNameData.hasUnresolvedTie" class="tie-break-required">
+        {{ $t("results.tieBreakRequired") }}
+      </p>
       <div class="votes-list">
         <template v-for="(p, i) in votesByNameData.people" :key="i">
           <div v-if="p.showBreak" class="section-break"></div>
@@ -314,11 +314,7 @@ const selectedReportName = computed(() => props.selectedReportName);
             <span class="vote-count">
               -
               {{
-                formatVoteCountWithTieBreak(
-                  p.voteCount,
-                  p.tieBreakRequired,
-                  p.tieBreakCount,
-                )
+                formatVoteCountWithTieBreak(p.voteCount, p.tieBreakCount)
               }}</span
             >
           </div>
@@ -521,3 +517,11 @@ const selectedReportName = computed(() => props.selectedReportName);
     <!-- All Can Receive -->
   </div>
 </template>
+
+<style lang="less">
+.reporting-ballot-reports {
+  .tie-break-required {
+    font-weight: 700;
+  }
+}
+</style>
