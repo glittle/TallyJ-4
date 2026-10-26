@@ -88,9 +88,13 @@ public static class ProgramServiceRegistration
         bool isTesting,
         bool skipDatabase = false)
     {
+        services.AddSingleton<UnmatchedRequestTracker>();
+        services.AddHostedService<UnmatchedRequestSummaryService>();
+
         services.AddSingleton<RateLimitStore>();
 
         // Testing and --skip-database must not start hosted services that open SQL.
+        // The unmatched-request summary does not touch SQL and stays registered above.
         if (isTesting || skipDatabase)
         {
             services.AddSingleton<IVoteCountBroadcastService, NullVoteCountBroadcastService>();

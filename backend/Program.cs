@@ -236,6 +236,8 @@ if (!isDevelopment && !isTesting)
         builder.WebHost.UseSentry(o =>
         {
             o.Dsn = dsn;
+            // Probe 404s are counted, not sent as their own events. Exceptions still go through.
+            o.SetBeforeSend(static (sentryEvent, _) => UnmatchedRequestSentry.Filter(sentryEvent));
             // When configuring for the first time, to see what the SDK is doing:
             // o.Debug = true;
         });
@@ -244,9 +246,12 @@ if (!isDevelopment && !isTesting)
 
 var app = builder.Build();
 
+UnmatchedRequestLogPolicy.Bind(app.Services.GetRequiredService<IHttpContextAccessor>());
+
 // Reconfigure logger with correlation ID enricher now that services are available
 var loggerConfiguration = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
+    .Filter.ByExcluding(UnmatchedRequestLogPolicy.ShouldSuppress)
     .Enrich.With(new CorrelationIdEnricher(app.Services.GetRequiredService<IHttpContextAccessor>()));
 
 // Create new logger with the same sinks as the original but with correlation ID enricher

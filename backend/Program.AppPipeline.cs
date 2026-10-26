@@ -78,6 +78,7 @@ public static class ProgramAppPipeline
         app.UseForwardedHeaders();
 
         app.UseExceptionHandler();
+        app.UseMiddleware<UnmatchedRequestMiddleware>();
 
         if (isDevelopment)
         {
@@ -158,10 +159,32 @@ public static class ProgramAppPipeline
         app.MapGet("/protected", () => "This is protected!").RequireAuthorization();
 
         // add a shutdown hook to help with server logs
-        app.Lifetime.ApplicationStopping.Register(async () =>
+        app.Lifetime.ApplicationStopping.Register(() =>
         {
             Log.Information("Application Stopping...");
-            await Log.CloseAndFlushAsync();
+            try
+            {
+                // Drain before CloseAndFlush. Hosted services stop after this callback,
+                // and their own flush is a no-op once the counts are taken.
+                var summary = app.Services.GetService<UnmatchedRequestTracker>()?.DrainFormatted();
+                if (summary is not null)
+                {
+                    Log.Information("{UnmatchedRequestSummary:l}", summary);
+                }
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    Log.Warning(ex, "Failed to flush unmatched request summary");
+                }
+                catch
+                {
+                    // The logger may already be closing.
+                }
+            }
+
+            _ = Log.CloseAndFlushAsync();
         });
     }
 
