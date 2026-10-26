@@ -2,6 +2,10 @@
 # push-to-main only (`pr: none`) and runs on windows-latest, so this is what
 # runs before a human reviews a backend PR.
 #
+# Ubuntu matches the usual PR gate. The extra Windows job runs the same Release
+# tests, because a Linux pass does not catch path, culture, or file-lock
+# failures that the Azure deploy would hit on windows-latest.
+#
 # Tests use SQLite (CustomWebApplicationFactory) or EF Core InMemory
 # (ServiceTestBase). No SQL Server is required.
 #
@@ -69,6 +73,45 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: backend-test-results
+          path: TestResults/**/*.trx
+          retention-days: 7
+          if-no-files-found: warn
+
+  # Same test command shape as .azure/pipelines/azure-back-end-pipeline.yml
+  # (dotnet test, Release). The project path is explicit so PowerShell does not
+  # have to expand the Azure glob.
+  backend-windows:
+    name: Backend (build, tests, windows)
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: |
+            backend/Backend.csproj
+            Backend.Tests/Backend.Tests.csproj
+
+      - name: Restore
+        run: dotnet restore repo.sln
+
+      - name: Build
+        run: dotnet build repo.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test Backend.Tests/Backend.Tests.csproj --configuration Release --no-build --results-directory TestResults --logger "trx;LogFileName=backend-tests.trx" --logger "console;verbosity=normal"
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: backend-test-results-windows
           path: TestResults/**/*.trx
           retention-days: 7
           if-no-files-found: warn
