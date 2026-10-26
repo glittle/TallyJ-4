@@ -131,6 +131,7 @@ Accept-all vs Front Desk **same person** is still one counted vote (desk method 
 
 **Status:** active  
 **Evidence:** inferred (Windows `File.Delete` of a pooled Microsoft.Data.Sqlite file throws a sharing violation; Linux unlink of that same open file succeeds. #401’s `EvaluateAsync_WorksOnSqliteWithoutThrowing` started deleting a temp file and did not release the handle. Sibling file tests already catch `IOException` on delete. The Azure exception text was not in this checkout.)  
+**Verification:** corroborated — with pooling off for that file, `windows-latest` passed `EvaluateAsync_WorksOnSqliteWithoutThrowing` and the other 1635 Backend.Tests  
 **Revisit when:** Microsoft.Data.Sqlite drops the file handle on dispose while pooling stays on, or Backend.Tests stops using file-backed SQLite
 
 `Microsoft.Data.Sqlite` pools by default. Disposing the context returns the connection to the pool, so the file stays open. `EvaluateAsync_WorksOnSqliteWithoutThrowing` deletes that temp database in a `finally`, with `Pooling = false` on that connection string only. The finalization queries still run on a real SQLite file.
