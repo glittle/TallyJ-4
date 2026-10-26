@@ -296,6 +296,31 @@ describe("usePeopleStore", () => {
         phoneOnlineVoter: undefined,
       });
     });
+
+    it("keeps the last announcement when a person update omits it", async () => {
+      const store = usePeopleStore();
+      store.peopleList = [
+        {
+          personGuid: "person-1",
+          fullName: "Smith, Alice",
+          lastAnnouncementChannel: "sms",
+          lastAnnouncementOutcome: "failed",
+          lastAnnouncementError: "election-cap",
+        },
+      ];
+
+      store.upsertPersonListEntry(
+        createPersonDto({
+          personGuid: "person-1",
+          fullName: "Smith, Alicia",
+        }),
+      );
+
+      expect(store.peopleList[0].fullName).toBe("Smith, Alicia");
+      expect(store.peopleList[0].lastAnnouncementChannel).toBe("sms");
+      expect(store.peopleList[0].lastAnnouncementOutcome).toBe("failed");
+      expect(store.peopleList[0].lastAnnouncementError).toBe("election-cap");
+    });
   });
 
   describe("election stats invalidation", () => {

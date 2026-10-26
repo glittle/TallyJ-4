@@ -14,4 +14,10 @@ public class WhatsAppNotifyPersonResultDto
     /// <c>sent</c>, <c>failed</c>, <c>cancelled</c>, or a <c>skipped-*</c> reason.
     /// </summary>
     public string Outcome { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Provider text or paid-send block reason for a failed attempt.
+    /// No raw phone or email.
+    /// </summary>
+    public string? Error { get; set; }
 }

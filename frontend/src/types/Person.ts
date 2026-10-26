@@ -36,6 +36,9 @@ export interface PersonListDto {
   ineligibleReasonCode?: string;
   unitName?: string;
   phoneOnlineVoter?: PersonPhoneSmsHintDto | null;
+  lastAnnouncementChannel?: string | null;
+  lastAnnouncementOutcome?: string | null;
+  lastAnnouncementError?: string | null;
 }
 
 export interface PersonSmsLogDto {
@@ -139,6 +142,25 @@ export interface CheckSelectedWhatsAppResultDto {
 export interface WhatsAppNotifyPersonResultDto {
   personGuid: string;
   outcome: string;
+  error?: string | null;
+}
+
+export interface AnnouncementPersonResultDto {
+  personGuid: string;
+  outcome: string;
+  error?: string | null;
+}
+
+export interface AnnouncementStatusDto {
+  queueToken: string;
+  channel: string;
+  running: boolean;
+  cancelled: boolean;
+  queued: number;
+  sent: number;
+  skipped: number;
+  failed: number;
+  results: AnnouncementPersonResultDto[];
 }
 
 export interface WhatsAppNotifyStatusDto {

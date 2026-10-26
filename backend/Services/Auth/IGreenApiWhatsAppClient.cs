@@ -1,3 +1,5 @@
+using Backend.Helpers;
+
 namespace Backend.Services.Auth;
 
 /// <summary>
@@ -49,13 +51,21 @@ public readonly record struct GreenApiWhatsAppCheckResult(string Status, bool Pr
 /// <summary>
 /// Result of a GreenAPI <c>sendMessage</c> call.
 /// </summary>
-public readonly record struct GreenApiWhatsAppSendResult(bool Sent, bool ProviderCalled, string? MessageId)
+public readonly record struct GreenApiWhatsAppSendResult(
+    bool Sent,
+    bool ProviderCalled,
+    string? MessageId,
+    string? Error = null)
 {
     public static GreenApiWhatsAppSendResult NotConfigured() =>
         new(false, ProviderCalled: false, null);
 
-    public static GreenApiWhatsAppSendResult Failed() =>
-        new(false, ProviderCalled: true, null);
+    /// <summary>
+    /// Provider was called and did not accept the message.
+    /// <paramref name="error"/> is sanitized before it is stored.
+    /// </summary>
+    public static GreenApiWhatsAppSendResult Failed(string? error = null) =>
+        new(false, ProviderCalled: true, null, AnnouncementErrorText.Sanitize(error) ?? "send-failed");
 
     public static GreenApiWhatsAppSendResult Succeeded(string messageId) =>
         new(true, ProviderCalled: true, messageId);

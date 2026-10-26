@@ -246,9 +246,44 @@ describe("PeopleTable", () => {
       },
     });
 
+    expect(wrapper.find(".people-table__last-send").text()).toBe("");
+
     await wrapper.find(".select-stub").trigger("click");
     expect(wrapper.emitted("update:selectedGuids")?.[0]).toEqual([
       [samplePerson.personGuid],
     ]);
+  });
+
+  it("shows the last failed send and its error", () => {
+    const wrapper = mount(PeopleTable, {
+      props: {
+        people: [
+          {
+            ...samplePerson,
+            lastAnnouncementChannel: "sms",
+            lastAnnouncementOutcome: "failed",
+            lastAnnouncementError: "election-cap",
+          },
+        ],
+        loading: false,
+        tableHeight: 400,
+        selectedGuids: [],
+      },
+      global: {
+        components: { ElButton },
+        directives: { loading: () => undefined },
+        stubs: {
+          ElAutoResizer: AutoResizerStub as unknown as Component,
+          ElTableV2: TableStub as unknown as Component,
+          ElIcon: { template: "<span />" },
+          ElCheckbox: true,
+          ElTag: { template: "<span><slot /></span>" },
+        },
+      },
+    });
+
+    expect(wrapper.find(".people-table__last-send").text()).toBe(
+      "failed — election-cap",
+    );
   });
 });
