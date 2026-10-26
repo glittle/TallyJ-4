@@ -999,6 +999,16 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "reporting.votesTieBreak": {
+    "t": "Votes / tie-break",
+    "s": "ai",
+    "w": "2026-10-26T05:30:00Z"
+  },
+  "reporting.votesTieBreakLegend": {
+    "t": "Votes / tie-break count",
+    "s": "ai",
+    "w": "2026-10-26T05:30:00Z"
+  },
   "reporting.votingMethod": {
     "t": "Voting Method",
     "s": "source",

@@ -14034,6 +14034,9 @@
               "$ref": "#/components/schemas/Reports_VotePersonDto"
             },
             "nullable": true
+          },
+          "hasUnresolvedTie": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -14056,6 +14059,9 @@
               "$ref": "#/components/schemas/Reports_VotePersonDto"
             },
             "nullable": true
+          },
+          "hasUnresolvedTie": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -14753,6 +14759,11 @@
           },
           "tieBreakRequired": {
             "type": "boolean"
+          },
+          "tieBreakCount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           },
           "closeToNext": {
             "type": "boolean"

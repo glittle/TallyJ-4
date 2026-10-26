@@ -60,28 +60,105 @@ public class ElectionStageFinalizationReadinessTests : ServiceTestBase
     public async Task EvaluateAsync_WorksOnSqliteWithoutThrowing()
     {
         var electionGuid = Guid.NewGuid();
+        var dbPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".db");
         var options = new DbContextOptionsBuilder<MainDbContext>()
-            .UseSqlite($"Data Source={Guid.NewGuid()}.db")
+            .UseSqlite($"Data Source={dbPath}")
             .Options;
 
-        await using var context = new MainDbContext(options);
-        context.Database.EnsureCreated();
-        context.Elections.Add(new Election
+        await using (var context = new MainDbContext(options))
         {
-            ElectionGuid = electionGuid,
-            Name = "Sqlite Election",
-            ElectionType = "LSA",
-            NumberToElect = 3,
-            ElectionStage = ElectionStage.ProcessingBallots,
-            DateOfElection = DateTime.UtcNow,
-            RowVersion = new byte[8]
-        });
-        await context.SaveChangesAsync();
+            context.Database.EnsureCreated();
+            var bestId = Guid.NewGuid();
+            var coleId = Guid.NewGuid();
+            context.Elections.Add(new Election
+            {
+                ElectionGuid = electionGuid,
+                Name = "Sqlite Election",
+                ElectionType = "LSA",
+                NumberToElect = 3,
+                NumberExtra = 1,
+                ElectionStage = ElectionStage.ProcessingBallots,
+                DateOfElection = DateTime.UtcNow,
+                RowVersion = new byte[8]
+            });
+            context.People.AddRange(
+                new Person
+                {
+                    PersonGuid = bestId,
+                    ElectionGuid = electionGuid,
+                    FirstName = "Pat",
+                    LastName = "Best",
+                    RowVersion = new byte[8]
+                },
+                new Person
+                {
+                    PersonGuid = coleId,
+                    ElectionGuid = electionGuid,
+                    FirstName = "Sam",
+                    LastName = "Cole",
+                    RowVersion = new byte[8]
+                });
+            // Calculate writes both summaries, then an unresolved tie leaves UseOnReports false.
+            context.ResultSummaries.Add(CalculatedSummary(electionGuid, "C"));
+            context.ResultSummaries.Add(CalculatedSummary(electionGuid, "F"));
+            context.Results.AddRange(
+                new Result
+                {
+                    ElectionGuid = electionGuid,
+                    PersonGuid = bestId,
+                    Rank = 1,
+                    Section = "E",
+                    VoteCount = 10,
+                    IsTied = true,
+                    TieBreakGroup = 1,
+                    TieBreakRequired = true,
+                    TieBreakCount = null,
+                    IsTieResolved = false,
+                    CloseToPrev = false,
+                    CloseToNext = true
+                },
+                new Result
+                {
+                    ElectionGuid = electionGuid,
+                    PersonGuid = coleId,
+                    Rank = 2,
+                    Section = "X",
+                    VoteCount = 10,
+                    IsTied = true,
+                    TieBreakGroup = 1,
+                    TieBreakRequired = true,
+                    TieBreakCount = null,
+                    IsTieResolved = false,
+                    CloseToPrev = true,
+                    CloseToNext = false,
+                    RankInExtra = 1
+                });
+            context.ResultTies.Add(new ResultTie
+            {
+                ElectionGuid = electionGuid,
+                TieBreakGroup = 1,
+                TieBreakRequired = true,
+                IsResolved = false,
+                NumInTie = 2,
+                NumToElect = 1
+            });
+            await context.SaveChangesAsync();
 
-        var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(context, electionGuid);
+            var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(context, electionGuid);
 
-        Assert.False(readiness.IsReady);
-        Assert.NotEmpty(readiness.Blockers);
+            Assert.False(readiness.IsReady);
+            Assert.Contains(readiness.Blockers, blocker => blocker == AnalysisNotReady);
+            Assert.Contains(readiness.Blockers, blocker => blocker == UnresolvedTies);
+        }
+
+        foreach (var suffix in new[] { "", "-wal", "-shm" })
+        {
+            var path = dbPath + suffix;
+            if (File.Exists(path))
+            {
+                File.Delete(path);
+            }
+        }
     }
 
     [Fact]
@@ -192,6 +269,57 @@ public class ElectionStageFinalizationReadinessTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task EvaluateAsync_ResolvedTie_DoesNotBlockFinalization()
+    {
+        var electionGuid = await SeedReadyElectionAsync(useOnlineVoting: false);
+        var result = Context.Results.Single(r => r.ElectionGuid == electionGuid);
+        result.IsTied = true;
+        result.TieBreakRequired = true;
+        result.IsTieResolved = true;
+        result.TieBreakCount = 3;
+        Context.ResultTies.Add(new ResultTie
+        {
+            ElectionGuid = electionGuid,
+            TieBreakGroup = 1,
+            TieBreakRequired = true,
+            IsResolved = true,
+            NumInTie = 2,
+            NumToElect = 1
+        });
+        await Context.SaveChangesAsync();
+
+        var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, electionGuid);
+
+        Assert.True(readiness.IsReady);
+        Assert.DoesNotContain(UnresolvedTies, readiness.Blockers);
+    }
+
+    [Fact]
+    public async Task EvaluateAsync_UnresolvedResultTie_BlocksFinalization()
+    {
+        var electionGuid = await SeedReadyElectionAsync(useOnlineVoting: false);
+        var result = Context.Results.Single(r => r.ElectionGuid == electionGuid);
+        result.IsTied = true;
+        result.TieBreakRequired = true;
+        result.IsTieResolved = false;
+        Context.ResultTies.Add(new ResultTie
+        {
+            ElectionGuid = electionGuid,
+            TieBreakGroup = 1,
+            TieBreakRequired = true,
+            IsResolved = true,
+            NumInTie = 2,
+            NumToElect = 1
+        });
+        await Context.SaveChangesAsync();
+
+        var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, electionGuid);
+
+        Assert.False(readiness.IsReady);
+        Assert.Contains(UnresolvedTies, readiness.Blockers);
+    }
+
+    [Fact]
     public async Task EvaluateAsync_ReadyWhenUseOnlineVotingIsFalse()
     {
         var electionGuid = await SeedReadyElectionAsync(useOnlineVoting: false);
@@ -243,5 +371,32 @@ public class ElectionStageFinalizationReadinessTests : ServiceTestBase
         });
         await Context.SaveChangesAsync();
         return electionGuid;
+    }
+
+    /// <summary>
+    /// Count fields <c>CombineCalcAndManualSummaries</c> writes after Calculate, with an unresolved tie.
+    /// </summary>
+    private static ResultSummary CalculatedSummary(Guid electionGuid, string resultType)
+    {
+        return new ResultSummary
+        {
+            ElectionGuid = electionGuid,
+            ResultType = resultType,
+            UseOnReports = false,
+            NumVoters = 0,
+            NumEligibleToVote = 0,
+            MailedInBallots = 0,
+            DroppedOffBallots = 0,
+            InPersonBallots = 0,
+            SpoiledBallots = 0,
+            BallotsReceived = 0,
+            BallotsNeedingReview = 0,
+            CalledInBallots = 0,
+            OnlineBallots = 0,
+            Custom1Ballots = 0,
+            Custom2Ballots = 0,
+            Custom3Ballots = 0,
+            ImportedBallots = 0
+        };
     }
 }

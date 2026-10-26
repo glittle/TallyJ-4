@@ -1675,12 +1675,14 @@ export type ReportsVotesByNameDto = {
     electionName?: string | null;
     dateOfElection?: Date | null;
     people?: Array<ReportsVotePersonDto> | null;
+    hasUnresolvedTie?: boolean;
 };
 
 export type ReportsVotesByNumDto = {
     electionName?: string | null;
     dateOfElection?: Date | null;
     people?: Array<ReportsVotePersonDto> | null;
+    hasUnresolvedTie?: boolean;
 };
 
 export type ResultsAcceptAllOnlineBallotsRunDto = {
@@ -1879,6 +1881,7 @@ export type ResultsPersonResultDto = {
     isTied?: boolean;
     tieBreakGroup?: number | null;
     tieBreakRequired?: boolean;
+    tieBreakCount?: number | null;
     closeToNext?: boolean;
     closeToPrev?: boolean;
 };

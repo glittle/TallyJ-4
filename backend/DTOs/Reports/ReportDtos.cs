@@ -62,6 +62,11 @@ public class VotesByNumDto
     public string ElectionName { get; set; } = "";
     public DateTimeOffset? DateOfElection { get; set; }
     public List<VotePersonDto> People { get; set; } = new();
+
+    /// <summary>
+    /// True when a required tie is still unresolved (no counts, all equal, or all 0).
+    /// </summary>
+    public bool HasUnresolvedTie { get; set; }
 }
 
 public class VotePersonDto
@@ -79,6 +84,11 @@ public class VotesByNameDto
     public string ElectionName { get; set; } = "";
     public DateTimeOffset? DateOfElection { get; set; }
     public List<VotePersonDto> People { get; set; } = new();
+
+    /// <summary>
+    /// True when a required tie is still unresolved (no counts, all equal, or all 0).
+    /// </summary>
+    public bool HasUnresolvedTie { get; set; }
 }
 
 public class BallotReportItemDto

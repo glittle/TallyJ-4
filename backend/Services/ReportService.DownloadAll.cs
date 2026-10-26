@@ -225,6 +225,11 @@ internal static class ReportCsvFormatter
         WriteRow(writer, "Online", main.OnlineBallots.ToString());
         WriteRow(writer, "Imported", main.ImportedBallots.ToString());
         writer.WriteLine();
+        if (main.HasTies)
+        {
+            WriteRow(writer, "Tie-break Required");
+        }
+
         WriteRow(writer, "Rank", "Name", "Votes", "Section");
         foreach (var person in main.Elected)
         {
@@ -235,6 +240,11 @@ internal static class ReportCsvFormatter
     private static void WriteVotePeople(TextWriter writer, string electionName, List<VotePersonDto> people)
     {
         WriteRow(writer, "Election", electionName);
+        if (people.Any(p => p.TieBreakRequired))
+        {
+            WriteRow(writer, "Tie-break Required");
+        }
+
         WriteRow(writer, "Name", "Votes", "Tie-break", "Section");
         foreach (var p in people)
         {

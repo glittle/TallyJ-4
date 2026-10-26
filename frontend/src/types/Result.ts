@@ -17,6 +17,8 @@ export interface PersonResultDto {
   isTied: boolean;
   tieBreakGroup?: number;
   tieBreakRequired: boolean;
+  /** Null when none has been entered. 0 is an explicit runoff result. */
+  tieBreakCount?: number | null;
   closeToNext: boolean;
   closeToPrev: boolean;
 }

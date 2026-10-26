@@ -48,15 +48,15 @@ export function setClearedTieBreakCount(person: TiePersonDto): void {
 }
 
 /**
- * Votes reports show `/ count` only when a runoff result was entered.
- * Unset (null/undefined) omits the suffix so it is not printed as "null" or 0.
+ * Votes reports show `/ count` whenever a runoff result was entered,
+ * including after the tie is resolved. Unset (null/undefined) omits the suffix.
+ * Explicit 0 is an entered result.
  */
 export function formatVoteCountWithTieBreak(
   voteCount: number,
-  tieBreakRequired: boolean,
   tieBreakCount: number | null | undefined,
 ): string {
-  if (!tieBreakRequired || isTieBreakCountUnset(tieBreakCount)) {
+  if (isTieBreakCountUnset(tieBreakCount)) {
     return String(voteCount);
   }
 

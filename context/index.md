@@ -8,7 +8,7 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [realtime.md](realtime.md) — SignalR hub group naming (not a single `election-{guid}` pattern); election hub joins require election access
 - [api-contracts.md](api-contracts.md) — dual API response wrappers and OpenAPI client regeneration
 - [election-analysis.md](election-analysis.md) — core analysis engine; risk-first correctness vs v3
-- [reports.md](reports.md) — VotersByArea 18+/18–21 (V01), download-all zip of the existing report list, Front Desk vs analysis voted rule; Analyze SaveManual persists M without re-running Analyze; vote `/ tie-break` only when a count was entered
+- [reports.md](reports.md) — VotersByArea 18+/18–21 (V01), download-all zip of the existing report list, Front Desk vs analysis voted rule; Analyze SaveManual persists M without re-running Analyze; vote `/ tie-break` when a count was entered, including after resolution; unresolved ties are named on Main and Votes-by reports
 - [ballot-validation.md](ballot-validation.md) — pre-finalization integrity; count-reconciliation report before Analyze/Finalize
 - [election-state.md](election-state.md) — teller coordination, Finalized write lock, and #191 concurrent-teller SQLite coverage
 - [online-ballots.md](online-ballots.md) - Draft autosave vs Submitted, online acceptance (pending until Accept-all), reserved Online/Imported locations, monitor close countdown, anonymous ballot-page sessions, and random name resolution

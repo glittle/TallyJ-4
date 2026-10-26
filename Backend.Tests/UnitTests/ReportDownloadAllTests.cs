@@ -129,6 +129,117 @@ public class ReportDownloadAllTests : ServiceTestBase
     }
 
     [Fact]
+    public void WriteMainCsv_UnresolvedTie_WritesTieBreakRequired()
+    {
+        using var writer = new StringWriter();
+        ReportCsvFormatter.Write(
+            writer,
+            "Main",
+            "Main Report",
+            new MainReportDto
+            {
+                ElectionName = "Ties",
+                HasTies = true,
+                Elected =
+                [
+                    new ElectedPersonDto
+                    {
+                        Rank = "1",
+                        Name = "Best",
+                        VoteCountDisplay = "10",
+                        Section = "E"
+                    }
+                ]
+            });
+
+        Assert.Contains("Tie-break Required", writer.ToString());
+    }
+
+    [Fact]
+    public void WriteMainCsv_ResolvedCount_OmitsTieBreakRequired()
+    {
+        using var writer = new StringWriter();
+        ReportCsvFormatter.Write(
+            writer,
+            "Main",
+            "Main Report",
+            new MainReportDto
+            {
+                ElectionName = "Ties",
+                HasTies = false,
+                Elected =
+                [
+                    new ElectedPersonDto
+                    {
+                        Rank = "1",
+                        Name = "Best",
+                        VoteCountDisplay = "10 / 5",
+                        Section = "E"
+                    }
+                ]
+            });
+
+        var csv = writer.ToString();
+        Assert.DoesNotContain("Tie-break Required", csv);
+        Assert.Contains("10 / 5", csv);
+    }
+
+    [Fact]
+    public void WriteVotesByNumCsv_UnresolvedTie_WritesTieBreakRequired()
+    {
+        using var writer = new StringWriter();
+        ReportCsvFormatter.Write(
+            writer,
+            "VotesByNum",
+            "Votes by number",
+            new VotesByNumDto
+            {
+                ElectionName = "Ties",
+                People =
+                [
+                    new VotePersonDto
+                    {
+                        PersonName = "Best",
+                        VoteCount = 10,
+                        TieBreakRequired = true,
+                        Section = "E"
+                    }
+                ]
+            });
+
+        Assert.Contains("Tie-break Required", writer.ToString());
+    }
+
+    [Fact]
+    public void WriteVotesByNameCsv_ResolvedCount_OmitsTieBreakRequired()
+    {
+        using var writer = new StringWriter();
+        ReportCsvFormatter.Write(
+            writer,
+            "VotesByName",
+            "Votes by name",
+            new VotesByNameDto
+            {
+                ElectionName = "Ties",
+                People =
+                [
+                    new VotePersonDto
+                    {
+                        PersonName = "Best",
+                        VoteCount = 10,
+                        TieBreakCount = 5,
+                        TieBreakRequired = false,
+                        Section = "E"
+                    }
+                ]
+            });
+
+        var csv = writer.ToString();
+        Assert.DoesNotContain("Tie-break Required", csv);
+        Assert.Contains("5", csv);
+    }
+
+    [Fact]
     public async Task GetReportByCode_Unknown_Throws()
     {
         SeedElection();

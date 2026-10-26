@@ -690,22 +690,25 @@ public class ElectionAnalyzerNormalTests : IDisposable
         Assert.Single(resultTies);
         Assert.Equal(2, resultTies[0].NumToElect);
         Assert.Equal(3, resultTies[0].NumInTie);
-        Assert.Equal(true, resultTies[0].TieBreakRequired);
+        Assert.Equal(false, resultTies[0].TieBreakRequired);
         Assert.Equal(true, resultTies[0].IsResolved);
 
         Assert.Equal(true, results[0].IsTied);
         Assert.Equal("E", results[0].Section);
-        Assert.Equal(true, results[0].TieBreakRequired);
+        Assert.Equal(false, results[0].TieBreakRequired);
+        Assert.Equal(1, results[0].TieBreakCount);
         Assert.Equal(true, results[0].IsTieResolved);
 
         Assert.Equal(true, results[1].IsTied);
         Assert.Equal("E", results[1].Section);
-        Assert.Equal(true, results[1].TieBreakRequired);
+        Assert.Equal(false, results[1].TieBreakRequired);
+        Assert.Equal(1, results[1].TieBreakCount);
         Assert.Equal(true, results[1].IsTieResolved);
 
         Assert.Equal(true, results[2].IsTied);
         Assert.Equal("X", results[2].Section);
-        Assert.Equal(true, results[2].TieBreakRequired);
+        Assert.Equal(false, results[2].TieBreakRequired);
+        Assert.Equal(0, results[2].TieBreakCount);
         Assert.Equal(true, results[2].IsTieResolved);
     }
 
@@ -958,7 +961,9 @@ public class ElectionAnalyzerNormalTests : IDisposable
             .ToList();
         Assert.Single(resultTies);
         Assert.Equal(true, resultTies[0].IsResolved);
+        Assert.Equal(false, resultTies[0].TieBreakRequired);
         Assert.True(results.All(r => r.IsTieResolved == true));
+        Assert.True(results.All(r => r.TieBreakRequired != true));
     }
 
     [Fact]

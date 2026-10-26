@@ -35,7 +35,8 @@ public partial class ReportService
         {
             ElectionName = election.Name,
             DateOfElection = election.DateOfElection,
-            People = people
+            People = people,
+            HasUnresolvedTie = people.Any(p => p.TieBreakRequired)
         };
     }
 
@@ -62,7 +63,8 @@ public partial class ReportService
         {
             ElectionName = election.Name,
             DateOfElection = election.DateOfElection,
-            People = people
+            People = people,
+            HasUnresolvedTie = people.Any(p => p.TieBreakRequired)
         };
     }
 }

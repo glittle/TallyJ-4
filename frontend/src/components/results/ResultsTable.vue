@@ -1,10 +1,22 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { PersonResultDto } from "../../types";
+import { isTieBreakCountUnset } from "../../utils/tieBreakCounts";
 
-defineProps<{
+const props = defineProps<{
   results: PersonResultDto[];
 }>();
+
+const showTieBreakCount = computed(() =>
+  props.results.some(
+    (row) => row.tieBreakRequired || !isTieBreakCountUnset(row.tieBreakCount),
+  ),
+);
+
+function tieBreakCountText(count: number | null | undefined): string {
+  return isTieBreakCountUnset(count) ? "" : String(count);
+}
 
 const { t } = useI18n();
 
@@ -47,6 +59,16 @@ function getSectionLabel(section: string) {
       align="center"
       sortable
     />
+    <el-table-column
+      v-if="showTieBreakCount"
+      :label="$t('tieManagement.tieBreakCount')"
+      width="150"
+      align="center"
+    >
+      <template #default="scope">
+        {{ tieBreakCountText(scope.row.tieBreakCount) }}
+      </template>
+    </el-table-column>
     <el-table-column prop="section" :label="$t('results.section')" width="120">
       <template #default="scope">
         <el-tag :type="getSectionType(scope.row.section)">

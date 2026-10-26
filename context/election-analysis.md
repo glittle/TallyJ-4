@@ -50,7 +50,7 @@ v3 always re-ran analysis after saving tie-break counts (the Analyze button is �
 - All-0 is valid input. Ranking treats every 0 as equal, so the tie stays unresolved and `UseOnReports` stays false.
 - Persist null for “not entered” and 0 for an explicit runoff result. Required ties no longer coerce null to 0. Sort and still-tied checks still treat null as 0.
 - The tie-management page sends null when a field is cleared (#389) and refreshes stored results after save. Explicit 0 remains a runoff result. Omitting a person still leaves the stored count unchanged.
-- Reports show `/ {count}` only when a count was entered (including 0). Unset omits the suffix. Main `HasTies` is `TieBreakRequired` on the elected/extra rows, not a slash in the display string.
+- Reports show `/ {count}` whenever a count was entered (including 0), including after the tie is resolved. Unset omits the suffix. Main `HasTies` follows `TieBreakRequired` on any result in the election, which is cleared once the counts resolve the group. It is not a slash in the display string.
 
 **Rejected alternative:** re-analyze only when every group member `HasValue`. Rejected — that is not v3 behavior, and it would skip re-rank after a partial save once required ties stop filling 0.
 
@@ -61,6 +61,19 @@ v3 always re-ran analysis after saving tie-break counts (the Analyze button is �
 **Rejected alternative:** clear a saved count by writing 0 (#389). Rejected — 0 is a real runoff result, so it cannot return a saved count to unset. Clear sends null; the analyzer restores only counts that still have a value.
 
 **Rejected alternative:** concatenate `TieBreakCount` whenever the tie is required. Rejected — that printed `" / "` (C#) or `" / null"` (Vue) for unset, and made `HasTies` false until a count was typed.
+
+## Resolved runoff clears "Tie-break Required"
+
+**Status:** active  
+**Evidence:** confirmed (issues #388 and #390; analyzer tests had kept the flag after distinct counts)  
+**Source:** issues #388, #390  
+**Revisit when:** a known-good v3 package shows v3 keeps the required flag after the runoff distinguishes the group
+
+Equal ballot totals still set `IsTied`. `TieBreakRequired` means the group is not yet distinguished. Once saved counts give every member a different `(TieBreakCount ?? 0)` across a section boundary (or inside Extra), `IsResolved` / `IsTieResolved` are true and both the `ResultTie` and each `Result` clear `TieBreakRequired`. The counts stay, including explicit 0. A later Calculate does not put the flag back. All-0 and all-unset stay unresolved, so the flag stays. The clear happens after the block that drops counts when the tie was not required, so a resolved runoff does not wipe its counts.
+
+Finalization already required `ResultTie.TieBreakRequired && IsResolved != true`. The `Results` clause also requires `IsTieResolved != true`, so a resolved row does not block Finalize.
+
+**Rejected alternative:** leave `TieBreakRequired` true after the counts resolve the group. That is what the analyzer tests locked, reading the flag as "this group needed a tie-break". Rejected — the results page and finalization treat the bit as "still required", so a finished runoff stayed on "Tie-break Required".
 
 ## Analyze manual voter counts persist M without re-running Analyze
 

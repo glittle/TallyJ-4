@@ -78,8 +78,14 @@ public class PersonResultDto
 
     /// <summary>
     /// Whether tie breaking is required for this person.
+    /// False once saved tie-break counts resolve the group.
     /// </summary>
     public bool TieBreakRequired { get; set; }
+
+    /// <summary>
+    /// Tie-break runoff votes. Null when none has been entered. 0 is an explicit runoff result.
+    /// </summary>
+    public int? TieBreakCount { get; set; }
 
     /// <summary>
     /// Whether this person's vote count is close to the next person's count.
