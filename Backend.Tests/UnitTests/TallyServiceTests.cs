@@ -1077,6 +1077,41 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task SaveTieCountsAsync_Null_UnsetsPreviousCount()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 1, numberExtra: 1);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 3);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 3);
+        await CreateThreeWayEqualVoteAsync(ballots, people);
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        await _service.SaveTieCountsAsync(election.ElectionGuid, new SaveTieCountsRequestDto
+        {
+            Counts =
+            [
+                new TieCountDto { PersonGuid = people[1].PersonGuid, TieBreakCount = 4 },
+            ]
+        });
+
+        var cleared = await _service.SaveTieCountsAsync(election.ElectionGuid, new SaveTieCountsRequestDto
+        {
+            Counts =
+            [
+                new TieCountDto { PersonGuid = people[1].PersonGuid, TieBreakCount = null },
+            ]
+        });
+
+        Assert.True(cleared.Success);
+        Assert.True(cleared.ReAnalysisTriggered);
+
+        var stored = Context.Results.Single(r =>
+            r.ElectionGuid == election.ElectionGuid && r.PersonGuid == people[1].PersonGuid);
+        Assert.Null(stored.TieBreakCount);
+    }
+
+    [Fact]
     public async Task CalculateNormalElectionAsync_ExtrasAssignRankInExtraSequentially()
     {
         var election = await CreateTestElectionAsync(numberToElect: 2, numberExtra: 3);

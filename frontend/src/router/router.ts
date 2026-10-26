@@ -124,6 +124,16 @@ const routes = [
 
         meta: { titleKey: "auth.tellerJoin.title" },
       },
+
+      {
+        path: ":pathMatch(.*)*",
+
+        name: "not-found",
+
+        component: () => import("../pages/NotFoundPage.vue"),
+
+        meta: { titleKey: "error.pageNotFound.title" },
+      },
     ],
   },
 

@@ -259,7 +259,7 @@ People list (`PersonListDto.PhoneOnlineVoter`) and Front Desk (`FrontDeskVoterDt
 
 The list DTO is slim (`PersonPhoneSmsHintDto`: `HasPhoneRow`, `WhenRegistered`, `SmsStatus`, plus `WhatsAppStatus` from the #255 list-column slice). It does not include last-login or recent SmsLog — those stay on person detail. Create/update `PersonDto` carries the same slim hint so the people-list cache is not wiped on save. Front Desk does not add the raw phone to the voter row.
 
-Compact cell (SMS first): blocked reason / OK / never-seen / imported (`HasPhoneRow` and `WhenRegistered` null) / unchecked (registered, `SmsStatus` still null). Set OK / Block stays on person detail; the list has no new edit surface.
+Compact cell (SMS and WhatsApp): blocked reason / OK / never-seen / unchecked. A P-row with a null channel status is Unchecked, including when `WhenRegistered` is null, so the list matches the person form (#400). Set OK / Block stays on person detail and the reloaded hint is written back onto the people-list row. The list has no new edit surface.
 
 Batch lookup is `FindPhoneOnlineVotersAsync` (P rows only) so Front Desk / people list do not N+1.
 

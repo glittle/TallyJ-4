@@ -1951,7 +1951,7 @@ export type ResultsTallyStatisticsDto = {
 
 export type ResultsTieCountDto = {
     personGuid?: string;
-    tieBreakCount?: number;
+    tieBreakCount?: number | null;
 };
 
 export type ResultsTieDetailsDto = {

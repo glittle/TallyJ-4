@@ -5,7 +5,7 @@ import {
   setElectionKioskEnabled,
 } from "@/utils/votingMethodLabels";
 import { paidChannelMessageKey } from "@/utils/paidChannelMessage";
-import { computed, ref, type Ref } from "vue";
+import { computed, nextTick, ref, type Ref } from "vue";
 import type {
   CreateElectionDto,
   LinkedElectionOption,
@@ -43,7 +43,11 @@ const tabFields: Record<string, string[]> = {
   basic: ["name", "dateOfElection", "convenor", "electionType", "electionMode"],
   rules: ["numberToElect", "numberExtra"],
   "voting-methods": ["customMethods", "votingMethods"],
-  "online-voting": ["useOnlineVoting", "onlineSelectionProcess"],
+  "online-voting": [
+    "useOnlineVoting",
+    "onlineSelectionProcess",
+    "expectedPhoneRegions",
+  ],
   communication: [
     "emailFromAddress",
     "emailFromName",
@@ -65,6 +69,16 @@ const tabFields: Record<string, string[]> = {
     "flags",
   ],
 };
+
+async function validateExpectedPhoneRegions() {
+  await nextTick();
+  const formRef = props.formRef;
+  const form =
+    formRef && typeof formRef === "object" && "value" in formRef
+      ? formRef.value
+      : formRef;
+  form?.validateField?.("expectedPhoneRegions");
+}
 
 function tabHasError(tab: string) {
   // Defensive: formRef may be undefined or not a ref
@@ -277,6 +291,7 @@ function onUseOnlineVotingChange(enabled: string | number | boolean) {
           v-model="model.expectedPhoneRegions"
           maxlength="80"
           placeholder="CA, US"
+          @input="validateExpectedPhoneRegions"
         />
         <template #help>
           <span class="form-help">{{

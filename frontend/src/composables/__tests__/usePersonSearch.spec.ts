@@ -712,4 +712,15 @@ describe("usePersonSearch", () => {
       expect(names).toContain("Johnny");
     });
   });
+
+  it("returns one row when the same person is listed twice", () => {
+    const person = createMockPerson("Cnf2", "Confidential");
+    const searchQuery = ref("Confidential");
+    const searchablePeople = ref([person, { ...person }]);
+    const { searchResults } = usePersonSearch(searchQuery, searchablePeople);
+
+    expect(
+      searchResults.value.filter((row) => row.personGuid === person.personGuid),
+    ).toHaveLength(1);
+  });
 });

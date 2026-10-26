@@ -1,3 +1,4 @@
+import { dedupeByPersonGuid } from "@/utils/dedupeByPersonGuid";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { peopleService } from "../services/peopleService";
@@ -6,6 +7,7 @@ import type {
   CreatePersonDto,
   PersonDto,
   PersonListDto,
+  PersonPhoneSmsHintDto,
   SearchablePersonDto,
   UpdatePersonDto,
 } from "../types";
@@ -22,6 +24,7 @@ export const usePeopleStore = defineStore("people", () => {
   const loading = ref(false);
   const error = ref<string | null>(null);
   const signalrInitialized = ref(false);
+  let signalrInit: Promise<void> | null = null;
   const peopleCache = ref<SearchablePersonDto[]>([]);
   const isCacheInitialized = ref(false);
   const personUpdatedListeners = new Set<(data: PersonUpdateEvent) => void>();
@@ -235,7 +238,9 @@ export const usePeopleStore = defineStore("people", () => {
 
     try {
       const allPeople = await peopleService.getAllForBallotEntry(electionGuid);
-      peopleCache.value = allPeople.map(enrichPersonForSearch);
+      peopleCache.value = dedupeByPersonGuid(allPeople).map(
+        enrichPersonForSearch,
+      );
       isCacheInitialized.value = true;
     } catch (e) {
       console.error("Failed to initialize people cache:", e);
@@ -287,65 +292,122 @@ export const usePeopleStore = defineStore("people", () => {
       return;
     }
 
-    try {
-      const connection = await signalrService.connectToFrontDeskHub();
-
-      // Server contract (SignalRNotificationService.SendPersonUpdateAsync):
-      // PersonAdded / PersonUpdated / PersonDeleted with PersonUpdateDto payload.
-      connection.on("PersonAdded", (data: unknown) => {
-        const event = normalizePersonUpdateEvent(data);
-        if (event) {
-          void handlePersonAdded({ ...event, action: "added" });
-        }
+    if (!signalrInit) {
+      signalrInit = bindPeopleSignalR().catch((e) => {
+        signalrInit = null;
+        console.error("Failed to initialize SignalR for people store:", e);
       });
-
-      connection.on("PersonUpdated", (data: unknown) => {
-        const event = normalizePersonUpdateEvent(data);
-        if (event) {
-          void handlePersonUpdated({ ...event, action: "updated" });
-        }
-      });
-
-      connection.on("PersonDeleted", (data: unknown) => {
-        const event = normalizePersonUpdateEvent(data);
-        if (event) {
-          handlePersonDeleted({ ...event, action: "deleted" });
-        }
-      });
-
-      connection.on("reloadPage", () => {
-        // Thin post-import (or bulk) signal: soft re-fetch instead of full page reload.
-        void handleReloadPage();
-      });
-
-      connection.on(
-        "PersonVoteCountUpdated",
-        (data: PersonVoteCountUpdateEvent) => {
-          handlePersonVoteCountUpdated(data);
-        },
-      );
-
-      signalrInitialized.value = true;
-    } catch (e) {
-      console.error("Failed to initialize SignalR for people store:", e);
     }
+
+    await signalrInit;
+  }
+
+  async function bindPeopleSignalR() {
+    const connection = await signalrService.connectToFrontDeskHub();
+
+    // Server contract (SignalRNotificationService.SendPersonUpdateAsync):
+    // PersonAdded / PersonUpdated / PersonDeleted with PersonUpdateDto payload.
+    connection.on("PersonAdded", (data: unknown) => {
+      const event = normalizePersonUpdateEvent(data);
+      if (event) {
+        void handlePersonAdded({ ...event, action: "added" });
+      }
+    });
+
+    connection.on("PersonUpdated", (data: unknown) => {
+      const event = normalizePersonUpdateEvent(data);
+      if (event) {
+        void handlePersonUpdated({ ...event, action: "updated" });
+      }
+    });
+
+    connection.on("PersonDeleted", (data: unknown) => {
+      const event = normalizePersonUpdateEvent(data);
+      if (event) {
+        handlePersonDeleted({ ...event, action: "deleted" });
+      }
+    });
+
+    connection.on("reloadPage", () => {
+      // Thin post-import (or bulk) signal: soft re-fetch instead of full page reload.
+      void handleReloadPage();
+    });
+
+    connection.on(
+      "PersonVoteCountUpdated",
+      (data: PersonVoteCountUpdateEvent) => {
+        handlePersonVoteCountUpdated(data);
+      },
+    );
+
+    signalrInitialized.value = true;
+  }
+
+  function samePersonGuid(a: string, b: string): boolean {
+    return a.toLowerCase() === b.toLowerCase();
   }
 
   async function handlePersonAdded(data: PersonUpdateEvent) {
-    const exists = people.value.some((p) => p.personGuid === data.personGuid);
-    if (!exists) {
-      try {
-        const person = await fetchPersonById(data.personGuid);
-        if (person) {
-          upsertPersonListEntry(person);
-          if (isCacheInitialized.value) {
-            peopleCache.value.push(enrichPersonForSearch(person));
-          }
-        }
-      } catch (e) {
-        console.error("Failed to handle person added:", e);
-      }
+    const inPeople = people.value.some((p) =>
+      samePersonGuid(p.personGuid, data.personGuid),
+    );
+    const inList = peopleList.value.some((p) =>
+      samePersonGuid(p.personGuid, data.personGuid),
+    );
+    const inCache = peopleCache.value.some((p) =>
+      samePersonGuid(p.personGuid, data.personGuid),
+    );
+    if (inCache) {
+      return;
     }
+    if (!isCacheInitialized.value && (inPeople || inList)) {
+      return;
+    }
+
+    try {
+      const person = await fetchPersonById(data.personGuid);
+      if (!person) {
+        return;
+      }
+      if (!inPeople && !inList) {
+        upsertPersonListEntry(person);
+      }
+      if (
+        isCacheInitialized.value &&
+        !peopleCache.value.some((p) =>
+          samePersonGuid(p.personGuid, person.personGuid),
+        )
+      ) {
+        peopleCache.value.push(enrichPersonForSearch(person));
+      }
+    } catch (e) {
+      console.error("Failed to handle person added:", e);
+    }
+  }
+
+  function patchListPhoneOnlineVoter(
+    personGuid: string,
+    phoneOnlineVoter: PersonPhoneSmsHintDto | null | undefined,
+  ) {
+    const index = peopleList.value.findIndex((p) =>
+      samePersonGuid(p.personGuid, personGuid),
+    );
+    if (index === -1) {
+      return;
+    }
+
+    const hint = phoneOnlineVoter
+      ? {
+          hasPhoneRow: phoneOnlineVoter.hasPhoneRow,
+          whenRegistered: phoneOnlineVoter.whenRegistered ?? null,
+          smsStatus: phoneOnlineVoter.smsStatus ?? null,
+          whatsAppStatus: phoneOnlineVoter.whatsAppStatus ?? null,
+        }
+      : null;
+    peopleList.value[index] = {
+      ...peopleList.value[index],
+      phoneOnlineVoter: hint,
+    };
   }
 
   function onPersonUpdated(
@@ -469,6 +531,7 @@ export const usePeopleStore = defineStore("people", () => {
     joinElection,
     leaveElection,
     handlePersonAdded,
+    patchListPhoneOnlineVoter,
     handlePersonUpdated,
     onPersonUpdated,
     handlePersonDeleted,

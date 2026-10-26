@@ -19,6 +19,7 @@ vi.mock("@/stores/peopleStore", () => ({
     createPerson: vi.fn(),
     updatePerson: vi.fn(),
     deletePerson: vi.fn(),
+    patchListPhoneOnlineVoter: vi.fn(),
   }),
 }));
 

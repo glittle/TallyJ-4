@@ -183,7 +183,7 @@
   transition: all var(--transition-normal);
   font-weight: var(--font-weight-medium);
 
-  &:not(:disabled) {
+  &:not(:disabled):not(.is-link) {
     &:hover {
       transform: translateY(-1px);
       box-shadow: var(--shadow-sm);
@@ -194,7 +194,7 @@
     }
   }
 
-  &--primary {
+  &--primary:not(.is-link) {
     background: linear-gradient(135deg, var(--color-primary-500) 0%, var(--color-primary-600) 100%);
     border: none;
 
@@ -202,6 +202,23 @@
       background: linear-gradient(135deg, var(--color-primary-400) 0%, var(--color-primary-500) 100%);
       box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     }
+  }
+}
+
+.el-button.el-button--primary.is-link,
+.el-button.is-link {
+  --el-button-text-color: var(--color-text-link);
+  --el-button-hover-text-color: var(--color-text-link-hover);
+  --el-button-hover-link-text-color: var(--color-text-link-hover);
+  color: var(--color-text-link);
+  background: transparent;
+
+  &:hover,
+  &:focus {
+    color: var(--color-text-link-hover);
+    background: transparent;
+    box-shadow: none;
+    transform: none;
   }
 }
 

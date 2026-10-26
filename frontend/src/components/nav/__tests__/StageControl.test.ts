@@ -36,12 +36,13 @@ vi.mock("vue-i18n", async (importOriginal) => {
   };
 });
 
+const mockShowSuccessMessage = vi.fn();
 const mockShowErrorMessage = vi.fn();
 const mockConfirm = vi.fn();
 
 vi.mock("@/composables/useNotifications", () => ({
   useNotifications: () => ({
-    showSuccessMessage: vi.fn(),
+    showSuccessMessage: mockShowSuccessMessage,
     showErrorMessage: mockShowErrorMessage,
   }),
 }));
@@ -88,6 +89,7 @@ describe("StageControl", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     mockSetStage.mockReset();
+    mockShowSuccessMessage.mockReset();
     mockShowErrorMessage.mockReset();
     mockConfirm.mockReset();
     mockGetCountReconciliation.mockReset();
@@ -140,6 +142,7 @@ describe("StageControl", () => {
         "GatheringBallots",
         false,
       );
+      expect(mockShowSuccessMessage).not.toHaveBeenCalled();
     });
 
     it("does not call setStage when the current stage is clicked", async () => {

@@ -769,11 +769,11 @@ function formatDate(date: string) {
 
   .clickable {
     cursor: pointer;
-    color: var(--el-color-primary);
+    color: var(--color-text-link);
     transition: color 0.2s ease;
 
     &:hover {
-      color: var(--el-color-primary-dark-2);
+      color: var(--color-text-link-hover);
       text-decoration: underline;
     }
   }

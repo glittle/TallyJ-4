@@ -423,6 +423,10 @@ async function loadPersonDetails() {
     );
 
     if (personDetails.value) {
+      peopleStore.patchListPhoneOnlineVoter(
+        props.person.personGuid,
+        personDetails.value.phoneOnlineVoter ?? null,
+      );
       form.firstName = personDetails.value.firstName || "";
       form.lastName = personDetails.value.lastName;
       form.otherNames = personDetails.value.otherNames || "";

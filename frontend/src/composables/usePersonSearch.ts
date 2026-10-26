@@ -1,5 +1,6 @@
 import { computed, watch, type Ref } from "vue";
 import { useDebounceFn } from "@/utils/debounce";
+import { dedupeByPersonGuid } from "@/utils/dedupeByPersonGuid";
 import type { SearchablePersonDto } from "@/types/Person";
 import {
   applyAllStrategies,
@@ -89,13 +90,14 @@ export function usePersonSearch(
     people: SearchablePersonDto[],
   ): RankedSearchPerson[] => {
     const trimmedQuery = query.trim();
+    const uniquePeople = dedupeByPersonGuid(people);
 
-    if (!trimmedQuery || people.length === 0) {
+    if (!trimmedQuery || uniquePeople.length === 0) {
       return [];
     }
 
     if (enableCache) {
-      const peopleHash = getPeopleHash(people);
+      const peopleHash = getPeopleHash(uniquePeople);
       const cacheKey = getCacheKey(trimmedQuery, peopleHash);
       const cachedResult = cache.get(cacheKey);
 
@@ -108,7 +110,7 @@ export function usePersonSearch(
 
     const results: SearchResult[] = [];
 
-    for (const person of people) {
+    for (const person of uniquePeople) {
       const result = applyAllStrategies(trimmedQuery, person);
       if (result) {
         results.push(result);
@@ -156,7 +158,7 @@ export function usePersonSearch(
       }));
 
     if (enableCache) {
-      const peopleHash = getPeopleHash(people);
+      const peopleHash = getPeopleHash(uniquePeople);
       const cacheKey = getCacheKey(trimmedQuery, peopleHash);
       cache.set(cacheKey, {
         query: trimmedQuery,

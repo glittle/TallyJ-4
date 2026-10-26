@@ -146,16 +146,24 @@ describe("TieManagementPage", () => {
     await vm.saveTieCounts();
     await flushPromises();
 
+    expect(mockConfirm).toHaveBeenCalledWith(
+      "Save tie-break counts? The tally will be re-analyzed after save.",
+      "Confirmation",
+      expect.objectContaining({ type: "warning" }),
+    );
     expect(mockSaveTieCounts).toHaveBeenCalledWith("election-1", [
       { personGuid: "person-a", tieBreakCount: 5 },
       { personGuid: "person-b", tieBreakCount: 0 },
     ]);
+    expect(mockShowSuccess).toHaveBeenCalledWith(
+      "Tie-break counts saved successfully.",
+    );
     expect(mockFetchResults).toHaveBeenCalledWith("election-1");
     expect(mockFetchTieDetails).toHaveBeenCalledTimes(2);
     expect(mockShowInfo).toHaveBeenCalled();
   });
 
-  it("sends explicit 0 after clearing a previous count via the input", async () => {
+  it("sends null after clearing a previous count via the input", async () => {
     const wrapper = mount(TieManagementPage, {
       global: { plugins: [i18n], stubs },
     });
@@ -169,13 +177,17 @@ describe("TieManagementPage", () => {
       tieDetails: TieDetailsDto[];
       saveTieCounts: () => Promise<void>;
     };
-    expect(vm.tieDetails[0]?.people[0]?.tieBreakCount).toBe(0);
+    expect(vm.tieDetails[0]?.people[0]?.tieBreakCount).toBeNull();
 
     await vm.saveTieCounts();
     await flushPromises();
 
     expect(mockSaveTieCounts).toHaveBeenCalledWith("election-1", [
-      { personGuid: "person-a", tieBreakCount: 0 },
+      { personGuid: "person-a", tieBreakCount: null },
+      { personGuid: "person-b", tieBreakCount: null },
     ]);
+    expect(mockShowSuccess).toHaveBeenCalledWith(
+      "Tie-break counts saved successfully.",
+    );
   });
 });

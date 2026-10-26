@@ -2,6 +2,7 @@ import {
   isImportedLocationType,
   isOnlineLocationType,
 } from "@/utils/ballotStartRequirements";
+import { translateIfPhraseKey } from "@/utils/errorHandler";
 
 /** Label for a location. Online / Imported rows use i18n; names are not identifiers. */
 export function formatLocationLabel(
@@ -17,7 +18,7 @@ export function formatLocationLabel(
   if (isImportedLocationType(location.locationType)) {
     return t("locations.typeImported");
   }
-  return location.name?.trim() || "";
+  return translateIfPhraseKey(location.name?.trim() || "");
 }
 
 /** Resolve a location by guid, then apply formatLocationLabel. */
@@ -40,5 +41,5 @@ export function formatLocationLabelForGuid(
     return formatLocationLabel(t, location);
   }
 
-  return fallbackName?.trim() || "";
+  return translateIfPhraseKey(fallbackName?.trim() || "");
 }

@@ -224,6 +224,26 @@ describe("People Store - People Cache", () => {
 
       expect(store.peopleCache).toHaveLength(0);
     });
+
+    it("does not append a second cache row for the same person", async () => {
+      store.isCacheInitialized = true;
+      store.peopleCache = [];
+      vi.mocked(peopleService.getById).mockResolvedValue(mockPerson);
+
+      const event = {
+        electionGuid: "election-123",
+        personGuid: mockPerson.personGuid,
+        action: "added" as const,
+        firstName: mockPerson.firstName,
+        lastName: mockPerson.lastName,
+        updatedAt: new Date().toISOString(),
+      };
+      await store.handlePersonAdded(event);
+      await store.handlePersonAdded(event);
+
+      expect(store.peopleCache).toHaveLength(1);
+      expect(peopleService.getById).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe("SignalR handlePersonUpdated", () => {
@@ -375,6 +395,30 @@ describe("People Store - People Cache", () => {
       expect(handlers.has("PersonDeleted")).toBe(true);
       expect(handlers.has("PersonVoteCountUpdated")).toBe(true);
       expect(handlers.has("updatePeople")).toBe(false);
+    });
+
+    it("registers person events once when initializeSignalR overlaps", async () => {
+      const { signalrService } = await import("../services/signalrService");
+      const on = vi.fn();
+      let resolveConnect: (connection: { on: typeof on }) => void = () =>
+        undefined;
+      vi.mocked(signalrService.connectToFrontDeskHub).mockImplementation(
+        () =>
+          new Promise((resolve) => {
+            resolveConnect = resolve;
+          }) as never,
+      );
+
+      const first = store.initializeSignalR();
+      const second = store.initializeSignalR();
+      resolveConnect({ on });
+      await Promise.all([first, second]);
+
+      const addedCalls = on.mock.calls.filter(
+        (call) => call[0] === "PersonAdded",
+      );
+      expect(addedCalls).toHaveLength(1);
+      expect(signalrService.connectToFrontDeskHub).toHaveBeenCalledTimes(1);
     });
 
     it("PersonAdded event fetches person into cache", async () => {

@@ -409,6 +409,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "voting.elections.welcomeKiosk": {
+    "t": "Welcome! You're signed in at a shared kiosk. Choose an election below to vote.",
+    "s": "ai",
+    "w": "2026-10-26T04:45:00Z"
+  },
   "voting.elections.welcomeHint": {
     "t": "If an upcoming election is not listed here, it may not exist in TallyJ or your information is not registered in it. Please contact the head teller of the election for assistance.",
     "s": "source",

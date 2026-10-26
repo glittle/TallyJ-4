@@ -42,7 +42,7 @@ public class PeopleImportController : ControllerBase
         {
             if (file == null || file.Length == 0)
             {
-                return BadRequest(new { message = "No file provided" });
+                return BadRequest(new { message = "people.import.noFileProvided" });
             }
 
             var result = await _peopleImportService.UploadFileAsync(electionGuid, file);

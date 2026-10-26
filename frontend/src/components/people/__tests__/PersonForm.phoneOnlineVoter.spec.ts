@@ -8,6 +8,7 @@ import type { PersonDetailDto, PersonListDto } from "@/types/Person";
 const mockGetDetails = vi.fn();
 const mockSetPhoneSmsStatus = vi.fn();
 const mockCheckWhatsApp = vi.fn();
+const mockPatchListPhoneOnlineVoter = vi.fn();
 
 vi.mock("@/services/peopleService", () => ({
   peopleService: {
@@ -23,6 +24,8 @@ vi.mock("@/stores/peopleStore", () => ({
     createPerson: vi.fn(),
     updatePerson: vi.fn(),
     deletePerson: vi.fn(),
+    patchListPhoneOnlineVoter: (...args: unknown[]) =>
+      mockPatchListPhoneOnlineVoter(...args),
   }),
 }));
 
@@ -120,6 +123,10 @@ describe("PersonForm phone OnlineVoter status", () => {
 
     expect(wrapper.find(".phone-online-voter").text()).toContain("Never seen");
     expect(wrapper.find(".phone-online-voter").text()).toContain("Unchecked");
+    expect(mockPatchListPhoneOnlineVoter).toHaveBeenCalledWith(
+      person.personGuid,
+      expect.objectContaining({ hasPhoneRow: false, smsStatus: null }),
+    );
   });
 
   it("shows not yet used for auth when the P row has no WhenRegistered", async () => {

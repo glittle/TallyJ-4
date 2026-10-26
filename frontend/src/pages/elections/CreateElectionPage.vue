@@ -44,6 +44,7 @@ import {
 } from "@/utils/formServerErrors";
 import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
 import { tellerPasscodeLengthError } from "@/domain/tellerPasscode";
+import { expectedPhoneRegionsRule } from "@/utils/expectedPhoneRegions";
 
 const router = useRouter();
 const { t } = useI18n();
@@ -123,6 +124,7 @@ const rules = reactive<FormRules>({
       trigger: "blur",
     },
   ],
+  expectedPhoneRegions: [expectedPhoneRegionsRule(t)],
 });
 
 onMounted(async () => {

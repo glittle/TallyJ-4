@@ -24,7 +24,7 @@ public partial class PeopleImportService
     {
         if (file == null || file.Length == 0)
         {
-            throw new ArgumentException("No file provided");
+            throw new ArgumentException("people.import.noFileProvided");
         }
 
         // Validate file extension

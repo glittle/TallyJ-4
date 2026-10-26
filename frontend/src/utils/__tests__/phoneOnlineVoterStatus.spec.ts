@@ -88,10 +88,10 @@ describe("phoneSmsListHint", () => {
     expect(phoneSmsListHint(status({ hasPhoneRow: false }))).toBe("neverSeen");
   });
 
-  it("is imported when a P row exists and has not been used for auth", () => {
+  it("is unchecked when a P row exists and SmsStatus is null", () => {
     expect(
       phoneSmsListHint(status({ hasPhoneRow: true, whenRegistered: null })),
-    ).toBe("imported");
+    ).toBe("unchecked");
   });
 
   it("is unchecked when registered but SmsStatus is still null", () => {
@@ -175,12 +175,12 @@ describe("phoneWhatsAppListHint", () => {
     );
   });
 
-  it("is imported when a P row exists and has not been used for auth", () => {
+  it("is unchecked when a P row exists and WhatsAppStatus is null", () => {
     expect(
       phoneWhatsAppListHint(
         status({ hasPhoneRow: true, whenRegistered: null }),
       ),
-    ).toBe("imported");
+    ).toBe("unchecked");
   });
 
   it("is unchecked when registered but WhatsAppStatus is still null", () => {
@@ -254,6 +254,6 @@ describe("phoneWhatsAppListHint", () => {
           whatsAppStatus: null,
         }),
       ),
-    ).toBe("imported");
+    ).toBe("unchecked");
   });
 });

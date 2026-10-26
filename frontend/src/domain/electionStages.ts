@@ -8,6 +8,7 @@ import {
   Monitor,
   PieChart,
   Setting,
+  Sort,
   Tickets,
   Upload,
   User,
@@ -179,6 +180,13 @@ export const STAGE_PAGES: Record<NavElectionStage, NavPageDef[]> = {
       i18nKey: "results.calculateTally",
       icon: PieChart,
       routePath: (g) => `/elections/${g}/tally`,
+      adminOnly: true,
+    },
+    {
+      key: "tie-management",
+      i18nKey: "results.tieManagement",
+      icon: Sort,
+      routePath: (g) => `/elections/${g}/tie-management`,
       adminOnly: true,
     },
     {

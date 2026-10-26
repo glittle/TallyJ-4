@@ -8,21 +8,19 @@ export function isTieBreakCountUnset(
 }
 
 /**
- * Collect entered tie-break counts, including explicit 0.
- * Unset (null/undefined) people are omitted so the server leaves them null.
+ * Collect tie-break counts for everyone in the tie list.
+ * Explicit 0 is a runoff result. Null clears a previous count.
+ * People left out of this list keep whatever is already stored.
  */
 export function collectTieBreakCounts(ties: TieDetailsDto[]): TieCountDto[] {
   const counts: TieCountDto[] = [];
 
   for (const tie of ties) {
     for (const person of tie.people) {
-      const count = person.tieBreakCount;
-      if (count !== null && count !== undefined) {
-        counts.push({
-          personGuid: person.personGuid,
-          tieBreakCount: count,
-        });
-      }
+      counts.push({
+        personGuid: person.personGuid,
+        tieBreakCount: person.tieBreakCount ?? null,
+      });
     }
   }
 
@@ -40,9 +38,9 @@ export function electedTieMissingCounts(tie: TieDetailsDto): boolean {
   );
 }
 
-/** Clear writes an explicit 0 so the server overwrites a previous count. */
-export function clearedTieBreakCount(): number {
-  return 0;
+/** Clear unsets the count. 0 stays available as an explicit runoff result. */
+export function clearedTieBreakCount(): number | null {
+  return null;
 }
 
 export function setClearedTieBreakCount(person: TiePersonDto): void {

@@ -224,7 +224,7 @@ export const useResultStore = defineStore("result", () => {
 
   async function saveTieCounts(
     electionGuid: string,
-    counts: { personGuid: string; tieBreakCount: number }[],
+    counts: { personGuid: string; tieBreakCount: number | null }[],
   ) {
     loading.value = true;
     error.value = null;
