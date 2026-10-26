@@ -126,3 +126,17 @@ Accept-all vs Front Desk **same person** is still one counted vote (desk method 
 **Rejected alternative:** treat two browsers on the same computer code as the numbering invariant. Rejected — each teller workstation has its own code; colliding Max+1 on one code would be a different product change.
 
 **Reason:** lock the already-shipped multi-teller write contract locally, without Azure SQL and without inventing a new lock.
+
+## Private SQLite files turn pooling off before delete
+
+**Status:** active  
+**Evidence:** inferred (Windows `File.Delete` of a pooled Microsoft.Data.Sqlite file throws a sharing violation; Linux unlink of that same open file succeeds. #401’s `EvaluateAsync_WorksOnSqliteWithoutThrowing` started deleting a temp file and did not release the handle. Sibling file tests already catch `IOException` on delete. The Azure exception text was not in this checkout.)  
+**Revisit when:** Microsoft.Data.Sqlite drops the file handle on dispose while pooling stays on, or Backend.Tests stops using file-backed SQLite
+
+`Microsoft.Data.Sqlite` pools by default. Disposing the context returns the connection to the pool, so the file stays open. `EvaluateAsync_WorksOnSqliteWithoutThrowing` deletes that temp database in a `finally`, with `Pooling = false` on that connection string only. The finalization queries still run on a real SQLite file.
+
+**Rejected alternative:** `SqliteConnection.ClearAllPools()` before delete. Rejected — it closes every pooled connection in the process, and Backend.Tests keeps parallelization on (`GlobalSettings.cs`).
+
+**Rejected alternative:** catch `IOException` and leave the file, as the phone-prefix and paid-send tests do. Rejected — those tests tolerate a leftover file. This test is supposed to remove its file, and a caught sharing violation still leaves the handle open.
+
+**Reason:** the SQLite finalization check has to be deletable on Windows without disturbing other tests.

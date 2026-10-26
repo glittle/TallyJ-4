@@ -3,6 +3,7 @@ using Backend.Entities;
 using Backend.Enumerations;
 using static Backend.Enumerations.ElectionStageMessageKeys;
 using Backend.Services;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Tests.UnitTests;
@@ -61,12 +62,20 @@ public class ElectionStageFinalizationReadinessTests : ServiceTestBase
     {
         var electionGuid = Guid.NewGuid();
         var dbPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid() + ".db");
+        // Pooling keeps the file handle after dispose. Windows File.Delete then
+        // throws a sharing violation. This database is private to the test.
+        var connectionString = new SqliteConnectionStringBuilder
+        {
+            DataSource = dbPath,
+            Pooling = false
+        }.ToString();
         var options = new DbContextOptionsBuilder<MainDbContext>()
-            .UseSqlite($"Data Source={dbPath}")
+            .UseSqlite(connectionString)
             .Options;
 
-        await using (var context = new MainDbContext(options))
+        try
         {
+            await using var context = new MainDbContext(options);
             context.Database.EnsureCreated();
             var bestId = Guid.NewGuid();
             var coleId = Guid.NewGuid();
@@ -150,13 +159,15 @@ public class ElectionStageFinalizationReadinessTests : ServiceTestBase
             Assert.Contains(readiness.Blockers, blocker => blocker == AnalysisNotReady);
             Assert.Contains(readiness.Blockers, blocker => blocker == UnresolvedTies);
         }
-
-        foreach (var suffix in new[] { "", "-wal", "-shm" })
+        finally
         {
-            var path = dbPath + suffix;
-            if (File.Exists(path))
+            foreach (var suffix in new[] { "", "-wal", "-shm" })
             {
-                File.Delete(path);
+                var path = dbPath + suffix;
+                if (File.Exists(path))
+                {
+                    File.Delete(path);
+                }
             }
         }
     }

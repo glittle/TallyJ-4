@@ -1,6 +1,7 @@
 # Pull-request gate for the ASP.NET Core API. The Azure back-end pipeline is
-# push-to-main only (`pr: none`) and runs on windows-latest, so this is what
-# runs before a human reviews a backend PR.
+# push-to-main only (`pr: none`) and runs on windows-latest. This workflow
+# runs the same Release test pass on ubuntu-latest and windows-latest before
+# a human reviews a backend PR. The Windows leg covers SQLite file locks.
 #
 # Tests use SQLite (CustomWebApplicationFactory) or EF Core InMemory
 # (ServiceTestBase). No SQL Server is required.
@@ -33,9 +34,13 @@ concurrency:
 
 jobs:
   backend:
-    name: Backend (build, tests)
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
+    name: ${{ matrix.os == 'ubuntu-latest' && 'Backend (build, tests)' || 'Backend (build, tests, windows)' }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout
@@ -68,7 +73,7 @@ jobs:
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: backend-test-results
+          name: backend-test-results-${{ matrix.os }}
           path: TestResults/**/*.trx
           retention-days: 7
           if-no-files-found: warn
