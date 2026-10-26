@@ -29,6 +29,16 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "error.pageNotFound.title": {
+    "t": "Page not found",
+    "s": "ai",
+    "w": "2026-10-26T04:45:00Z"
+  },
+  "error.pageNotFound.message": {
+    "t": "That address doesn't match a page in TallyJ.",
+    "s": "ai",
+    "w": "2026-10-26T04:45:00Z"
+  },
   "error.serverError": {
     "t": "Server error. Please try again later.",
     "s": "source",

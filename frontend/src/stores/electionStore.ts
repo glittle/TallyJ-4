@@ -32,6 +32,10 @@ function sameElectionGuid(a?: string | null, b?: string | null): boolean {
   return !!a && !!b && a.toLowerCase() === b.toLowerCase();
 }
 
+function stageNotifyKey(electionGuid: string): string {
+  return electionGuid.trim().toLowerCase();
+}
+
 function parseStage(value: unknown): ElectionStage | undefined {
   if (typeof value !== "string") {
     return undefined;
@@ -381,12 +385,13 @@ export const useElectionStore = defineStore("election", () => {
   }
 
   function isRemoteStageNotifySuppressed(electionGuid: string): boolean {
-    const until = suppressRemoteStageNotifyUntil.get(electionGuid);
+    const key = stageNotifyKey(electionGuid);
+    const until = suppressRemoteStageNotifyUntil.get(key);
     if (until === undefined) {
       return false;
     }
     if (Date.now() >= until) {
-      suppressRemoteStageNotifyUntil.delete(electionGuid);
+      suppressRemoteStageNotifyUntil.delete(key);
       return false;
     }
     return true;
@@ -520,10 +525,10 @@ export const useElectionStore = defineStore("election", () => {
   ) {
     loading.value = true;
     error.value = null;
-    // StageControl shows the success toast; suppress the echo from statusChanged
-    // (SignalR often arrives before the HTTP response updates local state).
+    // The operator already sees the stage control change. Suppress the
+    // statusChanged echo, including when the hub guid casing differs.
     suppressRemoteStageNotifyUntil.set(
-      electionGuid,
+      stageNotifyKey(electionGuid),
       Date.now() + LOCAL_STAGE_NOTIFY_SUPPRESS_MS,
     );
     try {
@@ -546,7 +551,7 @@ export const useElectionStore = defineStore("election", () => {
 
       return election;
     } catch (e: any) {
-      suppressRemoteStageNotifyUntil.delete(electionGuid);
+      suppressRemoteStageNotifyUntil.delete(stageNotifyKey(electionGuid));
       error.value = extractApiErrorMessage(e);
       throw e;
     } finally {

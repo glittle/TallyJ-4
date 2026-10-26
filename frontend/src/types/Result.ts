@@ -148,8 +148,8 @@ export interface SaveTieCountsRequestDto {
 
 export interface TieCountDto {
   personGuid: string;
-  /** Explicit runoff result. 0 is valid and must be sent when clearing a previous count. */
-  tieBreakCount: number;
+  /** Explicit runoff result, or null to unset a previous count. 0 is a real runoff. */
+  tieBreakCount: number | null;
 }
 
 /** v3 Analyze count table. Null on a manual field means no override. */

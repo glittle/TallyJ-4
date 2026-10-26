@@ -39,7 +39,7 @@ describe("tieBreakCounts", () => {
     expect(isTieBreakCountUnset(5)).toBe(false);
   });
 
-  it("sends explicit 0 counts and omits unset people", () => {
+  it("sends explicit 0 and null so a cleared count can be unset", () => {
     expect(
       collectTieBreakCounts([
         tie("E", [
@@ -52,6 +52,8 @@ describe("tieBreakCounts", () => {
     ).toEqual([
       { personGuid: "a", tieBreakCount: 5 },
       { personGuid: "b", tieBreakCount: 0 },
+      { personGuid: "c", tieBreakCount: null },
+      { personGuid: "d", tieBreakCount: null },
     ]);
   });
 
@@ -75,13 +77,13 @@ describe("tieBreakCounts", () => {
     expect(formatVoteCountWithTieBreak(50, true, 3)).toBe("50 / 3");
   });
 
-  it("clears to an explicit 0 so the server overwrites a previous count", () => {
+  it("clears to null so a previous count can be unset", () => {
     const row = person("a", 5);
     setClearedTieBreakCount(row);
-    expect(clearedTieBreakCount()).toBe(0);
-    expect(row.tieBreakCount).toBe(0);
+    expect(clearedTieBreakCount()).toBeNull();
+    expect(row.tieBreakCount).toBeNull();
     expect(collectTieBreakCounts([tie("E", [row])])).toEqual([
-      { personGuid: "a", tieBreakCount: 0 },
+      { personGuid: "a", tieBreakCount: null },
     ]);
   });
 });

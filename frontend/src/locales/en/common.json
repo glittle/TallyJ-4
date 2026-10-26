@@ -54,6 +54,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "common.confirmation": {
+    "t": "Confirmation",
+    "s": "ai",
+    "w": "2026-10-26T04:45:00Z"
+  },
   "common.confirmAction": {
     "t": "Are you sure you want to {action}?",
     "s": "source",

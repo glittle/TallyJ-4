@@ -1179,7 +1179,7 @@ public class PeopleImportServiceTests : ServiceTestBase
 
         var exception = await Assert.ThrowsAsync<ArgumentException>(
             () => _service.UploadFileAsync(electionGuid, file));
-        Assert.Contains("No file provided", exception.Message);
+        Assert.Contains("people.import.noFileProvided", exception.Message);
     }
 
     [Fact]

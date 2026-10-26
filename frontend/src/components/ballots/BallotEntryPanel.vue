@@ -16,6 +16,7 @@ import { useElectionStore } from "../../stores/electionStore";
 import { usePeopleStore } from "../../stores/peopleStore";
 import type { CreateVoteDto, VoteDto } from "../../types";
 import { formatComputerCodeLabel } from "@/utils/ballotDisplayCode";
+import { resolveUserFacingApiError } from "@/utils/errorHandler";
 import { formatLocationLabelForGuid } from "@/utils/locationDisplay";
 import { useLocationStore } from "../../stores/locationStore";
 
@@ -197,7 +198,9 @@ async function handleVoteAdded(vote: VoteDto, _options?: VoteAddedOptions) {
     await ballotStore.createVote(toCreateVoteDto(vote));
   } catch (error: any) {
     voteResyncKey.value++;
-    showErrorMessage(error.message || t("ballots.voteAddedError"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("ballots.voteAddedError")),
+    );
   }
 }
 
@@ -206,7 +209,9 @@ async function handleVoteUpdated(vote: VoteDto) {
     await ballotStore.updateVote(vote.rowId, toCreateVoteDto(vote));
   } catch (error: any) {
     voteResyncKey.value++;
-    showErrorMessage(error.message || t("ballots.voteSaveError"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("ballots.voteSaveError")),
+    );
   }
 }
 
@@ -217,7 +222,9 @@ async function handleVoteRemoved(positionOnBallot: number) {
     showSuccessMessage(t("ballots.voteRemovedSuccess"));
   } catch (error: any) {
     voteResyncKey.value++;
-    showErrorMessage(error.message || t("ballots.voteRemovedError"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("ballots.voteRemovedError")),
+    );
   }
 }
 
@@ -230,7 +237,9 @@ async function handleVotesReordered(voteRowIds: number[]) {
     showSuccessMessage(t("ballots.votesReorderedSuccess"));
   } catch (error: any) {
     voteResyncKey.value++;
-    showErrorMessage(error.message || t("ballots.votesReorderedError"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("ballots.votesReorderedError")),
+    );
   }
 }
 </script>

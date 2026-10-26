@@ -27,6 +27,7 @@ import {
   electionBallotsPath,
 } from "@/utils/ballotRoutes";
 import { formatBallotDisplayCode } from "@/utils/ballotDisplayCode";
+import { resolveUserFacingApiError } from "@/utils/errorHandler";
 import { getBallotStatusLabel } from "@/utils/ballotStatusLabel";
 import type { BallotSummaryDto } from "@/utils/ballotSummary";
 import {
@@ -226,7 +227,7 @@ onMounted(async () => {
       openBallotByGuid(ballotFromUrl, { alignViewFilter: true });
     }
   } catch (error) {
-    showErrorMessage(t("ballots.loadError") + ": " + (error as Error).message);
+    showErrorMessage(resolveUserFacingApiError(error, t("ballots.loadError")));
   } finally {
     listLoading.value = false;
   }
@@ -284,7 +285,7 @@ async function handleRefresh() {
   try {
     await ballotStore.fetchBallots(electionGuid.value);
   } catch (error) {
-    showErrorMessage(t("ballots.loadError") + ": " + (error as Error).message);
+    showErrorMessage(resolveUserFacingApiError(error, t("ballots.loadError")));
   } finally {
     refreshing.value = false;
   }

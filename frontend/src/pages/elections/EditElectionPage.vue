@@ -54,6 +54,7 @@ import {
   mapServerValidationErrors,
 } from "@/utils/formServerErrors";
 import { tellerPasscodeLengthError } from "@/domain/tellerPasscode";
+import { expectedPhoneRegionsRule } from "@/utils/expectedPhoneRegions";
 
 const router = useRouter();
 const route = useRoute();
@@ -155,6 +156,7 @@ const rules = reactive<FormRules>({
       trigger: "blur",
     },
   ],
+  expectedPhoneRegions: [expectedPhoneRegionsRule(t)],
 });
 
 onMounted(async () => {

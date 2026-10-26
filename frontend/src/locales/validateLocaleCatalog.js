@@ -134,14 +134,22 @@ function isIsoUtcTimestamp(value) {
 
 function allowedStatuses(locale) {
   if (locale === null || locale === "en") {
+    // Reviewed English stays "source". AI-authored English leaves use "ai"
+    // until a person reviews them. Root shared strings stay "source".
+    if (locale === "en") {
+      return new Set([SOURCE_STATUS, "ai"]);
+    }
     return new Set([SOURCE_STATUS]);
   }
   return TRANSLATION_STATUSES;
 }
 
 function statusExpectation(locale) {
-  if (locale === null || locale === "en") {
+  if (locale === null) {
     return "source";
+  }
+  if (locale === "en") {
+    return "source or ai";
   }
   return "ai, human, or approved";
 }

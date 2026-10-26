@@ -171,7 +171,11 @@
               prop="locationName"
               :label="$t('monitoring.location')"
               width="200"
-            />
+            >
+              <template #default="scope">
+                {{ translateIfPhraseKey(scope.row.locationName || "") }}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="ballotCount"
               :label="$t('monitoring.ballotsEntered')"
@@ -211,7 +215,11 @@
               prop="locationName"
               :label="$t('monitoring.location')"
               width="200"
-            />
+            >
+              <template #default="scope">
+                {{ translateIfPhraseKey(scope.row.locationName || "") }}
+              </template>
+            </el-table-column>
             <el-table-column
               prop="voterCount"
               :label="$t('monitoring.registeredVoters')"
@@ -282,7 +290,10 @@ import { useNotifications } from "@/composables/useNotifications";
 import { isFullTeller } from "@/domain/guestTellerAccess";
 import { electionService } from "@/services/electionService";
 import { useElectionStore } from "@/stores/electionStore";
-import { extractApiErrorMessage } from "@/utils/errorHandler";
+import {
+  extractApiErrorMessage,
+  translateIfPhraseKey,
+} from "@/utils/errorHandler";
 import {
   closeOnlineVotingNowAt,
   formatCloseRemainingClock,

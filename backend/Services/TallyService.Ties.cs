@@ -52,7 +52,8 @@ public partial class TallyService
 
     /// <summary>
     /// Saves tie-breaking vote counts for an election and re-analyzes when any count is persisted.
-    /// An explicit 0 is a valid runoff result; omit a person to leave their count unset (null).
+    /// Null unsets a previous count. An explicit 0 is a valid runoff result.
+    /// Omit a person to leave their stored count unchanged.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
     /// <param name="request">The request containing tie count information.</param>

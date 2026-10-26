@@ -831,6 +831,57 @@ describe("Election Store", () => {
       );
     });
 
+    it("statusChanged does not toast when the hub guid casing differs from setStage", async () => {
+      const { signalrService } = vi.mocked(
+        await import("../services/signalrService"),
+        true,
+      );
+      const { electionService } = vi.mocked(
+        await import("../services/electionService"),
+        true,
+      );
+      const handlers = new Map<string, (data: unknown) => void>();
+      const mockConnection = {
+        on: vi.fn((event: string, handler: (data: unknown) => void) => {
+          handlers.set(event, handler);
+        }),
+      };
+      signalrService.connectToMainHub.mockResolvedValue(
+        asHubConnection(mockConnection),
+      );
+      signalrService.connectToFrontDeskHub.mockResolvedValue(
+        asHubConnection({ on: vi.fn() }),
+      );
+
+      electionStore.elections = [
+        {
+          electionGuid: "Election-1",
+          name: "Springfield LSA",
+          electionStage: "SettingUp",
+        } as ElectionDto,
+      ];
+      electionStore.currentElection = electionStore.elections[0] as ElectionDto;
+
+      electionService.changeStage.mockImplementation(async () => {
+        handlers.get("statusChanged")!({
+          electionGuid: "election-1",
+          name: "Springfield LSA",
+          electionStage: "ProcessingBallots",
+          updatedAt: new Date().toISOString(),
+        });
+        return {
+          electionGuid: "Election-1",
+          name: "Springfield LSA",
+          electionStage: "ProcessingBallots",
+        } as ElectionDto;
+      });
+
+      await electionStore.initializeSignalR();
+      await electionStore.setStage("Election-1", "ProcessingBallots");
+
+      expect(elMessageMock).not.toHaveBeenCalled();
+    });
+
     it("statusChanged for GuestTeller toasts without Go there (redirect is separate)", async () => {
       const { isFullTeller, isGuestTeller } =
         await import("@/domain/guestTellerAccess");

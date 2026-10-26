@@ -10,7 +10,7 @@ export type PhoneOnlineVoterSmsState = "unchecked" | "ok" | "blocked";
 /** Same vocabulary as SMS: null / OK / other short reason. */
 export type PhoneOnlineVoterWhatsAppState = PhoneOnlineVoterSmsState;
 
-/** Compact list/Front Desk cell: channel status first, then never-seen / imported / unchecked. */
+/** Compact list/Front Desk cell. Null channel status is unchecked, matching person detail. */
 export type PhoneSmsListHint =
   | "none"
   | "neverSeen"
@@ -57,7 +57,8 @@ export function phoneOnlineVoterWhatsAppState(
 
 /**
  * Compact people-list / Front Desk hint for one stored channel status.
- * OK / reason win over imported vs never-seen. No phone → none (caller hides the cell).
+ * OK / reason win. A P-row with no channel status is unchecked, the same word
+ * the person form uses. "imported" remains in the union for older filters.
  */
 function phoneChannelListHint(
   status: PersonPhoneSmsHintDto | null | undefined,
@@ -76,15 +77,12 @@ function phoneChannelListHint(
   if (!status.hasPhoneRow) {
     return "neverSeen";
   }
-  if (!status.whenRegistered) {
-    return "imported";
-  }
   return "unchecked";
 }
 
 /**
  * Compact people-list / Front Desk SMS hint.
- * Blocked / OK win over imported vs never-seen. No phone → none (caller hides the cell).
+ * Blocked / OK win. Null status is unchecked. No phone → none (caller hides the cell).
  */
 export function phoneSmsListHint(
   status: PersonPhoneSmsHintDto | null | undefined,
@@ -94,7 +92,7 @@ export function phoneSmsListHint(
 
 /**
  * Compact people-list / Front Desk WhatsApp hint. Independent of SmsStatus.
- * OK / reason (no-wa, check-failed, …) win over imported vs never-seen.
+ * OK / reason (no-wa, check-failed, …) win. Null status is unchecked.
  */
 export function phoneWhatsAppListHint(
   status: PersonPhoneSmsHintDto | null | undefined,

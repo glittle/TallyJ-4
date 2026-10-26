@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import { useResultStore } from "../../stores/resultStore";
 import type { TiePersonDto, TieDetailsDto } from "../../types";
+import { resolveUserFacingApiError } from "@/utils/errorHandler";
 import {
   clearedTieBreakCount,
   collectTieBreakCounts,
@@ -44,9 +45,7 @@ async function loadTieDetails() {
     originalTieDetails.value = JSON.parse(JSON.stringify(details)); // Store original
   } catch (error) {
     showErrorMessage(
-      t("tieManagement.loadError") +
-        " " +
-        (error instanceof Error ? error.message : ""),
+      resolveUserFacingApiError(error, t("tieManagement.loadError")),
     );
   } finally {
     loading.value = false;

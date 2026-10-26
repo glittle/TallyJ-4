@@ -16,6 +16,7 @@ import {
   formatBallotDisplayCode,
   isOnlineOrImportedComputerCode,
 } from "@/utils/ballotDisplayCode";
+import { resolveUserFacingApiError } from "@/utils/errorHandler";
 import {
   getActiveTellerPayload,
   getActiveTellers,
@@ -403,7 +404,9 @@ async function toggleNeedsReview() {
     }
     showSuccessMessage(t("ballots.needsReviewUpdated"));
   } catch (error: any) {
-    showErrorMessage(error.message || t("ballots.needsReviewError"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("ballots.needsReviewError")),
+    );
   } finally {
     reviewToggleLoading.value = false;
   }

@@ -147,7 +147,7 @@ describe("FrontDeskVotersTable SMS column", () => {
       }),
     );
     expect(imported.find(".cell-sms").text()).toBe(
-      "people.phoneOnlineVoter.imported",
+      "people.phoneOnlineVoter.smsUnchecked",
     );
 
     const neverSeen = mountTable(
@@ -242,7 +242,7 @@ describe("FrontDeskVotersTable WhatsApp column", () => {
       }),
     );
     expect(imported.find(".cell-whatsApp").text()).toBe(
-      "people.phoneOnlineVoter.imported",
+      "people.phoneOnlineVoter.whatsAppUnchecked",
     );
 
     const neverSeen = mountTable(

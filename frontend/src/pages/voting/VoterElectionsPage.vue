@@ -135,7 +135,11 @@ async function handleLogout() {
         class="welcome-alert"
       >
         {{
-          $t("voting.elections.welcome", { voterId: onlineVotingStore.voterId })
+          onlineVotingStore.isKioskSession
+            ? $t("voting.elections.welcomeKiosk")
+            : $t("voting.elections.welcome", {
+                voterId: onlineVotingStore.voterId,
+              })
         }}
         <br />
         {{ $t("voting.elections.welcomeHint") }}

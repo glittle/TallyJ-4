@@ -574,6 +574,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "voting.auth.welcome.subheading": {
+    "t": "We need to confirm your identity matches the voter list for this election.",
+    "s": "ai",
+    "w": "2026-10-26T04:45:00Z"
+  },
   "voting.auth.welcome.intro": {
     "t": "In order to vote in this election, we need to confirm who you are. Your identity must match the information that the election administrator has on file for eligible voters.",
     "s": "source",

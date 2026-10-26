@@ -25,7 +25,7 @@ const props = defineProps<{
 const { t } = useI18n();
 const electionStore = useElectionStore();
 const { confirm } = useConfirmDialog();
-const { showSuccessMessage, showErrorMessage } = useNotifications();
+const { showErrorMessage } = useNotifications();
 
 const finalizeReportVisible = ref(false);
 const finalizeReport = ref<CountReconciliationReportDto | null>(null);
@@ -86,11 +86,6 @@ async function selectStage(newStage: ElectionStage) {
       props.electionGuid,
       newStage,
       confirmLeavingFinalized,
-    );
-    showSuccessMessage(
-      t("elections.stageAdvanced", {
-        stage: t(STAGE_META[newStage].i18nKey),
-      }),
     );
   } catch (error) {
     const serverMessage = extractApiErrorMessage(error);

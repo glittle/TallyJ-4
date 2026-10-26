@@ -8,6 +8,7 @@ import VoterElectionsPage from "../VoterElectionsPage.vue";
 const storeState = reactive({
   loginElsewhereNotice: false,
   voterId: "voter@example.com",
+  isKioskSession: false,
   loading: false,
   availableElections: [] as AvailableElection[],
   restoreSession: vi.fn().mockResolvedValue(true),
@@ -58,6 +59,8 @@ function votedElection(
 describe("VoterElectionsPage Edit visibility", () => {
   beforeEach(() => {
     storeState.availableElections = [];
+    storeState.isKioskSession = false;
+    storeState.voterId = "voter@example.com";
     storeState.restoreSession.mockResolvedValue(true);
     storeState.loadAvailableElections.mockResolvedValue(undefined);
     storeState.ensureVoterHubsConnected.mockResolvedValue(undefined);
@@ -129,5 +132,15 @@ describe("VoterElectionsPage Edit visibility", () => {
     expect(wrapper.find("[data-testid='cannot-change-vote']").exists()).toBe(
       true,
     );
+  });
+
+  it("does not show the kiosk code or election guid in the welcome", async () => {
+    storeState.isKioskSession = true;
+    storeState.voterId = "AB.11111111-1111-1111-1111-111111111111";
+    const wrapper = await mountPage(votedElection({}));
+
+    expect(wrapper.text()).toContain("shared kiosk");
+    expect(wrapper.text()).not.toContain(storeState.voterId);
+    expect(wrapper.text()).not.toContain("11111111");
   });
 });

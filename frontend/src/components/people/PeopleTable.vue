@@ -214,7 +214,7 @@ const columns = computed<Column<any>[]>(() => [
   width: 100%;
   min-height: 200px;
 
-  .people-table__name {
+  .el-button.people-table__name.is-link {
     --el-button-text-color: var(--color-text-link);
     --el-button-hover-text-color: var(--color-text-link-hover);
     --el-button-hover-link-text-color: var(--color-text-link-hover);

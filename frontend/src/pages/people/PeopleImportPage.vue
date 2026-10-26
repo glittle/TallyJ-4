@@ -2,7 +2,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { ElMessageBox } from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { useNotifications } from "../../composables/useNotifications";
 import type { UploadFile } from "element-plus";
 import { peopleImportService } from "../../services/peopleImportService";
@@ -13,10 +13,7 @@ import type {
   ImportPeopleResult,
   ParseFileResult,
 } from "../../types";
-import type {
-  PeopleImportProgressEvent,
-  PeopleImportCompleteEvent,
-} from "../../types/SignalREvents";
+import type { PeopleImportProgressEvent } from "../../types/SignalREvents";
 
 import PeopleImportFileGuide from "@/components/people/PeopleImportFileGuide.vue";
 import PeopleImportUploadStep from "@/components/people/PeopleImportUploadStep.vue";
@@ -24,9 +21,18 @@ import PeopleImportMappingStep from "@/components/people/PeopleImportMappingStep
 import PeopleImportExecuteStep from "@/components/people/PeopleImportExecuteStep.vue";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import {
+  ensurePeopleImportHubBound,
+  setPeopleImportHubListener,
+} from "@/services/peopleImportHubBinding";
+import {
+  resolveUserFacingApiError,
+  translateIfPhraseKey,
+} from "@/utils/errorHandler";
+import {
   isRequiredMappingComplete,
   mappedFieldCount,
 } from "@/utils/peopleImportMapping";
+import { peopleImportEmptyFileKey } from "@/utils/peopleImportUpload";
 
 const { handleApiError } = useApiErrorHandler();
 
@@ -134,21 +140,23 @@ async function loadPeopleCount() {
 }
 
 async function initializeSignalR() {
-  try {
-    const connection = await signalrService.connectToPeopleImportHub();
-
-    connection.on("importProgress", (data: PeopleImportProgressEvent) => {
-      importProgress.value = data;
-    });
-
-    connection.on("importError", (msg: string) => {
-      showErrorMessage(msg);
-    });
-
-    connection.on("importComplete", (_data: PeopleImportCompleteEvent) => {
+  setPeopleImportHubListener({
+    onProgress: (data) => {
+      importProgress.value = data as PeopleImportProgressEvent;
+    },
+    onError: (msg) => {
+      showErrorMessage(translateIfPhraseKey(msg), 8000);
+    },
+    onComplete: () => {
       importing.value = false;
       importProgress.value = null;
-    });
+    },
+  });
+
+  try {
+    await ensurePeopleImportHubBound(() =>
+      signalrService.connectToPeopleImportHub(),
+    );
   } catch (e) {
     handleApiError(e);
   }
@@ -164,6 +172,8 @@ onMounted(async () => {
 });
 
 onBeforeUnmount(async () => {
+  setPeopleImportHubListener(null);
+  ElMessage.closeAll();
   try {
     await signalrService.leavePeopleImportSession(electionGuid);
   } catch (e) {
@@ -267,6 +277,13 @@ async function handleFileChange(file: UploadFile) {
     return;
   }
 
+  const emptyFileKey = peopleImportEmptyFileKey(file.raw);
+  if (emptyFileKey) {
+    showErrorMessage(t(emptyFileKey), 8000);
+    uploadKey.value += 1;
+    return;
+  }
+
   uploading.value = true;
   try {
     const uploadedFile = await peopleImportService.uploadFile(
@@ -296,7 +313,10 @@ async function handleFileChange(file: UploadFile) {
     await selectFile(fromList, true);
   } catch (error) {
     console.error("Upload failed:", error);
-    showErrorMessage(t("people.import.uploadError"));
+    showErrorMessage(
+      resolveUserFacingApiError(error, t("people.import.uploadError")),
+      8000,
+    );
   } finally {
     uploading.value = false;
   }

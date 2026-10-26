@@ -6711,7 +6711,8 @@ export const Results_TieCountDtoSchema = {
         },
         tieBreakCount: {
             type: 'integer',
-            format: 'int32'
+            format: 'int32',
+            nullable: true
         }
     },
     additionalProperties: false

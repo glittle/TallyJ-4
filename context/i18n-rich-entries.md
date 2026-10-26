@@ -9,7 +9,7 @@
 
 Editable locale JSON stores each message as `{ t, s, w }` so a later AI pass can refresh machine drafts without overwriting a human edit, and so a translation can be seen as stale when English changes. vue-i18n still receives plain strings.
 
-**Decision:** source files under `frontend/src/locales/{lang}/*.json`, and string leaves in root `frontend/src/locales/common.json`, use this shape. `t` is the text. `s` is `source` for English and for those root shared strings. Other locales use `ai`, `human`, or `approved`. `w` is ISO-8601 UTC for when that text was last set. `frontend/src/locales/index.ts` unwraps to `t` before `createI18n` / `setLocaleMessage`. `frontend/merge-locales.js` writes `bundled/{lang}.json` as text only. `JsonLocalizationProvider` reads `t` from the same source files the API already points at; it does not read the frontend bundle.
+**Decision:** source files under `frontend/src/locales/{lang}/*.json`, and string leaves in root `frontend/src/locales/common.json`, use this shape. `t` is the text. `s` is `source` for reviewed English and for those root shared strings. AI-authored English leaves that have not been reviewed use `ai`. Other locales use `ai`, `human`, or `approved`. `w` is ISO-8601 UTC for when that text was last set. `frontend/src/locales/index.ts` unwraps to `t` before `createI18n` / `setLocaleMessage`. `frontend/merge-locales.js` writes `bundled/{lang}.json` as text only. `JsonLocalizationProvider` reads `t` from the same source files the API already points at; it does not read the frontend bundle.
 
 **Rejected alternative:** ship `s` and `w` in `bundled/*.json`. The bundle stays a string catalog, and a missed unwrap cannot return a metadata object from `$t()`.
 

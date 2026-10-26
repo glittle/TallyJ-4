@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   ArrowLeft,
+  Document,
   Expand,
   Fold,
   HomeFilled,
@@ -200,6 +201,13 @@ function dockSidebar() {
           <HomeFilled />
         </el-icon>
         <span>{{ $t("nav.dashboard") }}</span>
+      </el-menu-item>
+
+      <el-menu-item index="/audit-logs" role="menuitem">
+        <el-icon aria-hidden="true">
+          <Document />
+        </el-icon>
+        <span>{{ $t("nav.auditLogs") }}</span>
       </el-menu-item>
 
       <el-menu-item v-if="isSuperAdmin" index="/super-admin" role="menuitem">
