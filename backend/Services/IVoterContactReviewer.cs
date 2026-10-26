@@ -48,7 +48,7 @@ public static class VoterContactFlagReason
     public const string NoMx = "no-mx";
 
     /// <summary>
-    /// The review threw. The failure is logged and does not flag the election by itself.
+    /// Older flag rows may still store this value. The current reviewer does not write it.
     /// </summary>
     public const string ReviewFailed = "review-failed";
 }

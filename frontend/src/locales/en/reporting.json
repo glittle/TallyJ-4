@@ -1001,12 +1001,12 @@
   },
   "reporting.votesTieBreak": {
     "t": "Votes / tie-break",
-    "s": "source",
+    "s": "ai",
     "w": "2026-10-26T05:30:00Z"
   },
   "reporting.votesTieBreakLegend": {
     "t": "Votes / tie-break count",
-    "s": "source",
+    "s": "ai",
     "w": "2026-10-26T05:30:00Z"
   },
   "reporting.votingMethod": {

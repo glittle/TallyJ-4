@@ -49,10 +49,12 @@ A flagged election, a cap hit, and an owner's first paid send email `AntiAbuse:A
 
 ## Voter-list flag
 
-**Status:** active  
-**Evidence:** confirmed  
-**Source:** issue #371 slice 3a; the threshold counts one upload (issue #397)  
-**Revisit when:** the disposable-domain file is refreshed
+**Status:** needs-review  
+**Evidence:** confirmed for the #371 checks; the threshold scope below is unknown until the product decision  
+**Source:** issue #371 slice 3a; issue #397; review of #401  
+**Revisit when:** the product owner decides the three open threshold questions below, or the disposable-domain file is refreshed
+
+**Open:** the code on this branch counts one upload, a manual add/edit or Duplicate passes no upload map so it does not flag, and a thrown review is logged without flagging. Review of #401 says that reverses the election-total count and the fail-closed `review-failed` flag from #371 slice 3a. Those three points are waiting on a product decision. The description below is what the code does now, not a settled rule.
 
 Checked when send-time prefix limits were added: flagging still stops every channel. The prefix cap below is a separate limit and does not clear or replace a flag.
 
@@ -60,11 +62,9 @@ Every path that writes people rechecks the election's phones and emails: CSV/Exc
 
 Active rows are stored in `VoterContactFlags` (masked value truncated to 80 characters, reason, file row number). `ContactKey` is the SHA-256 of the normalized phone or email so a 250-character address still fits the column and the same contact is counted once. A phone key is the E.164 form when the number parses, including a number that is not valid, so `+1 555 0100` and `+15550100` are one contact. A value that already starts with `+` uses those digits with the same `+` prefix, which is how a consecutive-run flag matches the parsed key. Anything else uses its digits only. The election is flagged when one upload has more distinct bad contacts than `AntiAbuse:FlaggedEntryThreshold` (default 3). Exactly 3 do not flag. Contacts already stored from an earlier upload are refreshed as flag rows and are not added to this count. CSV/Excel import counts the rows that file added. JSON import and a v2/v3 package count every person in that package, so the package is one upload. A manual add or edit, and Duplicate, pass no upload map, so they do not flag from the stored list. `ExpectedPhoneRegions` accepts only libphonenumber region codes, at most 80 characters (`CA, US`). A code such as `USA` or `UK` is rejected. Duplicate and the JSON package copy that list. A manual add or edit reruns the review only when the phone or email changed, including when the value is cleared. If the review throws, including an MX lookup error, the saved people stay, the error is logged, and the election is not flagged because of that failure. Phone flags already collected still count, so an upload that is already over the threshold is still flagged. Flagging writes `ElectionFlagged`, emails the super admin with the masked rows, and sets `ElectionSendControls.Flagged`. That stops online voting and every login code (email, SMS, voice, and WhatsApp). The owner cannot turn `UseOnlineVoting` on or save an open online window (`elections.onlineVotingSuspended`). A window that is already open stays on the row, but `requestCode` sends nothing, sign-in is refused with `voting.auth.noOpenElections` when every matching open election is flagged, and ballot submit returns `voting.submit.notOpen`. Teller ballot entry is unchanged. Ballots already stored are not deleted. Clearing the flag deactivates the rows and writes `ElectionFlagCleared`. The next review flags the election again only when that review's upload is over the threshold.
 
-> Superseded 2026-10: the threshold counted every active bad contact in the election, and a thrown review flagged the election with reason `review-failed` even when the upload was small.
+**Alternative still open:** count every stored bad contact toward the threshold, including contacts from earlier uploads and from a manual add or edit. That is what flagged a later small upload because of older rows, and it is also what stopped a list split into files of 3.
 
-**Rejected alternative:** count every stored bad contact toward the threshold. A later upload of one or two contacts was flagged because of rows from earlier files. The limit is per upload.
-
-**Rejected alternative:** flag the election whenever the review throws. An MX lookup error flagged a small upload that was under the threshold. The failure is logged. The threshold still applies to contacts already classified.
+**Alternative still open:** flag the election whenever the review throws, with reason `review-failed`. An MX lookup error then flags a small upload. Leaving the failure as a log leaves codes and online voting open if the review throws.
 
 **Rejected alternative:** treat a DNS timeout as no MX. A slow resolver would flag real addresses.
 
