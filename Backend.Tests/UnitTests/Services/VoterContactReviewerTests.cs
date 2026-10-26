@@ -53,16 +53,21 @@ public class VoterContactReviewerTests : ServiceTestBase
     [Fact]
     public async Task FourFlaggedContacts_FlagTheElection_ThreeDoNot()
     {
-        AddPerson("bad-1", null);
-        AddPerson("bad-2", null);
-        AddPerson("bad-3", null);
+        var first = AddPerson("bad-1", null);
+        var second = AddPerson("bad-2", null);
+        var third = AddPerson("bad-3", null);
         await Context.SaveChangesAsync();
-        await CreateReviewer(threshold: 3).ReviewElectionAsync(_electionId);
+        await CreateReviewer(threshold: 3).ReviewElectionAsync(_electionId, AsUpload(first, second, third));
         Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false);
 
-        AddPerson("bad-4", null);
+        var fourth = AddPerson("bad-4", null);
         await Context.SaveChangesAsync();
-        await CreateReviewer(threshold: 3).ReviewElectionAsync(_electionId);
+        await CreateReviewer(threshold: 3).ReviewElectionAsync(_electionId, AsUpload(fourth));
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false);
+
+        await CreateReviewer(threshold: 3).ReviewElectionAsync(
+            _electionId,
+            AsUpload(first, second, third, fourth));
 
         var control = Context.ElectionSendControls.Single();
         Assert.True(control.Flagged);
@@ -172,19 +177,21 @@ public class VoterContactReviewerTests : ServiceTestBase
     [Fact]
     public async Task DefaultThreshold_ThreeRealisticPhonesDoNotFlag_FourDo()
     {
-        AddPerson("000-000-0000", null);
-        AddPerson("111-111-1111", null);
-        AddPerson("222-222-2222", null);
+        var first = AddPerson("000-000-0000", null);
+        var second = AddPerson("111-111-1111", null);
+        var third = AddPerson("222-222-2222", null);
         await Context.SaveChangesAsync();
 
-        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId);
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(first, second, third));
 
         Assert.InRange(DistinctActiveKeys(), 1, 3);
         Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false);
 
-        AddPerson("333-333-3333", null);
+        var fourth = AddPerson("333-333-3333", null);
         await Context.SaveChangesAsync();
-        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId);
+        await CreateReviewerWithDefaults().ReviewElectionAsync(
+            _electionId,
+            AsUpload(first, second, third, fourth));
 
         var described = DescribeActiveFlags();
         Assert.Equal(4, DistinctActiveKeys());
@@ -196,12 +203,12 @@ public class VoterContactReviewerTests : ServiceTestBase
     [Fact]
     public async Task TwoPhonesAndOneDisposableEmail_DoNotFlag()
     {
-        AddPerson("000-000-0000", null);
-        AddPerson("111-111-1111", null);
-        AddPerson(null, "a@mailinator.com");
+        var first = AddPerson("000-000-0000", null);
+        var second = AddPerson("111-111-1111", null);
+        var third = AddPerson(null, "a@mailinator.com");
         await Context.SaveChangesAsync();
 
-        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId);
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(first, second, third));
 
         Assert.Equal(3, DistinctActiveKeys());
         Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
@@ -210,12 +217,12 @@ public class VoterContactReviewerTests : ServiceTestBase
     [Fact]
     public async Task ThreeUnexpectedCountryNumbers_CountOnceEach_AndDoNotFlag()
     {
-        AddPerson("+442079460111", null);
-        AddPerson("+442079460222", null);
-        AddPerson("+442079460333", null);
+        var first = AddPerson("+442079460111", null);
+        var second = AddPerson("+442079460222", null);
+        var third = AddPerson("+442079460333", null);
         await Context.SaveChangesAsync();
 
-        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId);
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(first, second, third));
 
         Assert.Equal(3, DistinctActiveKeys());
         Assert.Equal(3, Context.VoterContactFlags.Count(row => row.Active));
@@ -223,7 +230,7 @@ public class VoterContactReviewerTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task Import_ThreeBadPhones_DoNotFlag_FourDo()
+    public async Task Import_ThreeBadPhones_DoNotFlag_ALaterSinglePhoneDoesNotFlag()
     {
         var three = await ImportContacts(
             "FirstName,LastName,Phone\nA,One,000-000-0000\nB,Two,111-111-1111\nC,Three,222-222-2222",
@@ -240,6 +247,18 @@ public class VoterContactReviewerTests : ServiceTestBase
 
         Assert.True(four.Success, string.Join("; ", four.Errors.Select(error => error.Key)));
         Assert.Equal(4, Context.People.Count(person => person.ElectionGuid == _electionId));
+        Assert.Equal(4, DistinctActiveKeys());
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+    }
+
+    [Fact]
+    public async Task Import_FourBadPhonesInOneFile_Flags()
+    {
+        var result = await ImportContacts(
+            "FirstName,LastName,Phone\nA,One,000-000-0000\nB,Two,111-111-1111\nC,Three,222-222-2222\nD,Four,333-333-3333",
+            PhoneMappings());
+
+        Assert.True(result.Success, string.Join("; ", result.Errors.Select(error => error.Key)));
         Assert.Equal(4, DistinctActiveKeys());
         var control = Context.ElectionSendControls.Single();
         Assert.True(control.Flagged, DescribeActiveFlags());
@@ -265,35 +284,160 @@ public class VoterContactReviewerTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task ReviewFailure_FlagsTheElection_AndKeepsThePeople()
+    public async Task ReviewFailure_DoesNotFlagASmallUpload_AndKeepsThePeople()
     {
-        AddPerson(null, "a@boom.example");
+        var personId = AddPerson(null, "a@boom.example");
         await Context.SaveChangesAsync();
         _mx.Failure = new InvalidOperationException("dns client failed");
 
-        var thrown = await Record.ExceptionAsync(() => CreateReviewer(threshold: 10).ReviewElectionAsync(_electionId));
+        var thrown = await Record.ExceptionAsync(() =>
+            CreateReviewer(threshold: 10).ReviewElectionAsync(_electionId, AsUpload(personId)));
 
         Assert.Null(thrown);
         Assert.Single(Context.People);
-        var control = Context.ElectionSendControls.Single();
-        Assert.True(control.Flagged);
-        Assert.Contains(Context.VoterContactFlags, row => row.Active && row.Reason == VoterContactFlagReason.ReviewFailed);
-        Assert.Single(_alerts.Flagged);
-        Assert.Contains(_alerts.Flagged[0].Rows, row => row.Reason == VoterContactFlagReason.ReviewFailed);
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false);
+        Assert.DoesNotContain(
+            Context.VoterContactFlags,
+            row => row.Active && row.Reason == VoterContactFlagReason.ReviewFailed);
+        Assert.Empty(_alerts.Flagged);
     }
 
-    private void AddPerson(string? phone, string? email)
+    [Fact]
+    public async Task ReviewFailure_StillFlagsWhenTheUploadIsOverTheThreshold()
     {
+        var phones = new[]
+        {
+            AddPerson("000-000-0000", null),
+            AddPerson("111-111-1111", null),
+            AddPerson("222-222-2222", null),
+            AddPerson("333-333-3333", "a@boom.example")
+        };
+        await Context.SaveChangesAsync();
+        _mx.Failure = new InvalidOperationException("dns client failed");
+
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(phones));
+
+        var control = Context.ElectionSendControls.Single();
+        Assert.True(control.Flagged, DescribeActiveFlags());
+        Assert.Equal(4, control.FlaggedEntryCount);
+        Assert.DoesNotContain(
+            Context.VoterContactFlags,
+            row => row.Reason == VoterContactFlagReason.ReviewFailed);
+    }
+
+    [Fact]
+    public async Task Upload_ThreeFictionalPhones_DoNotFlag()
+    {
+        var phones = new[]
+        {
+            AddPerson("+1 555 0100", null),
+            AddPerson("+1 555 0101", null),
+            AddPerson("+1 555 0102", null)
+        };
+        await Context.SaveChangesAsync();
+
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(phones));
+
+        Assert.Equal(3, DistinctActiveKeys());
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+    }
+
+    [Fact]
+    public async Task Upload_TwoFictionalPhonesAndOneEmail_DoNotFlagWhenOlderContactsExist()
+    {
+        var older = AddPerson("+1 555 0199", null);
+        await Context.SaveChangesAsync();
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(older));
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+
+        var upload = new[]
+        {
+            AddPerson("+1 555 0100", null),
+            AddPerson("+1 555 0101", null),
+            AddPerson(null, "a@mailinator.com")
+        };
+        await Context.SaveChangesAsync();
+
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(upload));
+
+        Assert.Equal(4, DistinctActiveKeys());
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+    }
+
+    [Fact]
+    public async Task Upload_FourFictionalPhones_Flag()
+    {
+        var phones = new[]
+        {
+            AddPerson("+1 555 0100", null),
+            AddPerson("+1 555 0101", null),
+            AddPerson("+1 555 0102", null),
+            AddPerson("+1 555 0103", null)
+        };
+        await Context.SaveChangesAsync();
+
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(phones));
+
+        Assert.Equal(4, DistinctActiveKeys());
+        var control = Context.ElectionSendControls.Single();
+        Assert.True(control.Flagged, DescribeActiveFlags());
+        Assert.Equal(4, control.FlaggedEntryCount);
+    }
+
+    [Fact]
+    public async Task SamePhone_TwoSpellings_AreOneContact()
+    {
+        var spaced = AddPerson("+1 555 0100", null);
+        var compact = AddPerson("+15550100", null);
+        await Context.SaveChangesAsync();
+
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(spaced, compact));
+
+        Assert.Equal(1, DistinctActiveKeys());
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+    }
+
+    [Fact]
+    public async Task UnexpectedCountryAndConsecutiveRun_ShareOneKeyPerNumber()
+    {
+        var numbers = FourConsecutiveNumbers("GB");
+        var people = numbers.Select(number => AddPerson(number, null)).ToArray();
+        await Context.SaveChangesAsync();
+
+        await CreateReviewer(threshold: 10, runLength: 4).ReviewElectionAsync(_electionId, AsUpload(people));
+
+        Assert.Equal(4, DistinctActiveKeys());
+        Assert.Equal(8, Context.VoterContactFlags.Count(row => row.Active));
+        Assert.Equal(4, Context.VoterContactFlags.Count(row => row.Active && row.Reason == VoterContactFlagReason.UnexpectedCountry));
+        Assert.Equal(4, Context.VoterContactFlags.Count(row => row.Active && row.Reason == VoterContactFlagReason.ConsecutiveRun));
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+    }
+
+    private Guid AddPerson(string? phone, string? email)
+    {
+        var personId = Guid.NewGuid();
         Context.People.Add(new Person
         {
             ElectionGuid = _electionId,
-            PersonGuid = Guid.NewGuid(),
+            PersonGuid = personId,
             FirstName = "A",
             LastName = "B",
             Phone = phone,
             Email = email,
             RowVersion = new byte[8]
         });
+        return personId;
+    }
+
+    private static Dictionary<Guid, int> AsUpload(params Guid[] personIds)
+    {
+        var rows = new Dictionary<Guid, int>();
+        for (var index = 0; index < personIds.Length; index++)
+        {
+            rows[personIds[index]] = index + 1;
+        }
+
+        return rows;
     }
 
     private VoterContactReviewer CreateReviewer(int threshold, int runLength = 4)
@@ -376,10 +520,12 @@ public class VoterContactReviewerTests : ServiceTestBase
         return await service.ImportPeopleAsync(_electionId, importFile.RowId);
     }
 
-    private static IReadOnlyList<string> FourConsecutiveCanadianNumbers()
+    private static IReadOnlyList<string> FourConsecutiveCanadianNumbers() => FourConsecutiveNumbers("CA");
+
+    private static IReadOnlyList<string> FourConsecutiveNumbers(string region)
     {
         var util = PhoneNumberUtil.GetInstance();
-        var example = util.Format(util.GetExampleNumber("CA"), PhoneNumberFormat.E164);
+        var example = util.Format(util.GetExampleNumber(region), PhoneNumberFormat.E164);
         var start = long.Parse(example.TrimStart('+'), System.Globalization.CultureInfo.InvariantCulture);
         for (var offset = 0L; offset < 5000; offset++)
         {
@@ -390,8 +536,8 @@ public class VoterContactReviewerTests : ServiceTestBase
                 var text = "+" + (start + offset + step).ToString(System.Globalization.CultureInfo.InvariantCulture);
                 try
                 {
-                    var parsed = util.Parse(text, "CA");
-                    if (!util.IsValidNumber(parsed) || util.GetRegionCodeForNumber(parsed) != "CA")
+                    var parsed = util.Parse(text, region);
+                    if (!util.IsValidNumber(parsed) || util.GetRegionCodeForNumber(parsed) != region)
                     {
                         allValid = false;
                         break;
@@ -412,7 +558,7 @@ public class VoterContactReviewerTests : ServiceTestBase
             }
         }
 
-        throw new InvalidOperationException("Could not find four consecutive valid Canadian numbers");
+        throw new InvalidOperationException("Could not find four consecutive valid numbers for " + region);
     }
 
     private sealed class FakeDisposableDomains : IDisposableDomainList

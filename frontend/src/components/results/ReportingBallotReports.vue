@@ -15,7 +15,10 @@ import {
   formatReportDate,
   formatReportPercent,
 } from "@/utils/reportFormatters";
-import { formatVoteCountWithTieBreak } from "@/utils/tieBreakCounts";
+import {
+  formatVoteCountWithTieBreak,
+  isTieBreakCountUnset,
+} from "@/utils/tieBreakCounts";
 import { useI18n } from "vue-i18n";
 
 const props = defineProps<{
@@ -60,6 +63,21 @@ const ballotsSummaryData = computed(
 const isBallotReport = computed(() =>
   ["Ballots", "BallotsOnline", "BallotsImported", "BallotsTied"].includes(
     props.selectedReport,
+  ),
+);
+const mainShowsTieBreak = computed(() =>
+  (mainData.value?.elected ?? []).some((person) =>
+    person.voteCountDisplay.includes(" / "),
+  ),
+);
+const votesByNumShowsTieBreak = computed(() =>
+  (votesByNumData.value?.people ?? []).some(
+    (person) => !isTieBreakCountUnset(person.tieBreakCount),
+  ),
+);
+const votesByNameShowsTieBreak = computed(() =>
+  (votesByNameData.value?.people ?? []).some(
+    (person) => !isTieBreakCountUnset(person.tieBreakCount),
   ),
 );
 const selectedReport = computed(() => props.selectedReport);
@@ -242,13 +260,22 @@ const selectedReportName = computed(() => props.selectedReportName);
       <p v-if="mainData.hasTies" class="tie-break-required">
         {{ $t("results.tieBreakRequired") }}
       </p>
+      <p v-if="mainShowsTieBreak" class="tie-break-legend">
+        {{ $t("reporting.votesTieBreakLegend") }}
+      </p>
       <table class="data-table">
         <thead>
           <tr>
             <th>#</th>
             <th>{{ $t("reporting.name") }}</th>
             <th>{{ $t("reporting.bahaiId") }}</th>
-            <th>{{ $t("reporting.votes") }}</th>
+            <th>
+              {{
+                mainShowsTieBreak
+                  ? $t("reporting.votesTieBreak")
+                  : $t("reporting.votes")
+              }}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -279,6 +306,9 @@ const selectedReportName = computed(() => props.selectedReportName);
       <p v-if="votesByNumData.hasUnresolvedTie" class="tie-break-required">
         {{ $t("results.tieBreakRequired") }}
       </p>
+      <p v-if="votesByNumShowsTieBreak" class="tie-break-legend">
+        {{ $t("reporting.votesTieBreakLegend") }}
+      </p>
       <div class="votes-list">
         <template v-for="(p, i) in votesByNumData.people" :key="i">
           <div v-if="p.showBreak" class="section-break"></div>
@@ -305,6 +335,9 @@ const selectedReportName = computed(() => props.selectedReportName);
       </div>
       <p v-if="votesByNameData.hasUnresolvedTie" class="tie-break-required">
         {{ $t("results.tieBreakRequired") }}
+      </p>
+      <p v-if="votesByNameShowsTieBreak" class="tie-break-legend">
+        {{ $t("reporting.votesTieBreakLegend") }}
       </p>
       <div class="votes-list">
         <template v-for="(p, i) in votesByNameData.people" :key="i">
@@ -522,6 +555,10 @@ const selectedReportName = computed(() => props.selectedReportName);
 .reporting-ballot-reports {
   .tie-break-required {
     font-weight: 700;
+  }
+
+  .tie-break-legend {
+    margin: 0 0 0.5rem;
   }
 }
 </style>

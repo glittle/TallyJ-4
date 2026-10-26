@@ -368,6 +368,66 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
     }
 
     [Fact]
+    public async Task GetMainReport_ResolvedGroupAndRequiredGroup_KeepsHasTiesAndBlocksFinalize()
+    {
+        await AddLocation("Hall");
+        await AddResultSummary();
+        var summary = Context.ResultSummaries.Single(row => row.ElectionGuid == _electionGuid);
+        summary.UseOnReports = true;
+        summary.BallotsNeedingReview = 0;
+
+        var best = await AddPerson("Best", "Pat");
+        var cole = await AddPerson("Cole", "Sam");
+        var dunn = await AddPerson("Dunn", "Ada");
+        var east = await AddPerson("East", "Bo");
+        await AddResult(best.PersonGuid, 1, 40, "E", tieBreakRequired: false, tieBreakCount: 5);
+        await AddResult(cole.PersonGuid, 2, 40, "E", tieBreakRequired: false, tieBreakCount: 2);
+        await AddResult(dunn.PersonGuid, 3, 10, "X", tieBreakRequired: true, tieBreakCount: null);
+        await AddResult(east.PersonGuid, 4, 10, "O", tieBreakRequired: true, tieBreakCount: null);
+
+        foreach (var result in Context.Results.Where(row => row.PersonGuid == best.PersonGuid || row.PersonGuid == cole.PersonGuid))
+        {
+            result.IsTied = true;
+            result.IsTieResolved = true;
+            result.TieBreakGroup = 1;
+        }
+
+        foreach (var result in Context.Results.Where(row => row.PersonGuid == dunn.PersonGuid || row.PersonGuid == east.PersonGuid))
+        {
+            result.IsTied = true;
+            result.IsTieResolved = false;
+            result.TieBreakGroup = 2;
+        }
+
+        Context.ResultTies.Add(new ResultTie
+        {
+            ElectionGuid = _electionGuid,
+            TieBreakGroup = 1,
+            TieBreakRequired = false,
+            IsResolved = true,
+            NumInTie = 2,
+            NumToElect = 1
+        });
+        Context.ResultTies.Add(new ResultTie
+        {
+            ElectionGuid = _electionGuid,
+            TieBreakGroup = 2,
+            TieBreakRequired = true,
+            IsResolved = false,
+            NumInTie = 2,
+            NumToElect = 1
+        });
+        await Context.SaveChangesAsync();
+
+        var report = await _service.GetMainReportAsync(_electionGuid);
+        Assert.True(report.HasTies);
+
+        var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, _electionGuid);
+        Assert.False(readiness.IsReady);
+        Assert.Contains(ElectionStageMessageKeys.UnresolvedTies, readiness.Blockers);
+    }
+
+    [Fact]
     public async Task GetVotesByNum_UnresolvedTie_SetsHasUnresolvedTie()
     {
         var p1 = await AddPerson("Alpha", "A");

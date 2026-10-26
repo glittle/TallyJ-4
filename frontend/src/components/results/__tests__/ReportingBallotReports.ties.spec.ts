@@ -54,6 +54,7 @@ describe("ReportingBallotReports unresolved ties", () => {
 
     expect(wrapper.text()).toContain("Tie-break Required");
     expect(wrapper.text()).not.toContain("/ Tie Break");
+    expect(wrapper.text()).not.toContain("Votes / tie-break");
   });
 
   it("does not name a tie on the main report once the flag is clear", () => {
@@ -74,6 +75,9 @@ describe("ReportingBallotReports unresolved ties", () => {
 
     expect(wrapper.text()).not.toContain("Tie-break Required");
     expect(wrapper.text()).toContain("10 / 5");
+    expect(wrapper.text()).toContain("Votes / tie-break");
+    expect(wrapper.text()).toContain("Votes / tie-break count");
+    expect(wrapper.text()).not.toContain("/ Tie Break");
   });
 
   it("names an unresolved tie on votes by number", () => {
@@ -96,6 +100,7 @@ describe("ReportingBallotReports unresolved ties", () => {
     expect(wrapper.text()).toContain("Tie-break Required");
     expect(wrapper.text()).toContain("10 -");
     expect(wrapper.text()).not.toContain("10 /");
+    expect(wrapper.text()).not.toContain("Votes / tie-break count");
   });
 
   it("shows a resolved runoff count on votes by name without the required flag", () => {
@@ -117,5 +122,6 @@ describe("ReportingBallotReports unresolved ties", () => {
     const wrapper = mountReport("VotesByName", report);
     expect(wrapper.text()).not.toContain("Tie-break Required");
     expect(wrapper.text()).toContain("5 / 3");
+    expect(wrapper.text()).toContain("Votes / tie-break count");
   });
 });

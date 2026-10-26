@@ -28,8 +28,8 @@ public class AntiAbuseOptions
     public const int DefaultAlertThrottleHours = 24;
 
     /// <summary>
-    /// Default number of flagged voter-list entries that flags the whole election.
-    /// The election is flagged when the count is greater than this number.
+    /// Default number of flagged voter-list entries in one upload that flags the whole election.
+    /// The election is flagged when that upload has more distinct bad contacts than this number.
     /// </summary>
     public const int DefaultFlaggedEntryThreshold = 3;
 
@@ -96,7 +96,8 @@ public class AntiAbuseOptions
     public string[] AlertEmails { get; set; } = Array.Empty<string>();
 
     /// <summary>
-    /// An upload or an election total with more flagged entries than this flags the election.
+    /// More than this many distinct bad phones or emails in a single upload flags the election.
+    /// Contacts already stored from earlier uploads are not added to this count.
     /// </summary>
     public int FlaggedEntryThreshold { get; set; } = DefaultFlaggedEntryThreshold;
 

@@ -58,11 +58,13 @@ public class VoterContactReviewer : IVoterContactReviewer
         {
             await ReviewStoredPeopleAsync(electionGuid, sourceRowNumbers, cancellationToken);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            // People are already saved. Flag the election so a review bug cannot leave sending open.
-            _logger.LogError(ex, "Voter list review failed for election {ElectionGuid}", electionGuid);
-            await FlagBecauseReviewFailedAsync(electionGuid, cancellationToken);
+            // People are already saved. A thrown review must not flag a small upload.
+            _logger.LogError(
+                ex,
+                "Voter list review failed for election {ElectionGuid}. The election was not flagged.",
+                electionGuid);
         }
     }
 
@@ -96,7 +98,18 @@ public class VoterContactReviewer : IVoterContactReviewer
         }
 
         CollectConsecutiveRuns(parsedPhones, sourceRowNumbers, flags);
-        await CollectEmailsAsync(people, sourceRowNumbers, flags, cancellationToken);
+        try
+        {
+            await CollectEmailsAsync(people, sourceRowNumbers, flags, cancellationToken);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            // Phone flags already collected still count. The failure itself is not a bad contact.
+            _logger.LogError(
+                ex,
+                "Email review failed for election {ElectionGuid}. The election is flagged only when this upload is over the threshold.",
+                electionGuid);
+        }
 
         var now = DateTimeOffset.UtcNow;
         foreach (var flag in flags)
@@ -117,8 +130,10 @@ public class VoterContactReviewer : IVoterContactReviewer
         _context.VoterContactFlags.AddRange(flags);
         await _context.SaveChangesAsync(cancellationToken);
 
-        var distinct = flags.Select(flag => flag.ContactKey).Distinct(StringComparer.OrdinalIgnoreCase).Count();
-        // More than FlaggedEntryThreshold (default 3). Exactly 3 distinct bad contacts do not flag.
+        // More than FlaggedEntryThreshold (default 3) distinct bad contacts in this upload.
+        // Exactly 3 do not flag. People already stored from earlier uploads are not counted.
+        // A review with no upload map (manual edit, duplicate) does not flag.
+        var distinct = CountUploadContacts(flags, sourceRowNumbers);
         if (distinct <= _options.ResolvedFlaggedEntryThreshold)
         {
             return;
@@ -187,13 +202,14 @@ public class VoterContactReviewer : IVoterContactReviewer
         }
         catch (NumberParseException)
         {
-            flags.Add(MakeFlag(person.PersonGuid, sourceRowNumbers, DestinationMask.Mask(raw), VoterContactFlagReason.InvalidPhone, "phone:" + Digits(raw)));
+            flags.Add(MakeFlag(person.PersonGuid, sourceRowNumbers, DestinationMask.Mask(raw), VoterContactFlagReason.InvalidPhone, PhoneContactKey(raw, null)));
             return;
         }
 
+        var contactKey = PhoneContactKey(raw, parsed);
         if (!_phones.IsValidNumber(parsed))
         {
-            flags.Add(MakeFlag(person.PersonGuid, sourceRowNumbers, DestinationMask.Mask(raw), VoterContactFlagReason.InvalidPhone, "phone:" + Digits(raw)));
+            flags.Add(MakeFlag(person.PersonGuid, sourceRowNumbers, DestinationMask.Mask(raw), VoterContactFlagReason.InvalidPhone, contactKey));
             return;
         }
 
@@ -201,7 +217,7 @@ public class VoterContactReviewer : IVoterContactReviewer
         var region = _phones.GetRegionCodeForNumber(parsed);
         if (string.IsNullOrEmpty(region) || !expected.Contains(region))
         {
-            flags.Add(MakeFlag(person.PersonGuid, sourceRowNumbers, DestinationMask.Mask(e164), VoterContactFlagReason.UnexpectedCountry, "phone:" + e164));
+            flags.Add(MakeFlag(person.PersonGuid, sourceRowNumbers, DestinationMask.Mask(e164), VoterContactFlagReason.UnexpectedCountry, contactKey));
         }
 
         if (long.TryParse(e164.TrimStart('+'), NumberStyles.None, CultureInfo.InvariantCulture, out var numeric))
@@ -241,7 +257,7 @@ public class VoterContactReviewer : IVoterContactReviewer
                             sourceRowNumbers,
                             DestinationMask.Mask(phone.E164),
                             VoterContactFlagReason.ConsecutiveRun,
-                            "phone:" + phone.E164));
+                            PhoneContactKey(phone.E164, null)));
                     }
                 }
             }
@@ -296,7 +312,15 @@ public class VoterContactReviewer : IVoterContactReviewer
         };
         await Parallel.ForEachAsync(domains, parallel, async (domain, token) =>
         {
-            lookups[domain] = await _mailExchangers.LookupAsync(domain, token);
+            try
+            {
+                lookups[domain] = await _mailExchangers.LookupAsync(domain, token);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                _logger.LogError(ex, "MX lookup failed for domain {Domain}", domain);
+                lookups[domain] = MxLookupResult.Unknown;
+            }
         });
 
         foreach (var item in pending)
@@ -360,87 +384,49 @@ public class VoterContactReviewer : IVoterContactReviewer
         return value[..maxLength];
     }
 
-    private async Task FlagBecauseReviewFailedAsync(Guid electionGuid, CancellationToken cancellationToken)
+    /// <summary>
+    /// Distinct bad contacts that belong to this upload. A null map is not an upload.
+    /// </summary>
+    private static int CountUploadContacts(
+        List<VoterContactFlag> flags,
+        IReadOnlyDictionary<Guid, int>? sourceRowNumbers)
     {
-        try
+        if (sourceRowNumbers == null)
         {
-            foreach (var entry in _context.ChangeTracker.Entries<VoterContactFlag>().ToList())
-            {
-                if (entry.State == EntityState.Added)
-                {
-                    entry.State = EntityState.Detached;
-                }
-            }
-
-            var electionName = await _context.Elections
-                .AsNoTracking()
-                .Where(item => item.ElectionGuid == electionGuid)
-                .Select(item => item.Name)
-                .FirstOrDefaultAsync(cancellationToken);
-            if (electionName == null)
-            {
-                return;
-            }
-
-            var now = DateTimeOffset.UtcNow;
-            _context.VoterContactFlags.Add(new VoterContactFlag
-            {
-                ElectionGuid = electionGuid,
-                MaskedValue = "review failed",
-                Reason = VoterContactFlagReason.ReviewFailed,
-                ContactKey = HashContactKey(VoterContactFlagReason.ReviewFailed),
-                Active = true,
-                FlaggedAt = now
-            });
-
-            var control = await _context.ElectionSendControls
-                .FirstOrDefaultAsync(row => row.ElectionGuid == electionGuid, cancellationToken);
-            var alreadyFlagged = control?.Flagged == true;
-            if (control == null)
-            {
-                control = new ElectionSendControl { ElectionGuid = electionGuid };
-                _context.ElectionSendControls.Add(control);
-            }
-
-            if (control.FlaggedEntryCount < 1)
-            {
-                control.FlaggedEntryCount = 1;
-            }
-
-            if (!alreadyFlagged)
-            {
-                control.Flagged = true;
-                control.FlaggedAt = now;
-            }
-
-            await _context.SaveChangesAsync(cancellationToken);
-            if (alreadyFlagged)
-            {
-                return;
-            }
-
-            await _audit.LogSecurityEventAsync(new CreateSecurityAuditLogDto
-            {
-                EventType = SecurityEventType.ElectionFlagged,
-                ElectionGuid = electionGuid,
-                Details = "Flagged election " + electionGuid + " because the voter-list review failed",
-                Severity = SecurityEventSeverity.Warning
-            });
-            await _alerts.NotifyElectionFlaggedAsync(
-                new AbuseElectionFlaggedAlert(
-                    electionGuid,
-                    electionName,
-                    control.FlaggedEntryCount,
-                    new[]
-                    {
-                        new AbuseFlaggedRow(null, "review failed", VoterContactFlagReason.ReviewFailed)
-                    }),
-                cancellationToken);
+            return 0;
         }
-        catch (Exception ex)
+
+        return flags
+            .Where(flag => flag.PersonGuid is Guid personId && sourceRowNumbers.ContainsKey(personId))
+            .Select(flag => flag.ContactKey)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Count();
+    }
+
+    /// <summary>
+    /// One key per phone. A parsed number uses E.164, including numbers that are not valid,
+    /// so <c>+1 555 0100</c> and <c>+15550100</c> are the same contact. A value that already
+    /// starts with <c>+</c> uses those digits with the same <c>+</c> prefix. Anything else
+    /// uses its digits only.
+    /// </summary>
+    private string PhoneContactKey(string raw, PhoneNumber? parsed)
+    {
+        if (parsed != null)
         {
-            _logger.LogError(ex, "Could not flag election {ElectionGuid} after the voter-list review failed", electionGuid);
+            var e164 = _phones.Format(parsed, PhoneNumberFormat.E164);
+            if (!string.IsNullOrEmpty(e164))
+            {
+                return "phone:" + e164;
+            }
         }
+
+        var digits = Digits(raw);
+        if (raw.TrimStart().StartsWith('+') && digits.Length > 0)
+        {
+            return "phone:+" + digits;
+        }
+
+        return "phone:" + digits;
     }
 
     private (string DefaultRegion, HashSet<string> Regions) ExpectedRegions(string? stored)
