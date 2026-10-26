@@ -2,14 +2,15 @@ namespace Backend.Services;
 
 /// <summary>
 /// Checks phones and emails already stored on an election and flags the election
-/// when one upload has more bad contacts than the threshold.
+/// when one upload is over the threshold or the election total is over the cap.
 /// </summary>
 public interface IVoterContactReviewer
 {
     /// <summary>
     /// Replaces the active flag rows for the election from its current people.
     /// <paramref name="sourceRowNumbers"/> maps each person in this upload to the file row that added them.
-    /// Only those people count toward the flag threshold. A null map is not an upload.
+    /// Only those people count toward the per-upload threshold. A null map is a manual add, edit, or
+    /// duplicate: it still counts toward the election-wide cap.
     /// </summary>
     Task ReviewElectionAsync(
         Guid electionGuid,
@@ -48,7 +49,8 @@ public static class VoterContactFlagReason
     public const string NoMx = "no-mx";
 
     /// <summary>
-    /// Older flag rows may still store this value. The current reviewer does not write it.
+    /// The review threw. The election is flagged so a review bug cannot leave sending open.
+    /// One MX lookup error does not use this reason.
     /// </summary>
     public const string ReviewFailed = "review-failed";
 }

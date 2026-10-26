@@ -60,11 +60,9 @@ public class VoterContactReviewer : IVoterContactReviewer
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            // People are already saved. A thrown review must not flag a small upload.
-            _logger.LogError(
-                ex,
-                "Voter list review failed for election {ElectionGuid}. The election was not flagged.",
-                electionGuid);
+            // People are already saved. Flag the election so a review bug cannot leave sending open.
+            _logger.LogError(ex, "Voter list review failed for election {ElectionGuid}", electionGuid);
+            await FlagBecauseReviewFailedAsync(electionGuid, cancellationToken);
         }
     }
 
@@ -98,18 +96,7 @@ public class VoterContactReviewer : IVoterContactReviewer
         }
 
         CollectConsecutiveRuns(parsedPhones, sourceRowNumbers, flags);
-        try
-        {
-            await CollectEmailsAsync(people, sourceRowNumbers, flags, cancellationToken);
-        }
-        catch (Exception ex) when (ex is not OperationCanceledException)
-        {
-            // Phone flags already collected still count. The failure itself is not a bad contact.
-            _logger.LogError(
-                ex,
-                "Email review failed for election {ElectionGuid}. The election is flagged only when this upload is over the threshold.",
-                electionGuid);
-        }
+        await CollectEmailsAsync(people, sourceRowNumbers, flags, cancellationToken);
 
         var now = DateTimeOffset.UtcNow;
         foreach (var flag in flags)
@@ -130,11 +117,17 @@ public class VoterContactReviewer : IVoterContactReviewer
         _context.VoterContactFlags.AddRange(flags);
         await _context.SaveChangesAsync(cancellationToken);
 
-        // More than FlaggedEntryThreshold (default 3) distinct bad contacts in this upload.
-        // Exactly 3 do not flag. People already stored from earlier uploads are not counted.
-        // A review with no upload map (manual edit, duplicate) does not flag.
-        var distinct = CountUploadContacts(flags, sourceRowNumbers);
-        if (distinct <= _options.ResolvedFlaggedEntryThreshold)
+        // (a) More than FlaggedEntryThreshold (default 3) distinct bad contacts in this upload.
+        // (b) More than ElectionBadContactCap (default 10) distinct bad contacts on the election.
+        // Exactly 3 in one upload, and exactly the cap on the election, do not flag.
+        // A null map is not an upload, so a manual add or duplicate only trips (b).
+        var uploadDistinct = CountUploadContacts(flags, sourceRowNumbers);
+        var electionDistinct = flags
+            .Select(flag => flag.ContactKey)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Count();
+        if (uploadDistinct <= _options.ResolvedFlaggedEntryThreshold
+            && electionDistinct <= _options.ResolvedElectionBadContactCap)
         {
             return;
         }
@@ -148,7 +141,7 @@ public class VoterContactReviewer : IVoterContactReviewer
             _context.ElectionSendControls.Add(control);
         }
 
-        control.FlaggedEntryCount = distinct;
+        control.FlaggedEntryCount = electionDistinct;
         if (!alreadyFlagged)
         {
             control.Flagged = true;
@@ -165,7 +158,7 @@ public class VoterContactReviewer : IVoterContactReviewer
         {
             EventType = SecurityEventType.ElectionFlagged,
             ElectionGuid = electionGuid,
-            Details = "Flagged election " + electionGuid + " with " + distinct + " voter-list entries",
+            Details = "Flagged election " + electionGuid + " with " + electionDistinct + " voter-list entries",
             Severity = SecurityEventSeverity.Warning
         });
 
@@ -173,12 +166,12 @@ public class VoterContactReviewer : IVoterContactReviewer
             .Select(flag => new AbuseFlaggedRow(flag.SourceRowNumber, flag.MaskedValue, flag.Reason))
             .ToList();
         await _alerts.NotifyElectionFlaggedAsync(
-            new AbuseElectionFlaggedAlert(electionGuid, election.Name, distinct, rows),
+            new AbuseElectionFlaggedAlert(electionGuid, election.Name, electionDistinct, rows),
             cancellationToken);
         _logger.LogWarning(
             "Flagged election {ElectionGuid} with {FlaggedEntryCount} voter-list entries",
             electionGuid,
-            distinct);
+            electionDistinct);
     }
 
     private void CollectPhone(
@@ -382,6 +375,91 @@ public class VoterContactReviewer : IVoterContactReviewer
         }
 
         return value[..maxLength];
+    }
+
+    /// <summary>
+    /// Flags the election because the review threw. One MX lookup error does not reach here.
+    /// </summary>
+    private async Task FlagBecauseReviewFailedAsync(Guid electionGuid, CancellationToken cancellationToken)
+    {
+        try
+        {
+            foreach (var entry in _context.ChangeTracker.Entries<VoterContactFlag>().ToList())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.State = EntityState.Detached;
+                }
+            }
+
+            var electionName = await _context.Elections
+                .AsNoTracking()
+                .Where(item => item.ElectionGuid == electionGuid)
+                .Select(item => item.Name)
+                .FirstOrDefaultAsync(cancellationToken);
+            if (electionName == null)
+            {
+                return;
+            }
+
+            var now = DateTimeOffset.UtcNow;
+            _context.VoterContactFlags.Add(new VoterContactFlag
+            {
+                ElectionGuid = electionGuid,
+                MaskedValue = "review failed",
+                Reason = VoterContactFlagReason.ReviewFailed,
+                ContactKey = HashContactKey(VoterContactFlagReason.ReviewFailed),
+                Active = true,
+                FlaggedAt = now
+            });
+
+            var control = await _context.ElectionSendControls
+                .FirstOrDefaultAsync(row => row.ElectionGuid == electionGuid, cancellationToken);
+            var alreadyFlagged = control?.Flagged == true;
+            if (control == null)
+            {
+                control = new ElectionSendControl { ElectionGuid = electionGuid };
+                _context.ElectionSendControls.Add(control);
+            }
+
+            if (control.FlaggedEntryCount < 1)
+            {
+                control.FlaggedEntryCount = 1;
+            }
+
+            if (!alreadyFlagged)
+            {
+                control.Flagged = true;
+                control.FlaggedAt = now;
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
+            if (alreadyFlagged)
+            {
+                return;
+            }
+
+            await _audit.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.ElectionFlagged,
+                ElectionGuid = electionGuid,
+                Details = "Flagged election " + electionGuid + " because the voter-list review failed",
+                Severity = SecurityEventSeverity.Warning
+            });
+            await _alerts.NotifyElectionFlaggedAsync(
+                new AbuseElectionFlaggedAlert(
+                    electionGuid,
+                    electionName,
+                    control.FlaggedEntryCount,
+                    [
+                        new AbuseFlaggedRow(null, "review failed", VoterContactFlagReason.ReviewFailed)
+                    ]),
+                cancellationToken);
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            _logger.LogError(ex, "Could not flag election {ElectionGuid} after the voter-list review failed", electionGuid);
+        }
     }
 
     /// <summary>

@@ -34,6 +34,12 @@ public class AntiAbuseOptions
     public const int DefaultFlaggedEntryThreshold = 3;
 
     /// <summary>
+    /// Default election-wide cap. More distinct bad contacts than this, from every upload and
+    /// from manual adds, flags the election even when no single upload crossed the threshold.
+    /// </summary>
+    public const int DefaultElectionBadContactCap = 10;
+
+    /// <summary>
     /// Default length of a consecutive phone run that is flagged.
     /// </summary>
     public const int DefaultConsecutivePhoneRunLength = 4;
@@ -98,8 +104,15 @@ public class AntiAbuseOptions
     /// <summary>
     /// More than this many distinct bad phones or emails in a single upload flags the election.
     /// Contacts already stored from earlier uploads are not added to this count.
+    /// The election-wide cap is <see cref="ElectionBadContactCap"/>.
     /// </summary>
     public int FlaggedEntryThreshold { get; set; } = DefaultFlaggedEntryThreshold;
+
+    /// <summary>
+    /// More than this many distinct bad phones or emails stored on the election flags it.
+    /// Manual adds, edits, and duplicates count. A person with no phone and no email does not.
+    /// </summary>
+    public int ElectionBadContactCap { get; set; } = DefaultElectionBadContactCap;
 
     /// <summary>
     /// A run of this many sequential phone numbers is flagged.
@@ -166,6 +179,12 @@ public class AntiAbuseOptions
     /// </summary>
     public int ResolvedFlaggedEntryThreshold =>
         FlaggedEntryThreshold < 0 ? DefaultFlaggedEntryThreshold : FlaggedEntryThreshold;
+
+    /// <summary>
+    /// Election-wide cap after applying the default when the configured value is below zero.
+    /// </summary>
+    public int ResolvedElectionBadContactCap =>
+        ElectionBadContactCap < 0 ? DefaultElectionBadContactCap : ElectionBadContactCap;
 
     /// <summary>
     /// Consecutive-run length after applying the default when the configured value is below 2.

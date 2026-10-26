@@ -21,6 +21,7 @@ public class VoterContactReviewerTests : ServiceTestBase
     private readonly Guid _electionId = Guid.NewGuid();
     private readonly RecordingAlerts _alerts = new();
     private readonly RecordingMx _mx = new();
+    private readonly FakeDisposableDomains _domains = new(new[] { "mailinator.com" });
 
     public VoterContactReviewerTests()
     {
@@ -284,7 +285,7 @@ public class VoterContactReviewerTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task ReviewFailure_DoesNotFlagASmallUpload_AndKeepsThePeople()
+    public async Task MxLookupFailure_DoesNotFlagTheElection_AndKeepsThePeople()
     {
         var personId = AddPerson(null, "a@boom.example");
         await Context.SaveChangesAsync();
@@ -300,6 +301,25 @@ public class VoterContactReviewerTests : ServiceTestBase
             Context.VoterContactFlags,
             row => row.Active && row.Reason == VoterContactFlagReason.ReviewFailed);
         Assert.Empty(_alerts.Flagged);
+    }
+
+    [Fact]
+    public async Task ReviewThrow_FlagsTheElection_AndKeepsThePeople()
+    {
+        var personId = AddPerson(null, "a@example.com");
+        await Context.SaveChangesAsync();
+        _domains.Failure = new InvalidOperationException("domain list unavailable");
+
+        var thrown = await Record.ExceptionAsync(() =>
+            CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(personId)));
+
+        Assert.Null(thrown);
+        Assert.Single(Context.People);
+        var control = Context.ElectionSendControls.Single();
+        Assert.True(control.Flagged);
+        Assert.Contains(Context.VoterContactFlags, row => row.Active && row.Reason == VoterContactFlagReason.ReviewFailed);
+        Assert.Single(_alerts.Flagged);
+        Assert.Contains(_alerts.Flagged[0].Rows, row => row.Reason == VoterContactFlagReason.ReviewFailed);
     }
 
     [Fact]
@@ -413,6 +433,133 @@ public class VoterContactReviewerTests : ServiceTestBase
         Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
     }
 
+    [Fact]
+    public async Task Upload_ThreeWithOlderContactsAtTheCap_DoNotFlag_PastTheCapDoes()
+    {
+        for (var index = 0; index < 7; index++)
+        {
+            AddPerson($"{index:000}-000-0000", null);
+        }
+
+        await Context.SaveChangesAsync();
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId);
+        Assert.Equal(7, DistinctActiveKeys());
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+
+        var upload = new[]
+        {
+            AddPerson("+1 555 0100", null),
+            AddPerson("+1 555 0101", null),
+            AddPerson(null, "a@mailinator.com")
+        };
+        await Context.SaveChangesAsync();
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(upload));
+        Assert.Equal(10, DistinctActiveKeys());
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+
+        var extra = AddPerson("+1 555 0102", null);
+        await Context.SaveChangesAsync();
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(extra));
+
+        Assert.Equal(11, DistinctActiveKeys());
+        var control = Context.ElectionSendControls.Single();
+        Assert.True(control.Flagged, DescribeActiveFlags());
+        Assert.Equal(11, control.FlaggedEntryCount);
+    }
+
+    [Fact]
+    public async Task UploadsOfThree_FlagOnceTheElectionTotalPassesTheCap()
+    {
+        for (var file = 0; file < 3; file++)
+        {
+            var people = new List<Guid>();
+            for (var row = 0; row < 3; row++)
+            {
+                people.Add(AddPerson($"{file:0}{row:00}-000-0000", null));
+            }
+
+            await Context.SaveChangesAsync();
+            await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(people.ToArray()));
+            Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+        }
+
+        Assert.Equal(9, DistinctActiveKeys());
+
+        var fourth = new List<Guid>();
+        for (var row = 0; row < 3; row++)
+        {
+            fourth.Add(AddPerson($"3{row:00}-000-0000", null));
+        }
+
+        await Context.SaveChangesAsync();
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(fourth.ToArray()));
+
+        Assert.Equal(12, DistinctActiveKeys());
+        var control = Context.ElectionSendControls.Single();
+        Assert.True(control.Flagged, DescribeActiveFlags());
+        Assert.Equal(12, control.FlaggedEntryCount);
+    }
+
+    [Fact]
+    public async Task ManualAdds_FlagWhenTheElectionTotalExceedsTheCap()
+    {
+        for (var index = 0; index < 10; index++)
+        {
+            AddPerson($"{index:000}-111-0000", null);
+            await Context.SaveChangesAsync();
+            await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId);
+            Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+        }
+
+        Assert.Equal(10, DistinctActiveKeys());
+        AddPerson("010-111-0000", null);
+        await Context.SaveChangesAsync();
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId);
+
+        Assert.Equal(11, DistinctActiveKeys());
+        var control = Context.ElectionSendControls.Single();
+        Assert.True(control.Flagged, DescribeActiveFlags());
+        Assert.Equal(11, control.FlaggedEntryCount);
+    }
+
+    [Fact]
+    public async Task ReviewWithoutUploadMap_FourBadContacts_DoNotFlag()
+    {
+        AddPerson("000-000-0000", null);
+        AddPerson("111-111-1111", null);
+        AddPerson("222-222-2222", null);
+        AddPerson("333-333-3333", null);
+        await Context.SaveChangesAsync();
+
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId);
+
+        Assert.Equal(4, DistinctActiveKeys());
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+    }
+
+    [Fact]
+    public async Task BlankContacts_NeverCount()
+    {
+        for (var index = 0; index < 12; index++)
+        {
+            AddPerson(index % 2 == 0 ? null : " ", index % 3 == 0 ? null : "");
+        }
+
+        var upload = new[]
+        {
+            AddPerson("000-000-0000", null),
+            AddPerson("111-111-1111", null),
+            AddPerson(null, "a@mailinator.com")
+        };
+        await Context.SaveChangesAsync();
+
+        await CreateReviewerWithDefaults().ReviewElectionAsync(_electionId, AsUpload(upload));
+
+        Assert.Equal(3, DistinctActiveKeys());
+        Assert.Equal(15, Context.People.Count(person => person.ElectionGuid == _electionId));
+        Assert.False(Context.ElectionSendControls.SingleOrDefault()?.Flagged ?? false, DescribeActiveFlags());
+    }
+
     private Guid AddPerson(string? phone, string? email)
     {
         var personId = Guid.NewGuid();
@@ -444,7 +591,7 @@ public class VoterContactReviewerTests : ServiceTestBase
     {
         return new VoterContactReviewer(
             Context,
-            new FakeDisposableDomains(new[] { "mailinator.com" }),
+            _domains,
             _mx,
             _alerts,
             new SecurityAuditService(Context, NullLogger<SecurityAuditService>.Instance),
@@ -461,7 +608,7 @@ public class VoterContactReviewerTests : ServiceTestBase
     {
         return new VoterContactReviewer(
             Context,
-            new FakeDisposableDomains(new[] { "mailinator.com" }),
+            _domains,
             _mx,
             _alerts,
             new SecurityAuditService(Context, NullLogger<SecurityAuditService>.Instance),
@@ -570,7 +717,17 @@ public class VoterContactReviewerTests : ServiceTestBase
             _domains = new HashSet<string>(domains, StringComparer.OrdinalIgnoreCase);
         }
 
-        public bool Contains(string domain) => _domains.Contains(domain);
+        public Exception? Failure { get; set; }
+
+        public bool Contains(string domain)
+        {
+            if (Failure != null)
+            {
+                throw Failure;
+            }
+
+            return _domains.Contains(domain);
+        }
     }
 
     private sealed class RecordingMx : IMailExchangerLookup
