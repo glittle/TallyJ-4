@@ -38,7 +38,7 @@ v3 had no “download all”. v4 already had print and a separate advanced expor
 
 Main and Votes-by-* reports used to append `" / " + TieBreakCount` whenever `TieBreakRequired` was true. After required ties stopped filling 0, unset became a dangling slash (C#) or the literal `"null"` (Vue). Download-all CSV already used empty for null and `"0"` for 0.
 
-**Chosen:** format the suffix whenever a count is present, including explicit 0 and after the tie is resolved. Unset omits the suffix. `HasTies` on the main report and `HasUnresolvedTie` on Votes-by-* are any result in the election with `TieBreakRequired` still true, not only the elected/extra slice and not whether the display string contains `/`. On-screen reports and the download-all CSV say "Tie-break Required" when that flag is set.
+**Chosen:** format the suffix whenever a count is present, including explicit 0 and after the tie is resolved. Unset omits the suffix. `HasTies` on the main report and `HasUnresolvedTie` on Votes-by-* are any tie group whose saved counts do not yet decide the needed positions, not only the elected/extra slice and not whether the display string contains `/`. A stored `TieBreakRequired` bit left true after those counts were saved does not keep the banner. On-screen reports and the download-all CSV say "Tie-break Required" only while the group is still unresolved.
 
 **Rejected alternative:** keep string-concatenating the nullable count. Rejected — it hid the unset vs 0 distinction that #198 asked for.
 

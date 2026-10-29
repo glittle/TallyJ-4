@@ -1,4 +1,5 @@
 using Backend.DTOs.Reports;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -16,6 +17,7 @@ public partial class ReportService
             .ThenBy(r => r.Person!.FirstName)
             .ToListAsync();
 
+        var tieGroups = TieBreakResolution.Evaluate(results);
         var people = new List<VotePersonDto>();
         for (var i = 0; i < results.Count; i++)
         {
@@ -25,7 +27,7 @@ public partial class ReportService
                 PersonName = r.Person?.FullNameFl ?? "",
                 VoteCount = r.VoteCount ?? 0,
                 TieBreakCount = r.TieBreakCount,
-                TieBreakRequired = r.TieBreakRequired == true,
+                TieBreakRequired = TieBreakResolution.FlagsFor(r, tieGroups).TieBreakRequired,
                 Section = r.Section,
                 ShowBreak = i == 0 || r.Section != results[i - 1].Section
             });
@@ -50,12 +52,13 @@ public partial class ReportService
             .ThenBy(r => r.Person!.FirstName)
             .ToListAsync();
 
+        var tieGroups = TieBreakResolution.Evaluate(results);
         var people = results.Select(r => new VotePersonDto
         {
             PersonName = r.Person?.FullName ?? "",
             VoteCount = r.VoteCount ?? 0,
             TieBreakCount = r.TieBreakCount,
-            TieBreakRequired = r.TieBreakRequired == true,
+            TieBreakRequired = TieBreakResolution.FlagsFor(r, tieGroups).TieBreakRequired,
             Section = r.Section
         }).ToList();
 

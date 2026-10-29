@@ -1,4 +1,5 @@
 using Backend.DTOs.Results;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -33,6 +34,11 @@ public partial class TallyService
         }
 
         var section = tieResults[0].Section ?? SectionOther;
+        var members = await _context.Results
+            .Where(r => r.ElectionGuid == electionGuid && r.TieBreakGroup == tieBreakGroup)
+            .ToListAsync();
+        var stillRequired = TieBreakResolution.Evaluate(members)
+            .TryGetValue(tieBreakGroup, out var status) && status.TieBreakRequired;
 
         var people = tieResults.Select(r => new TiePersonDto
         {
@@ -46,7 +52,10 @@ public partial class TallyService
         {
             TieBreakGroup = tieBreakGroup,
             Section = section,
-            People = people
+            People = people,
+            Instructions = stillRequired
+                ? "Enter tie-break vote counts for these people"
+                : string.Empty
         };
     }
 
@@ -73,8 +82,9 @@ public partial class TallyService
 
         foreach (var count in request.Counts)
         {
+            // A resolved group clears IsTied. Still accept a later edit so a recount can re-open it.
             var result = await _context.Results
-                .FirstOrDefaultAsync(r => r.ElectionGuid == electionGuid && r.PersonGuid == count.PersonGuid && r.IsTied == true);
+                .FirstOrDefaultAsync(r => r.ElectionGuid == electionGuid && r.PersonGuid == count.PersonGuid);
 
             if (result != null)
             {

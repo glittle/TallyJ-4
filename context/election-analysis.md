@@ -65,15 +65,19 @@ v3 always re-ran analysis after saving tie-break counts (the Analyze button is �
 ## Resolved runoff clears "Tie-break Required"
 
 **Status:** active  
-**Evidence:** confirmed (issues #388 and #390; analyzer tests had kept the flag after distinct counts)  
+**Evidence:** confirmed (issues #388 and #390; the retest still showed Tied, the tie prompt, and the report banner after the first flag clear)  
 **Source:** issues #388, #390  
 **Revisit when:** a known-good v3 package shows v3 keeps the required flag after the runoff distinguishes the group
 
-Equal ballot totals still set `IsTied`. `TieBreakRequired` means the group is not yet distinguished. Once saved counts give every member a different `(TieBreakCount ?? 0)` across a section boundary (or inside Extra), `IsResolved` / `IsTieResolved` are true and both the `ResultTie` and each `Result` clear `TieBreakRequired`. The counts stay, including explicit 0. A later Calculate does not put the flag back. All-0 and all-unset stay unresolved, so the flag stays. The clear happens after the block that drops counts when the tie was not required, so a resolved runoff does not wipe its counts.
+Equal ballot totals set `IsTied` until a runoff decides the seats. `TieBreakRequired` means the group is not yet distinguished. Once saved counts are distinct enough to decide the needed positions — every member's `(TieBreakCount ?? 0)` differs across a section boundary, or inside Extra — `IsResolved` / `IsTieResolved` are true and both `IsTied` and `TieBreakRequired` are cleared on the `ResultTie` and each `Result`. The counts stay, including explicit 0. A later Calculate does not put the flags back. All-0 and all-unset stay unresolved, so both flags stay. The clear happens after the block that drops counts when the tie was not required, so a resolved runoff does not wipe its counts.
+
+Results, the tie list, and the Main / Votes-by reports recompute that from the saved counts. A flag left true after the counts were saved does not keep the Tied tag, the "enter tie-break counts" prompt, or the Tie-break Required banner.
 
 Finalization already required `ResultTie.TieBreakRequired && IsResolved != true`. The `Results` clause also requires `IsTieResolved != true`, so a resolved row does not block Finalize.
 
 **Rejected alternative:** leave `TieBreakRequired` true after the counts resolve the group. That is what the analyzer tests locked, reading the flag as "this group needed a tie-break". Rejected — the results page and finalization treat the bit as "still required", so a finished runoff stayed on "Tie-break Required".
+
+**Rejected alternative:** clear only `TieBreakRequired` and leave `IsTied` set from the equal ballot totals. That was the first fix. The tie screen still listed the group and kept the prompt, and Results still showed Tied. A stored required bit that was not rewritten after the counts were saved also kept the report banner. Rejected — both flags mean the runoff is still open, and readers recompute them from the counts.
 
 ## Analyze manual voter counts persist M without re-running Analyze
 

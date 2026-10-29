@@ -158,22 +158,7 @@ public class PeopleService : IPeopleService
         await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, createDto.ElectionGuid);
         await ThrowIfGuestCannotAddPeopleAsync(createDto.ElectionGuid);
 
-        var existingPerson = await _context.People
-            .FirstOrDefaultAsync(p => p.ElectionGuid == createDto.ElectionGuid &&
-                                     ((p.Email != null && createDto.Email != null && p.Email == createDto.Email) ||
-                                      (p.Phone != null && createDto.Phone != null && p.Phone == createDto.Phone)));
-
-        if (existingPerson != null)
-        {
-            if (existingPerson.Email == createDto.Email)
-            {
-                throw new InvalidOperationException($"A person with email '{createDto.Email}' already exists in this election");
-            }
-            if (existingPerson.Phone == createDto.Phone)
-            {
-                throw new InvalidOperationException($"A person with phone '{createDto.Phone}' already exists in this election");
-            }
-        }
+        await ThrowIfDuplicateContactAsync(createDto.ElectionGuid, createDto.Email, createDto.Phone);
 
         var person = createDto.CopyMatchingPropertiesToNew<Person>();
         person.PersonGuid = Guid.NewGuid();
@@ -236,15 +221,7 @@ public class PeopleService : IPeopleService
 
         if (!string.IsNullOrWhiteSpace(updateDto.Email) && updateDto.Email != person.Email)
         {
-            var emailExists = await _context.People
-                .AnyAsync(p => p.ElectionGuid == person.ElectionGuid &&
-                              p.PersonGuid != personGuid &&
-                              p.Email == updateDto.Email);
-
-            if (emailExists)
-            {
-                throw new InvalidOperationException($"A person with email '{updateDto.Email}' already exists in this election");
-            }
+            await ThrowIfDuplicateContactAsync(person.ElectionGuid, updateDto.Email, phone: null, exceptPersonGuid: personGuid);
         }
 
         var previousPhone = person.Phone;
@@ -252,15 +229,7 @@ public class PeopleService : IPeopleService
 
         if (!string.IsNullOrWhiteSpace(updateDto.Phone) && updateDto.Phone != person.Phone)
         {
-            var phoneExists = await _context.People
-                .AnyAsync(p => p.ElectionGuid == person.ElectionGuid &&
-                              p.PersonGuid != personGuid &&
-                              p.Phone == updateDto.Phone);
-
-            if (phoneExists)
-            {
-                throw new InvalidOperationException($"A person with phone '{updateDto.Phone}' already exists in this election");
-            }
+            await ThrowIfDuplicateContactAsync(person.ElectionGuid, email: null, updateDto.Phone, exceptPersonGuid: personGuid);
         }
 
         updateDto.CopyMatchingPropertiesTo(person);
@@ -408,6 +377,49 @@ public class PeopleService : IPeopleService
     /// <see cref="Election.GuestTellersCanAddPeople"/> is on. No HttpContext
     /// (unit tests) is treated as a full teller.
     /// </summary>
+    /// <summary>
+    /// Blank emails and phones are not identities. Two people with no email, or two with no phone,
+    /// are not duplicates of each other. A real duplicate names the contact that matched.
+    /// </summary>
+    private async Task ThrowIfDuplicateContactAsync(
+        Guid electionGuid,
+        string? email,
+        string? phone,
+        Guid? exceptPersonGuid = null)
+    {
+        if (!string.IsNullOrWhiteSpace(email))
+        {
+            var emailTaken = _context.People.Where(p =>
+                p.ElectionGuid == electionGuid && p.Email == email);
+            if (exceptPersonGuid.HasValue)
+            {
+                var id = exceptPersonGuid.Value;
+                emailTaken = emailTaken.Where(p => p.PersonGuid != id);
+            }
+
+            if (await emailTaken.AnyAsync())
+            {
+                throw new InvalidOperationException($"A person with email '{email}' already exists in this election");
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(phone))
+        {
+            var phoneTaken = _context.People.Where(p =>
+                p.ElectionGuid == electionGuid && p.Phone == phone);
+            if (exceptPersonGuid.HasValue)
+            {
+                var id = exceptPersonGuid.Value;
+                phoneTaken = phoneTaken.Where(p => p.PersonGuid != id);
+            }
+
+            if (await phoneTaken.AnyAsync())
+            {
+                throw new InvalidOperationException($"A person with phone '{phone}' already exists in this election");
+            }
+        }
+    }
+
     private async Task ThrowIfGuestCannotAddPeopleAsync(Guid electionGuid)
     {
         if (!GuestTellerClaims.IsGuestTeller(_httpContextAccessor?.HttpContext?.User))
