@@ -373,11 +373,6 @@ public class PeopleService : IPeopleService
     }
 
     /// <summary>
-    /// v3 PeopleModel.SavePerson: guests may add a person only when
-    /// <see cref="Election.GuestTellersCanAddPeople"/> is on. No HttpContext
-    /// (unit tests) is treated as a full teller.
-    /// </summary>
-    /// <summary>
     /// Blank emails and phones are not identities. Two people with no email, or two with no phone,
     /// are not duplicates of each other. A real duplicate names the contact that matched.
     /// </summary>
@@ -420,6 +415,11 @@ public class PeopleService : IPeopleService
         }
     }
 
+    /// <summary>
+    /// v3 PeopleModel.SavePerson: guests may add a person only when
+    /// <see cref="Election.GuestTellersCanAddPeople"/> is on. No HttpContext
+    /// (unit tests) is treated as a full teller.
+    /// </summary>
     private async Task ThrowIfGuestCannotAddPeopleAsync(Guid electionGuid)
     {
         if (!GuestTellerClaims.IsGuestTeller(_httpContextAccessor?.HttpContext?.User))

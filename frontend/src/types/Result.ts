@@ -133,7 +133,12 @@ export interface TieDetailsDto {
   tieBreakGroup: number;
   section: string;
   people: TiePersonDto[];
+  /** Empty once the saved counts have decided the seats. */
   instructions: string;
+  /** False once a required runoff is decided, and when no runoff was needed. */
+  tieBreakRequired?: boolean;
+  /** True when this group needed a runoff and the counts have decided it. */
+  isResolved?: boolean;
 }
 
 export interface TiePersonDto {

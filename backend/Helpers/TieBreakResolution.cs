@@ -9,7 +9,14 @@ namespace Backend.Helpers;
 /// </summary>
 public static class TieBreakResolution
 {
-    public readonly record struct GroupStatus(bool IsTied, bool TieBreakRequired);
+    /// <summary>
+    /// How a tie group should be shown after the saved counts are applied.
+    /// </summary>
+    /// <param name="IsTied">Results-page Tied flag. False once a required runoff is decided.</param>
+    /// <param name="TieBreakRequired">True while the seats this group must fill are still undecided.</param>
+    /// <param name="IsResolved">True when this group needed a runoff and the saved counts have decided it.
+    /// The tie page keeps these groups so the counts can be corrected.</param>
+    public readonly record struct GroupStatus(bool IsTied, bool TieBreakRequired, bool IsResolved);
 
     /// <summary>
     /// True when this group crosses a section boundary or sits inside Extra,
@@ -72,12 +79,12 @@ public static class TieBreakResolution
             var members = group.ToList();
             if (!NeedsTieBreak(members))
             {
-                map[group.Key] = new GroupStatus(members.Any(r => r.IsTied == true), false);
+                map[group.Key] = new GroupStatus(members.Any(r => r.IsTied == true), false, false);
                 continue;
             }
 
             var decided = CountsDecidePositions(members);
-            map[group.Key] = new GroupStatus(!decided, !decided);
+            map[group.Key] = new GroupStatus(!decided, !decided, decided);
         }
 
         return map;

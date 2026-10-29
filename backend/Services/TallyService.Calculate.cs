@@ -159,7 +159,7 @@ public partial class TallyService
         var ties = results
             .Where(r => r.TieBreakGroup.HasValue
                 && tieGroups.TryGetValue(r.TieBreakGroup.Value, out var groupStatus)
-                && groupStatus.IsTied)
+                && (groupStatus.IsTied || groupStatus.IsResolved))
             .GroupBy(r => r.TieBreakGroup!.Value)
             .Select(g => new TieInfoDto
             {

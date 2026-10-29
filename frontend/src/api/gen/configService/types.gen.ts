@@ -1962,6 +1962,8 @@ export type ResultsTieDetailsDto = {
     section?: string | null;
     people?: Array<ResultsTiePersonDto> | null;
     instructions?: string | null;
+    tieBreakRequired?: boolean;
+    isResolved?: boolean;
 };
 
 export type ResultsTieInfoDto = {

@@ -6750,6 +6750,12 @@ export const Results_TieDetailsDtoSchema = {
         instructions: {
             type: 'string',
             nullable: true
+        },
+        tieBreakRequired: {
+            type: 'boolean'
+        },
+        isResolved: {
+            type: 'boolean'
         }
     },
     additionalProperties: false
