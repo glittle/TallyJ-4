@@ -891,6 +891,7 @@ public class TallyServiceTests : ServiceTestBase
         Assert.Contains(tally.Results, row => row.TieBreakCount == 1);
         var listed = Assert.Single(tally.Ties);
         Assert.False(listed.TieBreakRequired);
+        Assert.True(listed.IsResolved);
         var details = await _service.GetTiesAsync(election.ElectionGuid, listed.TieBreakGroup);
         Assert.False(details.TieBreakRequired);
         Assert.True(details.IsResolved);
@@ -971,6 +972,7 @@ public class TallyServiceTests : ServiceTestBase
         Assert.Equal(5, cole.TieBreakCount);
         var listed = Assert.Single(tally.Ties);
         Assert.False(listed.TieBreakRequired);
+        Assert.True(listed.IsResolved);
         Assert.Contains(listed.PersonNames, name => name.Contains("Best"));
         Assert.Contains(listed.PersonNames, name => name.Contains("Cole"));
         var details = await _service.GetTiesAsync(election.ElectionGuid, bestStored.TieBreakGroup!.Value);
@@ -1011,6 +1013,7 @@ public class TallyServiceTests : ServiceTestBase
         Assert.False(staleTally.Results.Single(r => r.PersonGuid == people[2].PersonGuid).TieBreakRequired);
         var staleListed = Assert.Single(staleTally.Ties);
         Assert.False(staleListed.TieBreakRequired);
+        Assert.True(staleListed.IsResolved);
         var staleDetails = await _service.GetTiesAsync(election.ElectionGuid, bestStored.TieBreakGroup!.Value);
         Assert.False(staleDetails.TieBreakRequired);
         Assert.True(staleDetails.IsResolved);
@@ -1053,6 +1056,7 @@ public class TallyServiceTests : ServiceTestBase
         Assert.True(reopened.Results.Single(r => r.PersonGuid == people[2].PersonGuid).TieBreakRequired);
         var reopenedTie = Assert.Single(reopened.Ties);
         Assert.True(reopenedTie.TieBreakRequired);
+        Assert.False(reopenedTie.IsResolved);
         var reopenedDetails = await _service.GetTiesAsync(election.ElectionGuid, reopenedTie.TieBreakGroup);
         Assert.True(reopenedDetails.TieBreakRequired);
         Assert.False(reopenedDetails.IsResolved);

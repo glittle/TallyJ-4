@@ -15064,6 +15064,9 @@
           "tieBreakRequired": {
             "type": "boolean"
           },
+          "isResolved": {
+            "type": "boolean"
+          },
           "section": {
             "type": "string",
             "nullable": true

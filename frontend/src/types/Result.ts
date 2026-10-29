@@ -27,6 +27,8 @@ export interface TieInfoDto {
   tieBreakGroup: number;
   voteCount: number;
   tieBreakRequired: boolean;
+  /** True when a required runoff has been decided. The Ties tab still lists the group. */
+  isResolved?: boolean;
   section: string;
   personNames: string[];
 }

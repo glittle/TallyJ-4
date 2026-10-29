@@ -1970,6 +1970,7 @@ export type ResultsTieInfoDto = {
     tieBreakGroup?: number;
     voteCount?: number;
     tieBreakRequired?: boolean;
+    isResolved?: boolean;
     section?: string | null;
     personNames?: Array<string> | null;
 };

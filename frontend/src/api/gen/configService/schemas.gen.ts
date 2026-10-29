@@ -6775,6 +6775,9 @@ export const Results_TieInfoDtoSchema = {
         tieBreakRequired: {
             type: 'boolean'
         },
+        isResolved: {
+            type: 'boolean'
+        },
         section: {
             type: 'string',
             nullable: true

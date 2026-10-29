@@ -73,7 +73,7 @@ Equal ballot totals set `IsTied` until a runoff decides the seats. `TieBreakRequ
 
 Results and the Main / Votes-by reports recompute that from the saved counts. A flag left true after the counts were saved does not keep the Tied tag or the Tie-break Required banner.
 
-The tie page keeps the group after it is resolved. It is shown as resolved, with no "enter tie-break counts" prompt and no Tie-break Required tag, and the counts stay editable. `SaveTieCountsAsync` writes a count only for a person who still has a `TieBreakGroup` (a resolved group keeps that id; a person in no group does not). Saving counts that no longer decide the seats re-opens the tie.
+The tie page keeps the group after it is resolved. It is shown as resolved, with no "enter tie-break counts" prompt and no Tie-break Required tag, and the counts stay editable. The Results Ties tab uses the same Resolved marker (`TieInfoDto.IsResolved`). `SaveTieCountsAsync` writes a count only for a person who still has a `TieBreakGroup` (a resolved group keeps that id; a person in no group does not). Saving counts that no longer decide the seats re-opens the tie.
 
 Finalization already required `ResultTie.TieBreakRequired && IsResolved != true`. The `Results` clause also requires `IsTieResolved != true`, so a resolved row does not block Finalize.
 

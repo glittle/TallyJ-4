@@ -166,6 +166,7 @@ public partial class TallyService
                 TieBreakGroup = g.Key,
                 VoteCount = g.First().VoteCount ?? 0,
                 TieBreakRequired = tieGroups[g.Key].TieBreakRequired,
+                IsResolved = tieGroups[g.Key].IsResolved,
                 Section = g.First().Section ?? string.Empty,
                 PersonNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList()
             })
