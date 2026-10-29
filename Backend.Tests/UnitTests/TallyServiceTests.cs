@@ -1,3 +1,5 @@
+using System.IO.Compression;
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.Extensions.Logging;
@@ -883,10 +885,214 @@ public class TallyServiceTests : ServiceTestBase
         var tally = await _service.GetTallyResultsAsync(election.ElectionGuid);
         Assert.Equal(3, tally.Results.Count);
         Assert.All(tally.Results, row => Assert.False(row.TieBreakRequired));
+        Assert.All(tally.Results, row => Assert.False(row.IsTied));
         Assert.Contains(tally.Results, row => row.TieBreakCount == 5);
         Assert.Contains(tally.Results, row => row.TieBreakCount == 2);
         Assert.Contains(tally.Results, row => row.TieBreakCount == 1);
-        Assert.All(tally.Ties, tie => Assert.False(tie.TieBreakRequired));
+        var listed = Assert.Single(tally.Ties);
+        Assert.False(listed.TieBreakRequired);
+        Assert.True(listed.IsResolved);
+        var details = await _service.GetTiesAsync(election.ElectionGuid, listed.TieBreakGroup);
+        Assert.False(details.TieBreakRequired);
+        Assert.True(details.IsResolved);
+        Assert.Equal(string.Empty, details.Instructions);
+        Assert.Equal(3, details.People.Count);
+    }
+
+    [Fact]
+    public async Task SaveTieCountsAsync_LastElectedSeat_DistinctCountsResolveResultsAndReport()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 2, numberExtra: 0);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 4);
+        people[0].FirstName = "Ada";
+        people[0].LastName = "Alpha";
+        people[1].FirstName = "Pat";
+        people[1].LastName = "Best";
+        people[2].FirstName = "Sam";
+        people[2].LastName = "Cole";
+        await Context.SaveChangesAsync();
+
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 4);
+        // Ada 4, Best 2, Cole 2. Best and Cole are tied for the last elected seat.
+        await AddPairAsync(ballots[0], people[0], people[1]);
+        await AddPairAsync(ballots[1], people[0], people[2]);
+        await AddPairAsync(ballots[2], people[0], people[1]);
+        await AddPairAsync(ballots[3], people[0], people[2]);
+
+        var before = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+        var bestBefore = before.Results.Single(r => r.PersonGuid == people[1].PersonGuid);
+        var coleBefore = before.Results.Single(r => r.PersonGuid == people[2].PersonGuid);
+        Assert.Equal(2, bestBefore.VoteCount);
+        Assert.Equal(2, coleBefore.VoteCount);
+        Assert.True(bestBefore.IsTied);
+        Assert.True(coleBefore.IsTied);
+        Assert.True(bestBefore.TieBreakRequired);
+        Assert.True(coleBefore.TieBreakRequired);
+        Assert.NotNull(bestBefore.TieBreakGroup);
+
+        var prompt = await _service.GetTiesAsync(election.ElectionGuid, bestBefore.TieBreakGroup!.Value);
+        Assert.Contains("Enter tie-break vote counts", prompt.Instructions);
+
+        var response = await _service.SaveTieCountsAsync(election.ElectionGuid, new SaveTieCountsRequestDto
+        {
+            Counts =
+            [
+                new TieCountDto { PersonGuid = people[1].PersonGuid, TieBreakCount = 0 },
+                new TieCountDto { PersonGuid = people[2].PersonGuid, TieBreakCount = 5 },
+            ]
+        });
+        Assert.True(response.Success);
+        Assert.True(response.ReAnalysisTriggered);
+
+        var stored = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid)
+            .ToList();
+        var bestStored = stored.Single(r => r.PersonGuid == people[1].PersonGuid);
+        var coleStored = stored.Single(r => r.PersonGuid == people[2].PersonGuid);
+        Assert.Equal(0, bestStored.TieBreakCount);
+        Assert.Equal(5, coleStored.TieBreakCount);
+        Assert.Equal("E", coleStored.Section);
+        Assert.Equal("O", bestStored.Section);
+        Assert.Equal(false, bestStored.IsTied);
+        Assert.Equal(false, coleStored.IsTied);
+        Assert.Equal(false, bestStored.TieBreakRequired);
+        Assert.Equal(false, coleStored.TieBreakRequired);
+        Assert.Equal(true, Context.ResultTies.Single(rt => rt.ElectionGuid == election.ElectionGuid).IsResolved);
+        Assert.Equal(false, Context.ResultTies.Single(rt => rt.ElectionGuid == election.ElectionGuid).TieBreakRequired);
+
+        var tally = await _service.GetTallyResultsAsync(election.ElectionGuid);
+        var best = tally.Results.Single(r => r.PersonGuid == people[1].PersonGuid);
+        var cole = tally.Results.Single(r => r.PersonGuid == people[2].PersonGuid);
+        Assert.False(best.IsTied);
+        Assert.False(cole.IsTied);
+        Assert.False(best.TieBreakRequired);
+        Assert.False(cole.TieBreakRequired);
+        Assert.Equal(0, best.TieBreakCount);
+        Assert.Equal(5, cole.TieBreakCount);
+        var listed = Assert.Single(tally.Ties);
+        Assert.False(listed.TieBreakRequired);
+        Assert.True(listed.IsResolved);
+        Assert.Contains(listed.PersonNames, name => name.Contains("Best"));
+        Assert.Contains(listed.PersonNames, name => name.Contains("Cole"));
+        var details = await _service.GetTiesAsync(election.ElectionGuid, bestStored.TieBreakGroup!.Value);
+        Assert.False(details.TieBreakRequired);
+        Assert.True(details.IsResolved);
+        Assert.Equal(string.Empty, details.Instructions);
+        Assert.Equal(0, details.People.Single(p => p.PersonGuid == people[1].PersonGuid).TieBreakCount);
+        Assert.Equal(5, details.People.Single(p => p.PersonGuid == people[2].PersonGuid).TieBreakCount);
+
+        var reports = new ReportService(Context, new Mock<IStringLocalizer<ReportService>>().Object);
+        var main = await reports.GetMainReportAsync(election.ElectionGuid);
+        Assert.False(main.HasTies);
+        var coleOnReport = main.Elected.Single(p => p.Name.Contains("Cole"));
+        var coleDisplay = TieBreakDisplayHelper.FormatVoteCountDisplay(2, 5);
+        Assert.Equal(coleDisplay, coleOnReport.VoteCountDisplay);
+
+        var csv = await ReadReportCsvAsync(reports, election.ElectionGuid, "Main.csv");
+        Assert.DoesNotContain("Tie-break Required", csv);
+        Assert.Contains(coleDisplay, csv);
+
+        // Counts stayed, but an older analysis can leave the flags set. Readers must not trust that bit.
+        foreach (var result in stored.Where(r => r.TieBreakGroup != null))
+        {
+            result.IsTied = true;
+            result.TieBreakRequired = true;
+            result.IsTieResolved = false;
+        }
+
+        var staleTie = Context.ResultTies.Single(rt => rt.ElectionGuid == election.ElectionGuid);
+        staleTie.TieBreakRequired = true;
+        staleTie.IsResolved = false;
+        await Context.SaveChangesAsync();
+
+        var staleTally = await _service.GetTallyResultsAsync(election.ElectionGuid);
+        Assert.False(staleTally.Results.Single(r => r.PersonGuid == people[1].PersonGuid).IsTied);
+        Assert.False(staleTally.Results.Single(r => r.PersonGuid == people[2].PersonGuid).IsTied);
+        Assert.False(staleTally.Results.Single(r => r.PersonGuid == people[1].PersonGuid).TieBreakRequired);
+        Assert.False(staleTally.Results.Single(r => r.PersonGuid == people[2].PersonGuid).TieBreakRequired);
+        var staleListed = Assert.Single(staleTally.Ties);
+        Assert.False(staleListed.TieBreakRequired);
+        Assert.True(staleListed.IsResolved);
+        var staleDetails = await _service.GetTiesAsync(election.ElectionGuid, bestStored.TieBreakGroup!.Value);
+        Assert.False(staleDetails.TieBreakRequired);
+        Assert.True(staleDetails.IsResolved);
+        Assert.DoesNotContain("Enter tie-break vote counts", staleDetails.Instructions);
+        Assert.Equal(0, staleDetails.People.Single(p => p.PersonGuid == people[1].PersonGuid).TieBreakCount);
+        Assert.Equal(5, staleDetails.People.Single(p => p.PersonGuid == people[2].PersonGuid).TieBreakCount);
+
+        var staleMain = await reports.GetMainReportAsync(election.ElectionGuid);
+        Assert.False(staleMain.HasTies);
+        var staleCsv = await ReadReportCsvAsync(reports, election.ElectionGuid, "Main.csv");
+        Assert.DoesNotContain("Tie-break Required", staleCsv);
+        Assert.Contains(coleDisplay, staleCsv);
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+        var afterCalculate = Context.Results.Where(r => r.ElectionGuid == election.ElectionGuid).ToList();
+        Assert.All(
+            afterCalculate.Where(r => r.PersonGuid == people[1].PersonGuid || r.PersonGuid == people[2].PersonGuid),
+            row =>
+            {
+                Assert.Equal(false, row.IsTied);
+                Assert.Equal(false, row.TieBreakRequired);
+            });
+        Assert.Equal(0, afterCalculate.Single(r => r.PersonGuid == people[1].PersonGuid).TieBreakCount);
+        Assert.Equal(5, afterCalculate.Single(r => r.PersonGuid == people[2].PersonGuid).TieBreakCount);
+
+        var reopen = await _service.SaveTieCountsAsync(election.ElectionGuid, new SaveTieCountsRequestDto
+        {
+            Counts =
+            [
+                new TieCountDto { PersonGuid = people[1].PersonGuid, TieBreakCount = 1 },
+                new TieCountDto { PersonGuid = people[2].PersonGuid, TieBreakCount = 1 },
+            ]
+        });
+        Assert.True(reopen.ReAnalysisTriggered);
+
+        var reopened = await _service.GetTallyResultsAsync(election.ElectionGuid);
+        Assert.True(reopened.Results.Single(r => r.PersonGuid == people[1].PersonGuid).IsTied);
+        Assert.True(reopened.Results.Single(r => r.PersonGuid == people[1].PersonGuid).TieBreakRequired);
+        Assert.True(reopened.Results.Single(r => r.PersonGuid == people[2].PersonGuid).IsTied);
+        Assert.True(reopened.Results.Single(r => r.PersonGuid == people[2].PersonGuid).TieBreakRequired);
+        var reopenedTie = Assert.Single(reopened.Ties);
+        Assert.True(reopenedTie.TieBreakRequired);
+        Assert.False(reopenedTie.IsResolved);
+        var reopenedDetails = await _service.GetTiesAsync(election.ElectionGuid, reopenedTie.TieBreakGroup);
+        Assert.True(reopenedDetails.TieBreakRequired);
+        Assert.False(reopenedDetails.IsResolved);
+        Assert.Contains("Enter tie-break vote counts", reopenedDetails.Instructions);
+    }
+
+    [Fact]
+    public async Task SaveTieCountsAsync_PersonOutsideTieGroup_DoesNotStoreCount()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 2, numberExtra: 0);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 4);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 4);
+        await AddPairAsync(ballots[0], people[0], people[1]);
+        await AddPairAsync(ballots[1], people[0], people[2]);
+        await AddPairAsync(ballots[2], people[0], people[1]);
+        await AddPairAsync(ballots[3], people[0], people[2]);
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+        var winner = Context.Results.Single(r => r.ElectionGuid == election.ElectionGuid && r.PersonGuid == people[0].PersonGuid);
+        Assert.Null(winner.TieBreakGroup);
+
+        var response = await _service.SaveTieCountsAsync(election.ElectionGuid, new SaveTieCountsRequestDto
+        {
+            Counts =
+            [
+                new TieCountDto { PersonGuid = people[0].PersonGuid, TieBreakCount = 9 },
+                new TieCountDto { PersonGuid = people[2].PersonGuid, TieBreakCount = 5 },
+            ]
+        });
+
+        Assert.True(response.Success);
+        Assert.True(response.ReAnalysisTriggered);
+        var stored = Context.Results.Where(r => r.ElectionGuid == election.ElectionGuid).ToList();
+        Assert.Null(stored.Single(r => r.PersonGuid == people[0].PersonGuid).TieBreakCount);
+        Assert.Equal(5, stored.Single(r => r.PersonGuid == people[2].PersonGuid).TieBreakCount);
     }
 
     [Fact]
@@ -1168,6 +1374,39 @@ public class TallyServiceTests : ServiceTestBase
         Assert.Equal(100, result.Statistics.BallotsReceived);
         Assert.True(stopwatch.ElapsedMilliseconds < 1000,
             $"Tally calculation took {stopwatch.ElapsedMilliseconds}ms, expected < 1000ms");
+    }
+
+    private async Task AddPairAsync(Ballot ballot, Person first, Person second)
+    {
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballot.BallotGuid,
+            PersonGuid = first.PersonGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Ok,
+            PersonCombinedInfo = first.CombinedInfo,
+            RowVersion = new byte[8]
+        });
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballot.BallotGuid,
+            PersonGuid = second.PersonGuid,
+            PositionOnBallot = 2,
+            VoteStatus = VoteStatus.Ok,
+            PersonCombinedInfo = second.CombinedInfo,
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+    }
+
+    private static async Task<string> ReadReportCsvAsync(ReportService reports, Guid electionGuid, string entryName)
+    {
+        var (zipBytes, _) = await reports.GetAllReportsZipAsync(electionGuid);
+        using var zip = new ZipArchive(new MemoryStream(zipBytes), ZipArchiveMode.Read);
+        var entry = zip.GetEntry(entryName);
+        Assert.NotNull(entry);
+        using var reader = new StreamReader(entry!.Open(), Encoding.UTF8);
+        return await reader.ReadToEndAsync();
     }
 
     private async Task<Election> CreateTestElectionAsync(

@@ -66,8 +66,11 @@ public partial class TallyService
             })
             .ToList();
 
+        var tieGroups = TieBreakResolution.Evaluate(results);
         var ties = results
-            .Where(r => r.IsTied == true && r.TieBreakGroup.HasValue)
+            .Where(r => r.TieBreakGroup.HasValue
+                && tieGroups.TryGetValue(r.TieBreakGroup.Value, out var groupStatus)
+                && groupStatus.IsTied)
             .GroupBy(r => r.TieBreakGroup!.Value)
             .Select(g => new TieReportDto
             {
@@ -264,10 +267,12 @@ public partial class TallyService
     {
         var results = await _context.Results
             .Include(r => r.Person)
-            .Where(r => r.ElectionGuid == electionGuid && r.IsTied == true && r.TieBreakGroup.HasValue)
+            .Where(r => r.ElectionGuid == electionGuid && r.TieBreakGroup != null)
             .ToListAsync();
+        var tieGroups = TieBreakResolution.Evaluate(results);
 
         return results
+            .Where(r => tieGroups.TryGetValue(r.TieBreakGroup!.Value, out var groupStatus) && groupStatus.IsTied)
             .GroupBy(r => r.TieBreakGroup!.Value)
             .Select(g => new TieReportDto
             {

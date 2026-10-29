@@ -1962,12 +1962,15 @@ export type ResultsTieDetailsDto = {
     section?: string | null;
     people?: Array<ResultsTiePersonDto> | null;
     instructions?: string | null;
+    tieBreakRequired?: boolean;
+    isResolved?: boolean;
 };
 
 export type ResultsTieInfoDto = {
     tieBreakGroup?: number;
     voteCount?: number;
     tieBreakRequired?: boolean;
+    isResolved?: boolean;
     section?: string | null;
     personNames?: Array<string> | null;
 };

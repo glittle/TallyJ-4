@@ -1,6 +1,7 @@
 using Backend.DTOs.Results;
 using Backend.Entities;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -32,6 +33,8 @@ public partial class TallyService
         var summary = await _context.ResultSummaries
             .FirstOrDefaultAsync(rs => rs.ElectionGuid == electionGuid);
 
+        var tieGroups = TieBreakResolution.Evaluate(results);
+
         var electedPeople = results
             .Where(r => r.Section == "E")
             .Select(r => new PresentationPersonDto
@@ -39,7 +42,7 @@ public partial class TallyService
                 Rank = r.Rank,
                 FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
                 VoteCount = r.VoteCount ?? 0,
-                IsTied = r.IsTied == true,
+                IsTied = TieBreakResolution.FlagsFor(r, tieGroups).IsTied,
                 IsWinner = true
             })
             .ToList();
@@ -51,20 +54,22 @@ public partial class TallyService
                 Rank = r.Rank,
                 FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
                 VoteCount = r.VoteCount ?? 0,
-                IsTied = r.IsTied == true,
+                IsTied = TieBreakResolution.FlagsFor(r, tieGroups).IsTied,
                 IsWinner = false
             })
             .ToList();
 
         var ties = results
-            .Where(r => r.IsTied == true && r.TieBreakGroup.HasValue)
+            .Where(r => r.TieBreakGroup.HasValue
+                && tieGroups.TryGetValue(r.TieBreakGroup.Value, out var groupStatus)
+                && groupStatus.IsTied)
             .GroupBy(r => r.TieBreakGroup!.Value)
             .Select(g => new PresentationTieDto
             {
                 TieBreakGroup = g.Key,
                 Section = g.First().Section ?? SectionOther,
                 PersonNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList(),
-                TieBreakRequired = g.First().TieBreakRequired == true
+                TieBreakRequired = tieGroups[g.Key].TieBreakRequired
             })
             .ToList();
 

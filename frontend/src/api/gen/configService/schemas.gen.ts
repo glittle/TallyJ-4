@@ -6750,6 +6750,12 @@ export const Results_TieDetailsDtoSchema = {
         instructions: {
             type: 'string',
             nullable: true
+        },
+        tieBreakRequired: {
+            type: 'boolean'
+        },
+        isResolved: {
+            type: 'boolean'
         }
     },
     additionalProperties: false
@@ -6767,6 +6773,9 @@ export const Results_TieInfoDtoSchema = {
             format: 'int32'
         },
         tieBreakRequired: {
+            type: 'boolean'
+        },
+        isResolved: {
             type: 'boolean'
         },
         section: {

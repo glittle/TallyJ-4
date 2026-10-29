@@ -27,6 +27,8 @@ export interface TieInfoDto {
   tieBreakGroup: number;
   voteCount: number;
   tieBreakRequired: boolean;
+  /** True when a required runoff has been decided. The Ties tab still lists the group. */
+  isResolved?: boolean;
   section: string;
   personNames: string[];
 }
@@ -133,7 +135,12 @@ export interface TieDetailsDto {
   tieBreakGroup: number;
   section: string;
   people: TiePersonDto[];
+  /** Empty once the saved counts have decided the seats. */
   instructions: string;
+  /** False once a required runoff is decided, and when no runoff was needed. */
+  tieBreakRequired?: boolean;
+  /** True when this group needed a runoff and the counts have decided it. */
+  isResolved?: boolean;
 }
 
 export interface TiePersonDto {

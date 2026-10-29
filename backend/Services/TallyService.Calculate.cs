@@ -1,5 +1,6 @@
 using Backend.DTOs.Results;
 using Backend.DTOs.SignalR;
+using Backend.Helpers;
 using Backend.Services.Analyzers;
 using Microsoft.EntityFrameworkCore;
 
@@ -153,14 +154,19 @@ public partial class TallyService
 
         var statistics = await GetTallyStatisticsAsync(electionGuid);
 
+        var tieGroups = TieBreakResolution.Evaluate(results);
+
         var ties = results
-            .Where(r => r.IsTied == true && r.TieBreakGroup.HasValue)
+            .Where(r => r.TieBreakGroup.HasValue
+                && tieGroups.TryGetValue(r.TieBreakGroup.Value, out var groupStatus)
+                && (groupStatus.IsTied || groupStatus.IsResolved))
             .GroupBy(r => r.TieBreakGroup!.Value)
             .Select(g => new TieInfoDto
             {
                 TieBreakGroup = g.Key,
                 VoteCount = g.First().VoteCount ?? 0,
-                TieBreakRequired = g.First().TieBreakRequired == true,
+                TieBreakRequired = tieGroups[g.Key].TieBreakRequired,
+                IsResolved = tieGroups[g.Key].IsResolved,
                 Section = g.First().Section ?? string.Empty,
                 PersonNames = g.Select(r => r.Person?.FullNameFl ?? UnknownFallbackValue).ToList()
             })
@@ -172,19 +178,23 @@ public partial class TallyService
             ElectionName = election.Name ?? UnknownElectionName,
             CalculatedAt = DateTimeOffset.UtcNow,
             Statistics = statistics,
-            Results = results.Select(r => new PersonResultDto
+            Results = results.Select(r =>
             {
-                PersonGuid = r.PersonGuid,
-                FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
-                VoteCount = r.VoteCount ?? 0,
-                Rank = r.Rank,
-                Section = r.Section ?? SectionOther,
-                IsTied = r.IsTied == true,
-                TieBreakGroup = r.TieBreakGroup,
-                TieBreakRequired = r.TieBreakRequired == true,
-                TieBreakCount = r.TieBreakCount,
-                CloseToNext = r.CloseToNext == true,
-                CloseToPrev = r.CloseToPrev == true
+                var (isTied, tieBreakRequired) = TieBreakResolution.FlagsFor(r, tieGroups);
+                return new PersonResultDto
+                {
+                    PersonGuid = r.PersonGuid,
+                    FullName = r.Person?.FullNameFl ?? UnknownFallbackValue,
+                    VoteCount = r.VoteCount ?? 0,
+                    Rank = r.Rank,
+                    Section = r.Section ?? SectionOther,
+                    IsTied = isTied,
+                    TieBreakGroup = r.TieBreakGroup,
+                    TieBreakRequired = tieBreakRequired,
+                    TieBreakCount = r.TieBreakCount,
+                    CloseToNext = r.CloseToNext == true,
+                    CloseToPrev = r.CloseToPrev == true
+                };
             }).ToList(),
             Ties = ties
         };

@@ -897,6 +897,116 @@ public class PeopleServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task CreatePersonAsync_BlankEmailAndDuplicatePhone_NamesThePhone()
+    {
+        var electionGuid = Guid.NewGuid();
+        await _service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "Best",
+            FirstName = "Pat",
+            Phone = "123",
+            Email = null
+        });
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CreatePersonAsync(new CreatePersonDto
+            {
+                ElectionGuid = electionGuid,
+                LastName = "Cole",
+                FirstName = "Sam",
+                Phone = "123",
+                Email = ""
+            }));
+
+        Assert.Contains("phone '123'", ex.Message);
+        Assert.DoesNotContain("email", ex.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task CreatePersonAsync_BlankEmailsAndPhones_AreNotDuplicates()
+    {
+        var electionGuid = Guid.NewGuid();
+        var first = await _service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "One",
+            FirstName = "A",
+            Email = "",
+            Phone = ""
+        });
+        var second = await _service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "Two",
+            FirstName = "B",
+            Email = null,
+            Phone = "   "
+        });
+
+        Assert.NotEqual(first.PersonGuid, second.PersonGuid);
+        Assert.Equal(2, Context.People.Count(p => p.ElectionGuid == electionGuid));
+    }
+
+    [Fact]
+    public async Task CreatePersonAsync_DuplicateEmail_StillNamesTheEmail()
+    {
+        var electionGuid = Guid.NewGuid();
+        await _service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "One",
+            FirstName = "A",
+            Email = "a@example.com"
+        });
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CreatePersonAsync(new CreatePersonDto
+            {
+                ElectionGuid = electionGuid,
+                LastName = "Two",
+                FirstName = "B",
+                Email = "a@example.com",
+                Phone = "555"
+            }));
+
+        Assert.Contains("email 'a@example.com'", ex.Message);
+    }
+
+    [Fact]
+    public async Task UpdatePersonAsync_BlankEmailAndDuplicatePhone_NamesThePhone()
+    {
+        var electionGuid = Guid.NewGuid();
+        await _service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "Best",
+            FirstName = "Pat",
+            Phone = "123"
+        });
+        var second = await _service.CreatePersonAsync(new CreatePersonDto
+        {
+            ElectionGuid = electionGuid,
+            LastName = "Cole",
+            FirstName = "Sam",
+            Phone = "555",
+            Email = "sam@example.com"
+        });
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.UpdatePersonAsync(second.PersonGuid, new UpdatePersonDto
+            {
+                LastName = "Cole",
+                FirstName = "Sam",
+                Phone = "123",
+                Email = ""
+            }));
+
+        Assert.Contains("phone '123'", ex.Message);
+        Assert.DoesNotContain("email", ex.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public async Task CreatePersonAsync_WithoutPhone_DoesNotCreatePhoneOnlineVoter()
     {
         var before = await Context.OnlineVoters.CountAsync();
