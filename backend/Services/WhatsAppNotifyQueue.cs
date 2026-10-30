@@ -104,18 +104,19 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
         var hostSite = _configuration["ClientEnv:frontendUrl"]?.Trim() ?? "";
         var work = new List<NotifyWorkItem>();
         var results = new List<WhatsAppNotifyPersonResultDto>(requested.Count);
+        var failedMasked = new List<string>();
 
         foreach (var personGuid in requested)
         {
             if (!byGuid.TryGetValue(personGuid, out var person))
             {
-                results.Add(Result(personGuid, WhatsAppNotifyOutcome.SkippedOtherElection));
+                results.Add(Result(personGuid, WhatsAppNotifyOutcome.SkippedOtherElection, null));
                 continue;
             }
 
             if (string.IsNullOrWhiteSpace(person.Phone))
             {
-                results.Add(Result(personGuid, WhatsAppNotifyOutcome.SkippedNoPhone));
+                await RememberSkipAsync(db, electionGuid, personGuid, WhatsAppNotifyOutcome.SkippedNoPhone, null, results, cancellationToken);
                 continue;
             }
 
@@ -124,14 +125,28 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
             // Identifier gate: send only on VoterId + VoterIdType == "P". Do not convert.
             if (row == null || row.VoterIdType != OnlineVoterPhoneHelper.PhoneVoterIdType)
             {
-                results.Add(Result(personGuid, WhatsAppNotifyOutcome.SkippedNonP));
+                await RememberSkipAsync(db, electionGuid, personGuid, WhatsAppNotifyOutcome.SkippedNonP, null, results, cancellationToken);
                 continue;
             }
 
             // SmsStatus is not the WhatsApp allow rule.
             if (!OnlineVoterWhatsAppStatus.AllowsNotify(row.WhatsAppStatus))
             {
-                results.Add(Result(personGuid, WhatsAppNotifyOutcome.SkipForStatus(row.WhatsAppStatus)));
+                var skip = WhatsAppNotifyOutcome.SkipForStatus(row.WhatsAppStatus);
+                await RememberSkipAsync(db, electionGuid, personGuid, skip, row.WhatsAppStatus, results, cancellationToken);
+                continue;
+            }
+
+            if (!PaidDestinationPhone.TryExplain(person.Phone, out var phoneReason))
+            {
+                var reason = phoneReason ?? PaidDestinationPhone.ReasonMalformedE164;
+                results.Add(Result(personGuid, AnnouncementOutcomes.SkippedInvalidPhone, reason));
+                failedMasked.Add(BulkSendSupport.Mask(person.Phone));
+                await BulkSendSupport.LogUnreservedBlockAsync(
+                    db, electionGuid, AnnouncementChannels.WhatsApp, person.Phone, reason, cancellationToken);
+                await BulkSendSupport.UpsertLastAsync(
+                    db, electionGuid, personGuid, AnnouncementChannels.WhatsApp,
+                    AnnouncementOutcomes.SkippedInvalidPhone, reason, cancellationToken);
                 continue;
             }
 
@@ -144,7 +159,7 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
                     person.FirstName,
                     person.Phone,
                     hostSite)));
-            results.Add(Result(personGuid, WhatsAppNotifyOutcome.Queued));
+            results.Add(Result(personGuid, WhatsAppNotifyOutcome.Queued, null));
         }
 
         var run = new NotifyRun
@@ -154,7 +169,8 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
             Results = results,
             Work = work,
             Queued = work.Count,
-            Skipped = results.Count(r => WhatsAppNotifyOutcome.IsSkip(r.Outcome))
+            Skipped = results.Count(r => WhatsAppNotifyOutcome.IsSkip(r.Outcome)
+                || r.Outcome == AnnouncementOutcomes.SkippedInvalidPhone)
         };
 
         if (_beforeClaim != null)
@@ -178,11 +194,40 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
 
         if (startProcess)
         {
+            run.FailedMasked.AddRange(failedMasked);
             var token = run.Cts.Token;
             run.ProcessTask = Task.Run(() => ProcessAsync(run, token), CancellationToken.None);
         }
+        else
+        {
+            BulkSendSupport.LogFailures(_logger, electionGuid, AnnouncementChannels.WhatsApp, failedMasked);
+        }
 
         return Snapshot(run);
+    }
+
+    /// <inheritdoc />
+    public async Task<WhatsAppNotifyStatusDto> RetryFailedAsync(
+        Guid electionGuid,
+        CancellationToken cancellationToken = default)
+    {
+        using var scope = _scopeFactory.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+        var failed = await db.PersonLastAnnouncements
+            .AsNoTracking()
+            .Where(row => row.ElectionGuid == electionGuid
+                && row.Channel == AnnouncementChannels.WhatsApp
+                && row.Outcome == WhatsAppNotifyOutcome.Failed)
+            .Select(row => row.PersonGuid)
+            .Take(StartWhatsAppNotifyDto.MaxSelectedPeople + 1)
+            .ToListAsync(cancellationToken);
+
+        if (failed.Count == 0)
+        {
+            return new WhatsAppNotifyStatusDto();
+        }
+
+        return await StartAsync(electionGuid, failed, cancellationToken);
     }
 
     /// <inheritdoc />
@@ -231,6 +276,7 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
             using var scope = _scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
             var client = scope.ServiceProvider.GetRequiredService<IGreenApiWhatsAppClient>();
+            var guard = scope.ServiceProvider.GetRequiredService<ICodeSendGuard>();
             var providerCalls = 0;
 
             foreach (var item in run.Work)
@@ -254,6 +300,20 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
                     }
                 }
 
+                // Reserve before GreenAPI. A blocked attempt is not a provider call and is not refunded
+                // because nothing was consumed. A later provider failure keeps the slot.
+                var reservation = await guard.ReserveAsync(
+                    [run.ElectionGuid], AnnouncementChannels.WhatsApp, item.Phone, cancellationToken);
+                if (!reservation.Allowed)
+                {
+                    var error = reservation.BlockReason ?? CodeSendBlockReason.NotApproved;
+                    RememberFailure(run, item.PersonGuid, item.Phone, error);
+                    await BulkSendSupport.UpsertLastAsync(
+                        db, run.ElectionGuid, item.PersonGuid, AnnouncementChannels.WhatsApp,
+                        WhatsAppNotifyOutcome.Failed, error, CancellationToken.None);
+                    continue;
+                }
+
                 GreenApiWhatsAppSendResult send;
                 try
                 {
@@ -261,30 +321,41 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
                 }
                 catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
                 {
-                    MarkRemainingCancelled(run, item.PersonGuid);
+                    await guard.LogOutcomeAsync(
+                        reservation, AnnouncementChannels.WhatsApp, item.Phone, sent: false, CancellationToken.None);
+                    RememberFailure(run, item.PersonGuid, item.Phone, "cancelled");
+                    await BulkSendSupport.UpsertLastAsync(
+                        db, run.ElectionGuid, item.PersonGuid, AnnouncementChannels.WhatsApp,
+                        WhatsAppNotifyOutcome.Failed, "cancelled", CancellationToken.None);
+                    MarkRemainingCancelled(run, NextQueued(run, item.PersonGuid));
                     break;
                 }
 
+                providerCalls++;
                 if (!send.ProviderCalled || !send.Sent)
                 {
-                    lock (run.Sync)
-                    {
-                        SetOutcome(run, item.PersonGuid, WhatsAppNotifyOutcome.Failed);
-                        run.Failed++;
-                    }
-
-                    providerCalls++;
+                    var error = send.Error ?? "send-failed";
+                    await guard.LogOutcomeAsync(
+                        reservation, AnnouncementChannels.WhatsApp, item.Phone, sent: false, CancellationToken.None);
+                    RememberFailure(run, item.PersonGuid, item.Phone, error);
+                    await BulkSendSupport.UpsertLastAsync(
+                        db, run.ElectionGuid, item.PersonGuid, AnnouncementChannels.WhatsApp,
+                        WhatsAppNotifyOutcome.Failed, error, CancellationToken.None);
                     continue;
                 }
 
+                await guard.LogOutcomeAsync(
+                    reservation, AnnouncementChannels.WhatsApp, item.Phone, sent: true, CancellationToken.None);
                 await TryPersistSmsLogAsync(db, send.MessageId, item.Phone, run.ElectionGuid, item.PersonGuid);
                 lock (run.Sync)
                 {
-                    SetOutcome(run, item.PersonGuid, WhatsAppNotifyOutcome.Sent);
+                    SetOutcome(run, item.PersonGuid, WhatsAppNotifyOutcome.Sent, null);
                     run.Sent++;
                 }
 
-                providerCalls++;
+                await BulkSendSupport.UpsertLastAsync(
+                    db, run.ElectionGuid, item.PersonGuid, AnnouncementChannels.WhatsApp,
+                    WhatsAppNotifyOutcome.Sent, null, CancellationToken.None);
             }
         }
         catch (Exception ex)
@@ -294,9 +365,43 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
         }
         finally
         {
+            BulkSendSupport.LogFailures(_logger, run.ElectionGuid, AnnouncementChannels.WhatsApp, run.FailedMasked);
             run.Running = false;
             run.Cts.Dispose();
         }
+    }
+
+    private static void RememberFailure(NotifyRun run, Guid personGuid, string phone, string error)
+    {
+        lock (run.Sync)
+        {
+            SetOutcome(run, personGuid, WhatsAppNotifyOutcome.Failed, error);
+            run.Failed++;
+            run.FailedMasked.Add(BulkSendSupport.Mask(phone));
+        }
+    }
+
+    private static Guid NextQueued(NotifyRun run, Guid after)
+    {
+        lock (run.Sync)
+        {
+            var seen = false;
+            foreach (var row in run.Results)
+            {
+                if (row.PersonGuid == after)
+                {
+                    seen = true;
+                    continue;
+                }
+
+                if (seen && row.Outcome == WhatsAppNotifyOutcome.Queued)
+                {
+                    return row.PersonGuid;
+                }
+            }
+        }
+
+        return Guid.Empty;
     }
 
     private async Task TryPersistSmsLogAsync(
@@ -331,6 +436,11 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
 
     private static void MarkRemainingCancelled(NotifyRun run, Guid fromPersonGuid)
     {
+        if (fromPersonGuid == Guid.Empty)
+        {
+            return;
+        }
+
         lock (run.Sync)
         {
             MarkRemainingCancelledCore(run, fromPersonGuid);
@@ -372,17 +482,41 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
         }
     }
 
-    private static void SetOutcome(NotifyRun run, Guid personGuid, string outcome)
+    private static void SetOutcome(NotifyRun run, Guid personGuid, string outcome, string? error)
     {
         var row = run.Results.FirstOrDefault(r => r.PersonGuid == personGuid);
-        if (row != null)
+        if (row == null)
         {
-            row.Outcome = outcome;
+            return;
         }
+
+        row.Outcome = outcome;
+        row.Error = outcome == WhatsAppNotifyOutcome.Failed
+            ? AnnouncementErrorText.Sanitize(error) ?? "send-failed"
+            : AnnouncementErrorText.Sanitize(error);
     }
 
-    private static WhatsAppNotifyPersonResultDto Result(Guid personGuid, string outcome) =>
-        new() { PersonGuid = personGuid, Outcome = outcome };
+    private static async Task RememberSkipAsync(
+        MainDbContext db,
+        Guid electionGuid,
+        Guid personGuid,
+        string outcome,
+        string? error,
+        List<WhatsAppNotifyPersonResultDto> results,
+        CancellationToken cancellationToken)
+    {
+        results.Add(Result(personGuid, outcome, error));
+        await BulkSendSupport.UpsertLastAsync(
+            db, electionGuid, personGuid, AnnouncementChannels.WhatsApp, outcome, error, cancellationToken);
+    }
+
+    private static WhatsAppNotifyPersonResultDto Result(Guid personGuid, string outcome, string? error) =>
+        new()
+        {
+            PersonGuid = personGuid,
+            Outcome = outcome,
+            Error = AnnouncementErrorText.Sanitize(error)
+        };
 
     private static bool TokenMatches(NotifyRun run, string? queueToken) =>
         string.IsNullOrWhiteSpace(queueToken)
@@ -404,7 +538,8 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
                 Results = run.Results.Select(r => new WhatsAppNotifyPersonResultDto
                 {
                     PersonGuid = r.PersonGuid,
-                    Outcome = r.Outcome
+                    Outcome = r.Outcome,
+                    Error = r.Error
                 }).ToList()
             };
         }
@@ -421,6 +556,7 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
         public int Skipped { get; set; }
         public int Sent { get; set; }
         public int Failed { get; set; }
+        public List<string> FailedMasked { get; } = [];
         public bool Running { get; set; }
         public bool Cancelled { get; set; }
         public CancellationTokenSource Cts { get; } = new();

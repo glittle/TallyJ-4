@@ -20,6 +20,9 @@ public static class ProgramServiceRegistration
         services.AddScoped<ITellerService, TellerService>();
         services.AddScoped<IPeopleService, PeopleService>();
         services.AddSingleton<IWhatsAppNotifyQueue, WhatsAppNotifyQueue>();
+        services.AddSingleton<IAnnouncementQueue, AnnouncementQueue>();
+        services.AddScoped<IAnnouncementSmsSender, TwilioAnnouncementSmsSender>();
+        services.AddScoped<IAnnouncementEmailSender, AnnouncementEmailSender>();
         services.AddScoped<IBallotService, BallotService>();
         services.AddScoped<IVoteService, VoteService>();
         services.AddScoped<IDashboardService, DashboardService>();

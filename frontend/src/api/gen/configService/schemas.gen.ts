@@ -640,6 +640,30 @@ export const ApiResponsePaginatedResponseSuperAdmin_SuperAdminUserDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ApiResponsePeople_AnnouncementStatusDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            $ref: '#/components/schemas/People_AnnouncementStatusDto'
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ApiResponsePeople_CheckSelectedWhatsAppResultDtoSchema = {
     type: 'object',
     properties: {
@@ -3877,11 +3901,89 @@ export const PaginatedResponseTellers_TellerDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const People_AbortAnnouncementDtoSchema = {
+    type: 'object',
+    properties: {
+        channel: {
+            type: 'string',
+            nullable: true
+        },
+        queueToken: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const People_AbortWhatsAppNotifyDtoSchema = {
     type: 'object',
     properties: {
         queueToken: {
             type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const People_AnnouncementPersonResultDtoSchema = {
+    type: 'object',
+    properties: {
+        personGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        outcome: {
+            type: 'string',
+            nullable: true
+        },
+        error: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const People_AnnouncementStatusDtoSchema = {
+    type: 'object',
+    properties: {
+        queueToken: {
+            type: 'string',
+            nullable: true
+        },
+        channel: {
+            type: 'string',
+            nullable: true
+        },
+        running: {
+            type: 'boolean'
+        },
+        cancelled: {
+            type: 'boolean'
+        },
+        queued: {
+            type: 'integer',
+            format: 'int32'
+        },
+        sent: {
+            type: 'integer',
+            format: 'int32'
+        },
+        skipped: {
+            type: 'integer',
+            format: 'int32'
+        },
+        failed: {
+            type: 'integer',
+            format: 'int32'
+        },
+        results: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/People_AnnouncementPersonResultDto'
+            },
             nullable: true
         }
     },
@@ -4256,6 +4358,18 @@ export const People_PersonListDtoSchema = {
         },
         phoneOnlineVoter: {
             $ref: '#/components/schemas/People_PersonPhoneSmsHintDto'
+        },
+        lastAnnouncementChannel: {
+            type: 'string',
+            nullable: true
+        },
+        lastAnnouncementOutcome: {
+            type: 'string',
+            nullable: true
+        },
+        lastAnnouncementError: {
+            type: 'string',
+            nullable: true
         }
     },
     additionalProperties: false
@@ -4344,11 +4458,41 @@ export const People_PersonSmsLogDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const People_RetryFailedAnnouncementDtoSchema = {
+    type: 'object',
+    properties: {
+        channel: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const People_SetPersonPhoneSmsStatusDtoSchema = {
     type: 'object',
     properties: {
         smsStatus: {
             type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const People_StartAnnouncementDtoSchema = {
+    type: 'object',
+    properties: {
+        channel: {
+            type: 'string',
+            nullable: true
+        },
+        personGuids: {
+            type: 'array',
+            items: {
+                type: 'string',
+                format: 'uuid'
+            },
             nullable: true
         }
     },
@@ -4425,6 +4569,10 @@ export const People_WhatsAppNotifyPersonResultDtoSchema = {
             format: 'uuid'
         },
         outcome: {
+            type: 'string',
+            nullable: true
+        },
+        error: {
             type: 'string',
             nullable: true
         }

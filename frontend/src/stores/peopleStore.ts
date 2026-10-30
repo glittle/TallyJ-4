@@ -190,11 +190,18 @@ export const usePeopleStore = defineStore("people", () => {
     );
 
     if (index !== -1) {
+      const existing = peopleList.value[index];
       if (
         listEntry.phoneOnlineVoter === undefined &&
-        peopleList.value[index].phoneOnlineVoter !== undefined
+        existing.phoneOnlineVoter !== undefined
       ) {
-        listEntry.phoneOnlineVoter = peopleList.value[index].phoneOnlineVoter;
+        listEntry.phoneOnlineVoter = existing.phoneOnlineVoter;
+      }
+      // Person updates from SignalR do not carry the last announcement.
+      if (existing.lastAnnouncementOutcome !== undefined) {
+        listEntry.lastAnnouncementChannel = existing.lastAnnouncementChannel;
+        listEntry.lastAnnouncementOutcome = existing.lastAnnouncementOutcome;
+        listEntry.lastAnnouncementError = existing.lastAnnouncementError;
       }
       peopleList.value[index] = listEntry;
     } else {

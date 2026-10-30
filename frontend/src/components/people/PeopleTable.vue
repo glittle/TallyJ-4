@@ -12,6 +12,7 @@ import { useI18n } from "vue-i18n";
 import { computed, h } from "vue";
 import type { PersonListDto } from "../../types";
 import type { Column } from "element-plus";
+import { formatSendOutcome } from "@/utils/announcementSend";
 import {
   phoneSmsListHint,
   phoneSmsListLabel,
@@ -71,6 +72,22 @@ function toggleVisible(selected: boolean) {
     }
   }
   setSelected([...next]);
+}
+
+function lastSendLabel(row: PersonListDto): string {
+  const outcome = row.lastAnnouncementOutcome;
+  if (!outcome) {
+    return "";
+  }
+  const channelKey = row.lastAnnouncementChannel
+    ? `people.lastSendChannel.${row.lastAnnouncementChannel}`
+    : "";
+  const channel = channelKey ? t(channelKey) : "";
+  const outcomeText = formatSendOutcome(outcome, row.lastAnnouncementError, t);
+  if (!channel || channel === channelKey) {
+    return outcomeText;
+  }
+  return `${channel}: ${outcomeText}`;
 }
 
 const columns = computed<Column<any>[]>(() => [
@@ -179,6 +196,18 @@ const columns = computed<Column<any>[]>(() => [
           class: `people-table__whatsapp people-table__whatsapp--${hint}`,
         },
         { default: () => phoneWhatsAppListLabel(rowData.phoneOnlineVoter, t) },
+      );
+    },
+  },
+  {
+    key: "lastSend",
+    title: t("people.lastSendColumn"),
+    width: 180,
+    cellRenderer: ({ rowData }: { rowData: PersonListDto }) => {
+      return h(
+        "span",
+        { class: "people-table__last-send" },
+        lastSendLabel(rowData),
       );
     },
   },

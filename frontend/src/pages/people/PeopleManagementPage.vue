@@ -13,10 +13,23 @@ import { peopleImportService } from "@/services/peopleImportService";
 import { peopleService } from "@/services/peopleService";
 import { usePeopleStore } from "../../stores/peopleStore";
 import type {
+  AnnouncementStatusDto,
   CheckSelectedWhatsAppResultDto,
   PersonListDto,
   WhatsAppNotifyStatusDto,
 } from "../../types";
+import {
+  ANNOUNCEMENT_CHANNEL_EMAIL,
+  ANNOUNCEMENT_CHANNEL_SMS,
+  ANNOUNCEMENT_CHANNEL_WHATSAPP,
+  ANNOUNCEMENT_CHANNELS,
+  canSendAnnouncement,
+  formatSendOutcome,
+  isEmptyAnnouncementRun,
+  MAX_ANNOUNCEMENT_SELECTED,
+  selectedPeopleWithEmail,
+  type AnnouncementChannel,
+} from "@/utils/announcementSend";
 import {
   canCheckSelectedWhatsApp,
   isWhatsAppCheckAbortError,
@@ -28,12 +41,14 @@ import {
 import {
   canNotifySelectedWhatsApp,
   notifyCancelledCount,
-  whatsAppNotifyOutcomeLabel,
 } from "@/utils/whatsAppNotify";
 import {
   filterPeopleList,
+  PEOPLE_LIST_LAST_SEND_FILTER_ALL,
+  PEOPLE_LIST_LAST_SEND_FILTERS,
   PEOPLE_LIST_WHATSAPP_FILTER_ALL,
   PEOPLE_LIST_WHATSAPP_FILTERS,
+  type PeopleListLastSendFilter,
   type PeopleListWhatsAppFilter,
 } from "@/utils/peopleListWhatsAppFilter";
 
@@ -49,6 +64,9 @@ const electionGuid = route.params.id as string;
 const searchQuery = ref("");
 const whatsAppFilter = ref<PeopleListWhatsAppFilter>(
   PEOPLE_LIST_WHATSAPP_FILTER_ALL,
+);
+const lastSendFilter = ref<PeopleListLastSendFilter>(
+  PEOPLE_LIST_LAST_SEND_FILTER_ALL,
 );
 const showPersonDrawer = ref(false);
 const drawerMode = ref<"add" | "edit">("edit");
@@ -73,9 +91,22 @@ const notifyWhatsAppResults = ref<WhatsAppNotifyStatusDto | null>(null);
 const showNotifyWhatsAppResults = ref(false);
 let notifyWhatsAppToken: string | null = null;
 let notifyPollTimer: number | null = null;
+const announcing = ref(false);
+const announcementChannel = ref<"email" | "sms" | null>(null);
+const announcementResults = ref<AnnouncementStatusDto | null>(null);
+const showAnnouncementResults = ref(false);
+const retryChannel = ref<AnnouncementChannel>(ANNOUNCEMENT_CHANNEL_EMAIL);
+const retrying = ref(false);
+let announcementToken: string | null = null;
+let announcementPollTimer: number | null = null;
 
 const filteredPeople = computed(() =>
-  filterPeopleList(allPeople.value, searchQuery.value, whatsAppFilter.value),
+  filterPeopleList(
+    allPeople.value,
+    searchQuery.value,
+    whatsAppFilter.value,
+    lastSendFilter.value,
+  ),
 );
 
 const selectedWithPhone = computed(() =>
@@ -89,6 +120,21 @@ const canCheckWhatsApp = computed(() =>
 );
 const canNotifyWhatsApp = computed(() =>
   canNotifySelectedWhatsApp(
+    selectedGuids.value.length,
+    selectedWithPhone.value.length,
+  ),
+);
+const selectedWithEmail = computed(() =>
+  selectedPeopleWithEmail(allPeople.value, selectedGuids.value),
+);
+const canSendEmail = computed(() =>
+  canSendAnnouncement(
+    selectedGuids.value.length,
+    selectedWithEmail.value.length,
+  ),
+);
+const canSendSms = computed(() =>
+  canSendAnnouncement(
     selectedGuids.value.length,
     selectedWithPhone.value.length,
   ),
@@ -116,6 +162,7 @@ onMounted(async () => {
 
 onUnmounted(async () => {
   stopNotifyPoll();
+  stopAnnouncementPoll();
   try {
     await peopleStore.leaveElection(electionGuid);
   } catch (error) {
@@ -233,8 +280,20 @@ function applyNotifyStatus(status: WhatsAppNotifyStatusDto) {
   notifyWhatsAppToken = status.queueToken;
   if (!status.running) {
     stopNotifyPoll();
+    const shouldRefresh =
+      notifyingWhatsApp.value || (status.results?.length ?? 0) > 0;
     notifyingWhatsApp.value = false;
+    if (shouldRefresh) {
+      void peopleStore.fetchPeopleList(electionGuid);
+    }
   }
+}
+
+function startNotifyPoll() {
+  stopNotifyPoll();
+  notifyPollTimer = window.setInterval(() => {
+    void pollNotifyStatus();
+  }, 2000);
 }
 
 async function pollNotifyStatus() {
@@ -280,10 +339,7 @@ async function handleNotifyWhatsApp() {
       showSuccessMessage(
         t("people.notifyWhatsAppQueued", { queued: status.queued }),
       );
-      stopNotifyPoll();
-      notifyPollTimer = window.setInterval(() => {
-        void pollNotifyStatus();
-      }, 2000);
+      startNotifyPoll();
     }
   } catch (error) {
     notifyingWhatsApp.value = false;
@@ -304,6 +360,157 @@ async function handleAbortWhatsAppNotify() {
     await pollNotifyStatus();
   } catch (error) {
     handleApiError(error);
+  }
+}
+
+function stopAnnouncementPoll() {
+  if (announcementPollTimer !== null) {
+    window.clearInterval(announcementPollTimer);
+    announcementPollTimer = null;
+  }
+}
+
+function applyAnnouncementStatus(status: AnnouncementStatusDto) {
+  announcementResults.value = status;
+  announcementToken = status.queueToken;
+  if (!status.running) {
+    stopAnnouncementPoll();
+    const shouldRefresh = announcing.value || (status.results?.length ?? 0) > 0;
+    announcing.value = false;
+    if (shouldRefresh) {
+      void peopleStore.fetchPeopleList(electionGuid);
+    }
+  }
+}
+
+function startAnnouncementPoll() {
+  stopAnnouncementPoll();
+  announcementPollTimer = window.setInterval(() => {
+    void pollAnnouncementStatus();
+  }, 2000);
+}
+
+async function pollAnnouncementStatus() {
+  if (!announcementToken || !announcementChannel.value) {
+    return;
+  }
+  try {
+    const status = await peopleService.getAnnouncementStatus(
+      electionGuid,
+      announcementChannel.value,
+      announcementToken,
+    );
+    applyAnnouncementStatus(status);
+  } catch (error) {
+    stopAnnouncementPoll();
+    announcing.value = false;
+    handleApiError(error);
+  }
+}
+
+function rejectOversizedSelection(): boolean {
+  if (selectedGuids.value.length <= MAX_ANNOUNCEMENT_SELECTED) {
+    return false;
+  }
+  showErrorMessage(t("people.announcement.tooMany"));
+  return true;
+}
+
+async function handleSendAnnouncement(channel: "email" | "sms") {
+  const ready =
+    channel === ANNOUNCEMENT_CHANNEL_EMAIL
+      ? canSendEmail.value
+      : canSendSms.value;
+  if (!ready) {
+    if (rejectOversizedSelection()) {
+      return;
+    }
+    showErrorMessage(
+      t(
+        channel === ANNOUNCEMENT_CHANNEL_EMAIL
+          ? "people.sendEmailNone"
+          : "people.sendSmsNone",
+      ),
+    );
+    return;
+  }
+
+  announcing.value = true;
+  announcementChannel.value = channel;
+  showAnnouncementResults.value = true;
+  try {
+    const status = await peopleService.startAnnouncement(
+      electionGuid,
+      channel,
+      selectedGuids.value,
+    );
+    applyAnnouncementStatus(status);
+    if (status.running) {
+      showSuccessMessage(
+        t("people.announcementQueued", { queued: status.queued }),
+      );
+      startAnnouncementPoll();
+    }
+  } catch (error) {
+    announcing.value = false;
+    handleApiError(error);
+  }
+}
+
+async function handleAbortAnnouncement() {
+  if (!announcementToken || !announcementChannel.value) {
+    return;
+  }
+  try {
+    const status = await peopleService.abortAnnouncement(
+      electionGuid,
+      announcementChannel.value,
+      announcementToken,
+    );
+    applyAnnouncementStatus(status);
+    await pollAnnouncementStatus();
+  } catch (error) {
+    handleApiError(error);
+  }
+}
+
+async function handleRetryFailed() {
+  retrying.value = true;
+  try {
+    const status = await peopleService.retryFailedAnnouncement(
+      electionGuid,
+      retryChannel.value,
+    );
+    if (isEmptyAnnouncementRun(status)) {
+      showErrorMessage(t("people.retryFailedNone"));
+      return;
+    }
+    if (retryChannel.value === ANNOUNCEMENT_CHANNEL_WHATSAPP) {
+      notifyingWhatsApp.value = true;
+      showNotifyWhatsAppResults.value = true;
+      applyNotifyStatus(status);
+      if (status.running) {
+        startNotifyPoll();
+      }
+      return;
+    }
+    announcing.value = true;
+    announcementChannel.value =
+      retryChannel.value === ANNOUNCEMENT_CHANNEL_SMS
+        ? ANNOUNCEMENT_CHANNEL_SMS
+        : ANNOUNCEMENT_CHANNEL_EMAIL;
+    showAnnouncementResults.value = true;
+    applyAnnouncementStatus(status);
+    if (status.running) {
+      showSuccessMessage(
+        t("people.announcementQueued", { queued: status.queued }),
+      );
+      startAnnouncementPoll();
+    }
+  } catch (error) {
+    handleApiError(error);
+  } finally {
+    retrying.value = false;
   }
 }
 
@@ -343,7 +550,7 @@ async function handleDeleteAllPeople() {
       <template #header>
         <div class="card-header">
           <div class="header-actions">
-            <el-space>
+            <el-space wrap>
               <el-input
                 v-model="searchQuery"
                 :placeholder="$t('people.search')"
@@ -366,6 +573,19 @@ async function handleDeleteAllPeople() {
                   v-for="option in PEOPLE_LIST_WHATSAPP_FILTERS"
                   :key="option"
                   :label="$t(`people.filterWhatsAppOption.${option}`)"
+                  :value="option"
+                />
+              </el-select>
+              <el-select
+                v-model="lastSendFilter"
+                class="last-send-filter"
+                data-testid="people-last-send-filter"
+                :aria-label="$t('people.filterLastSend')"
+              >
+                <el-option
+                  v-for="option in PEOPLE_LIST_LAST_SEND_FILTERS"
+                  :key="option"
+                  :label="$t(`people.filterLastSendOption.${option}`)"
                   :value="option"
                 />
               </el-select>
@@ -416,6 +636,53 @@ async function handleDeleteAllPeople() {
                 @click="handleAbortWhatsAppNotify"
               >
                 {{ $t("people.notifyWhatsAppAbort") }}
+              </el-button>
+              <el-button
+                type="default"
+                :disabled="!canSendEmail || announcing"
+                :loading="announcing && announcementChannel === 'email'"
+                @click="handleSendAnnouncement('email')"
+              >
+                {{
+                  $t("people.sendEmail", { count: selectedWithEmail.length })
+                }}
+              </el-button>
+              <el-button
+                type="default"
+                :disabled="!canSendSms || announcing"
+                :loading="announcing && announcementChannel === 'sms'"
+                @click="handleSendAnnouncement('sms')"
+              >
+                {{ $t("people.sendSms", { count: selectedWithPhone.length }) }}
+              </el-button>
+              <el-button v-if="announcing" @click="handleAbortAnnouncement">
+                {{ $t("people.notifyWhatsAppAbort") }}
+              </el-button>
+              <el-select
+                v-model="retryChannel"
+                class="retry-channel"
+                data-testid="people-retry-channel"
+                :aria-label="$t('people.retryChannel')"
+                :disabled="retrying || announcing"
+              >
+                <el-option
+                  v-for="option in ANNOUNCEMENT_CHANNELS"
+                  :key="option"
+                  :label="$t(`people.lastSendChannel.${option}`)"
+                  :value="option"
+                />
+              </el-select>
+              <el-button
+                type="default"
+                :disabled="
+                  retrying ||
+                  announcing ||
+                  (retryChannel === 'whatsapp' && notifyingWhatsApp)
+                "
+                :loading="retrying"
+                @click="handleRetryFailed"
+              >
+                {{ $t("people.retryFailed") }}
               </el-button>
               <span v-if="selectedGuids.length" class="selected-count">
                 {{
@@ -527,7 +794,7 @@ async function handleDeleteAllPeople() {
       <ul v-if="notifyWhatsAppResults" class="whatsapp-check-results">
         <li v-for="row in notifyWhatsAppResults.results" :key="row.personGuid">
           {{ resultPersonName(row.personGuid) }} —
-          {{ whatsAppNotifyOutcomeLabel(row.outcome, t) }}
+          {{ formatSendOutcome(row.outcome, row.error, t) }}
         </li>
       </ul>
       <template #footer>
@@ -535,6 +802,44 @@ async function handleDeleteAllPeople() {
           {{ $t("people.notifyWhatsAppAbort") }}
         </el-button>
         <el-button @click="showNotifyWhatsAppResults = false">
+          {{ $t("people.notifyWhatsAppClose") }}
+        </el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog
+      v-model="showAnnouncementResults"
+      :title="$t('people.announcementResults')"
+      width="520px"
+    >
+      <p v-if="announcementResults">
+        {{
+          $t("people.notifyWhatsAppSummary", {
+            sent: announcementResults.sent,
+            skipped: announcementResults.skipped,
+            failed: announcementResults.failed,
+            cancelled: notifyCancelledCount(announcementResults.results),
+          })
+        }}
+      </p>
+      <p v-if="announcementResults?.running">
+        {{
+          $t("people.announcementQueued", {
+            queued: announcementResults.queued,
+          })
+        }}
+      </p>
+      <ul v-if="announcementResults" class="whatsapp-check-results">
+        <li v-for="row in announcementResults.results" :key="row.personGuid">
+          {{ resultPersonName(row.personGuid) }} —
+          {{ formatSendOutcome(row.outcome, row.error, t) }}
+        </li>
+      </ul>
+      <template #footer>
+        <el-button v-if="announcing" @click="handleAbortAnnouncement">
+          {{ $t("people.notifyWhatsAppAbort") }}
+        </el-button>
+        <el-button @click="showAnnouncementResults = false">
           {{ $t("people.notifyWhatsAppClose") }}
         </el-button>
       </template>
@@ -580,8 +885,13 @@ async function handleDeleteAllPeople() {
     align-items: center;
   }
 
-  .whatsapp-filter {
+  .whatsapp-filter,
+  .last-send-filter {
     width: 180px;
+  }
+
+  .retry-channel {
+    width: 140px;
   }
 
   .selected-count {

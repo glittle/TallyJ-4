@@ -15,6 +15,10 @@ import {
   postApiPeopleByElectionGuidNotifyWhatsApp,
   postApiPeopleByElectionGuidAbortWhatsAppNotify,
   getApiPeopleByElectionGuidWhatsAppNotifyStatus,
+  postApiPeopleByElectionGuidNotifyAnnouncement,
+  postApiPeopleByElectionGuidAbortAnnouncement,
+  getApiPeopleByElectionGuidAnnouncementStatus,
+  postApiPeopleByElectionGuidRetryFailedAnnouncement,
 } from "@/api/gen/configService";
 import type {
   PersonDto,
@@ -23,6 +27,7 @@ import type {
   PersonPhoneOnlineVoterDto,
   CheckSelectedWhatsAppResultDto,
   WhatsAppNotifyStatusDto,
+  AnnouncementStatusDto,
   CreatePersonDto,
   UpdatePersonDto,
 } from "../types";
@@ -197,5 +202,52 @@ export const peopleService = {
       query: { queueToken },
     });
     return response.data?.data as WhatsAppNotifyStatusDto;
+  },
+
+  async startAnnouncement(
+    electionGuid: string,
+    channel: string,
+    personGuids: string[],
+  ): Promise<AnnouncementStatusDto> {
+    const response = await postApiPeopleByElectionGuidNotifyAnnouncement({
+      path: { electionGuid },
+      body: { channel, personGuids },
+    });
+    return response.data?.data as AnnouncementStatusDto;
+  },
+
+  async abortAnnouncement(
+    electionGuid: string,
+    channel: string,
+    queueToken?: string,
+  ): Promise<AnnouncementStatusDto> {
+    const response = await postApiPeopleByElectionGuidAbortAnnouncement({
+      path: { electionGuid },
+      body: { channel, queueToken },
+    });
+    return response.data?.data as AnnouncementStatusDto;
+  },
+
+  async getAnnouncementStatus(
+    electionGuid: string,
+    channel: string,
+    queueToken?: string,
+  ): Promise<AnnouncementStatusDto> {
+    const response = await getApiPeopleByElectionGuidAnnouncementStatus({
+      path: { electionGuid },
+      query: { channel, queueToken },
+    });
+    return response.data?.data as AnnouncementStatusDto;
+  },
+
+  async retryFailedAnnouncement(
+    electionGuid: string,
+    channel: string,
+  ): Promise<AnnouncementStatusDto> {
+    const response = await postApiPeopleByElectionGuidRetryFailedAnnouncement({
+      path: { electionGuid },
+      body: { channel },
+    });
+    return response.data?.data as AnnouncementStatusDto;
   },
 };

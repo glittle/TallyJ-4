@@ -18,6 +18,14 @@ public interface IWhatsAppNotifyQueue
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Resend people whose last WhatsApp announcement failed.
+    /// Each retry reserves a paid-send slot. A blocked retry does not call GreenAPI.
+    /// </summary>
+    Task<WhatsAppNotifyStatusDto> RetryFailedAsync(
+        Guid electionGuid,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Abort remaining sends for this election (or the given token).
     /// Already-sent messages stay sent.
     /// </summary>
