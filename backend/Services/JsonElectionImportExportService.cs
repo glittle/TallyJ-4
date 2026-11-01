@@ -264,7 +264,18 @@ public class JsonElectionImportExportService : ElectionImportExportBase
     }
 
     // Job 3: Import from new JSON format
-    public async Task<JsonElectionImportResult> ImportElectionFromJsonAsync(Stream jsonStream, Guid? userId = null)
+    public Task<JsonElectionImportResult> ImportElectionFromJsonAsync(Stream jsonStream, Guid? userId = null)
+    {
+        return _context.Database.CreateExecutionStrategy().ExecuteAsync(() =>
+        {
+            // Drop Added rows from a failed attempt before this retry inserts them again.
+            _context.ChangeTracker.Clear();
+            StreamRewind.RewindIfSeekable(jsonStream);
+            return ImportElectionFromJsonCoreAsync(jsonStream, userId);
+        });
+    }
+
+    private async Task<JsonElectionImportResult> ImportElectionFromJsonCoreAsync(Stream jsonStream, Guid? userId = null)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
         try

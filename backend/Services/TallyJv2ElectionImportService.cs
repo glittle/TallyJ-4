@@ -471,7 +471,18 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
     }
 
     // Job 2: Import from TallyJv3-Export.xsd format
-    public async Task<ElectionDto> ImportTallyJv3ElectionAsync(Stream xmlStream, Guid? userId = null)
+    public Task<ElectionDto> ImportTallyJv3ElectionAsync(Stream xmlStream, Guid? userId = null)
+    {
+        return _context.Database.CreateExecutionStrategy().ExecuteAsync(() =>
+        {
+            // Drop Added rows from a failed attempt before this retry inserts them again.
+            _context.ChangeTracker.Clear();
+            StreamRewind.RewindIfSeekable(xmlStream);
+            return ImportTallyJv3ElectionCoreAsync(xmlStream, userId);
+        });
+    }
+
+    private async Task<ElectionDto> ImportTallyJv3ElectionCoreAsync(Stream xmlStream, Guid? userId = null)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
         try

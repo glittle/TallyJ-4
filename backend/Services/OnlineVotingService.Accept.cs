@@ -334,8 +334,25 @@ public partial class OnlineVotingService
     /// 0 rows updated means another server already took it. A rollback restores
     /// Processing so a later Accept-all can retry.
     /// </summary>
-    private async Task<bool> ProcessIfStillProcessingAsync(Guid electionGuid, int rowId)
+    private Task<bool> ProcessIfStillProcessingAsync(Guid electionGuid, int rowId)
     {
+        var attempt = 0;
+        return _context.Database.CreateExecutionStrategy().ExecuteAsync(() =>
+        {
+            // First attempt keeps the tracker's Processing rows (in-memory tests set them there).
+            // A retry drops a ballot added by the failed attempt; TryTakeProcessingRowAsync reloads the row.
+            var retry = ++attempt > 1;
+            return ProcessIfStillProcessingCoreAsync(electionGuid, rowId, retry);
+        });
+    }
+
+    private async Task<bool> ProcessIfStillProcessingCoreAsync(Guid electionGuid, int rowId, bool clearTracker)
+    {
+        if (clearTracker)
+        {
+            _context.ChangeTracker.Clear();
+        }
+
         await using var transaction = await _context.Database.BeginTransactionAsync();
         var now = DateTimeOffset.UtcNow;
 

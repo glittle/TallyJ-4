@@ -38,6 +38,9 @@ public abstract class ElectionAnalyzerBase
             throw new InvalidOperationException($"Election {TargetElection.ElectionGuid} has no NumberToElect specified. This is required for analysis.");
         }
 
+        var strategy = Context.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
+        {
         using var transaction = await Context.Database.BeginTransactionAsync();
         try
         {
@@ -61,6 +64,7 @@ public abstract class ElectionAnalyzerBase
             await transaction.RollbackAsync();
             throw;
         }
+        });
     }
 
     protected virtual async Task PrepareForAnalysisAsync()

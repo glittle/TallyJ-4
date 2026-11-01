@@ -10,7 +10,6 @@ using Backend.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration.Json;
@@ -90,7 +89,7 @@ void ConfigureServices(WebApplicationBuilder builder)
             connectionString ??= "Server=127.0.0.1;Database=unused;TrustServerCertificate=True";
             services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
             services.AddDbContext<DataProtectionDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(connectionString, ProgramExtensions.ConfigureSqlServerProvider));
             services.AddDataProtection();
         }
         else
@@ -112,7 +111,7 @@ void ConfigureServices(WebApplicationBuilder builder)
 
             services.AddDbContext<MainDbContext>(connectionStringName, connectionString);
             services.AddDbContext<DataProtectionDbContext>(options =>
-                options.UseSqlServer(connectionString));
+                options.UseSqlServer(connectionString, ProgramExtensions.ConfigureSqlServerProvider));
 
             services.AddDataProtection()
                 .PersistKeysToDbContext<DataProtectionDbContext>();
@@ -174,22 +173,10 @@ void ConfigureServices(WebApplicationBuilder builder)
     services.Configure<JsonLocalizationOptions>(builderConfiguration.GetSection(JsonLocalizationOptions.SectionName));
     services.AddJsonLocalization();
 
-    // Proto only: Azure terminates TLS and sets X-Forwarded-Proto. Do not apply
-    // X-Forwarded-For here — trust-all + ForwardLimit would rewrite RemoteIpAddress
-    // from a client-supplied chain and make spoofing easier. Rate-limit keys read
-    // the trusted ingress hop themselves (rightmost public XFF when the TCP peer
-    // is a private/loopback platform hop).
-    services.Configure<ForwardedHeadersOptions>(options =>
-    {
-        options.ForwardedHeaders = ForwardedHeaders.XForwardedProto;
-        options.KnownProxies.Clear();
-        options.KnownIPNetworks.Clear();
-#pragma warning disable ASPDEPR005
-        // .NET 10 dual-list: clear both so platform hops are trusted (issue #63627).
-        options.KnownNetworks.Clear();
-#pragma warning restore ASPDEPR005
-        options.ForwardLimit = 1;
-    });
+    // X-Forwarded-For and X-Forwarded-Proto when ForwardedHeaders:TrustPlatformProxy
+    // is true (the default). Only infrastructure peers and ForwardedHeaders:KnownProxies
+    // are trusted, one hop. See ForwardedHeadersSetup.
+    ForwardedHeadersSetup.Configure(services, builderConfiguration);
 
     services.AddHttpClient("GreenApi");
     services.AddHttpClient("Facebook", c =>

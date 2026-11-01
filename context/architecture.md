@@ -23,6 +23,32 @@ The app is hosted as a published ASP.NET Core process. On Windows that is IIS (`
 
 **Rejected alternative:** keep those untested image and compose definitions, including an nginx config that existed only to serve the frontend image, as a starting point. Rejected — they were never tested, the backend image still targeted a legacy `TallyJ4` assembly name, and the supported IIS and Linux publish path does not use them.
 
+## SQL retries and single-query splitting
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #410  
+**Revisit when:** the host stops using SQL Server, or startup migrations move out of the process
+
+Every `UseSqlServer` registration calls `EnableRetryOnFailure` and `UseQuerySplittingBehavior(SingleQuery)`. Single query is what the app already did when the mode was unset. `SuperAdminService` is the query that calls `AsSplitQuery()`; that call still overrides the default. Setting the mode explicitly keeps that behavior and stops the EF warning that fires when the mode is unset.
+
+Startup migrate and seed run inside `Database.CreateExecutionStrategy().ExecuteAsync`. The SQL Server strategy rejects a user transaction started outside that delegate, so each `BeginTransactionAsync` path runs inside the strategy as well. SQLite tests use a non-retrying strategy; the wrapper does not add retries there.
+
+**Rejected alternative:** `QuerySplittingBehavior.SplitQuery` as the default. The rest of the queries were written as one round trip. Changing them was not required to silence the warning.
+
+**Rejected alternative:** enable retries but leave `MigrateAsync` and `SeedAsync` outside the strategy. The migration's own transaction then fails the startup check.
+
+## Controller registrations are resolved in CI
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #410 — `POST /api/report-exports/{electionGuid}` returned 500 because `IReportExportService` was not registered  
+**Revisit when:** controllers stop being constructed from the application service collection
+
+`IReportExportService` is registered with the other application services. A test builds that service collection and activates every controller, so a missing registration fails before deploy. PDF export uses iText's built-in Helvetica (`StandardFonts`). Excel export uses ClosedXML 0.105, which measures column widths with its embedded Carlito metric font when the host has no system font such as Microsoft Sans Serif. Neither path uses System.Drawing.
+
+**Rejected alternative:** ship a Windows font or take a dependency on System.Drawing / libgdiplus. Both libraries already draw without them.
+
 ## Social preview URLs are static and pinned to production
 
 **Status:** active  

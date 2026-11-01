@@ -100,7 +100,9 @@ Auth rate-limit keys use the IP the **trusted ingress** saw, not a client-suppli
 - **No proxy hop** (public `RemoteIpAddress`): key is that address. XFF / Forwarded are ignored so a direct client cannot pick a bucket.
 - **Infrastructure peer** (`RemoteIpAddress` is null, loopback, or private — TestServer, App Service ARR, or any other host that presents a private socket address): parse XFF (else RFC 7239 `Forwarded`) and take the **rightmost public** IP. That is the socket address the platform appended. Private / loopback / link-local / CGNAT (100.64/10) suffix hops are skipped. Two connecting clients behind one proxy therefore get two buckets; changing only the leftmost XFF stays in the same bucket.
 
-`UseForwardedHeaders` is proto-only (`X-Forwarded-Proto`) with KnownProxies / KnownIPNetworks / KnownNetworks cleared so Azure TLS termination still sets `Request.IsHttps`. It does **not** apply `X-Forwarded-For`: trust-all + ForwardLimit would rewrite `RemoteIpAddress` from the client-controlled chain and make spoofing easier. Rate-limit keying reads the headers itself under the infrastructure-peer check above.
+> Superseded 2026-11: proto-only `UseForwardedHeaders`. See [Platform proxy forwarded headers](#platform-proxy-forwarded-headers-issue-410). Leaving `X-Forwarded-For` unapplied kept `RemoteIpAddress` on the platform hop, so login events, unusual-location checks, and audit rows never saw the client.
+
+Rate-limit keying still reads the client through `GetClientIpAddress` (rightmost public address when the TCP peer is an infrastructure hop). A public `RemoteIpAddress` is the client and forwarded headers are ignored. See the platform-proxy section for the one-hop middleware in front of that helper.
 
 The same in-memory middleware still owns the limits. Account `POST /api/auth/login` and guest teller `POST /api/auth/teller-login` count **failed attempts only** (`LoginIpMaxRequests` and `TellerLoginIpMaxRequests`, 20 per minute per trusted-ingress IP). A successful login does not consume the bucket. The middleware still returns 429 `error.tooManyRequests` up front when that bucket is already full, and it records the timestamp only after the endpoint runs and only for a counted failure: bad credentials or an invalid two-factor code on login, or an unknown election / wrong passcode on teller-login. Not-open, no-main-teller, and locked teller replies do not count, and neither do account-locked or unverified-email replies. An invalid two-factor code on `POST /api/auth/login` does count. That failure also calls `AccessFailedAsync`, so the account locks after `MaxFailedAccessAttempts` (5), the same as a bad password. The attempt that crosses that lock returns the account-locked reply and does not also consume the IP bucket. Only a full success clears the access-failed count: the password, and the two-factor code when one is required. A correct password with no code is the prompt. It does not count as a failure and it does not clear the count. Clearing it there would let a password holder send four wrong codes, one empty-code request, and repeat, including from rotating IPs, and the account would never lock. A user without two-factor still has the count cleared by a successful password login. Venues often share one public IP behind NAT, so counting every request, including a successful teller join, would 429 the next person in the hall. The failure is recorded after the endpoint returns, so parallel failures from one IP can all pass the check before any is recorded and a burst can go past 20. The per-IP cap is approximate under concurrency. The per-election lockout (10 consecutive wrong passcodes) and the account lockout are the real guards; see the guest teller login lockout section. Other teller routes (the disabled register endpoint, 2FA, password reset, teller OAuth) stay **tight per trusted-ingress IP** and still count every request. Anonymous voter `requestCode` / `verifyCode` do **not** use that login IP bucket: elections often share one venue WiFi / community NAT, so a public `RemoteIp` is the whole hall. Those routes use a **5/min per VoterId** bucket (JSON body peek capped at 16 KiB even when ContentLength is missing / chunked; a fitting body is replaced with a MemoryStream at position 0 so model binding still works) plus a **60/min per trusted-ingress IP** venue ceiling. Oversized / peek-overflow bodies are **413** (`error.payloadTooLarge`) and do not continue to model binding — they must not be demoted to `missing:{ip}`, or a padded body with a real voterId would opt out of the cross-IP identifier ceiling. `missing:{ip}` is only for a genuinely empty, malformed, or absent `voterId`. Voter OAuth (`/api/online-voting/*Auth`) has no VoterId in the body — venue IP ceiling only. Teller OAuth stays on the tight IP table.
 
@@ -108,7 +110,7 @@ The same in-memory middleware still owns the limits. Account `POST /api/auth/log
 
 **Rejected alternative:** leftmost XFF as “original client.” Front Door’s own docs say an existing XFF is appended; the left side is attacker-controlled.
 
-**Rejected alternative:** `UseForwardedHeaders` for XFF with KnownProxies cleared and ForwardLimit 2. That trust-all walk can set `RemoteIpAddress` to a spoofed entry, after which a “use RemoteIp” key is also spoofable.
+**Rejected alternative:** `UseForwardedHeaders` for XFF with KnownProxies cleared and ForwardLimit 2. That trust-all walk can set `RemoteIpAddress` to a spoofed entry, after which a “use RemoteIp” key is also spoofable. ForwardLimit stays 1; the helper still skips a private hop the middleware did not peel. See the platform-proxy section.
 
 **Rejected alternative:** keep keying on `RemoteIpAddress` only. On Azure UAT that address is the platform hop, so one client locks everyone out or the limit never isolates a single attacker.
 
@@ -125,6 +127,37 @@ The same in-memory middleware still owns the limits. Account `POST /api/auth/log
 **Rejected alternative:** rebuild on ASP.NET `RateLimiter` or add a new auth flow. #192 said do not rebuild auth; this slice only fixes keying, coverage, and i18n bodies.
 
 > Superseded 2026-10: count every `POST /api/auth/login` and `POST /api/auth/teller-login` request, including successes, at 5 per minute per trusted-ingress IP. See the guest teller login lockout section.
+
+## Platform proxy forwarded headers (issue #410)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #410 — on Linux Azure App Service every request arrived as `::ffff:169.254.129.1` over http; review of the first fix, which trusted every peer  
+**Revisit when:** a proxy's address is a public IP that is not listed in `ForwardedHeaders:KnownProxies`, or the platform inserts more than one proxy hop
+
+> Superseded 2026-11: clearing `KnownProxies`, `KnownIPNetworks`, and `KnownNetworks` while `TrustPlatformProxy` defaults to true. An empty known-proxy list makes the middleware apply `X-Forwarded-For` from any peer. With `ForwardLimit` 1 the client-supplied value becomes `RemoteIpAddress`. IIS in-process (`backend/web.config`, `hostingModel="inprocess"`) does not add `X-Forwarded-For`, and neither does Kestrel when nothing sits in front of it, so that value is whatever the client typed. Login and teller-login buckets, the voter venue ceiling, audit logs, and unusual-location checks would then use a chosen IP.
+
+`ForwardedHeaders:TrustPlatformProxy` defaults to true (`backend/appsettings.json`). The pipeline calls `UseForwardedHeaders` before rate limiting, authentication, security-event and audit logging, and HTTPS redirection. The options apply `X-Forwarded-For` and `X-Forwarded-Proto` with `ForwardLimit` 1. The peer is trusted only when it is an infrastructure address, the same kind of hop `GetClientIpAddress` already treats as a proxy:
+
+- loopback `127.0.0.0/8` and `::1/128` (nginx or Apache on the same machine, and the test host)
+- RFC 1918 `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`
+- link-local `169.254.0.0/16`, which covers Azure App Service `169.254.129.1`
+- IPv6 unique-local `fc00::/7` and link-local `fe80::/10`
+- the IPv4-mapped form of each IPv4 range. The middleware also maps `::ffff:a.b.c.d` to IPv4 before the check, so the App Service peer matches `169.254.0.0/16` either way
+
+`ForwardedHeaders:KnownProxies` adds extra proxy IPs or CIDRs, for a load balancer whose address is public. There is no Azure-only setting. A public `RemoteIpAddress` is not a trusted proxy, so a direct client cannot replace it. Set `TrustPlatformProxy` false to ignore the headers entirely.
+
+Login protection, unusual-login location, audit logs, and rate limits take the client from `HttpContext.GetClientIpAddress()`. After the middleware, a public `RemoteIpAddress` is that client and a leftover `X-Forwarded-For` is ignored. If the single consumed hop is still an infrastructure address, the helper uses the rightmost public address left on `X-Forwarded-For` or `Forwarded`.
+
+**Rejected alternative:** leave forwarding proto-only. The scheme was corrected and the client IP was not, so unusual-location, per-IP limits, and audit rows collapsed onto the platform hop.
+
+**Rejected alternative:** clear the known-proxy lists. That trusts every directly connected client. IIS in-process would accept a spoofed `X-Forwarded-For` as the client IP.
+
+**Rejected alternative:** default `TrustPlatformProxy` to false and turn it on only for Azure. nginx or Apache on loopback, and App Service, would keep the platform hop until someone found the switch.
+
+**Rejected alternative:** ForwardLimit 2, or an unlimited walk, even limited to infrastructure peers. A longer walk continues into the client-supplied prefix. That is the design reverted in 2026-09.
+
+**Rejected alternative:** read only `Connection.RemoteIpAddress` and drop the helper. When the rightmost header entry is the private platform address, one hop leaves `RemoteIpAddress` on that hop.
 
 ## Distinct voter verify error keys (issue #192 leftover)
 

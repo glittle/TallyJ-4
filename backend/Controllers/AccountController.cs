@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Backend.DTOs.Account;
+using Backend.Helpers;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -81,7 +82,7 @@ public class AccountController : ControllerBase
 
         try
         {
-            var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var clientIp = HttpContext.GetClientIpAddress();
             var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
             await _accountService.RequestEmailChangeAsync(userId, dto, clientIp, userAgent);
             return Ok(ApiResponse<object>.SuccessResponse(new { }, "Verification sent to the new email address"));

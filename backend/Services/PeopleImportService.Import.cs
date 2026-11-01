@@ -89,18 +89,31 @@ public partial class PeopleImportService
             return result;
         }
 
-        // Load existing people for deduplication
-        var existingPeople = await _context.People
-            .Where(p => p.ElectionGuid == electionGuid)
-            .ToListAsync();
+        try
+        {
+            await _context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
+            {
+                // A failed attempt leaves Added people tracked. Clear them, then rebuild the
+                // dedup lookups from the database so the retry does not skip rows it never committed.
+                _context.ChangeTracker.Clear();
+                importFile = await _context.ImportFiles
+                    .FirstAsync(f => f.ElectionGuid == electionGuid && f.RowId == rowId);
+                result.PeopleAdded = 0;
+                result.PeopleSkipped = 0;
+                result.TotalRows = 0;
+                result.Success = false;
+                result.Errors.Clear();
+                result.Warnings.Clear();
 
-        // Email, phone, and Baha'i ID must be unique. Names may repeat.
-        var bahaiIdLookup = BuildExistingLookup(
-            existingPeople.Where(p => !string.IsNullOrEmpty(p.BahaiId)).Select(p => p.BahaiId!));
-        var emailLookup = BuildExistingLookup(
-            existingPeople.Where(p => !string.IsNullOrEmpty(p.Email)).Select(p => p.Email!));
-        var phoneLookup = BuildExistingLookup(
-            existingPeople.Where(p => !string.IsNullOrEmpty(p.Phone)).Select(p => p.Phone!));
+                var existingPeople = await _context.People
+                    .Where(p => p.ElectionGuid == electionGuid)
+                    .ToListAsync();
+                var bahaiIdLookup = BuildExistingLookup(
+                    existingPeople.Where(p => !string.IsNullOrEmpty(p.BahaiId)).Select(p => p.BahaiId!));
+                var emailLookup = BuildExistingLookup(
+                    existingPeople.Where(p => !string.IsNullOrEmpty(p.Email)).Select(p => p.Email!));
+                var phoneLookup = BuildExistingLookup(
+                    existingPeople.Where(p => !string.IsNullOrEmpty(p.Phone)).Select(p => p.Phone!));
 
         using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -154,6 +167,10 @@ public partial class PeopleImportService
                         errorsFound = true;
                     }
                 }
+                catch (Exception ex) when (DbTransientFailure.IsTransient(ex))
+                {
+                    throw;
+                }
                 catch (Exception ex)
                 {
                     result.Errors.Add(new ImportErrorDto
@@ -182,6 +199,10 @@ public partial class PeopleImportService
                         await _context.SaveChangesAsync();
                         result.PeopleAdded += peopleToAdd.Count;
                         peopleToAdd.Clear();
+                    }
+                    catch (Exception ex) when (DbTransientFailure.IsTransient(ex))
+                    {
+                        throw;
                     }
                     catch (Exception ex)
                     {
@@ -227,9 +248,14 @@ public partial class PeopleImportService
                 await transaction.RollbackAsync();
             }
         }
+        catch (Exception ex) when (DbTransientFailure.IsTransient(ex))
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
         catch (Exception ex)
         {
-            // Rollback transaction on any exception
+            // Not transient: this is the final failure. Do not let the strategy retry it.
             await transaction.RollbackAsync();
 
             result.Success = false;
@@ -256,6 +282,22 @@ public partial class PeopleImportService
                     }
                 });
             }
+            await _signalRNotificationService.SendPeopleImportErrorAsync(electionGuid, ex.Message);
+        }
+            });
+        }
+        catch (Exception ex) when (DbTransientFailure.IsTransient(ex))
+        {
+            // Retries are exhausted. Report this once; earlier attempts did not notify.
+            result.Success = false;
+            result.Errors.Add(new ImportErrorDto
+            {
+                Key = "import.errors.importFailed",
+                Parameters = new Dictionary<string, string>
+                {
+                    ["message"] = ex.Message
+                }
+            });
             await _signalRNotificationService.SendPeopleImportErrorAsync(electionGuid, ex.Message);
         }
 

@@ -38,7 +38,8 @@ public class RemoteLogService : IRemoteLogService
         }
         else
         {
-            _logger.LogInformation("Remote logging webhook URL configured: {WebhookUrl}", _webhookUrl);
+            // The IFTTT key is a path segment of the webhook URL. Do not log the URL.
+            _logger.LogInformation("Remote logging webhook is configured.");
         }
     }
 

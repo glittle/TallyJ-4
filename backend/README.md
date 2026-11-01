@@ -198,4 +198,4 @@ This is a known issue with .NET 10 SDK tooling where stale NuGet cache state in 
 ### Localization appears missing
 
 - Confirm `frontend/src/locales/` exists
-- Confirm `Localization:ResourcesPath` points to `../frontend/src/locales` in development
+- Confirm `Localization:ResourcesPath` points to `../frontend/src/locales` in development (resolved from the content root; a missing folder is skipped)

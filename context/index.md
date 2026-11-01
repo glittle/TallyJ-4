@@ -2,9 +2,9 @@
 
 Lean index of project *why* knowledge. Load a topic file only when the work touches that area.
 
-- [architecture.md](architecture.md) — single backend host after domain consolidation; where code lives; social preview URLs are static HTML pinned to production; published on IIS or a Linux process, not container images
-- [logging.md](logging.md) — unmatched probe 404s and method mismatches are counted and summarized; SPA fallback and API NotFound stay out of that summary
-- [auth.md](auth.md) — JWT identity claims (`sub` / `NameIdentifier`); teller vs online-voter cookie transport; online ballot identity is the voter session; guest teller login is rate-limited per IP and locked per election; IdP-first teller signup; SuperAdmin one-time invite for local email/password; site-wide super admin is `SuperAdmin:Emails`; teller APIs require election membership
+- [architecture.md](architecture.md) — single backend host after domain consolidation; where code lives; social preview URLs are static HTML pinned to production; published on IIS or a Linux process, not container images; SQL retry and single-query splitting on that host
+- [logging.md](logging.md) — unmatched probe 404s and method mismatches are counted and summarized; SPA fallback and API NotFound stay out of that summary; HttpClient request URLs stay at Warning so webhook keys are not logged
+- [auth.md](auth.md) — JWT identity claims (`sub` / `NameIdentifier`); teller vs online-voter cookie transport; online ballot identity is the voter session; guest teller login is rate-limited per IP and locked per election; platform proxy sets that IP (`X-Forwarded-For`, one hop); IdP-first teller signup; SuperAdmin one-time invite for local email/password; site-wide super admin is `SuperAdmin:Emails`; teller APIs require election membership
 - [anti-abuse.md](anti-abuse.md) — owner approval before SMS, voice, and WhatsApp codes; election allowance, owner daily cap, and phone-prefix cap; neutral requestCode reply; freeze; masked send log; super-admin alerts
 - [realtime.md](realtime.md) — SignalR hub group naming (not a single `election-{guid}` pattern); election hub joins require election access
 - [api-contracts.md](api-contracts.md) — dual API response wrappers and OpenAPI client regeneration
