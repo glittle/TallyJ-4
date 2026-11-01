@@ -399,6 +399,9 @@ public class ElectionService : IElectionService
         var previousOnlineCloseIsEstimate = election.OnlineCloseIsEstimate;
         var previousOnlineSelectionProcess = election.OnlineSelectionProcess;
 
+        var strategy = _context.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
+        {
         IDbContextTransaction? transaction = null;
         if (_context.Database.IsRelational())
         {
@@ -433,6 +436,7 @@ public class ElectionService : IElectionService
                 await transaction.DisposeAsync();
             }
         }
+        });
 
         _logger.LogInformation("Reset test election {ElectionGuid}", electionGuid);
 

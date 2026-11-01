@@ -99,7 +99,7 @@ public partial class AuthController
     {
         try
         {
-            var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var clientIp = HttpContext.GetClientIpAddress();
             var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
             await _accountService.ConfirmEmailChangeAsync(userId, dto, clientIp, userAgent);

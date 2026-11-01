@@ -28,6 +28,7 @@ public static class ProgramServiceRegistration
         services.AddScoped<IPublicService, PublicService>();
         services.AddScoped<ITallyService, TallyService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IReportExportService, ReportExportService>();
         services.AddScoped<IFrontDeskService, FrontDeskService>();
         services.AddScoped<IOnlineVotingService, OnlineVotingService>();
         services.AddSingleton<IOnlineBallotAcceptLock, OnlineBallotAcceptLock>();

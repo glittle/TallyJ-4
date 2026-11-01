@@ -108,7 +108,7 @@ Adding a string:
 
 ## Backend (ASP.NET Core, no .resx)
 
-A small custom `IStringLocalizer` stack reads `{ResourcesPath}/{culture}/*.json`, merges, and caches.
+A small custom `IStringLocalizer` stack reads `{ResourcesPath}/{culture}/*.json`, merges, and caches. A relative `ResourcesPath` is resolved from the content root (then the application base directory). A missing culture directory is skipped with a debug log so a published host without `frontend/src/locales` still starts. A `locales` folder next to the app is used when the configured path is absent.
 
 ```json
 "Localization": {

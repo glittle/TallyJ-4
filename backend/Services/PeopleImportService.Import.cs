@@ -102,6 +102,8 @@ public partial class PeopleImportService
         var phoneLookup = BuildExistingLookup(
             existingPeople.Where(p => !string.IsNullOrEmpty(p.Phone)).Select(p => p.Phone!));
 
+        await _context.Database.CreateExecutionStrategy().ExecuteAsync(async () =>
+        {
         using var transaction = await _context.Database.BeginTransactionAsync();
 
         var rowNumber = 0; // Initialize row number for error reporting
@@ -258,6 +260,7 @@ public partial class PeopleImportService
             }
             await _signalRNotificationService.SendPeopleImportErrorAsync(electionGuid, ex.Message);
         }
+        });
 
         return result;
     }

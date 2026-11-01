@@ -85,24 +85,28 @@ public class FrontDeskService : IFrontDeskService
         var onlineInfo = await LoadLatestOnlineVotingInfoAsync(electionGuid, person.PersonGuid);
         await ThrowIfOnlineBlocksCheckInAsync(onlineInfo);
 
-        if (_context.Database.IsRelational())
+        var strategy = _context.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
         {
-            await using var transaction = await _context.Database.BeginTransactionAsync();
-            try
+            if (_context.Database.IsRelational())
+            {
+                await using var transaction = await _context.Database.BeginTransactionAsync();
+                try
+                {
+                    await ApplyCheckInAndWithdrawAsync(person, checkInDto, onlineInfo);
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            }
+            else
             {
                 await ApplyCheckInAndWithdrawAsync(person, checkInDto, onlineInfo);
-                await transaction.CommitAsync();
             }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
-        }
-        else
-        {
-            await ApplyCheckInAndWithdrawAsync(person, checkInDto, onlineInfo);
-        }
+        });
 
         _logger.LogInformation("Voter {PersonGuid} checked in for election {ElectionGuid} with envelope {EnvNum}",
             person.PersonGuid, electionGuid, person.EnvNum);

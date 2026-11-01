@@ -39,7 +39,7 @@ public partial class AuthController
     [HttpPost("registerAccount")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
@@ -76,7 +76,7 @@ public partial class AuthController
     [HttpPost("registerWithInvite")]
     public async Task<IActionResult> RegisterWithInvite([FromBody] RegisterWithInviteRequest request)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         var (success, error, response) = await _accountInviteService.RedeemAsync(request);
@@ -120,7 +120,7 @@ public partial class AuthController
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         var (success, error, response) = await _localAuthService.LoginAsync(request);
@@ -395,7 +395,7 @@ public partial class AuthController
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 

@@ -19,3 +19,14 @@ A request is unmatched only when the pipeline never ran an endpoint (framework 4
 **Rejected alternative:** count client routes such as `/account/billing`, `/index`, or `/wp-login.php`. `MapFallbackToFile` is the endpoint for those URLs (anything that is not `api/`, `systemhealth`, `hubs/`, `assets/`, `config.json`, or `og-image`). It returns the SPA shell so Vue Router can run. Counting it would record ordinary teller and voter navigation. Paths the fallback deliberately does not cover, such as `/systemhealth` or `/api/account/billing`, are the probes.
 
 **Rejected alternative:** a denylist of known scanner paths. New probe URLs would still log one by one, and the denylist would fight the SPA fallback.
+
+## HttpClient request logs omit webhook URLs
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #410  
+**Revisit when:** remote logging stops putting a secret in the request URL
+
+The console sink is Serilog. `Serilog:MinimumLevel:Override:System.Net.Http.HttpClient` is Warning. The same category is Warning under `Logging:LogLevel` so a non-Serilog sink does not write it either. Information logs from that category include the full request URL. The IFTTT webhook key is a path segment of that URL, not a query string. `RemoteLogService` records that a webhook is configured and does not write the URL.
+
+**Rejected alternative:** leave the category at Information and redact query strings only. The key would still be logged.

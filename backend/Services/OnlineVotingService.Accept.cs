@@ -334,7 +334,13 @@ public partial class OnlineVotingService
     /// 0 rows updated means another server already took it. A rollback restores
     /// Processing so a later Accept-all can retry.
     /// </summary>
-    private async Task<bool> ProcessIfStillProcessingAsync(Guid electionGuid, int rowId)
+    private Task<bool> ProcessIfStillProcessingAsync(Guid electionGuid, int rowId)
+    {
+        return _context.Database.CreateExecutionStrategy().ExecuteAsync(
+            () => ProcessIfStillProcessingCoreAsync(electionGuid, rowId));
+    }
+
+    private async Task<bool> ProcessIfStillProcessingCoreAsync(Guid electionGuid, int rowId)
     {
         await using var transaction = await _context.Database.BeginTransactionAsync();
         var now = DateTimeOffset.UtcNow;

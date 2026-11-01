@@ -232,6 +232,9 @@ public class JsonLocalizationProviderTests : IDisposable
             DefaultCulture = "en"
         });
 
+        _loggerMock.Setup(logger => logger.IsEnabled(LogLevel.Debug)).Returns(true);
+        _loggerMock.Setup(logger => logger.IsEnabled(LogLevel.Warning)).Returns(true);
+
         var provider = new JsonLocalizationProvider(_cache, options, _loggerMock.Object);
 
         // Act
@@ -239,6 +242,22 @@ public class JsonLocalizationProviderTests : IDisposable
 
         // Assert
         Assert.Null(result);
+        _loggerMock.Verify(
+            logger => logger.Log(
+                LogLevel.Debug,
+                It.IsAny<EventId>(),
+                It.Is<It.IsAnyType>((state, _) => state.ToString()!.Contains("Localization directory not found", StringComparison.Ordinal)),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Once);
+        _loggerMock.Verify(
+            logger => logger.Log(
+                LogLevel.Warning,
+                It.IsAny<EventId>(),
+                It.IsAny<It.IsAnyType>(),
+                It.IsAny<Exception?>(),
+                It.IsAny<Func<It.IsAnyType, Exception?, string>>()),
+            Times.Never);
     }
 
     [Fact]

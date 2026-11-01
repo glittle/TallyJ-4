@@ -86,7 +86,9 @@ dotnet ef database update --project backend/Backend.csproj
 
 ### Host behind a reverse proxy
 
-The backend is a standard ASP.NET Core application and can be hosted behind IIS, nginx, or another reverse proxy.
+The backend is a standard ASP.NET Core application and can be hosted behind IIS, nginx, or another reverse proxy. Windows IIS stays in-process (`backend/web.config`, `hostingModel="inprocess"`). Linux is the same published process behind Azure App Service, nginx, or Apache.
+
+`ForwardedHeaders:TrustPlatformProxy` defaults to true. The app applies `X-Forwarded-For` and `X-Forwarded-Proto` from one proxy hop and clears the known-proxy lists so the platform hop is trusted. Set it to false only when clients connect directly to the process and can set those headers themselves. See `backend/appsettings.json`.
 
 The important requirement is that the externally visible frontend origin and the backend CORS configuration agree.
 

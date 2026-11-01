@@ -17,7 +17,12 @@ public partial class OnlineVotingService
     };
 
     /// <inheritdoc/>
-    public async Task<(bool Success, string? Error)> SubmitBallotAsync(SubmitOnlineBallotDto dto)
+    public Task<(bool Success, string? Error)> SubmitBallotAsync(SubmitOnlineBallotDto dto)
+    {
+        return _context.Database.CreateExecutionStrategy().ExecuteAsync(() => SubmitBallotCoreAsync(dto));
+    }
+
+    private async Task<(bool Success, string? Error)> SubmitBallotCoreAsync(SubmitOnlineBallotDto dto)
     {
         using var transaction = await _context.Database.BeginTransactionAsync();
         var now = DateTimeOffset.UtcNow;

@@ -9,11 +9,11 @@ namespace Backend.Helpers;
 public static class HttpContextExtensions
 {
     /// <summary>
-    /// Client IP for rate-limit keys and audit fields.
-    /// When the TCP peer is an infrastructure hop (loopback, private, or unspecified),
-    /// uses the rightmost public address from X-Forwarded-For / Forwarded — the hop
-    /// Azure App Service / Front Door appended. Otherwise uses the connection address
-    /// and ignores client-supplied forwarded headers.
+    /// Client IP for rate-limit keys, login events, unusual-location checks, and audit logs.
+    /// After <c>UseForwardedHeaders</c> (ForwardLimit 1), a public <c>RemoteIpAddress</c> is
+    /// the client and forwarded headers are ignored. When the TCP peer is still an
+    /// infrastructure hop (loopback, private, or link-local, including Azure's
+    /// 169.254.129.1), uses the rightmost public address from X-Forwarded-For / Forwarded.
     /// </summary>
     public static string GetClientIpAddress(this HttpContext httpContext)
     {

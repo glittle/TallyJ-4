@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Text.Json;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace Backend.Localization;
@@ -14,6 +15,7 @@ public class JsonLocalizationProvider : IJsonLocalizationProvider
     private readonly IMemoryCache _cache;
     private readonly JsonLocalizationOptions _options;
     private readonly ILogger<JsonLocalizationProvider> _logger;
+    private readonly string _resourcesPath;
 
     /// <summary>
     /// Initializes a new instance of the JsonLocalizationProvider.
@@ -24,11 +26,13 @@ public class JsonLocalizationProvider : IJsonLocalizationProvider
     public JsonLocalizationProvider(
         IMemoryCache cache,
         IOptions<JsonLocalizationOptions> options,
-        ILogger<JsonLocalizationProvider> logger)
+        ILogger<JsonLocalizationProvider> logger,
+        IHostEnvironment? hostEnvironment = null)
     {
         _cache = cache;
         _options = options.Value;
         _logger = logger;
+        _resourcesPath = LocalizationPathResolver.Resolve(_options.ResourcesPath, hostEnvironment?.ContentRootPath);
     }
 
     /// <summary>
@@ -63,16 +67,17 @@ public class JsonLocalizationProvider : IJsonLocalizationProvider
             entry.SlidingExpiration = TimeSpan.FromHours(1);
             entry.Priority = CacheItemPriority.Normal;
 
-            _logger.LogInformation("Loading localization resources for culture: {Culture}", cultureName);
-
             var resources = new Dictionary<string, string>();
-            var localeDirectory = Path.Combine(_options.ResourcesPath, cultureName);
+            var localeDirectory = Path.Combine(_resourcesPath, cultureName);
 
             if (!Directory.Exists(localeDirectory))
             {
-                _logger.LogWarning("Localization directory not found: {Directory}", localeDirectory);
+                // Published hosts often have no frontend/src/locales tree. Skip quietly.
+                _logger.LogDebug("Localization directory not found: {Directory}. Skipping.", localeDirectory);
                 return resources;
             }
+
+            _logger.LogInformation("Loading localization resources for culture: {Culture}", cultureName);
 
             var jsonFiles = Directory.GetFiles(localeDirectory, "*.json");
             _logger.LogInformation("Found {Count} JSON files in {Directory}", jsonFiles.Length, localeDirectory);
