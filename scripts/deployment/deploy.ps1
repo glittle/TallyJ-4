@@ -28,13 +28,9 @@ if (Test-Path $EnvFile) {
     Write-Host "⚠ Warning: .env.$Environment not found" -ForegroundColor Yellow
 }
 
-# Determine the backend wwwroot folder from the environment name.
+# The published app serves static files from wwwroot next to Backend.dll.
 # The frontend has one build script. UAT then rewrites Open Graph URLs in dist.
-if ($Environment -eq "uat") {
-    $WwwrootFolder = "wwwroot-uat"
-} else {
-    $WwwrootFolder = "wwwroot-prod"
-}
+$WwwrootFolder = "wwwroot"
 
 # Step 1: Build Backend
 Write-Host ""
@@ -60,7 +56,7 @@ if ($Environment -eq "uat") {
 Write-Host "✓ Frontend build complete" -ForegroundColor Green
 
 # Step 3: Copy frontend dist into backend publish output
-# The backend serves static files from wwwroot-{env}/ relative to its working directory.
+# The backend serves static files from wwwroot next to Backend.dll.
 Write-Host ""
 Write-Host "Step 3: Bundling frontend into backend publish output..." -ForegroundColor Cyan
 $WwwrootTarget = Join-Path $ProjectRoot "backend\publish\$WwwrootFolder"
@@ -84,7 +80,7 @@ if ($DB_CONNECTION_STRING) {
     Write-Host "⚠ Skipping migrations: DB_CONNECTION_STRING not set" -ForegroundColor Yellow
 }
 
-# Step 5: Deploy Backend (includes frontend assets in wwwroot-{env}/)
+# Step 5: Deploy Backend (includes frontend assets in wwwroot/)
 Write-Host ""
 Write-Host "Step 5: Deploying Backend..." -ForegroundColor Cyan
 if ($BACKEND_DEPLOY_PATH) {

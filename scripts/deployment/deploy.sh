@@ -22,14 +22,13 @@ else
     echo "⚠ Warning: .env.$ENVIRONMENT not found"
 fi
 
-# Determine frontend build mode and backend wwwroot folder from the environment name
+# The published app serves static files from wwwroot next to Backend.dll.
 if [ "$ENVIRONMENT" = "uat" ]; then
     FRONTEND_BUILD_SCRIPT="build-uat"
-    WWWROOT_FOLDER="wwwroot-uat"
 else
     FRONTEND_BUILD_SCRIPT="build-production"
-    WWWROOT_FOLDER="wwwroot-prod"
 fi
+WWWROOT_FOLDER="wwwroot"
 
 # Step 1: Build Backend
 echo ""
@@ -49,7 +48,7 @@ npm run $FRONTEND_BUILD_SCRIPT
 echo "✓ Frontend build complete ($FRONTEND_BUILD_SCRIPT)"
 
 # Step 3: Copy frontend dist into backend publish output
-# The backend serves static files from wwwroot-{env}/ relative to its working directory.
+# The backend serves static files from wwwroot next to Backend.dll.
 echo ""
 echo "Step 3: Bundling frontend into backend publish output..."
 WWWROOT_TARGET="$PROJECT_ROOT/backend/publish/$WWWROOT_FOLDER"
@@ -68,7 +67,7 @@ else
     echo "⚠ Skipping migrations: DB_CONNECTION_STRING not set"
 fi
 
-# Step 5: Deploy Backend (includes frontend assets in wwwroot-{env}/)
+# Step 5: Deploy Backend (includes frontend assets in wwwroot/)
 echo ""
 echo "Step 5: Deploying Backend..."
 if [ -n "$BACKEND_DEPLOY_PATH" ]; then

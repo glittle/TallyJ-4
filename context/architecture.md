@@ -27,18 +27,24 @@ The app is hosted as a published ASP.NET Core process, not as a container image.
 
 **Status:** active  
 **Evidence:** confirmed  
-**Source:** `.azure/pipelines/templates/deploy-uat-appservice.yml` (App Service zip deploy replaces the site)  
+**Source:** `.azure/pipelines/templates/deploy-uat-appservice.yml`; `scripts/deployment/select-sibling-run.py` (Builds List returns `sourceVersion` and does not filter on it)  
 **Revisit when:** hosted UAT leaves `tallyj4-uat`, zip deploy stops replacing the whole site, or the pipelines start deploying production
 
-Hosted UAT is the Linux App Service web app `tallyj4-uat` (resource group `TallyJ3`) at https://uat.v4.tallyj.com. The two Azure DevOps pipelines still build only their own half (backend definition 3 publishes `backend_pkg` / `Backend.zip`; frontend definition 4 publishes `frontend_pkgs` / `frontend.zip`). Each deploy job, on a Microsoft-hosted Ubuntu agent, takes its own artifact plus the latest successful artifact of the other pipeline on `main`, puts the frontend dist inside the backend publish `wwwroot/`, and zip-deploys that one package with `AzureWebApp@1`. The shared steps are `.azure/pipelines/templates/deploy-uat-appservice.yml`. The app's own settings stay on the site, including the startup command `dotnet Backend.dll`. These pipelines deploy UAT only. Self-hosting on IIS or Linux is unchanged.
+Hosted UAT is the Linux App Service web app `tallyj4-uat` (resource group `TallyJ3`) at https://uat.v4.tallyj.com. The two Azure DevOps pipelines still build only their own half (backend definition 3 publishes `backend_pkg` / `Backend.zip`; frontend definition 4 publishes `frontend_pkgs` / `frontend.zip`). Each deploy puts the frontend dist inside the backend publish `wwwroot/` and zip-deploys that one package with `AzureWebApp@1`. The shared steps are `.azure/pipelines/templates/deploy-uat-appservice.yml`. The app's own settings stay on the site, including the startup command `dotnet Backend.dll`. These pipelines deploy UAT only. Self-hosting on IIS or Linux is unchanged.
 
-**Reason:** App Service zip deploy replaces the whole site. The IIS layout deployed the backend to the site and the frontend dist into that site's `wwwroot` as a second package. A second zip deploy would delete whichever half was not in the latest zip. The SPA is served from `wwwroot` next to `Backend.dll`.
+A push can start both pipelines (shared `version.json` trigger, or both trees in one commit). Each deploy looks up the other definition's run for `Build.SourceVersion`. While that run is queued or in progress, it polls until the artifact exists (30 seconds, 40 minutes), then downloads that run by id. It does not wait for the other deploy to finish. If that run failed, timed out, or never published the artifact, it warns and uses the latest **succeeded** run on `main`. A run whose build published an artifact and whose deploy then failed is result `failed`, so it is not that latest success. `scripts/deployment/select-sibling-run.py` is the lookup. `lockBehavior: sequential` is on the `DeployUat` stage (the deployment-job schema has no such property). That lock queues later runs of the same pipeline. It does not span the two pipelines.
+
+**Reason:** App Service zip deploy replaces the whole site. The IIS layout deployed the backend to the site and the frontend dist into that site's `wwwroot` as a second package. A second zip deploy would delete whichever half was not in the latest zip. The SPA is served from `wwwroot` next to `Backend.dll`. Pairing on the commit is required because `latestFromBranch` only sees a completed success, so overlapping deploys would each package the other half's previous artifact and the last upload would leave one half stale.
 
 **Rejected alternative:** deploy each pipeline's zip on its own, as the IIS virtual-application deploy did. The later deploy would wipe the earlier one.
 
 **Rejected alternative:** a third pipeline that only combines and deploys. Each existing pipeline already runs when its half changes, and either change has to publish a full site. The template is the shared part.
 
 **Rejected alternative:** send app settings or `startUpCommand` from the deploy task. The site already has them. A deploy that rewrites them can clear the startup command or the host configuration.
+
+**Rejected alternative:** an Exclusive Lock check on the `tallyj4-uat` environment. That check is created on the environment, and the pipeline token cannot manage environments. `lockBehavior` alone does not create a cross-pipeline lock.
+
+**Rejected alternative:** wait until the other run's status is completed, then download it. Each deploy is part of the run the other side is waiting on, so both sides sit until the 40-minute timeout and then fall back to the previous success.
 
 ## SQL retries and single-query splitting
 

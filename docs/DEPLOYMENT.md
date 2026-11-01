@@ -136,14 +136,22 @@ UAT is the Linux App Service web app `tallyj4-uat` in resource group `TallyJ3`, 
 
 Two pipelines, both push-to-`main` only (`pr: none`):
 
-| Pipeline | Definition | Builds | Also downloads |
+| Pipeline | Definition | Builds | Other half |
 | --- | --- | --- | --- |
-| `.azure/pipelines/azure-back-end-pipeline.yml` | 3 | `backend_pkg` (`Backend.zip`) | latest successful `frontend_pkgs` from definition 4 on `main` |
-| `.azure/pipelines/azure-front-end-pipeline.yml` | 4 | `frontend_pkgs` (`frontend.zip` of `dist`) | latest successful `backend_pkg` from definition 3 on `main` |
+| `.azure/pipelines/azure-back-end-pipeline.yml` | 3 | `backend_pkg` (`Backend.zip`) | definition 4, artifact `frontend_pkgs` |
+| `.azure/pipelines/azure-front-end-pipeline.yml` | 4 | `frontend_pkgs` (`frontend.zip` of `dist`) | definition 3, artifact `backend_pkg` |
 
-The shared steps are `.azure/pipelines/templates/deploy-uat-appservice.yml`. The deploy job runs on a Microsoft-hosted `ubuntu-latest` agent, in environment `tallyj4-uat` (no VM resource), and deploys with `AzureWebApp@1` (`azureSubscription: azure-tallyj`, `appType: webAppLinux`, `deploymentMethod: zipDeploy`). Build jobs stay on `windows-latest`. Tests are unchanged.
+The shared steps are `.azure/pipelines/templates/deploy-uat-appservice.yml`. The deploy stage runs on a Microsoft-hosted `ubuntu-latest` agent, in environment `tallyj4-uat` (no VM resource), and deploys with `AzureWebApp@1` (`azureSubscription: azure-tallyj`, `appType: webAppLinux`, `deploymentMethod: zipDeploy`). Build stages stay on `windows-latest`. Tests are unchanged. The deploy job timeout is 90 minutes so the wait below still fits.
 
-If the other pipeline has never succeeded on `main`, the deploy stops and names the missing zip. The first successful run of each pipeline on `main` has to exist before the other pipeline can publish a combined site.
+Both pipelines trigger on `version.json`, and a push often changes `backend/**` and `frontend/**` together, so one commit can start both runs. Each deploy has to ship **both new halves**. Taking the other pipeline's latest completed success would still be the previous commit, and the zip that lands last would leave one half stale.
+
+At deploy time the job lists the other definition's recent builds on this branch (`GET .../_apis/build/builds`, `queryOrder=queueTimeDescending`, `$top=50`, `api-version=7.1`) and keeps the ones whose `sourceVersion` equals `Build.SourceVersion`. The list API returns `sourceVersion` on each build and does not filter by it. The call uses the job OAuth token `System.AccessToken`. That variable is secret, so the step maps it to `SYSTEM_ACCESSTOKEN`. Other predefined variables (`System.CollectionUri`, `System.TeamProjectId`, `Build.SourceVersion`, `Build.SourceBranch`) are already in the process environment. The token can read builds in this project (the project build service, or the collection build service if job authorization scope is the collection). `DownloadPipelineArtifact@2` uses the same token. A 401 or 403 fails the deploy.
+
+If that run is queued (`notStarted`, `postponed`) or in progress and has not published its artifact, the deploy polls every 30 seconds for up to 40 minutes. As soon as the Artifacts API lists the artifact, the deploy downloads **that run** (`buildType: specific`, `buildVersionToDownload: specific`, `pipelineId` set to the build id) even while the run is still in progress. Waiting for the other run to finish would deadlock, because each deploy is part of the run the other side would be waiting on. The artifact is available once the build job publishes it.
+
+If that run has already failed or been canceled, the wait times out, the succeeded run has no artifact, or the specific download does not leave the zip, the deploy logs a warning and downloads the latest successful run of that definition on `refs/heads/main`. Latest successful means a completed run whose result is `succeeded`. `allowFailedBuilds` and `allowPartiallySucceededBuilds` are false. A run whose build job published an artifact and whose deploy job then failed has result `failed`, so the other pipeline does not pick it up as the latest successful run. A push that only triggers one pipeline finds no sibling run and uses that latest successful artifact. If that artifact has never been published, the deploy stops and names the missing zip.
+
+`lockBehavior: sequential` is set on the `DeployUat` stage. The deployment-job schema has no `lockBehavior` property; Azure DevOps accepts it on the stage or the pipeline. A stage with an id and `lockBehavior` creates a lock for that stage, and `sequential` queues later runs of **this** pipeline instead of the default `runLatest`, which cancels them. The lock does not span the two pipelines. An Exclusive Lock check on the environment would, and these pipelines do not add that check.
 
 The frontend build rewrites Open Graph URLs in `dist/index.html` to `https://uat.v4.tallyj.com` before it zips `dist`. Do not reuse that zip for production.
 
