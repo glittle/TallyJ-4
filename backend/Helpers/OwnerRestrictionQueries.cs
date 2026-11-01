@@ -114,8 +114,9 @@ public static class OwnerRestrictionQueries
     }
 
     /// <summary>
-    /// Elections in <paramref name="electionIds"/> that have a rejected owner or admin.
-    /// Those elections stay hidden from voters even if online voting was left on.
+    /// Elections in <paramref name="electionIds"/> that voters must not see because
+    /// no owner or co-admin is approved and at least one is rejected.
+    /// An approved owner keeps the election visible. A rejected co-admin alone does not hide it.
     /// </summary>
     public static async Task<List<Guid>> RejectedOwnerElectionIdsAsync(
         MainDbContext context,
@@ -140,21 +141,35 @@ public static class OwnerRestrictionQueries
         }
 
         var userIds = links.Select(link => link.UserId).Distinct().ToList();
-        var rejected = await context.OwnerSendControls
+        var controls = await context.OwnerSendControls
             .AsNoTracking()
-            .Where(row => userIds.Contains(row.UserId) && row.RestrictionStatus == OwnerRestrictionStatus.Rejected)
-            .Select(row => row.UserId)
+            .Where(row => userIds.Contains(row.UserId))
+            .Select(row => new OwnerTrust(
+                row.UserId,
+                row.RestrictionStatus,
+                row.PaidSendsApproved,
+                row.SendsFrozen))
             .ToListAsync(cancellationToken);
-        if (rejected.Count == 0)
+        var byUser = controls.ToDictionary(row => row.UserId);
+
+        var hidden = new List<Guid>();
+        foreach (var election in links.GroupBy(link => link.ElectionGuid))
         {
-            return new List<Guid>();
+            var owners = election
+                .Select(link => link.UserId)
+                .Distinct()
+                .Select(id => byUser.TryGetValue(id, out var row)
+                    ? row
+                    : new OwnerTrust(id, null, false, false))
+                .ToList();
+            var anyRejected = owners.Any(owner =>
+                string.Equals(owner.Status, OwnerRestrictionStatus.Rejected, StringComparison.Ordinal));
+            if (anyRejected && !owners.Any(owner => owner.IsApproved))
+            {
+                hidden.Add(election.Key);
+            }
         }
 
-        var rejectedSet = rejected.ToHashSet();
-        return links
-            .Where(link => rejectedSet.Contains(link.UserId))
-            .Select(link => link.ElectionGuid)
-            .Distinct()
-            .ToList();
+        return hidden;
     }
 }

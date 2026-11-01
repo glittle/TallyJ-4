@@ -1318,5 +1318,10 @@
     "t": "Test codes are stopped while sending is frozen.",
     "s": "source",
     "w": "2026-11-01T20:10:00Z"
+  },
+  "elections.ownerRestricted.testCodeThrottled": {
+    "t": "You can send another test code later. Test codes are limited to one a minute and five a day.",
+    "s": "source",
+    "w": "2026-11-01T20:30:00Z"
   }
 }

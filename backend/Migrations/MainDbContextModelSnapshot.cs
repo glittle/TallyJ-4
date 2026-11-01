@@ -817,6 +817,16 @@ namespace Backend.Migrations
                         .HasPrecision(0)
                         .HasColumnType("datetimeoffset(0)");
 
+                    b.Property<DateTimeOffset?>("LastOwnerTestCodeAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.Property<int>("OwnerTestCodeCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly?>("OwnerTestCodeUtcDate")
+                        .HasColumnType("date");
+
                     b.Property<bool>("PaidSendsApproved")
                         .HasColumnType("bit");
 

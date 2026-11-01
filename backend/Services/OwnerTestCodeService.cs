@@ -25,11 +25,23 @@ public class OwnerTestCodeService : IOwnerTestCodeService
     public const string NotAllowedKey = "elections.ownerRestricted.testCodeNotAllowed";
     public const string FrozenKey = "elections.ownerRestricted.testCodeFrozen";
     public const string SendFailedKey = "elections.ownerRestricted.testCodeFailed";
+    public const string ThrottledKey = "elections.ownerRestricted.testCodeThrottled";
     public const string Subject = "[TallyJ] Test code";
+
+    /// <summary>
+    /// Minimum time between test-code emails for one account.
+    /// </summary>
+    public const int MinimumMinutes = 1;
+
+    /// <summary>
+    /// Most test-code emails one account may send on a UTC day.
+    /// </summary>
+    public const int DailyCap = 5;
 
     private readonly MainDbContext _context;
     private readonly IEmailSender _emailSender;
     private readonly IConfiguration _configuration;
+    private readonly ICodeSendClock _clock;
     private readonly ILogger<OwnerTestCodeService> _logger;
 
     /// <summary>
@@ -39,11 +51,13 @@ public class OwnerTestCodeService : IOwnerTestCodeService
         MainDbContext context,
         IEmailSender emailSender,
         IConfiguration configuration,
+        ICodeSendClock clock,
         ILogger<OwnerTestCodeService> logger)
     {
         _context = context;
         _emailSender = emailSender;
         _configuration = configuration;
+        _clock = clock;
         _logger = logger;
     }
 
@@ -62,7 +76,7 @@ public class OwnerTestCodeService : IOwnerTestCodeService
             return OwnerReviewActionResult.Fail(OwnerReviewService.NotFoundKey);
         }
 
-        var row = await _context.OwnerSendControls.AsNoTracking()
+        var row = await _context.OwnerSendControls
             .FirstOrDefaultAsync(item => item.UserId == id, cancellationToken);
         if (row == null || !OwnerRestrictionStatus.AllowsOwnEmailTest(row.RestrictionStatus))
         {
@@ -73,6 +87,20 @@ public class OwnerTestCodeService : IOwnerTestCodeService
         {
             return OwnerReviewActionResult.Fail(FrozenKey);
         }
+
+        var now = _clock.UtcNow;
+        var today = _clock.UtcDate;
+        var sentToday = row.OwnerTestCodeUtcDate == today ? row.OwnerTestCodeCount : 0;
+        if (sentToday >= DailyCap
+            || (row.LastOwnerTestCodeAt is DateTimeOffset last && now < last.AddMinutes(MinimumMinutes)))
+        {
+            return OwnerReviewActionResult.Fail(ThrottledKey);
+        }
+
+        row.LastOwnerTestCodeAt = now;
+        row.OwnerTestCodeUtcDate = today;
+        row.OwnerTestCodeCount = sentToday + 1;
+        await _context.SaveChangesAsync(cancellationToken);
 
         var code = SecureCode.FromAlphabet("ABCDEFGHJKLMNPQRSTUVWXYZ23456789", 6);
         try

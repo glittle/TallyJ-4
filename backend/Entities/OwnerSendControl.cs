@@ -100,4 +100,20 @@ public class OwnerSendControl
     /// </summary>
     [Precision(0)]
     public DateTimeOffset? FirstPaidSendAt { get; set; }
+
+    /// <summary>
+    /// When this account last emailed itself an owner test code. Used for the one-per-minute limit.
+    /// </summary>
+    [Precision(0)]
+    public DateTimeOffset? LastOwnerTestCodeAt { get; set; }
+
+    /// <summary>
+    /// UTC day of <see cref="OwnerTestCodeCount"/>.
+    /// </summary>
+    public DateOnly? OwnerTestCodeUtcDate { get; set; }
+
+    /// <summary>
+    /// Owner test codes sent on <see cref="OwnerTestCodeUtcDate"/>.
+    /// </summary>
+    public int OwnerTestCodeCount { get; set; }
 }
