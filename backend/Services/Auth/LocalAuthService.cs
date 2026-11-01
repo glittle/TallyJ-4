@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Localization;
 using Backend.DTOs.Auth;
 using Backend.Context;
+using Backend.Helpers;
 using Backend.Identity;
 using Backend.Middleware;
 
@@ -37,9 +38,9 @@ public class LocalAuthService : ILocalAuthService
     }
 
     /// <summary>
-    /// Creates a local email/password user. Not used by open HTTP register
-    /// (<c>POST /api/auth/registerAccount</c> is disabled). Called by
-    /// <see cref="AccountInviteService"/> after a one-time invite is consumed.
+    /// Creates a local email/password user and sends the verification email.
+    /// Open <c>POST /api/auth/registerAccount</c> and invite redemption both call this.
+    /// The new row is restricted. Invite redemption then marks it approved.
     /// </summary>
     public async Task<(bool Success, string? Error, AuthResponse? Response)> RegisterAsync(RegisterRequest request)
     {
@@ -65,6 +66,17 @@ public class LocalAuthService : ILocalAuthService
         {
             var errors = string.Join(", ", result.Errors.Select(e => e.Description));
             return (false, errors, null);
+        }
+
+        try
+        {
+            OwnerAccountGate.AddRestricted(_context, user.Id);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            await _userManager.DeleteAsync(user);
+            return (false, ex.Message, null);
         }
 
         // Generate email verification token

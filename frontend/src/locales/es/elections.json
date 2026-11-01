@@ -758,5 +758,75 @@
     "t": "Votantes",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ownerRestricted.banner": {
+    "t": "Su cuenta está restringida. Puede preparar elecciones, cargar personas, introducir papeletas, escrutar y ver informes. No puede enviar códigos ni mensajes a los electores, ni abrir la votación en línea, hasta que un administrador del sitio apruebe su cuenta. Puede enviar un código de prueba a la dirección de correo de su cuenta.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestReview": {
+    "t": "Solicitar revisión",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requested": {
+    "t": "Revisión solicitada {when}. Puede volver a solicitarla después de {next}.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.holdNote": {
+    "t": "Nota de quien revisa: {note}",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.rejected": {
+    "t": "Esta cuenta fue rechazada. Sus elecciones están congeladas y ocultas a los electores. Se eliminarán 30 días después de la decisión, salvo que un administrador del sitio las borre antes.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.throttled": {
+    "t": "Puede solicitar otra revisión cuando termine la espera.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestFailed": {
+    "t": "No se pudo enviar la solicitud de revisión por correo. Inténtelo más tarde.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noRecipients": {
+    "t": "No hay un correo de administrador del sitio configurado, así que la solicitud no se envió.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.alreadyApproved": {
+    "t": "Esta cuenta ya está aprobada.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notFound": {
+    "t": "Cuenta no encontrada.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noteTooLong": {
+    "t": "La nota es demasiado larga.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notRejected": {
+    "t": "Solo una cuenta rechazada puede eliminar sus elecciones ahora.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.onlineBlocked": {
+    "t": "La votación en línea sigue cerrada hasta que un administrador del sitio apruebe su cuenta. La preparación, la entrada de escrutadores, el escrutinio y los informes siguen disponibles.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.paidChannels.ownerRestricted": {
+    "t": "Los códigos de elector y la votación en línea no están disponibles hasta que un administrador del sitio apruebe su cuenta. Puede enviar un código de prueba al correo de su cuenta. La votación presencial y la entrada de escrutadores siguen disponibles.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

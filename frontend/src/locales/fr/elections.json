@@ -758,5 +758,75 @@
     "t": "Votants",
     "s": "ai",
     "w": "2026-10-15T16:59:35Z"
+  },
+  "elections.ownerRestricted.banner": {
+    "t": "Votre compte est restreint. Vous pouvez préparer des élections, importer des personnes, saisir des bulletins, dépouiller et voir les rapports. Vous ne pouvez pas envoyer de codes ou de messages aux électeurs, ni ouvrir le vote en ligne, tant qu'un administrateur du site n'a pas approuvé votre compte. Vous pouvez envoyer un code d'essai à l'adresse e-mail de votre compte.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestReview": {
+    "t": "Demander un examen",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requested": {
+    "t": "Examen demandé {when}. Vous pourrez redemander après {next}.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.holdNote": {
+    "t": "Note de l'examinateur : {note}",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.rejected": {
+    "t": "Ce compte a été refusé. Ses élections sont gelées et cachées aux électeurs. Elles seront supprimées 30 jours après la décision, sauf si un administrateur du site les supprime plus tôt.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.throttled": {
+    "t": "Vous pourrez demander un autre examen après le délai d'attente.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestFailed": {
+    "t": "La demande d'examen n'a pas pu être envoyée par e-mail. Réessayez plus tard.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noRecipients": {
+    "t": "Aucune adresse d'administrateur du site n'est configurée, donc la demande n'a pas été envoyée.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.alreadyApproved": {
+    "t": "Ce compte est déjà approuvé.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notFound": {
+    "t": "Compte introuvable.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noteTooLong": {
+    "t": "La note est trop longue.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notRejected": {
+    "t": "Seules les élections d'un compte refusé peuvent être supprimées maintenant.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.onlineBlocked": {
+    "t": "Le vote en ligne reste fermé tant qu'un administrateur du site n'a pas approuvé votre compte. La préparation, la saisie, le dépouillement et les rapports restent possibles.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.paidChannels.ownerRestricted": {
+    "t": "Les codes d'électeur et le vote en ligne ne sont pas disponibles tant qu'un administrateur du site n'a pas approuvé votre compte. Vous pouvez envoyer un code d'essai à l'adresse e-mail de votre compte. Le vote en personne et la saisie par les scrutateurs restent possibles.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

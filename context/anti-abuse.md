@@ -2,14 +2,16 @@
 
 ## Owner paid-send gate (issue #371 slice 3a)
 
-**Status:** active  
+**Status:** superseded  
 **Evidence:** confirmed  
-**Source:** issue #371 comments of 2026-10-06 (owner abuse, flagged-upload threshold, block Online)  
-**Revisit when:** a second paid provider is added, or email codes should also wait for approval
+**Source:** issue #371 comments of 2026-10-06 (owner abuse, flagged-upload threshold, block Online); issue #414  
+**Revisit when:** a second paid provider is added
+
+> Superseded 2026-11: paid-send approval is no longer a separate step. An owner whose `RestrictionStatus` is Approved is trusted for voter codes, online voting, and paid sends. `PaidSendsApproved` is set with that status so the caps still read one flag. See [context/auth.md](auth.md). Email, SMS, voice, and WhatsApp are all blocked while the account is Restricted, ReviewRequested, or Rejected, except an email code to the owner's own account address.
 
 An owner who creates an election can upload any phone list and then trigger Twilio (SMS and voice) or GreenAPI (WhatsApp). Checking the request against that list does not help, because the attacker owns the list.
 
-SMS, voice, and WhatsApp login codes wait until a super admin approves every owner and admin on the election. The flag is `OwnerSendControls.PaidSendsApproved`. Email codes are not gated by that approval and are not counted against the caps. Voice is included because it is a paid Twilio channel, same as SMS.
+Before issue #414, SMS, voice, and WhatsApp login codes waited until a super admin approved every owner and admin on the election. The flag was `OwnerSendControls.PaidSendsApproved`. Email codes were not gated by that approval and were not counted against the caps. Voice was included because it is a paid Twilio channel, same as SMS. Those caps, the freeze, the prefix cap, and the voter-list flag still apply after an owner is approved. A new list upload re-restricts that election only when those bad-contact checks flag it. It does not put the approved owner back into restricted mode.
 
 The owner is a `JoinElectionUsers` row with role `Owner` or `Admin`. `CreateElection` stores `Admin`, not `Owner`. An election with no such row cannot send a paid code. When several owners or admins exist, paid codes go out only if every one of them is approved. The send is counted against the first of those accounts that is still under its daily cap. One approved account does not carry an unapproved co-owner.
 

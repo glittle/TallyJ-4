@@ -179,6 +179,64 @@
         }
       }
     },
+    "/api/Account/owner-restriction": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Account/owner-restriction/request-review": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Auth/google/login": {
       "get": {
         "tags": [
@@ -7596,6 +7654,282 @@
         }
       }
     },
+    "/api/superadmin/owner-reviews": {
+      "get": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseIReadOnlyListOwners_OwnerReviewListItemDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseIReadOnlyListOwners_OwnerReviewListItemDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseIReadOnlyListOwners_OwnerReviewListItemDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/owner-reviews/{userId}": {
+      "get": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerReviewDetailDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerReviewDetailDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerReviewDetailDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/owner-reviews/{userId}/approve": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/owner-reviews/{userId}/reject": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Owners_OwnerReviewNoteDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Owners_OwnerReviewNoteDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Owners_OwnerReviewNoteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/owner-reviews/{userId}/hold": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Owners_OwnerReviewNoteDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Owners_OwnerReviewNoteDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Owners_OwnerReviewNoteDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseOwners_OwnerRestrictionDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/superadmin/owner-reviews/{userId}/delete-elections": {
+      "post": {
+        "tags": [
+          "SuperAdmin"
+        ],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/superadmin/paid-sends/owners/{userId}/freeze": {
       "post": {
         "tags": [
@@ -8844,6 +9178,33 @@
         },
         "additionalProperties": false
       },
+      "ApiResponseIReadOnlyListOwners_OwnerReviewListItemDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Owners_OwnerReviewListItemDto"
+            },
+            "nullable": true
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApiResponseListComputers_ActiveComputerDto": {
         "type": "object",
         "properties": {
@@ -9068,6 +9429,52 @@
           },
           "data": {
             "$ref": "#/components/schemas/Locations_LocationDto"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiResponseOwners_OwnerRestrictionDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Owners_OwnerRestrictionDto"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApiResponseOwners_OwnerReviewDetailDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/Owners_OwnerReviewDetailDto"
           },
           "message": {
             "type": "string",
@@ -9934,7 +10341,12 @@
           44,
           45,
           46,
-          47
+          47,
+          48,
+          49,
+          50,
+          51,
+          52
         ],
         "type": "integer",
         "format": "int32"
@@ -11942,6 +12354,235 @@
             "nullable": true
           },
           "verifyCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Owners_OwnerRestrictionDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "reviewRequestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "nextRequestAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "canRequestReview": {
+            "type": "boolean"
+          },
+          "blocksSends": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Owners_OwnerReviewCountDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Owners_OwnerReviewDetailDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "authMethod": {
+            "type": "string",
+            "nullable": true
+          },
+          "signedUpAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          },
+          "reviewRequestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reviewedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "reviewedByUserId": {
+            "type": "string",
+            "nullable": true
+          },
+          "rejectedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "deleteElectionsAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "elections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Owners_OwnerReviewElectionDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Owners_OwnerReviewElectionDto": {
+        "type": "object",
+        "properties": {
+          "electionGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "electionType": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfElection": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "onlineWhenOpen": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "onlineWhenClose": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "peopleCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "emailDomains": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Owners_OwnerReviewCountDto"
+            },
+            "nullable": true
+          },
+          "phoneCountries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Owners_OwnerReviewCountDto"
+            },
+            "nullable": true
+          },
+          "flaggedContactCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "flaggedSample": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "peopleSample": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Owners_OwnerReviewListItemDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "displayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "authMethod": {
+            "type": "string",
+            "nullable": true
+          },
+          "reviewRequestedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "rejectedAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "electionCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Owners_OwnerReviewNoteDto": {
+        "type": "object",
+        "properties": {
+          "note": {
             "type": "string",
             "nullable": true
           }

@@ -304,6 +304,11 @@ public partial class AuthController
             }
         }
 
+        if (isNewUser)
+        {
+            OwnerAccountGate.AddRestricted(_context, user.Id);
+        }
+
         var token = _jwtTokenService.GenerateToken(user);
         var refreshToken = _jwtTokenService.GenerateRefreshToken();
         var refreshTokenEntity = _jwtTokenService.CreateRefreshToken(user.Id, refreshToken);

@@ -82,7 +82,9 @@ public static class OwnerPaidSendGrandfather
             {
                 UserId = userId,
                 PaidSendsApproved = true,
-                ApprovedAt = now
+                RestrictionStatus = OwnerRestrictionStatus.Approved,
+                ApprovedAt = now,
+                StatusChangedAt = now
             });
         }
 

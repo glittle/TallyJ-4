@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Backend.DTOs.Auth;
+using Backend.DTOs.Owners;
 using Backend.DTOs.SuperAdmin;
 using Backend.Models;
 using Backend.Services;
@@ -20,6 +21,7 @@ public class SuperAdminController : ControllerBase
     private readonly ISuperAdminService _superAdminService;
     private readonly IAccountInviteService _accountInviteService;
     private readonly IPaidSendAdminService _paidSendAdminService;
+    private readonly IOwnerReviewService _ownerReviewService;
     private readonly ILogger<SuperAdminController> _logger;
 
     /// <summary>
@@ -31,11 +33,13 @@ public class SuperAdminController : ControllerBase
         ISuperAdminService superAdminService,
         IAccountInviteService accountInviteService,
         IPaidSendAdminService paidSendAdminService,
+        IOwnerReviewService ownerReviewService,
         ILogger<SuperAdminController> logger)
     {
         _superAdminService = superAdminService;
         _accountInviteService = accountInviteService;
         _paidSendAdminService = paidSendAdminService;
+        _ownerReviewService = ownerReviewService;
         _logger = logger;
     }
 
@@ -167,7 +171,8 @@ public class SuperAdminController : ControllerBase
     }
 
     /// <summary>
-    /// Approves one owner for SMS, voice, and WhatsApp login codes.
+    /// Approves one owner. The same decision allows voter codes, online voting, and paid sends.
+    /// Prefer the owner review page, which also emails the owner.
     /// </summary>
     [HttpPost("paid-sends/owners/{userId:guid}/approve")]
     [Authorize(Policy = "SuperAdmin")]
@@ -179,13 +184,114 @@ public class SuperAdminController : ControllerBase
             return Unauthorized(ApiResponse<bool>.ErrorResponse("Not authenticated"));
         }
 
-        var approved = await _paidSendAdminService.ApproveOwnerAsync(userId, adminId);
-        if (!approved)
+        var result = await _ownerReviewService.ApproveAsync(userId, adminId);
+        if (!result.Success)
         {
-            return NotFound(ApiResponse<bool>.ErrorResponse("Owner not found"));
+            return NotFound(ApiResponse<bool>.ErrorResponse(result.ErrorKey ?? "Owner not found"));
         }
 
         return Ok(ApiResponse<bool>.SuccessResponse(true));
+    }
+
+    /// <summary>
+    /// Lists accounts that are restricted, waiting for review, or rejected.
+    /// </summary>
+    [HttpGet("owner-reviews")]
+    [Authorize(Policy = "SuperAdmin")]
+    public async Task<ActionResult<ApiResponse<IReadOnlyList<OwnerReviewListItemDto>>>> ListOwnerReviews(
+        [FromQuery] string? status)
+    {
+        var items = await _ownerReviewService.ListAsync(status);
+        return Ok(ApiResponse<IReadOnlyList<OwnerReviewListItemDto>>.SuccessResponse(items));
+    }
+
+    /// <summary>
+    /// Review dossier for one owner: sign-up, and each election's list stats.
+    /// </summary>
+    [HttpGet("owner-reviews/{userId:guid}")]
+    [Authorize(Policy = "SuperAdmin")]
+    public async Task<ActionResult<ApiResponse<OwnerReviewDetailDto>>> GetOwnerReview(Guid userId)
+    {
+        var detail = await _ownerReviewService.GetDetailAsync(userId);
+        if (detail == null)
+        {
+            return NotFound(ApiResponse<OwnerReviewDetailDto>.ErrorResponse(OwnerReviewService.NotFoundKey));
+        }
+
+        return Ok(ApiResponse<OwnerReviewDetailDto>.SuccessResponse(detail));
+    }
+
+    /// <summary>
+    /// Trusts the owner and emails them.
+    /// </summary>
+    [HttpPost("owner-reviews/{userId:guid}/approve")]
+    [Authorize(Policy = "SuperAdmin")]
+    public Task<ActionResult<ApiResponse<OwnerRestrictionDto>>> ApproveOwnerReview(Guid userId)
+        => ReviewAction(userId, adminId => _ownerReviewService.ApproveAsync(userId, adminId));
+
+    /// <summary>
+    /// Rejects the owner, freezes and hides their elections, and emails them.
+    /// </summary>
+    [HttpPost("owner-reviews/{userId:guid}/reject")]
+    [Authorize(Policy = "SuperAdmin")]
+    public Task<ActionResult<ApiResponse<OwnerRestrictionDto>>> RejectOwnerReview(
+        Guid userId,
+        [FromBody] OwnerReviewNoteDto? note)
+        => ReviewAction(userId, adminId => _ownerReviewService.RejectAsync(userId, adminId, note?.Note));
+
+    /// <summary>
+    /// Leaves the owner restricted, stores a note, and emails them.
+    /// </summary>
+    [HttpPost("owner-reviews/{userId:guid}/hold")]
+    [Authorize(Policy = "SuperAdmin")]
+    public Task<ActionResult<ApiResponse<OwnerRestrictionDto>>> HoldOwnerReview(
+        Guid userId,
+        [FromBody] OwnerReviewNoteDto? note)
+        => ReviewAction(userId, adminId => _ownerReviewService.HoldAsync(userId, adminId, note?.Note));
+
+    /// <summary>
+    /// Deletes a rejected owner's elections before the 30-day cleanup.
+    /// Elections shared with an owner who is not rejected are left in place.
+    /// </summary>
+    [HttpPost("owner-reviews/{userId:guid}/delete-elections")]
+    [Authorize(Policy = "SuperAdmin")]
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteRejectedOwnerElections(Guid userId)
+    {
+        var adminId = CurrentAdminId();
+        if (adminId == null)
+        {
+            return Unauthorized(ApiResponse<bool>.ErrorResponse("Not authenticated"));
+        }
+
+        var result = await _ownerReviewService.DeleteElectionsNowAsync(userId, adminId);
+        if (!result.Success)
+        {
+            return BadRequest(ApiResponse<bool>.ErrorResponse(result.ErrorKey ?? "error"));
+        }
+
+        return Ok(ApiResponse<bool>.SuccessResponse(true));
+    }
+
+    private async Task<ActionResult<ApiResponse<OwnerRestrictionDto>>> ReviewAction(
+        Guid userId,
+        Func<string, Task<OwnerReviewActionResult>> action)
+    {
+        var adminId = CurrentAdminId();
+        if (adminId == null)
+        {
+            return Unauthorized(ApiResponse<OwnerRestrictionDto>.ErrorResponse("Not authenticated"));
+        }
+
+        var result = await action(adminId);
+        if (!result.Success)
+        {
+            var status = result.ErrorKey == OwnerReviewService.NotFoundKey
+                ? StatusCodes.Status404NotFound
+                : StatusCodes.Status400BadRequest;
+            return StatusCode(status, ApiResponse<OwnerRestrictionDto>.ErrorResponse(result.ErrorKey ?? "error"));
+        }
+
+        return Ok(ApiResponse<OwnerRestrictionDto>.SuccessResponse(result.Restriction!));
     }
 
     /// <summary>

@@ -390,7 +390,7 @@ SELECT 'People', COUNT(*) FROM TallyJ4.dbo.Person;
 
 3. **Recreate User Accounts**
 
-   Have each teller sign in with Google (creates the account), or have a SuperAdmin issue a one-time invite link for a local email/password account. Open `POST /api/auth/registerAccount` is disabled. Existing local password accounts can still log in.
+   Have each teller create an account with email and password or with Google. A new account starts restricted: setup and teller entry work, and voter codes plus online voting wait for a super-admin review. A SuperAdmin one-time invite still creates an approved local account. Existing local password accounts can still log in.
 
 4. **Assign Roles**
    - Administrator

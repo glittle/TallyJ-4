@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using Backend.DTOs.Account;
+using Backend.DTOs.Owners;
 using Backend.Helpers;
 using Backend.Models;
 using Backend.Services;
@@ -17,11 +18,16 @@ namespace Backend.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IAccountService _accountService;
+    private readonly IOwnerReviewService _ownerReviewService;
     private readonly ILogger<AccountController> _logger;
 
-    public AccountController(IAccountService accountService, ILogger<AccountController> logger)
+    public AccountController(
+        IAccountService accountService,
+        IOwnerReviewService ownerReviewService,
+        ILogger<AccountController> logger)
     {
         _accountService = accountService;
+        _ownerReviewService = ownerReviewService;
         _logger = logger;
     }
 
@@ -118,5 +124,45 @@ public class AccountController : ControllerBase
             _logger.LogWarning("Password change failed: {Message}", ex.Message);
             return BadRequest(ApiResponse<object>.ErrorResponse(ex.Message));
         }
+    }
+
+    /// <summary>
+    /// Restriction state for the signed-in account. Missing rows do not block sends.
+    /// </summary>
+    [HttpGet("owner-restriction")]
+    public async Task<ActionResult<ApiResponse<OwnerRestrictionDto>>> GetOwnerRestriction()
+    {
+        var userId = CurrentUserId;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(ApiResponse<OwnerRestrictionDto>.ErrorResponse("User not authenticated"));
+        }
+
+        var restriction = await _ownerReviewService.GetForUserAsync(userId);
+        return Ok(ApiResponse<OwnerRestrictionDto>.SuccessResponse(restriction));
+    }
+
+    /// <summary>
+    /// Asks every super admin to review this account. Limited to one email per 24 hours.
+    /// </summary>
+    [HttpPost("owner-restriction/request-review")]
+    public async Task<ActionResult<ApiResponse<OwnerRestrictionDto>>> RequestOwnerReview()
+    {
+        var userId = CurrentUserId;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(ApiResponse<OwnerRestrictionDto>.ErrorResponse("User not authenticated"));
+        }
+
+        var result = await _ownerReviewService.RequestReviewAsync(userId);
+        if (!result.Success)
+        {
+            var status = result.ErrorKey == OwnerReviewService.ThrottledKey
+                ? StatusCodes.Status429TooManyRequests
+                : StatusCodes.Status400BadRequest;
+            return StatusCode(status, ApiResponse<OwnerRestrictionDto>.ErrorResponse(result.ErrorKey ?? "error"));
+        }
+
+        return Ok(ApiResponse<OwnerRestrictionDto>.SuccessResponse(result.Restriction!));
     }
 }

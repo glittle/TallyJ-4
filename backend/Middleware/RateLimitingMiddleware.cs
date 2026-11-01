@@ -59,7 +59,7 @@ public class RateLimitingMiddleware
         {
             { "/api/auth/login", (LoginIpMaxRequests, OneMinute) },
             { "/api/auth/teller-login", (TellerLoginIpMaxRequests, OneMinute) },
-            // Endpoint is disabled (400 + i18n key); keep a tight bucket for leftover callers.
+            // Open registration is back. Keep the tight per-IP bucket.
             { "/api/auth/registerAccount", (3, TimeSpan.FromHours(1)) },
             { "/api/auth/registerWithInvite", (3, TimeSpan.FromHours(1)) },
             { "/api/auth/account-invite", (10, TimeSpan.FromMinutes(1)) },

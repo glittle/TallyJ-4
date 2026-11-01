@@ -349,6 +349,26 @@ const routes = [
 
         meta: { titleKey: "nav.superAdminPaidSends", requiresSuperAdmin: true },
       },
+
+      {
+        path: "super-admin/owner-reviews",
+
+        name: "super-admin-owner-reviews",
+
+        component: () => import("../pages/SuperAdminOwnerReviewsPage.vue"),
+
+        meta: { titleKey: "nav.superAdminOwnerReviews", requiresSuperAdmin: true },
+      },
+
+      {
+        path: "super-admin/owner-reviews/:userId",
+
+        name: "super-admin-owner-review",
+
+        component: () => import("../pages/SuperAdminOwnerReviewDetailPage.vue"),
+
+        meta: { titleKey: "nav.superAdminOwnerReviews", requiresSuperAdmin: true },
+      },
     ],
   },
 ];

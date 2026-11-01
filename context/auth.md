@@ -44,22 +44,47 @@ Online voters use the same JWT claims as before (`voterType=online`, `voterId`, 
 
 **Rejected alternative:** encrypt the JWT in `localStorage`. Not a fix under XSS (issue #250 / #249).
 
-## IdP-first teller signup (issue #347)
+## Open sign-up starts restricted (issue #414)
 
 **Status:** active  
 **Evidence:** confirmed  
+**Source:** issue #414 and the owner's answers on that issue (approval is per owner)  
+**Revisit when:** review should require a captcha, or invited accounts should start restricted
+
+Anyone can create a teller account again. `POST /api/auth/registerAccount` creates a local email/password user, sends the existing verification email, and stays on the per-IP rate limit. Google, and the other teller sign-in methods that create an account, do the same. The new row is `OwnerSendControls.RestrictionStatus = Restricted`. Login still requires a confirmed email.
+
+A SuperAdmin one-time invite still creates one local account. That account is **Approved**, because a super admin already issued the link. The invitee still confirms the email.
+
+What a restricted, review-requested, or rejected owner cannot do is enforced on the server: send voter codes or messages (email, SMS, WhatsApp, voice), and turn on or open online voting. The one exception is an email code to that owner's own account address, and only while the status is Restricted or ReviewRequested. Setup, people upload, teller entry, tallying, and reports stay available. A package import that had online voting on is saved with it off when the importing account is not approved.
+
+The owner sees a banner and can request a review at most once every 24 hours. That emails every address in `SuperAdmin:Emails` with the subject prefix `[TallyJ review request]`. The super-admin review page can approve, reject, or hold. Approve also approves paid sends. Reject freezes the owner's elections, hides them from voters, and a background job deletes them 30 days later unless a super admin deletes them sooner. An election shared with an owner who is not rejected is frozen but not deleted.
+
+Existing accounts are migrated to Approved, including paid sends. A missing restriction row does not block email codes or online voting, so rows written before this column are not treated as new sign-ups.
+
+**Rejected alternative:** keep approval per election. The owner answered that trust belongs to the account: once approved, every election of that account is unrestricted, and a later list upload re-restricts an election only when the existing bad-contact checks flag it.
+
+**Rejected alternative:** leave open email/password registration disabled. The invite-only gate was the response to spam; restricted mode plus review is the replacement, and invites stay for communities that should start trusted.
+
+> Superseded 2026-11: open `POST /api/auth/registerAccount` returned `auth.errors.openRegisterDisabled`. See the IdP-first section below for what was true then.
+
+## IdP-first teller signup (issue #347)
+
+**Status:** superseded  
+**Evidence:** confirmed  
 **Source:** issue #347; product decision 2026-09-16 (Glen)  
-**Revisit when:** another teller IdP is added, or open register is reconsidered
+**Revisit when:** another teller IdP is added
 
-New teller/admin accounts are created through Google (teller external auth: `google/login`, `google/one-tap`). Open anonymous `POST /api/auth/registerAccount` is disabled and returns the i18n key `auth.errors.openRegisterDisabled`. Existing local email/password **login** is unchanged.
+> Superseded 2026-11: open registration is back, and new accounts start restricted. See [Open sign-up starts restricted](#open-sign-up-starts-restricted-issue-414).
 
-The SPA `/register` page without an invite query explains Google-first signup and sends the user to Google or `/login`. Login copy steers new tellers to Google.
+New teller/admin accounts were created through Google (teller external auth: `google/login`, `google/one-tap`). Open anonymous `POST /api/auth/registerAccount` was disabled and returned the i18n key `auth.errors.openRegisterDisabled`. Existing local email/password **login** was unchanged.
 
-**Rejected alternative:** keep v3-style open email/password register and add captcha. Live v3 already sees spam Admin Registered accounts; captcha is not the strategy.
+The SPA `/register` page without an invite query explained Google-first signup and sent the user to Google or `/login`.
 
-> Superseded 2026-09: “build invite-only email signup later.” That leftover is now the SuperAdmin one-time invite path below.
+**Rejected alternative:** keep v3-style open email/password register and add captcha. Live v3 already saw spam Admin Registered accounts; captcha was not the strategy. Issue #414 later reopened registration with a restricted account instead of captcha.
 
-**Rejected alternative:** remove `POST /api/auth/registerAccount` entirely. Leftover clients still get a clear i18n error instead of a silent 404. The endpoint is still rate-limited.
+> Superseded 2026-09: “build invite-only email signup later.” That leftover is the SuperAdmin one-time invite path below.
+
+**Rejected alternative:** remove `POST /api/auth/registerAccount` entirely. Leftover clients got a clear i18n error instead of a silent 404. The endpoint stayed rate-limited, which is why it could be reopened without a new route.
 
 Testing/Development accept the same `dev-google:{email}` credential as voter Google tests so teller create/login can be mocked without calling Google.
 
@@ -70,7 +95,7 @@ Testing/Development accept the same `dev-google:{email}` credential as voter Goo
 **Source:** issue #347 leftover after #348; product rule for communities that cannot use Google  
 **Revisit when:** invites should be bound to a pre-filled email, Head Teller should issue them, or captcha is added on this path only
 
-Communities that cannot use Google get a **one-time invite link**, not open register. SuperAdmin (`POST /api/superadmin/account-invites`) issues the link. The raw token is returned once and stored only as SHA-256. Anonymous `GET /api/auth/account-invite` peeks it; `POST /api/auth/registerWithInvite` consumes it and calls existing `LocalAuthService.RegisterAsync` (same Identity `AppUser` store, same verification email). After use or expiry (7 days) the invite is dead. Open `registerAccount` stays disabled.
+Communities that should start trusted still get a **one-time invite link**. SuperAdmin (`POST /api/superadmin/account-invites`) issues the link. The raw token is returned once and stored only as SHA-256. Anonymous `GET /api/auth/account-invite` peeks it; `POST /api/auth/registerWithInvite` consumes it and calls existing `LocalAuthService.RegisterAsync` (same Identity `AppUser` store, same verification email), then marks that account Approved. After use or expiry (7 days) the invite is dead. Open `registerAccount` creates a Restricted account instead.
 
 `/register?invite=` shows the email/password form only when peek says the token is still usable. SuperAdmin Users has “Issue email/password invite.”
 

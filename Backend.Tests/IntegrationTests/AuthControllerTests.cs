@@ -10,6 +10,7 @@ using Backend.DTOs.Auth;
 using Backend.Identity;
 using Backend.Middleware;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Xunit;
 
 namespace Backend.Tests.IntegrationTests;
@@ -328,7 +329,7 @@ public class AuthControllerTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RegisterAccount_OpenSelfServe_ReturnsBadRequestWithI18nKey_AndDoesNotCreateUser()
+    public async Task RegisterAccount_OpenSelfServe_CreatesRestrictedUser_AndRequiresEmailVerification()
     {
         var testEmail = $"open-register-{Guid.NewGuid()}@tallyj.test";
         var registerRequest = new RegisterRequest
@@ -336,7 +337,7 @@ public class AuthControllerTests : IntegrationTestBase
             Email = testEmail,
             Password = "TestPass123!",
             ConfirmPassword = "TestPass123!",
-            DisplayName = "Should Not Be Created"
+            DisplayName = "New Restricted Owner"
         };
 
         var content = new StringContent(
@@ -346,14 +347,20 @@ public class AuthControllerTests : IntegrationTestBase
 
         var response = await Client.PostAsync("/api/auth/registerAccount", content);
 
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         var responseContent = await response.Content.ReadAsStringAsync();
-        responseContent.Should().Contain(AuthController.OpenRegisterDisabledKey);
+        responseContent.Should().Contain("requiresEmailVerification");
+        responseContent.Should().NotContain(AuthController.OpenRegisterDisabledKey);
 
         using var scope = Factory.Services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
         var user = await userManager.FindByEmailAsync(testEmail);
-        user.Should().BeNull();
+        user.Should().NotBeNull();
+        user!.EmailConfirmed.Should().BeFalse();
+        var context = scope.ServiceProvider.GetRequiredService<Backend.Context.MainDbContext>();
+        var control = await context.OwnerSendControls.SingleAsync(row => row.UserId == Guid.Parse(user.Id));
+        control.RestrictionStatus.Should().Be(Backend.Entities.OwnerRestrictionStatus.Restricted);
+        control.PaidSendsApproved.Should().BeFalse();
     }
 
     [Fact]
@@ -390,6 +397,9 @@ public class AuthControllerTests : IntegrationTestBase
         user!.EmailConfirmed.Should().BeTrue();
         user.AuthMethod.Should().Be("Google");
         user.GoogleId.Should().Be($"dev-google:{testEmail}");
+        var context = scope.ServiceProvider.GetRequiredService<Backend.Context.MainDbContext>();
+        var control = await context.OwnerSendControls.SingleAsync(row => row.UserId == Guid.Parse(user.Id));
+        control.RestrictionStatus.Should().Be(Backend.Entities.OwnerRestrictionStatus.Restricted);
     }
 
     [Fact]

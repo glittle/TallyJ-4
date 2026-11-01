@@ -79,6 +79,7 @@ public static class ProgramServiceRegistration
         services.AddScoped<ICodeSendGuard, CodeSendGuard>();
         services.AddScoped<IPaidChannelStatusService, PaidChannelStatusService>();
         services.AddScoped<IPaidSendAdminService, PaidSendAdminService>();
+        services.AddScoped<IOwnerReviewService, OwnerReviewService>();
         services.AddSingleton<IDisposableDomainList, FileDisposableDomainList>();
         services.AddSingleton<IMailExchangerLookup, DnsMailExchangerLookup>();
         services.AddScoped<IVoterContactReviewer, VoterContactReviewer>();
@@ -103,6 +104,7 @@ public static class ProgramServiceRegistration
         }
 
         services.AddHostedService<RefreshTokenCleanupService>();
+        services.AddHostedService<RejectedOwnerCleanupService>();
         services.AddSingleton<VoteCountBroadcastService>();
         services.AddSingleton<IVoteCountBroadcastService>(sp => sp.GetRequiredService<VoteCountBroadcastService>());
         services.AddHostedService(sp => sp.GetRequiredService<VoteCountBroadcastService>());

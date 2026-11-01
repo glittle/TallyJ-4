@@ -345,6 +345,11 @@ public class JsonElectionImportExportService : ElectionImportExportBase
                 RowVersion = new byte[8]
             };
 
+            if (await OwnerAccountGate.BlocksOnlineVotingAsync(_context, userId))
+            {
+                OwnerAccountGate.ClearOnlineVoting(election);
+            }
+
             ElectionTellerAccessHelper.ApplyImportedGuestAccess(
                 election,
                 importData.election.ListForPublic,

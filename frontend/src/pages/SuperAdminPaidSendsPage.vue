@@ -104,22 +104,15 @@ onMounted(load);
           width="110"
         />
         <el-table-column
-          :label="$t('superAdmin.paidSends.approve')"
+          :label="$t('superAdmin.ownerReview.open')"
           width="280"
         >
           <template #default="{ row }">
-            <el-button
-              type="primary"
-              size="small"
-              @click="
-                run(
-                  () => superAdminService.approvePaidSends(row.userId),
-                  'superAdmin.paidSends.approved',
-                )
-              "
-            >
-              {{ $t("superAdmin.paidSends.approve") }}
-            </el-button>
+            <router-link :to="`/super-admin/owner-reviews/${row.userId}`">
+              <el-button type="primary" size="small">
+                {{ $t("superAdmin.ownerReview.open") }}
+              </el-button>
+            </router-link>
             <el-button
               size="small"
               @click="

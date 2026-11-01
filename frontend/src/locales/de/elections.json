@@ -1223,5 +1223,75 @@
     "t": "abstimmende Personen",
     "s": "ai",
     "w": "2026-10-15T17:15:00Z"
+  },
+  "elections.ownerRestricted.banner": {
+    "t": "Ihr Konto ist eingeschränkt. Sie können Wahlen einrichten, Personen hochladen, Stimmzettel erfassen, auszählen und Berichte ansehen. Sie können keine Wählercodes oder Nachrichten senden und die Online-Wahl nicht öffnen, bis ein Super-Admin Ihr Konto freigibt. Einen Testcode dürfen Sie an die E-Mail-Adresse Ihres Kontos senden.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestReview": {
+    "t": "Prüfung anfordern",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requested": {
+    "t": "Prüfung angefordert {when}. Sie können nach {next} erneut anfordern.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.holdNote": {
+    "t": "Hinweis der Prüfung: {note}",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.rejected": {
+    "t": "Dieses Konto wurde abgelehnt. Seine Wahlen sind eingefroren und für Wählerinnen und Wähler verborgen. Sie werden 30 Tage nach der Entscheidung gelöscht, sofern ein Super-Admin sie nicht früher löscht.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.throttled": {
+    "t": "Sie können nach der Wartezeit eine weitere Prüfung anfordern.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestFailed": {
+    "t": "Die Prüfanfrage konnte nicht gesendet werden. Versuchen Sie es später erneut.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noRecipients": {
+    "t": "Es ist keine Super-Admin-E-Mail eingerichtet, daher wurde die Prüfanfrage nicht gesendet.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.alreadyApproved": {
+    "t": "Dieses Konto ist bereits freigegeben.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notFound": {
+    "t": "Konto nicht gefunden.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noteTooLong": {
+    "t": "Der Hinweis ist zu lang.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notRejected": {
+    "t": "Nur ein abgelehntes Konto kann seine Wahlen jetzt löschen lassen.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.onlineBlocked": {
+    "t": "Die Online-Wahl bleibt geschlossen, bis ein Super-Admin Ihr Konto freigibt. Einrichtung, Tellereingabe, Auszählung und Berichte funktionieren weiter.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.paidChannels.ownerRestricted": {
+    "t": "Wählercodes und die Online-Wahl sind nicht verfügbar, bis ein Super-Admin Ihr Konto freigibt. Einen Testcode dürfen Sie an die E-Mail-Adresse Ihres Kontos senden. Persönliche Wahl und Tellereingabe funktionieren weiter.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

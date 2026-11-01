@@ -641,6 +641,7 @@ onBeforeUnmount(() => {
 
           <p v-if="mode === 'officer'" class="new-account-hint">
             {{ t("auth.newAccountUseGoogle") }}
+            <router-link to="/register">{{ t("auth.register") }}</router-link>
           </p>
         </el-form>
       </el-card>

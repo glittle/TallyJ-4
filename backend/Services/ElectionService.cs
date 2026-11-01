@@ -237,6 +237,11 @@ public class ElectionService : IElectionService
         election.ElectionGuid = Guid.NewGuid();
         election.ElectionStage = ElectionStage.SettingUp;
         election.RowVersion = new byte[8];
+        if (election.UseOnlineVoting && await CurrentUserBlocksOnlineVotingAsync())
+        {
+            throw new OwnerRestrictedException();
+        }
+
         _context.Elections.Add(election);
         await _context.SaveChangesAsync();
 
@@ -760,10 +765,17 @@ public class ElectionService : IElectionService
         var previousCloseIsEstimate = election.OnlineCloseIsEstimate;
 
         if (election.UseOnlineVoting
-            && await IsElectionFlaggedAsync(electionGuid)
             && OnlineVotingWindow.IsCurrentlyOpen(true, dto.OnlineWhenOpen, dto.OnlineWhenClose))
         {
-            throw new OnlineVotingSuspendedException();
+            if (await IsElectionFlaggedAsync(electionGuid))
+            {
+                throw new OnlineVotingSuspendedException();
+            }
+
+            if (await ElectionOwnersBlockOnlineVotingAsync(electionGuid))
+            {
+                throw new OwnerRestrictedException();
+            }
         }
 
         election.OnlineWhenOpen = dto.OnlineWhenOpen;
@@ -1145,22 +1157,66 @@ public class ElectionService : IElectionService
             return;
         }
 
-        if (!await IsElectionFlaggedAsync(election.ElectionGuid))
+        var opening = turningOn;
+        if (!opening && settingWindow)
+        {
+            var open = updateDto.OnlineWhenOpen ?? election.OnlineWhenOpen;
+            var close = updateDto.OnlineWhenClose ?? election.OnlineWhenClose;
+            opening = OnlineVotingWindow.IsCurrentlyOpen(election.UseOnlineVoting, open, close);
+        }
+
+        if (!opening)
         {
             return;
         }
 
-        if (turningOn)
+        if (await IsElectionFlaggedAsync(election.ElectionGuid))
         {
             throw new OnlineVotingSuspendedException();
         }
 
-        var open = updateDto.OnlineWhenOpen ?? election.OnlineWhenOpen;
-        var close = updateDto.OnlineWhenClose ?? election.OnlineWhenClose;
-        if (OnlineVotingWindow.IsCurrentlyOpen(election.UseOnlineVoting, open, close))
+        if (await ElectionOwnersBlockOnlineVotingAsync(election.ElectionGuid))
         {
-            throw new OnlineVotingSuspendedException();
+            throw new OwnerRestrictedException();
         }
+    }
+
+    private async Task<bool> CurrentUserBlocksOnlineVotingAsync()
+    {
+        if (!TryGetCurrentUserId(out var userId))
+        {
+            return false;
+        }
+
+        var status = await _context.OwnerSendControls
+            .AsNoTracking()
+            .Where(row => row.UserId == userId)
+            .Select(row => row.RestrictionStatus)
+            .FirstOrDefaultAsync();
+        return OwnerRestrictionStatus.BlocksSends(status);
+    }
+
+    private async Task<bool> ElectionOwnersBlockOnlineVotingAsync(Guid electionGuid)
+    {
+        var ownerIds = await _context.JoinElectionUsers
+            .AsNoTracking()
+            .Where(link =>
+                link.ElectionGuid == electionGuid
+                && (link.Role == "Owner" || link.Role == "Admin"))
+            .Select(link => link.UserId)
+            .Distinct()
+            .ToListAsync();
+        if (ownerIds.Count == 0)
+        {
+            return await CurrentUserBlocksOnlineVotingAsync();
+        }
+
+        var statuses = await _context.OwnerSendControls
+            .AsNoTracking()
+            .Where(row => ownerIds.Contains(row.UserId))
+            .Select(row => row.RestrictionStatus)
+            .ToListAsync();
+        return statuses.Any(OwnerRestrictionStatus.BlocksSends);
     }
 
     private Task<bool> IsElectionFlaggedAsync(Guid electionGuid)

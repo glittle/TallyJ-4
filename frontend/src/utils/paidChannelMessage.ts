@@ -3,6 +3,8 @@ export function paidChannelMessageKey(reason?: string | null): string | null {
   switch (reason) {
     case "not-approved":
       return "elections.paidChannels.notApproved";
+    case "owner-restricted":
+      return "elections.paidChannels.ownerRestricted";
     case "election-cap":
       return "elections.paidChannels.electionCap";
     case "owner-daily-cap":

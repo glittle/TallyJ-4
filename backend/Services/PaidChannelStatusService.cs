@@ -1,6 +1,7 @@
 using Backend.Configuration;
 using Backend.Context;
 using Backend.DTOs.Elections;
+using Backend.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -64,8 +65,17 @@ public class PaidChannelStatusService : IPaidChannelStatusService
                     row.UserId,
                     row.PaidSendsApproved,
                     row.SendsFrozen,
+                    row.RestrictionStatus,
                     row.DailyCapOverride))
                 .ToListAsync(cancellationToken);
+
+        if (ownerIds.Any(id => owners.Any(owner =>
+                owner.UserId == id && OwnerRestrictionStatus.BlocksSends(owner.RestrictionStatus))))
+        {
+            dto.PaidChannelBlockReason = PaidChannelStatus.OwnerRestricted;
+            dto.OnlineVotingSuspended = true;
+            return;
+        }
 
         if (control?.SendsFrozen == true
             || ownerIds.Any(id => owners.Any(owner => owner.UserId == id && owner.SendsFrozen)))
@@ -111,5 +121,6 @@ public class PaidChannelStatusService : IPaidChannelStatusService
         Guid UserId,
         bool PaidSendsApproved,
         bool SendsFrozen,
+        string? RestrictionStatus,
         int? DailyCapOverride);
 }

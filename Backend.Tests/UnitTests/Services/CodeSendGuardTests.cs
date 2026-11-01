@@ -68,6 +68,43 @@ public class CodeSendGuardTests : IDisposable
     }
 
     [Fact]
+    public async Task RestrictedOwner_BlocksVoterEmail_AndAllowsATestToTheirOwnAddress()
+    {
+        await using (var context = new MainDbContext(_options))
+        {
+            context.Users.Add(new Backend.Identity.AppUser
+            {
+                Id = _ownerId.ToString(),
+                UserName = "owner@example.com",
+                NormalizedUserName = "OWNER@EXAMPLE.COM",
+                Email = "owner@example.com",
+                NormalizedEmail = "OWNER@EXAMPLE.COM",
+                EmailConfirmed = true,
+                AuthMethod = "Local",
+                SecurityStamp = Guid.NewGuid().ToString()
+            });
+            context.OwnerSendControls.Add(new OwnerSendControl
+            {
+                UserId = _ownerId,
+                RestrictionStatus = OwnerRestrictionStatus.Restricted,
+                PaidSendsApproved = false
+            });
+            await context.SaveChangesAsync();
+        }
+
+        var voter = await ReserveAsync("email", "ada@example.com");
+        Assert.False(voter.Allowed);
+        Assert.Equal(CodeSendBlockReason.OwnerRestricted, voter.BlockReason);
+
+        var own = await ReserveAsync("email", "Owner@Example.com");
+        Assert.True(own.Allowed);
+
+        var sms = await ReserveAsync("sms", "+14165550100");
+        Assert.False(sms.Allowed);
+        Assert.Equal(CodeSendBlockReason.OwnerRestricted, sms.BlockReason);
+    }
+
+    [Fact]
     public async Task Email_IsSent_WhenOwnerIsNotApproved()
     {
         var reservation = await ReserveAsync("email", "ada@example.com");

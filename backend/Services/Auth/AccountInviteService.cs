@@ -3,6 +3,7 @@ using Backend.Configuration;
 using Backend.Context;
 using Backend.DTOs.Auth;
 using Backend.Entities;
+using Backend.Helpers;
 using Backend.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -10,8 +11,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Backend.Services.Auth;
 
 /// <summary>
-/// Issues and redeems one-time local-account invites. Open <c>registerAccount</c> stays disabled;
-/// this is the only email/password create path after IdP-first (#347).
+/// Issues and redeems one-time local-account invites.
+/// An invite creates an approved account. Open self sign-up creates a restricted one.
 /// </summary>
 public class AccountInviteService : IAccountInviteService
 {
@@ -120,6 +121,7 @@ public class AccountInviteService : IAccountInviteService
             await _context.AccountInvites
                 .Where(i => i.TokenHash == hash)
                 .ExecuteUpdateAsync(s => s.SetProperty(i => i.CreatedUserId, user.Id));
+            await OwnerAccountGate.ApproveInvitedAsync(_context, user.Id);
         }
 
         return (true, null, response);

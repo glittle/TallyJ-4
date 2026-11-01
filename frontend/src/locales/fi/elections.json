@@ -758,5 +758,75 @@
     "t": "Äänestäjät",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ownerRestricted.banner": {
+    "t": "Tilisi on rajoitettu. Voit valmistella vaaleja, ladata henkilöitä, kirjata ääniä, laskea ja katsoa raportteja. Et voi lähettää koodeja tai viestejä äänestäjille etkä avata verkkoäänestystä, ennen kuin sivuston ylläpitäjä hyväksyy tilin. Voit lähettää testikoodin tilisi sähköpostiin.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestReview": {
+    "t": "Pyydä tarkistusta",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requested": {
+    "t": "Tarkistus pyydetty {when}. Voit pyytää uudelleen {next} jälkeen.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.holdNote": {
+    "t": "Tarkistajan huomautus: {note}",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.rejected": {
+    "t": "Tämä tili hylättiin. Sen vaalit on jäädytetty ja piilotettu äänestäjiltä. Ne poistetaan 30 päivän kuluttua päätöksestä, ellei sivuston ylläpitäjä poista niitä aiemmin.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.throttled": {
+    "t": "Voit pyytää uutta tarkistusta odotusajan jälkeen.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestFailed": {
+    "t": "Tarkistuspyyntöä ei voitu lähettää sähköpostilla. Yritä myöhemmin.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noRecipients": {
+    "t": "Sivuston ylläpitäjän sähköpostia ei ole asetettu, joten pyyntöä ei lähetetty.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.alreadyApproved": {
+    "t": "Tämä tili on jo hyväksytty.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notFound": {
+    "t": "Tiliä ei löydy.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noteTooLong": {
+    "t": "Huomautus on liian pitkä.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notRejected": {
+    "t": "Vain hylätyn tilin vaalit voidaan poistaa nyt.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.onlineBlocked": {
+    "t": "Verkkoäänestys pysyy suljettuna, kunnes sivuston ylläpitäjä hyväksyy tilisi. Valmistelu, kirjaus, laskenta ja raportit toimivat yhä.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.paidChannels.ownerRestricted": {
+    "t": "Äänestäjäkoodit ja verkkoäänestys eivät ole käytössä, ennen kuin sivuston ylläpitäjä hyväksyy tilisi. Voit lähettää testikoodin tilisi sähköpostiin. Läsnäoloäänestys ja kirjaus toimivat yhä.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

@@ -19,14 +19,60 @@ public class OwnerSendControl
     public Guid UserId { get; set; }
 
     /// <summary>
+    /// <see cref="OwnerRestrictionStatus"/>. Empty on rows that predate owner review
+    /// and were not backfilled. Approved means this account is trusted for voter codes,
+    /// online voting, and paid sends. <see cref="PaidSendsApproved"/> is kept in step
+    /// with Approved so the paid-send counters still read one flag.
+    /// </summary>
+    [StringLength(32)]
+    public string RestrictionStatus { get; set; } = "";
+
+    /// <summary>
+    /// When the owner last asked for a review. Also the start of the 24-hour re-request throttle.
+    /// </summary>
+    [Precision(0)]
+    public DateTimeOffset? ReviewRequestedAt { get; set; }
+
+    /// <summary>
+    /// When a super admin last approved, rejected, or held this account.
+    /// </summary>
+    [Precision(0)]
+    public DateTimeOffset? ReviewedAt { get; set; }
+
+    /// <summary>
+    /// Super admin account id for the last review action.
+    /// </summary>
+    [StringLength(450)]
+    public string? ReviewedByUserId { get; set; }
+
+    /// <summary>
+    /// Note stored with Hold or Reject and shown to the owner.
+    /// </summary>
+    [StringLength(2000)]
+    public string? ReviewNote { get; set; }
+
+    /// <summary>
+    /// When the account was rejected. The cleanup job deletes that owner's elections
+    /// <see cref="OwnerRestrictionStatus.RejectionRetentionDays"/> after this time.
+    /// </summary>
+    [Precision(0)]
+    public DateTimeOffset? RejectedAt { get; set; }
+
+    /// <summary>
+    /// When <see cref="RestrictionStatus"/> last changed.
+    /// </summary>
+    [Precision(0)]
+    public DateTimeOffset? StatusChangedAt { get; set; }
+
+    /// <summary>
     /// When true, this account is approved for SMS, voice, and WhatsApp codes.
-    /// An election may send those codes only when every owner and admin on it is approved.
-    /// Email codes do not read this flag.
+    /// Set together with <see cref="RestrictionStatus"/> Approved. An election may send
+    /// those codes only when every owner and admin on it is approved.
     /// </summary>
     public bool PaidSendsApproved { get; set; }
 
     /// <summary>
-    /// When a super admin approved paid sends. Null until the first approval.
+    /// When a super admin approved this account. Null until the first approval.
     /// </summary>
     [Precision(0)]
     public DateTimeOffset? ApprovedAt { get; set; }

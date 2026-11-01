@@ -82,6 +82,18 @@ public class CodeSendGuard : ICodeSendGuard
                 .Where(row => ownerIds.Contains(row.UserId))
                 .ToDictionaryAsync(row => row.UserId, cancellationToken);
 
+        var ownerIdStrings = ownerIds.Select(id => id.ToString()).ToList();
+        var ownerEmails = ownerIds.Count == 0
+            ? new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase)
+            : await _context.Users
+                .AsNoTracking()
+                .Where(user => ownerIdStrings.Contains(user.Id))
+                .ToDictionaryAsync(
+                    user => user.Id,
+                    user => user.Email,
+                    StringComparer.OrdinalIgnoreCase,
+                    cancellationToken);
+
         var today = _clock.UtcDate;
         var dailyCounts = ownerIds.Count == 0
             ? new Dictionary<Guid, int>()
@@ -116,7 +128,7 @@ public class CodeSendGuard : ICodeSendGuard
                 .Where(link => link.ElectionGuid == electionGuid)
                 .Select(link => link.UserId)
                 .Distinct()
-                .Select(userId => ToOwner(userId, ownerControls, dailyCounts))
+                .Select(userId => ToOwner(userId, ownerControls, dailyCounts, ownerEmails))
                 .ToList();
 
             // One frozen owner or admin stops the election. A second account must not keep sending.
@@ -126,6 +138,22 @@ public class CodeSendGuard : ICodeSendGuard
                 lastReason = CodeSendBlockReason.Frozen;
                 lastOwner = frozenOwner.UserId;
                 continue;
+            }
+
+            var blocking = owners
+                .Where(owner => OwnerRestrictionStatus.BlocksSends(owner.RestrictionStatus))
+                .ToList();
+            if (blocking.Count > 0)
+            {
+                var ownEmailTest = !paid
+                    && blocking.All(owner => OwnerRestrictionStatus.AllowsOwnEmailTest(owner.RestrictionStatus))
+                    && blocking.Any(owner => SameEmail(owner.AccountEmail, destination));
+                if (!ownEmailTest)
+                {
+                    lastReason = CodeSendBlockReason.OwnerRestricted;
+                    lastOwner = blocking[0].UserId;
+                    continue;
+                }
             }
 
             if (!paid)
@@ -325,22 +353,33 @@ public class CodeSendGuard : ICodeSendGuard
     private static OwnerSnapshot ToOwner(
         Guid userId,
         Dictionary<Guid, OwnerSendControl> controls,
-        Dictionary<Guid, int> dailyCounts)
+        Dictionary<Guid, int> dailyCounts,
+        Dictionary<string, string?> emails)
     {
         controls.TryGetValue(userId, out var control);
         dailyCounts.TryGetValue(userId, out var today);
+        emails.TryGetValue(userId.ToString(), out var email);
         return new OwnerSnapshot(
             userId,
             control?.PaidSendsApproved == true,
             control?.SendsFrozen == true,
+            control?.RestrictionStatus,
+            email,
             control?.DailyCapOverride,
             today);
     }
+
+    private static bool SameEmail(string? left, string? right)
+        => !string.IsNullOrWhiteSpace(left)
+           && !string.IsNullOrWhiteSpace(right)
+           && string.Equals(left.Trim(), right.Trim(), StringComparison.OrdinalIgnoreCase);
 
     private sealed record OwnerSnapshot(
         Guid UserId,
         bool PaidSendsApproved,
         bool SendsFrozen,
+        string? RestrictionStatus,
+        string? AccountEmail,
         int? DailyCapOverride,
         int TodayCount);
 }

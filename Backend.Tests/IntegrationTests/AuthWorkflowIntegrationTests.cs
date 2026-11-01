@@ -214,7 +214,7 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task OpenRegisterAccount_IsRejected_WithI18nKey()
+    public async Task OpenRegisterAccount_CreatesTheAccount_AndAsksForEmailVerification()
     {
         var testEmail = $"verify-test-{Guid.NewGuid()}@tallyj.test";
         var registerRequest = new RegisterRequest
@@ -232,9 +232,10 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
 
         var registerResponse = await Client.PostAsync("/api/auth/registerAccount", registerContent);
 
-        registerResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var registerBody = await registerResponse.Content.ReadAsStringAsync();
-        registerBody.Should().Contain(AuthController.OpenRegisterDisabledKey);
+        registerBody.Should().Contain("requiresEmailVerification");
+        registerBody.Should().NotContain(AuthController.OpenRegisterDisabledKey);
     }
 
     [Fact]

@@ -758,5 +758,75 @@
     "t": "Eleitores",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ownerRestricted.banner": {
+    "t": "A sua conta está restrita. Pode preparar eleições, carregar pessoas, lançar boletins, apurar e ver relatórios. Não pode enviar códigos nem mensagens aos eleitores, nem abrir a votação online, até um administrador do sítio aprovar a conta. Pode enviar um código de teste para o e-mail da sua conta.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestReview": {
+    "t": "Pedir revisão",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requested": {
+    "t": "Revisão pedida {when}. Pode pedir de novo depois de {next}.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.holdNote": {
+    "t": "Nota de quem revê: {note}",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.rejected": {
+    "t": "Esta conta foi recusada. As eleições ficam congeladas e ocultas aos eleitores. Serão apagadas 30 dias depois da decisão, salvo se um administrador do sítio as apagar antes.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.throttled": {
+    "t": "Pode pedir outra revisão quando acabar a espera.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestFailed": {
+    "t": "Não foi possível enviar o pedido de revisão por e-mail. Tente mais tarde.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noRecipients": {
+    "t": "Não há um e-mail de administrador do sítio configurado, por isso o pedido não foi enviado.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.alreadyApproved": {
+    "t": "Esta conta já está aprovada.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notFound": {
+    "t": "Conta não encontrada.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noteTooLong": {
+    "t": "A nota é longa demais.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notRejected": {
+    "t": "Só uma conta recusada pode ter as eleições apagadas agora.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.onlineBlocked": {
+    "t": "A votação online fica fechada até um administrador do sítio aprovar a sua conta. A preparação, o lançamento, o apuramento e os relatórios continuam disponíveis.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.paidChannels.ownerRestricted": {
+    "t": "Os códigos de eleitor e a votação online ficam indisponíveis até um administrador do sítio aprovar a sua conta. Pode enviar um código de teste para o e-mail da conta. A votação presencial e o lançamento pelos escrutinadores continuam disponíveis.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }
