@@ -237,6 +237,35 @@
         }
       }
     },
+    "/api/Account/owner-test-code": {
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseSystem_Boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Auth/google/login": {
       "get": {
         "tags": [

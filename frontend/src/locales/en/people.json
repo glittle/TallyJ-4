@@ -1363,5 +1363,15 @@
     "t": "Voters",
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "people.notifyWhatsApp.frozen": {
+    "t": "WhatsApp messages are stopped while sending is frozen.",
+    "s": "source",
+    "w": "2026-11-01T20:10:00Z"
+  },
+  "people.notifyWhatsApp.ownerRestricted": {
+    "t": "WhatsApp messages stay unavailable until an owner or co-admin of this election is approved.",
+    "s": "source",
+    "w": "2026-11-01T20:10:00Z"
   }
 }

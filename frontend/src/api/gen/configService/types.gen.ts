@@ -2573,6 +2573,22 @@ export type PostApiAccountOwnerRestrictionRequestReviewResponses = {
 
 export type PostApiAccountOwnerRestrictionRequestReviewResponse = PostApiAccountOwnerRestrictionRequestReviewResponses[keyof PostApiAccountOwnerRestrictionRequestReviewResponses];
 
+export type PostApiAccountOwnerTestCodeData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Account/owner-test-code';
+};
+
+export type PostApiAccountOwnerTestCodeResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemBoolean;
+};
+
+export type PostApiAccountOwnerTestCodeResponse = PostApiAccountOwnerTestCodeResponses[keyof PostApiAccountOwnerTestCodeResponses];
+
 export type GetApiAuthGoogleLoginData = {
     body?: never;
     path?: never;

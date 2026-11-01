@@ -62,4 +62,19 @@ public static class OwnerRestrictionStatus
     /// </summary>
     public static bool AllowsOwnEmailTest(string? status)
         => status is Restricted or ReviewRequested;
+
+    /// <summary>
+    /// True when this account is trusted for an election it owns.
+    /// An empty status with paid-send approval is a row from before owner review.
+    /// A missing row is not approved; it also does not by itself restrict an election.
+    /// </summary>
+    public static bool IsApproved(string? status, bool paidSendsApproved)
+    {
+        if (string.Equals(status, Approved, StringComparison.Ordinal))
+        {
+            return true;
+        }
+
+        return string.IsNullOrEmpty(status) && paidSendsApproved;
+    }
 }

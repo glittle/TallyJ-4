@@ -1211,12 +1211,22 @@ public class ElectionService : IElectionService
             return await CurrentUserBlocksOnlineVotingAsync();
         }
 
-        var statuses = await _context.OwnerSendControls
+        var rows = await _context.OwnerSendControls
             .AsNoTracking()
             .Where(row => ownerIds.Contains(row.UserId))
-            .Select(row => row.RestrictionStatus)
+            .Select(row => new OwnerRestrictionQueries.OwnerTrust(
+                row.UserId,
+                row.RestrictionStatus,
+                row.PaidSendsApproved,
+                row.SendsFrozen))
             .ToListAsync();
-        return statuses.Any(OwnerRestrictionStatus.BlocksSends);
+        var byId = rows.ToDictionary(row => row.UserId);
+        var trusts = ownerIds
+            .Select(id => byId.TryGetValue(id, out var row)
+                ? row
+                : new OwnerRestrictionQueries.OwnerTrust(id, null, false, false))
+            .ToList();
+        return OwnerRestrictionQueries.ElectionIsOwnerRestricted(trusts);
     }
 
     private Task<bool> IsElectionFlaggedAsync(Guid electionGuid)

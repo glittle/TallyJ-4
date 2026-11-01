@@ -80,6 +80,7 @@ public static class ProgramServiceRegistration
         services.AddScoped<IPaidChannelStatusService, PaidChannelStatusService>();
         services.AddScoped<IPaidSendAdminService, PaidSendAdminService>();
         services.AddScoped<IOwnerReviewService, OwnerReviewService>();
+        services.AddScoped<IOwnerTestCodeService, OwnerTestCodeService>();
         services.AddSingleton<IDisposableDomainList, FileDisposableDomainList>();
         services.AddSingleton<IMailExchangerLookup, DnsMailExchangerLookup>();
         services.AddScoped<IVoterContactReviewer, VoterContactReviewer>();

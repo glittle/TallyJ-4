@@ -8,7 +8,9 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 const restriction = ref<OwnerRestriction | null>(null);
 const requesting = ref(false);
+const sendingTest = ref(false);
 const errorText = ref("");
+const testSent = ref(false);
 
 const showBanner = computed(() => restriction.value?.blocksSends === true);
 
@@ -36,6 +38,23 @@ async function load() {
     restriction.value = await authService.getOwnerRestriction();
   } catch {
     restriction.value = null;
+  }
+}
+
+async function sendTestCode() {
+  sendingTest.value = true;
+  errorText.value = "";
+  testSent.value = false;
+  try {
+    await authService.sendOwnerTestCode();
+    testSent.value = true;
+  } catch (error) {
+    errorText.value = resolveUserFacingApiError(
+      error,
+      t("elections.ownerRestricted.testCodeFailed"),
+    );
+  } finally {
+    sendingTest.value = false;
   }
 }
 
@@ -79,7 +98,19 @@ onMounted(load);
         })
       }}
     </p>
+    <p v-if="testSent">{{ t("elections.ownerRestricted.testCodeSent") }}</p>
     <p v-if="errorText" class="owner-restriction-error">{{ errorText }}</p>
+    <el-button
+      v-if="
+        restriction?.status === 'Restricted' ||
+        restriction?.status === 'ReviewRequested'
+      "
+      size="small"
+      :loading="sendingTest"
+      @click="sendTestCode"
+    >
+      {{ t("elections.ownerRestricted.sendTestCode") }}
+    </el-button>
     <el-button
       v-if="restriction?.status !== 'Rejected'"
       type="primary"

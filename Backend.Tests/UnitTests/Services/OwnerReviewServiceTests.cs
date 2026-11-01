@@ -128,7 +128,7 @@ public class OwnerReviewServiceTests : ServiceTestBase
         row = await Context.OwnerSendControls.SingleAsync();
         Assert.Equal(OwnerRestrictionStatus.Rejected, row.RestrictionStatus);
         Assert.False(row.PaidSendsApproved);
-        Assert.True(row.SendsFrozen);
+        Assert.False(row.SendsFrozen);
         var election = await Context.Elections.SingleAsync();
         Assert.False(election.UseOnlineVoting);
         Assert.Null(election.OnlineWhenOpen);
@@ -185,6 +185,8 @@ public class OwnerReviewServiceTests : ServiceTestBase
         {
             ElectionGuid = shared,
             Name = "Shared",
+            UseOnlineVoting = true,
+            OnlineWhenOpen = DateTimeOffset.Parse("2026-04-20T00:00:00Z"),
             ElectionStage = ElectionStage.SettingUp,
             RowVersion = new byte[8]
         });
@@ -195,7 +197,11 @@ public class OwnerReviewServiceTests : ServiceTestBase
 
         var service = CreateService();
         await service.RejectAsync(_ownerId, "admin-1", null);
-        Assert.Equal(1, await service.DeleteElectionsNowAsync(_ownerId, "admin-1") is { Success: true } ? 1 : 0);
+        var sharedElection = await Context.Elections.SingleAsync(election => election.ElectionGuid == shared);
+        Assert.True(sharedElection.UseOnlineVoting);
+        Assert.False(await Context.ElectionSendControls.AnyAsync(row =>
+            row.ElectionGuid == shared && row.SendsFrozen));
+        Assert.True(await service.DeleteElectionsNowAsync(_ownerId, "admin-1") is { Success: true });
 
         var remaining = await Context.Elections.Select(election => election.ElectionGuid).ToListAsync();
         Assert.DoesNotContain(_electionId, remaining);

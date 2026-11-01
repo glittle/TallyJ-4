@@ -22,6 +22,7 @@ import {
   postApiAuthRegisterAccount,
   getApiAccountOwnerRestriction,
   postApiAccountOwnerRestrictionRequestReview,
+  postApiAccountOwnerTestCode,
 } from "@/api/gen/configService";
 import type {
   AccountUserProfileDto,
@@ -106,6 +107,12 @@ export const authService = {
       return body.data;
     }
     return (body ?? {}) as OwnerRestriction;
+  },
+
+  async sendOwnerTestCode(): Promise<void> {
+    await postApiAccountOwnerTestCode({
+      throwOnError: true,
+    });
   },
 
   async requestOwnerReview(): Promise<OwnerRestriction> {

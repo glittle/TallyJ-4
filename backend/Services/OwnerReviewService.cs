@@ -346,8 +346,9 @@ public class OwnerReviewService : IOwnerReviewService
         if (status == OwnerRestrictionStatus.Rejected)
         {
             row.RejectedAt = now;
-            row.SendsFrozen = true;
-            await FreezeAndHideElectionsAsync(userId, cancellationToken);
+            // Do not set the account kill switch. That would freeze every election
+            // this person belongs to, including one that still has an approved owner.
+            await FreezeAndHideOwnElectionsAsync(userId, cancellationToken);
         }
         else if (previous == OwnerRestrictionStatus.Rejected && status == OwnerRestrictionStatus.Approved)
         {
@@ -380,9 +381,9 @@ public class OwnerReviewService : IOwnerReviewService
         return OwnerReviewActionResult.Ok(ToDto(row));
     }
 
-    private async Task FreezeAndHideElectionsAsync(Guid userId, CancellationToken cancellationToken)
+    private async Task FreezeAndHideOwnElectionsAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var electionIds = await OwnedElectionIdsAsync(userId, cancellationToken);
+        var electionIds = await OwnElectionIdsAsync(userId, cancellationToken);
         if (electionIds.Count == 0)
         {
             return;
@@ -417,7 +418,7 @@ public class OwnerReviewService : IOwnerReviewService
 
     private async Task UnfreezeElectionsAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var electionIds = await OwnedElectionIdsAsync(userId, cancellationToken);
+        var electionIds = await OwnElectionIdsAsync(userId, cancellationToken);
         var controls = await _context.ElectionSendControls
             .Where(row => electionIds.Contains(row.ElectionGuid))
             .ToListAsync(cancellationToken);
@@ -433,34 +434,7 @@ public class OwnerReviewService : IOwnerReviewService
         string details,
         CancellationToken cancellationToken)
     {
-        var electionIds = await OwnedElectionIdsAsync(userId, cancellationToken);
-        if (electionIds.Count == 0)
-        {
-            return 0;
-        }
-
-        var coOwners = await _context.JoinElectionUsers.AsNoTracking()
-            .Where(link =>
-                electionIds.Contains(link.ElectionGuid)
-                && link.UserId != userId
-                && (link.Role == "Owner" || link.Role == "Admin"))
-            .Select(link => new { link.ElectionGuid, link.UserId })
-            .ToListAsync(cancellationToken);
-        var otherIds = coOwners.Select(link => link.UserId).Distinct().ToList();
-        var otherStatuses = otherIds.Count == 0
-            ? new Dictionary<Guid, string>()
-            : await _context.OwnerSendControls.AsNoTracking()
-                .Where(row => otherIds.Contains(row.UserId))
-                .ToDictionaryAsync(row => row.UserId, row => row.RestrictionStatus, cancellationToken);
-
-        var shared = coOwners
-            .Where(link =>
-                !otherStatuses.TryGetValue(link.UserId, out var status)
-                || status != OwnerRestrictionStatus.Rejected)
-            .Select(link => link.ElectionGuid)
-            .ToHashSet();
-
-        var toDelete = electionIds.Where(id => !shared.Contains(id)).ToList();
+        var toDelete = await OwnElectionIdsAsync(userId, cancellationToken);
         if (toDelete.Count == 0)
         {
             return 0;
@@ -492,6 +466,40 @@ public class OwnerReviewService : IOwnerReviewService
             .Select(link => link.ElectionGuid)
             .Distinct()
             .ToListAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Elections this account owns that are not shared with an owner or admin who is not rejected.
+    /// Rejection freezes and later deletes this set only.
+    /// </summary>
+    private async Task<List<Guid>> OwnElectionIdsAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var electionIds = await OwnedElectionIdsAsync(userId, cancellationToken);
+        if (electionIds.Count == 0)
+        {
+            return electionIds;
+        }
+
+        var coOwners = await _context.JoinElectionUsers.AsNoTracking()
+            .Where(link =>
+                electionIds.Contains(link.ElectionGuid)
+                && link.UserId != userId
+                && (link.Role == "Owner" || link.Role == "Admin"))
+            .Select(link => new { link.ElectionGuid, link.UserId })
+            .ToListAsync(cancellationToken);
+        var otherIds = coOwners.Select(link => link.UserId).Distinct().ToList();
+        var otherStatuses = otherIds.Count == 0
+            ? new Dictionary<Guid, string>()
+            : await _context.OwnerSendControls.AsNoTracking()
+                .Where(row => otherIds.Contains(row.UserId))
+                .ToDictionaryAsync(row => row.UserId, row => row.RestrictionStatus, cancellationToken);
+        var shared = coOwners
+            .Where(link =>
+                !otherStatuses.TryGetValue(link.UserId, out var status)
+                || status != OwnerRestrictionStatus.Rejected)
+            .Select(link => link.ElectionGuid)
+            .ToHashSet();
+        return electionIds.Where(id => !shared.Contains(id)).ToList();
     }
 
     private async Task<OwnerReviewDetailDto> BuildDetailAsync(

@@ -19,15 +19,18 @@ public class AccountController : ControllerBase
 {
     private readonly IAccountService _accountService;
     private readonly IOwnerReviewService _ownerReviewService;
+    private readonly IOwnerTestCodeService _ownerTestCodeService;
     private readonly ILogger<AccountController> _logger;
 
     public AccountController(
         IAccountService accountService,
         IOwnerReviewService ownerReviewService,
+        IOwnerTestCodeService ownerTestCodeService,
         ILogger<AccountController> logger)
     {
         _accountService = accountService;
         _ownerReviewService = ownerReviewService;
+        _ownerTestCodeService = ownerTestCodeService;
         _logger = logger;
     }
 
@@ -164,5 +167,28 @@ public class AccountController : ControllerBase
         }
 
         return Ok(ApiResponse<OwnerRestrictionDto>.SuccessResponse(result.Restriction!));
+    }
+
+    /// <summary>
+    /// Emails a test code to the signed-in owner's own account address.
+    /// Allowed while the account is restricted or waiting for review.
+    /// Does not open online voting and does not send anything to voters.
+    /// </summary>
+    [HttpPost("owner-test-code")]
+    public async Task<ActionResult<ApiResponse<bool>>> SendOwnerTestCode()
+    {
+        var userId = CurrentUserId;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(ApiResponse<bool>.ErrorResponse("User not authenticated"));
+        }
+
+        var result = await _ownerTestCodeService.SendAsync(userId);
+        if (!result.Success)
+        {
+            return BadRequest(ApiResponse<bool>.ErrorResponse(result.ErrorKey ?? "error"));
+        }
+
+        return Ok(ApiResponse<bool>.SuccessResponse(true));
     }
 }

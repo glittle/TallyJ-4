@@ -11,6 +11,13 @@ namespace Backend.Helpers;
 public static class OwnerAccountGate
 {
     /// <summary>
+    /// When set to an email address, the next registration of that address fails
+    /// after the user row is created and before the restriction row is saved.
+    /// Tests use it to prove the two writes roll back together. Production leaves it null.
+    /// </summary>
+    public static string? FailRestrictionSaveForEmail { get; set; }
+
+    /// <summary>
     /// Adds a restricted row for a new login. The caller saves the context.
     /// </summary>
     public static void AddRestricted(MainDbContext context, string? userId)

@@ -45,14 +45,14 @@ public class PaidChannelStatusServiceTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task UnapprovedCoOwner_ShowsNotApproved()
+    public async Task UnapprovedCoOwner_DoesNotBlock_WhenAnotherOwnerIsApproved()
     {
         Context.OwnerSendControls.Add(new OwnerSendControl { UserId = _ownerId, PaidSendsApproved = true });
         await Context.SaveChangesAsync();
 
         var dto = await ApplyAsync();
 
-        Assert.Equal(PaidChannelStatus.NotApproved, dto.PaidChannelBlockReason);
+        Assert.Null(dto.PaidChannelBlockReason);
     }
 
     [Fact]
