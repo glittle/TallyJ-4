@@ -15,6 +15,12 @@ import {
   postApiSuperadminPaidSendsElectionsByGuidUnfreeze,
   postApiSuperadminPaidSendsElectionsByGuidAllowance,
   postApiSuperadminPaidSendsElectionsByGuidClearFlag,
+  getApiSuperadminOwnerReviews,
+  getApiSuperadminOwnerReviewsByUserId,
+  postApiSuperadminOwnerReviewsByUserIdApprove,
+  postApiSuperadminOwnerReviewsByUserIdReject,
+  postApiSuperadminOwnerReviewsByUserIdHold,
+  postApiSuperadminOwnerReviewsByUserIdDeleteElections,
 } from "@/api/gen/configService";
 import type { PaginatedResponse } from "@/types/ApiResponse";
 
@@ -217,6 +223,53 @@ export const superAdminService = {
     });
   },
 
+  async listOwnerReviews(status?: string): Promise<OwnerReviewListItem[]> {
+    const response = await getApiSuperadminOwnerReviews({
+      query: status ? { status } : undefined,
+      throwOnError: true,
+    });
+    const body = response.data as { data?: OwnerReviewListItem[] };
+    return body?.data ?? [];
+  },
+
+  async getOwnerReview(userId: string): Promise<OwnerReviewDetail> {
+    const response = await getApiSuperadminOwnerReviewsByUserId({
+      path: { userId },
+      throwOnError: true,
+    });
+    return (response.data as { data: OwnerReviewDetail }).data;
+  },
+
+  async approveOwnerReview(userId: string): Promise<void> {
+    await postApiSuperadminOwnerReviewsByUserIdApprove({
+      path: { userId },
+      throwOnError: true,
+    });
+  },
+
+  async rejectOwnerReview(userId: string, note?: string): Promise<void> {
+    await postApiSuperadminOwnerReviewsByUserIdReject({
+      path: { userId },
+      body: { note },
+      throwOnError: true,
+    });
+  },
+
+  async holdOwnerReview(userId: string, note?: string): Promise<void> {
+    await postApiSuperadminOwnerReviewsByUserIdHold({
+      path: { userId },
+      body: { note },
+      throwOnError: true,
+    });
+  },
+
+  async deleteRejectedOwnerElections(userId: string): Promise<void> {
+    await postApiSuperadminOwnerReviewsByUserIdDeleteElections({
+      path: { userId },
+      throwOnError: true,
+    });
+  },
+
   async updateUser(
     userId: string,
     body: { displayName?: string; email?: string },
@@ -250,6 +303,45 @@ export interface SuperAdminEmailChangeEntry {
 
 export interface SuperAdminUserDetail extends SuperAdminUser {
   emailHistory: SuperAdminEmailChangeEntry[];
+}
+
+export interface OwnerReviewCount {
+  key?: string | null;
+  count?: number;
+}
+
+export interface OwnerReviewElection {
+  electionGuid?: string;
+  name?: string | null;
+  electionType?: string | null;
+  dateOfElection?: string | Date | null;
+  onlineWhenOpen?: string | Date | null;
+  onlineWhenClose?: string | Date | null;
+  peopleCount?: number;
+  emailDomains?: OwnerReviewCount[] | null;
+  phoneCountries?: OwnerReviewCount[] | null;
+  flaggedContactCount?: number;
+  flaggedSample?: string[] | null;
+  peopleSample?: string[] | null;
+}
+
+export interface OwnerReviewListItem {
+  userId?: string;
+  email?: string | null;
+  displayName?: string | null;
+  status?: string | null;
+  authMethod?: string | null;
+  reviewRequestedAt?: string | Date | null;
+  rejectedAt?: string | Date | null;
+  electionCount?: number;
+}
+
+export interface OwnerReviewDetail extends OwnerReviewListItem {
+  signedUpAt?: string | Date | null;
+  note?: string | null;
+  reviewedAt?: string | Date | null;
+  deleteElectionsAt?: string | Date | null;
+  elections?: OwnerReviewElection[] | null;
 }
 
 export interface AccountInviteCreated {

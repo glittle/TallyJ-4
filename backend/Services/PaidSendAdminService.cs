@@ -210,9 +210,15 @@ public class PaidSendAdminService : IPaidSendAdminService
         }
 
         var row = await GetOrAddOwnerAsync(userId, cancellationToken);
+        var now = _clock.UtcNow;
         row.PaidSendsApproved = true;
-        row.ApprovedAt = _clock.UtcNow;
+        row.RestrictionStatus = OwnerRestrictionStatus.Approved;
+        row.ApprovedAt = now;
         row.ApprovedByUserId = adminUserId;
+        row.StatusChangedAt = now;
+        row.ReviewedAt = now;
+        row.ReviewedByUserId = adminUserId;
+        row.RejectedAt = null;
         await _context.SaveChangesAsync(cancellationToken);
         await AuditAsync(SecurityEventType.PaidSendOwnerApproved, adminUserId, null, "Paid sends approved for owner " + userId);
         _logger.LogInformation("Paid sends approved for owner {OwnerUserId}", userId);

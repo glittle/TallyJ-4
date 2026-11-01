@@ -11,6 +11,13 @@ public static class CodeSendBlockReason
     public const string NotApproved = "not-approved";
 
     /// <summary>
+    /// An owner or admin is restricted, waiting for review, or rejected.
+    /// Email to that owner's own account address is the only send still allowed,
+    /// and only while the account is restricted or waiting for review.
+    /// </summary>
+    public const string OwnerRestricted = "owner-restricted";
+
+    /// <summary>
     /// The election has used its SMS, voice, and WhatsApp allowance.
     /// </summary>
     public const string ElectionCap = "election-cap";

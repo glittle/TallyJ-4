@@ -23,9 +23,8 @@ describe("LoginPage", () => {
 
     expect(wrapper.find('input[type="password"]').exists()).toBe(true);
     expect(wrapper.text()).toContain(
-      "New teller? Sign in with Google to create an account",
+      "New teller? Create an account with email and password, or sign in with Google",
     );
-    expect(wrapper.text()).not.toContain("Don't have an account? Register");
-    expect(wrapper.find('a[href="/register"]').exists()).toBe(false);
+    expect(wrapper.find('a[href="/register"]').exists()).toBe(true);
   });
 });

@@ -303,6 +303,7 @@ function onUseOnlineVotingChange(enabled: string | number | boolean) {
       <el-form-item :label="$t('elections.form.useOnlineVoting')">
         <el-switch
           v-model="model.useOnlineVoting"
+          :disabled="paidChannelBlockReason === 'owner-restricted'"
           @change="onUseOnlineVotingChange"
         />
         <template #help>

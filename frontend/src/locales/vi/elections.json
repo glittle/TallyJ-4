@@ -758,5 +758,75 @@
     "t": "Cử Tri",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ownerRestricted.banner": {
+    "t": "Tài khoản của bạn đang bị hạn chế. Bạn có thể chuẩn bị bầu cử, tải danh sách, nhập phiếu, kiểm phiếu và xem báo cáo. Bạn không thể gửi mã hoặc tin cho cử tri, cũng không mở bỏ phiếu trực tuyến, cho đến khi quản trị viên trang phê duyệt tài khoản. Bạn có thể gửi một mã thử tới email của tài khoản.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestReview": {
+    "t": "Yêu cầu xem xét",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requested": {
+    "t": "Đã yêu cầu xem xét {when}. Bạn có thể yêu cầu lại sau {next}.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.holdNote": {
+    "t": "Ghi chú của người xem xét: {note}",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.rejected": {
+    "t": "Tài khoản này bị từ chối. Các cuộc bầu cử bị đóng băng và ẩn với cử tri. Chúng sẽ bị xóa 30 ngày sau quyết định, trừ khi quản trị viên trang xóa sớm hơn.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.throttled": {
+    "t": "Bạn có thể yêu cầu xem xét lần nữa sau thời gian chờ.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestFailed": {
+    "t": "Không gửi được email yêu cầu xem xét. Hãy thử lại sau.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noRecipients": {
+    "t": "Chưa cấu hình email quản trị viên trang, nên yêu cầu không được gửi.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.alreadyApproved": {
+    "t": "Tài khoản này đã được phê duyệt.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notFound": {
+    "t": "Không tìm thấy tài khoản.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noteTooLong": {
+    "t": "Ghi chú quá dài.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notRejected": {
+    "t": "Chỉ tài khoản bị từ chối mới có thể xóa bầu cử ngay bây giờ.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.onlineBlocked": {
+    "t": "Bỏ phiếu trực tuyến vẫn đóng cho đến khi quản trị viên trang phê duyệt tài khoản. Thiết lập, nhập phiếu, kiểm phiếu và báo cáo vẫn dùng được.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.paidChannels.ownerRestricted": {
+    "t": "Mã cử tri và bỏ phiếu trực tuyến không dùng được cho đến khi quản trị viên trang phê duyệt tài khoản. Bạn có thể gửi mã thử tới email tài khoản. Bỏ phiếu trực tiếp và nhập phiếu vẫn dùng được.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

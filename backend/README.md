@@ -151,7 +151,7 @@ Use the reset scripts under `backend/scripts/` when you need a clean local datab
 The backend uses controller-based routes. A few examples from the current codebase:
 
 - `POST /api/Auth/login`
-- `POST /api/Auth/registerAccount` (disabled; returns `auth.errors.openRegisterDisabled` — new teller accounts are created via Google, or via a SuperAdmin one-time invite)
+- `POST /api/Auth/registerAccount` (open email/password sign-up; the account starts restricted until a super admin approves it; email verification and the per-IP rate limit stay). Google sign-up is also restricted. A SuperAdmin one-time invite creates an approved account.
 - `POST /api/superadmin/account-invites` (SuperAdmin; issues a one-time `/register?invite=` link)
 - `POST /api/Auth/registerWithInvite` (anonymous; creates one local account, then the invite is dead)
 - `GET /api/Elections/getElections`

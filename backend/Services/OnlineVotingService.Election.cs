@@ -86,6 +86,8 @@ public partial class OnlineVotingService
                 .Where(row => electionGuids.Contains(row.ElectionGuid) && row.Flagged)
                 .Select(row => row.ElectionGuid)
                 .ToListAsync();
+            flaggedElections.AddRange(
+                await OwnerRestrictionQueries.RejectedOwnerElectionIdsAsync(_context, electionGuids));
 
             var votingInfos = await _context.OnlineVotingInfos
                 .Where(ovi => personGuids.Contains(ovi.PersonGuid) && electionGuids.Contains(ovi.ElectionGuid))

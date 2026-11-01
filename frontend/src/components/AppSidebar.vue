@@ -228,6 +228,16 @@ function dockSidebar() {
       </el-menu-item>
       <el-menu-item
         v-if="isSuperAdmin"
+        index="/super-admin/owner-reviews"
+        role="menuitem"
+      >
+        <el-icon aria-hidden="true">
+          <Document />
+        </el-icon>
+        <span>{{ $t("nav.superAdminOwnerReviews") }}</span>
+      </el-menu-item>
+      <el-menu-item
+        v-if="isSuperAdmin"
         index="/super-admin/paid-sends"
         role="menuitem"
       >

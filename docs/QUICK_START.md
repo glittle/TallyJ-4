@@ -32,7 +32,7 @@ npm run dev
 
 1. **Create a teller / admin account**
    - Sign in with Google from https://localhost:8095/login (or `/register`, which steers to Google).
-   - Open email/password registration is disabled. Existing local accounts can still log in with email and password.
+   - Email/password registration is open. A new account starts restricted until a super admin reviews it. Existing local accounts can still log in with email and password. Google sign-up is also available.
    - Development seeding (`SeedOnStartup`) also creates sample users.
 
 2. **Assign Admin Role** (via database or admin panel) if the Google account is not already a super-admin

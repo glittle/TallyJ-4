@@ -530,10 +530,10 @@ public class RateLimitingTests : IntegrationTestBase
         // Act
         var response = await Client.PostAsync("/api/auth/registerAccount", content);
 
-        // Open register is disabled (400 + i18n key). Rate limiting must not 429 the first call.
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        // The first open registration is accepted. Rate limiting must not 429 it.
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         var body = await response.Content.ReadAsStringAsync();
-        body.Should().Contain(AuthController.OpenRegisterDisabledKey);
+        body.Should().Contain("requiresEmailVerification");
     }
 
     [Fact]

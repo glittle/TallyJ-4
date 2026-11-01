@@ -422,7 +422,7 @@ public class AuthControllerTests : ServiceTestBase
     }
 
     [Fact]
-    public async Task Register_OpenSelfServe_ReturnsBadRequestWithI18nKey()
+    public async Task Register_OpenSelfServe_CreatesAccount_AndAudits()
     {
         var request = new RegisterRequest
         {
@@ -431,28 +431,31 @@ public class AuthControllerTests : ServiceTestBase
             ConfirmPassword = "TestPass123!",
             DisplayName = "Test User"
         };
+        _localAuthServiceMock
+            .Setup(service => service.RegisterAsync(request))
+            .ReturnsAsync((true, null, new AuthResponse
+            {
+                Email = request.Email,
+                Name = request.DisplayName,
+                AuthMethod = "Local",
+                RequiresEmailVerification = true
+            }));
+        _userManagerMock
+            .Setup(manager => manager.FindByEmailAsync(request.Email))
+            .ReturnsAsync(new AppUser { Id = Guid.NewGuid().ToString(), Email = request.Email });
 
         var result = await _controller.Register(request);
 
-        var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
-        var errorResponse = badRequestResult.Value;
-        Assert.NotNull(errorResponse);
-        var errorProperty = errorResponse.GetType().GetProperty("error");
-        Assert.NotNull(errorProperty);
-        Assert.Equal(AuthController.OpenRegisterDisabledKey, errorProperty.GetValue(errorResponse));
-        _localAuthServiceMock.Verify(x => x.RegisterAsync(It.IsAny<RegisterRequest>()), Times.Never);
+        var ok = Assert.IsType<OkObjectResult>(result);
+        var body = Assert.IsType<AuthResponse>(ok.Value);
+        Assert.Equal(request.Email, body.Email);
+        Assert.True(body.RequiresEmailVerification);
+        Assert.Null(body.Token);
         _securityAuditServiceMock.Verify(
-            x => x.LogSecurityEventAsync(It.Is<CreateSecurityAuditLogDto>(dto =>
-                dto.EventType == SecurityEventType.LoginAttemptBlocked
-                && dto.IsSuspicious
-                && dto.Email == request.Email
-                && dto.Details != null
-                && dto.Details.Contains("rejected", StringComparison.OrdinalIgnoreCase))),
+            audit => audit.LogSecurityEventAsync(It.Is<CreateSecurityAuditLogDto>(dto =>
+                dto.EventType == SecurityEventType.AccountCreated
+                && dto.Email == request.Email)),
             Times.Once);
-        _securityAuditServiceMock.Verify(
-            x => x.LogSecurityEventAsync(It.Is<CreateSecurityAuditLogDto>(dto =>
-                dto.EventType == SecurityEventType.AccountCreated)),
-            Times.Never);
     }
 
     [Fact]

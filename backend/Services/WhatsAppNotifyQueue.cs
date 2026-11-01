@@ -95,6 +95,17 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
             throw new InvalidOperationException(PeopleMessageKeys.PhoneWhatsAppNotConfigured);
         }
 
+        var blocked = await OwnerRestrictionQueries.VoterMessageBlockKeyAsync(
+            db,
+            electionGuid,
+            PeopleMessageKeys.WhatsAppNotifyFrozen,
+            PeopleMessageKeys.WhatsAppNotifyOwnerRestricted,
+            cancellationToken);
+        if (blocked != null)
+        {
+            throw new InvalidOperationException(blocked);
+        }
+
         var requested = personGuids.Distinct().ToList();
         var people = await db.People
             .Where(p => p.ElectionGuid == electionGuid && requested.Contains(p.PersonGuid))

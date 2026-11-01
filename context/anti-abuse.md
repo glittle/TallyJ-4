@@ -2,16 +2,20 @@
 
 ## Owner paid-send gate (issue #371 slice 3a)
 
-**Status:** active  
+**Status:** superseded  
 **Evidence:** confirmed  
-**Source:** issue #371 comments of 2026-10-06 (owner abuse, flagged-upload threshold, block Online)  
-**Revisit when:** a second paid provider is added, or email codes should also wait for approval
+**Source:** issue #371 comments of 2026-10-06 (owner abuse, flagged-upload threshold, block Online); issue #414  
+**Revisit when:** a second paid provider is added
+
+> Superseded 2026-11: paid-send approval is no longer a separate step. See [context/auth.md](auth.md). An election may send when any owner or co-admin is approved. A restricted co-admin does not close it. Caps are counted on an approved owner. The account freeze kill switch still stops every election that owner belongs to. Rejection does not use that kill switch.
 
 An owner who creates an election can upload any phone list and then trigger Twilio (SMS and voice) or GreenAPI (WhatsApp). Checking the request against that list does not help, because the attacker owns the list.
 
-SMS, voice, and WhatsApp login codes wait until a super admin approves every owner and admin on the election. The flag is `OwnerSendControls.PaidSendsApproved`. Email codes are not gated by that approval and are not counted against the caps. Voice is included because it is a paid Twilio channel, same as SMS.
+Before issue #414, SMS, voice, and WhatsApp login codes waited until a super admin approved every owner and admin on the election. The flag was `OwnerSendControls.PaidSendsApproved`. Email codes were not gated by that approval and were not counted against the caps. Voice was included because it is a paid Twilio channel, same as SMS. Those caps, the freeze, the prefix cap, and the voter-list flag still apply after an owner is approved. A new list upload re-restricts that election only when those bad-contact checks flag it. It does not put the approved owner back into restricted mode.
 
-The owner is a `JoinElectionUsers` row with role `Owner` or `Admin`. `CreateElection` stores `Admin`, not `Owner`. An election with no such row cannot send a paid code. When several owners or admins exist, paid codes go out only if every one of them is approved. The send is counted against the first of those accounts that is still under its daily cap. One approved account does not carry an unapproved co-owner.
+The owner is a `JoinElectionUsers` row with role `Owner` or `Admin`. `CreateElection` stores `Admin`, not `Owner`. An election with no such row cannot send a paid code. When several owners or admins exist, paid codes go out when any one of them is approved. The send is counted against the first approved account that is still under its daily cap. A restricted co-admin does not have to be approved and does not block the send.
+
+> Superseded 2026-11: “paid codes go out only if every owner is approved.” That was the #371 rule. Issue #414’s owner decision is that one approved owner or co-admin is enough. The manual freeze kill switch is unchanged: one frozen owner still stops the election.
 
 A blocked `requestCode` returns the same phrase key as a successful send (`voting.auth.requestCode.sentIfListed`), with no verification code and no delivery-status channel. The election screen shows `elections.paidChannels.*` so the owner can see why SMS, voice, and WhatsApp are unavailable.
 

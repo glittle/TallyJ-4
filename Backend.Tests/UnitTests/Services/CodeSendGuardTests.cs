@@ -68,6 +68,61 @@ public class CodeSendGuardTests : IDisposable
     }
 
     [Fact]
+    public async Task RestrictedOwner_BlocksEveryLoginCode_IncludingTheirOwnAddress()
+    {
+        await using (var context = new MainDbContext(_options))
+        {
+            context.OwnerSendControls.Add(new OwnerSendControl
+            {
+                UserId = _ownerId,
+                RestrictionStatus = OwnerRestrictionStatus.Restricted,
+                PaidSendsApproved = false
+            });
+            await context.SaveChangesAsync();
+        }
+
+        var voter = await ReserveAsync("email", "ada@example.com");
+        Assert.False(voter.Allowed);
+        Assert.Equal(CodeSendBlockReason.OwnerRestricted, voter.BlockReason);
+
+        var own = await ReserveAsync("email", "owner@example.com");
+        Assert.False(own.Allowed);
+        Assert.Equal(CodeSendBlockReason.OwnerRestricted, own.BlockReason);
+    }
+
+    [Fact]
+    public async Task ApprovedOwner_KeepsTheElectionOpen_WhenACoAdminIsRestricted()
+    {
+        var coAdmin = Guid.NewGuid();
+        await using (var context = new MainDbContext(_options))
+        {
+            context.JoinElectionUsers.Add(new JoinElectionUser
+            {
+                ElectionGuid = _electionId,
+                UserId = coAdmin,
+                Role = "Admin"
+            });
+            context.OwnerSendControls.AddRange(
+                new OwnerSendControl
+                {
+                    UserId = _ownerId,
+                    RestrictionStatus = OwnerRestrictionStatus.Approved,
+                    PaidSendsApproved = true
+                },
+                new OwnerSendControl
+                {
+                    UserId = coAdmin,
+                    RestrictionStatus = OwnerRestrictionStatus.Restricted,
+                    PaidSendsApproved = false
+                });
+            await context.SaveChangesAsync();
+        }
+
+        Assert.True((await ReserveAsync("email", "ada@example.com")).Allowed);
+        Assert.True((await ReserveAsync("sms", "+14165550100")).Allowed);
+    }
+
+    [Fact]
     public async Task Email_IsSent_WhenOwnerIsNotApproved()
     {
         var reservation = await ReserveAsync("email", "ada@example.com");
@@ -228,7 +283,7 @@ public class CodeSendGuardTests : IDisposable
     }
 
     [Fact]
-    public async Task UnapprovedCoOwner_BlocksSms_AndStillAllowsEmail()
+    public async Task UnapprovedCoOwner_DoesNotBlock_WhenAnotherOwnerIsApproved()
     {
         var coOwner = Guid.NewGuid();
         await using (var context = new MainDbContext(_options))
@@ -249,10 +304,8 @@ public class CodeSendGuardTests : IDisposable
         }
 
         Assert.True((await ReserveAsync("email", "ada@example.com")).Allowed);
-        var sms = await ReserveAsync("sms", "+14165550100");
-        Assert.False(sms.Allowed);
-        Assert.Equal(CodeSendBlockReason.NotApproved, sms.BlockReason);
-        Assert.Equal(0, await PaidSendsUsedAsync());
+        Assert.True((await ReserveAsync("sms", "+14165550100")).Allowed);
+        Assert.Equal(1, await PaidSendsUsedAsync());
     }
 
     [Fact]

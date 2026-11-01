@@ -68,6 +68,16 @@ public static class PeopleMessageKeys
     public const string WhatsAppNotifyNotFound = "people.notifyWhatsApp.notFound";
 
     /// <summary>
+    /// A super admin froze this election or an owner on it.
+    /// </summary>
+    public const string WhatsAppNotifyFrozen = "people.notifyWhatsApp.frozen";
+
+    /// <summary>
+    /// None of the owners or co-admins is approved.
+    /// </summary>
+    public const string WhatsAppNotifyOwnerRestricted = "people.notifyWhatsApp.ownerRestricted";
+
+    /// <summary>
     /// Guest teller tried to add a person while GuestTellersCanAddPeople is off (v3 GA).
     /// </summary>
     public const string GuestCannotAddPeople = "people.guestCannotAddPeople";

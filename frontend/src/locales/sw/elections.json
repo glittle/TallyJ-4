@@ -758,5 +758,75 @@
     "t": "Wapiga Kura",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ownerRestricted.banner": {
+    "t": "Akaunti yako imezuiliwa. Unaweza kuandaa uchaguzi, kupakia watu, kuingiza karatasi, kuhesabu na kuona ripoti. Huwezi kutuma misimbo au ujumbe kwa wapiga kura, wala kufungua kura mtandaoni, hadi msimamizi wa tovuti aidhinishe akaunti. Unaweza kutuma msimbo wa majaribio kwa barua pepe ya akaunti yako.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestReview": {
+    "t": "Omba ukaguzi",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requested": {
+    "t": "Ukaguzi uliombwa {when}. Unaweza kuomba tena baada ya {next}.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.holdNote": {
+    "t": "Maelezo ya mkaguzi: {note}",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.rejected": {
+    "t": "Akaunti hii imekataliwa. Uchaguzi wake umesimamishwa na umefichwa kwa wapiga kura. Utafutwa siku 30 baada ya uamuzi, isipokuwa msimamizi wa tovuti aufute mapema.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.throttled": {
+    "t": "Unaweza kuomba ukaguzi mwingine baada ya kusubiri.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestFailed": {
+    "t": "Ombi la ukaguzi halikuweza kutumwa kwa barua pepe. Jaribu tena baadaye.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noRecipients": {
+    "t": "Barua pepe ya msimamizi wa tovuti haijawekwa, kwa hiyo ombi halikutumwa.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.alreadyApproved": {
+    "t": "Akaunti hii tayari imeidhinishwa.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notFound": {
+    "t": "Akaunti haipatikani.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noteTooLong": {
+    "t": "Maelezo ni marefu sana.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notRejected": {
+    "t": "Ni akaunti iliyokataliwa tu inayoweza kufutwa uchaguzi wake sasa.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.onlineBlocked": {
+    "t": "Kura mtandaoni inabaki imefungwa hadi msimamizi wa tovuti aidhinishe akaunti yako. Maandalizi, uingizaji, hesabu na ripoti vinaendelea.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.paidChannels.ownerRestricted": {
+    "t": "Misimbo ya wapiga kura na kura mtandaoni havipatikani hadi msimamizi wa tovuti aidhinishe akaunti yako. Unaweza kutuma msimbo wa majaribio kwa barua pepe ya akaunti. Kura ya ana kwa ana na uingizaji vinaendelea.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

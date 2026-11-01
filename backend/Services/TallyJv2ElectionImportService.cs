@@ -497,6 +497,11 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
             nsm.AddNamespace("t", "urn:tallyj.bahai:v2");
 
             var (election, guidMap) = CreateElectionFromXml(root, nsm);
+            if (await OwnerAccountGate.BlocksOnlineVotingAsync(_context, userId))
+            {
+                OwnerAccountGate.ClearOnlineVoting(election);
+            }
+
             _context.Elections.Add(election);
             await ReportStatusAsync(userId, $"Creating election \"{election.Name}\"…");
 

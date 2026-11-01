@@ -53,5 +53,10 @@
     "t": "Voting Locations",
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "nav.superAdminOwnerReviews": {
+    "t": "Owner review",
+    "s": "source",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

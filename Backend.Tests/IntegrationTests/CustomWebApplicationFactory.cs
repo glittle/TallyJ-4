@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.DataProtection.EntityFrameworkCore;
@@ -75,11 +76,16 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     /// Mock email sender that doesn't make any external connections.
     /// Used in integration tests to avoid external dependencies.
     /// </summary>
-    private class MockEmailSender : IEmailSender
+    /// <summary>
+    /// Records messages the test host would have sent. Parallel tests filter by recipient.
+    /// </summary>
+    public class MockEmailSender : IEmailSender
     {
+        public static ConcurrentQueue<MimeMessage> Sent { get; } = new();
+
         public Task SendAsync(MimeMessage message)
         {
-            // Do nothing - just log that we would have sent an email
+            Sent.Enqueue(message);
             Console.WriteLine($"[MOCK EMAIL] Would send email to {message.To} with subject '{message.Subject}'");
             return Task.CompletedTask;
         }

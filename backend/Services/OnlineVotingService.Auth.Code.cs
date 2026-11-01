@@ -69,6 +69,7 @@ public partial class OnlineVotingService
                            (e.OnlineWhenClose == null || e.OnlineWhenClose > now))
                 .Select(e => e.ElectionGuid)
                 .ToListAsync();
+            openElections = await ExceptFlaggedElectionsAsync(openElections);
 
             if (!openElections.Any())
             {
@@ -551,12 +552,13 @@ public partial class OnlineVotingService
             .Where(row => electionIds.Contains(row.ElectionGuid) && row.Flagged)
             .Select(row => row.ElectionGuid)
             .ToListAsync();
-        if (flagged.Count == 0)
+        var rejected = await OwnerRestrictionQueries.RejectedOwnerElectionIdsAsync(_context, electionIds);
+        if (flagged.Count == 0 && rejected.Count == 0)
         {
             return electionIds;
         }
 
-        return electionIds.Where(id => !flagged.Contains(id)).ToList();
+        return electionIds.Where(id => !flagged.Contains(id) && !rejected.Contains(id)).ToList();
     }
 
     /// <summary>

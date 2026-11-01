@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Backend.DTOs.Auth;
 using Backend.Context;
+using Backend.Entities;
+using Backend.Helpers;
 using Backend.Identity;
 using Backend.Middleware;
 
@@ -17,6 +20,9 @@ public class LocalAuthService : ILocalAuthService
     private readonly EmailService _emailService;
     private readonly ITwoFactorService _twoFactorService;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly ILogger<LocalAuthService> _logger;
+
+    public const string RegisterFailedKey = "auth.errors.registerFailed";
 
     public LocalAuthService(
         UserManager<AppUser> userManager,
@@ -25,7 +31,8 @@ public class LocalAuthService : ILocalAuthService
         IStringLocalizer<LocalAuthService> localizer,
         EmailService emailService,
         ITwoFactorService twoFactorService,
-        IHttpContextAccessor httpContextAccessor)
+        IHttpContextAccessor httpContextAccessor,
+        ILogger<LocalAuthService> logger)
     {
         _userManager = userManager;
         _jwtTokenService = jwtTokenService;
@@ -34,12 +41,13 @@ public class LocalAuthService : ILocalAuthService
         _emailService = emailService;
         _twoFactorService = twoFactorService;
         _httpContextAccessor = httpContextAccessor;
+        _logger = logger;
     }
 
     /// <summary>
-    /// Creates a local email/password user. Not used by open HTTP register
-    /// (<c>POST /api/auth/registerAccount</c> is disabled). Called by
-    /// <see cref="AccountInviteService"/> after a one-time invite is consumed.
+    /// Creates a local email/password user and sends the verification email.
+    /// Open <c>POST /api/auth/registerAccount</c> and invite redemption both call this.
+    /// The new row is restricted. Invite redemption then marks it approved.
     /// </summary>
     public async Task<(bool Success, string? Error, AuthResponse? Response)> RegisterAsync(RegisterRequest request)
     {
@@ -60,11 +68,61 @@ public class LocalAuthService : ILocalAuthService
             AuthMethod = "Local"
         };
 
-        var result = await _userManager.CreateAsync(user, request.Password);
-        if (!result.Succeeded)
+        string? createError = null;
+        var restrictionFailed = false;
+        var strategy = _context.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
         {
-            var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-            return (false, errors, null);
+            createError = null;
+            restrictionFailed = false;
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+            var result = await _userManager.CreateAsync(user, request.Password);
+            if (!result.Succeeded)
+            {
+                createError = string.Join(", ", result.Errors.Select(error => error.Description));
+                await transaction.RollbackAsync();
+                return;
+            }
+
+            try
+            {
+                if (string.Equals(
+                        OwnerAccountGate.FailRestrictionSaveForEmail,
+                        request.Email,
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidOperationException(
+                        "UNIQUE constraint failed while saving the owner restriction row");
+                }
+
+                OwnerAccountGate.AddRestricted(_context, user.Id);
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to store the owner restriction row for {UserId}", user.Id);
+                foreach (var entry in _context.ChangeTracker.Entries<OwnerSendControl>().ToList())
+                {
+                    if (entry.State == EntityState.Added)
+                    {
+                        entry.State = EntityState.Detached;
+                    }
+                }
+
+                await transaction.RollbackAsync();
+                restrictionFailed = true;
+            }
+        });
+
+        if (createError != null)
+        {
+            return (false, createError, null);
+        }
+
+        if (restrictionFailed)
+        {
+            return (false, RegisterFailedKey, null);
         }
 
         // Generate email verification token

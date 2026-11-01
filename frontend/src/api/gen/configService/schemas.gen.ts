@@ -344,6 +344,34 @@ export const ApiResponseFrontDesk_RollCallDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ApiResponseIReadOnlyListOwners_OwnerReviewListItemDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/Owners_OwnerReviewListItemDto'
+            },
+            nullable: true
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ApiResponseListComputers_ActiveComputerDtoSchema = {
     type: 'object',
     properties: {
@@ -576,6 +604,54 @@ export const ApiResponseLocations_LocationDtoSchema = {
         },
         data: {
             $ref: '#/components/schemas/Locations_LocationDto'
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const ApiResponseOwners_OwnerRestrictionDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            $ref: '#/components/schemas/Owners_OwnerRestrictionDto'
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const ApiResponseOwners_OwnerReviewDetailDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            $ref: '#/components/schemas/Owners_OwnerReviewDetailDto'
         },
         message: {
             type: 'string',
@@ -1481,7 +1557,12 @@ export const Backend_SecurityEventTypeSchema = {
         44,
         45,
         46,
-        47
+        47,
+        48,
+        49,
+        50,
+        51,
+        52
     ],
     type: 'integer',
     format: 'int32'
@@ -3558,6 +3639,241 @@ export const OnlineVoting_VerifyCodeDtoSchema = {
             nullable: true
         },
         verifyCode: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Owners_OwnerRestrictionDtoSchema = {
+    type: 'object',
+    properties: {
+        status: {
+            type: 'string',
+            nullable: true
+        },
+        note: {
+            type: 'string',
+            nullable: true
+        },
+        reviewRequestedAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        nextRequestAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        canRequestReview: {
+            type: 'boolean'
+        },
+        blocksSends: {
+            type: 'boolean'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Owners_OwnerReviewCountDtoSchema = {
+    type: 'object',
+    properties: {
+        key: {
+            type: 'string',
+            nullable: true
+        },
+        count: {
+            type: 'integer',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Owners_OwnerReviewDetailDtoSchema = {
+    type: 'object',
+    properties: {
+        userId: {
+            type: 'string',
+            format: 'uuid'
+        },
+        email: {
+            type: 'string',
+            nullable: true
+        },
+        displayName: {
+            type: 'string',
+            nullable: true
+        },
+        authMethod: {
+            type: 'string',
+            nullable: true
+        },
+        signedUpAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        status: {
+            type: 'string',
+            nullable: true
+        },
+        note: {
+            type: 'string',
+            nullable: true
+        },
+        reviewRequestedAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        reviewedAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        reviewedByUserId: {
+            type: 'string',
+            nullable: true
+        },
+        rejectedAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        deleteElectionsAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        elections: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/Owners_OwnerReviewElectionDto'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Owners_OwnerReviewElectionDtoSchema = {
+    type: 'object',
+    properties: {
+        electionGuid: {
+            type: 'string',
+            format: 'uuid'
+        },
+        name: {
+            type: 'string',
+            nullable: true
+        },
+        electionType: {
+            type: 'string',
+            nullable: true
+        },
+        dateOfElection: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        onlineWhenOpen: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        onlineWhenClose: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        peopleCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        emailDomains: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/Owners_OwnerReviewCountDto'
+            },
+            nullable: true
+        },
+        phoneCountries: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/Owners_OwnerReviewCountDto'
+            },
+            nullable: true
+        },
+        flaggedContactCount: {
+            type: 'integer',
+            format: 'int32'
+        },
+        flaggedSample: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        },
+        peopleSample: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Owners_OwnerReviewListItemDtoSchema = {
+    type: 'object',
+    properties: {
+        userId: {
+            type: 'string',
+            format: 'uuid'
+        },
+        email: {
+            type: 'string',
+            nullable: true
+        },
+        displayName: {
+            type: 'string',
+            nullable: true
+        },
+        status: {
+            type: 'string',
+            nullable: true
+        },
+        authMethod: {
+            type: 'string',
+            nullable: true
+        },
+        reviewRequestedAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        rejectedAt: {
+            type: 'string',
+            format: 'date-time',
+            nullable: true
+        },
+        electionCount: {
+            type: 'integer',
+            format: 'int32'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Owners_OwnerReviewNoteDtoSchema = {
+    type: 'object',
+    properties: {
+        note: {
             type: 'string',
             nullable: true
         }
