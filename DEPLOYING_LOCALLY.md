@@ -2,6 +2,8 @@
 
 This guide describes how to set up a local deployment of TallyJ 4 for testing or production use on a local web server. This is **not** for development - see `README.md` for development setup.
 
+Hosted UAT is not this guide. It runs on Azure App Service (Linux) at https://uat.v4.tallyj.com. See `docs/DEPLOYMENT.md`. Self-hosting on IIS or Linux is what follows.
+
 ## Prerequisites
 
 - **Operating System**: Windows Server 2019+ or Linux (Ubuntu 20.04+)
@@ -27,29 +29,29 @@ dotnet publish Backend.csproj -c Release -o ../publish/backend
 ```bash
 cd frontend
 npm ci
-npm run build-production  # or npm run build-uat
+npm run build
+```
+
+For a self-hosted UAT site, point Open Graph URLs at UAT before copying (see `docs/DEPLOYMENT.md`):
+
+```bash
+cd frontend
+node scripts/set-og-origin.mjs https://uat.v4.tallyj.com dist/index.html
 ```
 
 ### 3. Copy Frontend to Backend
 
-The backend serves the frontend from a `wwwroot-{env}` folder.
+The backend serves the frontend from `wwwroot` next to `Backend.dll`.
 
 **Windows:**
 ```cmd
-# For production
-xcopy /E /I frontend\dist publish\backend\wwwroot-prod\
-
-# For UAT
-xcopy /E /I frontend\dist publish\backend\wwwroot-uat\
+xcopy /E /I frontend\dist publish\backend\wwwroot\
 ```
 
 **Linux/macOS:**
 ```bash
-# For production
-cp -r frontend/dist publish/backend/wwwroot-prod/
-
-# For UAT
-cp -r frontend/dist publish/backend/wwwroot-uat/
+mkdir -p publish/backend/wwwroot
+cp -a frontend/dist/. publish/backend/wwwroot/
 ```
 
 ### 4. Configure Environment
@@ -113,7 +115,7 @@ server {
 
 Ensure the web server:
 - Forwards requests to the backend (default port 5000)
-- Serves static files from `wwwroot-{env}/`
+- Serves static files from `wwwroot/` (the app does this itself; the reverse proxy forwards to the process)
 - Enables HTTPS/TLS
 - Sets appropriate CORS headers
 
@@ -136,7 +138,7 @@ Ensure the web server:
 ## Troubleshooting
 
 - **Database connection fails**: Verify connection string and SQL Server status
-- **Frontend not loading**: Check `wwwroot-{env}/` folder exists and has files
+- **Frontend not loading**: Check `wwwroot/` exists next to `Backend.dll` and has `index.html`
 - **Authentication issues**: Check Swagger at `/swagger` for API testing
 - **App won't start**: Ensure .NET 10 runtime is installed
 
