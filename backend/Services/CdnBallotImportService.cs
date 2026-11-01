@@ -250,6 +250,8 @@ public class CdnBallotImportService : ElectionImportExportBase
     {
         return _context.Database.CreateExecutionStrategy().ExecuteAsync(() =>
         {
+            // Drop Added rows from a failed attempt before this retry inserts them again.
+            _context.ChangeTracker.Clear();
             StreamRewind.RewindIfSeekable(xmlStream);
             return ImportCdnBallotsCoreAsync(electionGuid, xmlStream);
         });

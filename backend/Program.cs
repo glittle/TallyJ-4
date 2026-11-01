@@ -174,7 +174,8 @@ void ConfigureServices(WebApplicationBuilder builder)
     services.AddJsonLocalization();
 
     // X-Forwarded-For and X-Forwarded-Proto when ForwardedHeaders:TrustPlatformProxy
-    // is true (the default). ForwardLimit stays 1. See ForwardedHeadersSetup.
+    // is true (the default). Only infrastructure peers and ForwardedHeaders:KnownProxies
+    // are trusted, one hop. See ForwardedHeadersSetup.
     ForwardedHeadersSetup.Configure(services, builderConfiguration);
 
     services.AddHttpClient("GreenApi");

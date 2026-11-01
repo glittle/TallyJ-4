@@ -475,6 +475,8 @@ public class TallyJv3ElectionImportService : ElectionImportExportBase
     {
         return _context.Database.CreateExecutionStrategy().ExecuteAsync(() =>
         {
+            // Drop Added rows from a failed attempt before this retry inserts them again.
+            _context.ChangeTracker.Clear();
             StreamRewind.RewindIfSeekable(xmlStream);
             return ImportTallyJv3ElectionCoreAsync(xmlStream, userId);
         });

@@ -88,6 +88,15 @@ public class FrontDeskService : IFrontDeskService
         var strategy = _context.Database.CreateExecutionStrategy();
         await strategy.ExecuteAsync(async () =>
         {
+            // person and onlineInfo were loaded for the precondition checks. A retry must
+            // not append another registration-history entry onto that in-memory person, so
+            // reload both after clearing the tracker from the failed attempt.
+            _context.ChangeTracker.Clear();
+            person = await _context.People
+                .FirstOrDefaultAsync(p => p.PersonGuid == checkInDto.PersonGuid && p.ElectionGuid == electionGuid)
+                ?? throw new InvalidOperationException("Person not found");
+            onlineInfo = await LoadLatestOnlineVotingInfoAsync(electionGuid, person.PersonGuid);
+
             if (_context.Database.IsRelational())
             {
                 await using var transaction = await _context.Database.BeginTransactionAsync();

@@ -17,13 +17,34 @@ public partial class OnlineVotingService
     };
 
     /// <inheritdoc/>
-    public Task<(bool Success, string? Error)> SubmitBallotAsync(SubmitOnlineBallotDto dto)
+    public async Task<(bool Success, string? Error)> SubmitBallotAsync(SubmitOnlineBallotDto dto)
     {
-        return _context.Database.CreateExecutionStrategy().ExecuteAsync(() => SubmitBallotCoreAsync(dto));
+        var attempt = 0;
+        try
+        {
+            return await _context.Database.CreateExecutionStrategy().ExecuteAsync(() =>
+            {
+                // The first attempt must not detach entities the caller still holds.
+                // A retry drops Added rows from the failed attempt; the loads below read them again.
+                var retry = ++attempt > 1;
+                return SubmitBallotCoreAsync(dto, retry);
+            });
+        }
+        catch (Exception ex) when (DbTransientFailure.IsTransient(ex))
+        {
+            // Retries are exhausted. The voter still gets the same submit error, once.
+            _logger.LogError(ex, "Error submitting online ballot for election {ElectionGuid}", dto.ElectionGuid);
+            return (false, "voting.submit.error");
+        }
     }
 
-    private async Task<(bool Success, string? Error)> SubmitBallotCoreAsync(SubmitOnlineBallotDto dto)
+    private async Task<(bool Success, string? Error)> SubmitBallotCoreAsync(SubmitOnlineBallotDto dto, bool clearTracker)
     {
+        if (clearTracker)
+        {
+            _context.ChangeTracker.Clear();
+        }
+
         using var transaction = await _context.Database.BeginTransactionAsync();
         var now = DateTimeOffset.UtcNow;
 
@@ -137,6 +158,11 @@ public partial class OnlineVotingService
             _logger.LogInformation("Online ballot submitted for election {ElectionGuid}", dto.ElectionGuid);
 
             return (true, null);
+        }
+        catch (Exception ex) when (DbTransientFailure.IsTransient(ex))
+        {
+            await transaction.RollbackAsync();
+            throw;
         }
         catch (Exception ex)
         {

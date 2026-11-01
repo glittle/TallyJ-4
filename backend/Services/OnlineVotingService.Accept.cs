@@ -336,12 +336,23 @@ public partial class OnlineVotingService
     /// </summary>
     private Task<bool> ProcessIfStillProcessingAsync(Guid electionGuid, int rowId)
     {
-        return _context.Database.CreateExecutionStrategy().ExecuteAsync(
-            () => ProcessIfStillProcessingCoreAsync(electionGuid, rowId));
+        var attempt = 0;
+        return _context.Database.CreateExecutionStrategy().ExecuteAsync(() =>
+        {
+            // First attempt keeps the tracker's Processing rows (in-memory tests set them there).
+            // A retry drops a ballot added by the failed attempt; TryTakeProcessingRowAsync reloads the row.
+            var retry = ++attempt > 1;
+            return ProcessIfStillProcessingCoreAsync(electionGuid, rowId, retry);
+        });
     }
 
-    private async Task<bool> ProcessIfStillProcessingCoreAsync(Guid electionGuid, int rowId)
+    private async Task<bool> ProcessIfStillProcessingCoreAsync(Guid electionGuid, int rowId, bool clearTracker)
     {
+        if (clearTracker)
+        {
+            _context.ChangeTracker.Clear();
+        }
+
         await using var transaction = await _context.Database.BeginTransactionAsync();
         var now = DateTimeOffset.UtcNow;
 

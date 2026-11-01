@@ -132,18 +132,30 @@ The same in-memory middleware still owns the limits. Account `POST /api/auth/log
 
 **Status:** active  
 **Evidence:** confirmed  
-**Source:** issue #410 — on Linux Azure App Service every request arrived as `::ffff:169.254.129.1` over http  
-**Revisit when:** the process is exposed directly to clients with no proxy that appends or overwrites these headers, or the platform inserts more than one proxy hop
+**Source:** issue #410 — on Linux Azure App Service every request arrived as `::ffff:169.254.129.1` over http; review of the first fix, which trusted every peer  
+**Revisit when:** a proxy's address is a public IP that is not listed in `ForwardedHeaders:KnownProxies`, or the platform inserts more than one proxy hop
 
-`ForwardedHeaders:TrustPlatformProxy` defaults to true (`backend/appsettings.json`). The pipeline calls `UseForwardedHeaders` before rate limiting, authentication, security-event and audit logging, and HTTPS redirection. The options apply `X-Forwarded-For` and `X-Forwarded-Proto`, clear `KnownProxies`, `KnownIPNetworks`, and `KnownNetworks`, and set `ForwardLimit` to 1.
+> Superseded 2026-11: clearing `KnownProxies`, `KnownIPNetworks`, and `KnownNetworks` while `TrustPlatformProxy` defaults to true. An empty known-proxy list makes the middleware apply `X-Forwarded-For` from any peer. With `ForwardLimit` 1 the client-supplied value becomes `RemoteIpAddress`. IIS in-process (`backend/web.config`, `hostingModel="inprocess"`) does not add `X-Forwarded-For`, and neither does Kestrel when nothing sits in front of it, so that value is whatever the client typed. Login and teller-login buckets, the voter venue ceiling, audit logs, and unusual-location checks would then use a chosen IP.
 
-That one hop is the platform proxy: Azure App Service, nginx, Apache, or IIS in front of the process. Windows in-process IIS (`backend/web.config`, `hostingModel="inprocess"`) stays a supported host; the same middleware runs there. The rightmost forwarded address is the one that proxy added. A longer walk would continue into the client-supplied prefix.
+`ForwardedHeaders:TrustPlatformProxy` defaults to true (`backend/appsettings.json`). The pipeline calls `UseForwardedHeaders` before rate limiting, authentication, security-event and audit logging, and HTTPS redirection. The options apply `X-Forwarded-For` and `X-Forwarded-Proto` with `ForwardLimit` 1. The peer is trusted only when it is an infrastructure address, the same kind of hop `GetClientIpAddress` already treats as a proxy:
 
-Login protection, unusual-login location, audit logs, and rate limits take the client from `HttpContext.GetClientIpAddress()`. After the middleware, a public `RemoteIpAddress` is that client. If the single consumed hop is still an infrastructure address (loopback, private, or link-local, including `169.254.129.1`), the helper uses the rightmost public address left on `X-Forwarded-For` or `Forwarded`. Set `TrustPlatformProxy` false only when clients reach the process directly and can set those headers themselves.
+- loopback `127.0.0.0/8` and `::1/128` (nginx or Apache on the same machine, and the test host)
+- RFC 1918 `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`
+- link-local `169.254.0.0/16`, which covers Azure App Service `169.254.129.1`
+- IPv6 unique-local `fc00::/7` and link-local `fe80::/10`
+- the IPv4-mapped form of each IPv4 range. The middleware also maps `::ffff:a.b.c.d` to IPv4 before the check, so the App Service peer matches `169.254.0.0/16` either way
+
+`ForwardedHeaders:KnownProxies` adds extra proxy IPs or CIDRs, for a load balancer whose address is public. There is no Azure-only setting. A public `RemoteIpAddress` is not a trusted proxy, so a direct client cannot replace it. Set `TrustPlatformProxy` false to ignore the headers entirely.
+
+Login protection, unusual-login location, audit logs, and rate limits take the client from `HttpContext.GetClientIpAddress()`. After the middleware, a public `RemoteIpAddress` is that client and a leftover `X-Forwarded-For` is ignored. If the single consumed hop is still an infrastructure address, the helper uses the rightmost public address left on `X-Forwarded-For` or `Forwarded`.
 
 **Rejected alternative:** leave forwarding proto-only. The scheme was corrected and the client IP was not, so unusual-location, per-IP limits, and audit rows collapsed onto the platform hop.
 
-**Rejected alternative:** ForwardLimit 2, or an unlimited walk, with the known-proxy lists cleared. That is the design reverted in 2026-09: the walk can stop on a spoofed entry and a raw `RemoteIpAddress` key becomes spoofable.
+**Rejected alternative:** clear the known-proxy lists. That trusts every directly connected client. IIS in-process would accept a spoofed `X-Forwarded-For` as the client IP.
+
+**Rejected alternative:** default `TrustPlatformProxy` to false and turn it on only for Azure. nginx or Apache on loopback, and App Service, would keep the platform hop until someone found the switch.
+
+**Rejected alternative:** ForwardLimit 2, or an unlimited walk, even limited to infrastructure peers. A longer walk continues into the client-supplied prefix. That is the design reverted in 2026-09.
 
 **Rejected alternative:** read only `Connection.RemoteIpAddress` and drop the helper. When the rightmost header entry is the private platform address, one hop leaves `RemoteIpAddress` on that hop.
 

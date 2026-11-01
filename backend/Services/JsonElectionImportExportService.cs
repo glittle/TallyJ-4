@@ -268,6 +268,8 @@ public class JsonElectionImportExportService : ElectionImportExportBase
     {
         return _context.Database.CreateExecutionStrategy().ExecuteAsync(() =>
         {
+            // Drop Added rows from a failed attempt before this retry inserts them again.
+            _context.ChangeTracker.Clear();
             StreamRewind.RewindIfSeekable(jsonStream);
             return ImportElectionFromJsonCoreAsync(jsonStream, userId);
         });
