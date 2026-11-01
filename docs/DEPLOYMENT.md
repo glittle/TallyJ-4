@@ -141,7 +141,7 @@ Two pipelines, both push-to-`main` only (`pr: none`):
 | `.azure/pipelines/azure-back-end-pipeline.yml` | 3 | `backend_pkg` (`Backend.zip`) | definition 4, artifact `frontend_pkgs` |
 | `.azure/pipelines/azure-front-end-pipeline.yml` | 4 | `frontend_pkgs` (`frontend.zip` of `dist`) | definition 3, artifact `backend_pkg` |
 
-The shared steps are `.azure/pipelines/templates/deploy-uat-appservice.yml`. The deploy stage runs on a Microsoft-hosted `ubuntu-latest` agent, in environment `tallyj4-uat` (no VM resource), and deploys with `AzureWebApp@1` (`azureSubscription: azure-tallyj`, `appType: webAppLinux`, `deploymentMethod: zipDeploy`). Build stages stay on `windows-latest`. Tests are unchanged. The deploy job timeout is 90 minutes so the wait below still fits.
+The shared steps are `.azure/pipelines/templates/deploy-uat-appservice.yml`. The deploy stage runs on a Microsoft-hosted `ubuntu-24.04` agent, in environment `tallyj4-uat` (no VM resource), and deploys with `AzureWebApp@1` (`azureSubscription: azure-tallyj`, `appType: webAppLinux`, `deploymentMethod: zipDeploy`). Build stages stay on `windows-latest`. Tests are unchanged. The deploy job timeout is 90 minutes so the wait below still fits.
 
 Both pipelines trigger on `version.json`, and a push often changes `backend/**` and `frontend/**` together, so one commit can start both runs. Each deploy has to ship **both new halves**. Taking the other pipeline's latest completed success would still be the previous commit, and the zip that lands last would leave one half stale.
 
