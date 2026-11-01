@@ -208,7 +208,7 @@ The backend merges settings from many locations (later sources override earlier 
 - `appsettings.{MachineName}.json` (optional, reload-on-change)
 - `appsettings.{SiteType}.json` (Development / Production / UAT / etc.)
 - `version.json` (required, loaded from repo root)
-- `TALLYJ_CONFIG_PATH` environment variable (points at a single JSON file — very useful for Docker / shared hosting)
+- `TALLYJ_CONFIG_PATH` environment variable (points at a single JSON file — very useful for shared hosting)
 - Hard-coded fallback locations: `c:\AppSettings\TallyJ4.json` and `TallyJ4.{SiteType}.json` (intentionally outside the repo tree)
 - User secrets and environment variables (the recommended place for all secrets: `ConnectionStrings:TallyJ4`, `Jwt:Key`, `Google:*`, `Twilio:*`, `SuperAdmin:Emails`, etc.)
 - `launchSettings.json` only affects `dotnet run` / `dotnet watch` profiles.

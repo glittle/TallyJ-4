@@ -13,6 +13,16 @@ The previous `Backend.Domain` and `Backend.Application` projects were fully merg
 
 **Rejected alternative:** keep or reintroduce separate Domain/Application class libraries. Rejected for this codebase’s current size and ownership model — the split had become dead weight and produced duplicate or stale guidance.
 
+## Published process, not container images
+
+**Status:** active  
+**Evidence:** confirmed (maintainer: the image and compose definitions were never tested)  
+**Revisit when:** a container deployment is actually tested and adopted
+
+The app is hosted as a published ASP.NET Core process. On Windows that is IIS (`backend/web.config`). On Linux it is the same process behind nginx or Apache (`DEPLOYING_LOCALLY.md`). SQL Server is installed or reached as its own server. This repository does not include image or compose definitions.
+
+**Rejected alternative:** keep those untested image and compose definitions, including an nginx config that existed only to serve the frontend image, as a starting point. Rejected — they were never tested, the backend image still targeted a legacy `TallyJ4` assembly name, and the supported IIS and Linux publish path does not use them.
+
 ## Social preview URLs are static and pinned to production
 
 **Status:** active  

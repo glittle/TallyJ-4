@@ -16,7 +16,7 @@ TallyJ 4 is a full-stack election management and ballot tallying system for Bah√
 
 - .NET SDK 10
 - Node.js **22.19+** (required by current frontend tooling: Vite, OpenAPI client generator, and `vite-plugin-mkcert`; Node 20 is not sufficient)
-- SQL Server Express, SQL Server Developer Edition, or Docker SQL Server
+- SQL Server Express, SQL Server Developer Edition, or SQL Server on Linux
 
 ### Start the backend
 

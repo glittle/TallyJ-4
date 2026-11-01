@@ -68,7 +68,6 @@ TallyJ v4 is a complete rewrite of the election management system with modern te
    - Comprehensive audit logging
    - Advanced reporting and analytics
    - Data export (PDF, Excel, CSV)
-   - Docker deployment support
 
 ### 🔄 Improved Features
 

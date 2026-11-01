@@ -6,8 +6,10 @@ This is the canonical deployment document for the current repository.
 
 TallyJ 4 is deployed as two pieces:
 
-1. SQL Server database
+1. SQL Server database (installed or hosted on its own; Windows or Linux)
 2. ASP.NET Core backend — it serves both the API and the compiled frontend static files
+
+The host is Windows IIS (`backend/web.config`) or the published process on Linux behind nginx or Apache. See `DEPLOYING_LOCALLY.md`. This repository does not ship container images or compose files.
 
 ## Pre-deployment checklist
 
@@ -146,12 +148,6 @@ Then deploy `backend/publish/` to the server.  The backend detects the environme
 - open an election
 - verify at least one CRUD workflow relevant to your deployment
 
-## Docker status
-
-The repository includes Dockerfiles and compose files, but they should be validated before relying on them for production deployment.
-
-At the time of this cleanup, the backend Docker assets still reference legacy `TallyJ4` project filenames instead of the current `Backend` project naming, so treat them as starting points rather than canonical production instructions.
-
 ## Operational notes
 
 - The backend currently exposes Swagger, but no dedicated health-check route is documented in the active API host
@@ -165,5 +161,4 @@ Update this document whenever any of the following changes:
 - publish command or project names
 - required environment variables
 - CORS or frontend base URL behavior
-- deployment topology
-- Docker and compose support status
+- deployment topology (IIS on Windows, or the published process behind nginx/Apache on Linux)
