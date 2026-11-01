@@ -101,7 +101,7 @@ public class LocalAuthService : ILocalAuthService
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to store the owner restriction row for {Email}", request.Email);
+                _logger.LogError(ex, "Failed to store the owner restriction row for {UserId}", user.Id);
                 foreach (var entry in _context.ChangeTracker.Entries<OwnerSendControl>().ToList())
                 {
                     if (entry.State == EntityState.Added)
