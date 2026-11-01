@@ -19,9 +19,26 @@ The previous `Backend.Domain` and `Backend.Application` projects were fully merg
 **Evidence:** confirmed (maintainer: the image and compose definitions were never tested)  
 **Revisit when:** a container deployment is actually tested and adopted
 
-The app is hosted as a published ASP.NET Core process. On Windows that is IIS (`backend/web.config`). On Linux it is the same process behind nginx or Apache (`DEPLOYING_LOCALLY.md`). SQL Server is installed or reached as its own server. This repository does not include image or compose definitions.
+The app is hosted as a published ASP.NET Core process, not as a container image. Hosted UAT is Linux Azure App Service (`dotnet Backend.dll` on `tallyj4-uat`). Self-hosting is Windows IIS (`backend/web.config`) or the same process on Linux behind nginx or Apache (`DEPLOYING_LOCALLY.md`). SQL Server is installed or reached as its own server. This repository does not include image or compose definitions.
 
 **Rejected alternative:** keep those untested image and compose definitions, including an nginx config that existed only to serve the frontend image, as a starting point. Rejected — they were never tested, the backend image still targeted a legacy `TallyJ4` assembly name, and the supported IIS and Linux publish path does not use them.
+
+## UAT zip deploy is one combined site
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** `.azure/pipelines/templates/deploy-uat-appservice.yml` (App Service zip deploy replaces the site)  
+**Revisit when:** hosted UAT leaves `tallyj4-uat`, zip deploy stops replacing the whole site, or the pipelines start deploying production
+
+Hosted UAT is the Linux App Service web app `tallyj4-uat` (resource group `TallyJ3`) at https://uat.v4.tallyj.com. The two Azure DevOps pipelines still build only their own half (backend definition 3 publishes `backend_pkg` / `Backend.zip`; frontend definition 4 publishes `frontend_pkgs` / `frontend.zip`). Each deploy job, on a Microsoft-hosted Ubuntu agent, takes its own artifact plus the latest successful artifact of the other pipeline on `main`, puts the frontend dist inside the backend publish `wwwroot/`, and zip-deploys that one package with `AzureWebApp@1`. The shared steps are `.azure/pipelines/templates/deploy-uat-appservice.yml`. The app's own settings stay on the site, including the startup command `dotnet Backend.dll`. These pipelines deploy UAT only. Self-hosting on IIS or Linux is unchanged.
+
+**Reason:** App Service zip deploy replaces the whole site. The IIS layout deployed the backend to the site and the frontend dist into that site's `wwwroot` as a second package. A second zip deploy would delete whichever half was not in the latest zip. The SPA is served from `wwwroot` next to `Backend.dll`.
+
+**Rejected alternative:** deploy each pipeline's zip on its own, as the IIS virtual-application deploy did. The later deploy would wipe the earlier one.
+
+**Rejected alternative:** a third pipeline that only combines and deploys. Each existing pipeline already runs when its half changes, and either change has to publish a full site. The template is the shared part.
+
+**Rejected alternative:** send app settings or `startUpCommand` from the deploy task. The site already has them. A deploy that rewrites them can clear the startup command or the host configuration.
 
 ## SQL retries and single-query splitting
 
@@ -56,7 +73,7 @@ Startup migrate and seed run inside `Database.CreateExecutionStrategy().ExecuteA
 **Source:** production host in `ClientEnvResolver` tests (`https://v4.tallyj.com`); UAT host `https://uat.v4.tallyj.com`; `MapFallbackToFile` serves `index.html` for unknown routes  
 **Revisit when:** v4 production moves off `v4.tallyj.com`, or UAT and production stop sharing one frontend build
 
-Link previews (LinkedIn, Facebook, Slack, X) read `frontend/index.html`. They do not run the SPA. `/` is that file via static files; deep links are the same file via `MapFallbackToFile`, so the head does not vary by route. `og:url` and `og:image` are absolute `https://v4.tallyj.com` URLs in source. The Azure frontend pipeline rewrites that origin to the UAT host only in the UAT zip.
+Link previews (LinkedIn, Facebook, Slack, X) read `frontend/index.html`. They do not run the SPA. `/` is that file via static files; deep links are the same file via `MapFallbackToFile`, so the head does not vary by route. `og:url` and `og:image` are absolute `https://v4.tallyj.com` URLs in source. The Azure frontend pipeline rewrites that origin to the UAT host in `dist/index.html` before it publishes `frontend.zip`. The UAT deploy copies that dist into `wwwroot` of the combined App Service package.
 
 The rewrite (`frontend/scripts/set-og-origin.mjs`) changes `og:url`, `og:image`, `twitter:url`, and `twitter:image` only when `new URL(content).origin` is exactly `https://v4.tallyj.com`. A second run whose tags are already the target origin leaves the file unchanged.
 

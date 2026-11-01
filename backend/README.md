@@ -113,7 +113,7 @@ v3 vs v4 analysis comparison (issue #168): `dotnet test Backend.Tests/Backend.Te
 
 Pull requests into `main` that change `backend/**`, `Backend.Tests/**`, `repo.sln`, `global.json`, `Directory.*` (for example `Directory.Build.props`), or `.github/workflows/backend-pr.yml` run the **Backend (build, tests)** check on `ubuntu-latest` and **Backend (build, tests, windows)** on `windows-latest`. The workflow is `.github/workflows/backend-pr.yml`. It uses the .NET SDK from `global.json` (**10.0.103**, `rollForward: latestFeature`) via `actions/setup-dotnet`, the same pin as `UseDotNet` `useGlobalJson: true` in `.azure/pipelines/azure-back-end-pipeline.yml`. `backend/Backend.csproj` and `Backend.Tests/Backend.Tests.csproj` target **net10.0**.
 
-The Azure back-end pipeline is push-to-main only (`pr: none`) and runs on `windows-latest`. This pull-request check runs the same Release test pass on `ubuntu-latest` and `windows-latest`. Tests use SQLite (`Backend.Tests/IntegrationTests/CustomWebApplicationFactory.cs`) or EF Core InMemory (`Backend.Tests/UnitTests/ServiceTestBase.cs`), so SQL Server is not required.
+The Azure back-end pipeline is push-to-main only (`pr: none`). Its build and tests run on `windows-latest`; the UAT deploy job runs on `ubuntu-latest`. This pull-request check runs the same Release test pass on `ubuntu-latest` and `windows-latest`. Tests use SQLite (`Backend.Tests/IntegrationTests/CustomWebApplicationFactory.cs`) or EF Core InMemory (`Backend.Tests/UnitTests/ServiceTestBase.cs`), so SQL Server is not required.
 
 From the repository root, that check runs:
 
