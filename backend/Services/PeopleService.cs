@@ -484,6 +484,7 @@ public class PeopleService : IPeopleService
 
         var dtos = people.Select(MapToPersonListDto).ToList();
         await ApplyPhoneSmsHintsAsync(dtos, people);
+        await ApplyLastAnnouncementsAsync(electionGuid, dtos);
         return dtos;
     }
 
@@ -853,6 +854,34 @@ public class PeopleService : IPeopleService
         for (var i = 0; i < dtos.Count; i++)
         {
             dtos[i].PhoneOnlineVoter = OnlineVoterPhoneHelper.ToListHint(people[i].Phone, rows);
+        }
+    }
+
+    private async Task ApplyLastAnnouncementsAsync(
+        Guid electionGuid,
+        IReadOnlyList<PersonListDto> dtos)
+    {
+        if (dtos.Count == 0)
+        {
+            return;
+        }
+
+        var guids = dtos.Select(dto => dto.PersonGuid).ToList();
+        var rows = await _context.PersonLastAnnouncements
+            .AsNoTracking()
+            .Where(row => row.ElectionGuid == electionGuid && guids.Contains(row.PersonGuid))
+            .ToListAsync();
+        var byPerson = rows.ToDictionary(row => row.PersonGuid);
+        foreach (var dto in dtos)
+        {
+            if (!byPerson.TryGetValue(dto.PersonGuid, out var row))
+            {
+                continue;
+            }
+
+            dto.LastAnnouncementChannel = row.Channel;
+            dto.LastAnnouncementOutcome = row.Outcome;
+            dto.LastAnnouncementError = row.Error;
         }
     }
 

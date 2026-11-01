@@ -4564,6 +4564,237 @@
         }
       }
     },
+    "/api/People/{electionGuid}/notifyAnnouncement": {
+      "post": {
+        "tags": [
+          "People"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_StartAnnouncementDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_StartAnnouncementDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_StartAnnouncementDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_AnnouncementStatusDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_AnnouncementStatusDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_AnnouncementStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/People/{electionGuid}/abortAnnouncement": {
+      "post": {
+        "tags": [
+          "People"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_AbortAnnouncementDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_AbortAnnouncementDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_AbortAnnouncementDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_AnnouncementStatusDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_AnnouncementStatusDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_AnnouncementStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/People/{electionGuid}/announcementStatus": {
+      "get": {
+        "tags": [
+          "People"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "channel",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "queueToken",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_AnnouncementStatusDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_AnnouncementStatusDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_AnnouncementStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/People/{electionGuid}/retryFailedAnnouncement": {
+      "post": {
+        "tags": [
+          "People"
+        ],
+        "parameters": [
+          {
+            "name": "electionGuid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_RetryFailedAnnouncementDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_RetryFailedAnnouncementDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/People_RetryFailedAnnouncementDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_AnnouncementStatusDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_AnnouncementStatusDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponsePeople_AnnouncementStatusDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/PeopleImport/{electionGuid}/upload": {
       "post": {
         "tags": [
@@ -9129,6 +9360,29 @@
         },
         "additionalProperties": false
       },
+      "ApiResponsePeople_AnnouncementStatusDto": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "$ref": "#/components/schemas/People_AnnouncementStatusDto"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApiResponsePeople_CheckSelectedWhatsAppResultDto": {
         "type": "object",
         "properties": {
@@ -12252,11 +12506,86 @@
         },
         "additionalProperties": false
       },
+      "People_AbortAnnouncementDto": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "nullable": true
+          },
+          "queueToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "People_AbortWhatsAppNotifyDto": {
         "type": "object",
         "properties": {
           "queueToken": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "People_AnnouncementPersonResultDto": {
+        "type": "object",
+        "properties": {
+          "personGuid": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "outcome": {
+            "type": "string",
+            "nullable": true
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "People_AnnouncementStatusDto": {
+        "type": "object",
+        "properties": {
+          "queueToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "channel": {
+            "type": "string",
+            "nullable": true
+          },
+          "running": {
+            "type": "boolean"
+          },
+          "cancelled": {
+            "type": "boolean"
+          },
+          "queued": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sent": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skipped": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/People_AnnouncementPersonResultDto"
+            },
             "nullable": true
           }
         },
@@ -12624,6 +12953,18 @@
           },
           "phoneOnlineVoter": {
             "$ref": "#/components/schemas/People_PersonPhoneSmsHintDto"
+          },
+          "lastAnnouncementChannel": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastAnnouncementOutcome": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastAnnouncementError": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -12708,11 +13049,39 @@
         },
         "additionalProperties": false
       },
+      "People_RetryFailedAnnouncementDto": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "People_SetPersonPhoneSmsStatusDto": {
         "type": "object",
         "properties": {
           "smsStatus": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "People_StartAnnouncementDto": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "nullable": true
+          },
+          "personGuids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
             "nullable": true
           }
         },
@@ -12786,6 +13155,10 @@
             "format": "uuid"
           },
           "outcome": {
+            "type": "string",
+            "nullable": true
+          },
+          "error": {
             "type": "string",
             "nullable": true
           }

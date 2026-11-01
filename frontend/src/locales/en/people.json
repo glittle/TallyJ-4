@@ -1363,5 +1363,210 @@
     "t": "Voters",
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "people.filterLastSend": {
+    "t": "Last send",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.filterLastSendOption.all": {
+    "t": "All",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.filterLastSendOption.failed": {
+    "t": "Last send failed",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.lastSendColumn": {
+    "t": "Last send",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.lastSendChannel.email": {
+    "t": "Email",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.lastSendChannel.sms": {
+    "t": "SMS",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.lastSendChannel.whatsapp": {
+    "t": "WhatsApp",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.sendEmail": {
+    "t": "Send email ({count})",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.sendEmailNone": {
+    "t": "Select people with an email address.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.sendSms": {
+    "t": "Send SMS ({count})",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.sendSmsNone": {
+    "t": "Select people with a phone number.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.retryFailed": {
+    "t": "Retry failed",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.retryFailedNone": {
+    "t": "No failed recipients to retry.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.retryChannel": {
+    "t": "Channel to retry",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementResults": {
+    "t": "Announcement results",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementQueued": {
+    "t": "Sending to {queued} people. Already-sent messages stay sent if you stop.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcement.channelInvalid": {
+    "t": "Choose email, SMS, or WhatsApp.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcement.tooMany": {
+    "t": "At most 100 people can be sent at once.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcement.alreadyRunning": {
+    "t": "An announcement is already sending on this channel for this election.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcement.emailNotConfigured": {
+    "t": "Email is not configured, so the announcement was not sent.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcement.smsNotConfigured": {
+    "t": "SMS is not configured, so the announcement was not sent.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcement.electionNotFound": {
+    "t": "Election not found.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcement.textNotSet": {
+    "t": "Set the announcement text on the election before sending.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcement.notFound": {
+    "t": "No announcement is running for this election.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.sendOutcome.skipped-no-email": {
+    "t": "Skipped (no email)",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.sendOutcome.skipped-invalid-email": {
+    "t": "Skipped (invalid email)",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.sendOutcome.skipped-invalid-phone": {
+    "t": "Skipped (invalid phone)",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.sendOutcome.skipped-sms-blocked": {
+    "t": "Skipped (SMS blocked)",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.not-approved": {
+    "t": "Owners have not approved paid sends.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.election-cap": {
+    "t": "This election has used its paid-send allowance.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.owner-daily-cap": {
+    "t": "The owner daily paid-send cap is reached.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.frozen": {
+    "t": "Sends are frozen.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.flagged": {
+    "t": "This election is flagged and sends are blocked.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.prefix-limit": {
+    "t": "Too many sends to this phone prefix.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.prefix-unparsed": {
+    "t": "The phone number could not be checked against prefix limits.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.send-failed": {
+    "t": "The provider did not accept the message.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.not-configured": {
+    "t": "Sending is not configured.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.malformed-e164": {
+    "t": "The phone number is not a valid international number.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.555-range": {
+    "t": "The phone number is in the 555 range.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.invalid-email": {
+    "t": "The email address is not valid.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
+  },
+  "people.announcementError.cancelled": {
+    "t": "Cancelled before the provider was called.",
+    "s": "ai",
+    "w": "2026-10-26T06:00:00Z"
   }
 }

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { PersonListDto, PersonPhoneSmsHintDto } from "@/types/Person";
 import { phoneSmsListHint } from "@/utils/phoneOnlineVoterStatus";
 import {
+  PEOPLE_LIST_LAST_SEND_FILTER_FAILED,
   PEOPLE_LIST_WHATSAPP_FILTER_ALL,
   PEOPLE_LIST_WHATSAPP_FILTER_HAS,
   PEOPLE_LIST_WHATSAPP_FILTER_NO,
@@ -184,6 +185,53 @@ describe("peopleListWhatsAppFilter", () => {
         (row) => row.personGuid,
       ),
     ).toEqual(["ok"]);
+  });
+
+  it("keeps only people whose last send failed, together with the WhatsApp filter", () => {
+    const failed = person({
+      personGuid: "failed",
+      fullName: "Grace Hopper",
+      phoneOnlineVoter: hint({ whatsAppStatus: "OK" }),
+      lastAnnouncementChannel: "sms",
+      lastAnnouncementOutcome: "failed",
+      lastAnnouncementError: "election-cap",
+    });
+    const sent = person({
+      personGuid: "sent",
+      phoneOnlineVoter: hint({ whatsAppStatus: "OK" }),
+      lastAnnouncementOutcome: "sent",
+    });
+    const skipped = person({
+      personGuid: "skipped",
+      lastAnnouncementOutcome: "skipped-no-email",
+    });
+    const rollWithSends = [failed, sent, skipped, ok];
+
+    expect(
+      filterPeopleList(
+        rollWithSends,
+        "",
+        PEOPLE_LIST_WHATSAPP_FILTER_ALL,
+        PEOPLE_LIST_LAST_SEND_FILTER_FAILED,
+      ).map((row) => row.personGuid),
+    ).toEqual(["failed"]);
+
+    expect(
+      filterPeopleList(
+        rollWithSends,
+        "",
+        PEOPLE_LIST_WHATSAPP_FILTER_HAS,
+        PEOPLE_LIST_LAST_SEND_FILTER_FAILED,
+      ).map((row) => row.personGuid),
+    ).toEqual(["failed"]);
+
+    expect(
+      filterPeopleList(
+        rollWithSends,
+        "grace",
+        PEOPLE_LIST_WHATSAPP_FILTER_ALL,
+      ).map((row) => row.personGuid),
+    ).toEqual(["failed"]);
   });
 
   it("does not use SmsStatus for the WhatsApp filter", () => {

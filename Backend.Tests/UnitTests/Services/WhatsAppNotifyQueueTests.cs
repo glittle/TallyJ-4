@@ -32,6 +32,35 @@ public class WhatsAppNotifyQueueTests : IDisposable
     }
 
     [Fact]
+    public async Task Start_ProviderFailure_RecordsErrorWithoutSmsLog()
+    {
+        var electionGuid = Guid.NewGuid();
+        var person = await SeedPersonAsync(electionGuid, "+14168972920", whatsAppStatus: "OK");
+        var client = new Mock<IGreenApiWhatsAppClient>();
+        client.Setup(c => c.IsConfigured()).Returns(true);
+        client
+            .Setup(c => c.SendMessageAsync(person.Phone!, It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(GreenApiWhatsAppSendResult.Failed("The operation has timed out."));
+        var queue = CreateQueue(client);
+
+        await queue.StartAsync(electionGuid, [person.PersonGuid]);
+        var status = await WaitUntilIdle(queue, electionGuid);
+
+        Assert.Equal(1, status.Failed);
+        Assert.Equal(WhatsAppNotifyOutcome.Failed, status.Results[0].Outcome);
+        Assert.Equal("The operation has timed out.", status.Results[0].Error);
+
+        await using var db = new TestMainDbContext(_options);
+        Assert.Equal(0, await db.SmsLogs.CountAsync());
+        var last = await db.PersonLastAnnouncements.SingleAsync();
+        Assert.Equal(person.PersonGuid, last.PersonGuid);
+        Assert.Equal(AnnouncementChannels.WhatsApp, last.Channel);
+        Assert.Equal(WhatsAppNotifyOutcome.Failed, last.Outcome);
+        Assert.Equal("The operation has timed out.", last.Error);
+        Assert.DoesNotContain(person.Phone!, last.Error);
+    }
+
+    [Fact]
     public async Task Start_OkNumbers_SendAndWriteSmsLog()
     {
         var electionGuid = Guid.NewGuid();
@@ -346,6 +375,7 @@ public class WhatsAppNotifyQueueTests : IDisposable
         var services = new ServiceCollection();
         services.AddScoped<MainDbContext>(_ => new TestMainDbContext(_options));
         services.AddSingleton<IGreenApiWhatsAppClient>(client.Object);
+        services.AddSingleton<ICodeSendGuard, AllowingCodeSendGuard>();
         var provider = services.BuildServiceProvider();
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
@@ -470,4 +500,26 @@ public class WhatsAppNotifyQueueTests : IDisposable
         Phone = phone,
         RowVersion = new byte[8]
     };
+
+    /// <summary>
+    /// Existing notify tests are not about caps. The real guard is covered by
+    /// <see cref="BulkSendCapTests"/>. This double allows the send and writes nothing.
+    /// </summary>
+    private sealed class AllowingCodeSendGuard : ICodeSendGuard
+    {
+        public Task<CodeSendReservation> ReserveAsync(
+            IReadOnlyList<Guid> electionGuids,
+            string channel,
+            string destination,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult(new CodeSendReservation(true, null, electionGuids.FirstOrDefault(), null, false));
+
+        public Task LogOutcomeAsync(
+            CodeSendReservation reservation,
+            string channel,
+            string destination,
+            bool sent,
+            CancellationToken cancellationToken = default) =>
+            Task.CompletedTask;
+    }
 }

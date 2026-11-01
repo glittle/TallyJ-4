@@ -984,6 +984,51 @@ namespace Backend.Migrations
                     b.ToTable("People");
                 });
 
+            modelBuilder.Entity("Backend.Entities.PersonLastAnnouncement", b =>
+                {
+                    b.Property<int>("RowId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("_RowId");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RowId"));
+
+                    b.Property<DateTimeOffset>("AttemptedAt")
+                        .HasPrecision(0)
+                        .HasColumnType("datetimeoffset(0)");
+
+                    b.Property<string>("Channel")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(20)");
+
+                    b.Property<Guid>("ElectionGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Error")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Outcome")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(40)");
+
+                    b.Property<Guid>("PersonGuid")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("RowId");
+
+                    b.HasIndex(new[] { "ElectionGuid", "Channel", "Outcome" }, "IX_PersonLastAnnouncement_Election_Channel_Outcome");
+
+                    b.HasIndex(new[] { "PersonGuid" }, "IX_PersonLastAnnouncement_Person")
+                        .IsUnique();
+
+                    b.ToTable("PersonLastAnnouncements");
+                });
+
             modelBuilder.Entity("Backend.Entities.PhonePrefixSendCounter", b =>
                 {
                     b.Property<string>("Prefix")
