@@ -32,7 +32,7 @@ Remaining #168 work is import → Analyze → diff of `ResultSummary`, `ResultTi
 
 **Rejected alternative:** rewrite or “port” the analyzer as the #168 deliverable. Rejected — the issue is comparison against known-good v3 results.
 
-**Rejected alternative:** point automated tests at Azure SQL. Rejected — Backend.Tests stay on local InMemory/SQLite; live comparison in the app can use local Docker SQL + SeedOnStartup.
+**Rejected alternative:** point automated tests at Azure SQL. Rejected — Backend.Tests stay on local InMemory/SQLite; live comparison in the app can use a local SQL Server database with SeedOnStartup.
 
 **Rejected alternative:** require a separate `expected.json` for every real package. Rejected — a v3 export after Analyze already carries `resultSummary` / `result` / `resultTie`; import remaps GUIDs, so the harness snapshots those rows (by name) before re-analysis.
 

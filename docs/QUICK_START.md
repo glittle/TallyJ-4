@@ -10,26 +10,7 @@ Get up and running with TallyJ in 15 minutes!
 
 ### 1. Installation (5 minutes)
 
-**Option A: Docker (Recommended)**
-
-```bash
-# Clone repository
-git clone https://github.com/your-org/tallyj4.git
-cd tallyj4
-
-# Configure environment
-cp .env.docker.example .env.docker
-# Edit .env.docker with your settings
-
-# Start services
-docker-compose up -d
-
-# Access the application
-# Frontend: https://localhost:8095
-# Backend API: http://localhost:5016
-```
-
-**Option B: Local Development**
+Install SQL Server (Express or Developer Edition on Windows, or SQL Server on Linux), then start the app locally:
 
 ```bash
 # Backend
@@ -43,6 +24,9 @@ cd frontend
 npm install
 npm run dev
 ```
+
+- Frontend: https://localhost:8095
+- Backend API: http://localhost:5016
 
 ### 2. Initial Setup (3 minutes)
 

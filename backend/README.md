@@ -15,8 +15,7 @@ All domain entities, enumerations, the EF Core `MainDbContext`, identity models 
 ## Prerequisites
 
 - .NET SDK 10
-- SQL Server Express or SQL Server Developer Edition
-- Optional: Docker Desktop if you prefer running SQL Server in a container
+- SQL Server Express, SQL Server Developer Edition, or SQL Server on Linux
 
 ## Local database options
 
@@ -29,15 +28,9 @@ The default development configuration expects:
 
 The default development connection string key is `ConnectionStrings:TallyJ4`.
 
-### Option 2: SQL Server in Docker
+### Option 2: Another SQL Server instance
 
-Example local SQL Server container:
-
-```bash
-docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=YourStrong@Passw0rd" -p 1433:1433 --name tallyj4-sql -d mcr.microsoft.com/mssql/server:2022-latest
-```
-
-If you use Docker SQL Server, override `ConnectionStrings:TallyJ4` accordingly.
+SQL Server on Linux, or any other reachable SQL Server, uses the same key. Override `ConnectionStrings:TallyJ4` with user secrets or an environment variable so the host, database, and credentials match that server. Do not commit the password.
 
 ## Recommended configuration approach
 

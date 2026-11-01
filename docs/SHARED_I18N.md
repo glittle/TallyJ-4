@@ -130,7 +130,7 @@ Notes that matter if you copy this:
 - Missing key: return the key, `ResourceNotFound = true`.
 - **Set `SupportedCultures`.** If you leave it empty, ASP.NET Core will ignore `Accept-Language` and stay on the default culture. TallyJ’s checked-in `appsettings.json` currently leaves this empty; do not copy that part.
 - Implement **English fallback** in the provider (try `en` if the requested culture has no key). TallyJ’s comment claims this; the code does not. Copy the comment as a requirement, not the gap.
-- The API host must **actually have that folder**. `csproj` copy-to-output, a Docker volume, or a deploy step. A relative `../frontend/src/locales` works on a laptop; it will not exist in a published API zip unless you put it there.
+- The API host must **actually have that folder**. `csproj` copy-to-output, or a deploy step that copies the folder onto the host. A relative `../frontend/src/locales` works on a laptop; it will not exist in a published API zip unless you put it there.
 
 Root `locales/common.json` (language names, feature flags) is frontend-only. The backend only reads `{lang}/*.json`.
 
