@@ -1225,9 +1225,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.ownerRestricted.banner": {
-    "t": "Your account is restricted. You can set up elections, upload people, enter ballots, tally, and view reports. You cannot send voter codes or messages, or open online voting, until a site administrator approves your account. You can email a test code to your own account address.",
+    "t": "A site administrator has not approved this account yet. That approval is separate from verifying your email. You can set up elections, upload people, enter ballots, tally, and view reports. You cannot send voter codes or messages, or open online voting, until the account is approved. You can email a test code to your own account address.",
     "s": "source",
-    "w": "2026-11-01T20:00:00Z"
+    "w": "2026-11-07T06:00:00Z"
   },
   "elections.ownerRestricted.requestReview": {
     "t": "Request review",
@@ -1285,14 +1285,14 @@
     "w": "2026-11-01T20:00:00Z"
   },
   "elections.ownerRestricted.onlineBlocked": {
-    "t": "Online voting stays closed until a site administrator approves your account. Setup, teller entry, tallying, and reports still work.",
+    "t": "Online voting stays closed until a site administrator approves this account. Email verification does not grant that approval. Setup, teller entry, tallying, and reports still work.",
     "s": "source",
-    "w": "2026-11-01T20:00:00Z"
+    "w": "2026-11-07T06:00:00Z"
   },
   "elections.paidChannels.ownerRestricted": {
-    "t": "Voter codes and online voting are unavailable until a site administrator approves your account. You can email a test code to your own account address. In-person and teller entry still work.",
+    "t": "Voter codes and online voting stay closed until a site administrator approves this account. That approval is separate from verifying your email. You can email a test code to your own account address. In-person and teller entry still work.",
     "s": "source",
-    "w": "2026-11-01T20:00:00Z"
+    "w": "2026-11-07T06:00:00Z"
   },
   "elections.ownerRestricted.sendTestCode": {
     "t": "Send me a test code",

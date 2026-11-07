@@ -3,6 +3,7 @@ using Backend.DTOs.Elections;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
 namespace Backend.Tests.UnitTests.Services;
@@ -53,6 +54,64 @@ public class PaidChannelStatusServiceTests : ServiceTestBase
         var dto = await ApplyAsync();
 
         Assert.Null(dto.PaidChannelBlockReason);
+    }
+
+    [Fact]
+    public async Task ApprovedOwner_ClearsOnlineVotingBlock_WhenACoAdminIsStillInReview()
+    {
+        Context.OwnerSendControls.AddRange(
+            new OwnerSendControl
+            {
+                UserId = _ownerId,
+                RestrictionStatus = OwnerRestrictionStatus.Approved,
+                PaidSendsApproved = true
+            },
+            new OwnerSendControl
+            {
+                UserId = _coOwnerId,
+                RestrictionStatus = OwnerRestrictionStatus.ReviewRequested,
+                PaidSendsApproved = false
+            });
+        await Context.SaveChangesAsync();
+
+        var dto = await ApplyAsync();
+
+        Assert.Null(dto.PaidChannelBlockReason);
+        Assert.False(dto.OnlineVotingSuspended);
+    }
+
+    [Fact]
+    public async Task ReviewRequestedOwners_BlockOnlineVoting_UntilOneIsApproved()
+    {
+        Context.OwnerSendControls.AddRange(
+            new OwnerSendControl
+            {
+                UserId = _ownerId,
+                RestrictionStatus = OwnerRestrictionStatus.ReviewRequested,
+                PaidSendsApproved = false
+            },
+            new OwnerSendControl
+            {
+                UserId = _coOwnerId,
+                RestrictionStatus = OwnerRestrictionStatus.Restricted,
+                PaidSendsApproved = false
+            });
+        await Context.SaveChangesAsync();
+
+        var blocked = await ApplyAsync();
+        Assert.Equal(PaidChannelStatus.OwnerRestricted, blocked.PaidChannelBlockReason);
+        Assert.True(blocked.OnlineVotingSuspended);
+
+        var owner = await Context.OwnerSendControls
+            .Where(row => row.UserId == _ownerId)
+            .SingleAsync();
+        owner.RestrictionStatus = OwnerRestrictionStatus.Approved;
+        owner.PaidSendsApproved = true;
+        await Context.SaveChangesAsync();
+
+        var opened = await ApplyAsync();
+        Assert.Null(opened.PaidChannelBlockReason);
+        Assert.False(opened.OnlineVotingSuspended);
     }
 
     [Fact]

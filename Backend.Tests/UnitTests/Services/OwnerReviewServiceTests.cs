@@ -121,6 +121,9 @@ public class OwnerReviewServiceTests : ServiceTestBase
         var row = await Context.OwnerSendControls.SingleAsync();
         Assert.Equal(OwnerRestrictionStatus.Approved, row.RestrictionStatus);
         Assert.True(row.PaidSendsApproved);
+        var visible = await service.GetForUserAsync(_ownerId.ToString());
+        Assert.Equal(OwnerRestrictionStatus.Approved, visible.Status);
+        Assert.False(visible.BlocksSends);
         Assert.Contains(_email.Messages, message => message.Subject == "[TallyJ] Your account is approved");
 
         var rejected = await service.RejectAsync(_ownerId, "admin-1", "Not a real community");

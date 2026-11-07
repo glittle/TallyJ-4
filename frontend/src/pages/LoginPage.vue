@@ -61,7 +61,12 @@ const loginForm = reactive({
   email: "",
   password: "",
   code: "", // Voter OTC
+  twoFactorCode: "",
 });
+
+const awaiting2FA = computed(
+  () => authStore.requires2FA && loginForm.password.length > 0,
+);
 
 const rules = computed<FormRules>(() => {
   const baseRules: FormRules = {};
@@ -148,10 +153,14 @@ const handleLogin = async () => {
     loading.value = true;
     try {
       if (isStandardLogin.value) {
-        await authStore.login({
+        const response = await authStore.login({
           email: loginForm.email,
           password: loginForm.password,
         });
+        if (response.requires2FA) {
+          loginForm.twoFactorCode = "";
+          return;
+        }
       } else if (isVoterLogin.value) {
         // Handle System 3 login (OTC)
         // await authStore.loginVoter(loginForm.email, loginForm.code);
@@ -170,6 +179,41 @@ const handleLogin = async () => {
       loading.value = false;
     }
   });
+};
+
+const handleVerify2FA = async () => {
+  if (!loginForm.password) {
+    cancel2FA();
+    return;
+  }
+  if (!/^\d{6}$/.test(loginForm.twoFactorCode.trim())) {
+    showWarningMessage(t("auth.twoFactorCodePlaceholder"));
+    return;
+  }
+
+  loading.value = true;
+  try {
+    const response = await authStore.verify2FA({
+      email: authStore.pending2FAEmail || loginForm.email,
+      password: loginForm.password,
+      code: loginForm.twoFactorCode.trim(),
+    });
+    if (response.requires2FA) {
+      return;
+    }
+    const redirectPath = (route.query.redirect as string) || "/dashboard";
+    router.push(redirectPath);
+  } catch (error) {
+    console.error("2FA verification failed:", error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const cancel2FA = () => {
+  authStore.requires2FA = false;
+  authStore.pending2FAEmail = null;
+  loginForm.twoFactorCode = "";
 };
 
 const googleButtonRef = ref<HTMLElement>();
@@ -447,6 +491,10 @@ onMounted(() => {
 onBeforeUnmount(() => {
   globalThis.removeEventListener("keydown", handleKeydown);
   teardownGoogleOneTap();
+  // The password lives only in this form. A later visit must not reopen the
+  // code step and submit that empty password.
+  authStore.requires2FA = false;
+  authStore.pending2FAEmail = null;
 });
 </script>
 
@@ -483,7 +531,7 @@ onBeforeUnmount(() => {
         </template>
 
         <!-- Social login only for Officers -->
-        <div v-if="mode === 'officer'" class="social-login">
+        <div v-if="mode === 'officer' && !awaiting2FA" class="social-login">
           <div
             v-if="googleReady"
             ref="googleButtonRef"
@@ -563,21 +611,25 @@ onBeforeUnmount(() => {
           :model="loginForm"
           :rules="rules"
           label-position="top"
-          @keyup.enter="handleLogin"
+          @keyup.enter="awaiting2FA ? handleVerify2FA() : handleLogin()"
         >
+          <p v-if="awaiting2FA" class="two-factor-hint" role="status">
+            {{ t("auth.twoFactorRequired") }}
+          </p>
+
           <!-- System 1 & 3: Email Field -->
           <el-form-item :label="t('auth.email')" prop="email">
             <el-input
               v-model="loginForm.email"
               :placeholder="t('auth.emailPlaceholder')"
-              :disabled="isVoterLogin && codeSent"
+              :disabled="(isVoterLogin && codeSent) || awaiting2FA"
               autofocus
             />
           </el-form-item>
 
           <!-- System 1: Password Field -->
           <el-form-item
-            v-if="isStandardLogin"
+            v-if="isStandardLogin && !awaiting2FA"
             :label="t('auth.password')"
             prop="password"
           >
@@ -586,6 +638,21 @@ onBeforeUnmount(() => {
               type="password"
               :placeholder="t('auth.passwordPlaceholder')"
               show-password
+            />
+          </el-form-item>
+
+          <el-form-item
+            v-if="awaiting2FA"
+            :label="t('auth.twoFactorCode')"
+            prop="twoFactorCode"
+          >
+            <el-input
+              v-model="loginForm.twoFactorCode"
+              :placeholder="t('auth.twoFactorCodePlaceholder')"
+              maxlength="6"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              data-testid="login-2fa-code"
             />
           </el-form-item>
 
@@ -616,6 +683,17 @@ onBeforeUnmount(() => {
 
             <!-- General Login Button -->
             <el-button
+              v-else-if="awaiting2FA"
+              type="primary"
+              :loading="loading"
+              class="submit-btn"
+              data-testid="login-2fa-submit"
+              @click="handleVerify2FA"
+            >
+              {{ t("auth.verify2FA") }}
+            </el-button>
+
+            <el-button
               v-else
               type="primary"
               :loading="loading"
@@ -637,9 +715,19 @@ onBeforeUnmount(() => {
             >
               {{ t("common.tryAgain") }}
             </el-button>
+
+            <el-button
+              v-if="awaiting2FA"
+              link
+              class="retry-link"
+              data-testid="login-2fa-back"
+              @click="cancel2FA"
+            >
+              {{ t("common.tryAgain") }}
+            </el-button>
           </div>
 
-          <p v-if="mode === 'officer'" class="new-account-hint">
+          <p v-if="mode === 'officer' && !awaiting2FA" class="new-account-hint">
             {{ t("auth.newAccountUseGoogle") }}
             <router-link to="/register">{{ t("auth.register") }}</router-link>
           </p>
@@ -702,6 +790,12 @@ onBeforeUnmount(() => {
 
   .retry-link {
     font-size: 0.85rem;
+  }
+
+  .two-factor-hint {
+    margin: 0 0 12px;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
   }
 
   .new-account-hint {

@@ -343,7 +343,7 @@ async function handleDeleteAllPeople() {
       <template #header>
         <div class="card-header">
           <div class="header-actions">
-            <el-space>
+            <el-space wrap class="people-toolbar">
               <el-input
                 v-model="searchQuery"
                 :placeholder="$t('people.search')"
@@ -422,17 +422,18 @@ async function handleDeleteAllPeople() {
                   $t("people.selectedCount", { count: selectedGuids.length })
                 }}
               </span>
+              <el-button
+                class="people-toolbar-delete"
+                type="danger"
+                plain
+                :loading="deletingAll"
+                :disabled="allPeople.length === 0"
+                @click="handleDeleteAllPeople"
+              >
+                {{ $t("people.import.deleteAllPeople") }}
+              </el-button>
             </el-space>
           </div>
-          <el-button
-            type="danger"
-            plain
-            :loading="deletingAll"
-            :disabled="allPeople.length === 0"
-            @click="handleDeleteAllPeople"
-          >
-            {{ $t("people.import.deleteAllPeople") }}
-          </el-button>
         </div>
       </template>
 
@@ -571,13 +572,28 @@ async function handleDeleteAllPeople() {
 
   .card-header {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
+    min-width: 0;
   }
 
   .header-actions {
     display: flex;
     align-items: center;
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .people-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .people-toolbar-delete {
+    flex-shrink: 0;
   }
 
   .whatsapp-filter {

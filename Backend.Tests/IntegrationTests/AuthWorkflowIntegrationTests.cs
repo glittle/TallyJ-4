@@ -183,6 +183,8 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
         var reLoginAuthResponse = JsonSerializer.Deserialize<AuthResponse>(reLoginContent, JsonOptions);
         reLoginAuthResponse.Should().NotBeNull();
         reLoginAuthResponse!.Requires2FA.Should().BeTrue();
+        var promptCookies = GetCookiesFromResponse(reLoginResponse);
+        promptCookies.Should().NotContainKey(SecureCookieMiddleware.AccessTokenCookieName);
 
         // Act - Verify 2FA with valid code
         var verifyRequest = new Verify2FARequest

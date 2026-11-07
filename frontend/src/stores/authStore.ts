@@ -132,6 +132,36 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  async function verify2FA(data: {
+    email: string;
+    password: string;
+    code: string;
+  }) {
+    try {
+      const response = await authService.verify2FA(data);
+      if (response.requires2FA) {
+        requires2FA.value = true;
+        pending2FAEmail.value = data.email;
+        return response;
+      }
+
+      const cookieData = secureTokenService.refreshAuthData();
+      email.value = cookieData.email || response.email;
+      name.value = cookieData.name || response.name || null;
+      authMethod.value =
+        cookieData.authMethod || response.authMethod || "Local";
+      requires2FA.value = false;
+      pending2FAEmail.value = null;
+      await fetchUserInfo();
+      tokenRefreshService.initialize(TOKEN_REFRESH_CONFIG);
+      return response;
+    } catch (error) {
+      const { handleApiError } = useApiErrorHandler();
+      handleApiError(error as any);
+      throw error;
+    }
+  }
+
   async function googleOneTapLogin(credential: string) {
     clearClientSessionSelections();
     try {
@@ -419,6 +449,7 @@ export const useAuthStore = defineStore("auth", () => {
     fetchUserInfo,
     ensureUserInfoLoaded,
     login,
+    verify2FA,
     googleOneTapLogin,
     telegramLogin,
     facebookLogin,
