@@ -248,7 +248,6 @@ const cancel2FA = () => {
 };
 
 const googleButtonRef = ref<HTMLElement>();
-const telegramReady = appConfig.enableTelegramLogin ?? false;
 const telegramBotUsername = appConfig.telegramBotUsername ?? "";
 
 const fbReady = ref(false);
@@ -669,7 +668,7 @@ onBeforeUnmount(() => {
           </div>
 
           <div
-            v-if="officerMethods.telegram && telegramReady"
+            v-if="officerMethods.telegram && telegramBotUsername"
             class="telegram-btn"
           >
             <TelegramLoginButton

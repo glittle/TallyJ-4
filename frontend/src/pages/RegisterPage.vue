@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useSignInCapabilities } from "@/composables/useSignInCapabilities";
 import { useNotifications } from "@/composables/useNotifications";
 import { getAppConfig } from "@/config/appConfig";
 import { authService } from "@/services/authService";
@@ -13,6 +14,21 @@ const router = useRouter();
 const route = useRoute();
 const appConfig = getAppConfig();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
+const {
+  officers,
+  loaded: signInLoaded,
+  load: loadSignIn,
+} = useSignInCapabilities();
+
+const showLocal = computed(
+  () => !signInLoaded.value || officers.value?.local !== false,
+);
+const showGoogle = computed(
+  () => signInLoaded.value && officers.value?.google === true,
+);
+const showNone = computed(
+  () => signInLoaded.value && !showLocal.value && !showGoogle.value,
+);
 
 const inviteToken = computed(() => {
   const raw = route.query.invite;
@@ -175,9 +191,11 @@ const handleRegister = async () => {
 };
 
 onMounted(async () => {
+  const capabilitiesPromise = loadSignIn();
   if (!inviteToken.value) {
     inviteChecked.value = true;
     inviteValid.value = false;
+    await capabilitiesPromise;
     return;
   }
 
@@ -191,6 +209,7 @@ onMounted(async () => {
     inviteChecked.value = true;
     inviteLoading.value = false;
   }
+  await capabilitiesPromise;
 });
 </script>
 
@@ -226,6 +245,7 @@ onMounted(async () => {
         </p>
         <div class="register-actions">
           <el-button
+            v-if="showGoogle"
             type="primary"
             class="submit-btn"
             @click="handleGoogleLogin"
@@ -238,8 +258,22 @@ onMounted(async () => {
         </div>
       </template>
 
+      <p
+        v-else-if="showNone"
+        class="register-closed-body"
+        data-testid="register-sign-in-none"
+      >
+        {{ t("auth.signIn.none") }}
+      </p>
+
+      <div v-else-if="showGoogle && !showLocal" class="register-actions">
+        <el-button class="submit-btn" @click="handleGoogleLogin">
+          {{ t("auth.googleLogin") }}
+        </el-button>
+      </div>
+
       <el-form
-        v-else
+        v-else-if="showLocal"
         ref="registerFormRef"
         :model="registerForm"
         :rules="rules"
@@ -252,7 +286,10 @@ onMounted(async () => {
           }}
         </p>
 
-        <div v-if="!inviteToken" class="register-actions google-first">
+        <div
+          v-if="showGoogle && !inviteToken"
+          class="register-actions google-first"
+        >
           <el-button class="submit-btn" @click="handleGoogleLogin">
             {{ t("auth.googleLogin") }}
           </el-button>

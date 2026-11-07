@@ -4,6 +4,7 @@ import LoginPage from "./LoginPage.vue";
 import { pinia, router, i18n } from "@/test/setup";
 import { useAuthStore } from "@/stores/authStore";
 import { authService } from "@/services/authService";
+import { getAppConfig, setAppConfig } from "@/config/appConfig";
 import ElementPlus from "element-plus";
 
 const officerGoogle = vi.hoisted(() => ({
@@ -285,6 +286,48 @@ describe("LoginPage", () => {
 
     expect(officerGoogle.initGoogleOneTap).not.toHaveBeenCalled();
     wrapper.unmount();
+    capabilities.mockRestore();
+  });
+
+  it("shows Telegram when officer Telegram is on even if the legacy flag is off", async () => {
+    const previous = getAppConfig();
+    setAppConfig({
+      ...previous,
+      enableTelegramLogin: false,
+      telegramBotUsername: "tallyj_bot",
+    });
+    const capabilities = vi
+      .spyOn(authService, "getSignInCapabilities")
+      .mockResolvedValue({
+        officers: {
+          local: true,
+          google: false,
+          facebook: false,
+          kakao: false,
+          telegram: true,
+        },
+        voters: {
+          google: false,
+          facebook: false,
+          kakao: false,
+          telegram: false,
+          emailCode: false,
+          phoneCode: false,
+          sms: false,
+          voice: false,
+          whatsApp: false,
+          directCode: false,
+        },
+      });
+
+    const wrapper = mount(LoginPage, {
+      global: { plugins: [pinia, router, i18n, ElementPlus] },
+    });
+    await flushPromises();
+
+    expect(wrapper.find(".telegram-btn").exists()).toBe(true);
+    wrapper.unmount();
+    setAppConfig(previous);
     capabilities.mockRestore();
   });
 });

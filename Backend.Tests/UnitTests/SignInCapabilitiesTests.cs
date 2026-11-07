@@ -133,6 +133,29 @@ public class SignInCapabilitiesTests
     }
 
     [Fact]
+    public void AllowsVoterRequest_RejectsWrongPairs_AndKeepsTheOtherType()
+    {
+        var voters = new VoterSignInCapabilities
+        {
+            EmailCode = true,
+            PhoneCode = true,
+            Sms = true,
+            Voice = false,
+            WhatsApp = true,
+            DirectCode = false
+        };
+
+        Assert.False(SignInCapabilities.AllowsVoterRequest(voters, "E", "sms"));
+        Assert.False(SignInCapabilities.AllowsVoterRequest(voters, "P", "email"));
+        Assert.False(SignInCapabilities.AllowsVoterRequest(voters, "P", "voice"));
+        Assert.False(SignInCapabilities.AllowsVoterRequest(voters, "C", "email"));
+        Assert.False(SignInCapabilities.AllowsVoterRequest(voters, "X", "email"));
+        Assert.True(SignInCapabilities.AllowsVoterRequest(voters, "E", "email"));
+        Assert.True(SignInCapabilities.AllowsVoterRequest(voters, "P", "sms"));
+        Assert.True(SignInCapabilities.AllowsVoterRequest(voters, "P", "whatsapp"));
+    }
+
+    [Fact]
     public void Testing_DoesNotRequireProviderSecrets()
     {
         var set = Evaluate(new Dictionary<string, string?>(), "Testing");
