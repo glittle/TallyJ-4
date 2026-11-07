@@ -1705,6 +1705,82 @@ export const Computers_ActiveComputerDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const Configuration_OfficerSignInCapabilitiesSchema = {
+    type: 'object',
+    properties: {
+        local: {
+            type: 'boolean'
+        },
+        google: {
+            type: 'boolean'
+        },
+        facebook: {
+            type: 'boolean'
+        },
+        kakao: {
+            type: 'boolean'
+        },
+        telegram: {
+            type: 'boolean'
+        },
+        any: {
+            type: 'boolean',
+            readOnly: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Configuration_SignInCapabilitySetSchema = {
+    type: 'object',
+    properties: {
+        officers: {
+            $ref: '#/components/schemas/Configuration_OfficerSignInCapabilities'
+        },
+        voters: {
+            $ref: '#/components/schemas/Configuration_VoterSignInCapabilities'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Configuration_VoterSignInCapabilitiesSchema = {
+    type: 'object',
+    properties: {
+        google: {
+            type: 'boolean'
+        },
+        facebook: {
+            type: 'boolean'
+        },
+        kakao: {
+            type: 'boolean'
+        },
+        telegram: {
+            type: 'boolean'
+        },
+        emailCode: {
+            type: 'boolean'
+        },
+        phoneCode: {
+            type: 'boolean'
+        },
+        sms: {
+            type: 'boolean'
+        },
+        voice: {
+            type: 'boolean'
+        },
+        whatsApp: {
+            type: 'boolean'
+        },
+        directCode: {
+            type: 'boolean'
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const Controllers_ChooseLocationRequestSchema = {
     type: 'object',
     properties: {
@@ -8205,6 +8281,41 @@ export const ApiResponsePaginatedResponseSuperAdmin_SuperAdminUserDtoWritableSch
                 type: 'string'
             },
             nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Configuration_OfficerSignInCapabilitiesWritableSchema = {
+    type: 'object',
+    properties: {
+        local: {
+            type: 'boolean'
+        },
+        google: {
+            type: 'boolean'
+        },
+        facebook: {
+            type: 'boolean'
+        },
+        kakao: {
+            type: 'boolean'
+        },
+        telegram: {
+            type: 'boolean'
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Configuration_SignInCapabilitySetWritableSchema = {
+    type: 'object',
+    properties: {
+        officers: {
+            $ref: '#/components/schemas/Configuration_OfficerSignInCapabilitiesWritable'
+        },
+        voters: {
+            $ref: '#/components/schemas/Configuration_VoterSignInCapabilities'
         }
     },
     additionalProperties: false

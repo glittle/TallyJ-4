@@ -58,6 +58,31 @@ public class SignInCapabilitiesTests
     }
 
     [Fact]
+    public void Production_ClientIdOnly_StillOffersOfficerGoogleOneTap()
+    {
+        var values = ConfiguredProviders();
+        values.Remove("GoogleClientSecret");
+
+        var set = Evaluate(values, Environments.Production);
+
+        Assert.True(set.Officers.Google);
+        Assert.True(set.Voters.Google);
+        Assert.False(SignInCapabilities.OfficerGoogleRedirectReady(
+            new ConfigurationBuilder().AddInMemoryCollection(values).Build()));
+    }
+
+    [Fact]
+    public void Production_SecretWithoutClientId_DoesNotOfferOfficerGoogle()
+    {
+        var values = ConfiguredProviders();
+        values.Remove("ClientEnv:googleClientId");
+
+        var set = Evaluate(values, Environments.Production);
+
+        Assert.False(set.Officers.Google);
+    }
+
+    [Fact]
     public void PlaceholderCredentials_DoNotCountAsConfigured()
     {
         var values = ConfiguredProviders();

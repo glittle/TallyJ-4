@@ -442,14 +442,14 @@ public partial class OnlineVotingService
         return computedHashHex == hash.ToLowerInvariant();
     }
 
+    private Backend.Configuration.VoterSignInCapabilities VoterSignIn() =>
+        Backend.Configuration.SignInCapabilities.Evaluate(_configuration, _hostEnvironment).Voters;
+
     /// <summary>
     /// Normalizes a phone number from Kakao by extracting digits and adding a + prefix.
     /// </summary>
     /// <param name="phone">The phone number from Kakao to normalize.</param>
     /// <returns>The normalized phone number with + prefix, or null if invalid.</returns>
-    private Backend.Configuration.VoterSignInCapabilities VoterSignIn() =>
-        Backend.Configuration.SignInCapabilities.Evaluate(_configuration, _hostEnvironment).Voters;
-
     private static string? NormalizeKakaoPhone(string? phone)
     {
         if (string.IsNullOrEmpty(phone)) return null;

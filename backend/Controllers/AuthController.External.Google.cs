@@ -44,13 +44,7 @@ public partial class AuthController
 
         _logger.LogInformation("Google login attempt from {ClientIp} with returnUrl: {ReturnUrl}", clientIp, returnUrl);
 
-        var googleClientSecret = _configuration["GoogleClientSecret"]; // server only
-        var googleClientId = _configuration["ClientEnv:googleClientId"]; // client as well
-
-        _logger.LogInformation("Google ClientId configured: {!string.IsNullOrWhiteSpace(googleClientId)}, ClientSecret configured: {!string.IsNullOrWhiteSpace(googleClientSecret)}", !string.IsNullOrWhiteSpace(googleClientId), !string.IsNullOrWhiteSpace(googleClientSecret));
-
-        if (string.IsNullOrWhiteSpace(googleClientId) || string.IsNullOrWhiteSpace(googleClientSecret)
-            || googleClientId.StartsWith("<") || googleClientSecret.StartsWith("<"))
+        if (!SignInCapabilities.OfficerGoogleRedirectReady(_configuration))
         {
             _logger.LogWarning("Google OAuth login attempted but credentials are not configured");
 

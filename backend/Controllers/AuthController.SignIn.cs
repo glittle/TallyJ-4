@@ -12,9 +12,10 @@ public partial class AuthController
     /// </summary>
     [AllowAnonymous]
     [HttpGet("sign-in-capabilities")]
-    public IActionResult GetSignInCapabilities()
+    [ProducesResponseType(typeof(SignInCapabilitySet), StatusCodes.Status200OK)]
+    public ActionResult<SignInCapabilitySet> GetSignInCapabilities()
     {
-        return Ok(SignInCapabilities.Evaluate(_configuration, _hostEnvironment));
+        return SignInCapabilities.Evaluate(_configuration, _hostEnvironment);
     }
 
     private SignInCapabilitySet CurrentSignIn() =>

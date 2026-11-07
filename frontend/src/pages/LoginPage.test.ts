@@ -6,6 +6,22 @@ import { useAuthStore } from "@/stores/authStore";
 import { authService } from "@/services/authService";
 import ElementPlus from "element-plus";
 
+const officerGoogle = vi.hoisted(() => ({
+  initGoogleOneTap: vi.fn(),
+  teardownGoogleOneTap: vi.fn(),
+}));
+
+vi.mock("@/composables/useGoogleOneTap", async () => {
+  const { ref } = await import("vue");
+  return {
+    useGoogleOneTap: () => ({
+      googleReady: ref(false),
+      initGoogleOneTap: officerGoogle.initGoogleOneTap,
+      teardownGoogleOneTap: officerGoogle.teardownGoogleOneTap,
+    }),
+  };
+});
+
 describe("LoginPage", () => {
   it("renders login title", () => {
     const wrapper = mount(LoginPage, {
@@ -233,6 +249,42 @@ describe("LoginPage", () => {
     );
     expect(empty.find('input[type="password"]').exists()).toBe(false);
     empty.unmount();
+    capabilities.mockRestore();
+  });
+
+  it("does not initialize Google One Tap when officer Google is disabled", async () => {
+    officerGoogle.initGoogleOneTap.mockClear();
+    const capabilities = vi
+      .spyOn(authService, "getSignInCapabilities")
+      .mockResolvedValue({
+        officers: {
+          local: true,
+          google: false,
+          facebook: false,
+          kakao: false,
+          telegram: false,
+        },
+        voters: {
+          google: false,
+          facebook: false,
+          kakao: false,
+          telegram: false,
+          emailCode: false,
+          phoneCode: false,
+          sms: false,
+          voice: false,
+          whatsApp: false,
+          directCode: false,
+        },
+      });
+
+    const wrapper = mount(LoginPage, {
+      global: { plugins: [pinia, router, i18n, ElementPlus] },
+    });
+    await flushPromises();
+
+    expect(officerGoogle.initGoogleOneTap).not.toHaveBeenCalled();
+    wrapper.unmount();
     capabilities.mockRestore();
   });
 });

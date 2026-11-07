@@ -90,7 +90,14 @@ public static class SignInCapabilities
         };
     }
 
+    /// <summary>
+    /// One Tap validates the ID token with the client id only.
+    /// Redirect login also needs the client secret.
+    /// </summary>
     private static bool GoogleOfficerConfigured(IConfiguration configuration) =>
+        Configured(configuration["ClientEnv:googleClientId"]);
+
+    public static bool OfficerGoogleRedirectReady(IConfiguration configuration) =>
         Configured(configuration["ClientEnv:googleClientId"])
         && Configured(configuration["GoogleClientSecret"]);
 

@@ -11,7 +11,7 @@ Officer methods and voter methods are separate. Guest teller entry is not in thi
 | Key | Default | Needs |
 | --- | --- | --- |
 | `SignIn:Officers:Local` | true | Nothing else. Password signup, login, and the authenticator step. |
-| `SignIn:Officers:Google` | true | `ClientEnv:googleClientId` and `GoogleClientSecret` |
+| `SignIn:Officers:Google` | true | `ClientEnv:googleClientId` for One Tap. Redirect (`GET /api/auth/google/login`) also needs `GoogleClientSecret`. A client id alone still offers One Tap. |
 | `SignIn:Officers:Facebook` | true | `ClientEnv:facebookAppId` |
 | `SignIn:Officers:Kakao` | true | `ClientEnv:kakaoApiJsKey` |
 | `SignIn:Officers:Telegram` | `ClientEnv:enableTelegramLogin` (false when unset) | `Telegram:BotToken` and `ClientEnv:telegramBotUsername` |

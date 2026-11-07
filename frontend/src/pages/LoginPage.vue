@@ -491,19 +491,38 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 };
 
-// Watch mode changes to initialize/teardown Google One Tap
+function startOfficerProviders() {
+  if (mode.value !== "officer") {
+    teardownGoogleOneTap();
+    return;
+  }
+  if (!signInLoaded.value) {
+    return;
+  }
+  if (officerMethods.value.google) {
+    void initGoogleOneTap();
+  } else {
+    teardownGoogleOneTap();
+  }
+  if (officerMethods.value.facebook) {
+    void initFacebookSdk();
+  }
+  if (officerMethods.value.kakao) {
+    void initKakaoSdk();
+  }
+}
+
 watch(
-  () => mode.value,
-  (newMode, oldMode) => {
-    if (newMode === "officer") {
-      // Initialize Google One Tap when switching into officer mode
-      initGoogleOneTap();
-      initFacebookSdk();
-      initKakaoSdk();
-    } else if (oldMode === "officer") {
-      // Tear down Google One Tap when leaving officer mode
-      teardownGoogleOneTap();
-    }
+  () =>
+    [
+      mode.value,
+      signInLoaded.value,
+      officerMethods.value.google,
+      officerMethods.value.facebook,
+      officerMethods.value.kakao,
+    ] as const,
+  () => {
+    startOfficerProviders();
   },
 );
 
@@ -513,11 +532,6 @@ onMounted(() => {
     router.push("/dashboard");
   }
   globalThis.addEventListener("keydown", handleKeydown);
-  if (mode.value === "officer") {
-    initGoogleOneTap();
-    initFacebookSdk();
-    initKakaoSdk();
-  }
 });
 
 onBeforeUnmount(() => {
