@@ -93,7 +93,7 @@ public class BulkSendCapTests : IDisposable
     }
 
     [Fact]
-    public async Task Email_UsesElectionSubjectAndFrom_WhileReplyToIsUndecided()
+    public async Task Email_PassesElectionSubjectNameAndReplyAddress()
     {
         await using (var db = new MainDbContext(_options))
         {

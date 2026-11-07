@@ -30,7 +30,7 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
     /// <inheritdoc />
     public async Task<AnnouncementProviderResult> SendAsync(
         string toAddress,
-        string? fromAddress,
+        string? replyToAddress,
         string? fromDisplayName,
         string subject,
         string body,
@@ -46,7 +46,7 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
             return AnnouncementProviderResult.NotConfigured();
         }
 
-        var from = ResolveFrom(fromAddress, fromDisplayName);
+        var from = ResolveSystemFrom(fromDisplayName);
         if (from == null)
         {
             return AnnouncementProviderResult.Failed("not-configured");
@@ -55,6 +55,11 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
         var message = new MimeMessage();
         message.From.Add(from);
         message.To.Add(to);
+        if (TryReplyTo(replyToAddress, fromDisplayName, out var replyTo))
+        {
+            message.ReplyTo.Add(replyTo);
+        }
+
         message.Subject = string.IsNullOrWhiteSpace(subject) ? "Announcement" : subject.Trim();
         message.Body = new TextPart("plain") { Text = body };
 
@@ -79,35 +84,55 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
     }
 
     /// <summary>
-    /// Election mailbox is the SMTP From when it is real. Otherwise the system mailbox is used.
-    /// Reply-To versus From is still an open product choice, so this does not add a Reply-To header.
+    /// Configured system mailbox only. A placeholder or missing address does not become a guessed From.
+    /// The display name is the election EmailFromName, then Email:FromName, then the same "TallyJ" name other mail uses.
     /// </summary>
-    private MailboxAddress? ResolveFrom(string? electionFrom, string? displayName)
+    private MailboxAddress? ResolveSystemFrom(string? displayName)
     {
-        if (!IsPlaceholder(electionFrom) && MailboxAddress.TryParse(electionFrom, out var electionMailbox))
-        {
-            var electionName = IsPlaceholder(displayName) ? electionMailbox.Address : displayName!.Trim();
-            return new MailboxAddress(electionName, electionMailbox.Address);
-        }
-
         var address = _configuration["Email:FromAddress"];
         if (IsPlaceholder(address) || !MailboxAddress.TryParse(address, out var mailbox))
         {
             return null;
         }
 
-        var name = displayName?.Trim();
-        if (IsPlaceholder(name))
+        return new MailboxAddress(ResolveDisplayName(displayName), mailbox.Address);
+    }
+
+    /// <summary>
+    /// Election address as Reply-To when it parses. Invalid or missing addresses are omitted.
+    /// </summary>
+    private static bool TryReplyTo(string? replyToAddress, string? displayName, out MailboxAddress replyTo)
+    {
+        replyTo = null!;
+        if (IsPlaceholder(replyToAddress) || !MailboxAddress.TryParse(replyToAddress, out var mailbox))
         {
-            name = _configuration["Email:FromName"];
+            return false;
         }
 
-        if (IsPlaceholder(name))
+        if (string.IsNullOrWhiteSpace(mailbox.Address) || !mailbox.Address.Contains('@'))
         {
-            name = "TallyJ";
+            return false;
         }
 
-        return new MailboxAddress(name, mailbox.Address);
+        var name = string.IsNullOrWhiteSpace(displayName) ? mailbox.Address : displayName.Trim();
+        replyTo = new MailboxAddress(name, mailbox.Address);
+        return true;
+    }
+
+    private string ResolveDisplayName(string? electionName)
+    {
+        if (!IsPlaceholder(electionName))
+        {
+            return electionName!.Trim();
+        }
+
+        var configured = _configuration["Email:FromName"];
+        if (!IsPlaceholder(configured))
+        {
+            return configured!.Trim();
+        }
+
+        return "TallyJ";
     }
 
     private static string SmtpStatus(Exception ex) =>

@@ -124,7 +124,7 @@ public class AnnouncementQueue : IAnnouncementQueue
         var byGuid = people.ToDictionary(p => p.PersonGuid);
         var hostSite = _configuration["ClientEnv:frontendUrl"]?.Trim() ?? "";
         var subject = ResolveSubject(election);
-        var (fromAddress, fromName) = ResolveElectionFrom(election);
+        var (replyToAddress, replyToName) = ResolveReplyTo(election);
 
         var work = new List<WorkItem>();
         var results = new List<AnnouncementPersonResultDto>(requested.Count);
@@ -155,8 +155,8 @@ public class AnnouncementQueue : IAnnouncementQueue
             QueueToken = Guid.NewGuid().ToString("N"),
             ElectionGuid = electionGuid,
             Channel = channel,
-            FromAddress = fromAddress,
-            FromName = fromName,
+            ReplyToAddress = replyToAddress,
+            ReplyToName = replyToName,
             Subject = subject,
             Results = results,
             Work = work,
@@ -398,9 +398,9 @@ public class AnnouncementQueue : IAnnouncementQueue
     }
 
     /// <summary>
-    /// Election mailbox passed through as SMTP From. Reply-To is not set until that choice is made.
+    /// Valid election mailbox for Reply-To. SMTP From is the configured system sender.
     /// </summary>
-    private static (string? Address, string? Name) ResolveElectionFrom(Election election)
+    private static (string? Address, string? Name) ResolveReplyTo(Election election)
     {
         var address = election.EmailFromAddress;
         if (string.IsNullOrWhiteSpace(address) || address.TrimStart().StartsWith('<'))
@@ -408,7 +408,9 @@ public class AnnouncementQueue : IAnnouncementQueue
             return (null, null);
         }
 
-        if (!MailboxAddress.TryParse(address, out var mailbox))
+        if (!MailboxAddress.TryParse(address, out var mailbox)
+            || string.IsNullOrWhiteSpace(mailbox.Address)
+            || !mailbox.Address.Contains('@'))
         {
             return (null, null);
         }
@@ -486,7 +488,7 @@ public class AnnouncementQueue : IAnnouncementQueue
                 {
                     send = run.Channel == AnnouncementChannels.Email
                         ? await email.SendAsync(
-                            item.Destination, run.FromAddress, run.FromName, run.Subject, item.Message, cancellationToken)
+                            item.Destination, run.ReplyToAddress, run.ReplyToName, run.Subject, item.Message, cancellationToken)
                         : await sms.SendAsync(item.Destination, item.Message, run.ElectionGuid, item.PersonGuid, cancellationToken);
                 }
                 catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -690,8 +692,8 @@ public class AnnouncementQueue : IAnnouncementQueue
         public required string QueueToken { get; init; }
         public required Guid ElectionGuid { get; init; }
         public required string Channel { get; init; }
-        public string? FromAddress { get; init; }
-        public string? FromName { get; init; }
+        public string? ReplyToAddress { get; init; }
+        public string? ReplyToName { get; init; }
         public string Subject { get; init; } = "Announcement";
         public required List<AnnouncementPersonResultDto> Results { get; init; }
         public required List<WorkItem> Work { get; init; }

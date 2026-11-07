@@ -34,14 +34,14 @@ public interface IAnnouncementEmailSender
 
     /// <summary>
     /// Sends <paramref name="body"/> as plain text.
-    /// <paramref name="fromAddress"/> is the election mailbox and is the SMTP From when it is a real address.
-    /// Whether that address should be Reply-To, with the system mailbox as From, is not decided yet.
-    /// <paramref name="fromDisplayName"/> is the election's EmailFromName when it is set.
+    /// SMTP From is <c>Email:FromAddress</c> with <c>Email:FromName</c>, or <paramref name="fromDisplayName"/> when the election set one.
+    /// <paramref name="replyToAddress"/> is the election mailbox and is added only when it parses.
+    /// A missing system From address fails the send. No fallback address is invented.
     /// Does not log the recipient address or the exception text.
     /// </summary>
     Task<AnnouncementProviderResult> SendAsync(
         string toAddress,
-        string? fromAddress,
+        string? replyToAddress,
         string? fromDisplayName,
         string subject,
         string body,
