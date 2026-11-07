@@ -134,7 +134,10 @@ const handleGoogleLogin = () => {
 };
 
 const handleRegister = async () => {
-  if (!registerFormRef.value || !inviteToken.value) {
+  if (!registerFormRef.value) {
+    return;
+  }
+  if (inviteToken.value && !inviteValid.value) {
     return;
   }
 
@@ -145,13 +148,18 @@ const handleRegister = async () => {
 
     loading.value = true;
     try {
-      const response = await authService.registerWithInvite({
-        token: inviteToken.value,
+      const payload = {
         email: registerForm.email,
         displayName: registerForm.displayName.trim(),
         password: registerForm.password,
         confirmPassword: registerForm.confirmPassword,
-      });
+      };
+      const response = inviteToken.value
+        ? await authService.registerWithInvite({
+            token: inviteToken.value,
+            ...payload,
+          })
+        : await authService.register(payload);
       submitted.value = true;
       if (response.requiresEmailVerification) {
         showSuccessMessage(t("auth.registerCheckEmail"));
@@ -195,32 +203,13 @@ onMounted(async () => {
             {{
               inviteToken
                 ? t("auth.inviteRegisterTitle")
-                : t("auth.registerClosedTitle")
+                : t("auth.registerTitle")
             }}
           </h2>
         </div>
       </template>
 
-      <template v-if="!inviteToken">
-        <p class="register-closed-body">
-          {{ t("auth.registerClosedBody") }}
-        </p>
-
-        <div class="register-actions">
-          <el-button
-            type="primary"
-            class="submit-btn"
-            @click="handleGoogleLogin"
-          >
-            {{ t("auth.googleLogin") }}
-          </el-button>
-          <el-button class="submit-btn" @click="goToLogin">
-            {{ t("auth.hasAccount") }}
-          </el-button>
-        </div>
-      </template>
-
-      <p v-else-if="inviteLoading" class="register-closed-body">
+      <p v-if="inviteLoading" class="register-closed-body">
         {{ t("auth.inviteChecking") }}
       </p>
 
@@ -231,7 +220,7 @@ onMounted(async () => {
         </el-button>
       </div>
 
-      <template v-else-if="inviteChecked && !inviteValid">
+      <template v-else-if="inviteToken && inviteChecked && !inviteValid">
         <p class="register-closed-body">
           {{ t("auth.errors.invalidInvite") }}
         </p>
@@ -257,7 +246,17 @@ onMounted(async () => {
         label-position="top"
         @keyup.enter="handleRegister"
       >
-        <p class="register-closed-body">{{ t("auth.inviteRegisterBody") }}</p>
+        <p class="register-closed-body">
+          {{
+            inviteToken ? t("auth.inviteRegisterBody") : t("auth.registerBody")
+          }}
+        </p>
+
+        <div v-if="!inviteToken" class="register-actions google-first">
+          <el-button class="submit-btn" @click="handleGoogleLogin">
+            {{ t("auth.googleLogin") }}
+          </el-button>
+        </div>
 
         <el-form-item :label="t('auth.email')" prop="email">
           <el-input
@@ -340,6 +339,10 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     gap: 12px;
+  }
+
+  .google-first {
+    margin-bottom: 16px;
   }
 
   .submit-btn {

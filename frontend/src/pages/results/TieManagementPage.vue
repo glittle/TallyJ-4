@@ -33,6 +33,10 @@ const hasChanges = computed(() => {
   );
 });
 
+const hasUnresolvedTie = computed(() =>
+  tieDetails.value.some((tie) => tie.tieBreakRequired),
+);
+
 onMounted(async () => {
   await loadTieDetails();
 });
@@ -142,6 +146,7 @@ defineExpose({
 
       <div v-else-if="tieDetails.length > 0">
         <el-alert
+          v-if="hasUnresolvedTie"
           :title="$t('tieManagement.instructions')"
           type="info"
           :closable="false"
@@ -155,7 +160,7 @@ defineExpose({
         >
           <el-card
             class="tie-card"
-            :class="{ 'tie-break-required': tie.section === 'E' }"
+            :class="{ 'tie-break-required': tie.tieBreakRequired }"
           >
             <template #header>
               <div class="tie-header">
@@ -166,14 +171,17 @@ defineExpose({
                   - {{ $t("tieManagement.section") }}:
                   {{ getSectionLabel(tie.section) }}
                 </span>
-                <el-tag v-if="tie.section === 'E'" type="danger">
+                <el-tag v-if="tie.tieBreakRequired" type="danger">
                   {{ $t("tieManagement.tieBreakRequired") }}
+                </el-tag>
+                <el-tag v-else-if="tie.isResolved" type="success">
+                  {{ $t("tieManagement.resolved") }}
                 </el-tag>
               </div>
             </template>
 
             <div class="tie-content">
-              <div v-if="tie.instructions" class="instructions">
+              <div v-if="tie.tieBreakRequired && tie.instructions" class="instructions">
                 <el-alert
                   :title="tie.instructions"
                   type="warning"

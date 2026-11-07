@@ -79,26 +79,49 @@ internal static class BulkSendSupport
     }
 
     /// <summary>
-    /// One warning that lists every masked destination that did not go out
-    /// because the provider failed, the guard blocked it, or the address was invalid.
+    /// Channel token safe to write to a log. The request value is not copied into the message,
+    /// so a newline or an address in that field cannot forge a log line or leak a mailbox.
+    /// </summary>
+    public static string LogChannel(string? channel)
+    {
+        if (string.Equals(channel, AnnouncementChannels.Email, StringComparison.Ordinal))
+        {
+            return "email";
+        }
+
+        if (string.Equals(channel, AnnouncementChannels.Sms, StringComparison.Ordinal))
+        {
+            return "sms";
+        }
+
+        if (string.Equals(channel, AnnouncementChannels.WhatsApp, StringComparison.Ordinal))
+        {
+            return "whatsapp";
+        }
+
+        return "unknown";
+    }
+
+    /// <summary>
+    /// One warning with the failure count. Masked addresses stay in <see cref="CodeSendLog"/>
+    /// and are not written here: a masked email still contains the domain.
     /// </summary>
     public static void LogFailures(
         ILogger logger,
         Guid electionGuid,
         string channel,
-        IReadOnlyCollection<string> maskedDestinations)
+        int failedCount)
     {
-        if (maskedDestinations.Count == 0)
+        if (failedCount <= 0)
         {
             return;
         }
 
         logger.LogWarning(
-            "Bulk send finished for election {ElectionGuid} channel {Channel} with {FailedCount} failures. Masked destinations: {MaskedDestinations}",
+            "Bulk send finished for election {ElectionGuid} channel {Channel} with {FailedCount} failures",
             electionGuid,
-            channel,
-            maskedDestinations.Count,
-            string.Join(", ", maskedDestinations));
+            LogChannel(channel),
+            failedCount);
     }
 
     public static string Mask(string? destination) => DestinationMask.Mask(destination);

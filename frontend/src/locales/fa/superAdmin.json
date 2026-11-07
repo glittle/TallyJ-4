@@ -128,5 +128,215 @@
     "t": "داشبورد مدیر ارشد",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.ownerReview.listTitle": {
+    "t": "حساب‌های در انتظار بررسی",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.title": {
+    "t": "بررسی مسئول",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.email": {
+    "t": "ایمیل",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.name": {
+    "t": "نام",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.status": {
+    "t": "وضعیت",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.signIn": {
+    "t": "ورود",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.elections": {
+    "t": "انتخابات",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.open": {
+    "t": "بررسی",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.empty": {
+    "t": "حسابی در انتظار نیست.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterAll": {
+    "t": "همه",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRequested": {
+    "t": "بررسی درخواست شده",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRestricted": {
+    "t": "محدود",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRejected": {
+    "t": "رد شده",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusReviewRequested": {
+    "t": "بررسی درخواست شده",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusRejected": {
+    "t": "رد شده",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusApproved": {
+    "t": "تأیید شده",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusRestricted": {
+    "t": "محدود",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.back": {
+    "t": "همه بررسی‌ها",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.none": {
+    "t": "هیچ",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.signedUp": {
+    "t": "تاریخ ثبت",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteAt": {
+    "t": "حذف انتخابات پس از",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.notePrompt": {
+    "t": "یادداشت برای مسئول",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.approve": {
+    "t": "تأیید",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.hold": {
+    "t": "نگه‌داشتن",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.reject": {
+    "t": "رد",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.rejectConfirm": {
+    "t": "این حساب رد شود و انتخاباتش مسدود شود؟",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.rejectedDone": {
+    "t": "حساب رد شد",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.approved": {
+    "t": "حساب تأیید شد",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.held": {
+    "t": "حساب محدود ماند",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteNow": {
+    "t": "حذف انتخابات همین حالا",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteConfirm": {
+    "t": "انتخابات این حساب همین حالا حذف شود؟ انتخابات مشترک با مسئول تأییدشده نگه داشته می‌شود.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleted": {
+    "t": "انتخابات حذف شد",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.noElections": {
+    "t": "این حساب هنوز انتخاباتی ندارد.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.type": {
+    "t": "نوع",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.dates": {
+    "t": "تاریخ انتخابات",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.online": {
+    "t": "پنجره آنلاین",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.people": {
+    "t": "افراد",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.domains": {
+    "t": "دامنه‌های ایمیل",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.phones": {
+    "t": "کشورهای تلفن",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.flagged": {
+    "t": "تماس‌های علامت‌خورده",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.sample": {
+    "t": "نمونه علامت‌خورده",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.peopleSample": {
+    "t": "نمونه افراد",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

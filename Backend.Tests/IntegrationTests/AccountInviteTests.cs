@@ -8,13 +8,14 @@ using Backend.Identity;
 using Backend.Services.Auth;
 using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
 namespace Backend.Tests.IntegrationTests;
 
 /// <summary>
-/// Invite-only local signup after open register was disabled (#347 leftover).
+/// SuperAdmin invites still create one local account, and that account is approved.
 /// </summary>
 public class AccountInviteTests : IntegrationTestBase
 {
@@ -23,7 +24,7 @@ public class AccountInviteTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task RegisterAccount_OpenSelfServe_StillRejected_WhenInvitePathExists()
+    public async Task RegisterAccount_OpenSelfServe_IsRestricted_WhileInvitePathStaysApproved()
     {
         var testEmail = $"open-register-{Guid.NewGuid()}@tallyj.test";
         var response = await PostJsonAsync("/api/auth/registerAccount", new RegisterRequest
@@ -31,16 +32,18 @@ public class AccountInviteTests : IntegrationTestBase
             Email = testEmail,
             Password = "TestPass123!",
             ConfirmPassword = "TestPass123!",
-            DisplayName = "Should Not Be Created"
+            DisplayName = "Open Signup"
         });
 
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        var body = await response.Content.ReadAsStringAsync();
-        body.Should().Contain(AuthController.OpenRegisterDisabledKey);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         using var scope = Factory.Services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-        (await userManager.FindByEmailAsync(testEmail)).Should().BeNull();
+        var user = await userManager.FindByEmailAsync(testEmail);
+        user.Should().NotBeNull();
+        var context = scope.ServiceProvider.GetRequiredService<Backend.Context.MainDbContext>();
+        var control = await context.OwnerSendControls.SingleAsync(row => row.UserId == Guid.Parse(user!.Id));
+        control.RestrictionStatus.Should().Be(Backend.Entities.OwnerRestrictionStatus.Restricted);
     }
 
     [Fact]
@@ -78,6 +81,10 @@ public class AccountInviteTests : IntegrationTestBase
             user.Should().NotBeNull();
             user!.AuthMethod.Should().Be("Local");
             user.EmailConfirmed.Should().BeFalse();
+            var context = scope.ServiceProvider.GetRequiredService<Backend.Context.MainDbContext>();
+            var control = await context.OwnerSendControls.SingleAsync(row => row.UserId == Guid.Parse(user.Id));
+            control.RestrictionStatus.Should().Be(Backend.Entities.OwnerRestrictionStatus.Approved);
+            control.PaidSendsApproved.Should().BeTrue();
         }
 
         await ConfirmEmailAsync(email);

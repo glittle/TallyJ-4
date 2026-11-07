@@ -1,5 +1,6 @@
 using Backend.DTOs.Reports;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 using LocationTypeEnum = Backend.Enumerations.LocationType;
@@ -31,11 +32,16 @@ public partial class ReportService
         }
         else if (filter == "Tied")
         {
-            var tiedResults = await _context.Results
-                .Where(r => r.ElectionGuid == electionGuid && r.TieBreakRequired == true)
-                .Select(r => r.PersonGuid)
+            var tieMembers = await _context.Results
+                .AsNoTracking()
+                .Where(r => r.ElectionGuid == electionGuid
+                    && (r.TieBreakGroup != null || r.TieBreakRequired == true))
                 .ToListAsync();
-            tiedPersonGuids = tiedResults.ToHashSet();
+            var tieGroups = TieBreakResolution.Evaluate(tieMembers);
+            tiedPersonGuids = tieMembers
+                .Where(r => TieBreakResolution.FlagsFor(r, tieGroups).TieBreakRequired)
+                .Select(r => r.PersonGuid)
+                .ToHashSet();
         }
 
         var ballots = await ballotsQuery

@@ -18,8 +18,15 @@ public static class PaidChannelStatus
 {
     /// <summary>
     /// An owner or admin is not approved for paid sends, or the election has none.
+    /// Email codes are still allowed. A restricted account uses <see cref="OwnerRestricted"/> instead.
     /// </summary>
     public const string NotApproved = "not-approved";
+
+    /// <summary>
+    /// An owner or admin is restricted, waiting for review, or rejected.
+    /// Voter codes and online voting are blocked. A test email to the owner's own address is still allowed.
+    /// </summary>
+    public const string OwnerRestricted = "owner-restricted";
 
     /// <summary>
     /// The election allowance is used up.

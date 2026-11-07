@@ -1,4 +1,5 @@
-﻿using Serilog;
+﻿using Backend.Middleware;
+using Serilog;
 using Serilog.Settings.Configuration;
 using Serilog.Sinks.SystemConsole.Themes;
 
@@ -27,7 +28,9 @@ public static class SerilogExtensions
       : new ConfigurationReaderOptions { SectionName = sectionName };
 
     // First apply configuration-based settings (excluding console sinks)
-    configuration = configuration.ReadFrom.Configuration(appConfiguration, options);
+    configuration = configuration
+      .ReadFrom.Configuration(appConfiguration, options)
+      .Filter.ByExcluding(UnmatchedRequestLogPolicy.ShouldSuppress);
 
     // Force colors for dotnet watch and development scenarios
     var isDevelopment =

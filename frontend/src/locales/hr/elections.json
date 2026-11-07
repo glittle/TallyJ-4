@@ -758,5 +758,75 @@
     "t": "Glasači",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ownerRestricted.banner": {
+    "t": "Vaš račun je ograničen. Možete pripremati izbore, učitavati osobe, unositi listiće, brojati i gledati izvještaje. Ne možete slati kodove ni poruke biračima niti otvoriti online glasovanje dok administrator mjesta ne odobri račun. Probni kod možete poslati na e-poštu svog računa.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestReview": {
+    "t": "Zatraži pregled",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requested": {
+    "t": "Pregled zatražen {when}. Možete ponovno zatražiti nakon {next}.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.holdNote": {
+    "t": "Bilješka pregledavatelja: {note}",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.rejected": {
+    "t": "Ovaj račun je odbijen. Njegovi izbori su zamrznuti i skriveni od birača. Bit će obrisani 30 dana nakon odluke, osim ako ih administrator mjesta ne obriše ranije.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.throttled": {
+    "t": "Novi pregled možete zatražiti nakon čekanja.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestFailed": {
+    "t": "Zahtjev za pregled nije mogao biti poslan e-poštom. Pokušajte kasnije.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noRecipients": {
+    "t": "E-pošta administratora mjesta nije postavljena, pa zahtjev nije poslan.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.alreadyApproved": {
+    "t": "Ovaj račun je već odobren.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notFound": {
+    "t": "Račun nije pronađen.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noteTooLong": {
+    "t": "Bilješka je predugačka.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notRejected": {
+    "t": "Samo odbijeni račun može sada obrisati svoje izbore.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.onlineBlocked": {
+    "t": "Online glasovanje ostaje zatvoreno dok administrator mjesta ne odobri vaš račun. Priprema, unos, brojanje i izvještaji i dalje rade.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.paidChannels.ownerRestricted": {
+    "t": "Kodovi birača i online glasovanje nisu dostupni dok administrator mjesta ne odobri vaš račun. Probni kod možete poslati na e-poštu računa. Glasovanje uživo i unos i dalje rade.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

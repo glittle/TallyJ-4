@@ -21,7 +21,7 @@ Synthetic numbers are constructed so the current v4 analyzer matches the analysi
 dotnet test Backend.Tests/Backend.Tests.csproj --filter FullyQualifiedName~V3AnalysisComparison
 ```
 
-The harness uses the same InMemory `MainDbContext` as other Backend.Tests analyzer/import tests. Do not connect it to Azure SQL. A local Docker SQL / `SeedOnStartup` database is fine for **manual** import + Analyze in the app; the automated diffs do not use that database.
+The harness uses the same InMemory `MainDbContext` as other Backend.Tests analyzer/import tests. Do not connect it to Azure SQL. A local SQL Server database with `SeedOnStartup` is fine for **manual** import + Analyze in the app; the automated diffs do not use that database.
 
 ## Fixture format
 
@@ -72,7 +72,7 @@ Details: `Backend.Tests/Fixtures/V3AnalysisComparison/known-good-v3/README.md`.
 - Live UI Analyze click-through
 - Claiming parity with a production election until a real package is in `known-good-v3/`
 
-**Manual (local Docker SQL + SeedOnStartup, or your usual local SQL)**
+**Manual (local SQL Server with SeedOnStartup, or your usual local SQL)**
 
 - Dashboard → load the same v3 package
 - Run Analyze

@@ -61,6 +61,9 @@ function getSectionLabel(section: string) {
             <el-tag v-if="tie.tieBreakRequired" type="danger">
               {{ $t("results.tieBreakRequired") }}
             </el-tag>
+            <el-tag v-else-if="tie.isResolved" type="success">
+              {{ $t("results.resolved") }}
+            </el-tag>
           </div>
         </template>
 

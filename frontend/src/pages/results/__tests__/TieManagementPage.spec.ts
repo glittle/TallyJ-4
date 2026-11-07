@@ -77,7 +77,10 @@ vi.mock("@/stores/resultStore", () => ({
 
 const stubs = {
   ElCard: { template: "<div><slot name='header' /><slot /></div>" },
-  ElAlert: { template: "<div />" },
+  ElAlert: {
+    props: ["title"],
+    template: "<div class='alert'>{{ title }}</div>",
+  },
   ElButton: {
     props: ["disabled", "loading"],
     template:
@@ -106,7 +109,7 @@ const stubs = {
       },
     },
   },
-  ElTag: { template: "<span />" },
+  ElTag: { template: "<span class='tag'><slot /></span>" },
   ElSkeleton: { template: "<div />" },
   ElEmpty: { template: "<div />" },
 };
@@ -189,5 +192,43 @@ describe("TieManagementPage", () => {
     expect(mockShowSuccess).toHaveBeenCalledWith(
       "Tie-break counts saved successfully.",
     );
+  });
+
+  it("lists a resolved group without the prompt or Tie-break Required tag", async () => {
+    mockFetchTieDetails.mockResolvedValue([
+      {
+        tieBreakGroup: 1,
+        section: "E",
+        instructions: "",
+        tieBreakRequired: false,
+        isResolved: true,
+        people: [
+          {
+            personGuid: "person-a",
+            fullName: "Cole, Sam",
+            voteCount: 2,
+            tieBreakCount: 5,
+          },
+          {
+            personGuid: "person-b",
+            fullName: "Best, Pat",
+            voteCount: 2,
+            tieBreakCount: 0,
+          },
+        ],
+      },
+    ]);
+
+    const wrapper = mount(TieManagementPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    expect(wrapper.text()).toContain("Resolved");
+    expect(wrapper.text()).not.toContain("Tie-break Required");
+    expect(wrapper.text()).not.toContain("Enter tie-break vote counts");
+    expect(wrapper.text()).not.toContain("Enter runoff counts");
+    expect(wrapper.find(".tie-count").exists()).toBe(true);
+    expect(wrapper.find(".tie-break-required").exists()).toBe(false);
   });
 });

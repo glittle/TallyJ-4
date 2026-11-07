@@ -95,6 +95,17 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
             throw new InvalidOperationException(PeopleMessageKeys.PhoneWhatsAppNotConfigured);
         }
 
+        var blocked = await OwnerRestrictionQueries.VoterMessageBlockKeyAsync(
+            db,
+            electionGuid,
+            PeopleMessageKeys.WhatsAppNotifyFrozen,
+            PeopleMessageKeys.WhatsAppNotifyOwnerRestricted,
+            cancellationToken);
+        if (blocked != null)
+        {
+            throw new InvalidOperationException(blocked);
+        }
+
         var requested = personGuids.Distinct().ToList();
         var people = await db.People
             .Where(p => p.ElectionGuid == electionGuid && requested.Contains(p.PersonGuid))
@@ -200,7 +211,7 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
         }
         else
         {
-            BulkSendSupport.LogFailures(_logger, electionGuid, AnnouncementChannels.WhatsApp, failedMasked);
+            BulkSendSupport.LogFailures(_logger, electionGuid, AnnouncementChannels.WhatsApp, failedMasked.Count);
         }
 
         return Snapshot(run);
@@ -365,7 +376,7 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
         }
         finally
         {
-            BulkSendSupport.LogFailures(_logger, run.ElectionGuid, AnnouncementChannels.WhatsApp, run.FailedMasked);
+            BulkSendSupport.LogFailures(_logger, run.ElectionGuid, AnnouncementChannels.WhatsApp, run.FailedMasked.Count);
             run.Running = false;
             run.Cts.Dispose();
         }

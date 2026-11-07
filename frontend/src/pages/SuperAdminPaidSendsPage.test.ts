@@ -58,7 +58,7 @@ describe("SuperAdminPaidSendsPage", () => {
     mockedService.clearElectionFlag.mockResolvedValue();
   });
 
-  it("approves a pending owner and clears a flagged election", async () => {
+  it("links a pending owner to review and clears a flagged election", async () => {
     const wrapper = mount(SuperAdminPaidSendsPage, {
       global: {
         plugins: [pinia, router, i18n, ElementPlus],
@@ -70,13 +70,9 @@ describe("SuperAdminPaidSendsPage", () => {
     expect(wrapper.text()).toContain("Flagged election");
     expect(wrapper.text()).toContain("Consecutive numbers");
 
-    const approve = wrapper
-      .findAll("button")
-      .find((button) => button.text().includes("Approve paid sends"));
-    expect(approve).toBeTruthy();
-    await approve!.trigger("click");
-    await flushPromises();
-    expect(mockedService.approvePaidSends).toHaveBeenCalledWith(ownerId);
+    const review = wrapper.find(`a[href="/super-admin/owner-reviews/${ownerId}"]`);
+    expect(review.exists()).toBe(true);
+    expect(review.text()).toContain("Review");
 
     const clear = wrapper
       .findAll("button")

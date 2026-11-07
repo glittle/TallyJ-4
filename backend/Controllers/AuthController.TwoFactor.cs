@@ -38,7 +38,7 @@ public partial class AuthController
             return Unauthorized();
         }
 
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         var (success, error, response) = await _twoFactorService.SetupAsync(userId);
@@ -87,7 +87,7 @@ public partial class AuthController
             return Unauthorized();
         }
 
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         var (success, error) = await _twoFactorService.EnableAsync(userId, request);
@@ -136,7 +136,7 @@ public partial class AuthController
             return Unauthorized();
         }
 
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         var (success, error) = await _twoFactorService.DisableAsync(userId, request);
@@ -205,7 +205,7 @@ public partial class AuthController
     [HttpPost("verify2fa")]
     public async Task<IActionResult> Verify2FA([FromBody] Verify2FARequest request)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         var (success, error, response) = await _localAuthService.LoginAsync(new LoginRequest

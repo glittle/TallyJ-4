@@ -6,6 +6,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import AppHeader from "../components/AppHeader.vue";
 import AppSidebar from "../components/AppSidebar.vue";
+import OwnerRestrictionBanner from "../components/common/OwnerRestrictionBanner.vue";
 import TestElectionBanner from "../components/common/TestElectionBanner.vue";
 import { useElectionStore } from "../stores/electionStore";
 import { useNavUiStore } from "../stores/navUiStore";
@@ -133,6 +134,7 @@ function dockSidebar() {
       </el-header>
       <!-- Below the fixed-height header (60px / Front Desk 48px) so the
            strip is not clipped. Hidden unless the route election is a test. -->
+      <OwnerRestrictionBanner />
       <TestElectionBanner />
       <el-main id="main-content" role="main" tabindex="-1">
         <router-view />

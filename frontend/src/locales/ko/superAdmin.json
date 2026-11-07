@@ -128,5 +128,215 @@
     "t": "슈퍼 관리자 대시보드",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.ownerReview.listTitle": {
+    "t": "검토를 기다리는 계정",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.title": {
+    "t": "소유자 검토",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.email": {
+    "t": "이메일",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.name": {
+    "t": "이름",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.status": {
+    "t": "상태",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.signIn": {
+    "t": "로그인",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.elections": {
+    "t": "선거",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.open": {
+    "t": "검토",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.empty": {
+    "t": "기다리는 계정이 없습니다.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterAll": {
+    "t": "모두",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRequested": {
+    "t": "검토 요청됨",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRestricted": {
+    "t": "제한됨",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRejected": {
+    "t": "거절됨",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusReviewRequested": {
+    "t": "검토 요청됨",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusRejected": {
+    "t": "거절됨",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusApproved": {
+    "t": "승인됨",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusRestricted": {
+    "t": "제한됨",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.back": {
+    "t": "모든 검토",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.none": {
+    "t": "없음",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.signedUp": {
+    "t": "가입",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteAt": {
+    "t": "이 시각 이후 선거 삭제",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.notePrompt": {
+    "t": "소유자에게 보내는 메모",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.approve": {
+    "t": "승인",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.hold": {
+    "t": "보류",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.reject": {
+    "t": "거절",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.rejectConfirm": {
+    "t": "이 계정을 거절하고 선거를 동결할까요?",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.rejectedDone": {
+    "t": "계정이 거절됨",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.approved": {
+    "t": "계정이 승인됨",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.held": {
+    "t": "계정이 제한된 채로 남음",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteNow": {
+    "t": "지금 선거 삭제",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteConfirm": {
+    "t": "이 계정의 선거를 지금 삭제할까요? 승인된 소유자와 함께인 선거는 남습니다.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleted": {
+    "t": "선거가 삭제됨",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.noElections": {
+    "t": "이 계정에는 아직 선거가 없습니다.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.type": {
+    "t": "유형",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.dates": {
+    "t": "선거 날짜",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.online": {
+    "t": "온라인 기간",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.people": {
+    "t": "사람",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.domains": {
+    "t": "이메일 도메인",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.phones": {
+    "t": "전화 국가",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.flagged": {
+    "t": "표시된 연락처",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.sample": {
+    "t": "표시된 표본",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.peopleSample": {
+    "t": "사람 표본",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

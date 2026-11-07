@@ -21,6 +21,12 @@ public class TieInfoDto
     public bool TieBreakRequired { get; set; }
 
     /// <summary>
+    /// True when this group needed a runoff and the saved counts have decided it.
+    /// The Ties tab keeps the group and marks it resolved.
+    /// </summary>
+    public bool IsResolved { get; set; }
+
+    /// <summary>
     /// The election section or position where the tie occurred.
     /// </summary>
     public string Section { get; set; } = string.Empty;

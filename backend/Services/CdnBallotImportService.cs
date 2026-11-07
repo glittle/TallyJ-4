@@ -246,7 +246,18 @@ public class CdnBallotImportService : ElectionImportExportBase
     }
 
     // Job 1: Import from CdnBallotImport.xsd format
-    public async Task<ImportResultDto> ImportCdnBallotsAsync(Guid electionGuid, Stream xmlStream)
+    public Task<ImportResultDto> ImportCdnBallotsAsync(Guid electionGuid, Stream xmlStream)
+    {
+        return _context.Database.CreateExecutionStrategy().ExecuteAsync(() =>
+        {
+            // Drop Added rows from a failed attempt before this retry inserts them again.
+            _context.ChangeTracker.Clear();
+            StreamRewind.RewindIfSeekable(xmlStream);
+            return ImportCdnBallotsCoreAsync(electionGuid, xmlStream);
+        });
+    }
+
+    private async Task<ImportResultDto> ImportCdnBallotsCoreAsync(Guid electionGuid, Stream xmlStream)
     {
         var result = new ImportResultDto();
 

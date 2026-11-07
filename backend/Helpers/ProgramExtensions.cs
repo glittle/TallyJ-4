@@ -61,6 +61,17 @@ public static class ProgramExtensions
     }
 
     /// <summary>
+    /// SQL Server provider defaults for every TallyJ context: transient-failure retries,
+    /// and single-query splitting (the behavior the app already had when the mode was unset).
+    /// A query that needs split results calls <c>AsSplitQuery()</c> itself.
+    /// </summary>
+    public static void ConfigureSqlServerProvider(Microsoft.EntityFrameworkCore.Infrastructure.SqlServerDbContextOptionsBuilder sql)
+    {
+        sql.EnableRetryOnFailure();
+        sql.UseQuerySplittingBehavior(QuerySplittingBehavior.SingleQuery);
+    }
+
+    /// <summary>
     /// Registers a DbContext with SQL Server configuration and connection string.
     /// </summary>
     /// <typeparam name="TContext">The type of DbContext to register.</typeparam>
@@ -83,11 +94,10 @@ public static class ProgramExtensions
             connectionString,
             sqlServerDbContextOptionsBuilder =>
             {
-                // --> We do not use this default, as most queries are better not using this
-                // --> If testing shows that splitting a query would help, apply it in that LINQ statement.
-                //sqlServerDbContextOptionsBuilder.UseQuerySplittingBehavior(
-                //  QuerySplittingBehavior.SplitQuery
-                //);
+                // SingleQuery matches the previous unset default. SuperAdminService opts
+                // one multi-include query into AsSplitQuery. Setting the mode here keeps
+                // that behavior and silences the "configure QuerySplittingBehavior" warning.
+                ConfigureSqlServerProvider(sqlServerDbContextOptionsBuilder);
                 sqlServerDbContextOptionsBuilder
               .MigrationsHistoryTable("__EFMigrations_" + connectionStringName)
               .MigrationsAssembly("Backend");
@@ -127,7 +137,7 @@ public static class ProgramExtensions
         if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") != "Testing")
         {
             services.AddDbContextFactory<TContext>(
-              options => options.UseSqlServer(connectionString),
+              options => options.UseSqlServer(connectionString, ConfigureSqlServerProvider),
               ServiceLifetime.Scoped
             );
         }

@@ -109,7 +109,32 @@ public enum SecurityEventType
     /// <summary>
     /// A super admin cleared an election flag. Online voting can be used again.
     /// </summary>
-    ElectionFlagCleared
+    ElectionFlagCleared,
+
+    /// <summary>
+    /// An owner asked for a review so restricted mode can be lifted.
+    /// </summary>
+    OwnerReviewRequested,
+
+    /// <summary>
+    /// A super admin approved an owner. Paid sends are included.
+    /// </summary>
+    OwnerApproved,
+
+    /// <summary>
+    /// A super admin rejected an owner. Their elections are frozen and hidden from voters.
+    /// </summary>
+    OwnerRejected,
+
+    /// <summary>
+    /// A super admin left an owner restricted and sent a note.
+    /// </summary>
+    OwnerReviewHeld,
+
+    /// <summary>
+    /// Elections belonging to a rejected owner were deleted.
+    /// </summary>
+    OwnerElectionsDeleted
 }
 
 /// <summary>

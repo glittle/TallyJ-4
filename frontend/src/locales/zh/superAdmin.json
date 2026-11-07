@@ -128,5 +128,215 @@
     "t": "超级管理员仪表板",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.ownerReview.listTitle": {
+    "t": "等待审核的账户",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.title": {
+    "t": "账户审核",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.email": {
+    "t": "电子邮件",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.name": {
+    "t": "姓名",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.status": {
+    "t": "状态",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.signIn": {
+    "t": "登录方式",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.elections": {
+    "t": "选举",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.open": {
+    "t": "审核",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.empty": {
+    "t": "没有等待中的账户。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterAll": {
+    "t": "全部",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRequested": {
+    "t": "已请求审核",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRestricted": {
+    "t": "受限",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRejected": {
+    "t": "已拒绝",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusReviewRequested": {
+    "t": "已请求审核",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusRejected": {
+    "t": "已拒绝",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusApproved": {
+    "t": "已批准",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusRestricted": {
+    "t": "受限",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.back": {
+    "t": "全部审核",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.none": {
+    "t": "无",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.signedUp": {
+    "t": "注册时间",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteAt": {
+    "t": "此后删除选举",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.notePrompt": {
+    "t": "给账户的说明",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.approve": {
+    "t": "批准",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.hold": {
+    "t": "暂缓",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.reject": {
+    "t": "拒绝",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.rejectConfirm": {
+    "t": "拒绝此账户并冻结其选举？",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.rejectedDone": {
+    "t": "账户已拒绝",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.approved": {
+    "t": "账户已批准",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.held": {
+    "t": "账户仍受限",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteNow": {
+    "t": "立即删除选举",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteConfirm": {
+    "t": "立即删除此账户的选举？与已批准账户共同管理的选举会保留。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleted": {
+    "t": "选举已删除",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.noElections": {
+    "t": "此账户还没有选举。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.type": {
+    "t": "类型",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.dates": {
+    "t": "选举日期",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.online": {
+    "t": "在线时段",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.people": {
+    "t": "人员",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.domains": {
+    "t": "电子邮件域名",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.phones": {
+    "t": "电话国家",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.flagged": {
+    "t": "已标记的联系方式",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.sample": {
+    "t": "标记样本",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.peopleSample": {
+    "t": "人员样本",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

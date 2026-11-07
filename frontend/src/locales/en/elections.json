@@ -1223,5 +1223,105 @@
     "t": "Voters",
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ownerRestricted.banner": {
+    "t": "A site administrator has not approved this account yet. That approval is separate from verifying your email. You can set up elections, upload people, enter ballots, tally, and view reports. You cannot send voter codes or messages, or open online voting, until the account is approved. You can email a test code to your own account address.",
+    "s": "source",
+    "w": "2026-11-07T06:00:00Z"
+  },
+  "elections.ownerRestricted.requestReview": {
+    "t": "Request review",
+    "s": "source",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requested": {
+    "t": "Review requested {when}. You can request again after {next}.",
+    "s": "source",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.holdNote": {
+    "t": "Note from the reviewer: {note}",
+    "s": "source",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.rejected": {
+    "t": "This account was declined. Its elections are frozen and hidden from voters. They will be deleted 30 days after the decision unless a site administrator deletes them sooner.",
+    "s": "source",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.throttled": {
+    "t": "You can request another review after the waiting period.",
+    "s": "source",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestFailed": {
+    "t": "The review request could not be emailed. Try again later.",
+    "s": "source",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noRecipients": {
+    "t": "No site administrator email is configured, so the review request was not sent.",
+    "s": "source",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.alreadyApproved": {
+    "t": "This account is already approved.",
+    "s": "source",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notFound": {
+    "t": "Account not found.",
+    "s": "source",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noteTooLong": {
+    "t": "The note is too long.",
+    "s": "source",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notRejected": {
+    "t": "Only a declined account can have its elections deleted now.",
+    "s": "source",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.onlineBlocked": {
+    "t": "Online voting stays closed until a site administrator approves this account. Email verification does not grant that approval. Setup, teller entry, tallying, and reports still work.",
+    "s": "source",
+    "w": "2026-11-07T06:00:00Z"
+  },
+  "elections.paidChannels.ownerRestricted": {
+    "t": "Voter codes and online voting stay closed until a site administrator approves this account. That approval is separate from verifying your email. You can email a test code to your own account address. In-person and teller entry still work.",
+    "s": "source",
+    "w": "2026-11-07T06:00:00Z"
+  },
+  "elections.ownerRestricted.sendTestCode": {
+    "t": "Send me a test code",
+    "s": "source",
+    "w": "2026-11-01T20:10:00Z"
+  },
+  "elections.ownerRestricted.testCodeSent": {
+    "t": "A test code was emailed to your account address. It does not open online voting.",
+    "s": "source",
+    "w": "2026-11-01T20:10:00Z"
+  },
+  "elections.ownerRestricted.testCodeFailed": {
+    "t": "The test code could not be emailed. Try again later.",
+    "s": "source",
+    "w": "2026-11-01T20:10:00Z"
+  },
+  "elections.ownerRestricted.testCodeNotAllowed": {
+    "t": "A test code can be sent only while your account is restricted or waiting for review.",
+    "s": "source",
+    "w": "2026-11-01T20:10:00Z"
+  },
+  "elections.ownerRestricted.testCodeFrozen": {
+    "t": "Test codes are stopped while sending is frozen.",
+    "s": "source",
+    "w": "2026-11-01T20:10:00Z"
+  },
+  "elections.ownerRestricted.testCodeThrottled": {
+    "t": "You can send another test code later. Test codes are limited to one a minute and five a day.",
+    "s": "source",
+    "w": "2026-11-01T20:30:00Z"
   }
 }

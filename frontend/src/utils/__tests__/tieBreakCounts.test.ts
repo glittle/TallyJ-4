@@ -69,12 +69,11 @@ describe("tieBreakCounts", () => {
     ).toBe(false);
   });
 
-  it("formats vote counts without a suffix when the tie-break is unset", () => {
-    expect(formatVoteCountWithTieBreak(50, false, 3)).toBe("50");
-    expect(formatVoteCountWithTieBreak(50, true, null)).toBe("50");
-    expect(formatVoteCountWithTieBreak(50, true, undefined)).toBe("50");
-    expect(formatVoteCountWithTieBreak(50, true, 0)).toBe("50 / 0");
-    expect(formatVoteCountWithTieBreak(50, true, 3)).toBe("50 / 3");
+  it("formats a stored tie-break count even after the tie is resolved", () => {
+    expect(formatVoteCountWithTieBreak(50, null)).toBe("50");
+    expect(formatVoteCountWithTieBreak(50, undefined)).toBe("50");
+    expect(formatVoteCountWithTieBreak(50, 0)).toBe("50 / 0");
+    expect(formatVoteCountWithTieBreak(50, 3)).toBe("50 / 3");
   });
 
   it("clears to null so a previous count can be unset", () => {

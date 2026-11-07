@@ -303,7 +303,12 @@ async function saveDates() {
           <el-button @click="drawerOpen = false">
             {{ t("common.close") }}
           </el-button>
-          <el-button type="primary" :loading="saving" @click="saveDates">
+          <el-button
+            type="primary"
+            :loading="saving"
+            :disabled="election?.paidChannelBlockReason === 'owner-restricted'"
+            @click="saveDates"
+          >
             {{ t("common.save") }}
           </el-button>
         </div>

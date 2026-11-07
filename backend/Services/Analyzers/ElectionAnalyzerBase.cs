@@ -38,6 +38,9 @@ public abstract class ElectionAnalyzerBase
             throw new InvalidOperationException($"Election {TargetElection.ElectionGuid} has no NumberToElect specified. This is required for analysis.");
         }
 
+        var strategy = Context.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
+        {
         using var transaction = await Context.Database.BeginTransactionAsync();
         try
         {
@@ -61,6 +64,7 @@ public abstract class ElectionAnalyzerBase
             await transaction.RollbackAsync();
             throw;
         }
+        });
     }
 
     protected virtual async Task PrepareForAnalysisAsync()
@@ -409,22 +413,13 @@ public abstract class ElectionAnalyzerBase
         }
 
         var groupOnlyInTop = groupInTop && !(groupInExtra || groupInOther);
-        var groupOnlyInOther = groupInOther && !(groupInTop || groupInExtra);
-        var isResolved = true;
+        // Unset (null) and explicit 0 compare equal; all-0 and all-unset stay unresolved.
+        var needsTieBreak = TieBreakResolution.NeedsTieBreak(results);
+        var isResolved = !needsTieBreak || TieBreakResolution.CountsDecidePositions(results);
 
         foreach (var r in results)
         {
-            r.TieBreakRequired = !(groupOnlyInOther || groupOnlyInTop);
-
-            // Unset (null) and explicit 0 compare equal; all-0 and all-unset stay unresolved.
-            var stillTied = results.Any(other => other != r
-                && (other.TieBreakCount ?? 0) == (r.TieBreakCount ?? 0)
-                && (other.Section != r.Section || r.Section == "X"));
-
-            if (stillTied)
-            {
-                isResolved = false;
-            }
+            r.TieBreakRequired = needsTieBreak;
         }
 
         foreach (var r in results)
@@ -467,6 +462,18 @@ public abstract class ElectionAnalyzerBase
             foreach (var r in results)
             {
                 r.TieBreakCount = null;
+            }
+        }
+        else if (isResolved)
+        {
+            // The runoff distinguished this group. "Tied" and "Tie-break required"
+            // both mean it is still unresolved. Keep the counts so the results table
+            // and reports can show them; a later Calculate must not put the flags back.
+            resultTie.TieBreakRequired = false;
+            foreach (var r in results)
+            {
+                r.TieBreakRequired = false;
+                r.IsTied = false;
             }
         }
         // Required ties keep null until a teller enters a value. Explicit 0 is stored

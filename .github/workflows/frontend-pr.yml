@@ -1,5 +1,6 @@
 # Pull-request gate for the Vue app. The Azure front-end pipeline is push-to-main
 # only (`pr: none`), so this is what runs before a human reviews a frontend PR.
+# A pull request that does not touch the paths below does not start this workflow.
 #
 # `npm run tsc` typechecks tsconfig.app.json (the SPA, including tests) and
 # tsconfig.node.json (Vite and Vitest config). `npm run lint` is ESLint without

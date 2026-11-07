@@ -367,6 +367,100 @@ public class WhatsAppNotifyQueueTests : IDisposable
             Times.Once);
     }
 
+    [Fact]
+    public async Task Start_RestrictedOwner_DoesNotSend()
+    {
+        var electionGuid = Guid.NewGuid();
+        var ownerId = Guid.NewGuid();
+        var person = await SeedPersonAsync(electionGuid, "+14168972911", whatsAppStatus: "OK");
+        await using (var db = new TestMainDbContext(_options))
+        {
+            db.JoinElectionUsers.Add(new JoinElectionUser
+            {
+                ElectionGuid = electionGuid,
+                UserId = ownerId,
+                Role = "Admin"
+            });
+            db.OwnerSendControls.Add(new OwnerSendControl
+            {
+                UserId = ownerId,
+                RestrictionStatus = OwnerRestrictionStatus.Restricted
+            });
+            await db.SaveChangesAsync();
+        }
+
+        var client = MockSender();
+        var queue = CreateQueue(client);
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            queue.StartAsync(electionGuid, [person.PersonGuid]));
+        Assert.Equal(PeopleMessageKeys.WhatsAppNotifyOwnerRestricted, error.Message);
+        client.Verify(
+            c => c.SendMessageAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task Start_ApprovedOwnerWithRestrictedCoAdmin_Sends()
+    {
+        var electionGuid = Guid.NewGuid();
+        var ownerId = Guid.NewGuid();
+        var coAdmin = Guid.NewGuid();
+        var person = await SeedPersonAsync(electionGuid, "+14168972912", whatsAppStatus: "OK");
+        await using (var db = new TestMainDbContext(_options))
+        {
+            db.JoinElectionUsers.AddRange(
+                new JoinElectionUser { ElectionGuid = electionGuid, UserId = ownerId, Role = "Owner" },
+                new JoinElectionUser { ElectionGuid = electionGuid, UserId = coAdmin, Role = "Admin" });
+            db.OwnerSendControls.AddRange(
+                new OwnerSendControl
+                {
+                    UserId = ownerId,
+                    RestrictionStatus = OwnerRestrictionStatus.Approved,
+                    PaidSendsApproved = true
+                },
+                new OwnerSendControl
+                {
+                    UserId = coAdmin,
+                    RestrictionStatus = OwnerRestrictionStatus.Restricted
+                });
+            await db.SaveChangesAsync();
+        }
+
+        var client = MockSender();
+        var queue = CreateQueue(client);
+        var started = await queue.StartAsync(electionGuid, [person.PersonGuid]);
+        Assert.Equal(1, started.Queued);
+        await WaitUntilIdle(queue, electionGuid);
+        client.Verify(
+            c => c.SendMessageAsync(person.Phone!, It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Start_FrozenElection_DoesNotSend()
+    {
+        var electionGuid = Guid.NewGuid();
+        var person = await SeedPersonAsync(electionGuid, "+14168972913", whatsAppStatus: "OK");
+        await using (var db = new TestMainDbContext(_options))
+        {
+            db.ElectionSendControls.Add(new ElectionSendControl
+            {
+                ElectionGuid = electionGuid,
+                SendsFrozen = true
+            });
+            await db.SaveChangesAsync();
+        }
+
+        var client = MockSender();
+        var queue = CreateQueue(client);
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            queue.StartAsync(electionGuid, [person.PersonGuid]));
+        Assert.Equal(PeopleMessageKeys.WhatsAppNotifyFrozen, error.Message);
+        client.Verify(
+            c => c.SendMessageAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+    }
+
     private WhatsAppNotifyQueue CreateQueue(
         Mock<IGreenApiWhatsAppClient> client,
         Func<CancellationToken, Task>? delay = null,

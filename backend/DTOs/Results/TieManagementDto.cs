@@ -1,7 +1,7 @@
 namespace Backend.DTOs.Results;
 
 /// <summary>
-/// Details about a tie situation that requires manual resolution.
+/// Details about a tie group. A resolved runoff stays here so its counts can be corrected.
 /// </summary>
 public class TieDetailsDto
 {
@@ -21,9 +21,20 @@ public class TieDetailsDto
     public List<TiePersonDto> People { get; set; } = new();
 
     /// <summary>
-    /// Instructions for resolving the tie.
+    /// Instructions for resolving the tie. Empty once the saved counts have decided the seats.
     /// </summary>
     public string Instructions { get; set; } = "Enter tie-break vote counts for these people";
+
+    /// <summary>
+    /// True while this group still needs a runoff. False when the counts have decided the seats,
+    /// and when the tie never crossed a section boundary.
+    /// </summary>
+    public bool TieBreakRequired { get; set; }
+
+    /// <summary>
+    /// True when this group needed a runoff and the saved counts have decided it.
+    /// </summary>
+    public bool IsResolved { get; set; }
 }
 
 /// <summary>

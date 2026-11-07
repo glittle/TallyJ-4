@@ -1,4 +1,5 @@
 using Backend.DTOs.Results;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -22,9 +23,11 @@ public partial class TallyService
             throw new ArgumentException($"Election {electionGuid} not found");
         }
 
+        // Resolved groups clear IsTied. They stay reachable so a teller can correct a count.
         var tieResults = await _context.Results
             .Include(r => r.Person)
-            .Where(r => r.ElectionGuid == electionGuid && r.TieBreakGroup == tieBreakGroup && r.IsTied == true)
+            .Where(r => r.ElectionGuid == electionGuid && r.TieBreakGroup == tieBreakGroup)
+            .OrderBy(r => r.Rank)
             .ToListAsync();
 
         if (!tieResults.Any())
@@ -33,6 +36,9 @@ public partial class TallyService
         }
 
         var section = tieResults[0].Section ?? SectionOther;
+        var evaluated = TieBreakResolution.Evaluate(tieResults);
+        var stillRequired = evaluated.TryGetValue(tieBreakGroup, out var status) && status.TieBreakRequired;
+        var resolved = evaluated.TryGetValue(tieBreakGroup, out status) && status.IsResolved;
 
         var people = tieResults.Select(r => new TiePersonDto
         {
@@ -46,7 +52,12 @@ public partial class TallyService
         {
             TieBreakGroup = tieBreakGroup,
             Section = section,
-            People = people
+            People = people,
+            TieBreakRequired = stillRequired,
+            IsResolved = resolved,
+            Instructions = stillRequired
+                ? "Enter tie-break vote counts for these people"
+                : string.Empty
         };
     }
 
@@ -73,8 +84,12 @@ public partial class TallyService
 
         foreach (var count in request.Counts)
         {
+            // TieBreakGroup stays set after a runoff is resolved, so a later edit can re-open it.
+            // A person in no tie group is never given a count.
             var result = await _context.Results
-                .FirstOrDefaultAsync(r => r.ElectionGuid == electionGuid && r.PersonGuid == count.PersonGuid && r.IsTied == true);
+                .FirstOrDefaultAsync(r => r.ElectionGuid == electionGuid
+                    && r.PersonGuid == count.PersonGuid
+                    && r.TieBreakGroup != null);
 
             if (result != null)
             {

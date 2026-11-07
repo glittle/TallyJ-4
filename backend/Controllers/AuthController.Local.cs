@@ -30,30 +30,55 @@ namespace Backend.Controllers;
 public partial class AuthController
 {
     /// <summary>
-    /// Open self-serve email/password registration is disabled (issue #347).
-    /// New teller accounts are created via Google, or via a SuperAdmin one-time invite.
-    /// Existing local password login remains.
+    /// Creates a local email/password account. The account starts restricted until a super admin
+    /// approves it. Email verification is still required before login. The route stays rate-limited.
     /// </summary>
-    /// <param name="request">Ignored. The body is accepted so leftover clients get a clear i18n error.</param>
-    /// <returns>400 with <c>auth.errors.openRegisterDisabled</c>.</returns>
+    [AllowAnonymous]
     [HttpPost("registerAccount")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
+        var (success, error, response) = await _localAuthService.RegisterAsync(request);
+        if (!success)
+        {
+            await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
+            {
+                EventType = SecurityEventType.LoginAttemptBlocked,
+                Email = request.Email,
+                IpAddress = clientIp,
+                UserAgent = userAgent,
+                Details = $"Open registration rejected: {error}",
+                IsSuspicious = false,
+                Severity = SecurityEventSeverity.Warning
+            });
+            return BadRequest(new { error });
+        }
+
+        var user = await _userManager.FindByEmailAsync(request.Email);
         await _securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto
         {
-            EventType = SecurityEventType.LoginAttemptBlocked,
+            EventType = SecurityEventType.AccountCreated,
+            UserId = user?.Id,
             Email = request.Email,
             IpAddress = clientIp,
             UserAgent = userAgent,
-            Details = "Open self-serve registration rejected (IdP-first; Google create path)",
-            IsSuspicious = true,
-            Severity = Backend.SecurityEventSeverity.Warning
+            Details = "Local account created via open registration (restricted until review)",
+            IsSuspicious = false,
+            Severity = SecurityEventSeverity.Info
         });
 
-        return BadRequest(new { error = OpenRegisterDisabledKey });
+        return Ok(new AuthResponse
+        {
+            Token = null,
+            RefreshToken = null,
+            Email = response?.Email ?? request.Email,
+            Name = response?.Name,
+            AuthMethod = response?.AuthMethod ?? "Local",
+            Requires2FA = false,
+            RequiresEmailVerification = true
+        });
     }
 
     /// <summary>
@@ -70,13 +95,13 @@ public partial class AuthController
 
     /// <summary>
     /// Creates one local email/password account using a SuperAdmin one-time invite.
-    /// Open <c>registerAccount</c> stays disabled; this is the only anonymous local create path.
+    /// Invite redemption creates an approved account. Open registration creates a restricted one.
     /// </summary>
     [AllowAnonymous]
     [HttpPost("registerWithInvite")]
     public async Task<IActionResult> RegisterWithInvite([FromBody] RegisterWithInviteRequest request)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         var (success, error, response) = await _accountInviteService.RedeemAsync(request);
@@ -120,7 +145,7 @@ public partial class AuthController
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         var (success, error, response) = await _localAuthService.LoginAsync(request);
@@ -395,7 +420,7 @@ public partial class AuthController
     [HttpPost("logout")]
     public async Task<IActionResult> Logout()
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 

@@ -206,7 +206,7 @@ public class RateLimitingTests : IntegrationTestBase
             {
                 var failed = await PostLoginAsync(email, password, wrongCode, ip);
                 failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-                (await failed.Content.ReadAsStringAsync()).Should().Contain("auth.errors.invalid2FACode");
+                (await failed.Content.ReadAsStringAsync()).Should().Contain("Invalid two-factor authentication code");
             }
         }
 
@@ -229,18 +229,18 @@ public class RateLimitingTests : IntegrationTestBase
             var failed = await PostLoginAsync(email, password, wrongCode, ip);
             failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             var body = await failed.Content.ReadAsStringAsync();
-            body.Should().Contain("auth.errors.invalid2FACode");
-            body.Should().NotContain("auth.errors.accountLocked");
+            body.Should().Contain("Invalid two-factor authentication code");
+            body.Should().NotContain("Account is temporarily locked");
         }
 
         var locking = await PostLoginAsync(email, password, wrongCode, ip);
         locking.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        (await locking.Content.ReadAsStringAsync()).Should().Contain("auth.errors.accountLocked");
+        (await locking.Content.ReadAsStringAsync()).Should().Contain("Account is temporarily locked");
 
         var correctCode = new OtpNet.Totp(OtpNet.Base32Encoding.ToBytes(secret)).ComputeTotp();
         var stillLocked = await PostLoginAsync(email, password, correctCode, ip);
         stillLocked.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        (await stillLocked.Content.ReadAsStringAsync()).Should().Contain("auth.errors.accountLocked");
+        (await stillLocked.Content.ReadAsStringAsync()).Should().Contain("Account is temporarily locked");
     }
 
     [Fact]
@@ -256,7 +256,7 @@ public class RateLimitingTests : IntegrationTestBase
         {
             var failed = await PostLoginAsync(email, password, wrongCode, ip);
             failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-            (await failed.Content.ReadAsStringAsync()).Should().Contain("auth.errors.invalid2FACode");
+            (await failed.Content.ReadAsStringAsync()).Should().Contain("Invalid two-factor authentication code");
         }
 
         var prompt = await PostLoginAsync(email, password, "", ip);
@@ -266,7 +266,7 @@ public class RateLimitingTests : IntegrationTestBase
 
         var locking = await PostLoginAsync(email, password, wrongCode, ip);
         locking.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        (await locking.Content.ReadAsStringAsync()).Should().Contain("auth.errors.accountLocked");
+        (await locking.Content.ReadAsStringAsync()).Should().Contain("Account is temporarily locked");
     }
 
     [Fact]
@@ -284,6 +284,7 @@ public class RateLimitingTests : IntegrationTestBase
             failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
             var body = await failed.Content.ReadAsStringAsync();
             body.Should().NotContain("auth.errors.accountLocked");
+            body.Should().NotContain("Account is temporarily locked");
         }
 
         var success = await PostLoginAsync(email, password, null, ip);
@@ -293,7 +294,7 @@ public class RateLimitingTests : IntegrationTestBase
         {
             var failed = await PostLoginAsync(email, wrongPassword, null, ip);
             failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-            (await failed.Content.ReadAsStringAsync()).Should().NotContain("auth.errors.accountLocked");
+            (await failed.Content.ReadAsStringAsync()).Should().NotContain("Account is temporarily locked");
         }
     }
 
@@ -529,10 +530,10 @@ public class RateLimitingTests : IntegrationTestBase
         // Act
         var response = await Client.PostAsync("/api/auth/registerAccount", content);
 
-        // Open register is disabled (400 + i18n key). Rate limiting must not 429 the first call.
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        // The first open registration is accepted. Rate limiting must not 429 it.
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         var body = await response.Content.ReadAsStringAsync();
-        body.Should().Contain(AuthController.OpenRegisterDisabledKey);
+        body.Should().Contain("requiresEmailVerification");
     }
 
     [Fact]

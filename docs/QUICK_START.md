@@ -10,26 +10,7 @@ Get up and running with TallyJ in 15 minutes!
 
 ### 1. Installation (5 minutes)
 
-**Option A: Docker (Recommended)**
-
-```bash
-# Clone repository
-git clone https://github.com/your-org/tallyj4.git
-cd tallyj4
-
-# Configure environment
-cp .env.docker.example .env.docker
-# Edit .env.docker with your settings
-
-# Start services
-docker-compose up -d
-
-# Access the application
-# Frontend: https://localhost:8095
-# Backend API: http://localhost:5016
-```
-
-**Option B: Local Development**
+Install SQL Server (Express or Developer Edition on Windows, or SQL Server on Linux), then start the app locally:
 
 ```bash
 # Backend
@@ -44,11 +25,14 @@ npm install
 npm run dev
 ```
 
+- Frontend: https://localhost:8095
+- Backend API: http://localhost:5016
+
 ### 2. Initial Setup (3 minutes)
 
 1. **Create a teller / admin account**
    - Sign in with Google from https://localhost:8095/login (or `/register`, which steers to Google).
-   - Open email/password registration is disabled. Existing local accounts can still log in with email and password.
+   - Email/password registration is open. A new account starts restricted until a super admin reviews it. Existing local accounts can still log in with email and password. Google sign-up is also available.
    - Development seeding (`SeedOnStartup`) also creates sample users.
 
 2. **Assign Admin Role** (via database or admin panel) if the Google account is not already a super-admin

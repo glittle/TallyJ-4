@@ -38,9 +38,7 @@ public static class ProgramAppPipeline
             using var scope = app.Services.CreateScope();
 
             var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
-
-            await EnsureConsistentMigrationHistoryAsync(context, Log.Logger);
-            await context.Database.MigrateAsync();
+            await MigrateDatabaseAsync(context);
         }
 
         var seedOnStartup = !skipDatabase && configuration.GetValue("Database:SeedOnStartup", false);
@@ -51,20 +49,12 @@ public static class ProgramAppPipeline
                 Log.Information("Migrating the database before seeding as required");
                 using var migrationScope = app.Services.CreateScope();
                 var migrationContext = migrationScope.ServiceProvider.GetRequiredService<MainDbContext>();
-
-                await EnsureConsistentMigrationHistoryAsync(migrationContext, Log.Logger);
-                await migrationContext.Database.MigrateAsync();
+                await MigrateDatabaseAsync(migrationContext);
             }
 
             Log.Information("Seeding the database on startup as configured");
             using var scope = app.Services.CreateScope();
-
-            var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
-            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-
-            await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
+            await SeedDatabaseAsync(scope.ServiceProvider);
         }
 
         if (!skipDatabase)
@@ -74,10 +64,15 @@ public static class ProgramAppPipeline
             await remoteLogService.SendLogAsync($"Started up - SiteType: {siteType} - Url: {FrontendUrlResolver.GetOrigin(configuration, app.Environment)} at {DateTime.Now}");
         }
 
-        // Proto only (see ForwardedHeadersOptions). Before UseHttpsRedirection.
-        app.UseForwardedHeaders();
+        // Before rate limiting, auth, audit logging, and HTTPS redirection.
+        // No-op when ForwardedHeaders:TrustPlatformProxy is false.
+        if (ForwardedHeadersSetup.TrustPlatformProxy(configuration))
+        {
+            app.UseForwardedHeaders();
+        }
 
         app.UseExceptionHandler();
+        app.UseMiddleware<UnmatchedRequestMiddleware>();
 
         if (isDevelopment)
         {
@@ -158,10 +153,62 @@ public static class ProgramAppPipeline
         app.MapGet("/protected", () => "This is protected!").RequireAuthorization();
 
         // add a shutdown hook to help with server logs
-        app.Lifetime.ApplicationStopping.Register(async () =>
+        app.Lifetime.ApplicationStopping.Register(() =>
         {
             Log.Information("Application Stopping...");
-            await Log.CloseAndFlushAsync();
+            try
+            {
+                // Drain before CloseAndFlush. Hosted services stop after this callback,
+                // and their own flush is a no-op once the counts are taken.
+                var summary = app.Services.GetService<UnmatchedRequestTracker>()?.DrainFormatted();
+                if (summary is not null)
+                {
+                    Log.Information("{UnmatchedRequestSummary:l}", summary);
+                }
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    Log.Warning(ex, "Failed to flush unmatched request summary");
+                }
+                catch
+                {
+                    // The logger may already be closing.
+                }
+            }
+
+            _ = Log.CloseAndFlushAsync();
+        });
+    }
+
+    /// <summary>
+    /// Migrate inside the SQL Server execution strategy. EnableRetryOnFailure rejects
+    /// the migration transaction unless it runs in that delegate.
+    /// </summary>
+    private static async Task MigrateDatabaseAsync(MainDbContext context)
+    {
+        var strategy = context.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
+        {
+            await EnsureConsistentMigrationHistoryAsync(context, Log.Logger);
+            await context.Database.MigrateAsync();
+        });
+    }
+
+    /// <summary>
+    /// Seed inside the same execution strategy so a transient SQL error can retry the seed.
+    /// </summary>
+    private static async Task SeedDatabaseAsync(IServiceProvider services)
+    {
+        var context = services.GetRequiredService<MainDbContext>();
+        var strategy = context.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
+        {
+            var userManager = services.GetRequiredService<UserManager<AppUser>>();
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            var logger = services.GetRequiredService<ILogger<Program>>();
+            await DbSeeder.SeedAsync(context, userManager, roleManager, logger);
         });
     }
 

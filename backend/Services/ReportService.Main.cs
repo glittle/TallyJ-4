@@ -33,7 +33,6 @@ public partial class ReportService
             BahaiId = r.Person?.BahaiId,
             VoteCountDisplay = TieBreakDisplayHelper.FormatVoteCountDisplay(
                 r.VoteCount ?? 0,
-                r.TieBreakRequired == true,
                 r.TieBreakCount),
             Section = r.Section
         }).ToList();
@@ -127,7 +126,14 @@ public partial class ReportService
             SpoiledBallotReasons = spoiledBallotReasons,
             SpoiledVoteReasons = spoiledVoteReasons,
             Elected = elected,
-            HasTies = results.Any(r => r.TieBreakRequired == true)
+            // Any tie whose saved counts do not yet decide the needed positions,
+            // including people outside the elected/extra slice. A stored flag left
+            // true after those counts were saved does not keep the banner.
+            HasTies = TieBreakResolution.AnyUnresolved(await _context.Results
+                .AsNoTracking()
+                .Where(r => r.ElectionGuid == electionGuid
+                    && (r.TieBreakGroup != null || r.TieBreakRequired == true))
+                .ToListAsync())
         };
     }
 }

@@ -2,15 +2,16 @@
 
 Lean index of project *why* knowledge. Load a topic file only when the work touches that area.
 
-- [architecture.md](architecture.md) — single backend host after domain consolidation; where code lives; social preview URLs are static HTML pinned to production
-- [auth.md](auth.md) — JWT identity claims (`sub` / `NameIdentifier`); teller vs online-voter cookie transport; online ballot identity is the voter session; guest teller login is rate-limited per IP and locked per election; IdP-first teller signup; SuperAdmin one-time invite for local email/password; site-wide super admin is `SuperAdmin:Emails`; teller APIs require election membership
-- [anti-abuse.md](anti-abuse.md) — owner approval before SMS, voice, and WhatsApp codes; election allowance, owner daily cap, and phone-prefix cap; neutral requestCode reply; freeze; masked send log; super-admin alerts
+- [architecture.md](architecture.md) — single backend host after domain consolidation; where code lives; social preview URLs are static HTML pinned to production; hosted UAT is one combined zip on Linux App Service `tallyj4-uat` (same-commit sibling artifact, then latest success), self-host stays IIS or a Linux process, not container images; SQL retry and single-query splitting on that host
+- [logging.md](logging.md) — unmatched probe 404s and method mismatches are counted and summarized; SPA fallback and API NotFound stay out of that summary; HttpClient request URLs stay at Warning so webhook keys are not logged
+- [auth.md](auth.md) — JWT identity claims (`sub` / `NameIdentifier`); teller vs online-voter cookie transport; online ballot identity is the voter session; guest teller login is rate-limited per IP and locked per election; platform proxy sets that IP (`X-Forwarded-For`, one hop); open sign-up starts restricted per owner, with review requests; SuperAdmin invite creates an approved account; site-wide super admin is `SuperAdmin:Emails`; teller APIs require election membership
+- [anti-abuse.md](anti-abuse.md) — owner approval covers paid sends as well as other voter codes; election allowance, owner daily cap, and phone-prefix cap; neutral requestCode reply; freeze; masked send log; super-admin alerts; bad-contact flag still re-restricts that election only
 - [realtime.md](realtime.md) — SignalR hub group naming (not a single `election-{guid}` pattern); election hub joins require election access
 - [api-contracts.md](api-contracts.md) — dual API response wrappers and OpenAPI client regeneration
 - [election-analysis.md](election-analysis.md) — core analysis engine; risk-first correctness vs v3
-- [reports.md](reports.md) — VotersByArea 18+/18–21 (V01), download-all zip of the existing report list, Front Desk vs analysis voted rule; Analyze SaveManual persists M without re-running Analyze; vote `/ tie-break` only when a count was entered
+- [reports.md](reports.md) — VotersByArea 18+/18–21 (V01), download-all zip of the existing report list, Front Desk vs analysis voted rule; Analyze SaveManual persists M without re-running Analyze; vote `/ tie-break` when a count was entered, including after resolution; unresolved ties are named on Main and Votes-by reports
 - [ballot-validation.md](ballot-validation.md) — pre-finalization integrity; count-reconciliation report before Analyze/Finalize
-- [election-state.md](election-state.md) — teller coordination, Finalized write lock, and #191 concurrent-teller SQLite coverage
+- [election-state.md](election-state.md) — teller coordination, Finalized write lock, #191 concurrent-teller SQLite coverage, and pooling off before a private SQLite file is deleted
 - [online-ballots.md](online-ballots.md) - Draft autosave vs Submitted, online acceptance (pending until Accept-all), reserved Online/Imported locations, monitor close countdown, anonymous ballot-page sessions, and random name resolution
 - [kiosk.md](kiosk.md) — kiosk as teller-minted 15-minute codes on a shared browser; not mint-on-read
 - [people.md](people.md) - person fields; AgeGroup removed (eligibility is V01/X05); cannot-vote lock after accepted ballot; guest Can Add People / Name not in the List; Confidential X is a named ordinary person

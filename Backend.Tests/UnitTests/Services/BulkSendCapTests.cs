@@ -2,6 +2,7 @@ using Backend.Configuration;
 using Backend.Context;
 using Backend.DTOs.People;
 using Backend.Entities;
+using Backend.Enumerations;
 using Backend.Helpers;
 using Backend.Services;
 using Backend.Services.Auth;
@@ -110,8 +111,74 @@ public class BulkSendCapTests : IDisposable
         Assert.DoesNotContain(Phone, log.MaskedDestination);
         Assert.Contains('*', log.MaskedDestination);
         Assert.Contains(harness.Logger.Messages, message =>
-            message.Contains(log.MaskedDestination, StringComparison.Ordinal) &&
-            !message.Contains(Phone, StringComparison.Ordinal));
+            message.Contains("channel sms", StringComparison.Ordinal) &&
+            message.Contains("1 failures", StringComparison.Ordinal) &&
+            !message.Contains(Phone, StringComparison.Ordinal) &&
+            !message.Contains(log.MaskedDestination, StringComparison.Ordinal) &&
+            !message.Contains('@'));
+    }
+
+    [Fact]
+    public async Task Sms_Sends_WhenAnApprovedOwnerSharesTheElectionWithARestrictedCoAdmin()
+    {
+        var coAdmin = Guid.NewGuid();
+        await using (var db = new MainDbContext(_options))
+        {
+            db.JoinElectionUsers.Add(new JoinElectionUser
+            {
+                ElectionGuid = _electionId,
+                UserId = coAdmin,
+                Role = "Admin"
+            });
+            db.OwnerSendControls.AddRange(
+                new OwnerSendControl
+                {
+                    UserId = _ownerId,
+                    RestrictionStatus = OwnerRestrictionStatus.Approved,
+                    PaidSendsApproved = true
+                },
+                new OwnerSendControl
+                {
+                    UserId = coAdmin,
+                    RestrictionStatus = OwnerRestrictionStatus.Restricted
+                });
+            await db.SaveChangesAsync();
+        }
+
+        var harness = Create();
+        await harness.Announcements.StartAsync(_electionId, AnnouncementChannels.Sms, [_personId]);
+        var done = await WaitUntilIdle(harness.Announcements, _electionId, AnnouncementChannels.Sms);
+
+        Assert.Equal(WhatsAppNotifyOutcome.Sent, done.Results[0].Outcome);
+        Assert.Equal(1, await PaidSendsUsedAsync());
+        harness.Sms.Verify(
+            sender => sender.SendAsync(Phone, It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task Email_DoesNotSend_WhenTheOnlyOwnerIsRestricted()
+    {
+        await using (var db = new MainDbContext(_options))
+        {
+            db.OwnerSendControls.Add(new OwnerSendControl
+            {
+                UserId = _ownerId,
+                RestrictionStatus = OwnerRestrictionStatus.Restricted
+            });
+            await db.SaveChangesAsync();
+        }
+
+        var harness = Create();
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            harness.Announcements.StartAsync(_electionId, AnnouncementChannels.Email, [_personId]));
+
+        Assert.Equal(PeopleMessageKeys.AnnouncementOwnerRestricted, error.Message);
+        harness.Email.Verify(
+            sender => sender.SendAsync(It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+        Assert.Equal(0, await PaidSendsUsedAsync());
+        Assert.DoesNotContain(harness.Logger.Messages, message => message.Contains(Email, StringComparison.Ordinal));
     }
 
     [Fact]
@@ -175,10 +242,10 @@ public class BulkSendCapTests : IDisposable
         }
 
         var harness = Create();
-        await harness.Announcements.StartAsync(_electionId, AnnouncementChannels.Email, [_personId]);
-        var done = await WaitUntilIdle(harness.Announcements, _electionId, AnnouncementChannels.Email);
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            harness.Announcements.StartAsync(_electionId, AnnouncementChannels.Email, [_personId]));
 
-        Assert.Equal(CodeSendBlockReason.Frozen, done.Results[0].Error);
+        Assert.Equal(PeopleMessageKeys.AnnouncementFrozen, error.Message);
         harness.Email.Verify(
             sender => sender.SendAsync(It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Never);

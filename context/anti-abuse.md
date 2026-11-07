@@ -2,16 +2,20 @@
 
 ## Owner paid-send gate (issue #371 slice 3a)
 
-**Status:** active  
+**Status:** superseded  
 **Evidence:** confirmed  
-**Source:** issue #371 comments of 2026-10-06 (owner abuse, flagged-upload threshold, block Online)  
-**Revisit when:** a second paid provider is added, or email codes should also wait for approval
+**Source:** issue #371 comments of 2026-10-06 (owner abuse, flagged-upload threshold, block Online); issue #414  
+**Revisit when:** a second paid provider is added
+
+> Superseded 2026-11: paid-send approval is no longer a separate step. See [context/auth.md](auth.md). An election may send when any owner or co-admin is approved. A restricted co-admin does not close it. Caps are counted on an approved owner. The account freeze kill switch still stops every election that owner belongs to. Rejection does not use that kill switch.
 
 An owner who creates an election can upload any phone list and then trigger Twilio (SMS and voice) or GreenAPI (WhatsApp). Checking the request against that list does not help, because the attacker owns the list.
 
-SMS, voice, and WhatsApp login codes wait until a super admin approves every owner and admin on the election. The flag is `OwnerSendControls.PaidSendsApproved`. Email codes are not gated by that approval and are not counted against the caps. Voice is included because it is a paid Twilio channel, same as SMS.
+Before issue #414, SMS, voice, and WhatsApp login codes waited until a super admin approved every owner and admin on the election. The flag was `OwnerSendControls.PaidSendsApproved`. Email codes were not gated by that approval and were not counted against the caps. Voice was included because it is a paid Twilio channel, same as SMS. Those caps, the freeze, the prefix cap, and the voter-list flag still apply after an owner is approved. A new list upload re-restricts that election only when those bad-contact checks flag it. It does not put the approved owner back into restricted mode.
 
-The owner is a `JoinElectionUsers` row with role `Owner` or `Admin`. `CreateElection` stores `Admin`, not `Owner`. An election with no such row cannot send a paid code. When several owners or admins exist, paid codes go out only if every one of them is approved. The send is counted against the first of those accounts that is still under its daily cap. One approved account does not carry an unapproved co-owner.
+The owner is a `JoinElectionUsers` row with role `Owner` or `Admin`. `CreateElection` stores `Admin`, not `Owner`. An election with no such row cannot send a paid code. When several owners or admins exist, paid codes go out when any one of them is approved. The send is counted against the first approved account that is still under its daily cap. A restricted co-admin does not have to be approved and does not block the send.
+
+> Superseded 2026-11: “paid codes go out only if every owner is approved.” That was the #371 rule. Issue #414’s owner decision is that one approved owner or co-admin is enough. The manual freeze kill switch is unchanged: one frozen owner still stops the election.
 
 A blocked `requestCode` returns the same phrase key as a successful send (`voting.auth.requestCode.sentIfListed`), with no verification code and no delivery-status channel. The election screen shows `elections.paidChannels.*` so the owner can see why SMS, voice, and WhatsApp are unavailable.
 
@@ -51,14 +55,26 @@ A flagged election, a cap hit, and an owner's first paid send email `AntiAbuse:A
 
 **Status:** active  
 **Evidence:** confirmed  
-**Source:** issue #371 slice 3a  
-**Revisit when:** the disposable-domain file is refreshed
+**Source:** issue #371 slice 3a; issue #397 product decision  
+**Revisit when:** the disposable-domain file is refreshed, or either cap changes
 
 Checked when send-time prefix limits were added: flagging still stops every channel. The prefix cap below is a separate limit and does not clear or replace a flag.
 
 Every path that writes people rechecks the election's phones and emails: CSV/Excel import, JSON import, v2/v3 package import, Duplicate, and manual add or edit. `libphonenumber` flags a number that does not parse, and a valid number whose region is not in `Elections.ExpectedPhoneRegions`. When that column is empty the check uses `AntiAbuse:DefaultPhoneRegionCode` (default `CA`). A run of `AntiAbuse:ConsecutivePhoneRunLength` sequential valid numbers (default 4) flags each number in the run. An email is flagged when its domain is in `backend/Data/disposable-email-domains.txt` (source note is the first lines of that file) or when the domain has no MX or only the Null MX from RFC 7505. An MX timeout or DNS failure is unknown and is not flagged. Domains are looked up once per review, at most `AntiAbuse:MxLookupParallelism` at a time (default 8), and successful answers are cached for six hours.
 
-Active rows are stored in `VoterContactFlags` (masked value truncated to 80 characters, reason, file row number). `ContactKey` is the SHA-256 of the normalized phone or email so a 250-character address still fits the column and the same contact is counted once. The election is flagged when the number of distinct contacts is greater than `AntiAbuse:FlaggedEntryThreshold` (default 3). `ExpectedPhoneRegions` accepts only libphonenumber region codes, at most 80 characters (`CA, US`). A code such as `USA` or `UK` is rejected. Duplicate and the JSON package copy that list. A manual add or edit reruns the review only when the phone or email changed, including when the value is cleared. If the review throws, the saved people stay and the election is flagged with reason `review-failed`, which stops online voting and every login code the same way. The error is logged and the super admin is emailed. Flagging writes `ElectionFlagged`, emails the super admin with the masked rows, and sets `ElectionSendControls.Flagged`. That stops online voting and every login code (email, SMS, voice, and WhatsApp). The owner cannot turn `UseOnlineVoting` on or save an open online window (`elections.onlineVotingSuspended`). A window that is already open stays on the row, but `requestCode` sends nothing, sign-in is refused with `voting.auth.noOpenElections` when every matching open election is flagged, and ballot submit returns `voting.submit.notOpen`. Teller ballot entry is unchanged. Ballots already stored are not deleted. Clearing the flag deactivates the rows and writes `ElectionFlagCleared`. The next review flags the election again if the list is still over the threshold.
+Active rows are stored in `VoterContactFlags` (masked value truncated to 80 characters, reason, file row number). `ContactKey` is the SHA-256 of the normalized phone or email so a 250-character address still fits the column and the same contact is counted once. A phone key is the E.164 form when the number parses, including a number that is not valid, so `+1 555 0100` and `+15550100` are one contact. A value that already starts with `+` uses those digits with the same `+` prefix, which is how a consecutive-run flag matches the parsed key. Anything else uses its digits only. A person with no phone and no email is not a bad contact, and blank fields are not counted.
+
+The election is flagged when either count is over its limit. One upload flags when it has more distinct bad contacts than `AntiAbuse:FlaggedEntryThreshold` (default 3). Exactly 3 in that upload do not. CSV/Excel import counts the rows that file added. JSON import and a v2/v3 package count every person in that package, so the package is one upload. Separately, the election flags when the distinct bad contacts stored on it are more than `AntiAbuse:ElectionBadContactCap` (default 10). Exactly 10 do not. That total includes earlier uploads, a manual add or edit, and Duplicate. Those three pass no upload map, so they do not use the per-upload threshold; they flag only through the election cap. `ExpectedPhoneRegions` accepts only libphonenumber region codes, at most 80 characters (`CA, US`). A code such as `USA` or `UK` is rejected. Duplicate and the JSON package copy that list. A manual add or edit reruns the review only when the phone or email changed, including when the value is cleared.
+
+If the review throws, the saved people stay and the election is flagged with reason `review-failed`, which stops online voting and every login code the same way. The error is logged and the super admin is emailed. An MX lookup error is caught for that domain, stored as unknown, and does not throw the review, so one DNS failure does not flag by itself. Flagging writes `ElectionFlagged`, emails the super admin with the masked rows, and sets `ElectionSendControls.Flagged`. That stops online voting and every login code (email, SMS, voice, and WhatsApp). The owner cannot turn `UseOnlineVoting` on or save an open online window (`elections.onlineVotingSuspended`). A window that is already open stays on the row, but `requestCode` sends nothing, sign-in is refused with `voting.auth.noOpenElections` when every matching open election is flagged, and ballot submit returns `voting.submit.notOpen`. Teller ballot entry is unchanged. Ballots already stored are not deleted. Clearing the flag deactivates the rows and writes `ElectionFlagCleared`. The next review flags the election again when that upload is over the threshold or the stored total is over the cap.
+
+**Rejected alternative:** count only the current upload. Files of 3 would never flag, however many bad contacts the election stored.
+
+**Rejected alternative:** apply the upload threshold of 3 to every stored contact. Four bad numbers spread across small uploads would flag. The election cap is 10 so a short list can be fixed without a flag.
+
+**Rejected alternative:** leave a thrown review as a log and keep sending open. A review bug would leave codes and online voting available.
+
+**Rejected alternative:** let one MX lookup failure throw the whole review and flag `review-failed`. A single DNS error would flag a clean list. That failure stays unknown for the domain.
 
 **Rejected alternative:** treat a DNS timeout as no MX. A slow resolver would flag real addresses.
 

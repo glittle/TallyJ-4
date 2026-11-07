@@ -35,6 +35,16 @@ public class HttpContextExtensionsClientIpTests
     }
 
     [Fact]
+    public void GetClientIpAddress_AzureAppServiceLinkLocalPeer_UsesRightmostPublic()
+    {
+        var context = new DefaultHttpContext();
+        context.Connection.RemoteIpAddress = IPAddress.Parse("::ffff:169.254.129.1");
+        context.Request.Headers["X-Forwarded-For"] = "198.51.100.9, 203.0.113.44";
+
+        Assert.Equal("203.0.113.44", context.GetClientIpAddress());
+    }
+
+    [Fact]
     public void GetClientIpAddress_InfrastructurePeer_UsesRightmostPublicNotLeftmost()
     {
         var context = new DefaultHttpContext();

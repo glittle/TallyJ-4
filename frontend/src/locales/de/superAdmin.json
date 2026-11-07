@@ -468,5 +468,215 @@
     "t": "Konto einfrieren",
     "s": "ai",
     "w": "2026-10-15T17:15:00Z"
+  },
+  "superAdmin.ownerReview.listTitle": {
+    "t": "Konten, die auf Prüfung warten",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.title": {
+    "t": "Inhaberprüfung",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.email": {
+    "t": "E-Mail",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.name": {
+    "t": "Name",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.status": {
+    "t": "Status",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.signIn": {
+    "t": "Anmeldung",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.elections": {
+    "t": "Wahlen",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.open": {
+    "t": "Prüfen",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.empty": {
+    "t": "Keine Konten warten.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterAll": {
+    "t": "Alle",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRequested": {
+    "t": "Prüfung angefordert",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRestricted": {
+    "t": "Eingeschränkt",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRejected": {
+    "t": "Abgelehnt",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusReviewRequested": {
+    "t": "Prüfung angefordert",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusRejected": {
+    "t": "Abgelehnt",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusApproved": {
+    "t": "Freigegeben",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusRestricted": {
+    "t": "Eingeschränkt",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.back": {
+    "t": "Alle Prüfungen",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.none": {
+    "t": "Keine",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.signedUp": {
+    "t": "Registriert",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteAt": {
+    "t": "Wahlen löschen nach",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.notePrompt": {
+    "t": "Hinweis an die Inhaberin oder den Inhaber",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.approve": {
+    "t": "Freigeben",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.hold": {
+    "t": "Zurückstellen",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.reject": {
+    "t": "Ablehnen",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.rejectConfirm": {
+    "t": "Dieses Konto ablehnen und seine Wahlen einfrieren?",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.rejectedDone": {
+    "t": "Konto abgelehnt",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.approved": {
+    "t": "Konto freigegeben",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.held": {
+    "t": "Konto bleibt eingeschränkt",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteNow": {
+    "t": "Wahlen jetzt löschen",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteConfirm": {
+    "t": "Die Wahlen dieses Kontos jetzt löschen? Wahlen, die mit einem freigegebenen Inhaber geteilt sind, bleiben erhalten.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleted": {
+    "t": "Wahlen gelöscht",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.noElections": {
+    "t": "Dieses Konto hat noch keine Wahlen.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.type": {
+    "t": "Art",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.dates": {
+    "t": "Wahldatum",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.online": {
+    "t": "Online-Fenster",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.people": {
+    "t": "Personen",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.domains": {
+    "t": "E-Mail-Domänen",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.phones": {
+    "t": "Telefon-Länder",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.flagged": {
+    "t": "Markierte Kontakte",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.sample": {
+    "t": "Markierte Beispiele",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.peopleSample": {
+    "t": "Personenbeispiel",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

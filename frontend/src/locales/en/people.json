@@ -1505,9 +1505,9 @@
     "w": "2026-10-26T06:00:00Z"
   },
   "people.announcementError.not-approved": {
-    "t": "Owners have not approved paid sends.",
+    "t": "No owner or co-admin of this election is approved for paid sends.",
     "s": "ai",
-    "w": "2026-10-26T06:00:00Z"
+    "w": "2026-11-07T22:00:00Z"
   },
   "people.announcementError.election-cap": {
     "t": "This election has used its paid-send allowance.",
@@ -1568,5 +1568,30 @@
     "t": "Cancelled before the provider was called.",
     "s": "ai",
     "w": "2026-10-26T06:00:00Z"
+  },
+  "people.notifyWhatsApp.frozen": {
+    "t": "WhatsApp messages are stopped while sending is frozen.",
+    "s": "source",
+    "w": "2026-11-01T20:10:00Z"
+  },
+  "people.notifyWhatsApp.ownerRestricted": {
+    "t": "WhatsApp messages stay unavailable until an owner or co-admin of this election is approved.",
+    "s": "source",
+    "w": "2026-11-01T20:10:00Z"
+  },
+  "people.announcement.frozen": {
+    "t": "Announcements are stopped while sending is frozen.",
+    "s": "ai",
+    "w": "2026-11-07T22:00:00Z"
+  },
+  "people.announcement.ownerRestricted": {
+    "t": "Announcements stay unavailable until an owner or co-admin of this election is approved.",
+    "s": "ai",
+    "w": "2026-11-07T22:00:00Z"
+  },
+  "people.announcementError.owner-restricted": {
+    "t": "This election stays closed until an owner or co-admin is approved.",
+    "s": "ai",
+    "w": "2026-11-07T22:00:00Z"
   }
 }

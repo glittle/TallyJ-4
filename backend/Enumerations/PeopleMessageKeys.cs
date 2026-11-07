@@ -68,6 +68,16 @@ public static class PeopleMessageKeys
     public const string WhatsAppNotifyNotFound = "people.notifyWhatsApp.notFound";
 
     /// <summary>
+    /// A super admin froze this election or an owner on it.
+    /// </summary>
+    public const string WhatsAppNotifyFrozen = "people.notifyWhatsApp.frozen";
+
+    /// <summary>
+    /// None of the owners or co-admins is approved.
+    /// </summary>
+    public const string WhatsAppNotifyOwnerRestricted = "people.notifyWhatsApp.ownerRestricted";
+
+    /// <summary>
     /// Guest teller tried to add a person while GuestTellersCanAddPeople is off (v3 GA).
     /// </summary>
     public const string GuestCannotAddPeople = "people.guestCannotAddPeople";
@@ -111,4 +121,15 @@ public static class PeopleMessageKeys
     /// No announcement run (or matching token) for this election and channel.
     /// </summary>
     public const string AnnouncementNotFound = "people.announcement.notFound";
+
+    /// <summary>
+    /// A super admin froze this election or an owner on it. Email and SMS both stop.
+    /// </summary>
+    public const string AnnouncementFrozen = "people.announcement.frozen";
+
+    /// <summary>
+    /// No owner or co-admin is approved, and one account is explicitly restricted.
+    /// An approved owner on the same election does not hit this key.
+    /// </summary>
+    public const string AnnouncementOwnerRestricted = "people.announcement.ownerRestricted";
 }

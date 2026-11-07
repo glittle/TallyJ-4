@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Backend;
 using Backend.DTOs.Security;
+using Backend.Helpers;
 using Backend.Services;
 
 namespace Backend.Middleware;
@@ -97,7 +98,7 @@ public class AuditMiddleware
             }
 
             var details = $"{context.Request.Method} {context.Request.Path}{context.Request.QueryString}";
-            var ipAddress = context.Connection.RemoteIpAddress?.ToString();
+            var ipAddress = context.GetClientIpAddress();
             var userAgent = context.Request.Headers.UserAgent.FirstOrDefault();
 
             await securityAuditService.LogSecurityEventAsync(new CreateSecurityAuditLogDto

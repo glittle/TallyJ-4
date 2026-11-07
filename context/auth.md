@@ -44,22 +44,49 @@ Online voters use the same JWT claims as before (`voterType=online`, `voterId`, 
 
 **Rejected alternative:** encrypt the JWT in `localStorage`. Not a fix under XSS (issue #250 / #249).
 
-## IdP-first teller signup (issue #347)
+## Open sign-up starts restricted (issue #414)
 
 **Status:** active  
 **Evidence:** confirmed  
+**Source:** issue #414 and the owner's answers on that issue (approval is per owner)  
+**Revisit when:** review should require a captcha, or invited accounts should start restricted
+
+Anyone can create a teller account again. `POST /api/auth/registerAccount` creates a local email/password user, sends the existing verification email, and stays on the per-IP rate limit. Google, and the other teller sign-in methods that create an account, do the same. The new row is `OwnerSendControls.RestrictionStatus = Restricted`. Login still requires a confirmed email. Local login with an authenticator shows the code step before any session cookie is set.
+
+A SuperAdmin one-time invite still creates one local account. That account is **Approved**, because a super admin already issued the link. The invitee still confirms the email.
+
+What a restricted election cannot do is enforced on the server: send voter codes or messages (email, SMS, voice, and the head-teller WhatsApp notify), and turn on or open online voting. An election is restricted only when none of its owners or co-admins is approved. One approved owner keeps the election open, so adding a restricted co-admin does not close it. A rejected owner freezes and later deletes only elections that are not shared with an owner or admin who is not rejected. The account-level send freeze is a separate kill switch and is not set by rejection.
+
+A restricted or review-requested owner can email a test code to their own account address from `POST /api/account/owner-test-code`. That mail is not a voter login code and does not open online voting. One account can send one test code a minute and five a UTC day. Voter `requestCode` still requires an open election, so it is not the test path. Voters also keep seeing an open election that still has an approved owner after a co-admin is rejected. An election is hidden from voters for rejection only when no owner or co-admin is approved and at least one is rejected. Setup, people upload, teller entry, tallying, and reports stay available. A package import that had online voting on is saved with it off when the importing account is not approved and the election has no approved owner.
+
+The owner sees a banner and can request a review at most once every 24 hours. That emails every address in `SuperAdmin:Emails` with the subject prefix `[TallyJ review request]`. The super-admin review page can approve, reject, or hold. Approve also approves paid sends. Reject freezes and later deletes only elections that are not shared with a non-rejected owner or admin. A background job deletes those 30 days later unless a super admin deletes them sooner. An election shared with any non-rejected owner or admin is neither frozen nor deleted, and voters stop seeing it only when no owner or co-admin is approved. The banner says this is site-administrator approval, separate from the verified email required to sign in. It reloads when the browser tab is shown again and when the route changes. When that reload finds the account no longer blocked, the open election is loaded again so online voting is not left on the restricted state from before approval.
+
+Existing accounts are migrated to Approved, including paid sends. A missing restriction row does not block email codes or online voting, so rows written before this column are not treated as new sign-ups.
+
+**Rejected alternative:** keep approval per election. The owner answered that trust belongs to the account: once approved, every election of that account is unrestricted, and a later list upload re-restricts an election only when the existing bad-contact checks flag it.
+
+**Rejected alternative:** leave open email/password registration disabled. The invite-only gate was the response to spam; restricted mode plus review is the replacement, and invites stay for communities that should start trusted.
+
+> Superseded 2026-11: open `POST /api/auth/registerAccount` returned `auth.errors.openRegisterDisabled`. See the IdP-first section below for what was true then.
+
+## IdP-first teller signup (issue #347)
+
+**Status:** superseded  
+**Evidence:** confirmed  
 **Source:** issue #347; product decision 2026-09-16 (Glen)  
-**Revisit when:** another teller IdP is added, or open register is reconsidered
+**Revisit when:** another teller IdP is added
 
-New teller/admin accounts are created through Google (teller external auth: `google/login`, `google/one-tap`). Open anonymous `POST /api/auth/registerAccount` is disabled and returns the i18n key `auth.errors.openRegisterDisabled`. Existing local email/password **login** is unchanged.
+> Superseded 2026-11: open registration is back, and new accounts start restricted. See [Open sign-up starts restricted](#open-sign-up-starts-restricted-issue-414).
 
-The SPA `/register` page without an invite query explains Google-first signup and sends the user to Google or `/login`. Login copy steers new tellers to Google.
+New teller/admin accounts were created through Google (teller external auth: `google/login`, `google/one-tap`). Open anonymous `POST /api/auth/registerAccount` was disabled and returned the i18n key `auth.errors.openRegisterDisabled`. Existing local email/password **login** was unchanged.
 
-**Rejected alternative:** keep v3-style open email/password register and add captcha. Live v3 already sees spam Admin Registered accounts; captcha is not the strategy.
+The SPA `/register` page without an invite query explained Google-first signup and sent the user to Google or `/login`.
 
-> Superseded 2026-09: “build invite-only email signup later.” That leftover is now the SuperAdmin one-time invite path below.
+**Rejected alternative:** keep v3-style open email/password register and add captcha. Live v3 already saw spam Admin Registered accounts; captcha was not the strategy. Issue #414 later reopened registration with a restricted account instead of captcha.
 
-**Rejected alternative:** remove `POST /api/auth/registerAccount` entirely. Leftover clients still get a clear i18n error instead of a silent 404. The endpoint is still rate-limited.
+> Superseded 2026-09: “build invite-only email signup later.” That leftover is the SuperAdmin one-time invite path below.
+
+**Rejected alternative:** remove `POST /api/auth/registerAccount` entirely. Leftover clients got a clear i18n error instead of a silent 404. The endpoint stayed rate-limited, which is why it could be reopened without a new route.
 
 Testing/Development accept the same `dev-google:{email}` credential as voter Google tests so teller create/login can be mocked without calling Google.
 
@@ -70,7 +97,7 @@ Testing/Development accept the same `dev-google:{email}` credential as voter Goo
 **Source:** issue #347 leftover after #348; product rule for communities that cannot use Google  
 **Revisit when:** invites should be bound to a pre-filled email, Head Teller should issue them, or captcha is added on this path only
 
-Communities that cannot use Google get a **one-time invite link**, not open register. SuperAdmin (`POST /api/superadmin/account-invites`) issues the link. The raw token is returned once and stored only as SHA-256. Anonymous `GET /api/auth/account-invite` peeks it; `POST /api/auth/registerWithInvite` consumes it and calls existing `LocalAuthService.RegisterAsync` (same Identity `AppUser` store, same verification email). After use or expiry (7 days) the invite is dead. Open `registerAccount` stays disabled.
+Communities that should start trusted still get a **one-time invite link**. SuperAdmin (`POST /api/superadmin/account-invites`) issues the link. The raw token is returned once and stored only as SHA-256. Anonymous `GET /api/auth/account-invite` peeks it; `POST /api/auth/registerWithInvite` consumes it and calls existing `LocalAuthService.RegisterAsync` (same Identity `AppUser` store, same verification email), then marks that account Approved. After use or expiry (7 days) the invite is dead. Open `registerAccount` creates a Restricted account instead.
 
 `/register?invite=` shows the email/password form only when peek says the token is still usable. SuperAdmin Users has “Issue email/password invite.”
 
@@ -98,9 +125,11 @@ Communities that cannot use Google get a **one-time invite link**, not open regi
 Auth rate-limit keys use the IP the **trusted ingress** saw, not a client-supplied leftmost address.
 
 - **No proxy hop** (public `RemoteIpAddress`): key is that address. XFF / Forwarded are ignored so a direct client cannot pick a bucket.
-- **Infrastructure peer** (`RemoteIpAddress` is null, loopback, or private — TestServer, App Service ARR, Docker): parse XFF (else RFC 7239 `Forwarded`) and take the **rightmost public** IP. That is the socket address the platform appended. Private / loopback / link-local / CGNAT (100.64/10) suffix hops are skipped. Two connecting clients behind one proxy therefore get two buckets; changing only the leftmost XFF stays in the same bucket.
+- **Infrastructure peer** (`RemoteIpAddress` is null, loopback, or private — TestServer, App Service ARR, or any other host that presents a private socket address): parse XFF (else RFC 7239 `Forwarded`) and take the **rightmost public** IP. That is the socket address the platform appended. Private / loopback / link-local / CGNAT (100.64/10) suffix hops are skipped. Two connecting clients behind one proxy therefore get two buckets; changing only the leftmost XFF stays in the same bucket.
 
-`UseForwardedHeaders` is proto-only (`X-Forwarded-Proto`) with KnownProxies / KnownIPNetworks / KnownNetworks cleared so Azure TLS termination still sets `Request.IsHttps`. It does **not** apply `X-Forwarded-For`: trust-all + ForwardLimit would rewrite `RemoteIpAddress` from the client-controlled chain and make spoofing easier. Rate-limit keying reads the headers itself under the infrastructure-peer check above.
+> Superseded 2026-11: proto-only `UseForwardedHeaders`. See [Platform proxy forwarded headers](#platform-proxy-forwarded-headers-issue-410). Leaving `X-Forwarded-For` unapplied kept `RemoteIpAddress` on the platform hop, so login events, unusual-location checks, and audit rows never saw the client.
+
+Rate-limit keying still reads the client through `GetClientIpAddress` (rightmost public address when the TCP peer is an infrastructure hop). A public `RemoteIpAddress` is the client and forwarded headers are ignored. See the platform-proxy section for the one-hop middleware in front of that helper.
 
 The same in-memory middleware still owns the limits. Account `POST /api/auth/login` and guest teller `POST /api/auth/teller-login` count **failed attempts only** (`LoginIpMaxRequests` and `TellerLoginIpMaxRequests`, 20 per minute per trusted-ingress IP). A successful login does not consume the bucket. The middleware still returns 429 `error.tooManyRequests` up front when that bucket is already full, and it records the timestamp only after the endpoint runs and only for a counted failure: bad credentials or an invalid two-factor code on login, or an unknown election / wrong passcode on teller-login. Not-open, no-main-teller, and locked teller replies do not count, and neither do account-locked or unverified-email replies. An invalid two-factor code on `POST /api/auth/login` does count. That failure also calls `AccessFailedAsync`, so the account locks after `MaxFailedAccessAttempts` (5), the same as a bad password. The attempt that crosses that lock returns the account-locked reply and does not also consume the IP bucket. Only a full success clears the access-failed count: the password, and the two-factor code when one is required. A correct password with no code is the prompt. It does not count as a failure and it does not clear the count. Clearing it there would let a password holder send four wrong codes, one empty-code request, and repeat, including from rotating IPs, and the account would never lock. A user without two-factor still has the count cleared by a successful password login. Venues often share one public IP behind NAT, so counting every request, including a successful teller join, would 429 the next person in the hall. The failure is recorded after the endpoint returns, so parallel failures from one IP can all pass the check before any is recorded and a burst can go past 20. The per-IP cap is approximate under concurrency. The per-election lockout (10 consecutive wrong passcodes) and the account lockout are the real guards; see the guest teller login lockout section. Other teller routes (the disabled register endpoint, 2FA, password reset, teller OAuth) stay **tight per trusted-ingress IP** and still count every request. Anonymous voter `requestCode` / `verifyCode` do **not** use that login IP bucket: elections often share one venue WiFi / community NAT, so a public `RemoteIp` is the whole hall. Those routes use a **5/min per VoterId** bucket (JSON body peek capped at 16 KiB even when ContentLength is missing / chunked; a fitting body is replaced with a MemoryStream at position 0 so model binding still works) plus a **60/min per trusted-ingress IP** venue ceiling. Oversized / peek-overflow bodies are **413** (`error.payloadTooLarge`) and do not continue to model binding — they must not be demoted to `missing:{ip}`, or a padded body with a real voterId would opt out of the cross-IP identifier ceiling. `missing:{ip}` is only for a genuinely empty, malformed, or absent `voterId`. Voter OAuth (`/api/online-voting/*Auth`) has no VoterId in the body — venue IP ceiling only. Teller OAuth stays on the tight IP table.
 
@@ -108,7 +137,7 @@ The same in-memory middleware still owns the limits. Account `POST /api/auth/log
 
 **Rejected alternative:** leftmost XFF as “original client.” Front Door’s own docs say an existing XFF is appended; the left side is attacker-controlled.
 
-**Rejected alternative:** `UseForwardedHeaders` for XFF with KnownProxies cleared and ForwardLimit 2. That trust-all walk can set `RemoteIpAddress` to a spoofed entry, after which a “use RemoteIp” key is also spoofable.
+**Rejected alternative:** `UseForwardedHeaders` for XFF with KnownProxies cleared and ForwardLimit 2. That trust-all walk can set `RemoteIpAddress` to a spoofed entry, after which a “use RemoteIp” key is also spoofable. ForwardLimit stays 1; the helper still skips a private hop the middleware did not peel. See the platform-proxy section.
 
 **Rejected alternative:** keep keying on `RemoteIpAddress` only. On Azure UAT that address is the platform hop, so one client locks everyone out or the limit never isolates a single attacker.
 
@@ -125,6 +154,37 @@ The same in-memory middleware still owns the limits. Account `POST /api/auth/log
 **Rejected alternative:** rebuild on ASP.NET `RateLimiter` or add a new auth flow. #192 said do not rebuild auth; this slice only fixes keying, coverage, and i18n bodies.
 
 > Superseded 2026-10: count every `POST /api/auth/login` and `POST /api/auth/teller-login` request, including successes, at 5 per minute per trusted-ingress IP. See the guest teller login lockout section.
+
+## Platform proxy forwarded headers (issue #410)
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #410 — on Linux Azure App Service every request arrived as `::ffff:169.254.129.1` over http; review of the first fix, which trusted every peer  
+**Revisit when:** a proxy's address is a public IP that is not listed in `ForwardedHeaders:KnownProxies`, or the platform inserts more than one proxy hop
+
+> Superseded 2026-11: clearing `KnownProxies`, `KnownIPNetworks`, and `KnownNetworks` while `TrustPlatformProxy` defaults to true. An empty known-proxy list makes the middleware apply `X-Forwarded-For` from any peer. With `ForwardLimit` 1 the client-supplied value becomes `RemoteIpAddress`. IIS in-process (`backend/web.config`, `hostingModel="inprocess"`) does not add `X-Forwarded-For`, and neither does Kestrel when nothing sits in front of it, so that value is whatever the client typed. Login and teller-login buckets, the voter venue ceiling, audit logs, and unusual-location checks would then use a chosen IP.
+
+`ForwardedHeaders:TrustPlatformProxy` defaults to true (`backend/appsettings.json`). The pipeline calls `UseForwardedHeaders` before rate limiting, authentication, security-event and audit logging, and HTTPS redirection. The options apply `X-Forwarded-For` and `X-Forwarded-Proto` with `ForwardLimit` 1. The peer is trusted only when it is an infrastructure address, the same kind of hop `GetClientIpAddress` already treats as a proxy:
+
+- loopback `127.0.0.0/8` and `::1/128` (nginx or Apache on the same machine, and the test host)
+- RFC 1918 `10.0.0.0/8`, `172.16.0.0/12`, `192.168.0.0/16`
+- link-local `169.254.0.0/16`, which covers Azure App Service `169.254.129.1`
+- IPv6 unique-local `fc00::/7` and link-local `fe80::/10`
+- the IPv4-mapped form of each IPv4 range. The middleware also maps `::ffff:a.b.c.d` to IPv4 before the check, so the App Service peer matches `169.254.0.0/16` either way
+
+`ForwardedHeaders:KnownProxies` adds extra proxy IPs or CIDRs, for a load balancer whose address is public. There is no Azure-only setting. A public `RemoteIpAddress` is not a trusted proxy, so a direct client cannot replace it. Set `TrustPlatformProxy` false to ignore the headers entirely.
+
+Login protection, unusual-login location, audit logs, and rate limits take the client from `HttpContext.GetClientIpAddress()`. After the middleware, a public `RemoteIpAddress` is that client and a leftover `X-Forwarded-For` is ignored. If the single consumed hop is still an infrastructure address, the helper uses the rightmost public address left on `X-Forwarded-For` or `Forwarded`.
+
+**Rejected alternative:** leave forwarding proto-only. The scheme was corrected and the client IP was not, so unusual-location, per-IP limits, and audit rows collapsed onto the platform hop.
+
+**Rejected alternative:** clear the known-proxy lists. That trusts every directly connected client. IIS in-process would accept a spoofed `X-Forwarded-For` as the client IP.
+
+**Rejected alternative:** default `TrustPlatformProxy` to false and turn it on only for Azure. nginx or Apache on loopback, and App Service, would keep the platform hop until someone found the switch.
+
+**Rejected alternative:** ForwardLimit 2, or an unlimited walk, even limited to infrastructure peers. A longer walk continues into the client-supplied prefix. That is the design reverted in 2026-09.
+
+**Rejected alternative:** read only `Connection.RemoteIpAddress` and drop the helper. When the rightmost header entry is the private platform address, one hop leaves `RemoteIpAddress` on that hop.
 
 ## Distinct voter verify error keys (issue #192 leftover)
 

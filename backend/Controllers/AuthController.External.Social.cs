@@ -32,7 +32,7 @@ public partial class AuthController
     [HttpPost("telegram")]
     public async Task<IActionResult> TelegramLogin([FromBody] TelegramLoginRequest request)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         var botToken = _configuration["Telegram:BotToken"];
@@ -90,7 +90,7 @@ public partial class AuthController
     [HttpPost("facebook")]
     public async Task<IActionResult> FacebookLogin([FromBody] FacebookLoginRequest request)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         try
@@ -161,7 +161,7 @@ public partial class AuthController
     [HttpPost("kakao")]
     public async Task<IActionResult> KakaoLogin([FromBody] KakaoLoginRequest request)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         try
@@ -302,6 +302,11 @@ public partial class AuthController
             {
                 await _userManager.UpdateAsync(user);
             }
+        }
+
+        if (isNewUser)
+        {
+            OwnerAccountGate.AddRestricted(_context, user.Id);
         }
 
         var token = _jwtTokenService.GenerateToken(user);

@@ -30,8 +30,8 @@ namespace Backend.Controllers;
 /// <summary>
 /// Controller for handling authentication and authorization operations including
 /// login, password management, two-factor authentication, and role management.
-    /// Open self-serve email/password registration is disabled; new teller accounts
-    /// are created via Google, or via a SuperAdmin one-time invite for local email/password.
+    /// Open self-serve email/password registration creates a restricted account.
+    /// Google sign-up does the same. A SuperAdmin invite creates an approved account.
     /// Implementation is split across partial files by concern.
 /// </summary>
 [ApiController]
@@ -60,8 +60,8 @@ public partial class AuthController : ControllerBase
     private readonly ITellerLoginLockoutService _tellerLoginLockoutService;
 
     /// <summary>
-    /// i18n key returned when anonymous callers POST <c>/api/auth/registerAccount</c>.
-    /// Open self-serve email/password signup is disabled; use Google to create a teller account.
+    /// Kept so older clients that still branch on this key have a stable name.
+    /// Open registration no longer returns it.
     /// </summary>
     public const string OpenRegisterDisabledKey = "auth.errors.openRegisterDisabled";
 

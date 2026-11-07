@@ -15,8 +15,7 @@ All domain entities, enumerations, the EF Core `MainDbContext`, identity models 
 ## Prerequisites
 
 - .NET SDK 10
-- SQL Server Express or SQL Server Developer Edition
-- Optional: Docker Desktop if you prefer running SQL Server in a container
+- SQL Server Express, SQL Server Developer Edition, or SQL Server on Linux
 
 ## Local database options
 
@@ -29,15 +28,9 @@ The default development configuration expects:
 
 The default development connection string key is `ConnectionStrings:TallyJ4`.
 
-### Option 2: SQL Server in Docker
+### Option 2: Another SQL Server instance
 
-Example local SQL Server container:
-
-```bash
-docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=YourStrong@Passw0rd" -p 1433:1433 --name tallyj4-sql -d mcr.microsoft.com/mssql/server:2022-latest
-```
-
-If you use Docker SQL Server, override `ConnectionStrings:TallyJ4` accordingly.
+SQL Server on Linux, or any other reachable SQL Server, uses the same key. Override `ConnectionStrings:TallyJ4` with user secrets or an environment variable so the host, database, and credentials match that server. Do not commit the password.
 
 ## Recommended configuration approach
 
@@ -118,9 +111,9 @@ v3 vs v4 analysis comparison (issue #168): `dotnet test Backend.Tests/Backend.Te
 
 ## Validation workflow
 
-Pull requests into `main` that change `backend/**`, `Backend.Tests/**`, `repo.sln`, `global.json`, `Directory.*` (for example `Directory.Build.props`), or `.github/workflows/backend-pr.yml` run the **Backend (build, tests)** check. The workflow is `.github/workflows/backend-pr.yml`. It uses the .NET SDK from `global.json` (**10.0.103**, `rollForward: latestFeature`) via `actions/setup-dotnet`, the same pin as `UseDotNet` `useGlobalJson: true` in `.azure/pipelines/azure-back-end-pipeline.yml`. `backend/Backend.csproj` and `Backend.Tests/Backend.Tests.csproj` target **net10.0**.
+Pull requests into `main` that change `backend/**`, `Backend.Tests/**`, `repo.sln`, `global.json`, `Directory.*` (for example `Directory.Build.props`), or `.github/workflows/backend-pr.yml` run the **Backend (build, tests)** check on `ubuntu-latest` and **Backend (build, tests, windows)** on `windows-latest`. The workflow is `.github/workflows/backend-pr.yml`. It uses the .NET SDK from `global.json` (**10.0.103**, `rollForward: latestFeature`) via `actions/setup-dotnet`, the same pin as `UseDotNet` `useGlobalJson: true` in `.azure/pipelines/azure-back-end-pipeline.yml`. `backend/Backend.csproj` and `Backend.Tests/Backend.Tests.csproj` target **net10.0**.
 
-The Azure back-end pipeline is push-to-main only (`pr: none`) and runs on `windows-latest`. This check runs on `ubuntu-latest`. Tests use SQLite (`Backend.Tests/IntegrationTests/CustomWebApplicationFactory.cs`) or EF Core InMemory (`Backend.Tests/UnitTests/ServiceTestBase.cs`), so SQL Server is not required.
+The Azure back-end pipeline is push-to-main only (`pr: none`). Its build and tests run on `windows-latest`; the UAT deploy job runs on `ubuntu-latest`. This pull-request check runs the same Release test pass on `ubuntu-latest` and `windows-latest`. Tests use SQLite (`Backend.Tests/IntegrationTests/CustomWebApplicationFactory.cs`) or EF Core InMemory (`Backend.Tests/UnitTests/ServiceTestBase.cs`), so SQL Server is not required.
 
 From the repository root, that check runs:
 
@@ -158,7 +151,7 @@ Use the reset scripts under `backend/scripts/` when you need a clean local datab
 The backend uses controller-based routes. A few examples from the current codebase:
 
 - `POST /api/Auth/login`
-- `POST /api/Auth/registerAccount` (disabled; returns `auth.errors.openRegisterDisabled` — new teller accounts are created via Google, or via a SuperAdmin one-time invite)
+- `POST /api/Auth/registerAccount` (open email/password sign-up; the account starts restricted until a super admin approves it; email verification and the per-IP rate limit stay). Google sign-up is also restricted. A SuperAdmin one-time invite creates an approved account.
 - `POST /api/superadmin/account-invites` (SuperAdmin; issues a one-time `/register?invite=` link)
 - `POST /api/Auth/registerWithInvite` (anonymous; creates one local account, then the invite is dead)
 - `GET /api/Elections/getElections`
@@ -205,4 +198,4 @@ This is a known issue with .NET 10 SDK tooling where stale NuGet cache state in 
 ### Localization appears missing
 
 - Confirm `frontend/src/locales/` exists
-- Confirm `Localization:ResourcesPath` points to `../frontend/src/locales` in development
+- Confirm `Localization:ResourcesPath` points to `../frontend/src/locales` in development (resolved from the content root; a missing folder is skipped)

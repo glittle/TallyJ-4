@@ -13,12 +13,17 @@ import {
   postApiAuthLogout,
   postApiAuthTellerLogin,
   postApiAuthVerifyEmail,
+  postApiAuthVerify2Fa,
   postApiAccountChangeDisplayName,
   getApiAccountGetMyProfile,
   postApiAccountRequestEmailChange,
   postApiAuthConfirmEmailChange,
   getApiAuthAccountInvite,
   postApiAuthRegisterWithInvite,
+  postApiAuthRegisterAccount,
+  getApiAccountOwnerRestriction,
+  postApiAccountOwnerRestrictionRequestReview,
+  postApiAccountOwnerTestCode,
 } from "@/api/gen/configService";
 import type {
   AccountUserProfileDto,
@@ -38,6 +43,15 @@ export interface AuthResponse {
 export interface TwoFactorSetupResponse {
   secret: string;
   qrCodeDataUrl: string;
+}
+
+export interface OwnerRestriction {
+  status?: string | null;
+  note?: string | null;
+  reviewRequestedAt?: string | Date | null;
+  nextRequestAt?: string | Date | null;
+  canRequestReview?: boolean;
+  blocksSends?: boolean;
 }
 
 export interface UserProfile {
@@ -70,6 +84,51 @@ export const authService = {
     return response.data as { valid: boolean };
   },
 
+  async register(data: {
+    email: string;
+    displayName: string;
+    password: string;
+    confirmPassword: string;
+  }): Promise<AuthResponse> {
+    const response = await postApiAuthRegisterAccount({
+      body: data,
+      throwOnError: true,
+    });
+    return response.data as AuthResponse;
+  },
+
+  async getOwnerRestriction(): Promise<OwnerRestriction> {
+    const response = await getApiAccountOwnerRestriction({
+      throwOnError: true,
+    });
+    const body = response.data as
+      | { data?: OwnerRestriction }
+      | OwnerRestriction;
+    if (body && typeof body === "object" && "data" in body && body.data) {
+      return body.data;
+    }
+    return (body ?? {}) as OwnerRestriction;
+  },
+
+  async sendOwnerTestCode(): Promise<void> {
+    await postApiAccountOwnerTestCode({
+      throwOnError: true,
+    });
+  },
+
+  async requestOwnerReview(): Promise<OwnerRestriction> {
+    const response = await postApiAccountOwnerRestrictionRequestReview({
+      throwOnError: true,
+    });
+    const body = response.data as
+      | { data?: OwnerRestriction }
+      | OwnerRestriction;
+    if (body && typeof body === "object" && "data" in body && body.data) {
+      return body.data;
+    }
+    return (body ?? {}) as OwnerRestriction;
+  },
+
   async registerWithInvite(data: {
     token: string;
     email: string;
@@ -86,6 +145,18 @@ export const authService = {
 
   async login(data: LoginRequest): Promise<AuthResponse> {
     const response = await postApiAuthLogin({
+      body: data,
+      throwOnError: true,
+    });
+    return response.data as AuthResponse;
+  },
+
+  async verify2FA(data: {
+    email: string;
+    password: string;
+    code: string;
+  }): Promise<AuthResponse> {
+    const response = await postApiAuthVerify2Fa({
       body: data,
       throwOnError: true,
     });

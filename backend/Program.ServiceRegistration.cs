@@ -31,6 +31,7 @@ public static class ProgramServiceRegistration
         services.AddScoped<IPublicService, PublicService>();
         services.AddScoped<ITallyService, TallyService>();
         services.AddScoped<IReportService, ReportService>();
+        services.AddScoped<IReportExportService, ReportExportService>();
         services.AddScoped<IFrontDeskService, FrontDeskService>();
         services.AddScoped<IOnlineVotingService, OnlineVotingService>();
         services.AddSingleton<IOnlineBallotAcceptLock, OnlineBallotAcceptLock>();
@@ -81,6 +82,8 @@ public static class ProgramServiceRegistration
         services.AddScoped<ICodeSendGuard, CodeSendGuard>();
         services.AddScoped<IPaidChannelStatusService, PaidChannelStatusService>();
         services.AddScoped<IPaidSendAdminService, PaidSendAdminService>();
+        services.AddScoped<IOwnerReviewService, OwnerReviewService>();
+        services.AddScoped<IOwnerTestCodeService, OwnerTestCodeService>();
         services.AddSingleton<IDisposableDomainList, FileDisposableDomainList>();
         services.AddSingleton<IMailExchangerLookup, DnsMailExchangerLookup>();
         services.AddScoped<IVoterContactReviewer, VoterContactReviewer>();
@@ -91,9 +94,13 @@ public static class ProgramServiceRegistration
         bool isTesting,
         bool skipDatabase = false)
     {
+        services.AddSingleton<UnmatchedRequestTracker>();
+        services.AddHostedService<UnmatchedRequestSummaryService>();
+
         services.AddSingleton<RateLimitStore>();
 
         // Testing and --skip-database must not start hosted services that open SQL.
+        // The unmatched-request summary does not touch SQL and stays registered above.
         if (isTesting || skipDatabase)
         {
             services.AddSingleton<IVoteCountBroadcastService, NullVoteCountBroadcastService>();
@@ -101,6 +108,7 @@ public static class ProgramServiceRegistration
         }
 
         services.AddHostedService<RefreshTokenCleanupService>();
+        services.AddHostedService<RejectedOwnerCleanupService>();
         services.AddSingleton<VoteCountBroadcastService>();
         services.AddSingleton<IVoteCountBroadcastService>(sp => sp.GetRequiredService<VoteCountBroadcastService>());
         services.AddHostedService(sp => sp.GetRequiredService<VoteCountBroadcastService>());

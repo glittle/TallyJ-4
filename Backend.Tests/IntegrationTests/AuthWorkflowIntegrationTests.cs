@@ -183,6 +183,8 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
         var reLoginAuthResponse = JsonSerializer.Deserialize<AuthResponse>(reLoginContent, JsonOptions);
         reLoginAuthResponse.Should().NotBeNull();
         reLoginAuthResponse!.Requires2FA.Should().BeTrue();
+        var promptCookies = GetCookiesFromResponse(reLoginResponse);
+        promptCookies.Should().NotContainKey(SecureCookieMiddleware.AccessTokenCookieName);
 
         // Act - Verify 2FA with valid code
         var verifyRequest = new Verify2FARequest
@@ -214,7 +216,7 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
     }
 
     [Fact]
-    public async Task OpenRegisterAccount_IsRejected_WithI18nKey()
+    public async Task OpenRegisterAccount_CreatesTheAccount_AndAsksForEmailVerification()
     {
         var testEmail = $"verify-test-{Guid.NewGuid()}@tallyj.test";
         var registerRequest = new RegisterRequest
@@ -232,9 +234,10 @@ public class AuthWorkflowIntegrationTests : IntegrationTestBase
 
         var registerResponse = await Client.PostAsync("/api/auth/registerAccount", registerContent);
 
-        registerResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var registerBody = await registerResponse.Content.ReadAsStringAsync();
-        registerBody.Should().Contain(AuthController.OpenRegisterDisabledKey);
+        registerBody.Should().Contain("requiresEmailVerification");
+        registerBody.Should().NotContain(AuthController.OpenRegisterDisabledKey);
     }
 
     [Fact]

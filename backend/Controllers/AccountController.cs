@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using Backend.DTOs.Account;
+using Backend.DTOs.Owners;
+using Backend.Helpers;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -16,11 +18,19 @@ namespace Backend.Controllers;
 public class AccountController : ControllerBase
 {
     private readonly IAccountService _accountService;
+    private readonly IOwnerReviewService _ownerReviewService;
+    private readonly IOwnerTestCodeService _ownerTestCodeService;
     private readonly ILogger<AccountController> _logger;
 
-    public AccountController(IAccountService accountService, ILogger<AccountController> logger)
+    public AccountController(
+        IAccountService accountService,
+        IOwnerReviewService ownerReviewService,
+        IOwnerTestCodeService ownerTestCodeService,
+        ILogger<AccountController> logger)
     {
         _accountService = accountService;
+        _ownerReviewService = ownerReviewService;
+        _ownerTestCodeService = ownerTestCodeService;
         _logger = logger;
     }
 
@@ -81,7 +91,7 @@ public class AccountController : ControllerBase
 
         try
         {
-            var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var clientIp = HttpContext.GetClientIpAddress();
             var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
             await _accountService.RequestEmailChangeAsync(userId, dto, clientIp, userAgent);
             return Ok(ApiResponse<object>.SuccessResponse(new { }, "Verification sent to the new email address"));
@@ -117,5 +127,68 @@ public class AccountController : ControllerBase
             _logger.LogWarning("Password change failed: {Message}", ex.Message);
             return BadRequest(ApiResponse<object>.ErrorResponse(ex.Message));
         }
+    }
+
+    /// <summary>
+    /// Restriction state for the signed-in account. Missing rows do not block sends.
+    /// </summary>
+    [HttpGet("owner-restriction")]
+    public async Task<ActionResult<ApiResponse<OwnerRestrictionDto>>> GetOwnerRestriction()
+    {
+        var userId = CurrentUserId;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(ApiResponse<OwnerRestrictionDto>.ErrorResponse("User not authenticated"));
+        }
+
+        var restriction = await _ownerReviewService.GetForUserAsync(userId);
+        return Ok(ApiResponse<OwnerRestrictionDto>.SuccessResponse(restriction));
+    }
+
+    /// <summary>
+    /// Asks every super admin to review this account. Limited to one email per 24 hours.
+    /// </summary>
+    [HttpPost("owner-restriction/request-review")]
+    public async Task<ActionResult<ApiResponse<OwnerRestrictionDto>>> RequestOwnerReview()
+    {
+        var userId = CurrentUserId;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(ApiResponse<OwnerRestrictionDto>.ErrorResponse("User not authenticated"));
+        }
+
+        var result = await _ownerReviewService.RequestReviewAsync(userId);
+        if (!result.Success)
+        {
+            var status = result.ErrorKey == OwnerReviewService.ThrottledKey
+                ? StatusCodes.Status429TooManyRequests
+                : StatusCodes.Status400BadRequest;
+            return StatusCode(status, ApiResponse<OwnerRestrictionDto>.ErrorResponse(result.ErrorKey ?? "error"));
+        }
+
+        return Ok(ApiResponse<OwnerRestrictionDto>.SuccessResponse(result.Restriction!));
+    }
+
+    /// <summary>
+    /// Emails a test code to the signed-in owner's own account address.
+    /// Allowed while the account is restricted or waiting for review.
+    /// Does not open online voting and does not send anything to voters.
+    /// </summary>
+    [HttpPost("owner-test-code")]
+    public async Task<ActionResult<ApiResponse<bool>>> SendOwnerTestCode()
+    {
+        var userId = CurrentUserId;
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(ApiResponse<bool>.ErrorResponse("User not authenticated"));
+        }
+
+        var result = await _ownerTestCodeService.SendAsync(userId);
+        if (!result.Success)
+        {
+            return BadRequest(ApiResponse<bool>.ErrorResponse(result.ErrorKey ?? "error"));
+        }
+
+        return Ok(ApiResponse<bool>.SuccessResponse(true));
     }
 }

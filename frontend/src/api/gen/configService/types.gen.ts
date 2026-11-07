@@ -107,6 +107,13 @@ export type ApiResponseFrontDeskRollCallDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponseIReadOnlyListOwnersOwnerReviewListItemDto = {
+    success?: boolean;
+    data?: Array<OwnersOwnerReviewListItemDto> | null;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponseListComputersActiveComputerDto = {
     success?: boolean;
     data?: Array<ComputersActiveComputerDto> | null;
@@ -166,6 +173,20 @@ export type ApiResponseListVotesVoteDto = {
 export type ApiResponseLocationsLocationDto = {
     success?: boolean;
     data?: LocationsLocationDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
+export type ApiResponseOwnersOwnerRestrictionDto = {
+    success?: boolean;
+    data?: OwnersOwnerRestrictionDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
+export type ApiResponseOwnersOwnerReviewDetailDto = {
+    success?: boolean;
+    data?: OwnersOwnerReviewDetailDto;
     message?: string | null;
     errors?: Array<string> | null;
 };
@@ -464,7 +485,12 @@ export const BackendSecurityEventType = {
     44: 44,
     45: 45,
     46: 46,
-    47: 47
+    47: 47,
+    48: 48,
+    49: 49,
+    50: 50,
+    51: 51,
+    52: 52
 } as const;
 
 export type BackendSecurityEventType = typeof BackendSecurityEventType[keyof typeof BackendSecurityEventType];
@@ -1095,6 +1121,66 @@ export type OnlineVotingVerifyCodeDto = {
     verifyCode?: string | null;
 };
 
+export type OwnersOwnerRestrictionDto = {
+    status?: string | null;
+    note?: string | null;
+    reviewRequestedAt?: Date | null;
+    nextRequestAt?: Date | null;
+    canRequestReview?: boolean;
+    blocksSends?: boolean;
+};
+
+export type OwnersOwnerReviewCountDto = {
+    key?: string | null;
+    count?: number;
+};
+
+export type OwnersOwnerReviewDetailDto = {
+    userId?: string;
+    email?: string | null;
+    displayName?: string | null;
+    authMethod?: string | null;
+    signedUpAt?: Date | null;
+    status?: string | null;
+    note?: string | null;
+    reviewRequestedAt?: Date | null;
+    reviewedAt?: Date | null;
+    reviewedByUserId?: string | null;
+    rejectedAt?: Date | null;
+    deleteElectionsAt?: Date | null;
+    elections?: Array<OwnersOwnerReviewElectionDto> | null;
+};
+
+export type OwnersOwnerReviewElectionDto = {
+    electionGuid?: string;
+    name?: string | null;
+    electionType?: string | null;
+    dateOfElection?: Date | null;
+    onlineWhenOpen?: Date | null;
+    onlineWhenClose?: Date | null;
+    peopleCount?: number;
+    emailDomains?: Array<OwnersOwnerReviewCountDto> | null;
+    phoneCountries?: Array<OwnersOwnerReviewCountDto> | null;
+    flaggedContactCount?: number;
+    flaggedSample?: Array<string> | null;
+    peopleSample?: Array<string> | null;
+};
+
+export type OwnersOwnerReviewListItemDto = {
+    userId?: string;
+    email?: string | null;
+    displayName?: string | null;
+    status?: string | null;
+    authMethod?: string | null;
+    reviewRequestedAt?: Date | null;
+    rejectedAt?: Date | null;
+    electionCount?: number;
+};
+
+export type OwnersOwnerReviewNoteDto = {
+    note?: string | null;
+};
+
 export type PaginatedResponseBallotsBallotDto = {
     items?: Array<BallotsBallotDto> | null;
     pageNumber?: number;
@@ -1718,12 +1804,14 @@ export type ReportsVotesByNameDto = {
     electionName?: string | null;
     dateOfElection?: Date | null;
     people?: Array<ReportsVotePersonDto> | null;
+    hasUnresolvedTie?: boolean;
 };
 
 export type ReportsVotesByNumDto = {
     electionName?: string | null;
     dateOfElection?: Date | null;
     people?: Array<ReportsVotePersonDto> | null;
+    hasUnresolvedTie?: boolean;
 };
 
 export type ResultsAcceptAllOnlineBallotsRunDto = {
@@ -1922,6 +2010,7 @@ export type ResultsPersonResultDto = {
     isTied?: boolean;
     tieBreakGroup?: number | null;
     tieBreakRequired?: boolean;
+    tieBreakCount?: number | null;
     closeToNext?: boolean;
     closeToPrev?: boolean;
 };
@@ -2002,12 +2091,15 @@ export type ResultsTieDetailsDto = {
     section?: string | null;
     people?: Array<ResultsTiePersonDto> | null;
     instructions?: string | null;
+    tieBreakRequired?: boolean;
+    isResolved?: boolean;
 };
 
 export type ResultsTieInfoDto = {
     tieBreakGroup?: number;
     voteCount?: number;
     tieBreakRequired?: boolean;
+    isResolved?: boolean;
     section?: string | null;
     personNames?: Array<string> | null;
 };
@@ -2491,6 +2583,54 @@ export type PostApiAccountChangePasswordResponses = {
 };
 
 export type PostApiAccountChangePasswordResponse = PostApiAccountChangePasswordResponses[keyof PostApiAccountChangePasswordResponses];
+
+export type GetApiAccountOwnerRestrictionData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Account/owner-restriction';
+};
+
+export type GetApiAccountOwnerRestrictionResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseOwnersOwnerRestrictionDto;
+};
+
+export type GetApiAccountOwnerRestrictionResponse = GetApiAccountOwnerRestrictionResponses[keyof GetApiAccountOwnerRestrictionResponses];
+
+export type PostApiAccountOwnerRestrictionRequestReviewData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Account/owner-restriction/request-review';
+};
+
+export type PostApiAccountOwnerRestrictionRequestReviewResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseOwnersOwnerRestrictionDto;
+};
+
+export type PostApiAccountOwnerRestrictionRequestReviewResponse = PostApiAccountOwnerRestrictionRequestReviewResponses[keyof PostApiAccountOwnerRestrictionRequestReviewResponses];
+
+export type PostApiAccountOwnerTestCodeData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Account/owner-test-code';
+};
+
+export type PostApiAccountOwnerTestCodeResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemBoolean;
+};
+
+export type PostApiAccountOwnerTestCodeResponse = PostApiAccountOwnerTestCodeResponses[keyof PostApiAccountOwnerTestCodeResponses];
 
 export type GetApiAuthGoogleLoginData = {
     body?: never;
@@ -5595,6 +5735,114 @@ export type PostApiSuperadminPaidSendsOwnersByUserIdApproveResponses = {
 };
 
 export type PostApiSuperadminPaidSendsOwnersByUserIdApproveResponse = PostApiSuperadminPaidSendsOwnersByUserIdApproveResponses[keyof PostApiSuperadminPaidSendsOwnersByUserIdApproveResponses];
+
+export type GetApiSuperadminOwnerReviewsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        status?: string;
+    };
+    url: '/api/superadmin/owner-reviews';
+};
+
+export type GetApiSuperadminOwnerReviewsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseIReadOnlyListOwnersOwnerReviewListItemDto;
+};
+
+export type GetApiSuperadminOwnerReviewsResponse = GetApiSuperadminOwnerReviewsResponses[keyof GetApiSuperadminOwnerReviewsResponses];
+
+export type GetApiSuperadminOwnerReviewsByUserIdData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/api/superadmin/owner-reviews/{userId}';
+};
+
+export type GetApiSuperadminOwnerReviewsByUserIdResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseOwnersOwnerReviewDetailDto;
+};
+
+export type GetApiSuperadminOwnerReviewsByUserIdResponse = GetApiSuperadminOwnerReviewsByUserIdResponses[keyof GetApiSuperadminOwnerReviewsByUserIdResponses];
+
+export type PostApiSuperadminOwnerReviewsByUserIdApproveData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/api/superadmin/owner-reviews/{userId}/approve';
+};
+
+export type PostApiSuperadminOwnerReviewsByUserIdApproveResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseOwnersOwnerRestrictionDto;
+};
+
+export type PostApiSuperadminOwnerReviewsByUserIdApproveResponse = PostApiSuperadminOwnerReviewsByUserIdApproveResponses[keyof PostApiSuperadminOwnerReviewsByUserIdApproveResponses];
+
+export type PostApiSuperadminOwnerReviewsByUserIdRejectData = {
+    body?: OwnersOwnerReviewNoteDto;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/api/superadmin/owner-reviews/{userId}/reject';
+};
+
+export type PostApiSuperadminOwnerReviewsByUserIdRejectResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseOwnersOwnerRestrictionDto;
+};
+
+export type PostApiSuperadminOwnerReviewsByUserIdRejectResponse = PostApiSuperadminOwnerReviewsByUserIdRejectResponses[keyof PostApiSuperadminOwnerReviewsByUserIdRejectResponses];
+
+export type PostApiSuperadminOwnerReviewsByUserIdHoldData = {
+    body?: OwnersOwnerReviewNoteDto;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/api/superadmin/owner-reviews/{userId}/hold';
+};
+
+export type PostApiSuperadminOwnerReviewsByUserIdHoldResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseOwnersOwnerRestrictionDto;
+};
+
+export type PostApiSuperadminOwnerReviewsByUserIdHoldResponse = PostApiSuperadminOwnerReviewsByUserIdHoldResponses[keyof PostApiSuperadminOwnerReviewsByUserIdHoldResponses];
+
+export type PostApiSuperadminOwnerReviewsByUserIdDeleteElectionsData = {
+    body?: never;
+    path: {
+        userId: string;
+    };
+    query?: never;
+    url: '/api/superadmin/owner-reviews/{userId}/delete-elections';
+};
+
+export type PostApiSuperadminOwnerReviewsByUserIdDeleteElectionsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemBoolean;
+};
+
+export type PostApiSuperadminOwnerReviewsByUserIdDeleteElectionsResponse = PostApiSuperadminOwnerReviewsByUserIdDeleteElectionsResponses[keyof PostApiSuperadminOwnerReviewsByUserIdDeleteElectionsResponses];
 
 export type PostApiSuperadminPaidSendsOwnersByUserIdFreezeData = {
     body?: never;

@@ -101,6 +101,19 @@ public class AnnouncementQueue : IAnnouncementQueue
             throw new InvalidOperationException(PeopleMessageKeys.AnnouncementTextNotSet);
         }
 
+        // Same election gate as WhatsApp notify: one frozen owner stops every channel,
+        // and a restricted co-admin does not close an election that still has an approved owner.
+        var blocked = await OwnerRestrictionQueries.VoterMessageBlockKeyAsync(
+            db,
+            electionGuid,
+            PeopleMessageKeys.AnnouncementFrozen,
+            PeopleMessageKeys.AnnouncementOwnerRestricted,
+            cancellationToken);
+        if (blocked != null)
+        {
+            throw new InvalidOperationException(blocked);
+        }
+
         var requested = personGuids.Distinct().ToList();
         var people = await db.People
             .Where(p => p.ElectionGuid == electionGuid && requested.Contains(p.PersonGuid))
@@ -162,7 +175,7 @@ public class AnnouncementQueue : IAnnouncementQueue
 
         if (!startProcess)
         {
-            BulkSendSupport.LogFailures(_logger, electionGuid, channel, failedMasked);
+            BulkSendSupport.LogFailures(_logger, electionGuid, channel, failedMasked.Count);
         }
         else
         {
@@ -451,12 +464,12 @@ public class AnnouncementQueue : IAnnouncementQueue
         catch (Exception ex)
         {
             _logger.LogError(ex, "Announcement queue failed for election {ElectionGuid} channel {Channel}",
-                run.ElectionGuid, run.Channel);
+                run.ElectionGuid, BulkSendSupport.LogChannel(run.Channel));
             MarkRemainingCancelled(run, remainingFromFirstUnsent: true);
         }
         finally
         {
-            BulkSendSupport.LogFailures(_logger, run.ElectionGuid, run.Channel, run.FailedMasked);
+            BulkSendSupport.LogFailures(_logger, run.ElectionGuid, run.Channel, run.FailedMasked.Count);
             run.Running = false;
             run.Cts.Dispose();
         }

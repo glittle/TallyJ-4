@@ -1,6 +1,8 @@
 using Backend.Configuration;
 using Backend.Context;
 using Backend.DTOs.Elections;
+using Backend.Entities;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -64,8 +66,29 @@ public class PaidChannelStatusService : IPaidChannelStatusService
                     row.UserId,
                     row.PaidSendsApproved,
                     row.SendsFrozen,
+                    row.RestrictionStatus,
                     row.DailyCapOverride))
                 .ToListAsync(cancellationToken);
+
+        var trusts = ownerIds
+            .Select(id =>
+            {
+                var owner = owners.FirstOrDefault(row => row.UserId == id);
+                return owner == null
+                    ? new OwnerRestrictionQueries.OwnerTrust(id, null, false, false)
+                    : new OwnerRestrictionQueries.OwnerTrust(
+                        owner.UserId,
+                        owner.RestrictionStatus,
+                        owner.PaidSendsApproved,
+                        owner.SendsFrozen);
+            })
+            .ToList();
+        if (OwnerRestrictionQueries.ElectionIsOwnerRestricted(trusts))
+        {
+            dto.PaidChannelBlockReason = PaidChannelStatus.OwnerRestricted;
+            dto.OnlineVotingSuspended = true;
+            return;
+        }
 
         if (control?.SendsFrozen == true
             || ownerIds.Any(id => owners.Any(owner => owner.UserId == id && owner.SendsFrozen)))
@@ -74,9 +97,10 @@ public class PaidChannelStatusService : IPaidChannelStatusService
             return;
         }
 
-        var everyOwnerApproved = ownerIds.Count > 0
-            && ownerIds.All(id => owners.Any(owner => owner.UserId == id && owner.PaidSendsApproved));
-        if (!everyOwnerApproved)
+        var approvedIds = trusts.Where(owner => owner.IsApproved && owner.PaidSendsApproved)
+            .Select(owner => owner.UserId)
+            .ToList();
+        if (approvedIds.Count == 0)
         {
             dto.PaidChannelBlockReason = PaidChannelStatus.NotApproved;
             return;
@@ -91,10 +115,10 @@ public class PaidChannelStatusService : IPaidChannelStatusService
         var today = _clock.UtcDate;
         var counts = await _context.OwnerDailyPaidSends
             .AsNoTracking()
-            .Where(row => ownerIds.Contains(row.UserId) && row.UtcDate == today)
+            .Where(row => approvedIds.Contains(row.UserId) && row.UtcDate == today)
             .ToDictionaryAsync(row => row.UserId, row => row.SendCount, cancellationToken);
 
-        var anyUnderCap = ownerIds.Any(id =>
+        var anyUnderCap = approvedIds.Any(id =>
         {
             var cap = owners.First(owner => owner.UserId == id).DailyCapOverride
                 ?? _options.ResolvedOwnerDailyPaidSendCap;
@@ -111,5 +135,6 @@ public class PaidChannelStatusService : IPaidChannelStatusService
         Guid UserId,
         bool PaidSendsApproved,
         bool SendsFrozen,
+        string? RestrictionStatus,
         int? DailyCapOverride);
 }

@@ -145,7 +145,15 @@ public class ElectionsController : ControllerBase
     [HttpPost("createElection")]
     public async Task<ActionResult<ApiResponse<ElectionDto>>> CreateElection(CreateElectionDto createDto)
     {
-        var election = await _electionService.CreateElectionAsync(createDto);
+        ElectionDto election;
+        try
+        {
+            election = await _electionService.CreateElectionAsync(createDto);
+        }
+        catch (OwnerRestrictedException ex)
+        {
+            return BadRequest(ApiResponse<ElectionDto>.ErrorResponse(ex.Message));
+        }
 
         return CreatedAtAction(
             nameof(GetElection),
@@ -252,6 +260,10 @@ public class ElectionsController : ControllerBase
         {
             return BadRequest(ApiResponse<ElectionDto>.ErrorResponse(ex.Message));
         }
+        catch (OwnerRestrictedException ex)
+        {
+            return BadRequest(ApiResponse<ElectionDto>.ErrorResponse(ex.Message));
+        }
 
         if (election == null)
         {
@@ -342,6 +354,10 @@ public class ElectionsController : ControllerBase
             election = await _electionService.UpdateOnlineVotingWindowAsync(guid, dto);
         }
         catch (OnlineVotingSuspendedException ex)
+        {
+            return BadRequest(ApiResponse<ElectionDto>.ErrorResponse(ex.Message));
+        }
+        catch (OwnerRestrictedException ex)
         {
             return BadRequest(ApiResponse<ElectionDto>.ErrorResponse(ex.Message));
         }

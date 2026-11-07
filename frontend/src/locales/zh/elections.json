@@ -758,5 +758,75 @@
     "t": "选民",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "elections.ownerRestricted.banner": {
+    "t": "您的账户处于受限状态。您可以建立选举、上传人员、录入选票、计票并查看报告。在站点管理员批准之前，您不能向选民发送验证码或消息，也不能开放在线投票。您可以向自己的账户邮箱发送一封测试验证码。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestReview": {
+    "t": "请求审核",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requested": {
+    "t": "已于 {when} 请求审核。您可以在 {next} 之后再次请求。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.holdNote": {
+    "t": "审核说明：{note}",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.rejected": {
+    "t": "此账户已被拒绝。其选举已冻结并对选民隐藏。除非站点管理员提前删除，否则将在决定后 30 天删除。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.throttled": {
+    "t": "等待时间结束后，您可以再次请求审核。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.requestFailed": {
+    "t": "审核请求邮件未能发出。请稍后再试。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noRecipients": {
+    "t": "尚未配置站点管理员邮箱，因此没有发送审核请求。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.alreadyApproved": {
+    "t": "此账户已经批准。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notFound": {
+    "t": "找不到账户。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.noteTooLong": {
+    "t": "说明过长。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.notRejected": {
+    "t": "只有被拒绝的账户才能立即删除其选举。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.ownerRestricted.onlineBlocked": {
+    "t": "在站点管理员批准您的账户之前，在线投票保持关闭。设置、计票员录入、计票和报告仍可使用。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "elections.paidChannels.ownerRestricted": {
+    "t": "在站点管理员批准您的账户之前，不能发送选民验证码，也不能开放在线投票。您可以向自己的账户邮箱发送测试验证码。现场投票和计票员录入仍可使用。",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }

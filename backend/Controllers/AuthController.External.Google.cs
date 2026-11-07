@@ -33,7 +33,7 @@ public partial class AuthController
     [HttpGet("google/login")]
     public async Task<IActionResult> GoogleLogin([FromQuery] string? returnUrl = null)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         _logger.LogInformation("Google login attempt from {ClientIp} with returnUrl: {ReturnUrl}", clientIp, returnUrl);
@@ -139,7 +139,7 @@ public partial class AuthController
             var displayName = principal.FindFirstValue(ClaimTypes.Name) ??
                               principal.FindFirstValue(ClaimTypes.GivenName);
 
-            var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+            var clientIp = HttpContext.GetClientIpAddress();
             var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
             var (user, _) = await ProcessGoogleUserAsync(
@@ -172,7 +172,7 @@ public partial class AuthController
     [HttpPost("google/one-tap")]
     public async Task<IActionResult> GoogleOneTap([FromBody] GoogleOneTapRequest request)
     {
-        var clientIp = HttpContext.Connection.RemoteIpAddress?.ToString();
+        var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         string email;
@@ -332,6 +332,11 @@ public partial class AuthController
             }
         }
 
+        if (isNewUser)
+        {
+            OwnerAccountGate.AddRestricted(_context, user.Id);
+        }
+
         var token = _jwtTokenService.GenerateToken(user);
         var refreshToken = _jwtTokenService.GenerateRefreshToken();
         var refreshTokenEntity = _jwtTokenService.CreateRefreshToken(user.Id, refreshToken);
@@ -425,6 +430,11 @@ public partial class AuthController
                 user.DisplayName = displayName;
                 await _userManager.UpdateAsync(user);
             }
+        }
+
+        if (isNewUser)
+        {
+            OwnerAccountGate.AddRestricted(_context, user.Id);
         }
 
         var token = _jwtTokenService.GenerateToken(user);

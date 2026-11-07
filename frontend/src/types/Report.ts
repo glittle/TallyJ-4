@@ -54,6 +54,8 @@ export interface VotesByNumReport {
   electionName: string;
   dateOfElection?: string;
   people: VotePerson[];
+  /** True when a required tie is still unresolved. */
+  hasUnresolvedTie?: boolean;
 }
 
 export interface VotePerson {
@@ -69,6 +71,8 @@ export interface VotesByNameReport {
   electionName: string;
   dateOfElection?: string;
   people: VotePerson[];
+  /** True when a required tie is still unresolved. */
+  hasUnresolvedTie?: boolean;
 }
 
 export interface BallotReportItem {

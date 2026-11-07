@@ -80,7 +80,7 @@ Issue #169 is the test script for this process, not a second product build. Cove
 
 **Rejected alternative:** Playwright browser E2E. Frontend tests stay Vitest + jsdom; the monitor already locks counts-only (no named pending/accepted list) and a reload after Accept-all.
 
-**Rejected alternative:** run these automated tests against Azure SQL. Backend.Tests stay on the local SQLite factory. Live cloud-agent app runs use local Docker SQL + migrations + SeedOnStartup, not production Azure SQL.
+**Rejected alternative:** run these automated tests against Azure SQL. Backend.Tests stay on the local SQLite factory. Live app runs use a local SQL Server database, migrations, and SeedOnStartup, not production Azure SQL.
 
 **Reason:** lock the already-shipped Accept-all contract (including anonymity: counts only) without a browser driver and without a production database.
 

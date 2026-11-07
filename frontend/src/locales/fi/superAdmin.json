@@ -128,5 +128,215 @@
     "t": "Super Admin -kojelauta",
     "s": "ai",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "superAdmin.ownerReview.listTitle": {
+    "t": "Tarkistusta odottavat tilit",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.title": {
+    "t": "Omistajan tarkistus",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.email": {
+    "t": "Sähköposti",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.name": {
+    "t": "Nimi",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.status": {
+    "t": "Tila",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.signIn": {
+    "t": "Kirjautuminen",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.elections": {
+    "t": "Vaalit",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.open": {
+    "t": "Tarkista",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.empty": {
+    "t": "Ei odottavia tilejä.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterAll": {
+    "t": "Kaikki",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRequested": {
+    "t": "Tarkistus pyydetty",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRestricted": {
+    "t": "Rajoitettu",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.filterRejected": {
+    "t": "Hylätty",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusReviewRequested": {
+    "t": "Tarkistus pyydetty",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusRejected": {
+    "t": "Hylätty",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusApproved": {
+    "t": "Hyväksytty",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.statusRestricted": {
+    "t": "Rajoitettu",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.back": {
+    "t": "Kaikki tarkistukset",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.none": {
+    "t": "Ei mitään",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.signedUp": {
+    "t": "Rekisteröitynyt",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteAt": {
+    "t": "Poista vaalit jälkeen",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.notePrompt": {
+    "t": "Huomautus omistajalle",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.approve": {
+    "t": "Hyväksy",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.hold": {
+    "t": "Pidä",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.reject": {
+    "t": "Hylkää",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.rejectConfirm": {
+    "t": "Hylätäänkö tämä tili ja jäädytetäänkö sen vaalit?",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.rejectedDone": {
+    "t": "Tili hylätty",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.approved": {
+    "t": "Tili hyväksytty",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.held": {
+    "t": "Tili jäi rajoitetuksi",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteNow": {
+    "t": "Poista vaalit nyt",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleteConfirm": {
+    "t": "Poistetaanko tämän tilin vaalit nyt? Hyväksytyn omistajan kanssa jaetut vaalit säilyvät.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.deleted": {
+    "t": "Vaalit poistettu",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.noElections": {
+    "t": "Tällä tilillä ei ole vielä vaaleja.",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.type": {
+    "t": "Tyyppi",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.dates": {
+    "t": "Vaalin päivä",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.online": {
+    "t": "Verkkoikkuna",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.people": {
+    "t": "Henkilöt",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.domains": {
+    "t": "Sähköpostin verkkotunnukset",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.phones": {
+    "t": "Puhelimen maat",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.flagged": {
+    "t": "Merkityt yhteystiedot",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.sample": {
+    "t": "Merkitty näyte",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
+  },
+  "superAdmin.ownerReview.peopleSample": {
+    "t": "Henkilönäyte",
+    "s": "ai",
+    "w": "2026-11-01T20:00:00Z"
   }
 }
