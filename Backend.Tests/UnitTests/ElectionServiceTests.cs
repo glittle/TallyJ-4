@@ -899,6 +899,41 @@ public class ElectionServiceTests : ServiceTestBase
             Times.Once);
     }
 
+    [Theory]
+    [InlineData(ElectionStage.GatheringBallots, true, "gather-1")]
+    [InlineData(ElectionStage.GatheringBallots, true, null)]
+    [InlineData(ElectionStage.SettingUp, false, "gather-1")]
+    [InlineData(ElectionStage.ProcessingBallots, true, "gather-1")]
+    [InlineData(ElectionStage.Finalized, false, "")]
+    public async Task ToggleTellerAccessAsync_does_not_follow_stage_or_online_voting(
+        ElectionStage stage,
+        bool useOnlineVoting,
+        string? passcode)
+    {
+        var electionGuid = Guid.NewGuid();
+        Context.Elections.Add(new Election
+        {
+            ElectionGuid = electionGuid,
+            Name = "Guest access stage",
+            ElectionType = ElectionTypeEnum.LSA.Code,
+            ElectionMode = ElectionModeEnum.Normal.Code,
+            NumberToElect = 3,
+            ElectionStage = stage,
+            UseOnlineVoting = useOnlineVoting,
+            ElectionPasscode = passcode,
+            RowVersion = new byte[8],
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.ToggleTellerAccessAsync(electionGuid, isOpen: true);
+
+        Assert.NotNull(result);
+        Assert.True(result!.IsTellerAccessOpen);
+        Assert.Equal(stage, result.ElectionStage);
+        Assert.Equal(useOnlineVoting, result.UseOnlineVoting);
+        Assert.Equal(passcode, result.ElectionPasscode);
+    }
+
     [Fact]
     public async Task DuplicateElectionAsync_CreatesNewTestElectionWithCopiedPeopleAndSettings()
     {

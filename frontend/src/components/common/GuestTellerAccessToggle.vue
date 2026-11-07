@@ -37,6 +37,10 @@ const isOpen = computed(() => election.value?.isTellerAccessOpen ?? false);
 
 const passcode = computed(() => election.value?.electionPasscode ?? "");
 
+// Guest login cannot succeed without the shared passcode. Stage and online
+// voting do not lock this switch. The API still requires FullTellerAccess.
+const needsPasscode = computed(() => passcode.value.length === 0);
+
 const lockoutMessage = computed(() => {
   const untilRaw = election.value?.tellerLoginLockedUntil;
   if (!untilRaw) {
@@ -49,6 +53,13 @@ const lockoutMessage = computed(() => {
   return t("elections.tellerLoginLocked", {
     until: until.toLocaleString(),
   });
+});
+
+const accessTitle = computed(() => {
+  if (needsPasscode.value) {
+    return t("elections.guestTellerAccessNeedsPasscode");
+  }
+  return lockoutMessage.value;
 });
 
 const shareableUrl = computed(() => {
@@ -167,8 +178,12 @@ function openShareDrawer() {
   <div
     v-if="showToggle"
     class="guest-teller-access-box header-status-box"
-    :class="isOpen ? 'is-open' : 'is-closed'"
-    :title="lockoutMessage || undefined"
+    :class="{
+      'is-open': isOpen,
+      'is-closed': !isOpen,
+      'is-needs-passcode': needsPasscode,
+    }"
+    :title="accessTitle || undefined"
   >
     <span class="guest-teller-access-label header-status-label">
       {{ t("elections.guestTellerAccess") }}
@@ -177,7 +192,8 @@ function openShareDrawer() {
       :model-value="isOpen"
       :loading="toggling"
       size="small"
-      :disabled="!passcode"
+      :disabled="needsPasscode"
+      data-testid="guest-teller-switch"
       :aria-label="t('elections.guestTellerAccess')"
       @change="handleToggle"
     />
@@ -186,11 +202,11 @@ function openShareDrawer() {
       size="small"
       :icon="Iphone"
       class="guest-teller-share-btn"
-      :disabled="!passcode"
+      :disabled="needsPasscode"
       :title="
-        passcode
-          ? t('elections.showShareLink')
-          : t('elections.form.electionPasscodeHelp')
+        needsPasscode
+          ? t('elections.guestTellerAccessNeedsPasscode')
+          : t('elections.showShareLink')
       "
       @click="openShareDrawer"
     >
@@ -303,6 +319,17 @@ function openShareDrawer() {
 .guest-teller-access-box {
   .guest-teller-share-btn {
     margin-left: 2px;
+  }
+
+  // A disabled switch keeps the not-allowed cursor and swallows hover, so the
+  // reason has to live on this box and the control must not eat the pointer.
+  &.is-needs-passcode {
+    cursor: not-allowed;
+
+    .el-switch,
+    .guest-teller-share-btn {
+      pointer-events: none;
+    }
   }
 }
 

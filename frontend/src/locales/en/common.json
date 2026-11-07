@@ -229,6 +229,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "common.tryAgain": {
+    "t": "Try Again",
+    "s": "source",
+    "w": "2026-11-07T23:50:00Z"
+  },
   "common.toggleTheme": {
     "t": "Toggle theme",
     "s": "source",

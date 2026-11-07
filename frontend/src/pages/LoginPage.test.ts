@@ -74,6 +74,9 @@ describe("LoginPage", () => {
 
     expect(wrapper.find('[data-testid="login-2fa-code"]').exists()).toBe(true);
     expect(wrapper.text()).toContain("Two-factor authentication is required");
+    expect(wrapper.get('[data-testid="login-2fa-back"]').text()).toBe(
+      "Try Again",
+    );
     expect(wrapper.find('input[type="password"]').exists()).toBe(false);
     expect(push).not.toHaveBeenCalled();
     login.mockRestore();
