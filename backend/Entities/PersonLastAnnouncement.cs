@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Backend.Entities;
 
 /// <summary>
-/// Last bulk announcement attempt for one person (email, SMS, or WhatsApp).
-/// One row per person. Retries update this row; they do not add another.
+/// Last bulk announcement attempt for one person on one channel.
+/// One row per person and channel, so an email skip cannot erase an SMS failure.
 /// </summary>
 [Table("PersonLastAnnouncements")]
-[Index(nameof(PersonGuid), Name = "IX_PersonLastAnnouncement_Person", IsUnique = true)]
+[Index(nameof(PersonGuid), nameof(Channel), Name = "IX_PersonLastAnnouncement_Person_Channel", IsUnique = true)]
 [Index(nameof(ElectionGuid), nameof(Channel), nameof(Outcome), Name = "IX_PersonLastAnnouncement_Election_Channel_Outcome")]
 public class PersonLastAnnouncement
 {

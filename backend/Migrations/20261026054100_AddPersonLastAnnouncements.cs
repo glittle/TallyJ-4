@@ -35,9 +35,9 @@ namespace Backend.Migrations
                 columns: new[] { "ElectionGuid", "Channel", "Outcome" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_PersonLastAnnouncement_Person",
+                name: "IX_PersonLastAnnouncement_Person_Channel",
                 table: "PersonLastAnnouncements",
-                column: "PersonGuid",
+                columns: new[] { "PersonGuid", "Channel" },
                 unique: true);
         }
 

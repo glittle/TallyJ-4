@@ -23,8 +23,7 @@ internal static class BulkSendSupport
         string? error,
         CancellationToken cancellationToken)
     {
-        var row = await db.PersonLastAnnouncements
-            .FirstOrDefaultAsync(item => item.PersonGuid == personGuid, cancellationToken);
+        var row = await FindRowAsync(db, personGuid, channel, cancellationToken);
         var safeError = AnnouncementErrorText.Sanitize(error);
         if (safeError == null && !string.IsNullOrWhiteSpace(error))
         {
@@ -54,11 +53,10 @@ internal static class BulkSendSupport
         }
         catch (DbUpdateException)
         {
-            // Another channel or teller inserted this person first. Update that row
+            // Another teller inserted this person and channel first. Update that row
             // instead of letting the queue cancel people whose send already succeeded.
             db.ChangeTracker.Clear();
-            var winner = await db.PersonLastAnnouncements
-                .FirstOrDefaultAsync(item => item.PersonGuid == personGuid, cancellationToken);
+            var winner = await FindRowAsync(db, personGuid, channel, cancellationToken);
             if (winner == null)
             {
                 return;
@@ -80,6 +78,25 @@ internal static class BulkSendSupport
     /// Test hook that runs once, immediately before the first save. Production leaves it null.
     /// </summary>
     internal static Func<CancellationToken, Task>? BeforeSaveForTests { get; set; }
+
+    /// <summary>
+    /// Row shown on the people list. A failed channel wins over a newer skip or send
+    /// on another channel, so the single column still points at a retryable failure.
+    /// </summary>
+    internal static PersonLastAnnouncement? ChooseListRow(IEnumerable<PersonLastAnnouncement> rows) =>
+        rows.OrderByDescending(row => row.Outcome == WhatsAppNotifyOutcome.Failed)
+            .ThenByDescending(row => row.AttemptedAt)
+            .ThenBy(row => row.Channel, StringComparer.Ordinal)
+            .FirstOrDefault();
+
+    private static Task<PersonLastAnnouncement?> FindRowAsync(
+        MainDbContext db,
+        Guid personGuid,
+        string channel,
+        CancellationToken cancellationToken) =>
+        db.PersonLastAnnouncements.FirstOrDefaultAsync(
+            item => item.PersonGuid == personGuid && item.Channel == channel,
+            cancellationToken);
 
     private static void Apply(
         PersonLastAnnouncement row,

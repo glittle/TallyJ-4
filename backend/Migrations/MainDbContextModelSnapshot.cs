@@ -1062,7 +1062,7 @@ namespace Backend.Migrations
 
                     b.HasIndex(new[] { "ElectionGuid", "Channel", "Outcome" }, "IX_PersonLastAnnouncement_Election_Channel_Outcome");
 
-                    b.HasIndex(new[] { "PersonGuid" }, "IX_PersonLastAnnouncement_Person")
+                    b.HasIndex(new[] { "PersonGuid", "Channel" }, "IX_PersonLastAnnouncement_Person_Channel")
                         .IsUnique();
 
                     b.ToTable("PersonLastAnnouncements");

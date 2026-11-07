@@ -33,7 +33,7 @@ public class BulkSendSupportTests : IDisposable
             {
                 PersonGuid = personId,
                 ElectionGuid = electionId,
-                Channel = "sms",
+                Channel = "email",
                 Outcome = "sent",
                 AttemptedAt = DateTimeOffset.UtcNow
             });
@@ -51,10 +51,28 @@ public class BulkSendSupportTests : IDisposable
         }
 
         await using var check = new MainDbContext(_options);
-        var row = await check.PersonLastAnnouncements.SingleAsync(item => item.PersonGuid == personId);
-        Assert.Equal("email", row.Channel);
+        var row = await check.PersonLastAnnouncements.SingleAsync(
+            item => item.PersonGuid == personId && item.Channel == "email");
         Assert.Equal("failed", row.Outcome);
         Assert.Equal("send-failed", row.Error);
+    }
+
+    [Fact]
+    public async Task Upsert_KeepsASeparateRowPerChannel()
+    {
+        var personId = Guid.NewGuid();
+        var electionId = Guid.NewGuid();
+        await using var db = new MainDbContext(_options);
+        await BulkSendSupport.UpsertLastAsync(
+            db, electionId, personId, "sms", "failed", "election-cap", CancellationToken.None);
+        await BulkSendSupport.UpsertLastAsync(
+            db, electionId, personId, "email", "skipped-no-email", null, CancellationToken.None);
+
+        var rows = await db.PersonLastAnnouncements.Where(row => row.PersonGuid == personId).ToListAsync();
+        Assert.Equal(2, rows.Count);
+        Assert.Equal("failed", rows.Single(row => row.Channel == "sms").Outcome);
+        Assert.Equal("skipped-no-email", rows.Single(row => row.Channel == "email").Outcome);
+        Assert.Equal("sms", BulkSendSupport.ChooseListRow(rows)!.Channel);
     }
 
     public void Dispose()

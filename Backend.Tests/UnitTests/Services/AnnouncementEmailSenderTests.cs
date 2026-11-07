@@ -12,7 +12,7 @@ namespace Backend.Tests.UnitTests.Services;
 public class AnnouncementEmailSenderTests
 {
     [Fact]
-    public async Task Send_UsesSystemFrom_AndElectionAddressAsReplyTo()
+    public async Task Send_UsesElectionAddressAsFrom_UntilReplyToIsDecided()
     {
         MimeMessage? sent = null;
         var email = new Mock<IEmailSender>();
@@ -31,9 +31,9 @@ public class AnnouncementEmailSenderTests
 
         Assert.True(result.Sent);
         Assert.NotNull(sent);
-        Assert.Equal("noreply@tallyj.com", ((MailboxAddress)sent!.From.Single()).Address);
+        Assert.Equal("teller@congregation.example", ((MailboxAddress)sent!.From.Single()).Address);
         Assert.Equal("Local Tellers", ((MailboxAddress)sent.From.Single()).Name);
-        Assert.Equal("teller@congregation.example", ((MailboxAddress)sent.ReplyTo.Single()).Address);
+        Assert.Empty(sent.ReplyTo);
         Assert.Equal("Ballot notice", sent.Subject);
         Assert.Empty(logger.Messages);
     }

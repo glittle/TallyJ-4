@@ -93,7 +93,7 @@ public class BulkSendCapTests : IDisposable
     }
 
     [Fact]
-    public async Task Email_UsesSubjectFromNameAndReplyTo_NotTheElectionAddressAsFrom()
+    public async Task Email_UsesElectionSubjectAndFrom_WhileReplyToIsUndecided()
     {
         await using (var db = new MainDbContext(_options))
         {
@@ -117,6 +117,71 @@ public class BulkSendCapTests : IDisposable
                 It.IsAny<string>(),
                 It.IsAny<CancellationToken>()),
             Times.Once);
+    }
+
+    [Fact]
+    public async Task EmailSkip_DoesNotEraseSmsFailure_AndSmsRetryStillSharesTheLoginCodeCap()
+    {
+        await ApproveOwnerAsync();
+        await SetAllowanceAsync(2);
+        await using (var db = new MainDbContext(_options))
+        {
+            var person = await db.People.SingleAsync(item => item.PersonGuid == _personId);
+            person.Email = null;
+            await db.SaveChangesAsync();
+        }
+
+        var calls = 0;
+        var harness = Create();
+        harness.Sms
+            .Setup(sender => sender.SendAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Guid>(), It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .Returns(() =>
+            {
+                calls++;
+                var result = calls == 1
+                    ? AnnouncementProviderResult.Failed("The operation has timed out.")
+                    : AnnouncementProviderResult.Succeeded();
+                return Task.FromResult(result);
+            });
+
+        await harness.Announcements.StartAsync(_electionId, AnnouncementChannels.Sms, [_personId]);
+        var smsFailed = await WaitUntilIdle(harness.Announcements, _electionId, AnnouncementChannels.Sms);
+        Assert.Equal(WhatsAppNotifyOutcome.Failed, smsFailed.Results[0].Outcome);
+        Assert.Equal(1, await PaidSendsUsedAsync());
+
+        await harness.Announcements.StartAsync(_electionId, AnnouncementChannels.Email, [_personId]);
+        var emailSkipped = await WaitUntilIdle(harness.Announcements, _electionId, AnnouncementChannels.Email);
+        Assert.Equal(AnnouncementOutcomes.SkippedNoEmail, emailSkipped.Results[0].Outcome);
+        Assert.Equal(1, await PaidSendsUsedAsync());
+        harness.Email.Verify(
+            sender => sender.SendAsync(It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
+
+        await using (var db = new MainDbContext(_options))
+        {
+            var rows = await db.PersonLastAnnouncements
+                .Where(row => row.PersonGuid == _personId)
+                .ToListAsync();
+            Assert.Equal(2, rows.Count);
+            Assert.Equal(WhatsAppNotifyOutcome.Failed, rows.Single(row => row.Channel == AnnouncementChannels.Sms).Outcome);
+            Assert.Equal(AnnouncementOutcomes.SkippedNoEmail, rows.Single(row => row.Channel == AnnouncementChannels.Email).Outcome);
+            Assert.Equal(AnnouncementChannels.Sms, BulkSendSupport.ChooseListRow(rows)!.Channel);
+        }
+
+        var emailRetry = await harness.Announcements.RetryFailedAsync(_electionId, AnnouncementChannels.Email);
+        Assert.Empty(emailRetry.Results);
+
+        await harness.Announcements.RetryFailedAsync(_electionId, AnnouncementChannels.Sms);
+        var smsSent = await WaitUntilIdle(harness.Announcements, _electionId, AnnouncementChannels.Sms);
+        Assert.Equal(WhatsAppNotifyOutcome.Sent, smsSent.Results[0].Outcome);
+        Assert.Equal(2, calls);
+        Assert.Equal(2, await PaidSendsUsedAsync());
+        await using (var db = new MainDbContext(_options))
+        {
+            var emailRow = await db.PersonLastAnnouncements.SingleAsync(
+                row => row.PersonGuid == _personId && row.Channel == AnnouncementChannels.Email);
+            Assert.Equal(AnnouncementOutcomes.SkippedNoEmail, emailRow.Outcome);
+        }
     }
 
     [Fact]

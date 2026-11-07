@@ -871,10 +871,11 @@ public class PeopleService : IPeopleService
             .AsNoTracking()
             .Where(row => row.ElectionGuid == electionGuid && guids.Contains(row.PersonGuid))
             .ToListAsync();
-        var byPerson = rows.ToDictionary(row => row.PersonGuid);
+        var byPerson = rows.GroupBy(row => row.PersonGuid)
+            .ToDictionary(group => group.Key, group => BulkSendSupport.ChooseListRow(group));
         foreach (var dto in dtos)
         {
-            if (!byPerson.TryGetValue(dto.PersonGuid, out var row))
+            if (!byPerson.TryGetValue(dto.PersonGuid, out var row) || row == null)
             {
                 continue;
             }

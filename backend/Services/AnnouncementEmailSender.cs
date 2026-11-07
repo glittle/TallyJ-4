@@ -30,7 +30,7 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
     /// <inheritdoc />
     public async Task<AnnouncementProviderResult> SendAsync(
         string toAddress,
-        string? replyToAddress,
+        string? fromAddress,
         string? fromDisplayName,
         string subject,
         string body,
@@ -46,7 +46,7 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
             return AnnouncementProviderResult.NotConfigured();
         }
 
-        var from = ResolveSystemFrom(fromDisplayName);
+        var from = ResolveFrom(fromAddress, fromDisplayName);
         if (from == null)
         {
             return AnnouncementProviderResult.Failed("not-configured");
@@ -55,12 +55,6 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
         var message = new MimeMessage();
         message.From.Add(from);
         message.To.Add(to);
-        var replyTo = ResolveReplyTo(replyToAddress, fromDisplayName);
-        if (replyTo != null)
-        {
-            message.ReplyTo.Add(replyTo);
-        }
-
         message.Subject = string.IsNullOrWhiteSpace(subject) ? "Announcement" : subject.Trim();
         message.Body = new TextPart("plain") { Text = body };
 
@@ -85,10 +79,17 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
     }
 
     /// <summary>
-    /// System mailbox only. An election address is Reply-To, not From, so SPF and DMARC stay on our domain.
+    /// Election mailbox is the SMTP From when it is real. Otherwise the system mailbox is used.
+    /// Reply-To versus From is still an open product choice, so this does not add a Reply-To header.
     /// </summary>
-    private MailboxAddress? ResolveSystemFrom(string? displayName)
+    private MailboxAddress? ResolveFrom(string? electionFrom, string? displayName)
     {
+        if (!IsPlaceholder(electionFrom) && MailboxAddress.TryParse(electionFrom, out var electionMailbox))
+        {
+            var electionName = IsPlaceholder(displayName) ? electionMailbox.Address : displayName!.Trim();
+            return new MailboxAddress(electionName, electionMailbox.Address);
+        }
+
         var address = _configuration["Email:FromAddress"];
         if (IsPlaceholder(address) || !MailboxAddress.TryParse(address, out var mailbox))
         {
@@ -107,19 +108,6 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
         }
 
         return new MailboxAddress(name, mailbox.Address);
-    }
-
-    private static MailboxAddress? ResolveReplyTo(string? replyToAddress, string? displayName)
-    {
-        if (IsPlaceholder(replyToAddress) || !MailboxAddress.TryParse(replyToAddress, out var mailbox))
-        {
-            return null;
-        }
-
-        var name = displayName?.Trim();
-        return IsPlaceholder(name)
-            ? new MailboxAddress(mailbox.Address, mailbox.Address)
-            : new MailboxAddress(name, mailbox.Address);
     }
 
     private static string SmtpStatus(Exception ex) =>

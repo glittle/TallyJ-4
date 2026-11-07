@@ -14,6 +14,7 @@ namespace Backend.Services;
 /// Email pauses briefly. Abort stops remaining sends only.
 /// Each SMS attempt calls <see cref="ICodeSendGuard.ReserveAsync"/> before Twilio.
 /// A provider failure is not refunded. Email is not counted against the paid caps.
+/// SMS and WhatsApp use the same election allowance and owner daily cap as voter login codes.
 /// Freeze and owner restriction stop the run before anyone is queued.
 /// A flagged election is not part of that start gate; the send guard still blocks each paid attempt.
 /// </summary>
@@ -123,7 +124,7 @@ public class AnnouncementQueue : IAnnouncementQueue
         var byGuid = people.ToDictionary(p => p.PersonGuid);
         var hostSite = _configuration["ClientEnv:frontendUrl"]?.Trim() ?? "";
         var subject = ResolveSubject(election);
-        var (replyToAddress, replyToName) = ResolveReplyTo(election);
+        var (fromAddress, fromName) = ResolveElectionFrom(election);
 
         var work = new List<WorkItem>();
         var results = new List<AnnouncementPersonResultDto>(requested.Count);
@@ -154,8 +155,8 @@ public class AnnouncementQueue : IAnnouncementQueue
             QueueToken = Guid.NewGuid().ToString("N"),
             ElectionGuid = electionGuid,
             Channel = channel,
-            ReplyToAddress = replyToAddress,
-            ReplyToName = replyToName,
+            FromAddress = fromAddress,
+            FromName = fromName,
             Subject = subject,
             Results = results,
             Work = work,
@@ -397,9 +398,9 @@ public class AnnouncementQueue : IAnnouncementQueue
     }
 
     /// <summary>
-    /// Election address is Reply-To. The SMTP From stays the system mailbox.
+    /// Election mailbox passed through as SMTP From. Reply-To is not set until that choice is made.
     /// </summary>
-    private static (string? Address, string? Name) ResolveReplyTo(Election election)
+    private static (string? Address, string? Name) ResolveElectionFrom(Election election)
     {
         var address = election.EmailFromAddress;
         if (string.IsNullOrWhiteSpace(address) || address.TrimStart().StartsWith('<'))
@@ -485,7 +486,7 @@ public class AnnouncementQueue : IAnnouncementQueue
                 {
                     send = run.Channel == AnnouncementChannels.Email
                         ? await email.SendAsync(
-                            item.Destination, run.ReplyToAddress, run.ReplyToName, run.Subject, item.Message, cancellationToken)
+                            item.Destination, run.FromAddress, run.FromName, run.Subject, item.Message, cancellationToken)
                         : await sms.SendAsync(item.Destination, item.Message, run.ElectionGuid, item.PersonGuid, cancellationToken);
                 }
                 catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -689,8 +690,8 @@ public class AnnouncementQueue : IAnnouncementQueue
         public required string QueueToken { get; init; }
         public required Guid ElectionGuid { get; init; }
         public required string Channel { get; init; }
-        public string? ReplyToAddress { get; init; }
-        public string? ReplyToName { get; init; }
+        public string? FromAddress { get; init; }
+        public string? FromName { get; init; }
         public string Subject { get; init; } = "Announcement";
         public required List<AnnouncementPersonResultDto> Results { get; init; }
         public required List<WorkItem> Work { get; init; }
