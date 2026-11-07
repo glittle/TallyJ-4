@@ -99,8 +99,8 @@ describe("LoginPage", () => {
 
   it("does not submit a short authenticator code", async () => {
     const authStore = useAuthStore(pinia);
-    authStore.requires2FA = true;
-    authStore.pending2FAEmail = "stefan@example.com";
+    authStore.requires2FA = false;
+    authStore.pending2FAEmail = null;
     const verify = vi
       .spyOn(authStore, "verify2FA")
       .mockResolvedValue({ email: "stefan@example.com", requires2FA: false });
@@ -111,13 +111,60 @@ describe("LoginPage", () => {
       },
     });
 
+    await wrapper.find('input[type="password"]').setValue("a-real-password");
+    authStore.requires2FA = true;
+    authStore.pending2FAEmail = "stefan@example.com";
+    await flushPromises();
+
     await wrapper.get('[data-testid="login-2fa-code"]').setValue("12345");
     await wrapper.get('[data-testid="login-2fa-submit"]').trigger("click");
     await flushPromises();
 
     expect(verify).not.toHaveBeenCalled();
     expect(wrapper.find('[data-testid="login-2fa-code"]').exists()).toBe(true);
+    wrapper.unmount();
+    verify.mockRestore();
+  });
+
+  it("returns to the password step after the authenticator page is left and opened again", async () => {
+    const authStore = useAuthStore(pinia);
     authStore.requires2FA = false;
     authStore.pending2FAEmail = null;
+    const verify = vi
+      .spyOn(authStore, "verify2FA")
+      .mockResolvedValue({ email: "stefan@example.com", requires2FA: false });
+
+    const wrapper = mount(LoginPage, {
+      global: {
+        plugins: [pinia, router, i18n, ElementPlus],
+      },
+    });
+
+    await wrapper.find('input[type="text"]').setValue("stefan@example.com");
+    await wrapper.find('input[type="password"]').setValue("a-real-password");
+    authStore.requires2FA = true;
+    authStore.pending2FAEmail = "stefan@example.com";
+    await flushPromises();
+    expect(wrapper.find('[data-testid="login-2fa-code"]').exists()).toBe(true);
+
+    wrapper.unmount();
+    expect(authStore.requires2FA).toBe(false);
+    expect(authStore.pending2FAEmail).toBeNull();
+
+    authStore.requires2FA = true;
+    authStore.pending2FAEmail = "stefan@example.com";
+    const again = mount(LoginPage, {
+      global: {
+        plugins: [pinia, router, i18n, ElementPlus],
+      },
+    });
+    await flushPromises();
+
+    expect(again.find('input[type="password"]').exists()).toBe(true);
+    expect(again.find('[data-testid="login-2fa-code"]').exists()).toBe(false);
+    expect(verify).not.toHaveBeenCalled();
+    again.unmount();
+    expect(authStore.requires2FA).toBe(false);
+    verify.mockRestore();
   });
 });

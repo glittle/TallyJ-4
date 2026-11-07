@@ -64,7 +64,9 @@ const loginForm = reactive({
   twoFactorCode: "",
 });
 
-const awaiting2FA = computed(() => authStore.requires2FA);
+const awaiting2FA = computed(
+  () => authStore.requires2FA && loginForm.password.length > 0,
+);
 
 const rules = computed<FormRules>(() => {
   const baseRules: FormRules = {};
@@ -180,8 +182,12 @@ const handleLogin = async () => {
 };
 
 const handleVerify2FA = async () => {
+  if (!loginForm.password) {
+    cancel2FA();
+    return;
+  }
   if (!/^\d{6}$/.test(loginForm.twoFactorCode.trim())) {
-    showWarningMessage(t("auth.twoFactorRequired"));
+    showWarningMessage(t("auth.twoFactorCodePlaceholder"));
     return;
   }
 
@@ -485,6 +491,10 @@ onMounted(() => {
 onBeforeUnmount(() => {
   globalThis.removeEventListener("keydown", handleKeydown);
   teardownGoogleOneTap();
+  // The password lives only in this form. A later visit must not reopen the
+  // code step and submit that empty password.
+  authStore.requires2FA = false;
+  authStore.pending2FAEmail = null;
 });
 </script>
 
