@@ -86,10 +86,114 @@ public class BulkSendCapTests : IDisposable
         Assert.Equal(1, done.Sent);
         Assert.Equal(0, done.Failed);
         harness.Email.Verify(
-            sender => sender.SendAsync(Email, It.IsAny<string?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            sender => sender.SendAsync(Email, It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Once);
         Assert.Equal(0, await PaidSendsUsedAsync());
         Assert.Equal("sent", await LogOutcomeAsync(AnnouncementChannels.Email));
+    }
+
+    [Fact]
+    public async Task Email_UsesSubjectFromNameAndReplyTo_NotTheElectionAddressAsFrom()
+    {
+        await using (var db = new MainDbContext(_options))
+        {
+            var election = await db.Elections.SingleAsync(item => item.ElectionGuid == _electionId);
+            election.EmailSubject = "Ballot notice";
+            election.EmailFromName = "Local Tellers";
+            election.EmailFromAddress = "teller@congregation.example";
+            await db.SaveChangesAsync();
+        }
+
+        var harness = Create();
+        await harness.Announcements.StartAsync(_electionId, AnnouncementChannels.Email, [_personId]);
+        await WaitUntilIdle(harness.Announcements, _electionId, AnnouncementChannels.Email);
+
+        harness.Email.Verify(
+            sender => sender.SendAsync(
+                Email,
+                "teller@congregation.example",
+                "Local Tellers",
+                "Ballot notice",
+                It.IsAny<string>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+    }
+
+    [Fact]
+    public async Task EmailRetry_StopsAtOneHundred_AndLeavesTheRestForAnotherRetry()
+    {
+        var ids = Enumerable.Range(0, StartAnnouncementDto.MaxSelectedPeople + 1)
+            .Select(_ => Guid.NewGuid())
+            .OrderBy(id => id)
+            .ToList();
+        await using (var db = new MainDbContext(_options))
+        {
+            foreach (var id in ids)
+            {
+                db.People.Add(new Person
+                {
+                    PersonGuid = id,
+                    ElectionGuid = _electionId,
+                    LastName = "Voter",
+                    RowVersion = new byte[8]
+                });
+                db.PersonLastAnnouncements.Add(FailedRow(id, AnnouncementChannels.Email));
+            }
+
+            await db.SaveChangesAsync();
+        }
+
+        var harness = Create();
+        var first = await harness.Announcements.RetryFailedAsync(_electionId, AnnouncementChannels.Email);
+        Assert.True(first.MoreFailedRemain);
+        Assert.Equal(StartAnnouncementDto.MaxSelectedPeople, first.Results.Count);
+        var done = await WaitUntilIdle(harness.Announcements, _electionId, AnnouncementChannels.Email);
+        Assert.True(done.MoreFailedRemain);
+        Assert.Equal(ids[^1], await SingleFailedPersonAsync(AnnouncementChannels.Email));
+
+        var second = await harness.Announcements.RetryFailedAsync(_electionId, AnnouncementChannels.Email);
+        Assert.False(second.MoreFailedRemain);
+        Assert.Equal(ids[^1], Assert.Single(second.Results).PersonGuid);
+    }
+
+    [Fact]
+    public async Task WhatsAppRetry_StopsAtOneHundred_AndLeavesTheRestForAnotherRetry()
+    {
+        var ids = Enumerable.Range(0, StartWhatsAppNotifyDto.MaxSelectedPeople + 1)
+            .Select(_ => Guid.NewGuid())
+            .OrderBy(id => id)
+            .ToList();
+        await using (var db = new MainDbContext(_options))
+        {
+            foreach (var id in ids)
+            {
+                db.People.Add(new Person
+                {
+                    PersonGuid = id,
+                    ElectionGuid = _electionId,
+                    LastName = "Voter",
+                    RowVersion = new byte[8]
+                });
+                db.PersonLastAnnouncements.Add(FailedRow(id, AnnouncementChannels.WhatsApp));
+            }
+
+            await db.SaveChangesAsync();
+        }
+
+        var harness = Create();
+        var first = await harness.WhatsApp.RetryFailedAsync(_electionId);
+        Assert.True(first.MoreFailedRemain);
+        Assert.Equal(StartWhatsAppNotifyDto.MaxSelectedPeople, first.Results.Count);
+        var done = await WaitUntilIdle(harness.WhatsApp, _electionId);
+        Assert.True(done.MoreFailedRemain);
+        Assert.Equal(ids[^1], await SingleFailedPersonAsync(AnnouncementChannels.WhatsApp));
+
+        var second = await harness.WhatsApp.RetryFailedAsync(_electionId);
+        Assert.False(second.MoreFailedRemain);
+        Assert.Equal(ids[^1], Assert.Single(second.Results).PersonGuid);
+        harness.WhatsAppClient.Verify(
+            client => client.SendMessageAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            Times.Never);
     }
 
     [Fact]
@@ -175,7 +279,7 @@ public class BulkSendCapTests : IDisposable
 
         Assert.Equal(PeopleMessageKeys.AnnouncementOwnerRestricted, error.Message);
         harness.Email.Verify(
-            sender => sender.SendAsync(It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            sender => sender.SendAsync(It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Never);
         Assert.Equal(0, await PaidSendsUsedAsync());
         Assert.DoesNotContain(harness.Logger.Messages, message => message.Contains(Email, StringComparison.Ordinal));
@@ -247,7 +351,7 @@ public class BulkSendCapTests : IDisposable
 
         Assert.Equal(PeopleMessageKeys.AnnouncementFrozen, error.Message);
         harness.Email.Verify(
-            sender => sender.SendAsync(It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
+            sender => sender.SendAsync(It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()),
             Times.Never);
         Assert.Equal(0, await PaidSendsUsedAsync());
     }
@@ -391,7 +495,7 @@ public class BulkSendCapTests : IDisposable
             .ReturnsAsync(AnnouncementProviderResult.Succeeded());
         var email = new Mock<IAnnouncementEmailSender>();
         email.Setup(sender => sender.IsConfigured()).Returns(true);
-        email.Setup(sender => sender.SendAsync(It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+        email.Setup(sender => sender.SendAsync(It.IsAny<string>(), It.IsAny<string?>(), It.IsAny<string?>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(AnnouncementProviderResult.Succeeded());
         var whatsApp = new Mock<IGreenApiWhatsAppClient>();
         whatsApp.Setup(client => client.IsConfigured()).Returns(true);
@@ -432,6 +536,26 @@ public class BulkSendCapTests : IDisposable
             email,
             whatsApp,
             logger);
+    }
+
+    private PersonLastAnnouncement FailedRow(Guid personGuid, string channel) =>
+        new()
+        {
+            PersonGuid = personGuid,
+            ElectionGuid = _electionId,
+            Channel = channel,
+            Outcome = WhatsAppNotifyOutcome.Failed,
+            Error = "send-failed",
+            AttemptedAt = DateTimeOffset.UtcNow
+        };
+
+    private async Task<Guid> SingleFailedPersonAsync(string channel)
+    {
+        await using var db = new MainDbContext(_options);
+        return await db.PersonLastAnnouncements
+            .Where(row => row.ElectionGuid == _electionId && row.Channel == channel && row.Outcome == WhatsAppNotifyOutcome.Failed)
+            .Select(row => row.PersonGuid)
+            .SingleAsync();
     }
 
     private async Task ApproveOwnerAsync()

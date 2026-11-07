@@ -1285,6 +1285,7 @@ export type PeopleAnnouncementStatusDto = {
     sent?: number;
     skipped?: number;
     failed?: number;
+    moreFailedRemain?: boolean;
     results?: Array<PeopleAnnouncementPersonResultDto> | null;
 };
 
@@ -1459,6 +1460,7 @@ export type PeopleWhatsAppNotifyStatusDto = {
     sent?: number;
     skipped?: number;
     failed?: number;
+    moreFailedRemain?: boolean;
     results?: Array<PeopleWhatsAppNotifyPersonResultDto> | null;
 };
 

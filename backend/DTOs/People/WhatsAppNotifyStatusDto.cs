@@ -37,9 +37,14 @@ public class WhatsAppNotifyStatusDto
     public int Skipped { get; set; }
 
     /// <summary>
-    /// Provider was called and the send failed.
+    /// Provider was called and the send failed, or the paid-send guard blocked the attempt.
     /// </summary>
     public int Failed { get; set; }
+
+    /// <summary>
+    /// This retry included only the first 100 failed people. Another retry sends the rest.
+    /// </summary>
+    public bool MoreFailedRemain { get; set; }
 
     /// <summary>
     /// Per-person outcomes in request order (duplicates removed).

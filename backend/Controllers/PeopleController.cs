@@ -1,7 +1,6 @@
 using Backend.Authorization;
 using Backend.DTOs.People;
 using Backend.Enumerations;
-using Backend.Helpers;
 using Backend.Models;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -497,13 +496,9 @@ public class PeopleController : ControllerBase
     {
         try
         {
-            if (dto.Channel == AnnouncementChannels.WhatsApp)
-            {
-                var whatsApp = await _whatsAppNotifyQueue.RetryFailedAsync(electionGuid, cancellationToken);
-                return Ok(ApiResponse<AnnouncementStatusDto>.SuccessResponse(ToAnnouncementStatus(whatsApp)));
-            }
-
-            var result = await _announcementQueue.RetryFailedAsync(
+            var result = await AnnouncementRetry.RetryAsync(
+                _announcementQueue,
+                _whatsAppNotifyQueue,
                 electionGuid,
                 dto.Channel,
                 cancellationToken);
@@ -514,25 +509,6 @@ public class PeopleController : ControllerBase
             return BadRequest(ApiResponse<AnnouncementStatusDto>.ErrorResponse(ex.Message));
         }
     }
-
-    private static AnnouncementStatusDto ToAnnouncementStatus(WhatsAppNotifyStatusDto status) =>
-        new()
-        {
-            QueueToken = status.QueueToken,
-            Channel = AnnouncementChannels.WhatsApp,
-            Running = status.Running,
-            Cancelled = status.Cancelled,
-            Queued = status.Queued,
-            Sent = status.Sent,
-            Skipped = status.Skipped,
-            Failed = status.Failed,
-            Results = status.Results.Select(row => new AnnouncementPersonResultDto
-            {
-                PersonGuid = row.PersonGuid,
-                Outcome = row.Outcome,
-                Error = row.Error
-            }).ToList()
-        };
 }
 
 

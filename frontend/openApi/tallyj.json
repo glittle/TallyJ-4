@@ -13251,6 +13251,9 @@
             "type": "integer",
             "format": "int32"
           },
+          "moreFailedRemain": {
+            "type": "boolean"
+          },
           "results": {
             "type": "array",
             "items": {
@@ -13863,6 +13866,9 @@
           "failed": {
             "type": "integer",
             "format": "int32"
+          },
+          "moreFailedRemain": {
+            "type": "boolean"
           },
           "results": {
             "type": "array",

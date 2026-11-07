@@ -45,11 +45,63 @@ internal static class BulkSendSupport
         }
         else
         {
-            row.ElectionGuid = electionGuid;
-            row.Channel = channel;
-            row.Outcome = outcome;
-            row.Error = safeError;
-            row.AttemptedAt = DateTimeOffset.UtcNow;
+            Apply(row, electionGuid, channel, outcome, safeError);
+        }
+
+        try
+        {
+            await SaveOnceAsync(db, cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            // Another channel or teller inserted this person first. Update that row
+            // instead of letting the queue cancel people whose send already succeeded.
+            db.ChangeTracker.Clear();
+            var winner = await db.PersonLastAnnouncements
+                .FirstOrDefaultAsync(item => item.PersonGuid == personGuid, cancellationToken);
+            if (winner == null)
+            {
+                return;
+            }
+
+            Apply(winner, electionGuid, channel, outcome, safeError);
+            try
+            {
+                await db.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException)
+            {
+                db.ChangeTracker.Clear();
+            }
+        }
+    }
+
+    /// <summary>
+    /// Test hook that runs once, immediately before the first save. Production leaves it null.
+    /// </summary>
+    internal static Func<CancellationToken, Task>? BeforeSaveForTests { get; set; }
+
+    private static void Apply(
+        PersonLastAnnouncement row,
+        Guid electionGuid,
+        string channel,
+        string outcome,
+        string? safeError)
+    {
+        row.ElectionGuid = electionGuid;
+        row.Channel = channel;
+        row.Outcome = outcome;
+        row.Error = safeError;
+        row.AttemptedAt = DateTimeOffset.UtcNow;
+    }
+
+    private static async Task SaveOnceAsync(MainDbContext db, CancellationToken cancellationToken)
+    {
+        var hook = BeforeSaveForTests;
+        BeforeSaveForTests = null;
+        if (hook != null)
+        {
+            await hook(cancellationToken);
         }
 
         await db.SaveChangesAsync(cancellationToken);
@@ -124,11 +176,19 @@ internal static class BulkSendSupport
             failedCount);
     }
 
-    public static string Mask(string? destination) => DestinationMask.Mask(destination);
-
     private static string Fit(string value, int max)
     {
         var trimmed = value.Trim();
         return trimmed.Length <= max ? trimmed : trimmed[..max];
     }
+}
+
+/// <summary>
+/// Count of failed or invalid attempts for the end-of-run warning. Addresses are not stored.
+/// </summary>
+internal sealed class FailureNotices
+{
+    public int Count { get; private set; }
+
+    public void Add() => Count++;
 }

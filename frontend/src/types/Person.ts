@@ -160,6 +160,7 @@ export interface AnnouncementStatusDto {
   sent: number;
   skipped: number;
   failed: number;
+  moreFailedRemain?: boolean;
   results: AnnouncementPersonResultDto[];
 }
 
@@ -171,5 +172,6 @@ export interface WhatsAppNotifyStatusDto {
   sent: number;
   skipped: number;
   failed: number;
+  moreFailedRemain?: boolean;
   results: WhatsAppNotifyPersonResultDto[];
 }

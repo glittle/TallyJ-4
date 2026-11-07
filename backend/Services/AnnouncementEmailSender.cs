@@ -1,5 +1,6 @@
 using Backend.Helpers;
 using Backend.Services.Auth;
+using MailKit.Net.Smtp;
 using MimeKit;
 
 namespace Backend.Services;
@@ -29,7 +30,8 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
     /// <inheritdoc />
     public async Task<AnnouncementProviderResult> SendAsync(
         string toAddress,
-        string? fromAddress,
+        string? replyToAddress,
+        string? fromDisplayName,
         string subject,
         string body,
         CancellationToken cancellationToken = default)
@@ -44,7 +46,7 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
             return AnnouncementProviderResult.NotConfigured();
         }
 
-        var from = ResolveFrom(fromAddress);
+        var from = ResolveSystemFrom(fromDisplayName);
         if (from == null)
         {
             return AnnouncementProviderResult.Failed("not-configured");
@@ -53,6 +55,12 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
         var message = new MimeMessage();
         message.From.Add(from);
         message.To.Add(to);
+        var replyTo = ResolveReplyTo(replyToAddress, fromDisplayName);
+        if (replyTo != null)
+        {
+            message.ReplyTo.Add(replyTo);
+        }
+
         message.Subject = string.IsNullOrWhiteSpace(subject) ? "Announcement" : subject.Trim();
         message.Body = new TextPart("plain") { Text = body };
 
@@ -67,25 +75,32 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Announcement email failed");
+            // Do not pass ex. SMTP text usually repeats the recipient address.
+            _logger.LogWarning(
+                "Announcement email failed ({ExceptionType}) smtp {SmtpStatus}",
+                ex.GetType().Name,
+                SmtpStatus(ex));
             return AnnouncementProviderResult.Failed(ex.Message);
         }
     }
 
-    private MailboxAddress? ResolveFrom(string? electionFrom)
+    /// <summary>
+    /// System mailbox only. An election address is Reply-To, not From, so SPF and DMARC stay on our domain.
+    /// </summary>
+    private MailboxAddress? ResolveSystemFrom(string? displayName)
     {
-        if (!IsPlaceholder(electionFrom) && MailboxAddress.TryParse(electionFrom, out var electionMailbox))
-        {
-            return electionMailbox;
-        }
-
         var address = _configuration["Email:FromAddress"];
         if (IsPlaceholder(address) || !MailboxAddress.TryParse(address, out var mailbox))
         {
             return null;
         }
 
-        var name = _configuration["Email:FromName"];
+        var name = displayName?.Trim();
+        if (IsPlaceholder(name))
+        {
+            name = _configuration["Email:FromName"];
+        }
+
         if (IsPlaceholder(name))
         {
             name = "TallyJ";
@@ -93,6 +108,22 @@ public class AnnouncementEmailSender : IAnnouncementEmailSender
 
         return new MailboxAddress(name, mailbox.Address);
     }
+
+    private static MailboxAddress? ResolveReplyTo(string? replyToAddress, string? displayName)
+    {
+        if (IsPlaceholder(replyToAddress) || !MailboxAddress.TryParse(replyToAddress, out var mailbox))
+        {
+            return null;
+        }
+
+        var name = displayName?.Trim();
+        return IsPlaceholder(name)
+            ? new MailboxAddress(mailbox.Address, mailbox.Address)
+            : new MailboxAddress(name, mailbox.Address);
+    }
+
+    private static string SmtpStatus(Exception ex) =>
+        ex is SmtpCommandException smtp ? ((int)smtp.StatusCode).ToString() : "none";
 
     private static bool IsPlaceholder(string? value) =>
         string.IsNullOrWhiteSpace(value) || value.TrimStart().StartsWith('<');

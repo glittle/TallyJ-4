@@ -785,6 +785,9 @@ async function handleDeleteAllPeople() {
           })
         }}
       </p>
+      <p v-if="notifyWhatsAppResults?.moreFailedRemain">
+        {{ $t("people.announcementMoreRemain") }}
+      </p>
       <p v-if="notifyWhatsAppResults?.running">
         {{
           $t("people.notifyWhatsAppQueued", {
@@ -822,6 +825,9 @@ async function handleDeleteAllPeople() {
             cancelled: notifyCancelledCount(announcementResults.results),
           })
         }}
+      </p>
+      <p v-if="announcementResults?.moreFailedRemain">
+        {{ $t("people.announcementMoreRemain") }}
       </p>
       <p v-if="announcementResults?.running">
         {{

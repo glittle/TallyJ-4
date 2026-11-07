@@ -33,11 +33,15 @@ public interface IAnnouncementEmailSender
     bool IsConfigured();
 
     /// <summary>
-    /// Sends <paramref name="body"/> as plain text. Does not log the recipient address.
+    /// Sends <paramref name="body"/> as plain text.
+    /// SMTP From is the system mailbox. <paramref name="replyToAddress"/> is the election address, not the From.
+    /// <paramref name="fromDisplayName"/> is the election's EmailFromName when it is set.
+    /// Does not log the recipient address or the exception text.
     /// </summary>
     Task<AnnouncementProviderResult> SendAsync(
         string toAddress,
-        string? fromAddress,
+        string? replyToAddress,
+        string? fromDisplayName,
         string subject,
         string body,
         CancellationToken cancellationToken = default);

@@ -115,7 +115,7 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
         var hostSite = _configuration["ClientEnv:frontendUrl"]?.Trim() ?? "";
         var work = new List<NotifyWorkItem>();
         var results = new List<WhatsAppNotifyPersonResultDto>(requested.Count);
-        var failedMasked = new List<string>();
+        var failureNotices = new FailureNotices();
 
         foreach (var personGuid in requested)
         {
@@ -152,7 +152,7 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
             {
                 var reason = phoneReason ?? PaidDestinationPhone.ReasonMalformedE164;
                 results.Add(Result(personGuid, AnnouncementOutcomes.SkippedInvalidPhone, reason));
-                failedMasked.Add(BulkSendSupport.Mask(person.Phone));
+                failureNotices.Add();
                 await BulkSendSupport.LogUnreservedBlockAsync(
                     db, electionGuid, AnnouncementChannels.WhatsApp, person.Phone, reason, cancellationToken);
                 await BulkSendSupport.UpsertLastAsync(
@@ -205,13 +205,13 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
 
         if (startProcess)
         {
-            run.FailedMasked.AddRange(failedMasked);
+            run.FailureNotices = failureNotices.Count;
             var token = run.Cts.Token;
             run.ProcessTask = Task.Run(() => ProcessAsync(run, token), CancellationToken.None);
         }
         else
         {
-            BulkSendSupport.LogFailures(_logger, electionGuid, AnnouncementChannels.WhatsApp, failedMasked.Count);
+            BulkSendSupport.LogFailures(_logger, electionGuid, AnnouncementChannels.WhatsApp, failureNotices.Count);
         }
 
         return Snapshot(run);
@@ -229,6 +229,7 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
             .Where(row => row.ElectionGuid == electionGuid
                 && row.Channel == AnnouncementChannels.WhatsApp
                 && row.Outcome == WhatsAppNotifyOutcome.Failed)
+            .OrderBy(row => row.PersonGuid)
             .Select(row => row.PersonGuid)
             .Take(StartWhatsAppNotifyDto.MaxSelectedPeople + 1)
             .ToListAsync(cancellationToken);
@@ -238,7 +239,20 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
             return new WhatsAppNotifyStatusDto();
         }
 
-        return await StartAsync(electionGuid, failed, cancellationToken);
+        var moreRemain = failed.Count > StartWhatsAppNotifyDto.MaxSelectedPeople;
+        if (moreRemain)
+        {
+            failed = failed.Take(StartWhatsAppNotifyDto.MaxSelectedPeople).ToList();
+        }
+
+        var status = await StartAsync(electionGuid, failed, cancellationToken);
+        if (moreRemain && _runs.TryGetValue(electionGuid, out var run))
+        {
+            run.MoreFailedRemain = true;
+            status.MoreFailedRemain = true;
+        }
+
+        return status;
     }
 
     /// <inheritdoc />
@@ -376,7 +390,7 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
         }
         finally
         {
-            BulkSendSupport.LogFailures(_logger, run.ElectionGuid, AnnouncementChannels.WhatsApp, run.FailedMasked.Count);
+            BulkSendSupport.LogFailures(_logger, run.ElectionGuid, AnnouncementChannels.WhatsApp, run.FailureNotices);
             run.Running = false;
             run.Cts.Dispose();
         }
@@ -388,7 +402,7 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
         {
             SetOutcome(run, personGuid, WhatsAppNotifyOutcome.Failed, error);
             run.Failed++;
-            run.FailedMasked.Add(BulkSendSupport.Mask(phone));
+            run.FailureNotices++;
         }
     }
 
@@ -546,6 +560,7 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
                 Sent = run.Sent,
                 Skipped = run.Skipped,
                 Failed = run.Failed,
+                MoreFailedRemain = run.MoreFailedRemain,
                 Results = run.Results.Select(r => new WhatsAppNotifyPersonResultDto
                 {
                     PersonGuid = r.PersonGuid,
@@ -567,7 +582,8 @@ public class WhatsAppNotifyQueue : IWhatsAppNotifyQueue
         public int Skipped { get; set; }
         public int Sent { get; set; }
         public int Failed { get; set; }
-        public List<string> FailedMasked { get; } = [];
+        public int FailureNotices { get; set; }
+        public bool MoreFailedRemain { get; set; }
         public bool Running { get; set; }
         public bool Cancelled { get; set; }
         public CancellationTokenSource Cts { get; } = new();

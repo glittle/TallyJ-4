@@ -4295,6 +4295,9 @@ export const People_AnnouncementStatusDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
+        moreFailedRemain: {
+            type: 'boolean'
+        },
         results: {
             type: 'array',
             items: {
@@ -4924,6 +4927,9 @@ export const People_WhatsAppNotifyStatusDtoSchema = {
         failed: {
             type: 'integer',
             format: 'int32'
+        },
+        moreFailedRemain: {
+            type: 'boolean'
         },
         results: {
             type: 'array',

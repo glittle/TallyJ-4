@@ -14,7 +14,8 @@ namespace Backend.Services;
 /// Email pauses briefly. Abort stops remaining sends only.
 /// Each SMS attempt calls <see cref="ICodeSendGuard.ReserveAsync"/> before Twilio.
 /// A provider failure is not refunded. Email is not counted against the paid caps.
-/// Freeze and a flagged election block both channels.
+/// Freeze and owner restriction stop the run before anyone is queued.
+/// A flagged election is not part of that start gate; the send guard still blocks each paid attempt.
 /// </summary>
 public class AnnouncementQueue : IAnnouncementQueue
 {
@@ -101,8 +102,9 @@ public class AnnouncementQueue : IAnnouncementQueue
             throw new InvalidOperationException(PeopleMessageKeys.AnnouncementTextNotSet);
         }
 
-        // Same election gate as WhatsApp notify: one frozen owner stops every channel,
-        // and a restricted co-admin does not close an election that still has an approved owner.
+        // Freeze and owner restriction only. Flagged is enforced per recipient by the send guard,
+        // which also keeps the paid-send caps on SMS and WhatsApp. One approved owner is enough.
+        // A restricted co-admin does not close an election that still has an approved owner.
         var blocked = await OwnerRestrictionQueries.VoterMessageBlockKeyAsync(
             db,
             electionGuid,
@@ -120,11 +122,12 @@ public class AnnouncementQueue : IAnnouncementQueue
             .ToListAsync(cancellationToken);
         var byGuid = people.ToDictionary(p => p.PersonGuid);
         var hostSite = _configuration["ClientEnv:frontendUrl"]?.Trim() ?? "";
-        var subject = string.IsNullOrWhiteSpace(election.Name) ? "Announcement" : election.Name.Trim();
+        var subject = ResolveSubject(election);
+        var (replyToAddress, replyToName) = ResolveReplyTo(election);
 
         var work = new List<WorkItem>();
         var results = new List<AnnouncementPersonResultDto>(requested.Count);
-        var failedMasked = new List<string>();
+        var failureNotices = new FailureNotices();
 
         foreach (var personGuid in requested)
         {
@@ -137,12 +140,12 @@ public class AnnouncementQueue : IAnnouncementQueue
             if (channel == AnnouncementChannels.Email)
             {
                 await ClassifyEmailAsync(
-                    db, election, person, template, hostSite, subject, work, results, failedMasked, cancellationToken);
+                    db, election, person, template, hostSite, subject, work, results, failureNotices, cancellationToken);
             }
             else
             {
                 await ClassifySmsAsync(
-                    db, electionGuid, person, template, hostSite, work, results, failedMasked, cancellationToken);
+                    db, electionGuid, person, template, hostSite, work, results, failureNotices, cancellationToken);
             }
         }
 
@@ -151,13 +154,14 @@ public class AnnouncementQueue : IAnnouncementQueue
             QueueToken = Guid.NewGuid().ToString("N"),
             ElectionGuid = electionGuid,
             Channel = channel,
-            FromAddress = election.EmailFromAddress,
+            ReplyToAddress = replyToAddress,
+            ReplyToName = replyToName,
             Subject = subject,
             Results = results,
             Work = work,
             Queued = work.Count,
             Skipped = results.Count(r => WhatsAppNotifyOutcome.IsSkip(r.Outcome) || IsAnnouncementSkip(r.Outcome)),
-            FailedMasked = failedMasked
+            FailureNotices = failureNotices.Count
         };
 
         var startProcess = false;
@@ -175,7 +179,7 @@ public class AnnouncementQueue : IAnnouncementQueue
 
         if (!startProcess)
         {
-            BulkSendSupport.LogFailures(_logger, electionGuid, channel, failedMasked.Count);
+            BulkSendSupport.LogFailures(_logger, electionGuid, channel, failureNotices.Count);
         }
         else
         {
@@ -203,7 +207,28 @@ public class AnnouncementQueue : IAnnouncementQueue
             return new AnnouncementStatusDto { Channel = channel };
         }
 
-        return await StartAsync(electionGuid, channel, failed, cancellationToken);
+        var moreRemain = failed.Count > StartAnnouncementDto.MaxSelectedPeople;
+        if (moreRemain)
+        {
+            failed = failed.Take(StartAnnouncementDto.MaxSelectedPeople).ToList();
+        }
+
+        var status = await StartAsync(electionGuid, channel, failed, cancellationToken);
+        if (moreRemain)
+        {
+            NoteMoreFailedRemain(electionGuid, channel);
+            status.MoreFailedRemain = true;
+        }
+
+        return status;
+    }
+
+    private void NoteMoreFailedRemain(Guid electionGuid, string channel)
+    {
+        if (_runs.TryGetValue(RunKey(electionGuid, channel), out var run))
+        {
+            run.MoreFailedRemain = true;
+        }
     }
 
     /// <inheritdoc />
@@ -258,6 +283,7 @@ public class AnnouncementQueue : IAnnouncementQueue
             .Where(row => row.ElectionGuid == electionGuid
                 && row.Channel == channel
                 && row.Outcome == WhatsAppNotifyOutcome.Failed)
+            .OrderBy(row => row.PersonGuid)
             .Select(row => row.PersonGuid)
             .Take(StartAnnouncementDto.MaxSelectedPeople + 1)
             .ToListAsync(cancellationToken);
@@ -278,7 +304,7 @@ public class AnnouncementQueue : IAnnouncementQueue
         string subject,
         List<WorkItem> work,
         List<AnnouncementPersonResultDto> results,
-        List<string> failedMasked,
+        FailureNotices failureNotices,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(person.Email))
@@ -295,7 +321,7 @@ public class AnnouncementQueue : IAnnouncementQueue
             await RecordPreSkipAsync(
                 db, election.ElectionGuid, person.PersonGuid, AnnouncementChannels.Email,
                 person.Email, "invalid-email", AnnouncementOutcomes.SkippedInvalidEmail,
-                results, failedMasked, cancellationToken);
+                results, failureNotices, cancellationToken);
             return;
         }
 
@@ -315,7 +341,7 @@ public class AnnouncementQueue : IAnnouncementQueue
         string hostSite,
         List<WorkItem> work,
         List<AnnouncementPersonResultDto> results,
-        List<string> failedMasked,
+        FailureNotices failureNotices,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(person.Phone))
@@ -333,7 +359,7 @@ public class AnnouncementQueue : IAnnouncementQueue
                 db, electionGuid, person.PersonGuid, AnnouncementChannels.Sms,
                 person.Phone, phoneReason ?? PaidDestinationPhone.ReasonMalformedE164,
                 AnnouncementOutcomes.SkippedInvalidPhone,
-                results, failedMasked, cancellationToken);
+                results, failureNotices, cancellationToken);
             return;
         }
 
@@ -355,6 +381,41 @@ public class AnnouncementQueue : IAnnouncementQueue
         results.Add(Result(person.PersonGuid, WhatsAppNotifyOutcome.Queued, null));
     }
 
+    private static string ResolveSubject(Election election)
+    {
+        if (!string.IsNullOrWhiteSpace(election.EmailSubject))
+        {
+            return election.EmailSubject.Trim();
+        }
+
+        if (!string.IsNullOrWhiteSpace(election.Name))
+        {
+            return election.Name.Trim();
+        }
+
+        return "Announcement";
+    }
+
+    /// <summary>
+    /// Election address is Reply-To. The SMTP From stays the system mailbox.
+    /// </summary>
+    private static (string? Address, string? Name) ResolveReplyTo(Election election)
+    {
+        var address = election.EmailFromAddress;
+        if (string.IsNullOrWhiteSpace(address) || address.TrimStart().StartsWith('<'))
+        {
+            return (null, null);
+        }
+
+        if (!MailboxAddress.TryParse(address, out var mailbox))
+        {
+            return (null, null);
+        }
+
+        var name = string.IsNullOrWhiteSpace(election.EmailFromName) ? null : election.EmailFromName.Trim();
+        return (mailbox.Address, name);
+    }
+
     private static async Task RecordPreSkipAsync(
         MainDbContext db,
         Guid electionGuid,
@@ -364,11 +425,11 @@ public class AnnouncementQueue : IAnnouncementQueue
         string reason,
         string outcome,
         List<AnnouncementPersonResultDto> results,
-        List<string> failedMasked,
+        FailureNotices failureNotices,
         CancellationToken cancellationToken)
     {
         results.Add(Result(personGuid, outcome, reason));
-        failedMasked.Add(BulkSendSupport.Mask(destination));
+        failureNotices.Add();
         await BulkSendSupport.LogUnreservedBlockAsync(
             db, electionGuid, channel, destination, reason, cancellationToken);
         await BulkSendSupport.UpsertLastAsync(
@@ -423,7 +484,8 @@ public class AnnouncementQueue : IAnnouncementQueue
                 try
                 {
                     send = run.Channel == AnnouncementChannels.Email
-                        ? await email.SendAsync(item.Destination, run.FromAddress, run.Subject, item.Message, cancellationToken)
+                        ? await email.SendAsync(
+                            item.Destination, run.ReplyToAddress, run.ReplyToName, run.Subject, item.Message, cancellationToken)
                         : await sms.SendAsync(item.Destination, item.Message, run.ElectionGuid, item.PersonGuid, cancellationToken);
                 }
                 catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -469,7 +531,7 @@ public class AnnouncementQueue : IAnnouncementQueue
         }
         finally
         {
-            BulkSendSupport.LogFailures(_logger, run.ElectionGuid, run.Channel, run.FailedMasked.Count);
+            BulkSendSupport.LogFailures(_logger, run.ElectionGuid, run.Channel, run.FailureNotices);
             run.Running = false;
             run.Cts.Dispose();
         }
@@ -491,7 +553,7 @@ public class AnnouncementQueue : IAnnouncementQueue
         {
             SetOutcome(run, item.PersonGuid, WhatsAppNotifyOutcome.Failed, error);
             run.Failed++;
-            run.FailedMasked.Add(BulkSendSupport.Mask(item.Destination));
+            run.FailureNotices++;
         }
     }
 
@@ -610,6 +672,7 @@ public class AnnouncementQueue : IAnnouncementQueue
                 Sent = run.Sent,
                 Skipped = run.Skipped,
                 Failed = run.Failed,
+                MoreFailedRemain = run.MoreFailedRemain,
                 Results = run.Results.Select(r => new AnnouncementPersonResultDto
                 {
                     PersonGuid = r.PersonGuid,
@@ -626,15 +689,17 @@ public class AnnouncementQueue : IAnnouncementQueue
         public required string QueueToken { get; init; }
         public required Guid ElectionGuid { get; init; }
         public required string Channel { get; init; }
-        public string? FromAddress { get; init; }
+        public string? ReplyToAddress { get; init; }
+        public string? ReplyToName { get; init; }
         public string Subject { get; init; } = "Announcement";
         public required List<AnnouncementPersonResultDto> Results { get; init; }
         public required List<WorkItem> Work { get; init; }
-        public required List<string> FailedMasked { get; init; }
         public int Queued { get; init; }
         public int Skipped { get; set; }
         public int Sent { get; set; }
         public int Failed { get; set; }
+        public int FailureNotices { get; set; }
+        public bool MoreFailedRemain { get; set; }
         public bool Running { get; set; }
         public bool Cancelled { get; set; }
         public CancellationTokenSource Cts { get; } = new();

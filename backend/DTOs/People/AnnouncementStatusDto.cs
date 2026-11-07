@@ -47,6 +47,11 @@ public class AnnouncementStatusDto
     public int Failed { get; set; }
 
     /// <summary>
+    /// This retry included only the first 100 failed people. Another retry sends the rest.
+    /// </summary>
+    public bool MoreFailedRemain { get; set; }
+
+    /// <summary>
     /// Per-person outcomes in request order (duplicates removed).
     /// </summary>
     public List<AnnouncementPersonResultDto> Results { get; set; } = [];
