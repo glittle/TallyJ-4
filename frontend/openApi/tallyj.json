@@ -811,6 +811,35 @@
         }
       }
     },
+    "/api/Auth/sign-in-capabilities": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Configuration_SignInCapabilitySet"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Configuration_SignInCapabilitySet"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Configuration_SignInCapabilitySet"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Auth/refreshToken": {
       "post": {
         "tags": [
@@ -10763,6 +10792,79 @@
           "connectedAt": {
             "type": "string",
             "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Configuration_OfficerSignInCapabilities": {
+        "type": "object",
+        "properties": {
+          "local": {
+            "type": "boolean"
+          },
+          "google": {
+            "type": "boolean"
+          },
+          "facebook": {
+            "type": "boolean"
+          },
+          "kakao": {
+            "type": "boolean"
+          },
+          "telegram": {
+            "type": "boolean"
+          },
+          "any": {
+            "type": "boolean",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Configuration_SignInCapabilitySet": {
+        "type": "object",
+        "properties": {
+          "officers": {
+            "$ref": "#/components/schemas/Configuration_OfficerSignInCapabilities"
+          },
+          "voters": {
+            "$ref": "#/components/schemas/Configuration_VoterSignInCapabilities"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Configuration_VoterSignInCapabilities": {
+        "type": "object",
+        "properties": {
+          "google": {
+            "type": "boolean"
+          },
+          "facebook": {
+            "type": "boolean"
+          },
+          "kakao": {
+            "type": "boolean"
+          },
+          "telegram": {
+            "type": "boolean"
+          },
+          "emailCode": {
+            "type": "boolean"
+          },
+          "phoneCode": {
+            "type": "boolean"
+          },
+          "sms": {
+            "type": "boolean"
+          },
+          "voice": {
+            "type": "boolean"
+          },
+          "whatsApp": {
+            "type": "boolean"
+          },
+          "directCode": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

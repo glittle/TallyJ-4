@@ -17,6 +17,7 @@ import { ref } from "vue";
 import type { TelegramWidgetUser } from "@/types/Auth";
 
 const activeTab = defineModel<string>("activeTab", { required: true });
+
 const emailForm = defineModel<{ email: string }>("emailForm", {
   required: true,
 });
@@ -26,21 +27,49 @@ const phoneForm = defineModel<{
 }>("phoneForm", { required: true });
 const codeForm = defineModel<{ code: string }>("codeForm", { required: true });
 
-defineProps<{
-  loading: boolean;
-  googleReady: boolean;
-  googleError: boolean;
-  fbReady: boolean;
-  fbError: boolean;
-  kakaoReady: boolean;
-  kakaoError: boolean;
-  telegramReady: boolean;
-  telegramError: boolean;
-  telegramBotUsername: string | null;
-  emailRules: object;
-  phoneRules: object;
-  codeRules: object;
-}>();
+const props = withDefaults(
+  defineProps<{
+    loading: boolean;
+    googleReady: boolean;
+    googleError: boolean;
+    fbReady: boolean;
+    fbError: boolean;
+    kakaoReady: boolean;
+    kakaoError: boolean;
+    telegramReady: boolean;
+    telegramError: boolean;
+    telegramBotUsername: string | null;
+    signIn?: {
+      google: boolean;
+      facebook: boolean;
+      kakao: boolean;
+      telegram: boolean;
+      email: boolean;
+      phone: boolean;
+      sms: boolean;
+      voice: boolean;
+      whatsApp: boolean;
+      directCode: boolean;
+    };
+    emailRules: object;
+    phoneRules: object;
+    codeRules: object;
+  }>(),
+  {
+    signIn: () => ({
+      google: true,
+      facebook: true,
+      kakao: true,
+      telegram: true,
+      email: true,
+      phone: true,
+      sms: true,
+      voice: true,
+      whatsApp: true,
+      directCode: true,
+    }),
+  },
+);
 
 const emit = defineEmits<{
   "request-email": [];
@@ -62,7 +91,7 @@ defineExpose({
 <template>
   <div class="voter-auth-request-tabs">
     <ElTabs v-model="activeTab" class="auth-tabs">
-      <ElTabPane name="google">
+      <ElTabPane v-if="signIn.google" name="google">
         <template #label>
           <span class="tab-label">
             <ElIcon>
@@ -94,7 +123,7 @@ defineExpose({
           </div>
         </div>
       </ElTabPane>
-      <ElTabPane name="email">
+      <ElTabPane v-if="signIn.email" name="email">
         <template #label>
           <span class="tab-label">
             <ElIcon>
@@ -135,7 +164,7 @@ defineExpose({
         </div>
       </ElTabPane>
 
-      <ElTabPane name="phone">
+      <ElTabPane v-if="signIn.phone" name="phone">
         <template #label>
           <span class="tab-label">
             <ElIcon>
@@ -169,11 +198,13 @@ defineExpose({
                 v-model="phoneForm.deliveryMethod"
                 class="delivery-options"
               >
-                <ElRadio value="sms">{{ $t("voting.auth.phone.sms") }}</ElRadio>
-                <ElRadio value="voice">{{
+                <ElRadio v-if="signIn.sms" value="sms">{{
+                  $t("voting.auth.phone.sms")
+                }}</ElRadio>
+                <ElRadio v-if="signIn.voice" value="voice">{{
                   $t("voting.auth.phone.voice")
                 }}</ElRadio>
-                <ElRadio value="whatsapp">{{
+                <ElRadio v-if="signIn.whatsApp" value="whatsapp">{{
                   $t("voting.auth.phone.whatsapp")
                 }}</ElRadio>
               </ElRadioGroup>
@@ -198,7 +229,7 @@ defineExpose({
         </div>
       </ElTabPane>
 
-      <ElTabPane name="code">
+      <ElTabPane v-if="signIn.directCode" name="code">
         <template #label>
           <span class="tab-label">
             <ElIcon>
@@ -238,7 +269,7 @@ defineExpose({
         </div>
       </ElTabPane>
 
-      <ElTabPane name="facebook">
+      <ElTabPane v-if="signIn.facebook" name="facebook">
         <template #label>
           <span class="tab-label">
             <svg
@@ -297,7 +328,7 @@ defineExpose({
         </div>
       </ElTabPane>
 
-      <ElTabPane name="kakao">
+      <ElTabPane v-if="signIn.kakao" name="kakao">
         <template #label>
           <span class="tab-label">
             <svg
@@ -344,7 +375,7 @@ defineExpose({
         </div>
       </ElTabPane>
 
-      <ElTabPane v-if="telegramBotUsername" name="telegram">
+      <ElTabPane v-if="signIn.telegram && telegramBotUsername" name="telegram">
         <template #label>
           <span class="tab-label">
             <ElIcon>

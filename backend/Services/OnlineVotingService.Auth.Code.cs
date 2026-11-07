@@ -202,8 +202,14 @@ public partial class OnlineVotingService
     {
         try
         {
+            var voters = Backend.Configuration.SignInCapabilities.Evaluate(_configuration, _hostEnvironment).Voters;
             if (string.Equals(dto.VoterId, dto.VerifyCode, StringComparison.OrdinalIgnoreCase))
             {
+                if (!voters.DirectCode)
+                {
+                    return (false, Backend.Configuration.SignInCapabilities.VoterDisabledKey, null);
+                }
+
                 var kioskResult = await TryAuthenticateWithDirectCodeAsync(dto.VoterId);
                 if (kioskResult.Success || kioskResult.Error == VoterVerifyError.CodeExpired)
                 {
@@ -217,6 +223,13 @@ public partial class OnlineVotingService
             if (onlineVoter == null)
             {
                 return (false, VoterVerifyError.VoterNotFound, null);
+            }
+
+            if (onlineVoter.VoterIdType == "E" && !voters.EmailCode
+                || onlineVoter.VoterIdType == "P" && !voters.PhoneCode
+                || onlineVoter.VoterIdType == "C" && !voters.DirectCode)
+            {
+                return (false, Backend.Configuration.SignInCapabilities.VoterDisabledKey, null);
             }
 
             if (string.IsNullOrEmpty(onlineVoter.VerifyCode))

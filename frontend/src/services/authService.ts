@@ -1,5 +1,6 @@
 import {
   postApiAuthLogin,
+  getApiAuthSignInCapabilities,
   postApiAuthForgotPassword,
   postApiAuthResetPassword,
   postApiAuthSetup2Fa,
@@ -29,8 +30,35 @@ import type {
   AccountUserProfileDto,
   AuthGoogleOneTapRequest as GoogleOneTapRequest,
   AuthLoginRequest as LoginRequest,
+  ConfigurationSignInCapabilitySet,
 } from "@/api/gen/configService/types.gen";
 import type { TelegramLoginRequest } from "../types";
+
+export interface OfficerSignInCapabilities {
+  local: boolean;
+  google: boolean;
+  facebook: boolean;
+  kakao: boolean;
+  telegram: boolean;
+}
+
+export interface VoterSignInCapabilities {
+  google: boolean;
+  facebook: boolean;
+  kakao: boolean;
+  telegram: boolean;
+  emailCode: boolean;
+  phoneCode: boolean;
+  sms: boolean;
+  voice: boolean;
+  whatsApp: boolean;
+  directCode: boolean;
+}
+
+export interface SignInCapabilityResponse {
+  officers: OfficerSignInCapabilities;
+  voters: VoterSignInCapabilities;
+}
 
 export interface AuthResponse {
   email: string;
@@ -141,6 +169,34 @@ export const authService = {
       throwOnError: true,
     });
     return response.data as AuthResponse;
+  },
+
+  async getSignInCapabilities(): Promise<SignInCapabilityResponse> {
+    const response = await getApiAuthSignInCapabilities({
+      throwOnError: true,
+    });
+    const data = response.data as ConfigurationSignInCapabilitySet;
+    return {
+      officers: {
+        local: data.officers?.local === true,
+        google: data.officers?.google === true,
+        facebook: data.officers?.facebook === true,
+        kakao: data.officers?.kakao === true,
+        telegram: data.officers?.telegram === true,
+      },
+      voters: {
+        google: data.voters?.google === true,
+        facebook: data.voters?.facebook === true,
+        kakao: data.voters?.kakao === true,
+        telegram: data.voters?.telegram === true,
+        emailCode: data.voters?.emailCode === true,
+        phoneCode: data.voters?.phoneCode === true,
+        sms: data.voters?.sms === true,
+        voice: data.voters?.voice === true,
+        whatsApp: data.voters?.whatsApp === true,
+        directCode: data.voters?.directCode === true,
+      },
+    };
   },
 
   async login(data: LoginRequest): Promise<AuthResponse> {

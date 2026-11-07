@@ -3,7 +3,25 @@ import { mount, flushPromises } from "@vue/test-utils";
 import LoginPage from "./LoginPage.vue";
 import { pinia, router, i18n } from "@/test/setup";
 import { useAuthStore } from "@/stores/authStore";
+import { authService } from "@/services/authService";
+import { getAppConfig, setAppConfig } from "@/config/appConfig";
 import ElementPlus from "element-plus";
+
+const officerGoogle = vi.hoisted(() => ({
+  initGoogleOneTap: vi.fn(),
+  teardownGoogleOneTap: vi.fn(),
+}));
+
+vi.mock("@/composables/useGoogleOneTap", async () => {
+  const { ref } = await import("vue");
+  return {
+    useGoogleOneTap: () => ({
+      googleReady: ref(false),
+      initGoogleOneTap: officerGoogle.initGoogleOneTap,
+      teardownGoogleOneTap: officerGoogle.teardownGoogleOneTap,
+    }),
+  };
+});
 
 describe("LoginPage", () => {
   it("renders login title", () => {
@@ -166,5 +184,150 @@ describe("LoginPage", () => {
     again.unmount();
     expect(authStore.requires2FA).toBe(false);
     verify.mockRestore();
+  });
+
+  it("hides a disabled officer provider and shows the empty state when nothing is offered", async () => {
+    const capabilities = vi
+      .spyOn(authService, "getSignInCapabilities")
+      .mockResolvedValue({
+        officers: {
+          local: true,
+          google: false,
+          facebook: false,
+          kakao: false,
+          telegram: false,
+        },
+        voters: {
+          google: true,
+          facebook: false,
+          kakao: false,
+          telegram: false,
+          emailCode: true,
+          phoneCode: false,
+          sms: false,
+          voice: false,
+          whatsApp: false,
+          directCode: false,
+        },
+      });
+
+    const wrapper = mount(LoginPage, {
+      global: { plugins: [pinia, router, i18n, ElementPlus] },
+    });
+    await flushPromises();
+
+    expect(wrapper.find('input[type="password"]').exists()).toBe(true);
+    expect(wrapper.find('[data-testid="officer-google"]').exists()).toBe(false);
+    wrapper.unmount();
+
+    capabilities.mockResolvedValue({
+      officers: {
+        local: false,
+        google: false,
+        facebook: false,
+        kakao: false,
+        telegram: false,
+      },
+      voters: {
+        google: false,
+        facebook: false,
+        kakao: false,
+        telegram: false,
+        emailCode: false,
+        phoneCode: false,
+        sms: false,
+        voice: false,
+        whatsApp: false,
+        directCode: false,
+      },
+    });
+    const empty = mount(LoginPage, {
+      global: { plugins: [pinia, router, i18n, ElementPlus] },
+    });
+    await flushPromises();
+    expect(empty.get('[data-testid="officer-sign-in-none"]').text()).toContain(
+      "No officer sign-in method is configured",
+    );
+    expect(empty.find('input[type="password"]').exists()).toBe(false);
+    empty.unmount();
+    capabilities.mockRestore();
+  });
+
+  it("does not initialize Google One Tap when officer Google is disabled", async () => {
+    officerGoogle.initGoogleOneTap.mockClear();
+    const capabilities = vi
+      .spyOn(authService, "getSignInCapabilities")
+      .mockResolvedValue({
+        officers: {
+          local: true,
+          google: false,
+          facebook: false,
+          kakao: false,
+          telegram: false,
+        },
+        voters: {
+          google: false,
+          facebook: false,
+          kakao: false,
+          telegram: false,
+          emailCode: false,
+          phoneCode: false,
+          sms: false,
+          voice: false,
+          whatsApp: false,
+          directCode: false,
+        },
+      });
+
+    const wrapper = mount(LoginPage, {
+      global: { plugins: [pinia, router, i18n, ElementPlus] },
+    });
+    await flushPromises();
+
+    expect(officerGoogle.initGoogleOneTap).not.toHaveBeenCalled();
+    wrapper.unmount();
+    capabilities.mockRestore();
+  });
+
+  it("shows Telegram when officer Telegram is on even if the legacy flag is off", async () => {
+    const previous = getAppConfig();
+    setAppConfig({
+      ...previous,
+      enableTelegramLogin: false,
+      telegramBotUsername: "tallyj_bot",
+    });
+    const capabilities = vi
+      .spyOn(authService, "getSignInCapabilities")
+      .mockResolvedValue({
+        officers: {
+          local: true,
+          google: false,
+          facebook: false,
+          kakao: false,
+          telegram: true,
+        },
+        voters: {
+          google: false,
+          facebook: false,
+          kakao: false,
+          telegram: false,
+          emailCode: false,
+          phoneCode: false,
+          sms: false,
+          voice: false,
+          whatsApp: false,
+          directCode: false,
+        },
+      });
+
+    const wrapper = mount(LoginPage, {
+      global: { plugins: [pinia, router, i18n, ElementPlus] },
+    });
+    await flushPromises();
+
+    expect(wrapper.find(".telegram-btn").exists()).toBe(true);
+    wrapper.unmount();
+    setAppConfig(previous);
+    capabilities.mockRestore();
   });
 });

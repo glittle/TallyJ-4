@@ -39,4 +39,32 @@ describe("VoterAuthRequestTabs", () => {
     expect(kakaoPath.attributes("fill")).toBe("currentColor");
     expect(facebookPath.attributes("fill")).not.toBe("#1877F2");
   });
+
+  it("hides disabled voter methods and an SMS transport without hiding email", () => {
+    const wrapper = mount(VoterAuthRequestTabs, {
+      props: {
+        ...defaultProps,
+        signIn: {
+          google: false,
+          facebook: true,
+          kakao: false,
+          telegram: false,
+          email: true,
+          phone: true,
+          sms: false,
+          voice: true,
+          whatsApp: true,
+          directCode: false,
+        },
+      },
+      global: { plugins: [i18n, ElementPlus] },
+    });
+
+    expect(wrapper.text()).not.toContain("sign in with Google");
+    expect(wrapper.text()).toContain("Email");
+    expect(wrapper.text()).not.toContain("personal voting code");
+    expect(wrapper.text()).not.toContain("SMS Text Message");
+    expect(wrapper.text()).toContain("Voice Call");
+    expect(wrapper.text()).toContain("WhatsApp Message");
+  });
 });
