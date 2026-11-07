@@ -13,6 +13,11 @@ public partial class OnlineVotingService
     /// <inheritdoc/>
     public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> AuthenticateVoterWithGoogleAsync(GoogleAuthForVoterDto dto)
     {
+        if (!VoterSignIn().Google)
+        {
+            return (false, Backend.Configuration.SignInCapabilities.VoterDisabledKey, null);
+        }
+
         try
         {
             var validation = await _googleIdTokenValidator.ValidateAsync(dto.Credential);
@@ -115,6 +120,11 @@ public partial class OnlineVotingService
     /// <inheritdoc/>
     public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> FacebookAuthAsync(FacebookAuthForVoterDto dto)
     {
+        if (!VoterSignIn().Facebook)
+        {
+            return (false, Backend.Configuration.SignInCapabilities.VoterDisabledKey, null);
+        }
+
         try
         {
             var client = _httpClientFactory.CreateClient("Facebook");
@@ -206,6 +216,11 @@ public partial class OnlineVotingService
     /// <inheritdoc/>
     public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> KakaoAuthAsync(KakaoAuthForVoterDto dto)
     {
+        if (!VoterSignIn().Kakao)
+        {
+            return (false, Backend.Configuration.SignInCapabilities.VoterDisabledKey, null);
+        }
+
         try
         {
             var client = _httpClientFactory.CreateClient("Kakao");
@@ -317,6 +332,11 @@ public partial class OnlineVotingService
     /// <inheritdoc/>
     public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> TelegramAuthAsync(TelegramAuthForVoterDto dto)
     {
+        if (!VoterSignIn().Telegram)
+        {
+            return (false, Backend.Configuration.SignInCapabilities.VoterDisabledKey, null);
+        }
+
         try
         {
             if (!ValidateTelegramHash(dto.Id, dto.FirstName, dto.LastName, dto.Username, dto.PhotoUrl, dto.AuthDate, dto.Hash))
@@ -421,6 +441,9 @@ public partial class OnlineVotingService
 
         return computedHashHex == hash.ToLowerInvariant();
     }
+
+    private Backend.Configuration.VoterSignInCapabilities VoterSignIn() =>
+        Backend.Configuration.SignInCapabilities.Evaluate(_configuration, _hostEnvironment).Voters;
 
     /// <summary>
     /// Normalizes a phone number from Kakao by extracting digits and adding a + prefix.

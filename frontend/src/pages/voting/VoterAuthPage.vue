@@ -5,7 +5,14 @@ import { useLocalStorage } from "@/composables/useLocalStorage";
 import { useVoterAuthSocialProviders } from "@/composables/useVoterAuthSocialProviders";
 import { ArrowLeft, Lock } from "@element-plus/icons-vue";
 import { ElButton, ElCard, ElIcon } from "element-plus";
-import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import {
+  computed,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import VoterAuthFaq from "@/components/voting/VoterAuthFaq.vue";
@@ -14,12 +21,18 @@ import VoterAuthVerifyStep from "@/components/voting/VoterAuthVerifyStep.vue";
 import { useNotifications } from "../../composables/useNotifications";
 import { useVoterCodeDelivery } from "../../composables/useVoterCodeDelivery";
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
+import { useSignInCapabilities } from "@/composables/useSignInCapabilities";
 import { resolveUserFacingApiError } from "../../utils/errorHandler";
 
 const router = useRouter();
 const route = useRoute();
 const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
+const {
+  voters,
+  loaded: signInLoaded,
+  load: loadSignIn,
+} = useSignInCapabilities();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 const { deliveryStatus, watchChannel, stopWatching } = useVoterCodeDelivery();
 
@@ -44,6 +57,42 @@ const phoneForm = ref({
 const codeForm = ref({ code: "" });
 const verificationForm = ref({ voterId: "", verifyCode: "" });
 const loading = ref(false);
+
+const voterSignIn = computed(() => {
+  const offered = voters.value;
+  if (!offered) {
+    return null;
+  }
+  return {
+    google: offered.google,
+    facebook: offered.facebook,
+    kakao: offered.kakao,
+    telegram: offered.telegram,
+    email: offered.emailCode,
+    phone:
+      offered.phoneCode && (offered.sms || offered.voice || offered.whatsApp),
+    sms: offered.sms,
+    voice: offered.voice,
+    whatsApp: offered.whatsApp,
+    directCode: offered.directCode,
+  };
+});
+
+const anyVoterMethod = computed(() => {
+  const offered = voterSignIn.value;
+  if (!offered) {
+    return false;
+  }
+  return (
+    offered.google ||
+    offered.facebook ||
+    offered.kakao ||
+    offered.telegram ||
+    offered.email ||
+    offered.phone ||
+    offered.directCode
+  );
+});
 
 const emailRules = {
   email: [
@@ -251,21 +300,46 @@ watch(activeTab, async (newTab) => {
   }
 });
 
-onMounted(() => {
-  if (route.query.tab === "code") {
-    activeTab.value = "code";
+onMounted(async () => {
+  globalThis.addEventListener("keydown", handleKeydown);
+  await loadSignIn();
+  const offered = voterSignIn.value;
+  if (!offered) {
+    return;
   }
-  if (activeTab.value === "google") {
+  if (offered.phone) {
+    if (offered.sms) {
+      phoneForm.value.deliveryMethod = "sms";
+    } else if (offered.voice) {
+      phoneForm.value.deliveryMethod = "voice";
+    } else if (offered.whatsApp) {
+      phoneForm.value.deliveryMethod = "whatsapp";
+    }
+  }
+  const order = [
+    ["google", offered.google],
+    ["email", offered.email],
+    ["phone", offered.phone],
+    ["code", offered.directCode],
+    ["facebook", offered.facebook],
+    ["kakao", offered.kakao],
+    ["telegram", offered.telegram],
+  ] as const;
+  const requested = route.query.tab === "code" ? "code" : activeTab.value;
+  const requestedOk = order.some(([name, on]) => name === requested && on);
+  activeTab.value = requestedOk
+    ? requested
+    : (order.find(([, on]) => on)?.[0] ?? activeTab.value);
+  if (activeTab.value === "google" && offered.google) {
     nextTick(() => {
       syncGoogleButtonRef();
       void initGoogleOneTap();
     });
-  } else if (activeTab.value === "facebook") {
+  } else if (activeTab.value === "facebook" && offered.facebook) {
     void initFacebookSdk();
-  } else if (activeTab.value === "kakao") {
+  } else if (activeTab.value === "kakao" && offered.kakao) {
     void initKakaoSdk();
   }
-  globalThis.addEventListener("keydown", handleKeydown);
 });
 
 onBeforeUnmount(() => {
@@ -290,13 +364,21 @@ onBeforeUnmount(() => {
       </div>
 
       <ElCard class="auth-card" shadow="always">
+        <p
+          v-if="signInLoaded && !anyVoterMethod"
+          class="voter-sign-in-none"
+          data-testid="voter-sign-in-none"
+        >
+          {{ $t("voting.auth.none") }}
+        </p>
         <VoterAuthRequestTabs
-          v-if="step === 'request'"
+          v-if="step === 'request' && voterSignIn && anyVoterMethod"
           ref="requestTabsRef"
           v-model:active-tab="activeTab"
           v-model:email-form="emailForm"
           v-model:phone-form="phoneForm"
           v-model:code-form="codeForm"
+          :sign-in="voterSignIn"
           :loading="loading"
           :google-ready="googleReady"
           :google-error="googleError"

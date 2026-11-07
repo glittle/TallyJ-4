@@ -429,6 +429,16 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "voting.auth.methodDisabled": {
+    "t": "This sign-in method is not offered on this server.",
+    "s": "source",
+    "w": "2026-11-07T21:40:00Z"
+  },
+  "voting.auth.none": {
+    "t": "Online sign-in is not offered on this server.",
+    "s": "source",
+    "w": "2026-11-07T21:40:00Z"
+  },
   "voting.auth.tabs.google": {
     "t": "Google",
     "s": "source",

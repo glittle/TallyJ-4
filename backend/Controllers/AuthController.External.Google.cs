@@ -33,18 +33,18 @@ public partial class AuthController
     [HttpGet("google/login")]
     public async Task<IActionResult> GoogleLogin([FromQuery] string? returnUrl = null)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Google);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
         _logger.LogInformation("Google login attempt from {ClientIp} with returnUrl: {ReturnUrl}", clientIp, returnUrl);
 
-        var googleClientSecret = _configuration["GoogleClientSecret"]; // server only
-        var googleClientId = _configuration["ClientEnv:googleClientId"]; // client as well
-
-        _logger.LogInformation("Google ClientId configured: {!string.IsNullOrWhiteSpace(googleClientId)}, ClientSecret configured: {!string.IsNullOrWhiteSpace(googleClientSecret)}", !string.IsNullOrWhiteSpace(googleClientId), !string.IsNullOrWhiteSpace(googleClientSecret));
-
-        if (string.IsNullOrWhiteSpace(googleClientId) || string.IsNullOrWhiteSpace(googleClientSecret)
-            || googleClientId.StartsWith("<") || googleClientSecret.StartsWith("<"))
+        if (!SignInCapabilities.OfficerGoogleRedirectReady(_configuration))
         {
             _logger.LogWarning("Google OAuth login attempted but credentials are not configured");
 
@@ -94,6 +94,11 @@ public partial class AuthController
     [HttpGet("google/callback")]
     public async Task<IActionResult> GoogleCallback()
     {
+        if (!CurrentSignIn().Officers.Google)
+        {
+            return Redirect(GetErrorRedirectUrl(null, SignInCapabilities.OfficerDisabledKey));
+        }
+
         string? returnUrl = null;
         try
         {
@@ -172,6 +177,12 @@ public partial class AuthController
     [HttpPost("google/one-tap")]
     public async Task<IActionResult> GoogleOneTap([FromBody] GoogleOneTapRequest request)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Google);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 

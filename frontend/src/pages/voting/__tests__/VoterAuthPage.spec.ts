@@ -30,6 +30,32 @@ vi.mock("@/stores/onlineVotingStore", () => ({
   }),
 }));
 
+vi.mock("@/services/authService", () => ({
+  authService: {
+    getSignInCapabilities: vi.fn().mockResolvedValue({
+      officers: {
+        local: true,
+        google: false,
+        facebook: false,
+        kakao: false,
+        telegram: false,
+      },
+      voters: {
+        google: false,
+        facebook: false,
+        kakao: false,
+        telegram: false,
+        emailCode: true,
+        phoneCode: true,
+        sms: true,
+        voice: true,
+        whatsApp: true,
+        directCode: true,
+      },
+    }),
+  },
+}));
+
 vi.mock("@/composables/useVoterCodeDelivery", () => ({
   useVoterCodeDelivery: () => ({
     deliveryStatus: { value: null },
@@ -85,6 +111,7 @@ async function mountOnVerifyStep() {
       stubs,
     },
   });
+  await flushPromises();
   await wrapper.get(".request-email").trigger("click");
   await flushPromises();
   return wrapper;

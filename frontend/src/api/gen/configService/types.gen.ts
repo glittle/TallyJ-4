@@ -526,6 +526,33 @@ export type ComputersActiveComputerDto = {
     connectedAt?: Date;
 };
 
+export type ConfigurationOfficerSignInCapabilities = {
+    local?: boolean;
+    google?: boolean;
+    facebook?: boolean;
+    kakao?: boolean;
+    telegram?: boolean;
+    readonly any?: boolean;
+};
+
+export type ConfigurationSignInCapabilitySet = {
+    officers?: ConfigurationOfficerSignInCapabilities;
+    voters?: ConfigurationVoterSignInCapabilities;
+};
+
+export type ConfigurationVoterSignInCapabilities = {
+    google?: boolean;
+    facebook?: boolean;
+    kakao?: boolean;
+    telegram?: boolean;
+    emailCode?: boolean;
+    phoneCode?: boolean;
+    sms?: boolean;
+    voice?: boolean;
+    whatsApp?: boolean;
+    directCode?: boolean;
+};
+
 export type ControllersChooseLocationRequest = {
     computerCode?: string | null;
     locationGuid?: string;
@@ -2378,6 +2405,19 @@ export type ApiResponsePaginatedResponseSuperAdminSuperAdminUserDtoWritable = {
     errors?: Array<string> | null;
 };
 
+export type ConfigurationOfficerSignInCapabilitiesWritable = {
+    local?: boolean;
+    google?: boolean;
+    facebook?: boolean;
+    kakao?: boolean;
+    telegram?: boolean;
+};
+
+export type ConfigurationSignInCapabilitySetWritable = {
+    officers?: ConfigurationOfficerSignInCapabilitiesWritable;
+    voters?: ConfigurationVoterSignInCapabilities;
+};
+
 export type ElectionsElectionSummaryDtoWritable = {
     electionGuid: string;
     name: string;
@@ -2891,6 +2931,22 @@ export type GetApiAuthGetAllRolesResponses = {
      */
     200: unknown;
 };
+
+export type GetApiAuthSignInCapabilitiesData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Auth/sign-in-capabilities';
+};
+
+export type GetApiAuthSignInCapabilitiesResponses = {
+    /**
+     * OK
+     */
+    200: ConfigurationSignInCapabilitySet;
+};
+
+export type GetApiAuthSignInCapabilitiesResponse = GetApiAuthSignInCapabilitiesResponses[keyof GetApiAuthSignInCapabilitiesResponses];
 
 export type PostApiAuthRefreshTokenData = {
     body?: AuthRefreshTokenRequest;
