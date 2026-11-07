@@ -56,4 +56,20 @@ public class PersonListDto
     /// Same P-row contract as person detail; does not include last-login or SmsLog.
     /// </summary>
     public PersonPhoneSmsHintDto? PhoneOnlineVoter { get; set; }
+
+    /// <summary>
+    /// Channel of the last bulk announcement attempt: email, sms, or whatsapp.
+    /// Null when this person has not been included in one.
+    /// </summary>
+    public string? LastAnnouncementChannel { get; set; }
+
+    /// <summary>
+    /// <c>sent</c>, <c>failed</c>, <c>cancelled</c>, or a <c>skipped-*</c> reason.
+    /// </summary>
+    public string? LastAnnouncementOutcome { get; set; }
+
+    /// <summary>
+    /// Provider text or block reason for the last attempt. No raw phone or email.
+    /// </summary>
+    public string? LastAnnouncementError { get; set; }
 }

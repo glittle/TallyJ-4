@@ -103,14 +103,36 @@ export function personMatchesPeopleSearch(
   );
 }
 
+/** People list last-send filter. Failed matches the persisted outcome "failed". */
+export const PEOPLE_LIST_LAST_SEND_FILTER_ALL = "all";
+export const PEOPLE_LIST_LAST_SEND_FILTER_FAILED = "failed";
+
+export type PeopleListLastSendFilter =
+  | typeof PEOPLE_LIST_LAST_SEND_FILTER_ALL
+  | typeof PEOPLE_LIST_LAST_SEND_FILTER_FAILED;
+
+export const PEOPLE_LIST_LAST_SEND_FILTERS: PeopleListLastSendFilter[] = [
+  PEOPLE_LIST_LAST_SEND_FILTER_ALL,
+  PEOPLE_LIST_LAST_SEND_FILTER_FAILED,
+];
+
+export function personLastSendFailed(
+  person: Pick<PersonListDto, "lastAnnouncementOutcome">,
+): boolean {
+  return person.lastAnnouncementOutcome === "failed";
+}
+
 export function filterPeopleList(
   people: PersonListDto[],
   searchQuery: string,
   whatsAppFilter: PeopleListWhatsAppFilter,
+  lastSendFilter: PeopleListLastSendFilter = PEOPLE_LIST_LAST_SEND_FILTER_ALL,
 ): PersonListDto[] {
   return people.filter(
     (person) =>
       personMatchesPeopleSearch(person, searchQuery) &&
-      personMatchesWhatsAppFilter(person, whatsAppFilter),
+      personMatchesWhatsAppFilter(person, whatsAppFilter) &&
+      (lastSendFilter === PEOPLE_LIST_LAST_SEND_FILTER_ALL ||
+        personLastSendFailed(person)),
   );
 }

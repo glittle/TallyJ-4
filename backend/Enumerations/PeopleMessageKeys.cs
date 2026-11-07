@@ -81,4 +81,55 @@ public static class PeopleMessageKeys
     /// Guest teller tried to add a person while GuestTellersCanAddPeople is off (v3 GA).
     /// </summary>
     public const string GuestCannotAddPeople = "people.guestCannotAddPeople";
+
+    /// <summary>
+    /// Announcement channel was not email, SMS, or WhatsApp.
+    /// </summary>
+    public const string AnnouncementChannelInvalid = "people.announcement.channelInvalid";
+
+    /// <summary>
+    /// More people were requested than one announcement start accepts.
+    /// </summary>
+    public const string AnnouncementTooMany = "people.announcement.tooMany";
+
+    /// <summary>
+    /// An email or SMS announcement is already sending for this election and channel.
+    /// </summary>
+    public const string AnnouncementAlreadyRunning = "people.announcement.alreadyRunning";
+
+    /// <summary>
+    /// SMTP is not configured, so the email announcement was not started.
+    /// </summary>
+    public const string AnnouncementEmailNotConfigured = "people.announcement.emailNotConfigured";
+
+    /// <summary>
+    /// Twilio is not configured, so the SMS announcement was not started.
+    /// </summary>
+    public const string AnnouncementSmsNotConfigured = "people.announcement.smsNotConfigured";
+
+    /// <summary>
+    /// Election GUID on the announcement URL was not found.
+    /// </summary>
+    public const string AnnouncementElectionNotFound = "people.announcement.electionNotFound";
+
+    /// <summary>
+    /// The election has no body text for this channel.
+    /// </summary>
+    public const string AnnouncementTextNotSet = "people.announcement.textNotSet";
+
+    /// <summary>
+    /// No announcement run (or matching token) for this election and channel.
+    /// </summary>
+    public const string AnnouncementNotFound = "people.announcement.notFound";
+
+    /// <summary>
+    /// A super admin froze this election or an owner on it. Email and SMS both stop.
+    /// </summary>
+    public const string AnnouncementFrozen = "people.announcement.frozen";
+
+    /// <summary>
+    /// No owner or co-admin is approved, and one account is explicitly restricted.
+    /// An approved owner on the same election does not hit this key.
+    /// </summary>
+    public const string AnnouncementOwnerRestricted = "people.announcement.ownerRestricted";
 }

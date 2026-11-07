@@ -18,6 +18,7 @@ public class PeopleController : ControllerBase
 {
     private readonly IPeopleService _peopleService;
     private readonly IWhatsAppNotifyQueue _whatsAppNotifyQueue;
+    private readonly IAnnouncementQueue _announcementQueue;
     private readonly ILogger<PeopleController> _logger;
 
     /// <summary>
@@ -25,14 +26,17 @@ public class PeopleController : ControllerBase
     /// </summary>
     /// <param name="peopleService">The people service for person operations.</param>
     /// <param name="whatsAppNotifyQueue">Head-teller WhatsApp notify queue.</param>
+    /// <param name="announcementQueue">Bulk email and SMS announcement queue.</param>
     /// <param name="logger">The logger for recording operations.</param>
     public PeopleController(
         IPeopleService peopleService,
         IWhatsAppNotifyQueue whatsAppNotifyQueue,
+        IAnnouncementQueue announcementQueue,
         ILogger<PeopleController> logger)
     {
         _peopleService = peopleService;
         _whatsAppNotifyQueue = whatsAppNotifyQueue;
+        _announcementQueue = announcementQueue;
         _logger = logger;
     }
 
@@ -410,6 +414,100 @@ public class PeopleController : ControllerBase
         }
 
         return Ok(ApiResponse<WhatsAppNotifyStatusDto>.SuccessResponse(result));
+    }
+
+    /// <summary>
+    /// Queue an email or SMS announcement for selected people. SMS reserves a
+    /// paid-send slot per recipient before Twilio is called. Email does not use
+    /// the paid caps. A freeze or a flagged election blocks both.
+    /// </summary>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
+    [HttpPost("{electionGuid}/notifyAnnouncement")]
+    public async Task<ActionResult<ApiResponse<AnnouncementStatusDto>>> NotifyAnnouncement(
+        Guid electionGuid,
+        StartAnnouncementDto dto,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await _announcementQueue.StartAsync(
+                electionGuid,
+                dto.Channel,
+                dto.PersonGuids,
+                cancellationToken);
+            return Ok(ApiResponse<AnnouncementStatusDto>.SuccessResponse(result));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<AnnouncementStatusDto>.ErrorResponse(ex.Message));
+        }
+    }
+
+    /// <summary>
+    /// Abort the active email or SMS announcement. Already-sent messages stay sent.
+    /// </summary>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
+    [HttpPost("{electionGuid}/abortAnnouncement")]
+    public ActionResult<ApiResponse<AnnouncementStatusDto>> AbortAnnouncement(
+        Guid electionGuid,
+        AbortAnnouncementDto dto)
+    {
+        var result = _announcementQueue.Abort(electionGuid, dto.Channel, dto.QueueToken);
+        if (result == null)
+        {
+            return NotFound(ApiResponse<AnnouncementStatusDto>.ErrorResponse(
+                PeopleMessageKeys.AnnouncementNotFound));
+        }
+
+        return Ok(ApiResponse<AnnouncementStatusDto>.SuccessResponse(result));
+    }
+
+    /// <summary>
+    /// Latest email or SMS announcement run for this election and channel.
+    /// </summary>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
+    [HttpGet("{electionGuid}/announcementStatus")]
+    public ActionResult<ApiResponse<AnnouncementStatusDto>> GetAnnouncementStatus(
+        Guid electionGuid,
+        [FromQuery] string channel,
+        [FromQuery] string? queueToken)
+    {
+        var result = _announcementQueue.GetStatus(electionGuid, channel, queueToken);
+        if (result == null)
+        {
+            return NotFound(ApiResponse<AnnouncementStatusDto>.ErrorResponse(
+                PeopleMessageKeys.AnnouncementNotFound));
+        }
+
+        return Ok(ApiResponse<AnnouncementStatusDto>.SuccessResponse(result));
+    }
+
+    /// <summary>
+    /// Resend people whose last announcement on this channel failed.
+    /// SMS and WhatsApp retries count against the election allowance and the owner daily cap.
+    /// A retry that the guard blocks does not call the provider.
+    /// </summary>
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
+    [HttpPost("{electionGuid}/retryFailedAnnouncement")]
+    public async Task<ActionResult<ApiResponse<AnnouncementStatusDto>>> RetryFailedAnnouncement(
+        Guid electionGuid,
+        RetryFailedAnnouncementDto dto,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await AnnouncementRetry.RetryAsync(
+                _announcementQueue,
+                _whatsAppNotifyQueue,
+                electionGuid,
+                dto.Channel,
+                cancellationToken);
+            return Ok(ApiResponse<AnnouncementStatusDto>.SuccessResponse(result));
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ApiResponse<AnnouncementStatusDto>.ErrorResponse(ex.Message));
+        }
     }
 }
 

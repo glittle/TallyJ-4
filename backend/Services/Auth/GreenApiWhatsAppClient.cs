@@ -122,7 +122,7 @@ public class GreenApiWhatsAppClient : IGreenApiWhatsAppClient
                 _logger.LogWarning("{Method}: GreenAPI sendMessage failed ({Status})",
                     nameof(SendMessageAsync),
                     (int)response.StatusCode);
-                return GreenApiWhatsAppSendResult.Failed();
+                return GreenApiWhatsAppSendResult.Failed($"HTTP {(int)response.StatusCode}");
             }
 
             _logger.LogInformation("{Method}: GreenAPI sendMessage", nameof(SendMessageAsync));
@@ -135,7 +135,7 @@ public class GreenApiWhatsAppClient : IGreenApiWhatsAppClient
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or JsonException)
         {
             _logger.LogWarning(ex, "{Method}: GreenAPI sendMessage failed", nameof(SendMessageAsync));
-            return GreenApiWhatsAppSendResult.Failed();
+            return GreenApiWhatsAppSendResult.Failed(ex.Message);
         }
     }
 }

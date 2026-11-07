@@ -205,6 +205,13 @@ export type ApiResponsePaginatedResponseSuperAdminSuperAdminUserDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponsePeopleAnnouncementStatusDto = {
+    success?: boolean;
+    data?: PeopleAnnouncementStatusDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponsePeopleCheckSelectedWhatsAppResultDto = {
     success?: boolean;
     data?: PeopleCheckSelectedWhatsAppResultDto;
@@ -1281,8 +1288,32 @@ export type PaginatedResponseTellersTellerDto = {
     readonly hasNextPage?: boolean;
 };
 
+export type PeopleAbortAnnouncementDto = {
+    channel?: string | null;
+    queueToken?: string | null;
+};
+
 export type PeopleAbortWhatsAppNotifyDto = {
     queueToken?: string | null;
+};
+
+export type PeopleAnnouncementPersonResultDto = {
+    personGuid?: string;
+    outcome?: string | null;
+    error?: string | null;
+};
+
+export type PeopleAnnouncementStatusDto = {
+    queueToken?: string | null;
+    channel?: string | null;
+    running?: boolean;
+    cancelled?: boolean;
+    queued?: number;
+    sent?: number;
+    skipped?: number;
+    failed?: number;
+    moreFailedRemain?: boolean;
+    results?: Array<PeopleAnnouncementPersonResultDto> | null;
 };
 
 export type PeopleCheckSelectedWhatsAppDto = {
@@ -1384,6 +1415,9 @@ export type PeoplePersonListDto = {
     ineligibleReasonCode?: string | null;
     unitName?: string | null;
     phoneOnlineVoter?: PeoplePersonPhoneSmsHintDto;
+    lastAnnouncementChannel?: string | null;
+    lastAnnouncementOutcome?: string | null;
+    lastAnnouncementError?: string | null;
 };
 
 export type PeoplePersonPhoneOnlineVoterDto = {
@@ -1409,8 +1443,17 @@ export type PeoplePersonSmsLogDto = {
     errorCode?: number | null;
 };
 
+export type PeopleRetryFailedAnnouncementDto = {
+    channel?: string | null;
+};
+
 export type PeopleSetPersonPhoneSmsStatusDto = {
     smsStatus?: string | null;
+};
+
+export type PeopleStartAnnouncementDto = {
+    channel?: string | null;
+    personGuids?: Array<string> | null;
 };
 
 export type PeopleStartWhatsAppNotifyDto = {
@@ -1433,6 +1476,7 @@ export type PeopleUpdatePersonDto = {
 export type PeopleWhatsAppNotifyPersonResultDto = {
     personGuid?: string;
     outcome?: string | null;
+    error?: string | null;
 };
 
 export type PeopleWhatsAppNotifyStatusDto = {
@@ -1443,6 +1487,7 @@ export type PeopleWhatsAppNotifyStatusDto = {
     sent?: number;
     skipped?: number;
     failed?: number;
+    moreFailedRemain?: boolean;
     results?: Array<PeopleWhatsAppNotifyPersonResultDto> | null;
 };
 
@@ -4445,6 +4490,81 @@ export type GetApiPeopleByElectionGuidWhatsAppNotifyStatusResponses = {
 };
 
 export type GetApiPeopleByElectionGuidWhatsAppNotifyStatusResponse = GetApiPeopleByElectionGuidWhatsAppNotifyStatusResponses[keyof GetApiPeopleByElectionGuidWhatsAppNotifyStatusResponses];
+
+export type PostApiPeopleByElectionGuidNotifyAnnouncementData = {
+    body?: PeopleStartAnnouncementDto;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/People/{electionGuid}/notifyAnnouncement';
+};
+
+export type PostApiPeopleByElectionGuidNotifyAnnouncementResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePeopleAnnouncementStatusDto;
+};
+
+export type PostApiPeopleByElectionGuidNotifyAnnouncementResponse = PostApiPeopleByElectionGuidNotifyAnnouncementResponses[keyof PostApiPeopleByElectionGuidNotifyAnnouncementResponses];
+
+export type PostApiPeopleByElectionGuidAbortAnnouncementData = {
+    body?: PeopleAbortAnnouncementDto;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/People/{electionGuid}/abortAnnouncement';
+};
+
+export type PostApiPeopleByElectionGuidAbortAnnouncementResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePeopleAnnouncementStatusDto;
+};
+
+export type PostApiPeopleByElectionGuidAbortAnnouncementResponse = PostApiPeopleByElectionGuidAbortAnnouncementResponses[keyof PostApiPeopleByElectionGuidAbortAnnouncementResponses];
+
+export type GetApiPeopleByElectionGuidAnnouncementStatusData = {
+    body?: never;
+    path: {
+        electionGuid: string;
+    };
+    query?: {
+        channel?: string;
+        queueToken?: string;
+    };
+    url: '/api/People/{electionGuid}/announcementStatus';
+};
+
+export type GetApiPeopleByElectionGuidAnnouncementStatusResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePeopleAnnouncementStatusDto;
+};
+
+export type GetApiPeopleByElectionGuidAnnouncementStatusResponse = GetApiPeopleByElectionGuidAnnouncementStatusResponses[keyof GetApiPeopleByElectionGuidAnnouncementStatusResponses];
+
+export type PostApiPeopleByElectionGuidRetryFailedAnnouncementData = {
+    body?: PeopleRetryFailedAnnouncementDto;
+    path: {
+        electionGuid: string;
+    };
+    query?: never;
+    url: '/api/People/{electionGuid}/retryFailedAnnouncement';
+};
+
+export type PostApiPeopleByElectionGuidRetryFailedAnnouncementResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponsePeopleAnnouncementStatusDto;
+};
+
+export type PostApiPeopleByElectionGuidRetryFailedAnnouncementResponse = PostApiPeopleByElectionGuidRetryFailedAnnouncementResponses[keyof PostApiPeopleByElectionGuidRetryFailedAnnouncementResponses];
 
 export type PostApiPeopleImportByElectionGuidUploadData = {
     body?: {
