@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { authService, type OwnerRestriction } from "@/services/authService";
 import { isGuestTeller } from "@/domain/guestTellerAccess";
+import { useElectionStore } from "@/stores/electionStore";
 import { resolveUserFacingApiError } from "@/utils/errorHandler";
-import { computed, onMounted, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
 
 const { t } = useI18n();
+const route = useRoute();
+const electionStore = useElectionStore();
 const restriction = ref<OwnerRestriction | null>(null);
 const requesting = ref(false);
 const sendingTest = ref(false);
@@ -30,14 +34,37 @@ function formatWhen(value?: string | Date | null) {
   return date.toLocaleString();
 }
 
+async function refreshOpenElection() {
+  const guid = electionStore.currentElection?.electionGuid;
+  if (!guid) {
+    return;
+  }
+  try {
+    await electionStore.fetchElectionById(guid);
+  } catch {
+    // The election page surfaces its own load error.
+  }
+}
+
 async function load() {
   if (isGuestTeller()) {
     return;
   }
   try {
-    restriction.value = await authService.getOwnerRestriction();
+    const next = await authService.getOwnerRestriction();
+    const wasBlocking = restriction.value?.blocksSends === true;
+    restriction.value = next;
+    if (wasBlocking && next?.blocksSends !== true) {
+      await refreshOpenElection();
+    }
   } catch {
     restriction.value = null;
+  }
+}
+
+function onVisible() {
+  if (document.visibilityState === "visible") {
+    void load();
   }
 }
 
@@ -73,7 +100,21 @@ async function requestReview() {
   }
 }
 
-onMounted(load);
+watch(
+  () => route.fullPath,
+  () => {
+    void load();
+  },
+);
+
+onMounted(() => {
+  void load();
+  document.addEventListener("visibilitychange", onVisible);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("visibilitychange", onVisible);
+});
 </script>
 
 <template>

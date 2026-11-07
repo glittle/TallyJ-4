@@ -13,6 +13,7 @@ import {
   postApiAuthLogout,
   postApiAuthTellerLogin,
   postApiAuthVerifyEmail,
+  postApiAuthVerify2Fa,
   postApiAccountChangeDisplayName,
   getApiAccountGetMyProfile,
   postApiAccountRequestEmailChange,
@@ -144,6 +145,18 @@ export const authService = {
 
   async login(data: LoginRequest): Promise<AuthResponse> {
     const response = await postApiAuthLogin({
+      body: data,
+      throwOnError: true,
+    });
+    return response.data as AuthResponse;
+  },
+
+  async verify2FA(data: {
+    email: string;
+    password: string;
+    code: string;
+  }): Promise<AuthResponse> {
+    const response = await postApiAuthVerify2Fa({
       body: data,
       throwOnError: true,
     });

@@ -19,6 +19,7 @@ vi.mock("../services/secureTokenService", () => ({
 vi.mock("../services/authService", () => ({
   authService: {
     login: vi.fn(),
+    verify2FA: vi.fn(),
     logout: vi.fn(),
     googleOneTap: vi.fn(),
   },
@@ -263,7 +264,86 @@ describe("Auth Store", () => {
       expect(authStore.email).toBeNull();
       expect(authStore.requires2FA).toBe(true);
       expect(authStore.pending2FAEmail).toBe("test@example.com");
+      expect(secureTokenService.refreshAuthData).not.toHaveBeenCalled();
       expect(result).toEqual(mockResponse);
+    });
+
+    it("starts a session only after the authenticator code is accepted", async () => {
+      const { authService } = vi.mocked(
+        await import("../services/authService"),
+        true,
+      );
+      const { secureTokenService } = vi.mocked(
+        await import("../services/secureTokenService"),
+        true,
+      );
+      const { tokenRefreshService } = vi.mocked(
+        await import("../services/tokenRefreshService"),
+        true,
+      );
+
+      authService.verify2FA.mockResolvedValue({
+        email: "mfa@example.com",
+        name: "MFA User",
+        authMethod: "Local",
+        requires2FA: false,
+      });
+      secureTokenService.refreshAuthData.mockReturnValue({
+        token: null,
+        refreshToken: null,
+        email: "mfa@example.com",
+        name: "MFA User",
+        authMethod: "Local",
+      });
+
+      authStore = useAuthStore();
+      authStore.requires2FA = true;
+      authStore.pending2FAEmail = "mfa@example.com";
+
+      await authStore.verify2FA({
+        email: "mfa@example.com",
+        password: "password123",
+        code: "123456",
+      });
+
+      expect(authService.verify2FA).toHaveBeenCalledWith({
+        email: "mfa@example.com",
+        password: "password123",
+        code: "123456",
+      });
+      expect(authStore.requires2FA).toBe(false);
+      expect(authStore.pending2FAEmail).toBeNull();
+      expect(authStore.email).toBe("mfa@example.com");
+      expect(tokenRefreshService.initialize).toHaveBeenCalled();
+    });
+
+    it("stays on the authenticator step when the code is rejected", async () => {
+      const { authService } = vi.mocked(
+        await import("../services/authService"),
+        true,
+      );
+      const { tokenRefreshService } = vi.mocked(
+        await import("../services/tokenRefreshService"),
+        true,
+      );
+
+      authService.verify2FA.mockRejectedValue(new Error("bad code"));
+      authStore = useAuthStore();
+      authStore.requires2FA = true;
+      authStore.pending2FAEmail = "mfa@example.com";
+
+      await expect(
+        authStore.verify2FA({
+          email: "mfa@example.com",
+          password: "password123",
+          code: "000000",
+        }),
+      ).rejects.toThrow("bad code");
+
+      expect(authStore.requires2FA).toBe(true);
+      expect(authStore.pending2FAEmail).toBe("mfa@example.com");
+      expect(authStore.email).toBeNull();
+      expect(tokenRefreshService.initialize).not.toHaveBeenCalled();
     });
 
     it("should handle login errors", async () => {
