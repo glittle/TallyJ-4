@@ -33,6 +33,12 @@ public partial class AuthController
     [HttpGet("google/login")]
     public async Task<IActionResult> GoogleLogin([FromQuery] string? returnUrl = null)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Google);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
@@ -94,6 +100,11 @@ public partial class AuthController
     [HttpGet("google/callback")]
     public async Task<IActionResult> GoogleCallback()
     {
+        if (!CurrentSignIn().Officers.Google)
+        {
+            return Redirect(GetErrorRedirectUrl(null, SignInCapabilities.OfficerDisabledKey));
+        }
+
         string? returnUrl = null;
         try
         {
@@ -172,6 +183,12 @@ public partial class AuthController
     [HttpPost("google/one-tap")]
     public async Task<IActionResult> GoogleOneTap([FromBody] GoogleOneTapRequest request)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Google);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 

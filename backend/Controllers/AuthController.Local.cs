@@ -37,6 +37,12 @@ public partial class AuthController
     [HttpPost("registerAccount")]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Local);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
@@ -101,6 +107,12 @@ public partial class AuthController
     [HttpPost("registerWithInvite")]
     public async Task<IActionResult> RegisterWithInvite([FromBody] RegisterWithInviteRequest request)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Local);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
@@ -145,6 +157,12 @@ public partial class AuthController
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Local);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 

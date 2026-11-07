@@ -32,6 +32,12 @@ public partial class AuthController
     [HttpPost("telegram")]
     public async Task<IActionResult> TelegramLogin([FromBody] TelegramLoginRequest request)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Telegram);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
@@ -90,6 +96,12 @@ public partial class AuthController
     [HttpPost("facebook")]
     public async Task<IActionResult> FacebookLogin([FromBody] FacebookLoginRequest request)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Facebook);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 
@@ -161,6 +173,12 @@ public partial class AuthController
     [HttpPost("kakao")]
     public async Task<IActionResult> KakaoLogin([FromBody] KakaoLoginRequest request)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Kakao);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 

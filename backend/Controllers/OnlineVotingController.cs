@@ -1,9 +1,11 @@
+using Backend.Configuration;
 using Backend.DTOs.OnlineVoting;
 using Backend.Helpers;
 using Backend.Middleware;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 
 namespace Backend.Controllers;
 
@@ -16,6 +18,8 @@ public class OnlineVotingController : ControllerBase
 {
     private readonly IOnlineVotingService _onlineVotingService;
     private readonly ILogger<OnlineVotingController> _logger;
+    private readonly IConfiguration _configuration;
+    private readonly IHostEnvironment _hostEnvironment;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OnlineVotingController"/> class.
@@ -24,10 +28,14 @@ public class OnlineVotingController : ControllerBase
     /// <param name="logger">The logger.</param>
     public OnlineVotingController(
         IOnlineVotingService onlineVotingService,
-        ILogger<OnlineVotingController> logger)
+        ILogger<OnlineVotingController> logger,
+        IConfiguration configuration,
+        IHostEnvironment hostEnvironment)
     {
         _onlineVotingService = onlineVotingService;
         _logger = logger;
+        _configuration = configuration;
+        _hostEnvironment = hostEnvironment;
     }
 
     /// <summary>
@@ -39,6 +47,12 @@ public class OnlineVotingController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<RequestCodeResponseDto>> RequestCode([FromBody] RequestCodeDto dto)
     {
+        var voters = SignInCapabilities.Evaluate(_configuration, _hostEnvironment).Voters;
+        if (!SignInCapabilities.AllowsVoterRequest(voters, dto.VoterIdType, dto.DeliveryMethod))
+        {
+            return BadRequest(new { error = SignInCapabilities.VoterDisabledKey });
+        }
+
         var result = await _onlineVotingService.RequestVerificationCodeAsync(dto);
         return Ok(result);
     }

@@ -205,6 +205,12 @@ public partial class AuthController
     [HttpPost("verify2fa")]
     public async Task<IActionResult> Verify2FA([FromBody] Verify2FARequest request)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Local);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var clientIp = HttpContext.GetClientIpAddress();
         var userAgent = HttpContext.Request.Headers.UserAgent.ToString();
 

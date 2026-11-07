@@ -1,3 +1,4 @@
+import { client } from "@/api/gen/configService/client.gen";
 import {
   postApiAuthLogin,
   postApiAuthForgotPassword,
@@ -31,6 +32,32 @@ import type {
   AuthLoginRequest as LoginRequest,
 } from "@/api/gen/configService/types.gen";
 import type { TelegramLoginRequest } from "../types";
+
+export interface OfficerSignInCapabilities {
+  local: boolean;
+  google: boolean;
+  facebook: boolean;
+  kakao: boolean;
+  telegram: boolean;
+}
+
+export interface VoterSignInCapabilities {
+  google: boolean;
+  facebook: boolean;
+  kakao: boolean;
+  telegram: boolean;
+  emailCode: boolean;
+  phoneCode: boolean;
+  sms: boolean;
+  voice: boolean;
+  whatsApp: boolean;
+  directCode: boolean;
+}
+
+export interface SignInCapabilityResponse {
+  officers: OfficerSignInCapabilities;
+  voters: VoterSignInCapabilities;
+}
 
 export interface AuthResponse {
   email: string;
@@ -141,6 +168,16 @@ export const authService = {
       throwOnError: true,
     });
     return response.data as AuthResponse;
+  },
+
+  async getSignInCapabilities(): Promise<SignInCapabilityResponse> {
+    const response = await client.get<SignInCapabilityResponse>({
+      url: "/api/Auth/sign-in-capabilities",
+    });
+    if (!response.data) {
+      throw new Error("Sign-in methods could not be loaded");
+    }
+    return response.data;
   },
 
   async login(data: LoginRequest): Promise<AuthResponse> {

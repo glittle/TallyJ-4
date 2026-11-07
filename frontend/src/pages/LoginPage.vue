@@ -25,6 +25,10 @@ import { useRoute, useRouter } from "vue-router";
 import TelegramLoginButton from "../components/auth/TelegramLoginButton.vue";
 import { useGoogleOneTap } from "../composables/useGoogleOneTap";
 import { useAuthStore } from "../stores/authStore";
+import {
+  useSignInCapabilities,
+  type OfficerSignInCapabilities,
+} from "@/composables/useSignInCapabilities";
 
 const appConfig = getAppConfig();
 
@@ -32,6 +36,11 @@ const { t } = useI18n();
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
+const {
+  officers,
+  loaded: signInLoaded,
+  load: loadSignIn,
+} = useSignInCapabilities();
 const { showSuccessMessage, showErrorMessage, showWarningMessage } =
   useNotifications();
 
@@ -66,6 +75,28 @@ const loginForm = reactive({
 
 const awaiting2FA = computed(
   () => authStore.requires2FA && loginForm.password.length > 0,
+);
+
+const officerMethods = computed<OfficerSignInCapabilities>(() => {
+  if (!signInLoaded.value || !officers.value) {
+    return {
+      local: true,
+      google: false,
+      facebook: false,
+      kakao: false,
+      telegram: false,
+    };
+  }
+  return officers.value;
+});
+
+const anyOfficerMethod = computed(
+  () =>
+    officerMethods.value.local ||
+    officerMethods.value.google ||
+    officerMethods.value.facebook ||
+    officerMethods.value.kakao ||
+    officerMethods.value.telegram,
 );
 
 const rules = computed<FormRules>(() => {
@@ -477,6 +508,7 @@ watch(
 );
 
 onMounted(() => {
+  void loadSignIn();
   if (authStore.isAuthenticated && isStandardLogin.value) {
     router.push("/dashboard");
   }
@@ -531,17 +563,36 @@ onBeforeUnmount(() => {
         </template>
 
         <!-- Social login only for Officers -->
-        <div v-if="mode === 'officer' && !awaiting2FA" class="social-login">
+        <p
+          v-if="signInLoaded && isStandardLogin && !anyOfficerMethod"
+          class="sign-in-none"
+          data-testid="officer-sign-in-none"
+        >
+          {{ t("auth.signIn.none") }}
+        </p>
+
+        <div
+          v-if="
+            mode === 'officer' &&
+            !awaiting2FA &&
+            (officerMethods.google ||
+              officerMethods.facebook ||
+              officerMethods.kakao ||
+              officerMethods.telegram)
+          "
+          class="social-login"
+        >
           <div
-            v-if="googleReady"
+            v-if="officerMethods.google && googleReady"
             ref="googleButtonRef"
             class="google-btn-container"
           >
             <!-- filled by Google One Tap -->
           </div>
           <el-button
-            v-if="!googleReady"
+            v-if="officerMethods.google && !googleReady"
             class="google-btn"
+            data-testid="officer-google"
             @click="handleGoogleLogin"
           >
             <img
@@ -551,7 +602,10 @@ onBeforeUnmount(() => {
             <span>{{ t("auth.googleLogin") }}</span>
           </el-button>
 
-          <div v-if="fbReady" class="facebook-btn-container">
+          <div
+            v-if="officerMethods.facebook && fbReady"
+            class="facebook-btn-container"
+          >
             <el-button
               class="facebook-btn"
               :loading="loading"
@@ -574,7 +628,10 @@ onBeforeUnmount(() => {
             </el-button>
           </div>
 
-          <div v-if="kakaoReady" class="kakao-btn-container">
+          <div
+            v-if="officerMethods.kakao && kakaoReady"
+            class="kakao-btn-container"
+          >
             <el-button
               class="kakao-btn"
               :loading="loading"
@@ -597,16 +654,22 @@ onBeforeUnmount(() => {
             </el-button>
           </div>
 
-          <div v-if="telegramReady" class="telegram-btn">
+          <div
+            v-if="officerMethods.telegram && telegramReady"
+            class="telegram-btn"
+          >
             <TelegramLoginButton
               :bot-username="telegramBotUsername"
               @success="handleTelegramSuccess"
             />
           </div>
-          <el-divider>{{ t("common.or") }}</el-divider>
+          <el-divider v-if="officerMethods.local">{{
+            t("common.or")
+          }}</el-divider>
         </div>
 
         <el-form
+          v-if="!isStandardLogin || officerMethods.local || awaiting2FA"
           ref="loginFormRef"
           :model="loginForm"
           :rules="rules"
@@ -727,7 +790,10 @@ onBeforeUnmount(() => {
             </el-button>
           </div>
 
-          <p v-if="mode === 'officer' && !awaiting2FA" class="new-account-hint">
+          <p
+            v-if="mode === 'officer' && !awaiting2FA && officerMethods.local"
+            class="new-account-hint"
+          >
             {{ t("auth.newAccountUseGoogle") }}
             <router-link to="/register">{{ t("auth.register") }}</router-link>
           </p>
@@ -796,6 +862,11 @@ onBeforeUnmount(() => {
     margin: 0 0 12px;
     color: var(--color-text-secondary);
     line-height: 1.4;
+  }
+
+  .sign-in-none {
+    margin: 0;
+    line-height: 1.45;
   }
 
   .new-account-hint {
