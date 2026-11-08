@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Backend.Context;
@@ -214,6 +215,107 @@ public class PasswordResetFlowTests : IntegrationTestBase
         (await locked.Content.ReadAsStringAsync()).ToLowerInvariant().Should().Contain("locked");
     }
 
+    [Fact]
+    public async Task Reset_RevocationFailure_RollsBackPassword_AndSuccessfulResetRevokesRefresh()
+    {
+        ResetRateLimit();
+        var email = UniqueEmail();
+        await CreateTestUserAsync(email, OldPassword);
+        var login = await PostLoginAsync(email, OldPassword);
+        login.StatusCode.Should().Be(HttpStatusCode.OK);
+        var originalRefresh = ReadCookie(login, "refresh_token");
+        originalRefresh.Should().NotBeNullOrEmpty();
+        var token = await RequestTokenAsync(email);
+
+        PasswordResetService.ForceRefreshRevocationFailure = true;
+        try
+        {
+            var failed = await PostResetAsync(email, token, NewPassword);
+            failed.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            (await failed.Content.ReadAsStringAsync()).Should().Contain(PasswordResetService.FailedKey);
+        }
+        finally
+        {
+            PasswordResetService.ForceRefreshRevocationFailure = false;
+        }
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var users = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+            var user = await users.FindByEmailAsync(email);
+            (await users.CheckPasswordAsync(user!, OldPassword)).Should().BeTrue();
+            (await users.CheckPasswordAsync(user!, NewPassword)).Should().BeFalse();
+        }
+
+        var rotatedResponse = await PostRefreshAsync(originalRefresh!);
+        rotatedResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var rotatedRefresh = ReadCookie(rotatedResponse, "refresh_token");
+        rotatedRefresh.Should().NotBeNullOrEmpty();
+
+        var reset = await PostResetAsync(email, token, NewPassword);
+        reset.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        using (var scope = Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<MainDbContext>();
+            var users = scope.ServiceProvider.GetRequiredService<UserManager<AppUser>>();
+            var user = await users.FindByEmailAsync(email);
+            (await users.CheckPasswordAsync(user!, NewPassword)).Should().BeTrue();
+            var live = await db.RefreshTokens.CountAsync(row => row.UserId == user!.Id && !row.IsRevoked);
+            live.Should().Be(0);
+        }
+
+        (await PostRefreshAsync(originalRefresh!)).StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        (await PostRefreshAsync(rotatedRefresh!)).StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task ForgotPassword_DuplicateEmailFields_DoNotSendOrSpendTheTargetCap()
+    {
+        ResetRateLimit();
+        var target = UniqueEmail();
+        var decoy = UniqueEmail();
+        await CreateTestUserAsync(target, OldPassword);
+
+        var duplicates = new[]
+        {
+            $"{{\"email\":\"{decoy}\",\"Email\":\"{target}\"}}",
+            $"{{\"Email\":\"{target}\",\"email\":\"{decoy}\"}}",
+            $"{{\"note\":\"x\",\"email\":\"{target}\",\"Email\":\"{decoy}\"}}"
+        };
+        for (var i = 0; i < duplicates.Length; i++)
+        {
+            var response = await PostRawForgot(duplicates[i], $"203.0.113.{40 + i}");
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+            (await response.Content.ReadAsStringAsync()).Should().Contain(RateLimitingMiddleware.DuplicateEmailFieldKey);
+        }
+
+        FindMessage(target).Should().BeNull();
+        FindMessage(decoy).Should().BeNull();
+
+        var accepted = new[]
+        {
+            $"{{\"email\":\"{target}\"}}",
+            $"{{\"Email\":\"{target.ToUpperInvariant()}\"}}",
+            $"{{\"unused\":false,\"email\":\"{target}\"}}"
+        };
+        for (var i = 0; i < accepted.Length; i++)
+        {
+            var response = await PostRawForgot(accepted[i], $"198.51.100.{40 + i}");
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
+        }
+
+        var blocked = await PostRawForgot($"{{\"Email\":\"{target}\"}}", "198.51.100.49");
+        blocked.StatusCode.Should().Be(HttpStatusCode.TooManyRequests);
+        (await blocked.Content.ReadAsStringAsync()).Should().Contain("error.tooManyRequests");
+
+        CustomWebApplicationFactory.MockEmailSender.Sent.Count(message =>
+            message.To.Mailboxes.Any(box =>
+                string.Equals(box.Address, target, StringComparison.OrdinalIgnoreCase)))
+            .Should().Be(3);
+        FindMessage(decoy).Should().BeNull();
+    }
+
     private async Task<string> RequestTokenAsync(string email)
     {
         var forgot = await PostForgotAsync(email);
@@ -222,6 +324,24 @@ public class PasswordResetFlowTests : IntegrationTestBase
     }
 
     private static int ForgotPasswordMax() => RateLimitingMiddleware.ForgotPasswordMaxRequests;
+
+    private async Task<HttpResponseMessage> PostRefreshAsync(string refreshToken)
+    {
+        var bare = Factory.CreateClient();
+        var message = new HttpRequestMessage(HttpMethod.Post, "/api/auth/refreshToken");
+        message.Headers.TryAddWithoutValidation("Cookie", $"refresh_token={refreshToken}");
+        return await bare.SendAsync(message);
+    }
+
+    private Task<HttpResponseMessage> PostRawForgot(string json, string forwardedFor)
+    {
+        var message = new HttpRequestMessage(HttpMethod.Post, "/api/auth/forgotPassword")
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        };
+        message.Headers.TryAddWithoutValidation("X-Forwarded-For", forwardedFor);
+        return Client.SendAsync(message);
+    }
 
     private Task<HttpResponseMessage> PostForgotFromIp(string email, string forwardedFor)
     {

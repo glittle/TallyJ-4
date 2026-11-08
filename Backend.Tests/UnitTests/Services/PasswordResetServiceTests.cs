@@ -1,5 +1,6 @@
 using Backend.Context;
 using Backend.Localization;
+using Microsoft.Data.Sqlite;
 using Backend.DTOs.Auth;
 using Backend.Identity;
 using Backend.Services.Auth;
@@ -145,11 +146,13 @@ public class PasswordResetServiceTests
             Mock.Of<ILogger<EmailService>>(),
             Mock.Of<IEmailSender>(),
             Mock.Of<IJsonLocalizationProvider>());
-        var options = new DbContextOptionsBuilder<MainDbContext>()
-            .UseInMemoryDatabase(Guid.NewGuid().ToString())
-            .Options;
+        var connection = new SqliteConnection("Data Source=:memory:");
+        connection.Open();
+        var options = new DbContextOptionsBuilder<MainDbContext>().UseSqlite(connection).Options;
+        var db = new MainDbContext(options);
+        db.Database.EnsureCreated();
         var logs = new ListLogger<PasswordResetService>();
-        var service = new PasswordResetService(users.Object, email.Object, new MainDbContext(options), logs);
+        var service = new PasswordResetService(users.Object, email.Object, db, logs);
         return (service, users, email, logs);
     }
 

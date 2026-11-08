@@ -25,6 +25,7 @@ public class RateLimitingMiddleware
 {
     public const string TooManyRequestsKey = "error.tooManyRequests";
     public const string PayloadTooLargeKey = "error.payloadTooLarge";
+    public const string DuplicateEmailFieldKey = "error.validationError";
 
     public const int VoterIdentifierMaxRequests = 5;
     public const int VoterVenueIpMaxRequests = 60;
@@ -182,10 +183,30 @@ public class RateLimitingMiddleware
                 var peek = await JsonRequestVoterId.TryReadPropertyAsync(
                     context.Request,
                     "email",
-                    context.RequestAborted);
+                    context.RequestAborted,
+                    rejectDuplicates: true);
                 if (peek.Status == JsonRequestVoterIdStatus.TooLarge)
                 {
                     await WritePayloadTooLargeAsync(context, path, clientIp);
+                    return;
+                }
+
+                if (peek.Status == JsonRequestVoterIdStatus.Duplicate)
+                {
+                    var userAgent = context.Request.Headers.UserAgent.ToString();
+                    if (await TryRejectIfLimitedAsync(
+                            context,
+                            securityAuditService,
+                            path,
+                            clientIp,
+                            userAgent,
+                            buckets,
+                            recordAttempts: true))
+                    {
+                        return;
+                    }
+
+                    await WriteDuplicateEmailFieldAsync(context);
                     return;
                 }
 
@@ -311,6 +332,13 @@ public class RateLimitingMiddleware
         {
             _store.RequestLog.GetOrAdd(key, _ => new List<DateTime>()).Add(now);
         }
+    }
+
+    private static async Task WriteDuplicateEmailFieldAsync(HttpContext context)
+    {
+        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync($"{{\"error\":\"{DuplicateEmailFieldKey}\"}}");
     }
 
     private async Task WritePayloadTooLargeAsync(HttpContext context, string path, string clientIp)

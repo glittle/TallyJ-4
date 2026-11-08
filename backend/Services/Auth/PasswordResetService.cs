@@ -18,6 +18,12 @@ public class PasswordResetService : IPasswordResetService
     private readonly MainDbContext _context;
     private readonly ILogger<PasswordResetService> _logger;
 
+    /// <summary>
+    /// Test seam. When set, revocation throws before it is saved. The password change
+    /// is in the same transaction and must roll back with it.
+    /// </summary>
+    internal static bool ForceRefreshRevocationFailure { get; set; }
+
     public PasswordResetService(
         UserManager<AppUser> userManager,
         EmailService emailService,
@@ -69,40 +75,72 @@ public class PasswordResetService : IPasswordResetService
 
     public async Task<(bool Success, string? Error)> ResetPasswordAsync(ResetPasswordRequest request)
     {
+        var strategy = _context.Database.CreateExecutionStrategy();
+        try
+        {
+            return await strategy.ExecuteAsync(() => ResetPasswordInTransactionAsync(request));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Password reset failed ({ExceptionType})", ex.GetType().Name);
+            return (false, FailedKey);
+        }
+    }
+
+    /// <summary>
+    /// Password change and refresh-token revocation commit together.
+    /// A failure rolls both back, so the reset link can be used again and old
+    /// refresh tokens are not left valid beside a new password.
+    /// </summary>
+    private async Task<(bool Success, string? Error)> ResetPasswordInTransactionAsync(ResetPasswordRequest request)
+    {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null || !CanReset(user))
             {
+                await transaction.RollbackAsync();
                 return (false, InvalidTokenKey);
             }
 
             var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
             if (!result.Succeeded)
             {
+                await transaction.RollbackAsync();
                 return (false, MapErrors(result));
             }
 
-            try
+            user.PasswordResetToken = null;
+            user.PasswordResetExpiry = null;
+            var cleared = await _userManager.UpdateAsync(user);
+            if (!cleared.Succeeded)
             {
-                user.PasswordResetToken = null;
-                user.PasswordResetExpiry = null;
-                await _userManager.UpdateAsync(user);
-                await RevokeRefreshTokensAsync(user.Id);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    "Password reset cleanup failed ({ExceptionType})",
-                    ex.GetType().Name);
+                await transaction.RollbackAsync();
+                return (false, FailedKey);
             }
 
+            await RevokeRefreshTokensAsync(user.Id);
+            await transaction.CommitAsync();
             return (true, null);
         }
         catch (Exception ex)
         {
+            await RollbackQuietlyAsync(transaction);
             _logger.LogError("Password reset failed ({ExceptionType})", ex.GetType().Name);
             return (false, FailedKey);
+        }
+    }
+
+    private static async Task RollbackQuietlyAsync(Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction)
+    {
+        try
+        {
+            await transaction.RollbackAsync();
+        }
+        catch (Exception)
+        {
+            // The transaction may already be complete. The caller still reports failure.
         }
     }
 
@@ -129,6 +167,11 @@ public class PasswordResetService : IPasswordResetService
 
     private async Task RevokeRefreshTokensAsync(string userId)
     {
+        if (ForceRefreshRevocationFailure)
+        {
+            throw new InvalidOperationException("Refresh token revocation failed");
+        }
+
         var tokens = await _context.RefreshTokens
             .Where(token => token.UserId == userId && !token.IsRevoked)
             .ToListAsync();
