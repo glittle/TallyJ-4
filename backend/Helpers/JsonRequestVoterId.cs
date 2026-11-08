@@ -37,11 +37,22 @@ public static class JsonRequestVoterId
     /// treat that as a missing identifier. Empty / malformed / absent voterId is
     /// <see cref="JsonRequestVoterIdStatus.Missing"/>.
     /// </summary>
-    public static async Task<JsonRequestVoterIdRead> TryReadAsync(
+    public static Task<JsonRequestVoterIdRead> TryReadAsync(
         HttpRequest request,
+        CancellationToken cancellationToken)
+        => TryReadPropertyAsync(request, "voterId", cancellationToken);
+
+    /// <summary>
+    /// Same capped peek as <see cref="TryReadAsync"/>, for a different JSON string property.
+    /// The address is not logged. Callers hash it before using it as a rate-limit key.
+    /// </summary>
+    public static async Task<JsonRequestVoterIdRead> TryReadPropertyAsync(
+        HttpRequest request,
+        string propertyName,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentException.ThrowIfNullOrWhiteSpace(propertyName);
 
         if (request.ContentLength is 0)
         {
@@ -70,10 +81,10 @@ public static class JsonRequestVoterId
         try
         {
             using var document = JsonDocument.Parse(capped);
-            var voterId = FindVoterId(document.RootElement);
-            return voterId == null
+            var value = FindStringProperty(document.RootElement, propertyName);
+            return value == null
                 ? JsonRequestVoterIdRead.Missing()
-                : JsonRequestVoterIdRead.Found(voterId);
+                : JsonRequestVoterIdRead.Found(value);
         }
         catch (JsonException)
         {
@@ -114,7 +125,9 @@ public static class JsonRequestVoterId
         return buffer.AsSpan(0, total).ToArray();
     }
 
-    internal static string? FindVoterId(JsonElement root)
+    internal static string? FindVoterId(JsonElement root) => FindStringProperty(root, "voterId");
+
+    internal static string? FindStringProperty(JsonElement root, string propertyName)
     {
         if (root.ValueKind != JsonValueKind.Object)
         {
@@ -123,7 +136,7 @@ public static class JsonRequestVoterId
 
         foreach (var property in root.EnumerateObject())
         {
-            if (!property.Name.Equals("voterId", StringComparison.OrdinalIgnoreCase))
+            if (!property.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }

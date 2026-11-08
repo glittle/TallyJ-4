@@ -130,6 +130,8 @@ public static class ProgramAuthSetup
             options.Lockout.AllowedForNewUsers = true;
 
             options.User.RequireUniqueEmail = true;
+
+            options.Tokens.PasswordResetTokenProvider = Backend.Services.Auth.PasswordResetTokenProvider.ProviderName;
         });
     }
 

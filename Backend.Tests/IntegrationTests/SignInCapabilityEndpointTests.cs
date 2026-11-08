@@ -69,6 +69,28 @@ public class SignInCapabilityEndpointTests : IClassFixture<SignInRestrictedFacto
         (await emailCode.Content.ReadAsStringAsync()).Should().Contain("voting.auth.methodDisabled");
     }
 
+    [Fact]
+    public async Task DisabledOfficerLocal_RejectsPasswordReset_WithoutEmail()
+    {
+        var email = $"disabled-{Guid.NewGuid():N}@example.com";
+        var forgot = await PostAsync("/api/auth/forgotPassword", new { email });
+        var reset = await PostAsync("/api/auth/resetPassword", new
+        {
+            email,
+            token = "unused-token",
+            newPassword = "NewPassword123!",
+            confirmPassword = "NewPassword123!"
+        });
+
+        forgot.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        (await forgot.Content.ReadAsStringAsync()).Should().Contain("auth.errors.signInMethodDisabled");
+        reset.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        (await reset.Content.ReadAsStringAsync()).Should().Contain("auth.errors.signInMethodDisabled");
+        CustomWebApplicationFactory.MockEmailSender.Sent.Any(message =>
+            message.To.Mailboxes.Any(box => string.Equals(box.Address, email, StringComparison.OrdinalIgnoreCase)))
+            .Should().BeFalse();
+    }
+
     private Task<HttpResponseMessage> PostAsync(string url, object body)
     {
         var json = JsonSerializer.Serialize(body);

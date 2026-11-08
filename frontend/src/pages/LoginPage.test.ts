@@ -41,6 +41,9 @@ describe("LoginPage", () => {
     });
 
     expect(wrapper.find('input[type="password"]').exists()).toBe(true);
+    expect(wrapper.get('[data-testid="forgot-password"]').text()).toBe(
+      "Forgot password?",
+    );
     expect(wrapper.text()).toContain(
       "New teller? Create an account with email and password, or sign in with Google",
     );
@@ -252,6 +255,7 @@ describe("LoginPage", () => {
       "No officer sign-in method is configured",
     );
     expect(empty.find('input[type="password"]').exists()).toBe(false);
+    expect(empty.find('[data-testid="forgot-password"]').exists()).toBe(false);
     empty.unmount();
     capabilities.mockRestore();
   });

@@ -29,9 +29,20 @@ namespace Backend.Controllers;
 
 public partial class AuthController
 {
+    /// <summary>
+    /// Asks for a local-account reset email. The reply is the same whether or not
+    /// that address has a local password. The link uses the configured public origin.
+    /// </summary>
+    [AllowAnonymous]
     [HttpPost("forgotPassword")]
     public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Local);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var (success, error) = await _passwordResetService.GenerateResetTokenAsync(request);
 
         if (!success)
@@ -39,7 +50,7 @@ public partial class AuthController
             return BadRequest(new { error });
         }
 
-        return Ok(new { message = "Password reset email sent if account exists" });
+        return Ok(new { message = PasswordResetService.AcceptedKey });
     }
 
     /// <summary>
@@ -47,9 +58,20 @@ public partial class AuthController
     /// </summary>
     /// <param name="request">The reset password request containing the token and new password.</param>
     /// <returns>A success message if the password was reset, or an error if the request fails.</returns>
+    /// <summary>
+    /// Sets a new local password from an Identity reset token. Does not sign the user in
+    /// and does not turn off an authenticator.
+    /// </summary>
+    [AllowAnonymous]
     [HttpPost("resetPassword")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
     {
+        var blocked = RejectOfficerSignIn(CurrentSignIn().Officers.Local);
+        if (blocked != null)
+        {
+            return blocked;
+        }
+
         var (success, error) = await _passwordResetService.ResetPasswordAsync(request);
 
         if (!success)
@@ -57,7 +79,7 @@ public partial class AuthController
             return BadRequest(new { error });
         }
 
-        return Ok(new { message = "Password reset successful" });
+        return Ok(new { message = PasswordResetService.CompletedKey });
     }
 
     /// <summary>

@@ -717,6 +717,16 @@ onBeforeUnmount(() => {
             />
           </el-form-item>
 
+          <p v-if="isStandardLogin && !awaiting2FA" class="forgot-password-row">
+            <router-link
+              class="forgot-password-link"
+              to="/forgot-password"
+              data-testid="forgot-password"
+            >
+              {{ t("auth.forgotPassword") }}
+            </router-link>
+          </p>
+
           <el-form-item
             v-if="awaiting2FA"
             :label="t('auth.twoFactorCode')"
@@ -880,6 +890,15 @@ onBeforeUnmount(() => {
   .sign-in-none {
     margin: 0;
     line-height: 1.45;
+  }
+
+  .forgot-password-row {
+    margin: 0 0 4px;
+  }
+
+  .forgot-password-link {
+    color: var(--color-text-primary);
+    text-decoration: underline;
   }
 
   .new-account-hint {

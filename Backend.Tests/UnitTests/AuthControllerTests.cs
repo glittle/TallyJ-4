@@ -598,7 +598,7 @@ public class AuthControllerTests : ServiceTestBase
         Assert.NotNull(response);
         var messageProperty = response.GetType().GetProperty("message");
         Assert.NotNull(messageProperty);
-        Assert.Equal("Password reset email sent if account exists", messageProperty.GetValue(response));
+        Assert.Equal(PasswordResetService.AcceptedKey, messageProperty.GetValue(response));
     }
 
     [Fact]
@@ -645,7 +645,7 @@ public class AuthControllerTests : ServiceTestBase
         Assert.NotNull(response);
         var messageProperty = response.GetType().GetProperty("message");
         Assert.NotNull(messageProperty);
-        Assert.Equal("Password reset successful", messageProperty.GetValue(response));
+        Assert.Equal(PasswordResetService.CompletedKey, messageProperty.GetValue(response));
     }
 
     [Fact]
@@ -672,6 +672,44 @@ public class AuthControllerTests : ServiceTestBase
         var errorProperty = errorResponse.GetType().GetProperty("error");
         Assert.NotNull(errorProperty);
         Assert.Equal("Invalid token", errorProperty.GetValue(errorResponse));
+    }
+
+    [Fact]
+    public async Task ForgotPassword_WhenLocalSignInDisabled_DoesNotAskForEmail()
+    {
+        _configurationMock.Setup(c => c["SignIn:Officers:Local"]).Returns("false");
+        var request = new ForgotPasswordRequest { Email = "hidden@example.com" };
+
+        var result = await _controller.ForgotPassword(request);
+
+        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        var error = badRequest.Value!.GetType().GetProperty("error")!.GetValue(badRequest.Value);
+        Assert.Equal(Backend.Configuration.SignInCapabilities.OfficerDisabledKey, error);
+        _passwordResetServiceMock.Verify(
+            service => service.GenerateResetTokenAsync(It.IsAny<ForgotPasswordRequest>()),
+            Times.Never);
+    }
+
+    [Fact]
+    public async Task ResetPassword_WhenLocalSignInDisabled_DoesNotReset()
+    {
+        _configurationMock.Setup(c => c["SignIn:Officers:Local"]).Returns("false");
+        var request = new ResetPasswordRequest
+        {
+            Email = "hidden@example.com",
+            Token = "not-used",
+            NewPassword = "NewPassword123!",
+            ConfirmPassword = "NewPassword123!"
+        };
+
+        var result = await _controller.ResetPassword(request);
+
+        var badRequest = Assert.IsType<BadRequestObjectResult>(result);
+        var error = badRequest.Value!.GetType().GetProperty("error")!.GetValue(badRequest.Value);
+        Assert.Equal(Backend.Configuration.SignInCapabilities.OfficerDisabledKey, error);
+        _passwordResetServiceMock.Verify(
+            service => service.ResetPasswordAsync(It.IsAny<ResetPasswordRequest>()),
+            Times.Never);
     }
 
     [Fact]

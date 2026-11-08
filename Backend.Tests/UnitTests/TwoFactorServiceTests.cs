@@ -62,7 +62,8 @@ public class TwoFactorServiceTests : ServiceTestBase
             emailConfig,
             hostEnvironment.Object,
             NullLogger<EmailService>.Instance,
-            emailSenderMock.Object);
+            emailSenderMock.Object,
+            Mock.Of<Backend.Localization.IJsonLocalizationProvider>());
 
         var config = new Dictionary<string, string?>
         {
