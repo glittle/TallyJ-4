@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount, flushPromises } from "@vue/test-utils";
 import { createRouter, createWebHistory } from "vue-router";
+import ElementPlus from "element-plus";
 import GuestTellerAccessToggle from "../GuestTellerAccessToggle.vue";
 import { pinia, i18n } from "@/test/setup";
 
@@ -13,6 +14,8 @@ const { electionState } = vi.hoisted(() => ({
     electionGuid: "election-1",
     isTellerAccessOpen: false,
     electionPasscode: "secret",
+    useOnlineVoting: false,
+    electionStage: "SettingUp",
     tellerLoginLockedUntil: undefined as string | undefined,
   },
 }));
@@ -42,6 +45,10 @@ describe("GuestTellerAccessToggle", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    electionState.electionPasscode = "secret";
+    electionState.isTellerAccessOpen = false;
+    electionState.useOnlineVoting = false;
+    electionState.electionStage = "SettingUp";
     electionState.tellerLoginLockedUntil = undefined;
     router = createRouter({
       history: createWebHistory(),
@@ -122,5 +129,55 @@ describe("GuestTellerAccessToggle", () => {
 
     expect(mockUnlockTellerLogin).toHaveBeenCalledWith("election-1");
     wrapper.unmount();
+  });
+
+  it("keeps the switch usable in Gathering Ballots when online voting is on and a passcode is set", async () => {
+    electionState.useOnlineVoting = true;
+    electionState.electionStage = "GatheringBallots";
+    electionState.electionPasscode = "gather-1";
+    await router.push("/elections/election-1");
+    await router.isReady();
+
+    const wrapper = mount(GuestTellerAccessToggle, {
+      global: {
+        plugins: [pinia, router, i18n, ElementPlus],
+      },
+    });
+    await flushPromises();
+
+    const toggle = wrapper.getComponent({ name: "ElSwitch" });
+    expect(toggle.props("disabled")).toBe(false);
+    expect(
+      wrapper.find(".guest-teller-access-box").attributes("title"),
+    ).toBeUndefined();
+
+    toggle.vm.$emit("change", true);
+    await flushPromises();
+    expect(mockToggleTellerAccess).toHaveBeenCalledWith("election-1", true);
+  });
+
+  it("explains that a passcode is required before guest tellers can be turned on", async () => {
+    electionState.useOnlineVoting = true;
+    electionState.electionStage = "GatheringBallots";
+    electionState.electionPasscode = "";
+    await router.push("/elections/election-1");
+    await router.isReady();
+
+    const wrapper = mount(GuestTellerAccessToggle, {
+      global: {
+        plugins: [pinia, router, i18n, ElementPlus],
+      },
+    });
+    await flushPromises();
+
+    const box = wrapper.get(".guest-teller-access-box");
+    expect(box.classes()).toContain("is-needs-passcode");
+    expect(box.attributes("title")).toBe(
+      "Set a passcode in election settings before guest tellers can be turned on.",
+    );
+    expect(wrapper.getComponent({ name: "ElSwitch" }).props("disabled")).toBe(
+      true,
+    );
+    expect(mockToggleTellerAccess).not.toHaveBeenCalled();
   });
 });
