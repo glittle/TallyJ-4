@@ -308,6 +308,18 @@ A site-wide super admin is an account whose email is in `SuperAdmin:Emails`. `Su
 
 Paid-send caps, the kill switch, and voter-list flags are in `context/anti-abuse.md`.
 
+## Local password minimum is 8 characters
+
+**Status:** active  
+**Evidence:** confirmed  
+**Revisit when:** the minimum length changes again
+
+New local passwords must be at least 8 characters, plus the existing lowercase, uppercase, digit, and special-character rules. Identity `RequiredLength` is 8. Signup and reset forms use the same check. Login compares the stored hash only, so an older shorter password still signs in and nobody is forced to reset. The reset page still does not list the rules before submit.
+
+**Rejected alternative:** drop the character-class rules when lowering the length. Only the minimum changed.
+
+**Rejected alternative:** reject sign-in until an existing password meets the new minimum. That would lock accounts that were valid when created.
+
 ## Local password reset uses Identity tokens and the public origin
 
 **Status:** active  

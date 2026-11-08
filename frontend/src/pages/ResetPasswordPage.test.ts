@@ -136,6 +136,53 @@ describe("ResetPasswordPage", () => {
     expect(wrapper.text()).not.toContain("used-token");
   });
 
+  it("accepts 8 characters when the other rules are met", async () => {
+    vi.spyOn(authService, "getSignInCapabilities").mockResolvedValue(
+      capabilities(true),
+    );
+    const reset = vi.spyOn(authService, "resetPassword").mockResolvedValue();
+    const { wrapper } = await mountPage(
+      "?email=officer@example.com&token=still-good",
+    );
+    await wrapper
+      .get('[data-testid="reset-password-new"]')
+      .setValue("Ab1!wxyz");
+    await wrapper
+      .get('[data-testid="reset-password-confirm"]')
+      .setValue("Ab1!wxyz");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    expect(reset).toHaveBeenCalledWith(
+      "officer@example.com",
+      "still-good",
+      "Ab1!wxyz",
+      "Ab1!wxyz",
+    );
+    expect(wrapper.text()).not.toContain("at least 8 characters");
+    reset.mockRestore();
+  });
+
+  it("rejects 7 characters that otherwise meet the rules", async () => {
+    vi.spyOn(authService, "getSignInCapabilities").mockResolvedValue(
+      capabilities(true),
+    );
+    const reset = vi.spyOn(authService, "resetPassword");
+    const { wrapper } = await mountPage(
+      "?email=officer@example.com&token=still-good",
+    );
+    await wrapper.get('[data-testid="reset-password-new"]').setValue("Ab1!xyz");
+    await wrapper
+      .get('[data-testid="reset-password-confirm"]')
+      .setValue("Ab1!xyz");
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+
+    expect(reset).not.toHaveBeenCalled();
+    expect(wrapper.text()).toContain("at least 8 characters");
+    reset.mockRestore();
+  });
+
   it("keeps a weak password off the API", async () => {
     vi.spyOn(authService, "getSignInCapabilities").mockResolvedValue(
       capabilities(true),
@@ -152,7 +199,7 @@ describe("ResetPasswordPage", () => {
     await flushPromises();
 
     expect(reset).not.toHaveBeenCalled();
-    expect(wrapper.text()).toContain("at least 12 characters");
+    expect(wrapper.text()).toContain("at least 8 characters");
     expect(wrapper.find('[data-testid="reset-password-new"]').exists()).toBe(
       true,
     );

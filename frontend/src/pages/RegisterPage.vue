@@ -2,6 +2,7 @@
 import { useSignInCapabilities } from "@/composables/useSignInCapabilities";
 import { useNotifications } from "@/composables/useNotifications";
 import { getAppConfig } from "@/config/appConfig";
+import { localPasswordProblems } from "@/domain/localPasswordRules";
 import { authService } from "@/services/authService";
 import { extractApiErrorMessage } from "@/utils/errorHandler";
 import type { FormInstance, FormRules } from "element-plus";
@@ -60,22 +61,7 @@ const validatePassword = (
     return;
   }
 
-  const errors = [];
-  if (value.length < 12) {
-    errors.push(t("auth.passwordMinLength12"));
-  }
-  if (!/(?=.*[a-z])/.test(value)) {
-    errors.push(t("auth.passwordRequireLowercase"));
-  }
-  if (!/(?=.*[A-Z])/.test(value)) {
-    errors.push(t("auth.passwordRequireUppercase"));
-  }
-  if (!/(?=.*\d)/.test(value)) {
-    errors.push(t("auth.passwordRequireDigit"));
-  }
-  if (!/(?=.*[^a-zA-Z\d])/.test(value)) {
-    errors.push(t("auth.passwordRequireSpecial"));
-  }
+  const errors = localPasswordProblems(value, (key) => t(key));
 
   if (errors.length > 0) {
     callback(new Error(errors.join(" ")));
