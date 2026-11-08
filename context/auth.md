@@ -308,6 +308,30 @@ A site-wide super admin is an account whose email is in `SuperAdmin:Emails`. `Su
 
 Paid-send caps, the kill switch, and voter-list flags are in `context/anti-abuse.md`.
 
+## Local password reset uses Identity tokens and the public origin
+
+**Status:** active  
+**Evidence:** confirmed  
+**Revisit when:** reset links should expire on a different clock than email confirmation, lost-authenticator recovery is added, or reset mail needs a shared store across hosts
+
+Officer local accounts request a reset from the login page. `POST /api/auth/forgotPassword` answers with the same body for an unknown address, an OAuth-only account, and a local account. Only a local account that already has a password is emailed. The link is `ClientEnv:frontendUrl` plus `/reset-password`, with the Identity reset token in the query. That origin is the same resolver used for verification mail. The request host and any extra JSON field are not a base URL. The token is the ASP.NET Identity data-protection token from `PasswordResetTokenProvider` (one hour, separate from the one-day email-confirmation provider). `ResetPasswordAsync` consumes it. A second use, a bad token, and an expired token are the same invalid-link reply. The password rules and the 15-minute lockout are unchanged. Reset does not sign the user in, does not turn off an authenticator, and does not clear lockout. The password change and refresh-token revocation commit in one database transaction. If revocation does not commit, the password change rolls back and the reset link stays usable. Refresh checks revocation, not the security stamp, so a committed new password with the old refresh tokens still valid is not a successful reset. An access token already issued stays valid until it expires. Lost-authenticator recovery is not this flow.
+
+`SignIn:Officers:Local` false hides the link and both routes return `auth.errors.signInMethodDisabled`. Voter sign-in flags are not involved. The reset message uses the request UI culture when that catalog has the leaf, then English, then a built-in English sentence, so a host without locale files still sends a link. The link is not taken from the catalog.
+
+Mail is capped twice, both in memory, both before the action, both the same 3 per hour: per trusted-ingress IP, and per submitted address. The address is hashed before it is used as a key. One email field is read with the same case-insensitive name the model binder uses, wherever it sits among other fields. Two email fields in one body are rejected, so the cap cannot count one address while the handler mails another. An unknown address and a local account get the same 200, and the same 429 once that address or that IP is over the cap. `POST /api/auth/verifyEmail` is on the same IP table as other anonymous token checks (10 per minute). It does not send mail.
+
+**Rejected alternative:** keep the random value in `PasswordResetToken` and mail that string. It was stored in plaintext, was not the Identity token (a new Identity token was minted only when the form was submitted), and the message had no link.
+
+**Rejected alternative:** build the link from the Host header or a caller-supplied return URL. A self-hosted site behind a proxy, and a forged host, would mail a credential to the wrong origin. `ClientEnv:frontendUrl` is already required outside Development and Testing.
+
+**Rejected alternative:** a per-address cap that counts only addresses which already have an account, or that returns a different body when the address is known. Rotating IPs could still fill one inbox, but a different status for known addresses would show which inboxes exist. The cap counts every submitted address the same way.
+
+**Rejected alternative:** count the first `email` field and let model binding keep the last. `{"email":"decoy","Email":"target"}` would cap the decoy and mail the target.
+
+**Rejected alternative:** report success when the password save commits and revocation throws. The reset link is already spent, and refresh still accepts the old token because it checks revocation and expiry, not the security stamp.
+
+**Rejected alternative:** sign the user in after a successful reset, or turn off the authenticator so they are not stuck. Inbox access is not possession of the authenticator. Lost-authenticator recovery stays a separate slice.
+
 ## Teller APIs are election-scoped
 
 **Status:** active  

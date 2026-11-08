@@ -15,6 +15,8 @@ describe("unknown routes", () => {
   it("keeps known pages on their own routes", () => {
     expect(router.resolve("/").name).toBe("landing");
     expect(router.resolve("/login").name).not.toBe("not-found");
+    expect(router.resolve("/forgot-password").name).toBe("forgot-password");
+    expect(router.resolve("/reset-password").name).toBe("reset-password");
     expect(
       router.resolve("/dashboard").matched.some((r) => r.path === "/dashboard"),
     ).toBe(true);

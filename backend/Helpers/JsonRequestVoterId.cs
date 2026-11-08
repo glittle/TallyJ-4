@@ -6,7 +6,8 @@ public enum JsonRequestVoterIdStatus
 {
     Found,
     Missing,
-    TooLarge
+    TooLarge,
+    Duplicate
 }
 
 public readonly record struct JsonRequestVoterIdRead(JsonRequestVoterIdStatus Status, string? VoterId)
@@ -19,6 +20,9 @@ public readonly record struct JsonRequestVoterIdRead(JsonRequestVoterIdStatus St
 
     public static JsonRequestVoterIdRead TooLarge() =>
         new(JsonRequestVoterIdStatus.TooLarge, null);
+
+    public static JsonRequestVoterIdRead Duplicate() =>
+        new(JsonRequestVoterIdStatus.Duplicate, null);
 }
 
 /// <summary>
@@ -37,11 +41,34 @@ public static class JsonRequestVoterId
     /// treat that as a missing identifier. Empty / malformed / absent voterId is
     /// <see cref="JsonRequestVoterIdStatus.Missing"/>.
     /// </summary>
-    public static async Task<JsonRequestVoterIdRead> TryReadAsync(
+    public static Task<JsonRequestVoterIdRead> TryReadAsync(
         HttpRequest request,
         CancellationToken cancellationToken)
+        => TryReadPropertyAsync(request, "voterId", cancellationToken);
+
+    /// <summary>
+    /// Same capped peek as <see cref="TryReadAsync"/>, for a different JSON string property.
+    /// The address is not logged. Callers hash it before using it as a rate-limit key.
+    /// </summary>
+    public static Task<JsonRequestVoterIdRead> TryReadPropertyAsync(
+        HttpRequest request,
+        string propertyName,
+        CancellationToken cancellationToken)
+        => TryReadPropertyAsync(request, propertyName, cancellationToken, rejectDuplicates: false);
+
+    /// <summary>
+    /// When <paramref name="rejectDuplicates"/> is set, a second case-insensitive match
+    /// is <see cref="JsonRequestVoterIdStatus.Duplicate"/> and no value is returned.
+    /// Model binding keeps the last duplicate. Taking the first would cap a different address.
+    /// </summary>
+    public static async Task<JsonRequestVoterIdRead> TryReadPropertyAsync(
+        HttpRequest request,
+        string propertyName,
+        CancellationToken cancellationToken,
+        bool rejectDuplicates)
     {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentException.ThrowIfNullOrWhiteSpace(propertyName);
 
         if (request.ContentLength is 0)
         {
@@ -70,10 +97,15 @@ public static class JsonRequestVoterId
         try
         {
             using var document = JsonDocument.Parse(capped);
-            var voterId = FindVoterId(document.RootElement);
-            return voterId == null
+            if (rejectDuplicates && HasDuplicateProperty(document.RootElement, propertyName))
+            {
+                return JsonRequestVoterIdRead.Duplicate();
+            }
+
+            var value = FindStringProperty(document.RootElement, propertyName);
+            return value == null
                 ? JsonRequestVoterIdRead.Missing()
-                : JsonRequestVoterIdRead.Found(voterId);
+                : JsonRequestVoterIdRead.Found(value);
         }
         catch (JsonException)
         {
@@ -114,7 +146,9 @@ public static class JsonRequestVoterId
         return buffer.AsSpan(0, total).ToArray();
     }
 
-    internal static string? FindVoterId(JsonElement root)
+    internal static string? FindVoterId(JsonElement root) => FindStringProperty(root, "voterId");
+
+    internal static string? FindStringProperty(JsonElement root, string propertyName)
     {
         if (root.ValueKind != JsonValueKind.Object)
         {
@@ -123,7 +157,7 @@ public static class JsonRequestVoterId
 
         foreach (var property in root.EnumerateObject())
         {
-            if (!property.Name.Equals("voterId", StringComparison.OrdinalIgnoreCase))
+            if (!property.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -138,6 +172,35 @@ public static class JsonRequestVoterId
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// True when the object has two properties with the same name, ignoring case.
+    /// </summary>
+    internal static bool HasDuplicateProperty(JsonElement root, string propertyName)
+    {
+        if (root.ValueKind != JsonValueKind.Object)
+        {
+            return false;
+        }
+
+        var seen = false;
+        foreach (var property in root.EnumerateObject())
+        {
+            if (!property.Name.Equals(propertyName, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (seen)
+            {
+                return true;
+            }
+
+            seen = true;
+        }
+
+        return false;
     }
 
     /// <summary>

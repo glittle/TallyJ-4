@@ -25,6 +25,7 @@ public class RateLimitingMiddleware
 {
     public const string TooManyRequestsKey = "error.tooManyRequests";
     public const string PayloadTooLargeKey = "error.payloadTooLarge";
+    public const string DuplicateEmailFieldKey = "error.validationError";
 
     public const int VoterIdentifierMaxRequests = 5;
     public const int VoterVenueIpMaxRequests = 60;
@@ -46,6 +47,14 @@ public class RateLimitingMiddleware
     /// </summary>
     public const int LoginIpMaxRequests = 20;
 
+    /// <summary>
+    /// Forgot-password mail. The IP bucket and the per-address bucket use the same
+    /// numbers so one client and one inbox are both bounded, with the same 429.
+    /// </summary>
+    public const int ForgotPasswordMaxRequests = 3;
+
+    public static readonly TimeSpan ForgotPasswordWindow = TimeSpan.FromHours(1);
+
     internal const string IpFailureItemKey = "RateLimitCountFailure";
 
     private static readonly TimeSpan OneMinute = TimeSpan.FromMinutes(1);
@@ -64,7 +73,13 @@ public class RateLimitingMiddleware
             { "/api/auth/registerWithInvite", (3, TimeSpan.FromHours(1)) },
             { "/api/auth/account-invite", (10, TimeSpan.FromMinutes(1)) },
             { "/api/auth/verify2fa", (10, TimeSpan.FromMinutes(1)) },
-            { "/api/auth/forgotPassword", (3, TimeSpan.FromHours(1)) },
+            // Confirmation links were not in this table. 10/minute matches verify2fa:
+            // a token check, not a mail send.
+            { "/api/auth/verifyEmail", (10, OneMinute) },
+            // Reset mail: 3/hour per trusted-ingress IP, plus the same 3/hour per
+            // submitted address (hashed). Both count before the action, for every
+            // address, so a known inbox and an unknown one get the same 429.
+            { "/api/auth/forgotPassword", (ForgotPasswordMaxRequests, ForgotPasswordWindow) },
             { "/api/auth/resetPassword", (3, TimeSpan.FromHours(1)) },
             { "/api/auth/google/one-tap", (5, TimeSpan.FromMinutes(1)) },
             { "/api/auth/facebook", (5, TimeSpan.FromMinutes(1)) },
@@ -162,6 +177,49 @@ public class RateLimitingMiddleware
             [
                 (GetClientKey(path, clientIp), tellerLimit.MaxRequests, tellerLimit.Window, "teller-ip")
             ];
+
+            if (path.Equals("/api/auth/forgotPassword", StringComparison.OrdinalIgnoreCase))
+            {
+                var peek = await JsonRequestVoterId.TryReadPropertyAsync(
+                    context.Request,
+                    "email",
+                    context.RequestAborted,
+                    rejectDuplicates: true);
+                if (peek.Status == JsonRequestVoterIdStatus.TooLarge)
+                {
+                    await WritePayloadTooLargeAsync(context, path, clientIp);
+                    return;
+                }
+
+                if (peek.Status == JsonRequestVoterIdStatus.Duplicate)
+                {
+                    var userAgent = context.Request.Headers.UserAgent.ToString();
+                    if (await TryRejectIfLimitedAsync(
+                            context,
+                            securityAuditService,
+                            path,
+                            clientIp,
+                            userAgent,
+                            buckets,
+                            recordAttempts: true))
+                    {
+                        return;
+                    }
+
+                    await WriteDuplicateEmailFieldAsync(context);
+                    return;
+                }
+
+                if (peek.Status == JsonRequestVoterIdStatus.Found && peek.VoterId != null)
+                {
+                    var email = JsonRequestVoterId.NormalizeForRateLimit(peek.VoterId);
+                    buckets.Add((
+                        GetIdentifierKey(path, email),
+                        ForgotPasswordMaxRequests,
+                        ForgotPasswordWindow,
+                        "reset-email"));
+                }
+            }
         }
 
         var failureOnly = FailureOnlyIpPaths.Contains(path);
@@ -274,6 +332,13 @@ public class RateLimitingMiddleware
         {
             _store.RequestLog.GetOrAdd(key, _ => new List<DateTime>()).Add(now);
         }
+    }
+
+    private static async Task WriteDuplicateEmailFieldAsync(HttpContext context)
+    {
+        context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync($"{{\"error\":\"{DuplicateEmailFieldKey}\"}}");
     }
 
     private async Task WritePayloadTooLargeAsync(HttpContext context, string path, string clientIp)

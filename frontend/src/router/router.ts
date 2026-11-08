@@ -66,6 +66,26 @@ const routes = [
       },
 
       {
+        path: "forgot-password",
+
+        name: "forgot-password",
+
+        component: () => import("../pages/ForgotPasswordPage.vue"),
+
+        meta: { titleKey: "auth.forgotPasswordPage.title" },
+      },
+
+      {
+        path: "reset-password",
+
+        name: "reset-password",
+
+        component: () => import("../pages/ResetPasswordPage.vue"),
+
+        meta: { titleKey: "auth.resetPasswordPage.title" },
+      },
+
+      {
         path: "auth/google/callback",
 
         name: "google-callback",
@@ -357,7 +377,10 @@ const routes = [
 
         component: () => import("../pages/SuperAdminOwnerReviewsPage.vue"),
 
-        meta: { titleKey: "nav.superAdminOwnerReviews", requiresSuperAdmin: true },
+        meta: {
+          titleKey: "nav.superAdminOwnerReviews",
+          requiresSuperAdmin: true,
+        },
       },
 
       {
@@ -367,7 +390,10 @@ const routes = [
 
         component: () => import("../pages/SuperAdminOwnerReviewDetailPage.vue"),
 
-        meta: { titleKey: "nav.superAdminOwnerReviews", requiresSuperAdmin: true },
+        meta: {
+          titleKey: "nav.superAdminOwnerReviews",
+          requiresSuperAdmin: true,
+        },
       },
     ],
   },

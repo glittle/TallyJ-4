@@ -10,7 +10,7 @@ Officer methods and voter methods are separate. Guest teller entry is not in thi
 
 | Key | Default | Needs |
 | --- | --- | --- |
-| `SignIn:Officers:Local` | true | Nothing else. Password signup, login, and the authenticator step. |
+| `SignIn:Officers:Local` | true | Nothing else. Password signup, login, the authenticator step, and password reset. Reset links use `ClientEnv:frontendUrl`, not the request host. |
 | `SignIn:Officers:Google` | true | `ClientEnv:googleClientId` for One Tap. Redirect (`GET /api/auth/google/login`) also needs `GoogleClientSecret`. A client id alone still offers One Tap. |
 | `SignIn:Officers:Facebook` | true | `ClientEnv:facebookAppId` |
 | `SignIn:Officers:Kakao` | true | `ClientEnv:kakaoApiJsKey` |

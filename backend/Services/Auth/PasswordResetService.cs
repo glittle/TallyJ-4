@@ -1,32 +1,38 @@
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Localization;
-using Microsoft.Extensions.Logging;
+using Backend.Context;
 using Backend.DTOs.Auth;
 using Backend.Identity;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services.Auth;
 
 public class PasswordResetService : IPasswordResetService
 {
+    public const string AcceptedKey = "auth.forgotPasswordPage.sent";
+    public const string CompletedKey = "auth.resetPasswordPage.success";
+    public const string InvalidTokenKey = "auth.errors.invalidResetToken";
+    public const string FailedKey = "auth.errors.failedToResetPassword";
+
     private readonly UserManager<AppUser> _userManager;
-    private readonly IStringLocalizer<PasswordResetService> _localizer;
-    private readonly IConfiguration _configuration;
     private readonly EmailService _emailService;
+    private readonly MainDbContext _context;
     private readonly ILogger<PasswordResetService> _logger;
+
+    /// <summary>
+    /// Test seam. When set, revocation throws before it is saved. The password change
+    /// is in the same transaction and must roll back with it.
+    /// </summary>
+    internal static bool ForceRefreshRevocationFailure { get; set; }
 
     public PasswordResetService(
         UserManager<AppUser> userManager,
-        IStringLocalizer<PasswordResetService> localizer,
-        IConfiguration configuration,
         EmailService emailService,
+        MainDbContext context,
         ILogger<PasswordResetService> logger)
     {
         _userManager = userManager;
-        _localizer = localizer;
-        _configuration = configuration;
         _emailService = emailService;
+        _context = context;
         _logger = logger;
     }
 
@@ -35,86 +41,177 @@ public class PasswordResetService : IPasswordResetService
         try
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user == null)
+            if (user == null || string.IsNullOrWhiteSpace(user.Email) || !CanReset(user))
             {
                 return (true, null);
             }
 
-            if (user.AuthMethod != "Local")
+            if (!await _userManager.HasPasswordAsync(user))
             {
-                return (false, _localizer["auth.errors.passwordResetNotAvailableForOAuth"]);
+                return (true, null);
             }
 
-            var token = GenerateSecureToken();
-            user.PasswordResetToken = token;
-            user.PasswordResetExpiry = DateTimeOffset.UtcNow.AddHours(1);
-
-            var result = await _userManager.UpdateAsync(user);
-            if (!result.Succeeded)
+            // Drop any leftover plaintext column value. Identity holds the real token.
+            if (user.PasswordResetToken != null || user.PasswordResetExpiry != null)
             {
-                return (false, _localizer["auth.errors.failedToGenerateResetToken"]);
+                user.PasswordResetToken = null;
+                user.PasswordResetExpiry = null;
+                await _userManager.UpdateAsync(user);
             }
 
-            await _emailService.SendPasswordResetEmailAsync(user.Email!, token);
-
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            await _emailService.SendPasswordResetEmailAsync(user.Email, token);
             return (true, null);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error generating password reset token for email {Email}", request.Email);
-            return (false, _localizer["auth.errors.failedToGenerateResetToken"]);
+            // Same reply as an unknown address. Do not log the address, token, or exception text.
+            _logger.LogError(
+                "Password reset email could not be sent ({ExceptionType})",
+                ex.GetType().Name);
+            return (true, null);
         }
     }
 
     public async Task<(bool Success, string? Error)> ResetPasswordAsync(ResetPasswordRequest request)
     {
+        var strategy = _context.Database.CreateExecutionStrategy();
+        try
+        {
+            return await strategy.ExecuteAsync(() => ResetPasswordInTransactionAsync(request));
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("Password reset failed ({ExceptionType})", ex.GetType().Name);
+            return (false, FailedKey);
+        }
+    }
+
+    /// <summary>
+    /// Password change and refresh-token revocation commit together.
+    /// A failure rolls both back, so the reset link can be used again and old
+    /// refresh tokens are not left valid beside a new password.
+    /// </summary>
+    private async Task<(bool Success, string? Error)> ResetPasswordInTransactionAsync(ResetPasswordRequest request)
+    {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
-            if (user == null)
+            if (user == null || !CanReset(user))
             {
-                return (false, _localizer["auth.errors.invalidResetToken"]);
+                await transaction.RollbackAsync();
+                return (false, InvalidTokenKey);
             }
 
-            if (user.PasswordResetToken != request.Token)
-            {
-                return (false, _localizer["auth.errors.invalidResetToken"]);
-            }
-
-            if (user.PasswordResetExpiry == null || user.PasswordResetExpiry < DateTimeOffset.UtcNow)
-            {
-                return (false, _localizer["auth.errors.resetTokenExpired"]);
-            }
-
-            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var result = await _userManager.ResetPasswordAsync(user, resetToken, request.NewPassword);
-
+            var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
             if (!result.Succeeded)
             {
-                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                return (false, errors);
+                await transaction.RollbackAsync();
+                return (false, MapErrors(result));
             }
 
             user.PasswordResetToken = null;
             user.PasswordResetExpiry = null;
-            await _userManager.UpdateAsync(user);
+            var cleared = await _userManager.UpdateAsync(user);
+            if (!cleared.Succeeded)
+            {
+                await transaction.RollbackAsync();
+                return (false, FailedKey);
+            }
 
+            await RevokeRefreshTokensAsync(user.Id);
+            await transaction.CommitAsync();
             return (true, null);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error resetting password for email {Email}", request.Email);
-            return (false, _localizer["auth.errors.failedToResetPassword"]);
+            await RollbackQuietlyAsync(transaction);
+            _logger.LogError("Password reset failed ({ExceptionType})", ex.GetType().Name);
+            return (false, FailedKey);
         }
     }
 
-    private static string GenerateSecureToken()
+    private static async Task RollbackQuietlyAsync(Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction transaction)
     {
-        var bytes = new byte[32];
-        using var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(bytes);
-        return Convert.ToBase64String(bytes).Replace("+", "-").Replace("/", "_").Replace("=", "");
+        try
+        {
+            await transaction.RollbackAsync();
+        }
+        catch (Exception)
+        {
+            // The transaction may already be complete. The caller still reports failure.
+        }
+    }
+
+    /// <summary>
+    /// Local is one entry in <see cref="AppUser.AuthMethod"/> (a linked Google account is "Local,Google").
+    /// </summary>
+    internal static bool CanReset(AppUser user)
+    {
+        if (string.IsNullOrWhiteSpace(user.AuthMethod))
+        {
+            return false;
+        }
+
+        foreach (var part in user.AuthMethod.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            if (part.Equals("Local", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private async Task RevokeRefreshTokensAsync(string userId)
+    {
+        if (ForceRefreshRevocationFailure)
+        {
+            throw new InvalidOperationException("Refresh token revocation failed");
+        }
+
+        var tokens = await _context.RefreshTokens
+            .Where(token => token.UserId == userId && !token.IsRevoked)
+            .ToListAsync();
+
+        if (tokens.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var token in tokens)
+        {
+            token.IsRevoked = true;
+            token.RevokedReason = "Password reset";
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    private static string MapErrors(IdentityResult result)
+    {
+        if (result.Errors.Any(error => error.Code == "InvalidToken"))
+        {
+            return InvalidTokenKey;
+        }
+
+        var keys = result.Errors
+            .Select(error => error.Code switch
+            {
+                "PasswordTooShort" => "auth.passwordMinLength12",
+                "PasswordRequiresDigit" => "auth.passwordRequireDigit",
+                "PasswordRequiresLower" => "auth.passwordRequireLowercase",
+                "PasswordRequiresUpper" => "auth.passwordRequireUppercase",
+                "PasswordRequiresNonAlphanumeric" => "auth.passwordRequireSpecial",
+                "PasswordRequiresUniqueChars" => "auth.errors.invalidPassword",
+                _ => null
+            })
+            .Where(key => key != null)
+            .Distinct()
+            .ToList();
+
+        return keys.Count == 0 ? FailedKey : string.Join('\n', keys);
     }
 }
-
-

@@ -23,7 +23,7 @@
 1. Navigate to the TallyJ website
 2. Enter your email address and password
 3. Click **Login**
-4. If you forgot your password, click **Forgot Password** to reset it
+4. If you forgot your password, click **Forgot password?** and open the link in the email
 
 ### Understanding User Roles
 

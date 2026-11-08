@@ -1,4 +1,6 @@
+using System.Globalization;
 using Backend.Configuration;
+using Backend.Localization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -13,49 +15,86 @@ public class EmailService
     private readonly IHostEnvironment _hostEnvironment;
     private readonly ILogger<EmailService> _logger;
     private readonly IEmailSender _emailSender;
+    private readonly IJsonLocalizationProvider _localization;
 
     public EmailService(
         IConfiguration configuration,
         IHostEnvironment hostEnvironment,
         ILogger<EmailService> logger,
-        IEmailSender emailSender)
+        IEmailSender emailSender,
+        IJsonLocalizationProvider localization)
     {
         _configuration = configuration;
         _hostEnvironment = hostEnvironment;
         _logger = logger;
         _emailSender = emailSender;
+        _localization = localization;
     }
 
     public virtual async Task SendPasswordResetEmailAsync(string toEmail, string resetToken)
     {
+        var resetUrl = BuildFrontendUrl(
+            "/reset-password",
+            ("email", toEmail),
+            ("token", resetToken));
+        var expiryText = DescribeResetLifespan(PasswordResetTokenProvider.Lifespan);
+
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(
             _configuration["Email:FromName"],
             _configuration["Email:FromAddress"] ?? defaultReplyFromEmail
         ));
         message.To.Add(new MailboxAddress(toEmail, toEmail));
-        message.Subject = "Password Reset Request";
+        var subject = Phrase(
+            "auth.passwordResetEmail.subject",
+            "Reset your TallyJ password");
+        var heading = Phrase(
+            "auth.passwordResetEmail.heading",
+            "Reset your TallyJ password");
+        var intro = Phrase(
+            "auth.passwordResetEmail.intro",
+            "A password reset was requested for this TallyJ account.");
+        var action = Phrase(
+            "auth.passwordResetEmail.action",
+            "Reset password");
+        var linkLead = Phrase(
+            "auth.passwordResetEmail.linkLead",
+            "Or open this link in your browser:");
+        var expiry = Phrase(
+            "auth.passwordResetEmail.expiry",
+            "This link expires in {0} and can be used once. If you did not request this, you can ignore this email.",
+            expiryText);
 
+        message.Subject = subject;
+
+        var safeUrl = System.Net.WebUtility.HtmlEncode(resetUrl);
+        var safeHeading = System.Net.WebUtility.HtmlEncode(heading);
+        var safeIntro = System.Net.WebUtility.HtmlEncode(intro);
+        var safeAction = System.Net.WebUtility.HtmlEncode(action);
+        var safeLinkLead = System.Net.WebUtility.HtmlEncode(linkLead);
+        var safeExpiry = System.Net.WebUtility.HtmlEncode(expiry);
         var bodyBuilder = new BodyBuilder
         {
             HtmlBody = $@"
-                <h2>Password Reset Request</h2>
-                <p>You requested a password reset for your TallyJ account.</p>
-                <p>Use the following token to reset your password:</p>
-                <p><strong>{System.Net.WebUtility.HtmlEncode(resetToken)}</strong></p>
-                <p>This token will expire in 1 hour.</p>
-                <p>If you did not request this reset, please ignore this email.</p>
+                <h2>{safeHeading}</h2>
+                <p>{safeIntro}</p>
+                <p><a href=""{safeUrl}"" style=""display:inline-block;padding:10px 16px;background:#409eff;color:#fff;text-decoration:none;border-radius:4px;"">{safeAction}</a></p>
+                <p>{safeLinkLead}</p>
+                <p><a href=""{safeUrl}"">{safeUrl}</a></p>
+                <p>{safeExpiry}</p>
             ",
             TextBody = $@"
-Password Reset Request
+{heading}
 
-You requested a password reset for your TallyJ account.
-Use the following token to reset your password:
+{intro}
 
-{resetToken}
+{action}:
+{resetUrl}
 
-This token will expire in 1 hour.
-If you did not request this reset, please ignore this email.
+{linkLead}
+{resetUrl}
+
+{expiry}
             "
         };
 
@@ -64,13 +103,52 @@ If you did not request this reset, please ignore this email.
         try
         {
             await _emailSender.SendAsync(message);
-            _logger.LogInformation("Password reset email sent to {Email}", toEmail);
+            _logger.LogInformation("Password reset email sent");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send password reset email to {Email}", toEmail);
+            _logger.LogError(
+                "Failed to send password reset email ({ExceptionType})",
+                ex.GetType().Name);
             throw;
         }
+    }
+
+    /// <summary>
+    /// Request UI culture, then English, then the built-in English sentence.
+    /// A self-hosted site with no locale files still sends a usable message.
+    /// The link itself is never taken from the catalog.
+    /// </summary>
+    private string Phrase(string key, string fallback, params object[] args)
+    {
+        var format = _localization.GetString(key, CultureInfo.CurrentUICulture);
+        if (string.IsNullOrEmpty(format))
+        {
+            format = _localization.GetString(key, CultureInfo.GetCultureInfo("en"));
+        }
+
+        if (string.IsNullOrEmpty(format))
+        {
+            format = fallback;
+        }
+
+        return args.Length == 0 ? format : string.Format(CultureInfo.CurrentUICulture, format, args);
+    }
+
+    private static string DescribeResetLifespan(TimeSpan lifespan)
+    {
+        var hours = (int)lifespan.TotalHours;
+        if (hours == 1)
+        {
+            return "1 hour";
+        }
+
+        if (hours > 1)
+        {
+            return $"{hours} hours";
+        }
+
+        return "1 hour";
     }
 
     public virtual async Task Send2FASetupEmailAsync(string toEmail, string qrCodeBase64)

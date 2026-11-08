@@ -145,7 +145,8 @@ void ConfigureServices(WebApplicationBuilder builder)
 
     services.AddIdentity<AppUser, IdentityRole>()
         .AddEntityFrameworkStores<MainDbContext>()
-        .AddDefaultTokenProviders();
+        .AddDefaultTokenProviders()
+        .AddTokenProvider<PasswordResetTokenProvider>(PasswordResetTokenProvider.ProviderName);
 
     services.ConfigureExternalCookie(options =>
     {
