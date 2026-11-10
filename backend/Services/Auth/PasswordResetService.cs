@@ -200,7 +200,7 @@ public class PasswordResetService : IPasswordResetService
         var keys = result.Errors
             .Select(error => error.Code switch
             {
-                "PasswordTooShort" => "auth.passwordMinLength12",
+                "PasswordTooShort" => "auth.passwordMinLength8",
                 "PasswordRequiresDigit" => "auth.passwordRequireDigit",
                 "PasswordRequiresLower" => "auth.passwordRequireLowercase",
                 "PasswordRequiresUpper" => "auth.passwordRequireUppercase",

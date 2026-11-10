@@ -3,6 +3,7 @@ import { computed, onMounted, reactive, ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import type { FormInstance, FormRules } from "element-plus";
+import { localPasswordProblems } from "@/domain/localPasswordRules";
 import { authService } from "../services/authService";
 import { useSignInCapabilities } from "@/composables/useSignInCapabilities";
 import {
@@ -41,23 +42,7 @@ const form = reactive({
 });
 
 function passwordProblems(value: string): string[] {
-  const errors: string[] = [];
-  if (value.length < 12) {
-    errors.push(t("auth.passwordMinLength12"));
-  }
-  if (!/(?=.*[a-z])/.test(value)) {
-    errors.push(t("auth.passwordRequireLowercase"));
-  }
-  if (!/(?=.*[A-Z])/.test(value)) {
-    errors.push(t("auth.passwordRequireUppercase"));
-  }
-  if (!/(?=.*\d)/.test(value)) {
-    errors.push(t("auth.passwordRequireDigit"));
-  }
-  if (!/(?=.*[^a-zA-Z\d])/.test(value)) {
-    errors.push(t("auth.passwordRequireSpecial"));
-  }
-  return errors;
+  return localPasswordProblems(value, (key) => t(key));
 }
 
 const rules = computed<FormRules>(() => ({

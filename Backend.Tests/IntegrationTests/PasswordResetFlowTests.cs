@@ -51,10 +51,10 @@ public class PasswordResetFlowTests : IntegrationTestBase
         token.Should().NotBeNullOrEmpty();
         link.Should().Contain("token=" + Uri.EscapeDataString(token));
 
-        var weak = await PostResetAsync(email, token, "Short1234!");
+        var weak = await PostResetAsync(email, token, "Ab1!xyz");
         weak.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-        (await weak.Content.ReadAsStringAsync()).Should().Contain("auth.passwordMinLength12");
-        (await weak.Content.ReadAsStringAsync()).Should().NotContain("Short1234!");
+        (await weak.Content.ReadAsStringAsync()).Should().Contain("auth.passwordMinLength8");
+        (await weak.Content.ReadAsStringAsync()).Should().NotContain("Ab1!xyz");
 
         var reset = await PostResetAsync(email, token, NewPassword);
         reset.StatusCode.Should().Be(HttpStatusCode.OK);

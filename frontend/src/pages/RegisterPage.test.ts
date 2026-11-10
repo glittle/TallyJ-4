@@ -120,9 +120,9 @@ describe("RegisterPage", () => {
 
     expect(wrapper.find("form").exists()).toBe(false);
     expect(wrapper.find('input[type="password"]').exists()).toBe(false);
-    expect(
-      wrapper.find('[data-testid="register-sign-in-none"]').exists(),
-    ).toBe(true);
+    expect(wrapper.find('[data-testid="register-sign-in-none"]').exists()).toBe(
+      true,
+    );
   });
 
   it("hides Google signup when officer Google is off and still shows the password form", async () => {

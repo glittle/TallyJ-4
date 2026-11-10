@@ -120,7 +120,7 @@ public class PasswordResetServiceTests
         });
 
         Assert.False(success);
-        Assert.Equal("auth.passwordMinLength12", error);
+        Assert.Equal("auth.passwordMinLength8", error);
         Assert.DoesNotContain(password, error);
         AssertNoSecrets(logs);
     }
