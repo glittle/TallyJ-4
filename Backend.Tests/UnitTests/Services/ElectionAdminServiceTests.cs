@@ -56,6 +56,26 @@ public class ElectionAdminServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task Add_UnconfirmedEmail_DoesNotCreateAJoin()
+    {
+        var electionId = await SeedElectionAsync();
+        var ownerId = await SeedUserAsync("owner@example.com", "Owner");
+        await SeedUserAsync("pending@example.com", "Pending", emailConfirmed: false);
+        await SeedJoinAsync(electionId, ownerId, ElectionAdminService.AdminRole);
+        var service = CreateService();
+
+        var result = await service.AddAsync(
+            electionId,
+            "pending@example.com",
+            Principal(ownerId));
+
+        Assert.True(result.IsEmailNotConfirmed);
+        Assert.False(result.IsNoAccount);
+        Assert.Null(result.Admin);
+        Assert.Equal(1, await Context.JoinElectionUsers.CountAsync(link => link.ElectionGuid == electionId));
+    }
+
+    [Fact]
     public async Task Add_DuplicateEmail_DoesNotCreateASecondRow()
     {
         var electionId = await SeedElectionAsync();
@@ -254,7 +274,7 @@ public class ElectionAdminServiceTests : ServiceTestBase
         return id;
     }
 
-    private async Task<Guid> SeedUserAsync(string email, string displayName)
+    private async Task<Guid> SeedUserAsync(string email, string displayName, bool emailConfirmed = true)
     {
         var id = Guid.NewGuid();
         Context.Users.Add(new AppUser
@@ -265,7 +285,7 @@ public class ElectionAdminServiceTests : ServiceTestBase
             Email = email,
             NormalizedEmail = email.ToUpperInvariant(),
             DisplayName = displayName,
-            EmailConfirmed = true,
+            EmailConfirmed = emailConfirmed,
             AuthMethod = "Local",
             SecurityStamp = Guid.NewGuid().ToString()
         });

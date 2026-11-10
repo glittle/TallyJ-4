@@ -38,6 +38,8 @@ public static class ElectionAdminMessages
 {
     public const string NoAccount = "elections.admins.noAccount";
 
+    public const string EmailNotConfirmed = "elections.admins.emailNotConfirmed";
+
     public const string AlreadyAdmin = "elections.admins.alreadyAdmin";
 
     public const string Added = "elections.admins.added";
@@ -83,6 +85,8 @@ public class AddElectionAdminResult
 
     public bool IsNoAccount { get; init; }
 
+    public bool IsEmailNotConfirmed { get; init; }
+
     public bool AlreadyAdmin { get; init; }
 
     public ElectionAdminDto? Admin { get; init; }
@@ -92,6 +96,8 @@ public class AddElectionAdminResult
     public static AddElectionAdminResult Forbidden() => new() { IsForbidden = true };
 
     public static AddElectionAdminResult NoAccount() => new() { IsNoAccount = true };
+
+    public static AddElectionAdminResult EmailNotConfirmed() => new() { IsEmailNotConfirmed = true };
 
     public static AddElectionAdminResult Ok(ElectionAdminDto admin, bool alreadyAdmin) =>
         new() { Admin = admin, AlreadyAdmin = alreadyAdmin };

@@ -80,6 +80,14 @@ public class ElectionAdminService : IElectionAdminService
             return AddElectionAdminResult.NoAccount();
         }
 
+        if (!user.EmailConfirmed)
+        {
+            _logger.LogInformation(
+                "Co-admin add for election {ElectionGuid} matched an account whose email is not confirmed",
+                electionGuid);
+            return AddElectionAdminResult.EmailNotConfirmed();
+        }
+
         var existing = await _context.JoinElectionUsers
             .AsNoTracking()
             .AnyAsync(

@@ -467,7 +467,7 @@ public class ElectionsController : ControllerBase
     }
 
     /// <summary>
-    /// Adds a co-admin by the email of an existing officer account.
+    /// Adds a co-admin by the email of an existing officer account whose email is confirmed.
     /// Adding someone who is already an owner or admin does not create a second row.
     /// </summary>
     /// <param name="guid">The election.</param>
@@ -496,6 +496,12 @@ public class ElectionsController : ControllerBase
         if (result.IsNoAccount)
         {
             return BadRequest(ApiResponse<ElectionAdminDto>.ErrorResponse(ElectionAdminMessages.NoAccount));
+        }
+
+        if (result.IsEmailNotConfirmed)
+        {
+            return BadRequest(ApiResponse<ElectionAdminDto>.ErrorResponse(
+                ElectionAdminMessages.EmailNotConfirmed));
         }
 
         var message = result.AlreadyAdmin

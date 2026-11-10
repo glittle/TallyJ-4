@@ -24,15 +24,20 @@
     "s": "source",
     "w": "2026-11-10T05:10:00Z"
   },
+  "elections.admins.emailNotConfirmed": {
+    "t": "That account hasn't confirmed its email yet. Ask them to confirm it first.",
+    "s": "source",
+    "w": "2026-11-10T06:00:00Z"
+  },
   "elections.admins.emailPlaceholder": {
     "t": "Email address",
     "s": "source",
     "w": "2026-11-10T05:10:00Z"
   },
   "elections.admins.help": {
-    "t": "Add a person who already has a TallyJ account. They can manage this election with you. This does not send an invitation.",
+    "t": "Add a person who already has a TallyJ account with a confirmed email. They can manage this election with you. This does not send an invitation.",
     "s": "source",
-    "w": "2026-11-10T05:10:00Z"
+    "w": "2026-11-10T06:00:00Z"
   },
   "elections.admins.lastOwner": {
     "t": "This election must keep at least one owner or admin.",
