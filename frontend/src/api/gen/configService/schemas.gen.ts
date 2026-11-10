@@ -200,6 +200,30 @@ export const ApiResponseDashboard_DashboardSummaryDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const ApiResponseElections_ElectionAdminDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            $ref: '#/components/schemas/Elections_ElectionAdminDto'
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const ApiResponseElections_ElectionDtoSchema = {
     type: 'object',
     properties: {
@@ -410,6 +434,34 @@ export const ApiResponseListDashboard_ElectionCardDtoSchema = {
             type: 'array',
             items: {
                 $ref: '#/components/schemas/Dashboard_ElectionCardDto'
+            },
+            nullable: true
+        },
+        message: {
+            type: 'string',
+            nullable: true
+        },
+        errors: {
+            type: 'array',
+            items: {
+                type: 'string'
+            },
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const ApiResponseListElections_ElectionAdminDtoSchema = {
+    type: 'object',
+    properties: {
+        success: {
+            type: 'boolean'
+        },
+        data: {
+            type: 'array',
+            items: {
+                $ref: '#/components/schemas/Elections_ElectionAdminDto'
             },
             nullable: true
         },
@@ -1926,6 +1978,17 @@ export const Dashboard_ElectionCardDtoSchema = {
     additionalProperties: false
 } as const;
 
+export const Elections_AddElectionAdminDtoSchema = {
+    type: 'object',
+    properties: {
+        email: {
+            type: 'string',
+            nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
 export const Elections_ChangeElectionStageDtoSchema = {
     required: [
         'electionStage'
@@ -2073,6 +2136,32 @@ export const Elections_DuplicateElectionDtoSchema = {
         name: {
             type: 'string',
             nullable: true
+        }
+    },
+    additionalProperties: false
+} as const;
+
+export const Elections_ElectionAdminDtoSchema = {
+    type: 'object',
+    properties: {
+        userId: {
+            type: 'string',
+            format: 'uuid'
+        },
+        email: {
+            type: 'string',
+            nullable: true
+        },
+        displayName: {
+            type: 'string',
+            nullable: true
+        },
+        role: {
+            type: 'string',
+            nullable: true
+        },
+        canRemove: {
+            type: 'boolean'
         }
     },
     additionalProperties: false

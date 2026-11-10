@@ -32,6 +32,8 @@
           </el-button>
         </el-form-item>
       </el-form>
+
+      <ElectionAdminsSection :election-guid="electionGuid" />
     </el-card>
 
     <el-empty v-else :description="$t('elections.notFound')" />
@@ -45,6 +47,7 @@ import { type FormInstance, type FormRules } from "element-plus";
 import { computed, onMounted, reactive, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
+import ElectionAdminsSection from "../../components/elections/ElectionAdminsSection.vue";
 import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
 import { useElectionStatsStore } from "../../stores/electionStatsStore";
 import { useElectionStore } from "../../stores/electionStore";
