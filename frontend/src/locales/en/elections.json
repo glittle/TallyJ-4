@@ -9,6 +9,96 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "elections.admins.add": {
+    "t": "Add admin",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.added": {
+    "t": "Admin added.",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.alreadyAdmin": {
+    "t": "That person is already an admin of this election.",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.emailNotConfirmed": {
+    "t": "That account hasn't confirmed its email yet. Ask them to confirm it first.",
+    "s": "source",
+    "w": "2026-11-10T06:00:00Z"
+  },
+  "elections.admins.emailPlaceholder": {
+    "t": "Email address",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.help": {
+    "t": "Add a person who already has a TallyJ account with a confirmed email. They can manage this election with you. This does not send an invitation.",
+    "s": "source",
+    "w": "2026-11-10T06:00:00Z"
+  },
+  "elections.admins.lastOwner": {
+    "t": "This election must keep at least one owner or admin.",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.loadError": {
+    "t": "Could not load election admins.",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.noAccount": {
+    "t": "No account found for that email. Ask them to sign up first.",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.notAnAdmin": {
+    "t": "That person is not an admin of this election.",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.ownerCannotBeRemoved": {
+    "t": "The owner cannot be removed.",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.remove": {
+    "t": "Remove",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.removeConfirm": {
+    "t": "Remove {name} as an admin of this election?",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.removeTitle": {
+    "t": "Remove admin",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.removed": {
+    "t": "Admin removed.",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.roleAdmin": {
+    "t": "Admin",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.roleOwner": {
+    "t": "Owner",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
+  "elections.admins.title": {
+    "t": "Election admins",
+    "s": "source",
+    "w": "2026-11-10T05:10:00Z"
+  },
   "elections.ballots": {
     "t": "Ballots",
     "s": "source",

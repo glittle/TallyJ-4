@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Backend.Authorization;
 using Backend.Enumerations;
 using Backend.Helpers;
 using Backend.DTOs.Elections;
@@ -20,6 +21,7 @@ namespace Backend.Controllers;
 public class ElectionsController : ControllerBase
 {
     private readonly IElectionService _electionService;
+    private readonly IElectionAdminService _electionAdminService;
     private readonly IOnlineVotingService _onlineVotingService;
     private readonly ILogger<ElectionsController> _logger;
 
@@ -27,14 +29,17 @@ public class ElectionsController : ControllerBase
     /// Initializes a new instance of the ElectionsController.
     /// </summary>
     /// <param name="electionService">The election service for election operations.</param>
+    /// <param name="electionAdminService">Owners and co-admins for one election.</param>
     /// <param name="onlineVotingService">Online ballot submit and Accept-all.</param>
     /// <param name="logger">The logger for recording operations.</param>
     public ElectionsController(
         IElectionService electionService,
+        IElectionAdminService electionAdminService,
         IOnlineVotingService onlineVotingService,
         ILogger<ElectionsController> logger)
     {
         _electionService = electionService;
+        _electionAdminService = electionAdminService;
         _onlineVotingService = onlineVotingService;
         _logger = logger;
     }
@@ -432,6 +437,121 @@ public class ElectionsController : ControllerBase
         }
 
         return NoContent();
+    }
+
+    /// <summary>
+    /// Lists the owners and co-admins of an election.
+    /// </summary>
+    /// <param name="guid">The election.</param>
+    /// <param name="cancellationToken">Request cancellation.</param>
+    [HttpGet("{guid}/admins")]
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
+    public async Task<ActionResult<ApiResponse<List<ElectionAdminDto>>>> ListAdmins(
+        Guid guid,
+        CancellationToken cancellationToken)
+    {
+        var result = await _electionAdminService.ListAsync(guid, User, cancellationToken);
+        if (result.IsNotFound)
+        {
+            return NotFound(ApiResponse<List<ElectionAdminDto>>.ErrorResponse("Election not found"));
+        }
+
+        if (result.IsForbidden)
+        {
+            return StatusCode(
+                StatusCodes.Status403Forbidden,
+                ApiResponse<List<ElectionAdminDto>>.ErrorResponse(ElectionAdminMessages.Forbidden));
+        }
+
+        return Ok(ApiResponse<List<ElectionAdminDto>>.SuccessResponse(result.Admins.ToList()));
+    }
+
+    /// <summary>
+    /// Adds a co-admin by the email of an existing officer account whose email is confirmed.
+    /// Adding someone who is already an owner or admin does not create a second row.
+    /// </summary>
+    /// <param name="guid">The election.</param>
+    /// <param name="dto">The account email.</param>
+    /// <param name="cancellationToken">Request cancellation.</param>
+    [HttpPost("{guid}/admins")]
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
+    public async Task<ActionResult<ApiResponse<ElectionAdminDto>>> AddAdmin(
+        Guid guid,
+        AddElectionAdminDto dto,
+        CancellationToken cancellationToken)
+    {
+        var result = await _electionAdminService.AddAsync(guid, dto.Email, User, cancellationToken);
+        if (result.IsNotFound)
+        {
+            return NotFound(ApiResponse<ElectionAdminDto>.ErrorResponse("Election not found"));
+        }
+
+        if (result.IsForbidden)
+        {
+            return StatusCode(
+                StatusCodes.Status403Forbidden,
+                ApiResponse<ElectionAdminDto>.ErrorResponse(ElectionAdminMessages.Forbidden));
+        }
+
+        if (result.IsNoAccount)
+        {
+            return BadRequest(ApiResponse<ElectionAdminDto>.ErrorResponse(ElectionAdminMessages.NoAccount));
+        }
+
+        if (result.IsEmailNotConfirmed)
+        {
+            return BadRequest(ApiResponse<ElectionAdminDto>.ErrorResponse(
+                ElectionAdminMessages.EmailNotConfirmed));
+        }
+
+        var message = result.AlreadyAdmin
+            ? ElectionAdminMessages.AlreadyAdmin
+            : ElectionAdminMessages.Added;
+        return Ok(ApiResponse<ElectionAdminDto>.SuccessResponse(result.Admin!, message));
+    }
+
+    /// <summary>
+    /// Removes a co-admin. An owner row cannot be removed, and the last owner or admin stays.
+    /// </summary>
+    /// <param name="guid">The election.</param>
+    /// <param name="userId">The officer account to remove.</param>
+    /// <param name="cancellationToken">Request cancellation.</param>
+    [HttpDelete("{guid}/admins/{userId}")]
+    [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
+    public async Task<ActionResult<ApiResponse<object>>> RemoveAdmin(
+        Guid guid,
+        Guid userId,
+        CancellationToken cancellationToken)
+    {
+        var result = await _electionAdminService.RemoveAsync(guid, userId, User, cancellationToken);
+        if (result.IsNotFound)
+        {
+            return NotFound(ApiResponse<object>.ErrorResponse("Election not found"));
+        }
+
+        if (result.IsForbidden)
+        {
+            return StatusCode(
+                StatusCodes.Status403Forbidden,
+                ApiResponse<object>.ErrorResponse(ElectionAdminMessages.Forbidden));
+        }
+
+        if (result.IsOwner)
+        {
+            return BadRequest(ApiResponse<object>.ErrorResponse(ElectionAdminMessages.OwnerCannotBeRemoved));
+        }
+
+        if (result.IsLastOwner)
+        {
+            return BadRequest(ApiResponse<object>.ErrorResponse(ElectionAdminMessages.LastOwner));
+        }
+
+        if (result.IsNotAnAdmin)
+        {
+            return BadRequest(ApiResponse<object>.ErrorResponse(ElectionAdminMessages.NotAnAdmin));
+        }
+
+        return Ok(ApiResponse<object>.SuccessResponse(new { }, ElectionAdminMessages.Removed));
     }
 }
 

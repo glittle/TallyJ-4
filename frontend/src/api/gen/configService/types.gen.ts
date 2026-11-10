@@ -65,6 +65,13 @@ export type ApiResponseDashboardDashboardSummaryDto = {
     errors?: Array<string> | null;
 };
 
+export type ApiResponseElectionsElectionAdminDto = {
+    success?: boolean;
+    data?: ElectionsElectionAdminDto;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
 export type ApiResponseElectionsElectionDto = {
     success?: boolean;
     data?: ElectionsElectionDto;
@@ -124,6 +131,13 @@ export type ApiResponseListComputersActiveComputerDto = {
 export type ApiResponseListDashboardElectionCardDto = {
     success?: boolean;
     data?: Array<DashboardElectionCardDto> | null;
+    message?: string | null;
+    errors?: Array<string> | null;
+};
+
+export type ApiResponseListElectionsElectionAdminDto = {
+    success?: boolean;
+    data?: Array<ElectionsElectionAdminDto> | null;
     message?: string | null;
     errors?: Array<string> | null;
 };
@@ -597,6 +611,10 @@ export type DashboardElectionCardDto = {
     percentComplete?: number;
 };
 
+export type ElectionsAddElectionAdminDto = {
+    email?: string | null;
+};
+
 export type ElectionsChangeElectionStageDto = {
     electionStage: EnumerationsElectionStage;
     confirmLeavingFinalized?: boolean;
@@ -636,6 +654,14 @@ export type ElectionsCreateElectionDto = {
 
 export type ElectionsDuplicateElectionDto = {
     name?: string | null;
+};
+
+export type ElectionsElectionAdminDto = {
+    userId?: string;
+    email?: string | null;
+    displayName?: string | null;
+    role?: string | null;
+    canRemove?: boolean;
 };
 
 export type ElectionsElectionDto = {
@@ -3743,6 +3769,61 @@ export type DeleteApiElectionsByGuidDeleteElectionResponses = {
      */
     200: unknown;
 };
+
+export type GetApiElectionsByGuidAdminsData = {
+    body?: never;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/admins';
+};
+
+export type GetApiElectionsByGuidAdminsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseListElectionsElectionAdminDto;
+};
+
+export type GetApiElectionsByGuidAdminsResponse = GetApiElectionsByGuidAdminsResponses[keyof GetApiElectionsByGuidAdminsResponses];
+
+export type PostApiElectionsByGuidAdminsData = {
+    body?: ElectionsAddElectionAdminDto;
+    path: {
+        guid: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/admins';
+};
+
+export type PostApiElectionsByGuidAdminsResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseElectionsElectionAdminDto;
+};
+
+export type PostApiElectionsByGuidAdminsResponse = PostApiElectionsByGuidAdminsResponses[keyof PostApiElectionsByGuidAdminsResponses];
+
+export type DeleteApiElectionsByGuidAdminsByUserIdData = {
+    body?: never;
+    path: {
+        guid: string;
+        userId: string;
+    };
+    query?: never;
+    url: '/api/Elections/{guid}/admins/{userId}';
+};
+
+export type DeleteApiElectionsByGuidAdminsByUserIdResponses = {
+    /**
+     * OK
+     */
+    200: ApiResponseSystemObject;
+};
+
+export type DeleteApiElectionsByGuidAdminsByUserIdResponse = DeleteApiElectionsByGuidAdminsByUserIdResponses[keyof DeleteApiElectionsByGuidAdminsByUserIdResponses];
 
 export type GetApiEligibilityEligibilityReasonsData = {
     body?: never;

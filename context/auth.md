@@ -71,6 +71,32 @@ Existing accounts are migrated to Approved, including paid sends. A missing rest
 
 > Superseded 2026-11: open `POST /api/auth/registerAccount` returned `auth.errors.openRegisterDisabled`. See the IdP-first section below for what was true then.
 
+## Co-admins are existing officer accounts
+
+**Status:** active  
+**Evidence:** confirmed  
+**Revisit when:** co-admins should be invited before they have an account, or ownership should be transferable
+
+An election owner adds a co-admin from the election settings page by the email of an account that already exists and has confirmed that email. The row is `JoinElectionUsers` with role `Admin`, the same role `CreateElection` writes for the person who created the election. Role `Owner` is the older ownership row. Both roles are the owners and co-admins in the #414 restriction rule. There is no invite email and no new role.
+
+Who may list, add, or remove is `FullTellerAccess`: an Owner or Admin join on that election, an Identity `Admin`, or an address in `SuperAdmin:Emails`. A guest teller and a `Teller` join cannot. A role `Owner` row cannot be removed. The last remaining Owner or Admin cannot be removed, so an election created with a single `Admin` row cannot be left with nobody. The person who created the election is stored as `Admin`, and that row can be removed once another owner or admin exists. Adding an email that is already an Owner or Admin does not insert a second row.
+
+An unknown email is `elections.admins.noAccount` (“No account found for that email. Ask them to sign up first.”). Open registration already answers `auth.errors.emailAlreadyExists` when the address is taken, and the admin list shows whether the add created a row, so a vague “if they have an account, they’ve been added” would still reveal the same fact and would look like success when nothing changed. Password reset stays neutral; this screen is only for someone who already manages the election.
+
+An account that exists but has not confirmed its email is `elections.admins.emailNotConfirmed` (“That account hasn't confirmed its email yet. Ask them to confirm it first.”) and is not added. Sign-in already requires a confirmed email, so that account could not manage the election until then.
+
+Adding or removing a co-admin does not write a restriction flag, freeze sends, or turn online voting off. `OwnerRestrictionQueries` reads the Owner and Admin joins on the next check. One approved owner or co-admin keeps the election unrestricted, so a restricted co-admin does not close it. Removing the only approved co-admin leaves it restricted when every remaining owner or admin is explicitly restricted, in review, or rejected. That re-restriction blocks new voter codes and turning online voting on or open. An open online-voting window stays on the row.
+
+**Rejected alternative:** make the creating `Admin` row sticky, the way role `Owner` is. The creator can leave once another admin remains; only the last owner or admin, and any role `Owner` row, stay.
+
+**Rejected alternative:** add an unconfirmed account and rely on the sign-in gate. The add itself refuses, and the message tells the other person to confirm first.
+
+**Rejected alternative:** clearing `UseOnlineVoting` or freezing sends when the last approved co-admin is removed. The existing send and open gates already stop a restricted election.
+
+**Rejected alternative:** store a new “election is restricted” bit and recompute it inside add and remove. The gates already recompute from the joins. A second flag would drift from them.
+
+**Rejected alternative:** invite an address that has no account, or transfer the `Owner` row. Both were out of this change.
+
 ## IdP-first teller signup (issue #347)
 
 **Status:** superseded  
