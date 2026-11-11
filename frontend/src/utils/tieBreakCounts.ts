@@ -27,9 +27,13 @@ export function collectTieBreakCounts(ties: TieDetailsDto[]): TieCountDto[] {
   return counts;
 }
 
-/** Elected-section ties still have someone with no entered count (0 is entered). */
+/**
+ * A required elected-section tie still has someone with no entered count.
+ * 0 is entered. A tie that does not need a runoff (everyone in it is already
+ * elected) does not ask for counts.
+ */
 export function electedTieMissingCounts(tie: TieDetailsDto): boolean {
-  if (tie.section !== "E") {
+  if (tie.section !== "E" || tie.tieBreakRequired !== true) {
     return false;
   }
 

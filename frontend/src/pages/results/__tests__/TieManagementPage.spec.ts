@@ -231,4 +231,76 @@ describe("TieManagementPage", () => {
     expect(wrapper.find(".tie-count").exists()).toBe(true);
     expect(wrapper.find(".tie-break-required").exists()).toBe(false);
   });
+
+  it("does not demand counts when everyone in the elected tie is already elected", async () => {
+    mockFetchTieDetails.mockResolvedValue([
+      {
+        tieBreakGroup: 1,
+        section: "E",
+        instructions: "",
+        tieBreakRequired: false,
+        isResolved: true,
+        people: [
+          {
+            personGuid: "person-a",
+            fullName: "Ada",
+            voteCount: 1,
+            tieBreakCount: null,
+          },
+          {
+            personGuid: "person-b",
+            fullName: "Bob",
+            voteCount: 1,
+            tieBreakCount: null,
+          },
+        ],
+      },
+    ]);
+
+    const wrapper = mount(TieManagementPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    expect(wrapper.text()).not.toContain(
+      "Elected-section ties still have people with no tie-break count entered. An explicit 0 is allowed.",
+    );
+    expect(wrapper.text()).not.toContain("Tie-break Required");
+  });
+
+  it("still demands a count for a required elected-section tie", async () => {
+    mockFetchTieDetails.mockResolvedValue([
+      {
+        tieBreakGroup: 1,
+        section: "E",
+        instructions: "Enter tie-break vote counts for these people",
+        tieBreakRequired: true,
+        isResolved: false,
+        people: [
+          {
+            personGuid: "person-a",
+            fullName: "Ada",
+            voteCount: 4,
+            tieBreakCount: 1,
+          },
+          {
+            personGuid: "person-b",
+            fullName: "Bob",
+            voteCount: 4,
+            tieBreakCount: null,
+          },
+        ],
+      },
+    ]);
+
+    const wrapper = mount(TieManagementPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    expect(wrapper.text()).toContain(
+      "Elected-section ties still have people with no tie-break count entered. An explicit 0 is allowed.",
+    );
+    expect(wrapper.text()).toContain("Tie-break Required");
+  });
 });
