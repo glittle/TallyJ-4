@@ -94,7 +94,11 @@ Finalization already required `ResultTie.TieBreakRequired && IsResolved != true`
 
 A tie blocks Finalize only when it still decides who is elected: the group crosses from Elected into Extra or Other, or it sits inside Extra. `NeedsTieBreak` is already false when the group is only in Elected or only in Other. That includes fewer candidates than seats, where everyone with votes is elected and tied. Those groups stay listed. They do not set `TieBreakRequired`, they do not leave `UseOnReports` false, and the tie page does not ask for counts. A boundary tie with missing or equal counts still blocks.
 
-`SaveTieCountsAsync` still re-analyzes. Re-analysis restores every saved count, including an explicit 0, and does not clear it when the group does not need a runoff. Ranking still uses `TieBreakCount ?? 0`.
+`SaveTieCountsAsync` still re-analyzes. Re-analysis restores every saved count, including an explicit 0, and does not clear it when the group does not need a runoff. Ranking still uses `TieBreakCount ?? 0`. The tie-details response leaves `IsResolved` false for that group: the flag means a required runoff has been decided, so the page shows neither Tie-break Required nor Resolved.
+
+The finalize readiness check already ignored these groups (`TieBreakRequired` stays false and `UseOnReports` can stay true). What asked for counts was the tie page, which treated every Elected-section tie as unfinished until each person had a count.
+
+Those saved counts stay on the person. If later ballots turn the same people into a boundary tie, the next Calculate uses the counts to place the seats. That is open: nothing yet asks the teller to confirm counts that were entered before a runoff was required.
 
 **Rejected alternative:** keep clearing counts on a tie that does not need a runoff. Rejected — the save succeeded and the next analysis deleted the values, so the page reloaded empty and still asked for counts.
 

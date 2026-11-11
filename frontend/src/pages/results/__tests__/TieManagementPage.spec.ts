@@ -239,7 +239,7 @@ describe("TieManagementPage", () => {
         section: "E",
         instructions: "",
         tieBreakRequired: false,
-        isResolved: true,
+        isResolved: false,
         people: [
           {
             personGuid: "person-a",
@@ -266,6 +266,7 @@ describe("TieManagementPage", () => {
       "Elected-section ties still have people with no tie-break count entered. An explicit 0 is allowed.",
     );
     expect(wrapper.text()).not.toContain("Tie-break Required");
+    expect(wrapper.text()).not.toContain("Resolved");
   });
 
   it("still demands a count for a required elected-section tie", async () => {
