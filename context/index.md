@@ -8,7 +8,7 @@ Lean index of project *why* knowledge. Load a topic file only when the work touc
 - [anti-abuse.md](anti-abuse.md) — owner approval covers paid sends as well as other voter codes; election allowance, owner daily cap, and phone-prefix cap; neutral requestCode reply; freeze; masked send log; super-admin alerts; bad-contact flag still re-restricts that election only
 - [realtime.md](realtime.md) — SignalR hub group naming (not a single `election-{guid}` pattern); election hub joins require election access
 - [api-contracts.md](api-contracts.md) — dual API response wrappers and OpenAPI client regeneration
-- [election-analysis.md](election-analysis.md) — core analysis engine; risk-first correctness vs v3
+- [election-analysis.md](election-analysis.md) — core analysis engine; risk-first correctness vs v3; an all-elected tie does not block finalize, and saved tie-break counts survive re-analysis
 - [reports.md](reports.md) — VotersByArea 18+/18–21 (V01), download-all zip of the existing report list, Front Desk vs analysis voted rule; Analyze SaveManual persists M without re-running Analyze; vote `/ tie-break` when a count was entered, including after resolution; unresolved ties are named on Main and Votes-by reports
 - [ballot-validation.md](ballot-validation.md) — pre-finalization integrity; count-reconciliation report before Analyze/Finalize
 - [election-state.md](election-state.md) — teller coordination, Finalized write lock, #191 concurrent-teller SQLite coverage, and pooling off before a private SQLite file is deleted

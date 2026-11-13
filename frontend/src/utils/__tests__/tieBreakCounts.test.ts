@@ -22,12 +22,14 @@ function tie(
   section: string,
   people: TiePersonDto[],
   group = 1,
+  tieBreakRequired = false,
 ): TieDetailsDto {
   return {
     tieBreakGroup: group,
     section,
     people,
     instructions: "",
+    tieBreakRequired,
   };
 }
 
@@ -57,15 +59,26 @@ describe("tieBreakCounts", () => {
     ]);
   });
 
-  it("flags elected ties only when a count is missing, not when it is 0", () => {
+  it("flags a required elected tie only when a count is missing, not when it is 0", () => {
     expect(
-      electedTieMissingCounts(tie("E", [person("a", 0), person("b", 1)])),
+      electedTieMissingCounts(
+        tie("E", [person("a", 0), person("b", 1)], 1, true),
+      ),
     ).toBe(false);
     expect(
-      electedTieMissingCounts(tie("E", [person("a", 0), person("b", null)])),
+      electedTieMissingCounts(
+        tie("E", [person("a", 0), person("b", null)], 1, true),
+      ),
     ).toBe(true);
     expect(
-      electedTieMissingCounts(tie("X", [person("a", null), person("b", null)])),
+      electedTieMissingCounts(
+        tie("E", [person("a", null), person("b", null)], 1, false),
+      ),
+    ).toBe(false);
+    expect(
+      electedTieMissingCounts(
+        tie("X", [person("a", null), person("b", null)], 1, true),
+      ),
     ).toBe(false);
   });
 

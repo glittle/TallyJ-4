@@ -69,7 +69,9 @@ v3 always re-ran analysis after saving tie-break counts (the Analyze button is �
 **Source:** issues #388, #390  
 **Revisit when:** a known-good v3 package shows v3 keeps the required flag after the runoff distinguishes the group
 
-Equal ballot totals set `IsTied` until a runoff decides the seats. `TieBreakRequired` means the group is not yet distinguished. Once saved counts are distinct enough to decide the needed positions — every member's `(TieBreakCount ?? 0)` differs across a section boundary, or inside Extra — `IsResolved` / `IsTieResolved` are true and both `IsTied` and `TieBreakRequired` are cleared on the `ResultTie` and each `Result`. The counts stay, including explicit 0. A later Calculate does not put the flags back. All-0 and all-unset stay unresolved, so both flags stay. The clear happens after the block that drops counts when the tie was not required, so a resolved runoff does not wipe its counts.
+Equal ballot totals set `IsTied` until a runoff decides the seats. `TieBreakRequired` means the group is not yet distinguished. Once saved counts are distinct enough to decide the needed positions — every member's `(TieBreakCount ?? 0)` differs across a section boundary, or inside Extra — `IsResolved` / `IsTieResolved` are true and both `IsTied` and `TieBreakRequired` are cleared on the `ResultTie` and each `Result`. The counts stay, including explicit 0. A later Calculate does not put the flags back. All-0 and all-unset stay unresolved, so both flags stay. A resolved runoff clears those flags and keeps its counts.
+
+> Superseded 2026-11: re-analysis used to drop `TieBreakCount` when the tie was not required. That wiped counts a teller had just saved on an all-elected tie. Entered counts are kept. See below.
 
 Results and the Main / Votes-by reports recompute that from the saved counts. A flag left true after the counts were saved does not keep the Tied tag or the Tie-break Required banner.
 
@@ -82,6 +84,25 @@ Finalization already required `ResultTie.TieBreakRequired && IsResolved != true`
 **Rejected alternative:** clear only `TieBreakRequired` and leave `IsTied` set from the equal ballot totals. That was the first fix. The tie screen kept the prompt, and Results still showed Tied. A stored required bit that was not rewritten after the counts were saved also kept the report banner. Rejected — both flags mean the runoff is still open on Results and the reports, and those screens recompute them from the counts.
 
 **Rejected alternative:** drop a resolved group from the tie page. Rejected — a teller has to correct a mistyped runoff count, and saving counts that no longer decide the seats must re-open the tie. The group stays listed, marked resolved, without the prompt or the Tie-break Required tag.
+
+## An all-elected tie does not block finalize
+
+**Status:** active  
+**Evidence:** confirmed (issue #424; `TieBreakResolution.NeedsTieBreak`)  
+**Source:** issue #424  
+**Revisit when:** a known-good v3 package shows v3 requires a runoff when every tied person is already elected
+
+A tie blocks Finalize only when it still decides who is elected: the group crosses from Elected into Extra or Other, or it sits inside Extra. `NeedsTieBreak` is already false when the group is only in Elected or only in Other. That includes fewer candidates than seats, where everyone with votes is elected and tied. Those groups stay listed. They do not set `TieBreakRequired`, they do not leave `UseOnReports` false, and the tie page does not ask for counts. A boundary tie with missing or equal counts still blocks.
+
+`SaveTieCountsAsync` still re-analyzes. Re-analysis restores every saved count, including an explicit 0, and does not clear it when the group does not need a runoff. Ranking still uses `TieBreakCount ?? 0`. The tie-details response leaves `IsResolved` false for that group: the flag means a required runoff has been decided, so the page shows neither Tie-break Required nor Resolved.
+
+The finalize readiness check already ignored these groups (`TieBreakRequired` stays false and `UseOnReports` can stay true). What asked for counts was the tie page, which treated every Elected-section tie as unfinished until each person had a count.
+
+Those saved counts stay on the person. If later ballots turn the same people into a boundary tie, the next Calculate uses the counts to place the seats. That is open: nothing yet asks the teller to confirm counts that were entered before a runoff was required.
+
+**Rejected alternative:** keep clearing counts on a tie that does not need a runoff. Rejected — the save succeeded and the next analysis deleted the values, so the page reloaded empty and still asked for counts.
+
+**Rejected alternative:** treat every Elected-section tie as unfinished until each person has a count. Rejected — a tie wholly inside Elected does not change who is elected, including when there are fewer candidates than seats.
 
 ## Analyze manual voter counts persist M without re-running Analyze
 

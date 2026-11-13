@@ -457,14 +457,7 @@ public abstract class ElectionAnalyzerBase
             resultTie.NumToElect--;
         }
 
-        if (resultTie.TieBreakRequired != true)
-        {
-            foreach (var r in results)
-            {
-                r.TieBreakCount = null;
-            }
-        }
-        else if (isResolved)
+        if (resultTie.TieBreakRequired == true && isResolved)
         {
             // The runoff distinguished this group. "Tied" and "Tie-break required"
             // both mean it is still unresolved. Keep the counts so the results table
@@ -476,8 +469,10 @@ public abstract class ElectionAnalyzerBase
                 r.IsTied = false;
             }
         }
-        // Required ties keep null until a teller enters a value. Explicit 0 is stored
-        // as 0; sorting and still-tied checks treat null as 0 without collapsing the two.
+        // Entered counts stay, including an explicit 0, even when this group does not
+        // need a runoff (everyone tied is already elected, or the tie is only in Other).
+        // Required ties keep null until a teller enters a value. Sorting and still-tied
+        // checks treat null as 0 without collapsing the two.
     }
 
     protected virtual void FinalizeSummaries()

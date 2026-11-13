@@ -703,6 +703,136 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task SaveTieCountsAsync_FewerCandidatesThanSeats_PersistsCountsAndDoesNotBlockFinalize()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 3);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 2);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 2);
+        await CreateAllElectedTieWithFewerCandidatesAsync(ballots, people);
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var before = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid)
+            .OrderBy(r => r.Rank)
+            .ToList();
+        Assert.Equal(2, before.Count);
+        Assert.All(before, r => Assert.Equal("E", r.Section));
+        Assert.All(before, r => Assert.Equal(false, r.TieBreakRequired));
+        Assert.All(before, r => Assert.Null(r.TieBreakCount));
+
+        var summary = Context.ResultSummaries
+            .First(rs => rs.ElectionGuid == election.ElectionGuid && rs.ResultType == "F");
+        Assert.Equal(true, summary.UseOnReports);
+
+        var readiness = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, election.ElectionGuid);
+        Assert.True(readiness.IsReady);
+        Assert.DoesNotContain(ElectionStageMessageKeys.UnresolvedTies, readiness.Blockers);
+
+        var response = await _service.SaveTieCountsAsync(election.ElectionGuid, new SaveTieCountsRequestDto
+        {
+            Counts =
+            [
+                new TieCountDto { PersonGuid = people[0].PersonGuid, TieBreakCount = 0 },
+                new TieCountDto { PersonGuid = people[1].PersonGuid, TieBreakCount = 2 },
+            ]
+        });
+
+        Assert.True(response.Success);
+        Assert.True(response.ReAnalysisTriggered);
+
+        var tieGroup = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid && r.TieBreakGroup != null)
+            .Select(r => r.TieBreakGroup!.Value)
+            .First();
+        var details = await _service.GetTiesAsync(election.ElectionGuid, tieGroup);
+        Assert.Equal("E", details.Section);
+        Assert.False(details.TieBreakRequired);
+        Assert.Equal(0, details.People.Single(p => p.PersonGuid == people[0].PersonGuid).TieBreakCount);
+        Assert.Equal(2, details.People.Single(p => p.PersonGuid == people[1].PersonGuid).TieBreakCount);
+
+        var stored = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid)
+            .ToDictionary(r => r.PersonGuid);
+        Assert.Equal(0, stored[people[0].PersonGuid].TieBreakCount);
+        Assert.Equal(2, stored[people[1].PersonGuid].TieBreakCount);
+        Assert.All(stored.Values, r => Assert.Equal("E", r.Section));
+
+        var after = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, election.ElectionGuid);
+        Assert.True(after.IsReady);
+        Assert.DoesNotContain(ElectionStageMessageKeys.UnresolvedTies, after.Blockers);
+    }
+
+    [Fact]
+    public async Task BoundaryTie_BlocksFinalizeUntilDistinctCountsPersist()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 1);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 2);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 2);
+
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballots[0].BallotGuid,
+            PersonGuid = people[0].PersonGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Ok,
+            PersonCombinedInfo = people[0].CombinedInfo,
+            RowVersion = new byte[8]
+        });
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballots[1].BallotGuid,
+            PersonGuid = people[1].PersonGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Ok,
+            PersonCombinedInfo = people[1].CombinedInfo,
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var blocked = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, election.ElectionGuid);
+        Assert.False(blocked.IsReady);
+        Assert.Contains(ElectionStageMessageKeys.UnresolvedTies, blocked.Blockers);
+        Assert.Equal(false, Context.ResultSummaries
+            .First(rs => rs.ElectionGuid == election.ElectionGuid && rs.ResultType == "F").UseOnReports);
+
+        var response = await _service.SaveTieCountsAsync(election.ElectionGuid, new SaveTieCountsRequestDto
+        {
+            Counts =
+            [
+                new TieCountDto { PersonGuid = people[0].PersonGuid, TieBreakCount = 0 },
+                new TieCountDto { PersonGuid = people[1].PersonGuid, TieBreakCount = 3 },
+            ]
+        });
+
+        Assert.True(response.Success);
+        Assert.True(response.ReAnalysisTriggered);
+
+        var stored = Context.Results
+            .Where(r => r.ElectionGuid == election.ElectionGuid)
+            .ToDictionary(r => r.PersonGuid);
+        Assert.Equal(0, stored[people[0].PersonGuid].TieBreakCount);
+        Assert.Equal(3, stored[people[1].PersonGuid].TieBreakCount);
+        Assert.Equal("O", stored[people[0].PersonGuid].Section);
+        Assert.Equal("E", stored[people[1].PersonGuid].Section);
+
+        var tieGroup = stored[people[0].PersonGuid].TieBreakGroup!.Value;
+        var details = await _service.GetTiesAsync(election.ElectionGuid, tieGroup);
+        Assert.Equal(0, details.People.Single(p => p.PersonGuid == people[0].PersonGuid).TieBreakCount);
+        Assert.Equal(3, details.People.Single(p => p.PersonGuid == people[1].PersonGuid).TieBreakCount);
+        Assert.False(details.TieBreakRequired);
+        Assert.True(details.IsResolved);
+
+        var ready = await ElectionStageFinalizationReadiness.EvaluateAsync(Context, election.ElectionGuid);
+        Assert.True(ready.IsReady);
+        Assert.DoesNotContain(ElectionStageMessageKeys.UnresolvedTies, ready.Blockers);
+    }
+
+    [Fact]
     public async Task GetTiesAsync_ReturnsTiedPeopleAndCounts()
     {
         var election = await CreateTestElectionAsync(numberToElect: 1, numberExtra: 1);
@@ -1854,6 +1984,46 @@ public class TallyServiceTests : ServiceTestBase
                 PositionOnBallot = 8,
                 VoteStatus = VoteStatus.Ok,
                 PersonCombinedInfo = people[8].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+        }
+
+        await Context.SaveChangesAsync();
+    }
+
+    /// <summary>
+    /// Two candidates for three seats. Each ballot has both names plus one ineligible
+    /// vote so the ballot is complete. Both people are elected and tied.
+    /// </summary>
+    private async Task CreateAllElectedTieWithFewerCandidatesAsync(List<Ballot> ballots, List<Person> people)
+    {
+        foreach (var ballot in ballots)
+        {
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballot.BallotGuid,
+                PersonGuid = people[0].PersonGuid,
+                PositionOnBallot = 1,
+                VoteStatus = VoteStatus.Ok,
+                PersonCombinedInfo = people[0].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballot.BallotGuid,
+                PersonGuid = people[1].PersonGuid,
+                PositionOnBallot = 2,
+                VoteStatus = VoteStatus.Ok,
+                PersonCombinedInfo = people[1].CombinedInfo,
+                RowVersion = new byte[8]
+            });
+            Context.Votes.Add(new Vote
+            {
+                BallotGuid = ballot.BallotGuid,
+                PersonGuid = null,
+                IneligibleReasonCode = IneligibleReasonEnum.U01_Unidentifiable.Code,
+                PositionOnBallot = 3,
+                VoteStatus = VoteStatus.Ok,
                 RowVersion = new byte[8]
             });
         }
