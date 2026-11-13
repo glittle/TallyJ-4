@@ -1,5 +1,10 @@
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { flushPromises, mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import ElementPlus from "element-plus";
+import less from "less";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@/test/setup";
 import TieManagementPage from "../TieManagementPage.vue";
 import type { TieDetailsDto } from "@/types";
@@ -101,6 +106,7 @@ const stubs = {
     template: "<div class='table-stub'><slot /></div>",
   },
   ElTableColumn: {
+    props: ["prop", "label", "width", "align"],
     template:
       "<div v-for='row in $parent.data' :key='row.personGuid'><slot :row='row' /></div>",
   },
@@ -124,7 +130,55 @@ const stubs = {
   ElEmpty: { template: "<div />" },
 };
 
+async function injectPageStyles() {
+  const sourcePath = resolve(
+    dirname(fileURLToPath(import.meta.url)),
+    "../TieManagementPage.vue",
+  );
+  const source = readFileSync(sourcePath, "utf8");
+  const style = source.match(/<style lang="less">([\s\S]*?)<\/style>/)?.[1];
+  if (!style) {
+    throw new Error("TieManagementPage styles were not found");
+  }
+  const { css } = await less.render(style);
+  const tag = document.createElement("style");
+  tag.setAttribute("data-tie-management-page", "true");
+  tag.textContent = css;
+  document.head.appendChild(tag);
+}
+
+function mountWithRealSteppers() {
+  return mount(TieManagementPage, {
+    global: {
+      plugins: [i18n, ElementPlus],
+      stubs: {
+        ...stubs,
+        ElInputNumber: false,
+      },
+    },
+  });
+}
+
+function tieCounts(wrapper: ReturnType<typeof mount>) {
+  const vm = wrapper.vm as unknown as { tieDetails: TieDetailsDto[] };
+  return vm.tieDetails[0]!.people.map((person) => person.tieBreakCount);
+}
+
+async function pressStepper(
+  wrapper: ReturnType<typeof mount>,
+  selector: ".el-input-number__increase" | ".el-input-number__decrease",
+) {
+  const button = wrapper.find(selector);
+  await button.trigger("mousedown");
+  await button.trigger("mouseup");
+  await flushPromises();
+}
+
 describe("TieManagementPage", () => {
+  beforeAll(async () => {
+    await injectPageStyles();
+  });
+
   beforeEach(() => {
     mockFetchTieDetails.mockReset();
     mockSaveTieCounts.mockReset();
@@ -379,5 +433,57 @@ describe("TieManagementPage", () => {
     expect(mockShowError).toHaveBeenCalledWith(
       "This election is finalized. People and ballot data cannot be changed.",
     );
+  });
+
+  it("keeps increase and decrease steppers working before the election is Finalized", async () => {
+    const wrapper = mountWithRealSteppers();
+    await flushPromises();
+
+    const steppers = wrapper.findAll(
+      ".el-input-number__increase, .el-input-number__decrease",
+    );
+    expect(steppers.length).toBeGreaterThan(0);
+    for (const stepper of steppers) {
+      expect(getComputedStyle(stepper.element).pointerEvents).not.toBe("none");
+    }
+
+    expect(tieCounts(wrapper)).toEqual([5, null]);
+    await pressStepper(wrapper, ".el-input-number__increase");
+    expect(tieCounts(wrapper)).toEqual([6, null]);
+    await pressStepper(wrapper, ".el-input-number__decrease");
+    expect(tieCounts(wrapper)).toEqual([5, null]);
+  });
+
+  it("disables increase and decrease steppers when the election is Finalized", async () => {
+    electionStage.current = "Finalized";
+    const wrapper = mountWithRealSteppers();
+    await flushPromises();
+
+    const inputs = wrapper.findAll(".el-input-number");
+    expect(inputs.length).toBeGreaterThan(0);
+    for (const input of inputs) {
+      expect(input.classes()).toContain("is-disabled");
+      expect(input.find("input").attributes("disabled")).toBeDefined();
+
+      for (const selector of [
+        ".el-input-number__increase",
+        ".el-input-number__decrease",
+      ]) {
+        const stepper = input.find(selector);
+        expect(stepper.exists()).toBe(true);
+        const style = getComputedStyle(stepper.element);
+        expect(style.pointerEvents).toBe("none");
+        expect(style.cursor).toBe("not-allowed");
+        expect(style.color).toBe("var(--el-disabled-text-color)");
+        expect(getComputedStyle(stepper.find(".el-icon").element).color).toBe(
+          "var(--el-disabled-text-color)",
+        );
+      }
+    }
+
+    expect(tieCounts(wrapper)).toEqual([5, null]);
+    await pressStepper(wrapper, ".el-input-number__increase");
+    await pressStepper(wrapper, ".el-input-number__decrease");
+    expect(tieCounts(wrapper)).toEqual([5, null]);
   });
 });
