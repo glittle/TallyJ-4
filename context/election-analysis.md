@@ -126,3 +126,16 @@ This table is v3 count-override parity (method counts and optional Eligible Vote
 **Rejected alternative:** invent override columns for Online or Imported. Rejected — v3 left those calculated-only.
 
 **Rejected alternative:** treat this table as #198 tie/extra counts. Rejected — `SaveTieCounts` is a different Analyze control.
+
+## Potential votes are ballots × seats, not lines typed
+
+**Status:** active  
+**Evidence:** confirmed (v3 `ElectionAnalyzerNormal`; issue #427)  
+**Source:** TallyJ-3.0 `Site/CoreModels/ElectionAnalyzerNormal.cs`; issue #427  
+**Revisit when:** a known-good v3 package shows v3 awards votes from a Too Few ballot
+
+For a normal election, stored `TotalVotes` is every ballot times number to elect. That includes spoiled ballots and lines that were never typed on a Too Few ballot. An Unreadable line is a `SpoiledVotes` row only when it sits on an Ok ballot. Names on a ballot that is not Ok are not awarded, and they are not `SpoiledVotes`; the ballot is already a spoiled ballot. Results "Valid votes", and the presentation screen's vote total, are the sum of awarded `Result.VoteCount` values. Subtracting `SpoiledVotes` from potential slots left every slot on a spoiled ballot inside that figure.
+
+**Rejected alternative:** store the number of vote rows typed as `TotalVotes`. Rejected — that is not the v3 total, and export plus the v3 comparison harness read the stored field.
+
+**Rejected alternative:** award the names on a Too Few ballot. Rejected — v3 counts votes only from `StatusCode == Ok`. Too Few is a spoiled ballot.

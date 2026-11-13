@@ -243,6 +243,13 @@ public partial class TallyService
             };
         }
 
+        // Votes the analyzer awarded. Potential slots (TotalVotes) still include
+        // every ballot × number to elect, so subtracting only SpoiledVotes left
+        // the slots on spoiled ballots inside "valid".
+        var countedVotes = await _context.Results
+            .Where(r => r.ElectionGuid == electionGuid)
+            .SumAsync(r => (int?)(r.VoteCount ?? 0)) ?? 0;
+
         return new TallyStatisticsDto
         {
             TotalBallots = (summary.BallotsReceived ?? 0) + (summary.SpoiledBallots ?? 0),
@@ -250,7 +257,7 @@ public partial class TallyService
             SpoiledBallots = summary.SpoiledBallots ?? 0,
             BallotsNeedingReview = summary.BallotsNeedingReview ?? 0,
             TotalVotes = summary.TotalVotes ?? 0,
-            ValidVotes = (summary.TotalVotes ?? 0) - (summary.SpoiledVotes ?? 0),
+            ValidVotes = countedVotes,
             InvalidVotes = summary.SpoiledVotes ?? 0,
             NumVoters = numVoters,
             NumEligiblePeople = numEligiblePeople,

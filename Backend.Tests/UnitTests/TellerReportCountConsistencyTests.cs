@@ -99,7 +99,9 @@ public class TellerReportCountConsistencyTests : ServiceTestBase
 
         Assert.Equal(summary.NumEligibleToVote, main.NumEligibleToVote);
         Assert.Equal(summary.NumVoters, main.SumOfEnvelopesCollected);
-        Assert.Equal(summary.BallotsReceived, main.NumBallotsWithManual);
+        Assert.Equal(
+            (summary.BallotsReceived ?? 0) + (summary.SpoiledBallots ?? 0),
+            main.NumBallotsWithManual);
         Assert.Equal(stats.TotalEligible, summary.NumEligibleToVote);
         Assert.Equal(stats.CheckedIn, summary.NumVoters);
         Assert.Equal(recon.BallotCount, (summary.BallotsReceived ?? 0) + (summary.SpoiledBallots ?? 0));

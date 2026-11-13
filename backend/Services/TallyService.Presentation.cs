@@ -79,7 +79,7 @@ public partial class TallyService
             ElectionDate = election.DateOfElection,
             NumToElect = election.NumberToElect ?? 9,
             TotalBallots = summary?.BallotsReceived ?? 0,
-            TotalVotes = summary?.TotalVotes ?? 0,
+            TotalVotes = results.Sum(r => r.VoteCount ?? 0),
             ElectedPeople = electedPeople,
             ExtraPeople = extraPeople,
             HasTies = ties.Any(),
