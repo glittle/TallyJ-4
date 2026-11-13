@@ -50,6 +50,7 @@ import { useOnlineVotingStore } from "../onlineVotingStore";
 describe("onlineVotingStore kiosk session isolation", () => {
   beforeEach(() => {
     setActivePinia(createPinia());
+    sessionStorage.clear();
     logoutApi.mockClear();
     verifyCode.mockReset();
   });
@@ -62,9 +63,11 @@ describe("onlineVotingStore kiosk session isolation", () => {
     expect(store.voterId).toBe("SMART");
     expect(store.voterIdType).toBe("C");
     expect(store.isKioskSession).toBe(true);
+    sessionStorage.setItem("tallyj.voterElectionGuid", "previous-election");
 
     await store.logout();
 
+    expect(sessionStorage.getItem("tallyj.voterElectionGuid")).toBeNull();
     expect(logoutApi).toHaveBeenCalled();
     expect(store.voterId).toBeNull();
     expect(store.voterIdType).toBeNull();

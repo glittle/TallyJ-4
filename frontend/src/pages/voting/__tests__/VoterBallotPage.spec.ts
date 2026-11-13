@@ -2,7 +2,12 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { reactive } from "vue";
 import { i18n } from "@/test/setup";
-import type { OnlineElectionInfo, OnlineVoteStatus } from "@/types";
+import type {
+  AvailableElection,
+  OnlineElectionInfo,
+  OnlineVoteStatus,
+} from "@/types";
+import { forgetRememberedVoterElection } from "@/utils/voterElectionContext";
 import VoterBallotPage from "../VoterBallotPage.vue";
 
 const submitBallot = vi.fn().mockResolvedValue({});
@@ -83,6 +88,13 @@ function submittedStatus(): OnlineVoteStatus {
   };
 }
 
+function availableElection(
+  electionGuid: string,
+  isOpen: boolean,
+): AvailableElection {
+  return { electionGuid, name: electionGuid, isOpen };
+}
+
 function draftStatus(): OnlineVoteStatus {
   return {
     hasVoted: true,
@@ -111,6 +123,11 @@ describe("VoterBallotPage silent autosave isDraft", () => {
     storeState.ensureVoterHubsConnected.mockResolvedValue(undefined);
     storeState.loadElectionInfo.mockReset();
     storeState.loadElectionInfo.mockResolvedValue(openElection);
+    storeState.loadAvailableElections.mockReset();
+    storeState.loadAvailableElections.mockResolvedValue([]);
+    storeState.joinElectionBallotPresence.mockReset();
+    storeState.joinElectionBallotPresence.mockResolvedValue(undefined);
+    storeState.leaveElectionBallotPresence.mockClear();
     storeState.checkVoteStatus.mockResolvedValue(draftStatus());
   });
 
@@ -350,6 +367,145 @@ describe("VoterBallotPage silent autosave isDraft", () => {
     expect(wrapper.find(".election-empty").exists()).toBe(false);
     expect(wrapper.text()).toContain("Open election");
     expect(sessionStorage.getItem("tallyj.voterElectionGuid")).toBe(guid);
+  });
+
+  it("does not use a remembered election after logout", async () => {
+    sessionStorage.setItem("tallyj.voterElectionGuid", "previous-election");
+    forgetRememberedVoterElection();
+    routeState.params.electionId = undefined;
+    storeState.electionInfo = null;
+    storeState.loadAvailableElections.mockResolvedValue([
+      availableElection("previous-election", true),
+      availableElection("second-open", true),
+    ]);
+
+    const wrapper = mount(VoterBallotPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    expect(storeState.loadElectionInfo).not.toHaveBeenCalled();
+    expect(replace).not.toHaveBeenCalled();
+    expect(wrapper.find(".election-empty").exists()).toBe(true);
+  });
+
+  it("ignores a remembered election that is not in this voter's list", async () => {
+    sessionStorage.setItem("tallyj.voterElectionGuid", "previous-election");
+    routeState.params.electionId = undefined;
+    storeState.electionInfo = null;
+    storeState.loadElectionInfo.mockImplementation(async (id: string) => {
+      storeState.electionInfo = {
+        ...openElection,
+        electionGuid: id,
+        name: "Only open",
+      };
+      return storeState.electionInfo;
+    });
+    storeState.loadAvailableElections.mockResolvedValue([
+      availableElection("only-open", true),
+    ]);
+
+    const wrapper = mount(VoterBallotPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    expect(storeState.loadElectionInfo).toHaveBeenCalledWith("only-open");
+    expect(storeState.loadElectionInfo).not.toHaveBeenCalledWith(
+      "previous-election",
+    );
+    expect(replace).toHaveBeenCalledWith({
+      name: "voter-ballot",
+      params: { electionId: "only-open" },
+    });
+    expect(wrapper.text()).toContain("Only open");
+  });
+
+  it("puts the only open election on the address when nothing else identifies one", async () => {
+    routeState.params.electionId = undefined;
+    storeState.electionInfo = null;
+    storeState.loadElectionInfo.mockImplementation(async (id: string) => {
+      storeState.electionInfo = {
+        ...openElection,
+        electionGuid: id,
+        name: "Sole election",
+      };
+      return storeState.electionInfo;
+    });
+    storeState.loadAvailableElections.mockResolvedValue([
+      availableElection("sole-election", false),
+      availableElection("sole-open", true),
+    ]);
+
+    const wrapper = mount(VoterBallotPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    expect(storeState.loadElectionInfo).toHaveBeenCalledWith("sole-open");
+    expect(replace).toHaveBeenCalledWith({
+      name: "voter-ballot",
+      params: { electionId: "sole-open" },
+    });
+    expect(wrapper.find(".election-empty").exists()).toBe(false);
+    expect(wrapper.text()).toContain("Sole election");
+  });
+
+  it("shows election not found when two elections are open and none is remembered", async () => {
+    routeState.params.electionId = undefined;
+    storeState.electionInfo = null;
+    storeState.loadAvailableElections.mockResolvedValue([
+      availableElection("open-a", true),
+      availableElection("open-b", true),
+    ]);
+
+    const wrapper = mount(VoterBallotPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    expect(storeState.loadElectionInfo).not.toHaveBeenCalled();
+    expect(replace).not.toHaveBeenCalled();
+    expect(wrapper.find(".election-empty").exists()).toBe(true);
+  });
+
+  it("does not show another election when the requested one fails to load", async () => {
+    storeState.electionInfo = {
+      ...openElection,
+      electionGuid: "other-election",
+      name: "Other election",
+    };
+    storeState.loadElectionInfo.mockRejectedValue(new Error("missing"));
+
+    const wrapper = mount(VoterBallotPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    expect(wrapper.find(".election-empty").exists()).toBe(true);
+    expect(wrapper.text()).not.toContain("Other election");
+  });
+
+  it("does not join ballot presence after the page has unmounted", async () => {
+    let releaseHubs: (() => void) | undefined;
+    storeState.ensureVoterHubsConnected.mockImplementation(
+      () =>
+        new Promise<void>((resolve) => {
+          releaseHubs = resolve;
+        }),
+    );
+
+    const wrapper = mount(VoterBallotPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+    wrapper.unmount();
+    releaseHubs?.();
+    await flushPromises();
+
+    expect(storeState.joinElectionBallotPresence).not.toHaveBeenCalled();
+    expect(storeState.leaveElectionBallotPresence).toHaveBeenCalled();
+    storeState.ensureVoterHubsConnected.mockResolvedValue(undefined);
   });
 
   it("logs out after kiosk submit so the next voter starts clean", async () => {

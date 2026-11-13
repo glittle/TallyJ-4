@@ -21,6 +21,7 @@ import type {
   UpdateVoterEvent,
   UpdateVotersEvent,
 } from "../types/SignalREvents";
+import { forgetRememberedVoterElection } from "../utils/voterElectionContext";
 
 export const useOnlineVotingStore = defineStore("onlineVoting", () => {
   const { handleApiError } = useApiErrorHandler();
@@ -380,6 +381,7 @@ export const useOnlineVotingStore = defineStore("onlineVoting", () => {
     voteStatus.value = null;
     availableElections.value = [];
     loginElsewhereNotice.value = false;
+    forgetRememberedVoterElection();
   }
 
   return {

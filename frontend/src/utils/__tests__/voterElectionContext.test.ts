@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import {
   electionGuidFromKioskVoterId,
+  forgetRememberedVoterElection,
   readRememberedVoterElection,
   readRouteElectionId,
   rememberVoterElection,
@@ -37,5 +38,7 @@ describe("voterElectionContext", () => {
     expect(readRememberedVoterElection()).toBe("");
     rememberVoterElection(GUID);
     expect(readRememberedVoterElection()).toBe(GUID);
+    forgetRememberedVoterElection();
+    expect(readRememberedVoterElection()).toBe("");
   });
 });

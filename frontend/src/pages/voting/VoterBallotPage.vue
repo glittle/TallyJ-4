@@ -47,6 +47,9 @@ const electionGuid = ref("");
 /** True until the session and election have been resolved. Starts true so a reload does not flash "Election not found". */
 const loading = ref(true);
 const loadFailed = ref(false);
+/** In-flight presence join. Unmount waits for this before leaving, so a late join is not left counted. */
+let ballotPresence: Promise<void> = Promise.resolve();
+let pageUnmounted = false;
 const submitting = ref(false);
 const autosaveReady = ref(false);
 /** Once Submitted, later autosaves keep isDraft false (never demote). */
@@ -111,6 +114,7 @@ const allVotablePersonOptions = computed(() => {
 });
 
 onMounted(async () => {
+  pageUnmounted = false;
   loading.value = true;
   loadFailed.value = false;
 
@@ -142,13 +146,13 @@ onMounted(async () => {
 
   await loadElectionData();
   // Presence is for the monitor count. A slow or failed hub must not block the ballot.
-  void connectBallotPresence(id);
+  ballotPresence = connectBallotPresence(id);
 });
 
 /**
  * Route id first. After a reload that lost the id, the kiosk voter session
- * still contains the election, then this tab's last ballot, then the only
- * open election for this voter.
+ * still contains the election. A remembered id is used only when it is in
+ * this voter's available elections; otherwise the only open election.
  */
 async function resolveElectionId(): Promise<string> {
   const fromRoute = readRouteElectionId(route.params.electionId);
@@ -163,21 +167,32 @@ async function resolveElectionId(): Promise<string> {
     }
   }
 
-  const remembered = readRememberedVoterElection();
-  if (remembered) {
-    return remembered;
-  }
-
+  let elections: Awaited<
+    ReturnType<typeof onlineVotingStore.loadAvailableElections>
+  > = [];
   try {
-    const elections = await onlineVotingStore.loadAvailableElections();
-    const open = elections.filter(
-      (election) => election.isOpen && election.electionGuid,
-    );
-    if (open.length === 1) {
-      return open[0]!.electionGuid!;
-    }
+    elections = await onlineVotingStore.loadAvailableElections();
   } catch {
     // The empty state covers a voter with no recoverable election.
+  }
+
+  const remembered = readRememberedVoterElection().toLowerCase();
+  const rememberedElection = remembered
+    ? elections.find(
+        (election) =>
+          !!election.electionGuid &&
+          election.electionGuid.toLowerCase() === remembered,
+      )
+    : undefined;
+  if (rememberedElection?.electionGuid) {
+    return rememberedElection.electionGuid;
+  }
+
+  const open = elections.filter(
+    (election) => election.isOpen && election.electionGuid,
+  );
+  if (open.length === 1) {
+    return open[0]!.electionGuid!;
   }
 
   return "";
@@ -186,6 +201,9 @@ async function resolveElectionId(): Promise<string> {
 async function connectBallotPresence(id: string): Promise<void> {
   try {
     await onlineVotingStore.ensureVoterHubsConnected();
+    if (pageUnmounted) {
+      return;
+    }
     await onlineVotingStore.joinElectionBallotPresence(id);
   } catch (error) {
     console.error("Failed to join ballot presence:", error);
@@ -193,7 +211,9 @@ async function connectBallotPresence(id: string): Promise<void> {
 }
 
 onUnmounted(async () => {
+  pageUnmounted = true;
   runAutosave.flush();
+  await ballotPresence;
   await onlineVotingStore.leaveElectionBallotPresence();
 });
 
@@ -232,7 +252,8 @@ async function loadElectionData() {
     }
   } catch (error) {
     console.error("Error loading election data:", error);
-    if (!onlineVotingStore.electionInfo) {
+    const loadedGuid = onlineVotingStore.electionInfo?.electionGuid ?? "";
+    if (loadedGuid.toLowerCase() !== electionGuid.value.toLowerCase()) {
       loadFailed.value = true;
     }
   } finally {
@@ -421,6 +442,10 @@ function backToElections() {
     <div class="ballot-container">
       <ElCard v-if="loading">
         <div class="loading-text">{{ $t("voting.ballot.loading") }}</div>
+      </ElCard>
+
+      <ElCard v-else-if="loadFailed">
+        <ElEmpty :description="$t('voting.ballot.electionNotFound')" />
       </ElCard>
 
       <ElCard v-else-if="onlineVotingStore.electionInfo" class="ballot-card">
@@ -681,10 +706,6 @@ function backToElections() {
             </ElForm>
           </div>
         </div>
-      </ElCard>
-
-      <ElCard v-else-if="loadFailed">
-        <ElEmpty :description="$t('voting.ballot.electionNotFound')" />
       </ElCard>
     </div>
   </div>

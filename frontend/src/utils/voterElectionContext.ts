@@ -3,7 +3,8 @@
  * The route param is authoritative when it is present. A kiosk session
  * also carries the election inside the voter id (`{letters}.{guid:N}`),
  * which survives reload via the httpOnly voter cookie. sessionStorage is
- * only a fallback when the address has no election id.
+ * only a fallback when the address has no election id, and only if that
+ * election is still in this voter's list. Logout clears it.
  */
 
 const LAST_ELECTION_KEY = "tallyj.voterElectionGuid";
@@ -59,5 +60,14 @@ export function readRememberedVoterElection(): string {
     return readRouteElectionId(sessionStorage.getItem(LAST_ELECTION_KEY));
   } catch {
     return "";
+  }
+}
+
+/** Drop the tab's last ballot so the next person on this device does not inherit it. */
+export function forgetRememberedVoterElection(): void {
+  try {
+    sessionStorage.removeItem(LAST_ELECTION_KEY);
+  } catch {
+    // Private mode — there is nothing stored to clear.
   }
 }

@@ -27,9 +27,11 @@ Once a row is **Submitted**, later autosaves (reload restore, notify toggle, or 
 
 **Reason:** survive reload without treating an in-progress ballot as ready for tellers, and keep a submitted ballot pending until Accept-all.
 
-A hard reload of `/vote` must not paint “Election not found” while the voter cookie is still being read, and must not wait on the SignalR connection before loading the ballot. The election id comes from the route when it is present. If the address has none, a kiosk session still carries it inside the voter id (`{letters}.{guid:N}`), then this tab’s last ballot (`sessionStorage`), then the only open election for that voter. The route is updated to match. The draft itself stays on the server either way.
+A hard reload of `/vote` must not paint “Election not found” while the voter cookie is still being read, and must not wait on the SignalR connection before loading the ballot. The election id comes from the route when it is present. If the address has none, a kiosk session still carries it inside the voter id (`{letters}.{guid:N}`). Otherwise this tab’s last ballot is used only when that election is in the current voter’s available list; if it is not, the only open election is used. Logout removes the remembered id. The route is updated to match. The draft itself stays on the server either way. The ballot-page presence join is kept and finished before leave, and skipped if the page is already gone, so a slow hub does not leave a session counted.
 
 **Rejected alternative:** require the election id only from the page URL. A reload that lands on `/vote` with the session still valid then has nowhere to read the election back from.
+
+**Rejected alternative:** trust the remembered id without checking this voter’s elections, and leave it in the tab after logout. The next email or phone voter on a shared device would open the previous person’s election.
 
 ## Accept-all of pending online ballots
 
