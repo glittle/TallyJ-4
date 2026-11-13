@@ -19,7 +19,7 @@ The checkbox is an extra filter on the current list: hide rows with a voting met
 **Evidence:** inferred (issue #194; Person.VotingMethod varchar(1); reports/analyzer already used P/M/D/O/K/I)  
 **Revisit when:** election setup exposes VotingMethods as first-class checkboxes instead of a string
 
-`Person.VotingMethod` is a single letter: **P** in person, **M** mailed, **D** dropped off, **C** called in, **O** online, **K** kiosk, **I** imported, **1/2/3** custom. Election setup may store the same letters concatenated (`PMD`) or comma-separated aliases (`IP,OL`). Front Desk buttons come from that string except **O** — Online is voter-initiated, so tellers cannot check anyone in as Online (that would count a Front Desk registration with no ballot). Empty setup defaults to P/M/D. The English word “In Person” is not code `I` — `I` is Imported.
+`Person.VotingMethod` is a single letter: **P** in person, **M** mailed, **D** dropped off, **C** called in, **O** online, **K** kiosk, **I** imported, **1/2/3** custom. Election setup may store the same letters concatenated (`PMD`) or comma-separated aliases (`IP,OL`). Empty setup defaults to P/M/D. The English word “In Person” is not code `I` — `I` is Imported. Which of those letters the Front Desk dialog offers is the next section.
 
 Online ballots stay voter-initiated. Tellers do not create ballots at the Online location. Checking in with a method other than Online while the person has a **Draft** or **Submitted** online row discards that pending row so Accept-all cannot create a second ballot. **Processed** (and **Processing**) online already means they have an accepted/claimed online ballot — Front Desk refuses another method. Draft is not Accept-all pending and does not lock cannot-vote.
 
@@ -34,6 +34,24 @@ Online ballots stay voter-initiated. Tellers do not create ballots at the Online
 #186 names this as “online then votes in person.” Draft or Submitted is withdrawn and the Front Desk method is recorded. Processing refuses (`frontDesk.errors.alreadyProcessingOnline`). Processed refuses (`frontDesk.errors.alreadyAcceptedOnline`). Covered in `Issue186OnlineThenInPersonTests`.
 
 **Rejected alternative:** treat the Not registered radio as enough and skip the named checkbox. Rejected — #171 names the control, and operators combine it with flags on the full list.
+
+## Front Desk check-in list
+
+**Status:** active  
+**Evidence:** confirmed (maintainer direction on #428; v3 new elections start at `VotingMethods = "PDM"` and add Kiosk as another letter; v4 already refused teller check-in as Online)  
+**Revisit when:** election setup replaces the VotingMethods string with per-method checkboxes
+
+> Superseded 2026-11: “Front Desk buttons come from that string except O.” Online is still never a desk button. The rest of the list is below.
+
+In person is always a Front Desk button. Mailed and Dropped off stay available unless the stored methods name at least one paper method and omit the other (`P` or `IP` is in person only; `M` is in person plus mailed). A blank value, and a value that names no paper method (`K`, `OL`, `KI`), still means the P/M/D default plus any non-paper method in that value. That covers elections whose kiosk switch previously saved only `K` over the blank default.
+
+Called in appears when `C` is in `VotingMethods` or `UseCallInButton` is true. Kiosk appears when `K` is stored. Imported and custom `1/2/3` appear when those codes are stored. Online does not appear: it is voter-initiated, and a desk `O` would count a registration with no ballot.
+
+Number keys stay the dialog’s existing order: those methods, then flags, Unregister, Close. In person is key 1.
+
+**Rejected alternative:** show Online at the desk when `UseOnlineVoting` or `O` is set. Rejected — tellers still must not record Online.
+
+**Rejected alternative:** hide Mailed and Dropped off whenever the string is non-empty and omits them, including a stored `K`. Rejected — blank means those methods are on, and the kiosk switch used to replace that blank with `K`.
 
 ## Roll Call and envelope pages are not v4 product pages
 

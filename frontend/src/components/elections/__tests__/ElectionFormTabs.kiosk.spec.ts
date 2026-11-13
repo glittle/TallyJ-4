@@ -43,6 +43,22 @@ describe("ElectionFormTabs kiosk toggle", () => {
     expect(model.useOnlineVoting).toBe(true);
   });
 
+  it("keeps the paper defaults when kiosk is enabled on a blank method list", async () => {
+    const { wrapper, model } = mountTabs("");
+
+    const votingTab = wrapper
+      .findAll(".el-tabs__item")
+      .find((tab) => tab.text().includes("Voting Methods"));
+    expect(votingTab).toBeTruthy();
+    await votingTab!.trigger("click");
+
+    const switchEl = wrapper.get('[data-testid="election-kiosk-toggle"]');
+    await switchEl.trigger("click");
+
+    expect(model.votingMethods).toBe("PMDK");
+    expect(model.useOnlineVoting).toBe(true);
+  });
+
   it("exposes Can Add People on the advanced tab for guest Name not in the List", async () => {
     const { wrapper, model } = mountTabs("IP");
 
