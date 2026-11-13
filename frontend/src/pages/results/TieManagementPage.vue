@@ -278,6 +278,27 @@ defineExpose({
 .tie-management {
   max-width: var(--normal-max-width);
   margin: 0 auto;
+
+  /* Element Plus disabled steppers keep the enabled border and pointer cursor,
+     and paint the icons with --el-disabled-border-color (nearly the button fill).
+     Match the disabled input text and ignore clicks. */
+  .el-input-number.is-disabled .el-input-number__increase,
+  .el-input-number.is-disabled .el-input-number__decrease {
+    background-color: var(--el-disabled-bg-color);
+    border-color: var(--el-disabled-border-color);
+    color: var(--el-disabled-text-color);
+    cursor: not-allowed;
+    pointer-events: none;
+
+    &:hover {
+      color: var(--el-disabled-text-color);
+      cursor: not-allowed;
+    }
+
+    .el-icon {
+      color: var(--el-disabled-text-color);
+    }
+  }
 }
 
 .card-header {
