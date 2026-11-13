@@ -130,6 +130,14 @@ public interface ISignalRNotificationService
     Task SendOnlineElectionUpdateAsync(OnlineElectionUpdateDto update);
 
     /// <summary>
+    /// Tells FrontDesk clients (the election monitor) to re-fetch counts after a voter
+    /// submits. Payload is the election id only — no voter id, name, or ballot contents.
+    /// Event name is camelCase <c>onlineBallotsChanged</c>.
+    /// </summary>
+    /// <param name="electionGuid">The election whose online ballot counts changed.</param>
+    Task NotifyOnlineBallotsChangedAsync(Guid electionGuid);
+
+    /// <summary>
     /// Notifies a voter's personal channel that their registration / voting method changed
     /// (VoterPersonalHub <c>updateVoter</c>). Targets groups for the person's email, phone,
     /// and election-scoped kiosk <c>OnlineVoter.VoterId</c> when present

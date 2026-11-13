@@ -93,11 +93,13 @@ Live distribution uses MainHub **base** group `Main{electionGuid}` and camelCase
 **Status:** active  
 **Evidence:** confirmed  
 **Source:** maintainer review of unused scaffold vs v3 `AllVotersHub` / `VoterPersonalHub`; issue #233  
-**Revisit when:** product wants per-election voter groups or ballot-submit live counts
+**Revisit when:** product wants per-election voter groups, or the monitor must receive counts without a follow-up GET
 
-There is still no `/hubs/online-voting` hub and no `online-election-{guid}` group that pushes vote totals. Ballot submit confirmation remains the HTTP response.
+There is still no `/hubs/online-voting` hub and no `online-election-{guid}` group that pushes vote totals. Ballot submit confirmation remains the HTTP response. Issue #430’s “monitor updates when a voter submits” is a FrontDesk thin refetch (`onlineBallotsChanged`, election id only), not a new hub.
 
-**Rejected alternative:** scaffolded `OnlineVotingHub` with `online-election-{electionGuid}` and client-callable `BallotSubmitted` (payload including `totalVotes`). Rejected — mismatched v3 voter model, would push vote totals rather than thin “refetch” signals.
+**Rejected alternative:** scaffolded `OnlineVotingHub` with `online-election-{electionGuid}` and client-callable `BallotSubmitted` (payload including `totalVotes`). Rejected — mismatched v3 voter model, would push vote totals rather than thin “refetch” signals. #430 did not reopen this: the monitor already sits on FrontDesk and re-fetches `GetMonitorInfo`.
+
+**Rejected alternative:** reuse `updateOnlineElection` / AllVoters `updateVoters` for a submitted ballot. Rejected — those events mean the online window or process changed, and voters would re-fetch the election list on every submit.
 
 ## Online voter hubs (AllVoters + VoterPersonal) — issue #233
 
@@ -197,6 +199,7 @@ Group: `FrontDesk{electionGuid}`.
 | `updateBallots` | `BallotUpdateDto` | `SendBallotUpdateAsync` | `ballotStore` |
 | `reloadPage` | (none) | `RequestFrontDeskReloadAsync` ← CSV / CDN ballot import success; people import success; delete-all-people | Front Desk page, `peopleStore`, `ballotStore` (soft re-fetch, not `location.reload`) |
 | `updateOnlineElection` | `OnlineElectionUpdateDto` | `SendOnlineElectionUpdateAsync` ← `ElectionService.UpdateElectionAsync` / `ResetElectionAsync` when online window, process, or `UseOnlineVoting` changes | `electionStore` (patch online fields); Monitoring dashboard re-fetches monitor info |
+| `onlineBallotsChanged` | election GUID only | `NotifyOnlineBallotsChangedAsync` ← non-draft online ballot submit, after commit | Monitoring dashboard re-fetches monitor info |
 
 **Person list contract:** v4 uses fine-grained `PersonAdded` / `PersonUpdated` / `PersonDeleted`, not v3’s single `updatePeople` stream. Handlers refetch the affected person (or drop the row on delete) rather than applying a partial patch from the thin DTO.
 

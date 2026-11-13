@@ -116,7 +116,7 @@ const routes = [
       },
 
       {
-        path: "vote/:electionId",
+        path: "vote/:electionId?",
 
         name: "voter-ballot",
 

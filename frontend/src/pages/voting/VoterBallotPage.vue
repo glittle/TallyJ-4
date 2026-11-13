@@ -30,6 +30,12 @@ import {
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 import type { OnlinePerson } from "../../types";
 import { debounce } from "../../utils/debounce";
+import {
+  electionGuidFromKioskVoterId,
+  readRememberedVoterElection,
+  readRouteElectionId,
+  rememberVoterElection,
+} from "../../utils/voterElectionContext";
 
 const router = useRouter();
 const route = useRoute();
@@ -37,8 +43,10 @@ const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
-const electionGuid = ref(route.params.electionId as string);
-const loading = ref(false);
+const electionGuid = ref("");
+/** True until the session and election have been resolved. Starts true so a reload does not flash "Election not found". */
+const loading = ref(true);
+const loadFailed = ref(false);
 const submitting = ref(false);
 const autosaveReady = ref(false);
 /** Once Submitted, later autosaves keep isDraft false (never demote). */
@@ -103,20 +111,86 @@ const allVotablePersonOptions = computed(() => {
 });
 
 onMounted(async () => {
+  loading.value = true;
+  loadFailed.value = false;
+
   const restored = await onlineVotingStore.restoreSession();
   if (!restored) {
     showErrorMessage(t("voting.ballot.authRequired"));
     router.push({
       name: "voter-auth",
-      query: { election: electionGuid.value },
+      query: { election: readRouteElectionId(route.params.electionId) },
     });
     return;
   }
 
-  await onlineVotingStore.ensureVoterHubsConnected();
-  await onlineVotingStore.joinElectionBallotPresence(electionGuid.value);
+  const id = await resolveElectionId();
+  if (!id) {
+    loadFailed.value = true;
+    loading.value = false;
+    return;
+  }
+
+  electionGuid.value = id;
+  rememberVoterElection(id);
+  if (readRouteElectionId(route.params.electionId) !== id) {
+    await router.replace({
+      name: "voter-ballot",
+      params: { electionId: id },
+    });
+  }
+
   await loadElectionData();
+  // Presence is for the monitor count. A slow or failed hub must not block the ballot.
+  void connectBallotPresence(id);
 });
+
+/**
+ * Route id first. After a reload that lost the id, the kiosk voter session
+ * still contains the election, then this tab's last ballot, then the only
+ * open election for this voter.
+ */
+async function resolveElectionId(): Promise<string> {
+  const fromRoute = readRouteElectionId(route.params.electionId);
+  if (fromRoute) {
+    return fromRoute;
+  }
+
+  if (onlineVotingStore.isKioskSession) {
+    const fromKiosk = electionGuidFromKioskVoterId(onlineVotingStore.voterId);
+    if (fromKiosk) {
+      return fromKiosk;
+    }
+  }
+
+  const remembered = readRememberedVoterElection();
+  if (remembered) {
+    return remembered;
+  }
+
+  try {
+    const elections = await onlineVotingStore.loadAvailableElections();
+    const open = elections.filter(
+      (election) => election.isOpen && election.electionGuid,
+    );
+    if (open.length === 1) {
+      return open[0]!.electionGuid!;
+    }
+  } catch {
+    // The empty state covers a voter with no recoverable election.
+  }
+
+  return "";
+}
+
+async function connectBallotPresence(id: string): Promise<void> {
+  try {
+    await onlineVotingStore.ensureVoterHubsConnected();
+    await onlineVotingStore.joinElectionBallotPresence(id);
+  } catch (error) {
+    console.error("Failed to join ballot presence:", error);
+  }
+}
 
 onUnmounted(async () => {
   runAutosave.flush();
@@ -158,6 +232,9 @@ async function loadElectionData() {
     }
   } catch (error) {
     console.error("Error loading election data:", error);
+    if (!onlineVotingStore.electionInfo) {
+      loadFailed.value = true;
+    }
   } finally {
     loading.value = false;
     autosaveReady.value = true;
@@ -606,7 +683,7 @@ function backToElections() {
         </div>
       </ElCard>
 
-      <ElCard v-else>
+      <ElCard v-else-if="loadFailed">
         <ElEmpty :description="$t('voting.ballot.electionNotFound')" />
       </ElCard>
     </div>

@@ -351,6 +351,31 @@ public class SignalRNotificationServiceTests
     }
 
     [Fact]
+    public async Task NotifyOnlineBallotsChangedAsync_sends_election_id_only_to_FrontDesk()
+    {
+        var (service, _, frontDeskClients, _, _, _, _, _, groupProxies) = CreateService();
+        var frontDeskGroup = FrontDeskHub.GetGroupName(_electionGuid);
+
+        await service.NotifyOnlineBallotsChangedAsync(_electionGuid);
+
+        frontDeskClients.Verify(c => c.Group(frontDeskGroup), Times.Once);
+        Assert.True(groupProxies.TryGetValue(frontDeskGroup, out var proxy));
+        proxy!.Verify(
+            p => p.SendCoreAsync(
+                "onlineBallotsChanged",
+                It.IsAny<object?[]>(),
+                It.IsAny<CancellationToken>()),
+            Times.Once);
+
+        var invocation = proxy.Invocations.Single(i =>
+            i.Method.Name == nameof(IClientProxy.SendCoreAsync)
+            && Equals(i.Arguments[0], "onlineBallotsChanged"));
+        var capturedArgs = Assert.IsType<object?[]>(invocation.Arguments[1]);
+        var id = Assert.Single(capturedArgs);
+        Assert.Equal(_electionGuid, id);
+    }
+
+    [Fact]
     public async Task NotifyVoterPersonalUpdateAsync_sends_updateVoter_only_to_person_identity_groups()
     {
         var (service, _, _, _, _, _, _, voterPersonalClients, groupProxies) = CreateService();

@@ -17,6 +17,7 @@ namespace Backend.Tests.UnitTests.Services;
 public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
 {
     private readonly OnlineBallotAcceptLock _lock = new();
+    private readonly Mock<ISignalRNotificationService> _signalR = new();
     private readonly OnlineVotingService _service;
 
     public OnlineVotingServiceAcceptAllTests()
@@ -29,6 +30,10 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
             .Setup(s => s.SendAsync(It.IsAny<MimeKit.MimeMessage>()))
             .Returns(Task.CompletedTask);
 
+        _signalR
+            .Setup(s => s.NotifyOnlineBallotsChangedAsync(It.IsAny<Guid>()))
+            .Returns(Task.CompletedTask);
+
         _service = new OnlineVotingService(
             Context,
             configuration,
@@ -38,7 +43,7 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
             emailSender.Object,
             Mock.Of<IPaidVerificationSender>(),
             Mock.Of<IGoogleIdTokenValidator>(),
-            Mock.Of<ISignalRNotificationService>(),
+            _signalR.Object,
             _lock);
     }
 
@@ -65,6 +70,26 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
         Assert.Equal(1, accept.AcceptedCount);
         Assert.Equal(OnlineBallotStatus.Processed, Context.OnlineVotingInfos.Single().Status);
         Assert.Equal(1, Context.Ballots.Count());
+    }
+
+    [Fact]
+    public async Task Submit_NotifiesMonitorAfterCommit_ButDraftAutosaveDoesNot()
+    {
+        var election = await SeedOpenElectionAsync();
+        var (person, email) = await SeedVoterAsync(election.ElectionGuid);
+
+        var draft = await SubmitPendingAsync(
+            election.ElectionGuid, email, person.PersonGuid, isDraft: true);
+        Assert.True(draft.Success);
+        _signalR.Verify(
+            s => s.NotifyOnlineBallotsChangedAsync(It.IsAny<Guid>()),
+            Times.Never);
+
+        var submit = await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid);
+        Assert.True(submit.Success);
+        _signalR.Verify(
+            s => s.NotifyOnlineBallotsChangedAsync(election.ElectionGuid),
+            Times.Once);
     }
 
     [Fact]
