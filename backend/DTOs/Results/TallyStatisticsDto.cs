@@ -26,17 +26,20 @@ public class TallyStatisticsDto
     public int BallotsNeedingReview { get; set; }
 
     /// <summary>
-    /// The total number of votes cast.
+    /// Potential vote slots for a normal election: ballots × number to elect,
+    /// including spoiled ballots and lines that were never typed. Single-name
+    /// elections store the sum of vote counts instead.
     /// </summary>
     public int TotalVotes { get; set; }
 
     /// <summary>
-    /// The number of valid votes.
+    /// Votes awarded to people. Normal elections count Ok lines on Ok ballots only.
     /// </summary>
     public int ValidVotes { get; set; }
 
     /// <summary>
-    /// The number of invalid votes.
+    /// Spoiled lines on valid ballots, such as Unreadable. Lines on a spoiled
+    /// ballot are not included here.
     /// </summary>
     public int InvalidVotes { get; set; }
 

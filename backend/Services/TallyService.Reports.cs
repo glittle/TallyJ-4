@@ -1,6 +1,5 @@
 using Backend.DTOs.Results;
 using Backend.Entities;
-using Backend.Enumerations;
 using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
@@ -243,7 +242,7 @@ public partial class TallyService
                 l.LocationTypeCode,
                 TotalVoters = _context.People.Count(p => p.ElectionGuid == electionGuid && p.VotingLocationGuid == l.LocationGuid && p.CanVote == true),
                 Voted = _context.People.Count(p => p.ElectionGuid == electionGuid && p.VotingLocationGuid == l.LocationGuid && p.HasOnlineBallot == true),
-                BallotsEntered = l.Ballots.Count(b => b.StatusCode == BallotStatus.Ok),
+                BallotsEntered = l.Ballots.Count(),
                 TotalVotes = l.Ballots.Sum(b => b.Votes.Count)
             })
             .ToListAsync();

@@ -97,7 +97,9 @@ public partial class ReportService
 
         var numEligible = summary?.NumEligibleToVote ?? 0;
         var numVoted = summary?.NumVoters ?? 0;
-        var totalBallots = summary?.BallotsReceived ?? 0;
+        // v3 NumBallotsWithManual is valid ballots plus spoiled ballots (Too Few
+        // and the rest). The warning row compares that total with Voted.
+        var ballotsReceived = (summary?.BallotsReceived ?? 0) + (summary?.SpoiledBallots ?? 0);
         var participation = numEligible > 0 ? (double)numVoted / numEligible * 100 : 0;
 
         return new MainReportDto
@@ -107,7 +109,7 @@ public partial class ReportService
             DateOfElection = election.DateOfElection,
             NumEligibleToVote = numEligible,
             SumOfEnvelopesCollected = numVoted,
-            NumBallotsWithManual = totalBallots,
+            NumBallotsWithManual = ballotsReceived,
             PercentParticipation = participation,
             InPersonBallots = summary?.InPersonBallots ?? 0,
             MailedInBallots = summary?.MailedInBallots ?? 0,

@@ -245,9 +245,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "results.totalVotes": {
-    "t": "Total Votes",
+    "t": "Potential votes",
     "s": "source",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-11-13T08:00:00Z"
   },
   "results.validVotes": {
     "t": "Valid Votes",

@@ -95,7 +95,10 @@ public partial class TallyService
                 l.LocationGuid,
                 l.Name,
                 l.LocationTypeCode,
-                BallotCount = l.Ballots.Count(b => b.StatusCode == BallotStatus.Ok),
+                // Entered ballots, including Too Few and other non-Ok statuses.
+                // Computer rows count every ballot; counting only Ok here made
+                // the location row disagree with the computer row and with VoteCount.
+                BallotCount = l.Ballots.Count(),
                 VoteCount = l.Ballots.Sum(b => b.Votes.Count),
                 VoterCount = _context.People.Count(p => p.ElectionGuid == electionGuid && p.VotingLocationGuid == l.LocationGuid && p.CanVote == true),
                 Status = l.Ballots.Any() ? "Active" : "No Ballots"
