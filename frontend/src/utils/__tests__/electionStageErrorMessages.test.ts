@@ -1,6 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { createI18n } from "vue-i18n";
-import { translateElectionStageChangeError } from "../electionStageErrorMessages";
+import {
+  translateAnalysisBlocker,
+  translateElectionStageChangeError,
+} from "../electionStageErrorMessages";
 
 const i18n = createI18n({
   legacy: false,
@@ -20,6 +23,8 @@ const i18n = createI18n({
         "{count} count-reconciliation mismatch(es) must be resolved before analyzing or finalizing",
       "elections.stageChangeError.onlineVotingStillOpen":
         "Close the online voting window before finalizing this election.",
+      "tally.reconciliation.blocked":
+        "{count} mismatch(es) must be resolved before Analyze or Finalize.",
     },
   },
 });
@@ -89,5 +94,32 @@ describe("translateElectionStageChangeError", () => {
     expect(translateElectionStageChangeError("some.unknown.key", t)).toBe(
       "Failed to change election stage",
     );
+  });
+});
+
+describe("translateAnalysisBlocker", () => {
+  const t = i18n.global.t;
+
+  it("uses the Calculate mismatch sentence for count reconciliation", () => {
+    expect(
+      translateAnalysisBlocker(
+        "elections.stageChangeError.countsDoNotReconcile|count=1",
+        t,
+      ),
+    ).toBe("1 mismatch(es) must be resolved before Analyze or Finalize.");
+  });
+
+  it("uses the stage phrase for outstanding ballots", () => {
+    expect(
+      translateAnalysisBlocker(
+        "elections.stageChangeError.ballotsOutstanding|count=3",
+        t,
+      ),
+    ).toBe("3 ballot(s) have outstanding issues");
+  });
+
+  it("returns an empty string when Analyze is not blocked", () => {
+    expect(translateAnalysisBlocker(null, t)).toBe("");
+    expect(translateAnalysisBlocker("", t)).toBe("");
   });
 });

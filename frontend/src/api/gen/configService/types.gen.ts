@@ -2116,7 +2116,8 @@ export type ResultsSaveTieCountsResponseDto = {
 export type ResultsTallyResultDto = {
     electionGuid?: string;
     electionName?: string | null;
-    calculatedAt?: Date;
+    calculatedAt?: Date | null;
+    analysisBlocker?: string | null;
     statistics?: ResultsTallyStatisticsDto;
     results?: Array<ResultsPersonResultDto> | null;
     ties?: Array<ResultsTieInfoDto> | null;

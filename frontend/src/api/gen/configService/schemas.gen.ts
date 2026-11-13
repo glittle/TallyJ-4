@@ -7274,7 +7274,12 @@ export const Results_TallyResultDtoSchema = {
         },
         calculatedAt: {
             type: 'string',
-            format: 'date-time'
+            format: 'date-time',
+            nullable: true
+        },
+        analysisBlocker: {
+            type: 'string',
+            nullable: true
         },
         statistics: {
             $ref: '#/components/schemas/Results_TallyStatisticsDto'

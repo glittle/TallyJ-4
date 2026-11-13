@@ -16,9 +16,19 @@ public class TallyResultDto
     public string ElectionName { get; set; } = string.Empty;
 
     /// <summary>
-    /// The date and time when the tally was calculated.
+    /// Present when a calculated (C) or final (F) summary is stored.
+    /// Null when Analyze has not stored a result, including a blocked run.
+    /// A blocked run does not write this and does not replace a previous result.
     /// </summary>
-    public DateTimeOffset CalculatedAt { get; set; }
+    public DateTimeOffset? CalculatedAt { get; set; }
+
+    /// <summary>
+    /// Phrase key when Analyze cannot run, with the same parameters Calculate returns
+    /// (for example <c>elections.stageChangeError.countsDoNotReconcile|count=1</c>).
+    /// Null when ballot review and count reconciliation both allow analysis.
+    /// A previous stored result is still returned when this is set.
+    /// </summary>
+    public string? AnalysisBlocker { get; set; }
 
     /// <summary>
     /// Statistical information about the tally.

@@ -198,7 +198,7 @@ function getSectionLabel(section: string) {
 
       <el-divider />
 
-      <div v-if="results" class="results-preview">
+      <div v-if="results?.calculatedAt" class="results-preview">
         <h3>{{ $t("tally.resultsPreview") }}</h3>
 
         <el-descriptions :column="2" border style="margin-bottom: 20px">

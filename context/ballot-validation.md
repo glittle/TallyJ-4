@@ -48,3 +48,13 @@ Ballot side: every entered ballot, **including spoiled** (`StatusCode != Ok`). A
 **Rejected alternative:** treat pending online as Processed for the Front Desk count. Rejected — pending rows are not ballots until Accept-all.
 
 **Reason:** issue #190 asked for a teller-visible row-level report that blocks Analyze/Finalize when counts do not reconcile, using the existing readiness path.
+
+## A blocked Analyze is not a stored result
+
+**Status:** active  
+**Evidence:** confirmed (issue #426; `GetTallyResultsAsync` used to stamp `CalculatedAt` on every read)  
+**Source:** issue #426
+
+`CalculatedAt` is set only when a calculated (`C`) or final (`F`) summary is already stored. It is the time the results were read, not a column on `ResultSummary`. Outstanding ballots and count reconciliation are checked before the analyzer clears or writes `Result` / non-manual `ResultSummary` rows, so a blocked Calculate leaves a previous tally in place. The Results page treats a null `CalculatedAt` as “not calculated” and shows the existing mismatch or ballot-blocker message (`AnalysisBlocker` is the same phrase key Calculate returns) instead of zeros and a Calculated-at time.
+
+**Rejected alternative:** persist an empty result row and timestamp when Calculate is blocked, so the Results page can see that the run happened. Rejected — that row is not a tally, and writing it would replace a previous good result. The read model had no stored timestamp; it invented one on every GET.

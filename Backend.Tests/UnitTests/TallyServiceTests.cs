@@ -121,6 +121,108 @@ public class TallyServiceTests : ServiceTestBase
             _service.CalculateNormalElectionAsync(election.ElectionGuid));
 
         Assert.Contains(ElectionStageMessageKeys.CountsDoNotReconcile, exception.Message);
+        Assert.Empty(Context.Results.Where(r => r.ElectionGuid == election.ElectionGuid));
+        Assert.Empty(Context.ResultSummaries.Where(rs =>
+            rs.ElectionGuid == election.ElectionGuid
+            && rs.ResultType != TallyService.ResultTypeManual));
+    }
+
+    [Fact]
+    public async Task GetTallyResultsAsync_WhenNeverCalculatedAndUnreconciled_OmitsTimestampAndReportsBlocker()
+    {
+        var election = await CreateTestElectionAsync();
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        await CreateTestBallotsAsync(location.LocationGuid, 1);
+        Context.People.Add(new Person
+        {
+            ElectionGuid = election.ElectionGuid,
+            PersonGuid = Guid.NewGuid(),
+            FirstName = "Extra",
+            LastName = "CheckIn",
+            CanVote = true,
+            VotingMethod = "P",
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetTallyResultsAsync(election.ElectionGuid);
+
+        Assert.Null(result.CalculatedAt);
+        Assert.NotNull(result.AnalysisBlocker);
+        Assert.Contains(ElectionStageMessageKeys.CountsDoNotReconcile, result.AnalysisBlocker);
+        Assert.Empty(result.Results);
+        Assert.Equal(0, result.Statistics.TotalBallots);
+        Assert.Empty(Context.Results.Where(r => r.ElectionGuid == election.ElectionGuid));
+        Assert.Empty(Context.ResultSummaries.Where(rs => rs.ElectionGuid == election.ElectionGuid));
+    }
+
+    [Fact]
+    public async Task GetTallyResultsAsync_WhenBallotsBlockAnalysis_ReportsBlockerWithoutTimestamp()
+    {
+        var election = await CreateTestElectionAsync();
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 1);
+        ballots[0].StatusCode = BallotStatus.Review;
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetTallyResultsAsync(election.ElectionGuid);
+
+        Assert.Null(result.CalculatedAt);
+        Assert.NotNull(result.AnalysisBlocker);
+        Assert.Contains(ElectionStageMessageKeys.BallotsOutstanding, result.AnalysisBlocker);
+        Assert.Empty(Context.ResultSummaries.Where(rs => rs.ElectionGuid == election.ElectionGuid));
+    }
+
+    [Fact]
+    public async Task CalculateNormalElectionAsync_WhenUnreconciled_DoesNotReplaceStoredResults()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 1);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 1);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 1);
+        Context.Votes.Add(new Vote
+        {
+            BallotGuid = ballots[0].BallotGuid,
+            PersonGuid = people[0].PersonGuid,
+            PositionOnBallot = 1,
+            VoteStatus = VoteStatus.Ok,
+            PersonCombinedInfo = people[0].CombinedInfo,
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        var before = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+        var storedVote = before.Results.Single().VoteCount;
+        var storedSummaryVotes = Context.ResultSummaries
+            .Single(rs => rs.ElectionGuid == election.ElectionGuid && rs.ResultType == TallyService.ResultTypeFinal)
+            .TotalVotes;
+
+        Context.People.Add(new Person
+        {
+            ElectionGuid = election.ElectionGuid,
+            PersonGuid = Guid.NewGuid(),
+            FirstName = "Later",
+            LastName = "CheckIn",
+            CanVote = true,
+            VotingMethod = "P",
+            RowVersion = new byte[8]
+        });
+        await Context.SaveChangesAsync();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CalculateNormalElectionAsync(election.ElectionGuid));
+
+        Assert.Contains(ElectionStageMessageKeys.CountsDoNotReconcile, exception.Message);
+
+        var after = await _service.GetTallyResultsAsync(election.ElectionGuid);
+        Assert.NotNull(after.CalculatedAt);
+        Assert.NotNull(after.AnalysisBlocker);
+        Assert.Contains(ElectionStageMessageKeys.CountsDoNotReconcile, after.AnalysisBlocker);
+        Assert.Equal(storedVote, after.Results.Single().VoteCount);
+        Assert.Equal(storedSummaryVotes, Context.ResultSummaries
+            .Single(rs => rs.ElectionGuid == election.ElectionGuid && rs.ResultType == TallyService.ResultTypeFinal)
+            .TotalVotes);
+        Assert.Equal(1, Context.Results.Count(r => r.ElectionGuid == election.ElectionGuid));
     }
 
     [Fact]
@@ -289,6 +391,8 @@ public class TallyServiceTests : ServiceTestBase
         var result = await _service.GetTallyResultsAsync(election.ElectionGuid);
 
         Assert.NotNull(result);
+        Assert.NotNull(result.CalculatedAt);
+        Assert.Null(result.AnalysisBlocker);
         Assert.NotEmpty(result.Results);
     }
 
@@ -358,6 +462,8 @@ public class TallyServiceTests : ServiceTestBase
         var result = await _service.CalculateNormalElectionAsync(election.ElectionGuid);
 
         Assert.NotNull(result);
+        Assert.NotNull(result.CalculatedAt);
+        Assert.Null(result.AnalysisBlocker);
         Assert.Equal(election.ElectionGuid, result.ElectionGuid);
         Assert.Empty(result.Results);
         Assert.Equal(0, result.Statistics.BallotsReceived);

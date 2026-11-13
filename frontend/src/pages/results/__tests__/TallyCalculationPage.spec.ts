@@ -2,7 +2,7 @@ import { flushPromises, mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@/test/setup";
 import TallyCalculationPage from "../TallyCalculationPage.vue";
-import type { CountReconciliationReportDto } from "@/types";
+import type { CountReconciliationReportDto, TallyResultDto } from "@/types";
 
 const {
   mockFetchReconciliation,
@@ -59,7 +59,7 @@ const readyReport: CountReconciliationReportDto = {
 const storeState = {
   calculating: false,
   loading: false,
-  results: null,
+  results: null as TallyResultDto | null,
   tallyProgress: null,
   reconciliation: blockedReport as CountReconciliationReportDto | null,
   currentElection: { numberToElect: 9 },
@@ -128,6 +128,7 @@ describe("TallyCalculationPage reconciliation gate", () => {
     mockShowSuccess.mockReset();
     mockFetchReconciliation.mockResolvedValue(blockedReport);
     storeState.reconciliation = blockedReport;
+    storeState.results = null;
     storeState.calculating = false;
   });
 
@@ -189,5 +190,37 @@ describe("TallyCalculationPage reconciliation gate", () => {
     expect(mockShowError).toHaveBeenCalledWith(
       "3 ballot(s) have outstanding issues",
     );
+  });
+
+  it("does not preview a zeroed result when no tally is stored", async () => {
+    storeState.results = {
+      electionGuid: "election-1",
+      electionName: "Blocked",
+      calculatedAt: null,
+      analysisBlocker:
+        "elections.stageChangeError.countsDoNotReconcile|count=1",
+      statistics: {
+        totalBallots: 0,
+        ballotsReceived: 0,
+        spoiledBallots: 0,
+        ballotsNeedingReview: 0,
+        totalVotes: 0,
+        validVotes: 0,
+        invalidVotes: 0,
+        numVoters: 0,
+        numEligiblePeople: 0,
+        numberToElect: 9,
+        numberExtra: 0,
+      },
+      results: [],
+      ties: [],
+    };
+
+    const wrapper = mount(TallyCalculationPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    expect(wrapper.find(".results-preview").exists()).toBe(false);
   });
 });

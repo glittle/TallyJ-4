@@ -1,8 +1,16 @@
 export interface TallyResultDto {
   electionGuid: string;
   electionName: string;
-  /** ISO string from older callers, or Date from the hey-api date transformer. */
-  calculatedAt: string | Date;
+  /**
+   * Set when a calculated or final summary is stored.
+   * Null when Analyze has not stored a result, including a blocked run.
+   */
+  calculatedAt?: string | Date | null;
+  /**
+   * Phrase key when Analyze cannot run, with the same parameters Calculate returns.
+   * A previous stored result is still present when this is set.
+   */
+  analysisBlocker?: string | null;
   statistics: TallyStatisticsDto;
   results: PersonResultDto[];
   ties: TieInfoDto[];
