@@ -138,6 +138,38 @@ function formatDateTime(date: string | Date) {
           show-icon
         />
 
+        <el-alert
+          v-if="calculating || tallyProgress"
+          data-testid="results-progress"
+          :title="
+            calculating
+              ? $t('results.calculating')
+              : $t('results.tallyProgress')
+          "
+          type="warning"
+          :closable="false"
+          style="margin-bottom: 20px"
+        >
+          <div v-if="tallyProgress" style="margin-top: 10px">
+            <el-progress
+              :percentage="tallyProgress.percentComplete"
+              :text-inside="true"
+              :stroke-width="20"
+              status="warning"
+            />
+            <div style="margin-top: 10px; font-size: 14px">
+              {{ tallyProgressMessage }}
+              <br />
+              {{
+                $t("results.processedBallots", {
+                  processed: tallyProgress.processedBallots,
+                  total: tallyProgress.totalBallots,
+                })
+              }}
+            </div>
+          </div>
+        </el-alert>
+
         <template v-if="hasCalculation">
           <el-alert
             v-if="results.calculatedAt"
@@ -151,37 +183,6 @@ function formatDateTime(date: string | Date) {
             :closable="false"
             style="margin-bottom: 20px"
           />
-
-          <el-alert
-            v-if="calculating || tallyProgress"
-            :title="
-              calculating
-                ? $t('results.calculating')
-                : $t('results.tallyProgress')
-            "
-            type="warning"
-            :closable="false"
-            style="margin-bottom: 20px"
-          >
-            <div v-if="tallyProgress" style="margin-top: 10px">
-              <el-progress
-                :percentage="tallyProgress.percentComplete"
-                :text-inside="true"
-                :stroke-width="20"
-                status="warning"
-              />
-              <div style="margin-top: 10px; font-size: 14px">
-                {{ tallyProgressMessage }}
-                <br />
-                {{
-                  $t("results.processedBallots", {
-                    processed: tallyProgress.processedBallots,
-                    total: tallyProgress.totalBallots,
-                  })
-                }}
-              </div>
-            </div>
-          </el-alert>
 
           <el-descriptions :column="2" border style="margin-bottom: 20px">
             <el-descriptions-item :label="$t('results.totalBallots')">
@@ -225,7 +226,7 @@ function formatDateTime(date: string | Date) {
         </template>
 
         <el-empty
-          v-else-if="!tallyBlocked"
+          v-else-if="!tallyBlocked && !calculating && !tallyProgress"
           :description="$t('results.noResults')"
         />
       </div>

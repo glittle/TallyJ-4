@@ -6,6 +6,7 @@ import type {
   TallyResultDto,
   TallyStatisticsDto,
 } from "@/types";
+import type { TallyProgressEvent } from "@/types/SignalREvents";
 import ResultsPage from "../ResultsPage.vue";
 
 const storeState = {
@@ -13,7 +14,7 @@ const storeState = {
   calculating: false,
   results: null as TallyResultDto | null,
   reconciliation: null as CountReconciliationReportDto | null,
-  tallyProgress: null,
+  tallyProgress: null as TallyProgressEvent | null,
   fetchResults: vi.fn().mockResolvedValue(undefined),
   fetchReconciliation: vi.fn().mockResolvedValue(undefined),
   initializeSignalR: vi.fn().mockResolvedValue(undefined),
@@ -38,7 +39,7 @@ const stubs = {
   ElSkeleton: { template: "<div class='skeleton' />" },
   ElAlert: {
     props: ["title"],
-    template: "<div class='alert'>{{ title }}</div>",
+    template: "<div class='alert'>{{ title }}<slot /></div>",
   },
   ElProgress: { template: "<div />" },
   ElDescriptions: { template: "<div class='descriptions'><slot /></div>" },
@@ -121,6 +122,8 @@ function tally(overrides: Partial<TallyResultDto> = {}): TallyResultDto {
 describe("ResultsPage blocked tally", () => {
   beforeEach(() => {
     storeState.loading = false;
+    storeState.calculating = false;
+    storeState.tallyProgress = null;
     storeState.results = null;
     storeState.reconciliation = null;
     storeState.fetchResults.mockClear();
@@ -201,6 +204,30 @@ describe("ResultsPage blocked tally", () => {
     expect(wrapper.text()).toContain("Ada Lovelace");
     expect(wrapper.text()).toContain("Total Ballots");
     expect(wrapper.text()).toContain("3");
+  });
+
+  it("shows tally progress before the first stored calculation", async () => {
+    storeState.results = tally();
+    storeState.reconciliation = readyReport;
+    storeState.calculating = true;
+    storeState.tallyProgress = {
+      electionGuid: "election-1",
+      totalBallots: 3,
+      processedBallots: 1,
+      totalVotes: 0,
+      message: "tally.progress.starting",
+      percentComplete: 10,
+      isComplete: false,
+    };
+
+    const wrapper = await mountPage();
+
+    expect(wrapper.get('[data-testid="results-progress"]').text()).toContain(
+      "Starting tally calculation...",
+    );
+    expect(wrapper.text()).not.toContain("Calculated at");
+    expect(wrapper.find(".empty").exists()).toBe(false);
+    expect(wrapper.find(".results-table").exists()).toBe(false);
   });
 
   it("asks for a calculation when nothing is stored and Analyze is allowed", async () => {
