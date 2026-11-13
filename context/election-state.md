@@ -14,7 +14,7 @@ Treat state changes as high-consequence operations. Prefer clear, atomic transit
 ## Lock after analysis is the Finalized stage
 
 **Status:** active  
-**Evidence:** inferred (issue #172 names; implementation in `ElectionService.ChangeElectionStageAsync`); people/ballot write gate and online-submit refusal confirmed by issue #308
+**Evidence:** inferred (issue #172 names; implementation in `ElectionService.ChangeElectionStageAsync`); people/ballot write gate and online-submit refusal confirmed by issue #308; tie-break count saves confirmed by issue #432
 
 There is no separate `Locked` flag. After analysis is complete and counts reconcile, advancing to **Finalized** is the lock:
 
@@ -26,13 +26,13 @@ There is no separate `Locked` flag. After analysis is complete and counts reconc
 
 **Rejected alternative:** reuse the unused `elections.confirmRevert` string, or auto-send `ConfirmLeavingFinalized` without a dialog. Rejected — leaving Finalized reopens people/ballot writes (#308); the dialog copy must say that, and the API flag must stay a deliberate confirm.
 - Accept-all online ballots is refused while Finalized (`monitoring.acceptAll.finalized`).
-- People, ballot, vote, Front Desk roll, people-import execute / delete-all, ballot/CDN import mutations, and online voter submit (create or update a pending online ballot) are refused while Finalized. Tellers see `elections.finalizedWriteBlocked`; voters see `voting.submit.finalized`. Reads stay open. Unlocking those writes is the confirmed leave-Finalized stage change (#309).
+- People, ballot, vote, Front Desk roll, people-import execute / delete-all, ballot/CDN import mutations, tie-break count saves, and online voter submit (create or update a pending online ballot) are refused while Finalized. Tellers see `elections.finalizedWriteBlocked`; voters see `voting.submit.finalized`. Reads stay open. Unlocking those writes is the confirmed leave-Finalized stage change (#309). Tie-break saves were still accepted after Finalized (#432) because `SaveTieCountsAsync` never called `ElectionFinalizedWriteGuard`. Counts saved before that stage, including an all-elected tie, stay and can still be edited until the election is Finalized.
 
 **Rejected alternative (not implemented):** a dedicated lock bit plus a “Move all tellers” command. Stage change + SignalR `statusChanged` is the coordination path.
 
 **Rejected alternative:** invent a second lock type or middleware. The existing `ElectionStage.Finalized` check (same as Accept-all) is the lock; `ElectionFinalizedWriteGuard` is only a shared helper.
 
-**What stays writable on purpose:** election settings, locations, teller names, computers, analysis/results, test-election reset, and people-import file upload/mapping (those do not change the roll until execute). Person-detail reads never mint a kiosk code (including after Finalized). Generate/renew is a write and is blocked after Finalized. Online-window open/close still gates submit when the election is not Finalized.
+**What stays writable on purpose:** election settings, locations, teller names, computers, re-running analysis and reading results, test-election reset, and people-import file upload/mapping (those do not change the roll until execute). Saving tie-break counts is a result mutation and uses the same teller refusal as people and ballots. Person-detail reads never mint a kiosk code (including after Finalized). Generate/renew is a write and is blocked after Finalized. Online-window open/close still gates submit when the election is not Finalized.
 
 **Rejected alternative:** leave online voter submit writable while Finalized because the online window (not stage) already gates it. Rejected — Finalized is the lock for people/ballot mutations, including creating or updating a pending online ballot.
 

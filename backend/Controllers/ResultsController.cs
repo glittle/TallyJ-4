@@ -1,5 +1,6 @@
 ﻿using Backend.Authorization;
 using Backend.DTOs.Results;
+using Backend.Enumerations;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -350,6 +351,11 @@ public class ResultsController : ControllerBase
         {
             _logger.LogWarning(ex, "Election {ElectionGuid} not found", electionGuid);
             return NotFound(new { message = ex.Message });
+        }
+        catch (InvalidOperationException ex) when (ex.Message == ElectionStageMessageKeys.FinalizedWriteBlocked)
+        {
+            _logger.LogWarning(ex, "Tie counts refused for election {ElectionGuid}", electionGuid);
+            return BadRequest(new { message = ex.Message });
         }
         catch (Exception ex)
         {
