@@ -115,8 +115,20 @@ export function setElectionKioskEnabled(
   }
 
   if (enabled) {
-    if (!current.trim()) {
-      return VOTING_METHOD_KIOSK;
+    const trimmed = current.trim();
+    // Blank means the implicit In person / Mailed / Dropped off default.
+    // Writing only "K" used to replace that default (#428).
+    if (!trimmed) {
+      return `${DEFAULT_FRONT_DESK_METHODS.join("")}${VOTING_METHOD_KIOSK}`;
+    }
+    // A two-letter alias ("OL", "IP") is one token. Appending "K" would
+    // split it into letters ("OLK" → Online + Kiosk).
+    if (
+      !trimmed.includes(",") &&
+      trimmed.length === 2 &&
+      ELECTION_METHOD_ALIASES[trimmed.toUpperCase()]
+    ) {
+      return `${trimmed},K`;
     }
     if (current.includes(",")) {
       return `${current.replace(/,\s*$/, "")},K`;
@@ -151,16 +163,10 @@ export function isRecordedOtherThanOnline(method?: string | null): boolean {
 }
 
 /**
- * Parse Election.VotingMethods into Person.VotingMethod letters.
+ * Recognized letters in Election.VotingMethods, with no empty-string default.
  * Accepts concatenated letters (`PMD`) or comma-separated aliases (`IP,OL`).
  */
-export function parseElectionVotingMethods(
-  votingMethods?: string | null,
-): string[] {
-  if (!votingMethods?.trim()) {
-    return [...DEFAULT_FRONT_DESK_METHODS];
-  }
-
+function collectElectionVotingMethodCodes(votingMethods: string): string[] {
   const seen = new Set<string>();
   const result: string[] = [];
 
@@ -204,6 +210,22 @@ export function parseElectionVotingMethods(
     }
   }
 
+  return result;
+}
+
+/**
+ * Parse Election.VotingMethods into Person.VotingMethod letters.
+ * Accepts concatenated letters (`PMD`) or comma-separated aliases (`IP,OL`).
+ * A blank value is the default In person / Mailed / Dropped off set.
+ */
+export function parseElectionVotingMethods(
+  votingMethods?: string | null,
+): string[] {
+  if (!votingMethods?.trim()) {
+    return [...DEFAULT_FRONT_DESK_METHODS];
+  }
+
+  const result = collectElectionVotingMethodCodes(votingMethods);
   return result.length > 0 ? result : [...DEFAULT_FRONT_DESK_METHODS];
 }
 
@@ -222,14 +244,74 @@ export function isWithdrawableOnlineBallotStatus(
   return status === "Draft" || status === "Submitted";
 }
 
+const PAPER_METHOD_CODES = new Set([
+  VOTING_METHOD_IN_PERSON,
+  VOTING_METHOD_MAILED,
+  VOTING_METHOD_DROPPED_OFF,
+]);
+
+/** Stable Front Desk order so number keys stay predictable. */
+const FRONT_DESK_CHECK_IN_ORDER = [
+  VOTING_METHOD_IN_PERSON,
+  VOTING_METHOD_MAILED,
+  VOTING_METHOD_DROPPED_OFF,
+  VOTING_METHOD_CALLED_IN,
+  VOTING_METHOD_KIOSK,
+  VOTING_METHOD_IMPORTED,
+  "1",
+  "2",
+  "3",
+];
+
+export type FrontDeskCheckInOptions = {
+  /** Election.UseCallInButton. The Voting Methods text can also include `C`. */
+  useCallInButton?: boolean | null;
+};
+
 /**
- * Methods a teller may record at Front Desk. Online (`O`) is voter-initiated
- * only — tellers do not check anyone in as Online.
+ * Methods a teller may record at Front Desk.
+ *
+ * In person is always offered. Mailed and Dropped off stay on unless the
+ * stored methods name at least one paper method and leave the other out
+ * (blank, and a value that only names Kiosk / Online / Call-in / Imported,
+ * still mean the P/M/D default). Called in, Kiosk, Imported, and custom
+ * codes appear when that setting names them. `UseCallInButton` also turns
+ * Called in on. Online is voter-initiated and is never a desk button.
  */
 export function parseFrontDeskCheckInMethods(
   votingMethods?: string | null,
+  options?: FrontDeskCheckInOptions,
 ): string[] {
-  return parseElectionVotingMethods(votingMethods).filter(
-    (code) => code !== VOTING_METHOD_ONLINE,
+  const trimmed = votingMethods?.trim() ?? "";
+  const recognized = trimmed ? collectElectionVotingMethodCodes(trimmed) : [];
+  const namesPaperMethod = recognized.some((code) =>
+    PAPER_METHOD_CODES.has(code),
   );
+
+  const enabled = new Set<string>([VOTING_METHOD_IN_PERSON]);
+
+  if (!trimmed || !namesPaperMethod) {
+    enabled.add(VOTING_METHOD_MAILED);
+    enabled.add(VOTING_METHOD_DROPPED_OFF);
+  } else {
+    if (recognized.includes(VOTING_METHOD_MAILED)) {
+      enabled.add(VOTING_METHOD_MAILED);
+    }
+    if (recognized.includes(VOTING_METHOD_DROPPED_OFF)) {
+      enabled.add(VOTING_METHOD_DROPPED_OFF);
+    }
+  }
+
+  for (const code of recognized) {
+    if (code === VOTING_METHOD_ONLINE || PAPER_METHOD_CODES.has(code)) {
+      continue;
+    }
+    enabled.add(code);
+  }
+
+  if (options?.useCallInButton) {
+    enabled.add(VOTING_METHOD_CALLED_IN);
+  }
+
+  return FRONT_DESK_CHECK_IN_ORDER.filter((code) => enabled.has(code));
 }

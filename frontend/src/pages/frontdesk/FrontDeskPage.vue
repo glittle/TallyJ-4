@@ -131,14 +131,14 @@ const highlightTimers = new Map<string, number>();
 const rowHighlightVersion = ref(0);
 
 const registrationTypes = computed(() =>
-  parseFrontDeskCheckInMethods(currentElection.value?.votingMethods).map(
-    (value, index) => ({
-      value,
-      label: labelVotingMethod(value, t),
-      key: String(index + 1),
-      isVotingMethod: true,
-    }),
-  ),
+  parseFrontDeskCheckInMethods(currentElection.value?.votingMethods, {
+    useCallInButton: currentElection.value?.useCallInButton,
+  }).map((value, index) => ({
+    value,
+    label: labelVotingMethod(value, t),
+    key: String(index + 1),
+    isVotingMethod: true,
+  })),
 );
 
 // Late-bound registration callbacks for SignalR (registration composable created after voters API)

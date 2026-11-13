@@ -25,7 +25,15 @@ function voter(overrides: Partial<FrontDeskVoterDto> = {}): FrontDeskVoterDto {
 
 function setup(
   selected: FrontDeskVoterDto | null,
-  extras: { isElectionFinalized?: boolean } = {},
+  extras: {
+    isElectionFinalized?: boolean;
+    registrationTypes?: {
+      value: string;
+      label: string;
+      key: string;
+      isVotingMethod: boolean;
+    }[];
+  } = {},
 ) {
   const unregisterVoter = vi.fn();
   const checkInVoter = vi.fn();
@@ -34,9 +42,12 @@ function setup(
     hasActiveTeller: ref(true),
     isElectionFinalized: ref(extras.isElectionFinalized ?? false),
     electionFlags: ref([]),
-    registrationTypes: computed(() => [
-      { value: "P", label: "In Person", key: "", isVotingMethod: true },
-    ]),
+    registrationTypes: computed(
+      () =>
+        extras.registrationTypes ?? [
+          { value: "P", label: "In Person", key: "", isVotingMethod: true },
+        ],
+    ),
     selectedVoter: ref(selected),
     searchInputRef: ref(null),
     registrationOverlayRef: ref(null),
@@ -111,5 +122,33 @@ describe("useFrontDeskRegistration Unregister gate", () => {
 
     api.clickDialogButton("P");
     expect(checkInVoter).not.toHaveBeenCalled();
+  });
+
+  it("numbers dialog keys in button order, with In person before later methods", () => {
+    const { api } = setup(voter(), {
+      registrationTypes: [
+        { value: "P", label: "In Person", key: "", isVotingMethod: true },
+        { value: "M", label: "Mailed", key: "", isVotingMethod: true },
+        { value: "D", label: "Dropped Off", key: "", isVotingMethod: true },
+        { value: "K", label: "Kiosk", key: "", isVotingMethod: true },
+      ],
+    });
+
+    expect(api.dialogButtons.value.map((button) => button.value)).toEqual([
+      "P",
+      "M",
+      "D",
+      "K",
+      "__close__",
+    ]);
+    expect(api.dialogButtons.value.map((button) => button.key)).toEqual([
+      "1",
+      "2",
+      "3",
+      "4",
+      "5",
+    ]);
+    expect(api.getDialogButtonKey("P")).toBe("1");
+    expect(api.getDialogButtonKey("K")).toBe("4");
   });
 });

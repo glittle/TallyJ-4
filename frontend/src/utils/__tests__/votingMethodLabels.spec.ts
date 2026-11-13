@@ -56,14 +56,38 @@ describe("votingMethodLabels", () => {
     expect(setElectionKioskEnabled("IP,OL,K", false)).toBe("IP,OL");
     expect(setElectionKioskEnabled("PMD", true)).toBe("PMDK");
     expect(setElectionKioskEnabled("PMDK", false)).toBe("PMD");
-    expect(setElectionKioskEnabled("", true)).toBe("K");
+    expect(setElectionKioskEnabled("", true)).toBe("PMDK");
+    expect(setElectionKioskEnabled("OL", true)).toBe("OL,K");
+    expect(setElectionKioskEnabled("IP", true)).toBe("IP,K");
     expect(setElectionKioskEnabled("IP,OL,K", true)).toBe("IP,OL,K");
     expect(setElectionKioskEnabled("KI", false)).toBe("");
     expect(setElectionKioskEnabled("IP,KI", false)).toBe("IP");
   });
 
-  it("omits Online from Front Desk check-in methods", () => {
+  it("offers In person at Front Desk and keeps paper defaults unless a paper method is named", () => {
+    expect(parseFrontDeskCheckInMethods("K")).toEqual(["P", "M", "D", "K"]);
+    expect(parseFrontDeskCheckInMethods("KI")).toEqual(["P", "M", "D", "K"]);
+    expect(parseFrontDeskCheckInMethods(null)).toEqual(["P", "M", "D"]);
+    expect(parseFrontDeskCheckInMethods("OL")).toEqual(["P", "M", "D"]);
     expect(parseFrontDeskCheckInMethods("PMDKO")).toEqual(["P", "M", "D", "K"]);
     expect(parseFrontDeskCheckInMethods("IP,OL")).toEqual(["P"]);
+    expect(parseFrontDeskCheckInMethods("IP,OL,K")).toEqual(["P", "K"]);
+    expect(parseFrontDeskCheckInMethods("P")).toEqual(["P"]);
+    expect(parseFrontDeskCheckInMethods("M")).toEqual(["P", "M"]);
+    expect(parseFrontDeskCheckInMethods("D")).toEqual(["P", "D"]);
+    expect(parseFrontDeskCheckInMethods("C")).toEqual(["P", "M", "D", "C"]);
+    expect(parseFrontDeskCheckInMethods("IM")).toEqual(["P", "M", "D", "I"]);
+  });
+
+  it("turns Called in on from UseCallInButton even when the method string omits C", () => {
+    expect(
+      parseFrontDeskCheckInMethods("PMD", { useCallInButton: true }),
+    ).toEqual(["P", "M", "D", "C"]);
+    expect(
+      parseFrontDeskCheckInMethods("K", { useCallInButton: false }),
+    ).toEqual(["P", "M", "D", "K"]);
+    expect(
+      parseFrontDeskCheckInMethods("P", { useCallInButton: true }),
+    ).toEqual(["P", "C"]);
   });
 });
