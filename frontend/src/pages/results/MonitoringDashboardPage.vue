@@ -336,6 +336,9 @@ let frontDeskConnection: Awaited<
   ReturnType<typeof signalrService.connectToFrontDeskHub>
 > | null = null;
 let onlineElectionHandler: ((data: unknown) => void) | null = null;
+let onlineBallotsChangedHandler: ((data: unknown) => void) | null = null;
+
+const MONITOR_POLL_MS = 30_000;
 
 const closeIsEstimate = computed(() => {
   const current = electionStore.currentElection;
@@ -382,6 +385,12 @@ onUnmounted(async () => {
   await teardownOnlineElectionListener();
 });
 
+function onMonitorVisible() {
+  if (document.visibilityState === "visible") {
+    void loadData();
+  }
+}
+
 async function ensureElectionLoaded() {
   if (electionStore.currentElection?.electionGuid === electionGuid) {
     return;
@@ -409,27 +418,39 @@ async function refreshData() {
   await loadData();
 }
 
-/** Soft refresh when operator changes online open/close (FrontDesk updateOnlineElection). */
+function sameElection(value: unknown): boolean {
+  if (value === null || value === undefined || value === "") {
+    return false;
+  }
+  return String(value).toLowerCase() === electionGuid.toLowerCase();
+}
+
+/** Soft refresh when the online window changes, or a voter submits a ballot. */
 async function initializeOnlineElectionListener() {
   try {
     frontDeskConnection = await signalrService.connectToFrontDeskHub();
     onlineElectionHandler = (data: unknown) => {
       const payload = data as { electionGuid?: string } | null;
-      if (!payload?.electionGuid) {
+      if (!sameElection(payload?.electionGuid)) {
         return;
       }
-      if (
-        String(payload.electionGuid).toLowerCase() !==
-        electionGuid.toLowerCase()
-      ) {
+      void loadData();
+    };
+    onlineBallotsChangedHandler = (data: unknown) => {
+      const id =
+        typeof data === "string"
+          ? data
+          : (data as { electionGuid?: string } | null)?.electionGuid;
+      if (!sameElection(id)) {
         return;
       }
       void loadData();
     };
     frontDeskConnection.on("updateOnlineElection", onlineElectionHandler);
+    frontDeskConnection.on("onlineBallotsChanged", onlineBallotsChangedHandler);
     await signalrService.joinFrontDeskElection(electionGuid);
   } catch (e) {
-    console.error("Failed to listen for updateOnlineElection on monitor:", e);
+    console.error("Failed to listen for online voting updates on monitor:", e);
   }
 }
 
@@ -444,10 +465,17 @@ async function teardownOnlineElectionListener() {
     if (frontDeskConnection && onlineElectionHandler) {
       frontDeskConnection.off("updateOnlineElection", onlineElectionHandler);
     }
+    if (frontDeskConnection && onlineBallotsChangedHandler) {
+      frontDeskConnection.off(
+        "onlineBallotsChanged",
+        onlineBallotsChangedHandler,
+      );
+    }
   } catch (e) {
-    console.error("Failed to remove updateOnlineElection handler:", e);
+    console.error("Failed to remove online voting monitor handlers:", e);
   } finally {
     onlineElectionHandler = null;
+    onlineBallotsChangedHandler = null;
     frontDeskConnection = null;
   }
 }
@@ -497,10 +525,16 @@ async function confirmAcceptAll() {
 }
 
 function startAutoRefresh() {
-  // Refresh every 30 seconds
+  stopAutoRefresh();
+  // Session counts are in-memory on this host; the poll picks those up.
+  // Skip hidden tabs so a background monitor does not keep hitting the API.
   refreshInterval.value = setInterval(() => {
-    loadData();
-  }, 30000);
+    if (document.visibilityState !== "visible") {
+      return;
+    }
+    void loadData();
+  }, MONITOR_POLL_MS);
+  document.addEventListener("visibilitychange", onMonitorVisible);
 }
 
 function stopAutoRefresh() {
@@ -508,6 +542,7 @@ function stopAutoRefresh() {
     clearInterval(refreshInterval.value);
     refreshInterval.value = null;
   }
+  document.removeEventListener("visibilitychange", onMonitorVisible);
 }
 
 function startCloseCountdownTick() {

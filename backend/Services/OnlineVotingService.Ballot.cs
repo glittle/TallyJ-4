@@ -157,6 +157,22 @@ public partial class OnlineVotingService
 
             _logger.LogInformation("Online ballot submitted for election {ElectionGuid}", dto.ElectionGuid);
 
+            // Draft autosave does not change monitor totals. A real submit does.
+            // Notify after commit so a hub failure cannot turn a saved ballot into an error.
+            if (!dto.IsDraft)
+            {
+                try
+                {
+                    await _signalRNotificationService.NotifyOnlineBallotsChangedAsync(dto.ElectionGuid);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,
+                        "Online ballot saved but monitor notify failed for election {ElectionGuid}",
+                        dto.ElectionGuid);
+                }
+            }
+
             return (true, null);
         }
         catch (Exception ex) when (DbTransientFailure.IsTransient(ex))

@@ -1,8 +1,10 @@
-import { flushPromises, mount } from "@vue/test-utils";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { enableAutoUnmount, flushPromises, mount } from "@vue/test-utils";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { i18n } from "@/test/setup";
 import MonitoringDashboardPage from "../MonitoringDashboardPage.vue";
 import type { MonitorInfoDto } from "@/types";
+
+enableAutoUnmount(afterEach);
 
 const {
   mockGetSummary,
@@ -14,6 +16,8 @@ const {
   mockFetchElection,
   mockFetchMonitor,
   mockElection,
+  mockFrontDeskOn,
+  mockFrontDeskOff,
 } = vi.hoisted(() => ({
   mockGetSummary: vi.fn(),
   mockAcceptAll: vi.fn(),
@@ -23,6 +27,8 @@ const {
   mockUpdateWindow: vi.fn(),
   mockFetchElection: vi.fn(),
   mockFetchMonitor: vi.fn(),
+  mockFrontDeskOn: vi.fn(),
+  mockFrontDeskOff: vi.fn(),
   mockElection: {
     electionGuid: "election-1",
     onlineCloseIsEstimate: true,
@@ -126,8 +132,8 @@ function copyMonitor(
 vi.mock("@/services/signalrService", () => ({
   signalrService: {
     connectToFrontDeskHub: vi.fn().mockResolvedValue({
-      on: vi.fn(),
-      off: vi.fn(),
+      on: mockFrontDeskOn,
+      off: mockFrontDeskOff,
     }),
     joinFrontDeskElection: vi.fn().mockResolvedValue(undefined),
   },
@@ -180,6 +186,8 @@ describe("MonitoringDashboardPage Accept all", () => {
     mockFetchElection.mockReset();
     mockFetchMonitor.mockReset();
     mockFetchMonitor.mockResolvedValue(mockMonitor);
+    mockFrontDeskOn.mockReset();
+    mockFrontDeskOff.mockReset();
     mockElection.onlineCloseIsEstimate = true;
     mockMonitor.onlineVotingInfo.onlineVotingEnabled = true;
     mockMonitor.onlineVotingInfo.pendingOnlineBallots = 3;
@@ -210,6 +218,78 @@ describe("MonitoringDashboardPage Accept all", () => {
     await flushPromises();
     return wrapper;
   }
+
+  it("refetches when a voter submits, without pressing Refresh", async () => {
+    const wrapper = await mountPage();
+    const handler = mockFrontDeskOn.mock.calls.find(
+      (call) => call[0] === "onlineBallotsChanged",
+    )?.[1] as ((id: string) => void) | undefined;
+    expect(handler).toBeTypeOf("function");
+
+    mockFetchMonitor.mockClear();
+    mockFetchMonitor.mockResolvedValue(
+      copyMonitor({ submittedOnlineBallots: 9, totalOnlineBallots: 10 }),
+    );
+    handler!("election-1");
+    await flushPromises();
+
+    expect(mockFetchMonitor).toHaveBeenCalledWith("election-1");
+    expect(
+      wrapper.find("[data-testid='submitted-online-ballots-count']").text(),
+    ).toBe("9");
+  });
+
+  it("ignores online ballot changes for a different election", async () => {
+    await mountPage();
+    const handler = mockFrontDeskOn.mock.calls.find(
+      (call) => call[0] === "onlineBallotsChanged",
+    )?.[1] as (id: string) => void;
+    mockFetchMonitor.mockClear();
+    handler("other-election");
+    await flushPromises();
+    expect(mockFetchMonitor).not.toHaveBeenCalled();
+  });
+
+  it("polls while the monitor tab is visible and refreshes when it is shown again", async () => {
+    vi.useFakeTimers({
+      toFake: ["setInterval", "clearInterval", "setTimeout", "clearTimeout"],
+    });
+    try {
+      const wrapper = await mountPage();
+      mockFetchMonitor.mockClear();
+
+      await vi.advanceTimersByTimeAsync(30_000);
+      expect(mockFetchMonitor).toHaveBeenCalledWith("election-1");
+
+      mockFetchMonitor.mockClear();
+      Object.defineProperty(document, "visibilityState", {
+        configurable: true,
+        get: () => "hidden",
+      });
+      await vi.advanceTimersByTimeAsync(30_000);
+      expect(mockFetchMonitor).not.toHaveBeenCalled();
+
+      Object.defineProperty(document, "visibilityState", {
+        configurable: true,
+        get: () => "visible",
+      });
+      document.dispatchEvent(new Event("visibilitychange"));
+      await flushPromises();
+      expect(mockFetchMonitor).toHaveBeenCalledWith("election-1");
+
+      wrapper.unmount();
+      mockFetchMonitor.mockClear();
+      document.dispatchEvent(new Event("visibilitychange"));
+      await flushPromises();
+      expect(mockFetchMonitor).not.toHaveBeenCalled();
+    } finally {
+      Object.defineProperty(document, "visibilityState", {
+        configurable: true,
+        get: () => "visible",
+      });
+      vi.useRealTimers();
+    }
+  });
 
   it("shows Accept all when there are pending online ballots", async () => {
     const wrapper = await mountPage();

@@ -30,6 +30,12 @@ import {
 import { useOnlineVotingStore } from "../../stores/onlineVotingStore";
 import type { OnlinePerson } from "../../types";
 import { debounce } from "../../utils/debounce";
+import {
+  electionGuidFromKioskVoterId,
+  readRememberedVoterElection,
+  readRouteElectionId,
+  rememberVoterElection,
+} from "../../utils/voterElectionContext";
 
 const router = useRouter();
 const route = useRoute();
@@ -37,8 +43,13 @@ const { t } = useI18n();
 const onlineVotingStore = useOnlineVotingStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
 
-const electionGuid = ref(route.params.electionId as string);
-const loading = ref(false);
+const electionGuid = ref("");
+/** True until the session and election have been resolved. Starts true so a reload does not flash "Election not found". */
+const loading = ref(true);
+const loadFailed = ref(false);
+/** In-flight presence join. Unmount waits for this before leaving, so a late join is not left counted. */
+let ballotPresence: Promise<void> = Promise.resolve();
+let pageUnmounted = false;
 const submitting = ref(false);
 const autosaveReady = ref(false);
 /** Once Submitted, later autosaves keep isDraft false (never demote). */
@@ -103,23 +114,106 @@ const allVotablePersonOptions = computed(() => {
 });
 
 onMounted(async () => {
+  pageUnmounted = false;
+  loading.value = true;
+  loadFailed.value = false;
+
   const restored = await onlineVotingStore.restoreSession();
   if (!restored) {
     showErrorMessage(t("voting.ballot.authRequired"));
     router.push({
       name: "voter-auth",
-      query: { election: electionGuid.value },
+      query: { election: readRouteElectionId(route.params.electionId) },
     });
     return;
   }
 
-  await onlineVotingStore.ensureVoterHubsConnected();
-  await onlineVotingStore.joinElectionBallotPresence(electionGuid.value);
+  const id = await resolveElectionId();
+  if (!id) {
+    loadFailed.value = true;
+    loading.value = false;
+    return;
+  }
+
+  electionGuid.value = id;
+  rememberVoterElection(id);
+  if (readRouteElectionId(route.params.electionId) !== id) {
+    await router.replace({
+      name: "voter-ballot",
+      params: { electionId: id },
+    });
+  }
+
   await loadElectionData();
+  // Presence is for the monitor count. A slow or failed hub must not block the ballot.
+  ballotPresence = connectBallotPresence(id);
 });
 
+/**
+ * Route id first. After a reload that lost the id, the kiosk voter session
+ * still contains the election. A remembered id is used only when it is in
+ * this voter's available elections; otherwise the only open election.
+ */
+async function resolveElectionId(): Promise<string> {
+  const fromRoute = readRouteElectionId(route.params.electionId);
+  if (fromRoute) {
+    return fromRoute;
+  }
+
+  if (onlineVotingStore.isKioskSession) {
+    const fromKiosk = electionGuidFromKioskVoterId(onlineVotingStore.voterId);
+    if (fromKiosk) {
+      return fromKiosk;
+    }
+  }
+
+  let elections: Awaited<
+    ReturnType<typeof onlineVotingStore.loadAvailableElections>
+  > = [];
+  try {
+    elections = await onlineVotingStore.loadAvailableElections();
+  } catch {
+    // The empty state covers a voter with no recoverable election.
+  }
+
+  const remembered = readRememberedVoterElection().toLowerCase();
+  const rememberedElection = remembered
+    ? elections.find(
+        (election) =>
+          !!election.electionGuid &&
+          election.electionGuid.toLowerCase() === remembered,
+      )
+    : undefined;
+  if (rememberedElection?.electionGuid) {
+    return rememberedElection.electionGuid;
+  }
+
+  const open = elections.filter(
+    (election) => election.isOpen && election.electionGuid,
+  );
+  if (open.length === 1) {
+    return open[0]!.electionGuid!;
+  }
+
+  return "";
+}
+
+async function connectBallotPresence(id: string): Promise<void> {
+  try {
+    await onlineVotingStore.ensureVoterHubsConnected();
+    if (pageUnmounted) {
+      return;
+    }
+    await onlineVotingStore.joinElectionBallotPresence(id);
+  } catch (error) {
+    console.error("Failed to join ballot presence:", error);
+  }
+}
+
 onUnmounted(async () => {
+  pageUnmounted = true;
   runAutosave.flush();
+  await ballotPresence;
   await onlineVotingStore.leaveElectionBallotPresence();
 });
 
@@ -158,6 +252,10 @@ async function loadElectionData() {
     }
   } catch (error) {
     console.error("Error loading election data:", error);
+    const loadedGuid = onlineVotingStore.electionInfo?.electionGuid ?? "";
+    if (loadedGuid.toLowerCase() !== electionGuid.value.toLowerCase()) {
+      loadFailed.value = true;
+    }
   } finally {
     loading.value = false;
     autosaveReady.value = true;
@@ -344,6 +442,10 @@ function backToElections() {
     <div class="ballot-container">
       <ElCard v-if="loading">
         <div class="loading-text">{{ $t("voting.ballot.loading") }}</div>
+      </ElCard>
+
+      <ElCard v-else-if="loadFailed">
+        <ElEmpty :description="$t('voting.ballot.electionNotFound')" />
       </ElCard>
 
       <ElCard v-else-if="onlineVotingStore.electionInfo" class="ballot-card">
@@ -604,10 +706,6 @@ function backToElections() {
             </ElForm>
           </div>
         </div>
-      </ElCard>
-
-      <ElCard v-else>
-        <ElEmpty :description="$t('voting.ballot.electionNotFound')" />
       </ElCard>
     </div>
   </div>

@@ -440,6 +440,27 @@ public class SignalRNotificationService : ISignalRNotificationService
     }
 
     /// <inheritdoc />
+    public async Task NotifyOnlineBallotsChangedAsync(Guid electionGuid)
+    {
+        try
+        {
+            var groupName = FrontDeskHub.GetGroupName(electionGuid);
+            await _frontDeskHubContext.Clients.Group(groupName)
+                .SendAsync("onlineBallotsChanged", electionGuid);
+            _logger.LogInformation(
+                "Sent onlineBallotsChanged notification to group {GroupName}",
+                groupName);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Error sending onlineBallotsChanged for election {ElectionGuid}",
+                electionGuid);
+        }
+    }
+
+    /// <inheritdoc />
     public async Task NotifyVoterPersonalUpdateAsync(
         string? email,
         string? phone,

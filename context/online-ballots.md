@@ -27,6 +27,12 @@ Once a row is **Submitted**, later autosaves (reload restore, notify toggle, or 
 
 **Reason:** survive reload without treating an in-progress ballot as ready for tellers, and keep a submitted ballot pending until Accept-all.
 
+A hard reload of `/vote` must not paint “Election not found” while the voter cookie is still being read, and must not wait on the SignalR connection before loading the ballot. The election id comes from the route when it is present. If the address has none, a kiosk session still carries it inside the voter id (`{letters}.{guid:N}`). Otherwise this tab’s last ballot is used only when that election is in the current voter’s available list; if it is not, the only open election is used. Logout removes the remembered id. The route is updated to match. The draft itself stays on the server either way. The ballot-page presence join is kept and finished before leave, and skipped if the page is already gone, so a slow hub does not leave a session counted.
+
+**Rejected alternative:** require the election id only from the page URL. A reload that lands on `/vote` with the session still valid then has nowhere to read the election back from.
+
+**Rejected alternative:** trust the remembered id without checking this voter’s elections, and leave it in the tab after logout. The next email or phone voter on a shared device would open the previous person’s election.
+
 ## Accept-all of pending online ballots
 
 **Status:** active  
@@ -156,7 +162,7 @@ v4 Draft is silent autosave only (not Accept-all pending). The monitor still doe
 
 The monitor count strip includes **Ballot-page sessions**: an anonymous count of AllVotersHub connections that called `JoinElection` for this election (the voter ballot page). One person with two tabs counts as two. The API and UI return that integer only — no person name, email, phone, kiosk, voter id, row id, or WhenStatus. `IOnlineVoterPresenceService` stores connection id → election GUID only.
 
-The count is same-host in-memory. Two app servers do not share it. Auto-refresh (30s) is how tellers see a new number.
+The count is same-host in-memory. Two app servers do not share it. While the monitor tab is visible it re-fetches every 30s, and again when the tab becomes visible, so a new session number shows up without Refresh. A submitted ballot does not wait for that timer: after commit the server sends FrontDesk `onlineBallotsChanged` (election id only) and the monitor re-fetches. Draft autosave does not send it. Draft is not in the monitor totals, and autosave would be noisy.
 
 `VoterPersonalHub` cannot do this safely: its group is `Voter{voterId}` (identifying) and the voter JWT has no election claim.
 
