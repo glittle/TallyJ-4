@@ -12,6 +12,7 @@ const {
   mockShowSuccess,
   mockShowError,
   mockShowInfo,
+  electionStage,
 } = vi.hoisted(() => ({
   mockFetchTieDetails: vi.fn(),
   mockSaveTieCounts: vi.fn(),
@@ -20,6 +21,7 @@ const {
   mockShowSuccess: vi.fn(),
   mockShowError: vi.fn(),
   mockShowInfo: vi.fn(),
+  electionStage: { current: "ProcessingBallots" },
 }));
 
 vi.mock("vue-router", () => ({
@@ -75,6 +77,14 @@ vi.mock("@/stores/resultStore", () => ({
   }),
 }));
 
+vi.mock("@/stores/electionStore", () => ({
+  useElectionStore: () => ({
+    get currentStage() {
+      return electionStage.current;
+    },
+  }),
+}));
+
 const stubs = {
   ElCard: { template: "<div><slot name='header' /><slot /></div>" },
   ElAlert: {
@@ -95,10 +105,10 @@ const stubs = {
       "<div v-for='row in $parent.data' :key='row.personGuid'><slot :row='row' /></div>",
   },
   ElInputNumber: {
-    props: ["modelValue", "valueOnClear"],
+    props: ["modelValue", "valueOnClear", "disabled"],
     emits: ["update:modelValue", "change"],
     template:
-      "<div><input class='tie-count' :value='modelValue' /><button type='button' class='input-clear' @click='onClear'>clear-input</button></div>",
+      "<div><input class='tie-count' :value='modelValue' :disabled='disabled' /><button type='button' class='input-clear' :disabled='disabled' @click='onClear'>clear-input</button></div>",
     methods: {
       onClear(this: {
         valueOnClear: unknown;
@@ -123,6 +133,7 @@ describe("TieManagementPage", () => {
     mockShowSuccess.mockReset();
     mockShowError.mockReset();
     mockShowInfo.mockReset();
+    electionStage.current = "ProcessingBallots";
     mockFetchTieDetails.mockResolvedValue(structuredClone(sampleTies));
     mockSaveTieCounts.mockResolvedValue({
       success: true,
@@ -303,5 +314,70 @@ describe("TieManagementPage", () => {
       "Elected-section ties still have people with no tie-break count entered. An explicit 0 is allowed.",
     );
     expect(wrapper.text()).toContain("Tie-break Required");
+  });
+
+  it("keeps tie-break counts editable before the election is Finalized", async () => {
+    const wrapper = mount(TieManagementPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    const input = wrapper.find(".tie-count");
+    expect(input.attributes("disabled")).toBeUndefined();
+    expect(wrapper.text()).not.toContain(
+      "This election is finalized. People and ballot data cannot be changed.",
+    );
+
+    const vm = wrapper.vm as unknown as {
+      tieDetails: TieDetailsDto[];
+      saveTieCounts: () => Promise<void>;
+    };
+    vm.tieDetails[0]!.people[0]!.tieBreakCount = 8;
+    await vm.saveTieCounts();
+    await flushPromises();
+
+    expect(mockSaveTieCounts).toHaveBeenCalledWith("election-1", [
+      { personGuid: "person-a", tieBreakCount: 8 },
+      { personGuid: "person-b", tieBreakCount: null },
+    ]);
+  });
+
+  it("disables tie-break edits and refuses save when the election is Finalized", async () => {
+    electionStage.current = "Finalized";
+    const wrapper = mount(TieManagementPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    expect(wrapper.text()).toContain(
+      "This election is finalized. People and ballot data cannot be changed.",
+    );
+    const inputs = wrapper.findAll(".tie-count");
+    expect(inputs.length).toBeGreaterThan(0);
+    for (const input of inputs) {
+      expect(input.attributes("disabled")).toBeDefined();
+    }
+
+    const clearButtons = wrapper
+      .findAll("button")
+      .filter((button) => button.text() === "Clear");
+    expect(clearButtons.length).toBeGreaterThan(0);
+    for (const button of clearButtons) {
+      expect(button.attributes("disabled")).toBeDefined();
+    }
+
+    const vm = wrapper.vm as unknown as {
+      tieDetails: TieDetailsDto[];
+      saveTieCounts: () => Promise<void>;
+    };
+    vm.tieDetails[0]!.people[0]!.tieBreakCount = 99;
+    await vm.saveTieCounts();
+    await flushPromises();
+
+    expect(mockConfirm).not.toHaveBeenCalled();
+    expect(mockSaveTieCounts).not.toHaveBeenCalled();
+    expect(mockShowError).toHaveBeenCalledWith(
+      "This election is finalized. People and ballot data cannot be changed.",
+    );
   });
 });

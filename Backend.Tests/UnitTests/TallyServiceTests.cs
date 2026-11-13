@@ -765,6 +765,71 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task SaveTieCountsAsync_Finalized_RefusesAndLeavesStoredCounts()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 1, numberExtra: 1);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 3);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 3);
+        await CreateThreeWayEqualVoteAsync(ballots, people);
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        var stored = Context.Results.Single(r =>
+            r.ElectionGuid == election.ElectionGuid && r.PersonGuid == people[0].PersonGuid);
+        stored.TieBreakCount = 1;
+        election.ElectionStage = ElectionStage.Finalized;
+        await Context.SaveChangesAsync();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.SaveTieCountsAsync(election.ElectionGuid, new SaveTieCountsRequestDto
+            {
+                Counts =
+                [
+                    new TieCountDto { PersonGuid = people[0].PersonGuid, TieBreakCount = 99 },
+                ]
+            }));
+
+        Assert.Equal(ElectionStageMessageKeys.FinalizedWriteBlocked, ex.Message);
+
+        var after = Context.Results.Single(r =>
+            r.ElectionGuid == election.ElectionGuid && r.PersonGuid == people[0].PersonGuid);
+        Assert.Equal(1, after.TieBreakCount);
+        Assert.Equal(ElectionStage.Finalized, election.ElectionStage);
+    }
+
+    [Fact]
+    public async Task SaveTieCountsAsync_ProcessingBallots_PersistsCounts()
+    {
+        var election = await CreateTestElectionAsync(numberToElect: 1, numberExtra: 1);
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 3);
+        var ballots = await CreateTestBallotsAsync(location.LocationGuid, 3);
+        await CreateThreeWayEqualVoteAsync(ballots, people);
+
+        await _service.CalculateNormalElectionAsync(election.ElectionGuid);
+
+        election.ElectionStage = ElectionStage.ProcessingBallots;
+        await Context.SaveChangesAsync();
+
+        var response = await _service.SaveTieCountsAsync(election.ElectionGuid, new SaveTieCountsRequestDto
+        {
+            Counts =
+            [
+                new TieCountDto { PersonGuid = people[0].PersonGuid, TieBreakCount = 7 },
+            ]
+        });
+
+        Assert.True(response.Success);
+        Assert.True(response.ReAnalysisTriggered);
+
+        var stored = Context.Results.Single(r =>
+            r.ElectionGuid == election.ElectionGuid && r.PersonGuid == people[0].PersonGuid);
+        Assert.Equal(7, stored.TieBreakCount);
+        Assert.Equal(ElectionStage.ProcessingBallots, election.ElectionStage);
+    }
+
+    [Fact]
     public async Task BoundaryTie_BlocksFinalizeUntilDistinctCountsPersist()
     {
         var election = await CreateTestElectionAsync(numberToElect: 1);

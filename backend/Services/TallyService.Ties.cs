@@ -65,11 +65,13 @@ public partial class TallyService
     /// Saves tie-breaking vote counts for an election and re-analyzes when any count is persisted.
     /// Null unsets a previous count. An explicit 0 is a valid runoff result.
     /// Omit a person to leave their stored count unchanged.
+    /// Refused when the election is Finalized, using the same write lock as people and ballots.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
     /// <param name="request">The request containing tie count information.</param>
     /// <returns>A SaveTieCountsResponseDto containing the result of the save operation.</returns>
     /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
+    /// <exception cref="InvalidOperationException">Thrown when the election is Finalized.</exception>
     public async Task<SaveTieCountsResponseDto> SaveTieCountsAsync(Guid electionGuid, SaveTieCountsRequestDto request)
     {
         var election = await _context.Elections
@@ -79,6 +81,10 @@ public partial class TallyService
         {
             throw new ArgumentException($"Election {electionGuid} not found");
         }
+
+        // Same Finalized lock as people, ballots, and manual counts. Counts saved
+        // before Finalized stay; this only refuses a later edit.
+        ElectionFinalizedWriteGuard.ThrowIfLocked(election.ElectionStage);
 
         var updatedCount = 0;
 

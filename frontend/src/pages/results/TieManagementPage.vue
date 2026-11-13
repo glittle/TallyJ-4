@@ -4,6 +4,7 @@ import { ElMessageBox } from "element-plus";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
+import { useElectionStore } from "../../stores/electionStore";
 import { useResultStore } from "../../stores/resultStore";
 import type { TiePersonDto, TieDetailsDto } from "../../types";
 import { resolveUserFacingApiError } from "@/utils/errorHandler";
@@ -16,6 +17,7 @@ import {
 
 const route = useRoute();
 const { t } = useI18n();
+const electionStore = useElectionStore();
 const resultStore = useResultStore();
 const { showSuccessMessage, showErrorMessage, showInfoMessage } =
   useNotifications();
@@ -37,6 +39,8 @@ const hasUnresolvedTie = computed(() =>
   tieDetails.value.some((tie) => tie.tieBreakRequired),
 );
 
+const isFinalized = computed(() => electionStore.currentStage === "Finalized");
+
 onMounted(async () => {
   await loadTieDetails();
 });
@@ -57,6 +61,11 @@ async function loadTieDetails() {
 }
 
 async function saveTieCounts() {
+  if (isFinalized.value) {
+    showErrorMessage(t("elections.finalizedWriteBlocked"));
+    return;
+  }
+
   try {
     await ElMessageBox.confirm(
       t("tieManagement.confirmSave"),
@@ -86,7 +95,9 @@ async function saveTieCounts() {
     }
   } catch (error) {
     if (error !== "cancel") {
-      showErrorMessage(t("tieManagement.saveError"));
+      showErrorMessage(
+        resolveUserFacingApiError(error, t("tieManagement.saveError")),
+      );
     }
   } finally {
     saving.value = false;
@@ -131,7 +142,7 @@ defineExpose({
             <el-button
               type="primary"
               :loading="saving"
-              :disabled="!hasChanges"
+              :disabled="!hasChanges || isFinalized"
               @click="saveTieCounts"
             >
               {{ $t("tieManagement.saveChanges") }}
@@ -145,6 +156,14 @@ defineExpose({
       </div>
 
       <div v-else-if="tieDetails.length > 0">
+        <el-alert
+          v-if="isFinalized"
+          class="finalized-lock"
+          :title="$t('elections.finalizedWriteBlocked')"
+          type="warning"
+          :closable="false"
+        />
+
         <el-alert
           v-if="hasUnresolvedTie"
           :title="$t('tieManagement.instructions')"
@@ -212,6 +231,7 @@ defineExpose({
                         :min="0"
                         :max="999"
                         :precision="0"
+                        :disabled="isFinalized"
                         :value-on-clear="clearedTieBreakCount()"
                         controls-position="right"
                         style="width: 120px"
@@ -227,6 +247,7 @@ defineExpose({
                       <el-button
                         type="primary"
                         size="small"
+                        :disabled="isFinalized"
                         @click="clearTieBreakCount(scope.row)"
                       >
                         {{ $t("common.clear") }}
@@ -293,6 +314,10 @@ defineExpose({
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+
+.finalized-lock {
+  margin-bottom: 20px;
 }
 
 .instructions {
