@@ -56,7 +56,7 @@ Front Desk personal notify targets `ToVoterId(election, letters)` so `VoterPerso
 **Status:** active  
 **Evidence:** inferred (v3 `VotingMethodsContains(Kiosk)`; v4 already gated person-form kiosk UI on that string)
 
-The Setup switch adds or removes `K` (or the `KI` alias) without replacing the other tokens. A blank `VotingMethods` is the implicit P/M/D default, so turning kiosk on stores `PMDK` rather than only `K` (that replacement hid In person, Mailed, and Dropped off at Front Desk). A two-letter alias (`OL`, `IP`) stays one token (`OL,K`), instead of a letter appended onto the alias. Turning kiosk on also sets `UseOnlineVoting`, because kiosk auth uses the same open-window rule as email/phone.
+The Setup switch adds or removes `K` (or the `KI` alias) without replacing the other tokens. A blank `VotingMethods` is the implicit P/M/D default, so turning kiosk on stores `PMDK` rather than only `K`. That replacement used to hide In person, Mailed, and Dropped off at Front Desk. Front Desk and check-in no longer depend on those letters being stored (#440); the switch still writes `PMDK` so the stored list matches a v3 election that added Kiosk to the default paper methods. A two-letter alias (`OL`, `IP`) stays one token (`OL,K`), instead of a letter appended onto the alias. Turning kiosk on also sets `UseOnlineVoting`, because kiosk auth uses the same open-window rule as email/phone.
 
 ## Related
 

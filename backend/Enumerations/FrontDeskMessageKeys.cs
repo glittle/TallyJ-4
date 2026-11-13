@@ -23,4 +23,10 @@ public static class FrontDeskMessageKeys
     /// tellers record paper/mail/kiosk/imported methods only.
     /// </summary>
     public const string OnlineIsVoterInitiated = "frontDesk.errors.onlineIsVoterInitiated";
+
+    /// <summary>
+    /// Check-in refused because this election has not enabled the method.
+    /// In person, Mailed, and Dropped off do not use this key.
+    /// </summary>
+    public const string MethodNotEnabled = "frontDesk.errors.methodNotEnabled";
 }

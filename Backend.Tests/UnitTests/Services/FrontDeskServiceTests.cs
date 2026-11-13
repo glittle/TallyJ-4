@@ -112,6 +112,75 @@ public class FrontDeskServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task CheckInVoterAsync_StoredMethodsExcludePaper_StillRecordsAllThree()
+    {
+        SeedElection(ElectionStage.GatheringBallots, votingMethods: "K");
+
+        foreach (var method in new[] { "P", "M", "D" })
+        {
+            var person = SeedEligiblePerson();
+            var result = await _service.CheckInVoterAsync(_electionGuid, new CheckInVoterDto
+            {
+                PersonGuid = person.PersonGuid,
+                VotingMethod = method,
+                Teller1 = "Ada"
+            });
+
+            Assert.Equal(method, result.VotingMethod);
+        }
+    }
+
+    [Fact]
+    public async Task CheckInVoterAsync_StoredPaperSubset_StillRecordsOmittedPaperMethod()
+    {
+        SeedElection(ElectionStage.GatheringBallots, votingMethods: "IP,OL");
+        var person = SeedEligiblePerson();
+
+        var result = await _service.CheckInVoterAsync(_electionGuid, new CheckInVoterDto
+        {
+            PersonGuid = person.PersonGuid,
+            VotingMethod = "d",
+            Teller1 = "Ada"
+        });
+
+        Assert.Equal("D", result.VotingMethod);
+    }
+
+    [Fact]
+    public async Task CheckInVoterAsync_KioskOff_RejectsKiosk()
+    {
+        SeedElection(ElectionStage.GatheringBallots, votingMethods: "OL");
+        var person = SeedEligiblePerson();
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            _service.CheckInVoterAsync(_electionGuid, new CheckInVoterDto
+            {
+                PersonGuid = person.PersonGuid,
+                VotingMethod = "K",
+                Teller1 = "Ada"
+            }));
+
+        Assert.Equal(FrontDeskMessageKeys.MethodNotEnabled, ex.Message);
+        Assert.Null(Context.People.Single().RegistrationTime);
+    }
+
+    [Fact]
+    public async Task CheckInVoterAsync_UseCallInButton_RecordsCallInWhenStringOmitsC()
+    {
+        SeedElection(ElectionStage.GatheringBallots, votingMethods: "K", useCallInButton: true);
+        var person = SeedEligiblePerson();
+
+        var result = await _service.CheckInVoterAsync(_electionGuid, new CheckInVoterDto
+        {
+            PersonGuid = person.PersonGuid,
+            VotingMethod = "C",
+            Teller1 = "Ada"
+        });
+
+        Assert.Equal("C", result.VotingMethod);
+    }
+
+    [Fact]
     public async Task CheckInVoterAsync_OnlineMethod_Throws()
     {
         SeedElection(ElectionStage.GatheringBallots);
@@ -429,7 +498,10 @@ public class FrontDeskServiceTests : ServiceTestBase
             Times.Never);
     }
 
-    private void SeedElection(ElectionStage stage)
+    private void SeedElection(
+        ElectionStage stage,
+        string? votingMethods = null,
+        bool? useCallInButton = null)
     {
         Context.Elections.Add(new Election
         {
@@ -438,6 +510,8 @@ public class FrontDeskServiceTests : ServiceTestBase
             NumberToElect = 3,
             ElectionType = "LSA",
             ElectionStage = stage,
+            VotingMethods = votingMethods,
+            UseCallInButton = useCallInButton,
             RowVersion = new byte[8]
         });
         Context.SaveChanges();

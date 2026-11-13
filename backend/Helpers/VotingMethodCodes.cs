@@ -71,8 +71,58 @@ public static class VotingMethodCodes
         string.Equals(votingMethod, Kiosk, StringComparison.Ordinal);
 
     /// <summary>
+    /// Single-letter person code. Letters are uppercased; digits stay as stored.
+    /// Returns null unless the value is exactly one character.
+    /// </summary>
+    public static string? CanonicalPersonCode(string? method)
+    {
+        if (string.IsNullOrWhiteSpace(method) || method.Length != 1)
+        {
+            return null;
+        }
+
+        return char.IsDigit(method[0]) ? method : method.ToUpperInvariant();
+    }
+
+    /// <summary>
+    /// Whether a teller may record <paramref name="method"/> at Front Desk.
+    /// In person, Mailed, and Dropped off are always allowed, including when
+    /// <paramref name="votingMethods"/> omits them. Other codes must be named
+    /// in that string. Called in is also allowed when
+    /// <paramref name="useCallInButton"/> is true. Online is never a desk method.
+    /// This does not rewrite <see cref="ParseElectionVotingMethods"/>: that
+    /// method still reports the stored string, which kiosk and imported checks use.
+    /// </summary>
+    public static bool AllowsDeskMethod(
+        string? votingMethods,
+        string? method,
+        bool useCallInButton = false)
+    {
+        var code = CanonicalPersonCode(method);
+        if (code is null || IsOnline(code))
+        {
+            return false;
+        }
+
+        if (code is InPerson or Mailed or DroppedOff)
+        {
+            return true;
+        }
+
+        if (useCallInButton && code == CalledIn)
+        {
+            return true;
+        }
+
+        return ParseElectionVotingMethods(votingMethods).Contains(code);
+    }
+
+    /// <summary>
     /// Parse <c>Election.VotingMethods</c> into Person.VotingMethod letters,
     /// preserving first-seen order. Unknown tokens are skipped.
+    /// A blank value is the default In person / Mailed / Dropped off set.
+    /// A non-blank value is only the codes it names; always-on paper methods
+    /// are applied by <see cref="AllowsDeskMethod"/>, not here.
     /// </summary>
     public static IReadOnlyList<string> ParseElectionVotingMethods(string? votingMethods)
     {

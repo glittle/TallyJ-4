@@ -38,20 +38,26 @@ Online ballots stay voter-initiated. Tellers do not create ballots at the Online
 ## Front Desk check-in list
 
 **Status:** active  
-**Evidence:** confirmed (maintainer direction on #428; v3 new elections start at `VotingMethods = "PDM"` and add Kiosk as another letter; v4 already refused teller check-in as Online)  
-**Revisit when:** election setup replaces the VotingMethods string with per-method checkboxes
+**Evidence:** confirmed (Glen, issue #440, 2026-11-13; builds on #428 / #438)  
+**Revisit when:** election setup replaces the VotingMethods string with per-method controls for the methods that can still be turned off
 
-> Superseded 2026-11: “Front Desk buttons come from that string except O.” Online is still never a desk button. The rest of the list is below.
+> Superseded 2026-11: “Front Desk buttons come from that string except O.” Online is still never a desk button.
+>
+> Superseded 2026-11-13: “Mailed and Dropped off stay available unless the stored methods name at least one paper method and leave the other out.” In person was already always a button. All three paper methods are always on. See below.
 
-In person is always a Front Desk button. Mailed and Dropped off stay available unless the stored methods name at least one paper method and omit the other (`P` or `IP` is in person only; `M` is in person plus mailed). A blank value, and a value that names no paper method (`K`, `OL`, `KI`), still means the P/M/D default plus any non-paper method in that value. That covers elections whose kiosk switch previously saved only `K` over the blank default.
+In person, Dropped off, and Mailed are always Front Desk buttons, and check-in always accepts `P`, `M`, and `D`. A stored `VotingMethods` value cannot turn them off. That includes elections already saved as `K`, `OL`, `C`, `IP`, or `P` only. Settings shows those three as always on and read-only. Kiosk, online, call-in, imported, and custom codes stay configurable.
 
-Called in appears when `C` is in `VotingMethods` or `UseCallInButton` is true. Kiosk appears when `K` is stored. Imported and custom `1/2/3` appear when those codes are stored. Online does not appear: it is voter-initiated, and a desk `O` would count a registration with no ballot.
+Called in appears when `C` is in `VotingMethods` or `UseCallInButton` is true. Kiosk appears when `K` is stored. Imported and custom `1/2/3` appear when those codes are stored. Online does not appear: it is voter-initiated, and a desk `O` would count a registration with no ballot. Check-in uses the same rule, so a stored string cannot block the three paper methods and cannot record a method the election has not enabled.
 
 Number keys stay the dialog’s existing order: those methods, then flags, Unregister, Close. In person is key 1.
 
+**Rejected alternative:** keep the #438 rule that a stored paper subset (`P`, `IP`, `M`) can hide Mailed or Dropped off. Rejected — officers do not need to turn those three off, and a stored “off” was blocking real check-in.
+
+**Rejected alternative:** rewrite existing `VotingMethods` strings so they contain P, M, and D. Rejected — the column is `varchar(10)`, and appending letters onto a value such as `IP,OL,K` does not fit. Check-in has to offer the three without a migration.
+
 **Rejected alternative:** show Online at the desk when `UseOnlineVoting` or `O` is set. Rejected — tellers still must not record Online.
 
-**Rejected alternative:** hide Mailed and Dropped off whenever the string is non-empty and omits them, including a stored `K`. Rejected — blank means those methods are on, and the kiosk switch used to replace that blank with `K`.
+**Rejected alternative:** hide Mailed and Dropped off whenever the string is non-empty and omits them, including a stored `K`. Rejected — those methods are always available, and the kiosk switch used to replace a blank default with `K`.
 
 ## Roll Call and envelope pages are not v4 product pages
 

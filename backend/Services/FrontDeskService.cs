@@ -77,10 +77,27 @@ public class FrontDeskService : IFrontDeskService
             throw new InvalidOperationException("Person has already checked in");
         }
 
-        if (VotingMethodCodes.IsOnline(checkInDto.VotingMethod))
+        var method = VotingMethodCodes.CanonicalPersonCode(checkInDto.VotingMethod);
+        if (VotingMethodCodes.IsOnline(method))
         {
             throw new InvalidOperationException(FrontDeskMessageKeys.OnlineIsVoterInitiated);
         }
+
+        var methodSettings = await _context.Elections
+            .AsNoTracking()
+            .Where(e => e.ElectionGuid == electionGuid)
+            .Select(e => new { e.VotingMethods, e.UseCallInButton })
+            .FirstOrDefaultAsync();
+
+        if (!VotingMethodCodes.AllowsDeskMethod(
+                methodSettings?.VotingMethods,
+                method,
+                methodSettings?.UseCallInButton == true))
+        {
+            throw new InvalidOperationException(FrontDeskMessageKeys.MethodNotEnabled);
+        }
+
+        checkInDto.VotingMethod = method!;
 
         var onlineInfo = await LoadLatestOnlineVotingInfoAsync(electionGuid, person.PersonGuid);
         await ThrowIfOnlineBlocksCheckInAsync(onlineInfo);
