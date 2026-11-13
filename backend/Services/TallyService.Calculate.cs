@@ -154,6 +154,10 @@ public partial class TallyService
 
         var statistics = await GetTallyStatisticsAsync(electionGuid);
 
+        var hasStoredCalculation = await _context.ResultSummaries
+            .AnyAsync(rs => rs.ElectionGuid == electionGuid
+                && (rs.ResultType == ResultTypeCalculated || rs.ResultType == ResultTypeFinal));
+
         var tieGroups = TieBreakResolution.Evaluate(results);
 
         var ties = results
@@ -176,7 +180,8 @@ public partial class TallyService
         {
             ElectionGuid = electionGuid,
             ElectionName = election.Name ?? UnknownElectionName,
-            CalculatedAt = DateTimeOffset.UtcNow,
+            CalculatedAt = hasStoredCalculation ? DateTimeOffset.UtcNow : null,
+            AnalysisBlocker = await ReadAnalysisBlockerAsync(electionGuid),
             Statistics = statistics,
             Results = results.Select(r =>
             {
@@ -276,5 +281,23 @@ public partial class TallyService
             report.BallotCount,
             report.PendingOnlineCount);
         return report;
+    }
+
+    /// <summary>
+    /// Same phrase Calculate returns when analysis cannot start.
+    /// Checked after any stored result is loaded, so a block does not erase it.
+    /// </summary>
+    private async Task<string?> ReadAnalysisBlockerAsync(Guid electionGuid)
+    {
+        try
+        {
+            await ElectionBallotBlocking.EnsureAnalysisCanProceedAsync(_context, electionGuid);
+            await ElectionCountReconciliation.EnsureReconciledAsync(_context, electionGuid);
+            return null;
+        }
+        catch (InvalidOperationException ex) when (ex.Message.StartsWith("elections.", StringComparison.Ordinal))
+        {
+            return ex.Message;
+        }
     }
 }

@@ -179,6 +179,7 @@ public class ResultsController : ControllerBase
                 ElectionGuid = result.ElectionGuid,
                 ElectionName = result.ElectionName,
                 CalculatedAt = result.CalculatedAt,
+                AnalysisBlocker = result.AnalysisBlocker,
                 Statistics = result.Statistics,
                 Results = result.Results
                     .Where(r => r.Section == "E" || r.Section == "X")
