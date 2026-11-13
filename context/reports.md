@@ -63,8 +63,12 @@ Analysis `NumVoters`, VotersByArea `Voted`, and count reconciliation already use
 
 Voted on the Main report is `NumVoters`. The warning row "Ballots received ≠ Voted" shows `BallotsReceived + SpoiledBallots` when that total differs. Too Few ballots are spoiled and still received. Showing only Ok ballots made a reconciled election look short by those ballots.
 
+The presentation screen uses that same received total for its ballot count. v3 Presenter's "Number who Voted" is `ResultSummary.NumBallotsWithManual` (valid + spoiled). The vote figure on that screen stays the awarded votes.
+
 Monitor "Ballots entered" for a location is every ballot at that location, the same count v3 `BallotHelper.BallotCount` uses and the same count the computer row uses. Vote lines on that row stay the lines typed, including lines on a non-Ok ballot.
 
 **Rejected alternative:** show the numeric difference on the warning row. Rejected — v3 shows the ballot total there.
 
 **Rejected alternative:** count only Ok ballots as entered on the monitor. Rejected — a Too Few ballot was still entered, and the location row then disagreed with the computer row while still adding that ballot's lines into the vote total.
+
+**Rejected alternative:** count only Ok ballots on the presentation screen. Rejected — a Too Few ballot was still received, and the screen then showed 1 ballot for an election that received 3.

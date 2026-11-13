@@ -21,7 +21,7 @@ public class PresentationDto
     public int NumToElect { get; set; }
 
     /// <summary>
-    /// Total number of ballots cast in the election.
+    /// Ballots received: valid ballots plus spoiled ballots.
     /// </summary>
     public int TotalBallots { get; set; }
 

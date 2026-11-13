@@ -78,7 +78,9 @@ public partial class TallyService
             ElectionName = election.Name ?? UnknownElectionName,
             ElectionDate = election.DateOfElection,
             NumToElect = election.NumberToElect ?? 9,
-            TotalBallots = summary?.BallotsReceived ?? 0,
+            // v3 Presenter's "Number who Voted" is ResultSummary.NumBallotsWithManual:
+            // valid ballots plus spoiled ballots (every ballot received).
+            TotalBallots = (summary?.BallotsReceived ?? 0) + (summary?.SpoiledBallots ?? 0),
             TotalVotes = results.Sum(r => r.VoteCount ?? 0),
             ElectedPeople = electedPeople,
             ExtraPeople = extraPeople,

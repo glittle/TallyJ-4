@@ -160,6 +160,8 @@ public class Issue427MixedBallotCountTests : ServiceTestBase
         Assert.Equal(17, paperReport.TotalVotes);
 
         var presentation = await _tally.GetPresentationDataAsync(election.ElectionGuid);
+        // Received ballots (valid + spoiled), matching v3 "Number who Voted".
+        Assert.Equal(3, presentation.TotalBallots);
         Assert.Equal(8, presentation.TotalVotes);
 
         var main = await _reports.GetMainReportAsync(election.ElectionGuid);
