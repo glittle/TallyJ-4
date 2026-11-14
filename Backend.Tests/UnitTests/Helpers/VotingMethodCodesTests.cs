@@ -56,4 +56,38 @@ public class VotingMethodCodesTests
         Assert.True(VotingMethodCodes.ElectionSupportsKiosk("IP,K"));
         Assert.False(VotingMethodCodes.ElectionSupportsKiosk("PDM"));
     }
+
+    [Theory]
+    [InlineData("K")]
+    [InlineData("KI")]
+    [InlineData("OL")]
+    [InlineData("C")]
+    [InlineData("P")]
+    [InlineData("IP")]
+    [InlineData("IP,OL")]
+    [InlineData("M")]
+    [InlineData(null)]
+    [InlineData("")]
+    public void AllowsDeskMethod_PaperMethodsStayOnWhenStoredStringOmitsThem(string? stored)
+    {
+        Assert.True(VotingMethodCodes.AllowsDeskMethod(stored, "P"));
+        Assert.True(VotingMethodCodes.AllowsDeskMethod(stored, "M"));
+        Assert.True(VotingMethodCodes.AllowsDeskMethod(stored, "D"));
+        Assert.True(VotingMethodCodes.AllowsDeskMethod(stored, "m"));
+    }
+
+    [Fact]
+    public void AllowsDeskMethod_OtherMethodsStayConfigurable()
+    {
+        Assert.True(VotingMethodCodes.AllowsDeskMethod("K", "K"));
+        Assert.True(VotingMethodCodes.AllowsDeskMethod("KI", "K"));
+        Assert.False(VotingMethodCodes.AllowsDeskMethod("OL", "K"));
+        Assert.False(VotingMethodCodes.AllowsDeskMethod("PMD", "C"));
+        Assert.True(VotingMethodCodes.AllowsDeskMethod("PMD", "C", useCallInButton: true));
+        Assert.True(VotingMethodCodes.AllowsDeskMethod("C", "C"));
+        Assert.False(VotingMethodCodes.AllowsDeskMethod("PMDKO", "O"));
+        Assert.False(VotingMethodCodes.AllowsDeskMethod("PMD", "I"));
+        Assert.True(VotingMethodCodes.AllowsDeskMethod("IM", "I"));
+        Assert.False(VotingMethodCodes.AllowsDeskMethod("K", "X"));
+    }
 }

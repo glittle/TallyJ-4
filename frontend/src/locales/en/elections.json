@@ -674,6 +674,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "elections.form.paperMethodsAlwaysOn": {
+    "t": "In person, dropped off, and mailed are always available and cannot be turned off.",
+    "s": "source",
+    "w": "2026-11-13T13:40:00Z"
+  },
   "elections.form.showAsTest": {
     "t": "Show as Test",
     "s": "source",
@@ -730,14 +735,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.form.votingMethodsHelp": {
-    "t": "Choose the methods by which votes will be cast.",
+    "t": "Extra method codes, such as kiosk, online, imported, call-in, and custom. In person, dropped off, and mailed stay on.",
     "s": "source",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-11-13T13:40:00Z"
   },
   "elections.form.votingMethodsPlaceholder": {
-    "t": "Select voting methods",
+    "t": "Extra codes, such as K or OL",
     "s": "source",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-11-13T13:40:00Z"
   },
   "elections.importCdnBallots": {
     "t": "Import CDN Ballots",

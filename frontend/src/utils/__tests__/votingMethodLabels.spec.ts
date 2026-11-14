@@ -64,19 +64,29 @@ describe("votingMethodLabels", () => {
     expect(setElectionKioskEnabled("IP,KI", false)).toBe("IP");
   });
 
-  it("offers In person at Front Desk and keeps paper defaults unless a paper method is named", () => {
+  it("offers In person, Mailed, and Dropped off even when the stored methods name a paper subset", () => {
+    expect(parseFrontDeskCheckInMethods("PMDKO")).toEqual(["P", "M", "D", "K"]);
+    expect(parseFrontDeskCheckInMethods("IP,OL")).toEqual(["P", "M", "D"]);
+    expect(parseFrontDeskCheckInMethods("IP,OL,K")).toEqual([
+      "P",
+      "M",
+      "D",
+      "K",
+    ]);
+    expect(parseFrontDeskCheckInMethods("P")).toEqual(["P", "M", "D"]);
+    expect(parseFrontDeskCheckInMethods("M")).toEqual(["P", "M", "D"]);
+    expect(parseFrontDeskCheckInMethods("D")).toEqual(["P", "M", "D"]);
+    expect(parseFrontDeskCheckInMethods("IP")).toEqual(["P", "M", "D"]);
+    expect(parseFrontDeskCheckInMethods("IM")).toEqual(["P", "M", "D", "I"]);
+  });
+
+  it("offers all three paper methods when an existing election stored them as off", () => {
     expect(parseFrontDeskCheckInMethods("K")).toEqual(["P", "M", "D", "K"]);
     expect(parseFrontDeskCheckInMethods("KI")).toEqual(["P", "M", "D", "K"]);
-    expect(parseFrontDeskCheckInMethods(null)).toEqual(["P", "M", "D"]);
     expect(parseFrontDeskCheckInMethods("OL")).toEqual(["P", "M", "D"]);
-    expect(parseFrontDeskCheckInMethods("PMDKO")).toEqual(["P", "M", "D", "K"]);
-    expect(parseFrontDeskCheckInMethods("IP,OL")).toEqual(["P"]);
-    expect(parseFrontDeskCheckInMethods("IP,OL,K")).toEqual(["P", "K"]);
-    expect(parseFrontDeskCheckInMethods("P")).toEqual(["P"]);
-    expect(parseFrontDeskCheckInMethods("M")).toEqual(["P", "M"]);
-    expect(parseFrontDeskCheckInMethods("D")).toEqual(["P", "D"]);
     expect(parseFrontDeskCheckInMethods("C")).toEqual(["P", "M", "D", "C"]);
-    expect(parseFrontDeskCheckInMethods("IM")).toEqual(["P", "M", "D", "I"]);
+    expect(parseFrontDeskCheckInMethods(null)).toEqual(["P", "M", "D"]);
+    expect(parseFrontDeskCheckInMethods("")).toEqual(["P", "M", "D"]);
   });
 
   it("turns Called in on from UseCallInButton even when the method string omits C", () => {
@@ -88,6 +98,6 @@ describe("votingMethodLabels", () => {
     ).toEqual(["P", "M", "D", "K"]);
     expect(
       parseFrontDeskCheckInMethods("P", { useCallInButton: true }),
-    ).toEqual(["P", "C"]);
+    ).toEqual(["P", "M", "D", "C"]);
   });
 });

@@ -244,12 +244,6 @@ export function isWithdrawableOnlineBallotStatus(
   return status === "Draft" || status === "Submitted";
 }
 
-const PAPER_METHOD_CODES = new Set([
-  VOTING_METHOD_IN_PERSON,
-  VOTING_METHOD_MAILED,
-  VOTING_METHOD_DROPPED_OFF,
-]);
-
 /** Stable Front Desk order so number keys stay predictable. */
 const FRONT_DESK_CHECK_IN_ORDER = [
   VOTING_METHOD_IN_PERSON,
@@ -271,12 +265,11 @@ export type FrontDeskCheckInOptions = {
 /**
  * Methods a teller may record at Front Desk.
  *
- * In person is always offered. Mailed and Dropped off stay on unless the
- * stored methods name at least one paper method and leave the other out
- * (blank, and a value that only names Kiosk / Online / Call-in / Imported,
- * still mean the P/M/D default). Called in, Kiosk, Imported, and custom
- * codes appear when that setting names them. `UseCallInButton` also turns
- * Called in on. Online is voter-initiated and is never a desk button.
+ * In person, Mailed, and Dropped off are always offered, including when the
+ * stored methods omit them or name only a subset (`K`, `OL`, `P`, `IP`).
+ * Called in, Kiosk, Imported, and custom codes appear when that setting
+ * names them. `UseCallInButton` also turns Called in on. Online is
+ * voter-initiated and is never a desk button.
  */
 export function parseFrontDeskCheckInMethods(
   votingMethods?: string | null,
@@ -284,26 +277,10 @@ export function parseFrontDeskCheckInMethods(
 ): string[] {
   const trimmed = votingMethods?.trim() ?? "";
   const recognized = trimmed ? collectElectionVotingMethodCodes(trimmed) : [];
-  const namesPaperMethod = recognized.some((code) =>
-    PAPER_METHOD_CODES.has(code),
-  );
-
-  const enabled = new Set<string>([VOTING_METHOD_IN_PERSON]);
-
-  if (!trimmed || !namesPaperMethod) {
-    enabled.add(VOTING_METHOD_MAILED);
-    enabled.add(VOTING_METHOD_DROPPED_OFF);
-  } else {
-    if (recognized.includes(VOTING_METHOD_MAILED)) {
-      enabled.add(VOTING_METHOD_MAILED);
-    }
-    if (recognized.includes(VOTING_METHOD_DROPPED_OFF)) {
-      enabled.add(VOTING_METHOD_DROPPED_OFF);
-    }
-  }
+  const enabled = new Set<string>(DEFAULT_FRONT_DESK_METHODS);
 
   for (const code of recognized) {
-    if (code === VOTING_METHOD_ONLINE || PAPER_METHOD_CODES.has(code)) {
+    if (code === VOTING_METHOD_ONLINE) {
       continue;
     }
     enabled.add(code);

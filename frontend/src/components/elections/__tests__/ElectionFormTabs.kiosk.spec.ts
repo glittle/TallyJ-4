@@ -59,6 +59,36 @@ describe("ElectionFormTabs kiosk toggle", () => {
     expect(model.useOnlineVoting).toBe(true);
   });
 
+  it("shows in person, dropped off, and mailed as always on when the stored methods omit them", async () => {
+    const { wrapper, model } = mountTabs("K");
+
+    const votingTab = wrapper
+      .findAll(".el-tabs__item")
+      .find((tab) => tab.text().includes("Voting Methods"));
+    expect(votingTab).toBeTruthy();
+    await votingTab!.trigger("click");
+
+    expect(wrapper.text()).toContain(
+      "In person, dropped off, and mailed are always available and cannot be turned off.",
+    );
+
+    for (const testId of [
+      "always-on-in-person",
+      "always-on-dropped-off",
+      "always-on-mailed",
+    ]) {
+      const toggle = wrapper.get(`[data-testid="${testId}"]`);
+      expect(toggle.classes()).toContain("is-disabled");
+      expect(toggle.classes()).toContain("is-checked");
+      await toggle.trigger("click");
+    }
+
+    expect(model.votingMethods).toBe("K");
+    expect(
+      wrapper.get('[data-testid="election-kiosk-toggle"]').classes(),
+    ).toContain("is-checked");
+  });
+
   it("exposes Can Add People on the advanced tab for guest Name not in the List", async () => {
     const { wrapper, model } = mountTabs("IP");
 

@@ -223,6 +223,37 @@ function onUseOnlineVotingChange(enabled: string | number | boolean) {
       :label="tabLabel('voting-methods', $t('elections.tabs.votingMethods'))"
       name="voting-methods"
     >
+      <p
+        class="form-help always-on-methods"
+        data-testid="paper-methods-always-on"
+      >
+        {{ $t("elections.form.paperMethodsAlwaysOn") }}
+      </p>
+
+      <el-form-item :label="$t('frontDesk.votingMethod.inPerson')">
+        <el-switch
+          :model-value="true"
+          disabled
+          data-testid="always-on-in-person"
+        />
+      </el-form-item>
+
+      <el-form-item :label="$t('people.votingMethod.droppedOff')">
+        <el-switch
+          :model-value="true"
+          disabled
+          data-testid="always-on-dropped-off"
+        />
+      </el-form-item>
+
+      <el-form-item :label="$t('frontDesk.votingMethod.mail')">
+        <el-switch
+          :model-value="true"
+          disabled
+          data-testid="always-on-mailed"
+        />
+      </el-form-item>
+
       <el-form-item :label="$t('elections.form.useCallInButton')">
         <el-switch v-model="model.useCallInButton" />
       </el-form-item>
@@ -522,6 +553,10 @@ function onUseOnlineVotingChange(enabled: string | number | boolean) {
     color: #909399;
     display: block;
     margin-top: 4px;
+  }
+
+  .always-on-methods {
+    margin: 0 0 12px;
   }
 
   .el-tabs__content {

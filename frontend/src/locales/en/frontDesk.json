@@ -284,6 +284,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "frontDesk.errors.methodNotEnabled": {
+    "t": "This voting method is not enabled for this election.",
+    "s": "source",
+    "w": "2026-11-13T13:40:00Z"
+  },
   "frontDesk.confirm.withdrawPendingOnline.title": {
     "t": "Unfinished online ballot",
     "s": "source",
