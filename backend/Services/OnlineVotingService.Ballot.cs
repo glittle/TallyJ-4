@@ -114,6 +114,23 @@ public partial class OnlineVotingService
                 return (false, "voting.submit.alreadyVotedAnotherWay");
             }
 
+            // Draft autosave may be short. A real submit must name exactly
+            // Number to Elect, or Accept-all would later spoil it as Too Few.
+            if (!dto.IsDraft)
+            {
+                var required = election.NumberToElect ?? 0;
+                var eligible = await LoadEligibleOnlineNamesAsync(election.ElectionGuid);
+                var chosen = OnlineBallotNameCount.CountDistinctValidNames(
+                    dto.Votes,
+                    election.OnlineSelectionProcess,
+                    eligible);
+                if (required < 1 || chosen != required)
+                {
+                    await transaction.RollbackAsync();
+                    return (false, OnlineBallotNameCount.ExactCountError);
+                }
+            }
+
             var payloadJson = SerializePendingPayload(dto.Votes, dto.ListPool);
 
             if (existingVotingInfo != null)
@@ -450,6 +467,38 @@ public partial class OnlineVotingService
         {
             return new List<OnlinePoolEntryDto>();
         }
+    }
+
+    private async Task<Dictionary<Guid, string?>> LoadEligibleOnlineNamesAsync(Guid electionGuid)
+    {
+        var people = await _context.People
+            .AsNoTracking()
+            .Where(p => p.ElectionGuid == electionGuid && p.CanReceiveVotes == true)
+            .Select(p => new
+            {
+                p.PersonGuid,
+                p.FirstName,
+                p.LastName,
+                p.OtherLastNames,
+                p.OtherNames,
+                p.OtherInfo
+            })
+            .ToListAsync();
+
+        var names = new Dictionary<Guid, string?>();
+        foreach (var row in people)
+        {
+            names[row.PersonGuid] = PersonNameHelper.ComputeFullName(new Person
+            {
+                FirstName = row.FirstName,
+                LastName = row.LastName,
+                OtherLastNames = row.OtherLastNames,
+                OtherNames = row.OtherNames,
+                OtherInfo = row.OtherInfo
+            });
+        }
+
+        return names;
     }
 
     private async Task<OnlineVoter?> FindOnlineVoterForBallotAsync(Guid electionGuid, string voterId)

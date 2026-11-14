@@ -25,6 +25,11 @@ const props = defineProps<{
   paidChannelBlockReason?: string | null;
   paidSendsUsed?: number;
   paidSendAllowance?: number;
+  /**
+   * People who can receive votes. Null until that count is known.
+   * Used only to warn when List mode cannot fill every online slot.
+   */
+  eligibleReceiverCount?: number | null;
 }>();
 
 const paidChannelKey = computed(() =>
@@ -123,6 +128,22 @@ function onUseOnlineVotingChange(enabled: string | number | boolean) {
     model.value.onlineSelectionProcess = "A";
   }
 }
+
+const listModeBlocksOnlineSubmit = computed(() => {
+  if (!model.value.useOnlineVoting) {
+    return false;
+  }
+  const process = model.value.onlineSelectionProcess || "A";
+  if (process === "B" || process === "C") {
+    return false;
+  }
+  const eligible = props.eligibleReceiverCount;
+  const needed = Number(model.value.numberToElect);
+  if (typeof eligible !== "number" || !Number.isFinite(needed) || needed <= 0) {
+    return false;
+  }
+  return eligible < needed;
+});
 </script>
 
 <template>
@@ -300,6 +321,21 @@ function onUseOnlineVotingChange(enabled: string | number | boolean) {
       :label="tabLabel('online-voting', $t('elections.tabs.onlineVoting'))"
       name="online-voting"
     >
+      <el-alert
+        v-if="listModeBlocksOnlineSubmit"
+        class="online-list-shortfall"
+        data-testid="online-list-shortfall"
+        type="warning"
+        :closable="false"
+        show-icon
+        :title="
+          $t('elections.form.onlineListTooFewPeople', {
+            eligible: eligibleReceiverCount ?? 0,
+            count: model.numberToElect ?? 0,
+          })
+        "
+      />
+
       <el-alert
         v-if="paidChannelKey"
         class="paid-channel-alert"

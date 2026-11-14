@@ -112,7 +112,10 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
     public async Task SubmitKioskBallot_EndsLoginWindow_ThenSameCodeCannotAuthenticate()
     {
         var kioskCode = "JSUBM";
-        var electionGuid = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+        var electionGuid = await SetupOpenElectionWithVoter(
+            kioskCode: kioskCode,
+            selectionProcess: "B",
+            numberToElect: 1);
 
         var auth = await Client.PostAsJsonAsync("/api/online-voting/verifyCode", new VerifyCodeDto
         {
@@ -186,7 +189,10 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
     public async Task SameKioskLetters_InTwoElections_DoNotShareOrCloseEachOthersWindow()
     {
         const string kioskCode = "SMART";
-        var electionA = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
+        var electionA = await SetupOpenElectionWithVoter(
+            kioskCode: kioskCode,
+            selectionProcess: "B",
+            numberToElect: 1);
         var electionB = await SetupOpenElectionWithVoter(kioskCode: kioskCode);
         await SetElectionVotingMethodsAsync(electionA, "K");
 
@@ -476,7 +482,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
     public async Task SubmitBallot_ThenResubmitTwice_UpdatesTimestampEachTime()
     {
         var email = $"twice_{Guid.NewGuid():N}@example.com";
-        var electionGuid = await SetupOpenElectionWithVoter(email);
+        var electionGuid = await SetupOpenElectionWithVoter(email, numberToElect: 2);
         await EnsureOnlineVoterAsync(email, "E");
         var people = await SetupPeopleAsync(electionGuid, 2);
 
@@ -500,14 +506,32 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         }
 
         var first = await SubmitAndGetTimestamp(2);
-        var second = await SubmitAndGetTimestamp(1);
-        var third = await SubmitAndGetTimestamp(2);
+        var second = await SubmitAndGetTimestamp(2);
 
         Assert.NotNull(first);
         Assert.NotNull(second);
-        Assert.NotNull(third);
         Assert.True(second > first);
-        Assert.True(third > second);
+
+        var shortResponse = await SubmitBallotAsVoterAsync(
+            electionGuid,
+            new SubmitOnlineBallotDto
+            {
+                ElectionGuid = electionGuid,
+                VoterId = email,
+                Votes =
+                [
+                    new OnlineVoteDto { PersonGuid = people[0], PositionOnBallot = 1 }
+                ]
+            });
+        Assert.Equal(HttpStatusCode.BadRequest, shortResponse.StatusCode);
+        Assert.Contains(
+            "voting.submit.exactCount",
+            await shortResponse.Content.ReadAsStringAsync());
+
+        var afterShort = await GetVoteStatusAsVoterAsync(electionGuid, email);
+        var stillFull = await afterShort.Content.ReadFromJsonAsync<OnlineVoteStatusDto>();
+        Assert.Equal(2, stillFull!.PriorVotes.Count);
+        Assert.Equal(second, stillFull.WhenSubmitted);
     }
 
     [Fact]
@@ -532,7 +556,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
     public async Task SubmitBallot_ThenResubmit_UpdatesBallotAndReturnsPriorVotes()
     {
         var email = $"ballot_{Guid.NewGuid():N}@example.com";
-        var electionGuid = await SetupOpenElectionWithVoter(email);
+        var electionGuid = await SetupOpenElectionWithVoter(email, numberToElect: 3);
         await EnsureOnlineVoterAsync(email, "E");
 
         var people = await SetupPeopleAsync(electionGuid, 3);
@@ -564,7 +588,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
             ElectionGuid = electionGuid,
             VoterId = email,
             NotifyWhenProcessed = false,
-            Votes = people.Take(2).Select((c, i) => new OnlineVoteDto
+            Votes = people.Select((c, i) => new OnlineVoteDto
             {
                 PersonGuid = c,
                 PositionOnBallot = i + 1
@@ -577,16 +601,39 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         var updatedStatusResponse = await GetVoteStatusAsVoterAsync(electionGuid, email);
         var updatedStatus = await updatedStatusResponse.Content.ReadFromJsonAsync<OnlineVoteStatusDto>();
         Assert.NotNull(updatedStatus);
-        Assert.Equal(2, updatedStatus.PriorVotes.Count);
+        Assert.Equal(3, updatedStatus.PriorVotes.Count);
         Assert.False(updatedStatus.NotifyWhenProcessed);
         Assert.NotEqual(status.WhenSubmitted, updatedStatus.WhenSubmitted);
+
+        var shortResponse = await SubmitBallotAsVoterAsync(
+            electionGuid,
+            new SubmitOnlineBallotDto
+            {
+                ElectionGuid = electionGuid,
+                VoterId = email,
+                Votes = people.Take(2).Select((c, i) => new OnlineVoteDto
+                {
+                    PersonGuid = c,
+                    PositionOnBallot = i + 1
+                }).ToList()
+            });
+        Assert.Equal(HttpStatusCode.BadRequest, shortResponse.StatusCode);
+        Assert.Contains(
+            "voting.submit.exactCount",
+            await shortResponse.Content.ReadAsStringAsync());
+        var unchanged = await GetVoteStatusAsVoterAsync(electionGuid, email);
+        var unchangedStatus = await unchanged.Content.ReadFromJsonAsync<OnlineVoteStatusDto>();
+        Assert.Equal(3, unchangedStatus!.PriorVotes.Count);
     }
 
     [Fact]
     public async Task SubmitBallot_EmptyVotes_OverwritesDraftAndSubmittedThroughValidation()
     {
         var email = $"empty_{Guid.NewGuid():N}@example.com";
-        var electionGuid = await SetupOpenElectionWithVoter(email);
+        var electionGuid = await SetupOpenElectionWithVoter(
+            email,
+            selectionProcess: "B",
+            numberToElect: 1);
         await EnsureOnlineVoterAsync(email, "E");
 
         var draft = await SubmitBallotAsVoterAsync(
@@ -643,12 +690,15 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
                 IsDraft = false,
                 Votes = []
             });
-        Assert.Equal(HttpStatusCode.OK, clearSubmitted.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, clearSubmitted.StatusCode);
+        Assert.Contains(
+            "voting.submit.exactCount",
+            await clearSubmitted.Content.ReadAsStringAsync());
 
         var submittedStatusResponse = await GetVoteStatusAsVoterAsync(electionGuid, email);
         var submittedStatus = await submittedStatusResponse.Content.ReadFromJsonAsync<OnlineVoteStatusDto>();
         Assert.NotNull(submittedStatus);
-        Assert.Empty(submittedStatus.PriorVotes ?? []);
+        Assert.Contains(submittedStatus.PriorVotes ?? [], v => v.VoteName == "Submitted Name");
         Assert.NotNull(submittedStatus.WhenSubmitted);
     }
 
@@ -1072,7 +1122,8 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
         string? email = null,
         string? kioskCode = null,
         string? phone = null,
-        string? selectionProcess = "A")
+        string? selectionProcess = "A",
+        int numberToElect = 9)
     {
         using var scope = Factory.Services.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<MainDbContext>();
@@ -1085,7 +1136,7 @@ public class OnlineVotingBallotFlowTests : IntegrationTestBase
             UseOnlineVoting = true,
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTime.UtcNow.AddHours(1),
-            NumberToElect = 9,
+            NumberToElect = numberToElect,
             OnlineSelectionProcess = selectionProcess,
             ElectionStage = ElectionStage.GatheringBallots,
             RowVersion = new byte[8]

@@ -305,7 +305,7 @@ public class Issue336AcceptAllFrontDeskRaceTests
             OnlineWhenOpen = DateTimeOffset.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTimeOffset.UtcNow.AddHours(1),
             ElectionStage = ElectionStage.GatheringBallots,
-            NumberToElect = 9,
+            NumberToElect = 1,
             RowVersion = new byte[8]
         });
         context.People.Add(new Person

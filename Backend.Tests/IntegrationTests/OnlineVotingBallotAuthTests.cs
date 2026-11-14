@@ -285,8 +285,8 @@ public class OnlineVotingBallotAuthTests : IntegrationTestBase
             UseOnlineVoting = true,
             OnlineWhenOpen = DateTime.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTime.UtcNow.AddHours(1),
-            NumberToElect = 9,
-            OnlineSelectionProcess = "A",
+            NumberToElect = 1,
+            OnlineSelectionProcess = "B",
             ElectionStage = ElectionStage.GatheringBallots,
             RowVersion = new byte[8]
         });

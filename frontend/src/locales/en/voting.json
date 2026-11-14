@@ -14,6 +14,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "voting.ballot.chooseCount": {
+    "t": "Choose {count} names ({chosen} chosen)",
+    "s": "source",
+    "w": "2026-11-14T18:30:00Z"
+  },
   "voting.ballot.editing": {
     "t": "Editing ballot",
     "s": "source",
@@ -473,6 +478,11 @@
     "t": "An error occurred while submitting your ballot. Please try again.",
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
+  },
+  "voting.submit.exactCount": {
+    "t": "An online ballot must contain exactly the Number to Elect different names. A duplicate name counts once, and a blank line does not count.",
+    "s": "source",
+    "w": "2026-11-14T18:30:00Z"
   },
   "voting.submit.notOpen": {
     "t": "Online voting is not currently open for this election.",

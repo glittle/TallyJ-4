@@ -104,6 +104,18 @@ function draftStatus(): OnlineVoteStatus {
   };
 }
 
+function completeDraftStatus(): OnlineVoteStatus {
+  return {
+    hasVoted: true,
+    canChangeVote: true,
+    whenSubmitted: null,
+    priorVotes: [
+      { voteName: "Alice Smith", positionOnBallot: 1 },
+      { voteName: "Bob Jones", positionOnBallot: 2 },
+    ],
+  };
+}
+
 describe("VoterBallotPage silent autosave isDraft", () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -248,8 +260,8 @@ describe("VoterBallotPage silent autosave isDraft", () => {
   });
 
   it("keeps isDraft false on later autosave after explicit Submit", async () => {
-    storeState.checkVoteStatus.mockResolvedValue(draftStatus());
-    storeState.voteStatus = draftStatus();
+    storeState.checkVoteStatus.mockResolvedValue(completeDraftStatus());
+    storeState.voteStatus = completeDraftStatus();
 
     const wrapper = await mountAndFlushAutosave();
     submitBallot.mockClear();
@@ -508,10 +520,45 @@ describe("VoterBallotPage silent autosave isDraft", () => {
     storeState.ensureVoterHubsConnected.mockResolvedValue(undefined);
   });
 
-  it("logs out after kiosk submit so the next voter starts clean", async () => {
-    storeState.isKioskSession = true;
+  it("disables submit until every slot has a distinct name", async () => {
     storeState.checkVoteStatus.mockResolvedValue(draftStatus());
     storeState.voteStatus = draftStatus();
+
+    const wrapper = await mountAndFlushAutosave();
+
+    expect(wrapper.get("[data-testid='ballot-choose-count']").text()).toBe(
+      "Choose 2 names (1 chosen)",
+    );
+    expect(
+      wrapper.get("[data-testid='ballot-submit']").attributes("disabled"),
+    ).toBeDefined();
+
+    await wrapper.get("form").trigger("submit");
+    await flushPromises();
+    expect(submitBallot).toHaveBeenCalled();
+    for (const [, payload] of submitBallot.mock.calls) {
+      expect(payload.isDraft).toBe(true);
+    }
+  });
+
+  it("enables submit when the chosen count equals Number to Elect", async () => {
+    storeState.checkVoteStatus.mockResolvedValue(completeDraftStatus());
+    storeState.voteStatus = completeDraftStatus();
+
+    const wrapper = await mountAndFlushAutosave();
+
+    expect(wrapper.get("[data-testid='ballot-choose-count']").text()).toBe(
+      "Choose 2 names (2 chosen)",
+    );
+    expect(
+      wrapper.get("[data-testid='ballot-submit']").attributes("disabled"),
+    ).toBeUndefined();
+  });
+
+  it("logs out after kiosk submit so the next voter starts clean", async () => {
+    storeState.isKioskSession = true;
+    storeState.checkVoteStatus.mockResolvedValue(completeDraftStatus());
+    storeState.voteStatus = completeDraftStatus();
 
     const wrapper = await mountAndFlushAutosave();
     submitBallot.mockClear();

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   autosaveAsDraft,
   buildOnlineVotes,
+  countChosenNames,
   createEmptyVoteSlots,
   getDuplicateVotePositions,
   getEffectiveVoteName,
@@ -198,6 +199,41 @@ describe("useVoterBallot", () => {
 
     expect(slots[0].person?.fullName).toBe("Alice Smith");
     expect(slots[1].searchText).toBe("Free Name");
+  });
+
+  it("countChosenNames requires every slot in list mode and ignores duplicates", () => {
+    const slots = createEmptyVoteSlots(3);
+    slots[0].person = { personGuid: "p1", fullName: "Doe, Ann" };
+    slots[0].searchText = "Doe, Ann";
+    slots[1].person = { personGuid: "p1", fullName: "Doe, Ann" };
+    slots[1].searchText = "Doe, Ann";
+    slots[2].searchText = "Someone typed";
+
+    expect(countChosenNames(slots, "A")).toBe(1);
+
+    slots[1].person = { personGuid: "p2", fullName: "Lee, Bo" };
+    slots[1].searchText = "Lee, Bo";
+    expect(countChosenNames(slots, "A")).toBe(2);
+  });
+
+  it("countChosenNames accepts distinct typed names only when write-ins are allowed", () => {
+    const slots = createEmptyVoteSlots(3);
+    slots[0].freeText = "Ann Doe";
+    slots[1].freeText = "ann   doe";
+    slots[2].freeText = "Bo Lee";
+
+    expect(countChosenNames(slots, "A")).toBe(0);
+    expect(countChosenNames(slots, "B")).toBe(2);
+    expect(countChosenNames(slots, "C")).toBe(2);
+  });
+
+  it("canSubmit is true only when the chosen count equals Number to Elect", () => {
+    const { canSubmit } = useVoterBallotHelpers(() => "B");
+    const slots = createEmptyVoteSlots(2);
+    slots[0].freeText = "Ann Doe";
+    expect(canSubmit(slots, 2)).toBe(false);
+    slots[1].freeText = "Bo Lee";
+    expect(canSubmit(slots, 2)).toBe(true);
   });
 
   it("applyPriorVotes sets isEditing only when already Submitted", () => {

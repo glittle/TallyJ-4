@@ -101,6 +101,61 @@ export function hasDuplicateVotes(
   return getDuplicateVotePositions(votes, selectionMode).size > 0;
 }
 
+/** Random (B) and Both (C) accept a typed name. List (A) does not. */
+export function onlineSelectionAllowsWriteIn(selectionMode: string): boolean {
+  return selectionMode === "B" || selectionMode === "C";
+}
+
+function normalizeVoteName(value: string | null | undefined): string {
+  return (value ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+/**
+ * Distinct names that fill a slot. A selected person counts once. The same
+ * name does not count again. Typed text with no person counts only when
+ * write-ins are allowed (not List mode).
+ */
+export function countChosenNames(
+  votes: VoteSlot[],
+  selectionMode: string,
+): number {
+  const writeIn = onlineSelectionAllowsWriteIn(selectionMode);
+  const seenGuids = new Set<string>();
+  const seenNames = new Set<string>();
+  let count = 0;
+
+  for (const slot of votes) {
+    const rawGuid = slot.person?.personGuid;
+    const guid =
+      rawGuid && !String(rawGuid).startsWith("pool-")
+        ? String(rawGuid).toLowerCase()
+        : "";
+    const name = normalizeVoteName(getEffectiveVoteName(slot, selectionMode));
+
+    if (guid) {
+      if (seenGuids.has(guid)) {
+        continue;
+      }
+      seenGuids.add(guid);
+      if (name && seenNames.has(name)) {
+        continue;
+      }
+      if (name) {
+        seenNames.add(name);
+      }
+      count++;
+      continue;
+    }
+
+    if (writeIn && name && !seenNames.has(name)) {
+      seenNames.add(name);
+      count++;
+    }
+  }
+
+  return count;
+}
+
 /**
  * Autosave is Draft only before the first Submitted write. After Submit, or
  * when status already has whenSubmitted, keep isDraft false so the client
@@ -156,8 +211,9 @@ export function useVoterBallotHelpers(selectionMode: () => string) {
   const hasAnyVote = (votes: VoteSlot[]) =>
     votes.some((v) => isVoteSlotFilled(v, selectionMode()));
 
-  const canSubmit = (votes: VoteSlot[]) =>
-    hasAnyVote(votes) && !duplicateVotes(votes);
+  const canSubmit = (votes: VoteSlot[], requiredCount: number) =>
+    requiredCount > 0 &&
+    countChosenNames(votes, selectionMode()) === requiredCount;
 
   function addPoolEntry(entry: OnlinePoolEntry) {
     const exists = poolEntries.value.some(

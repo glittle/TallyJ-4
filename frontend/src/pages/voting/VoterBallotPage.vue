@@ -21,6 +21,7 @@ import { useNotifications } from "../../composables/useNotifications";
 import {
   autosaveAsDraft,
   buildOnlineVotes,
+  countChosenNames,
   createEmptyVoteSlots,
   isSubmittedOnlineVoteStatus,
   shouldWriteAutosave,
@@ -61,6 +62,12 @@ const votes = ref<VoteSlot[]>([]);
 
 const selectionMode = computed(
   () => onlineVotingStore.electionInfo?.onlineSelectionProcess ?? "A",
+);
+const numberToElect = computed(
+  () => onlineVotingStore.electionInfo?.numberToElect || 9,
+);
+const chosenCount = computed(() =>
+  countChosenNames(votes.value, selectionMode.value),
 );
 
 const isModeList = computed(() => selectionMode.value === "A");
@@ -377,6 +384,15 @@ async function handleSubmit() {
     showErrorMessage(t("voting.ballot.duplicateError"));
     return;
   }
+  if (chosenCount.value !== numberToElect.value) {
+    showErrorMessage(
+      t("voting.ballot.chooseCount", {
+        count: numberToElect.value,
+        chosen: chosenCount.value,
+      }),
+    );
+    return;
+  }
 
   try {
     runAutosave.cancel();
@@ -572,10 +588,18 @@ function backToElections() {
             <h3>
               {{
                 $t("voting.ballot.votingFor", {
-                  count: onlineVotingStore.electionInfo.numberToElect ?? 9,
+                  count: numberToElect,
                 })
               }}
             </h3>
+            <p class="choose-count" data-testid="ballot-choose-count">
+              {{
+                $t("voting.ballot.chooseCount", {
+                  count: numberToElect,
+                  chosen: chosenCount,
+                })
+              }}
+            </p>
 
             <ElAlert
               v-if="isModeRandom"
@@ -692,9 +716,10 @@ function backToElections() {
                   type="primary"
                   native-type="submit"
                   :loading="submitting"
-                  :disabled="!canChangeVote || !canSubmit(votes)"
+                  :disabled="!canChangeVote || !canSubmit(votes, numberToElect)"
                   size="large"
                   class="submit-btn"
+                  data-testid="ballot-submit"
                 >
                   {{
                     isEditing
@@ -823,6 +848,11 @@ function backToElections() {
 
           h3 {
             margin: 0 0 8px 0;
+          }
+
+          .choose-count {
+            margin: 0 0 12px;
+            font-size: 15px;
           }
 
           .mode-hint {
