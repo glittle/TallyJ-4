@@ -614,6 +614,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "elections.form.onlineListTooFewPeople": {
+    "t": "Only {eligible} people can be voted for, but this election elects {count}. List mode does not let voters type names, so they cannot submit an online ballot. Add enough people who can receive votes, or choose Random or Both.",
+    "s": "source",
+    "w": "2026-11-14T18:30:00Z"
+  },
   "elections.form.onlineSelectionProcess": {
     "t": "Name Selection",
     "s": "source",

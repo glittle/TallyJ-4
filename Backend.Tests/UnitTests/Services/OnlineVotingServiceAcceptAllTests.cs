@@ -112,19 +112,25 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
 
         Assert.True((await SubmitPendingAsync(
             election.ElectionGuid, submittedVoter.Email, submittedVoter.Person.PersonGuid)).Success);
-        Assert.True((await SubmitEmptyAsync(
-            election.ElectionGuid, submittedVoter.Email, isDraft: false)).Success);
+        var refused = await SubmitEmptyAsync(
+            election.ElectionGuid, submittedVoter.Email, isDraft: false);
+        Assert.False(refused.Success);
+        Assert.Equal(OnlineBallotNameCount.ExactCountError, refused.Error);
 
         var submittedStatus = await _service.GetVoteStatusAsync(
             election.ElectionGuid, submittedVoter.Email);
         Assert.True(submittedStatus.HasVoted);
         Assert.True(submittedStatus.CanChangeVote);
-        Assert.Empty(submittedStatus.PriorVotes);
+        Assert.NotEmpty(submittedStatus.PriorVotes);
         Assert.Equal(OnlineBallotStatus.Submitted, Context.OnlineVotingInfos
             .Single(o => o.PersonGuid == submittedVoter.Person.PersonGuid).Status);
 
-        // Empty Submitted stays in pending counts (pending-but-skipped) so a
-        // later fill can be Accept-all'd. Accept-all must not Process it.
+        // A stored empty Submitted row is no longer produced by submit. Accept-all
+        // still skips one that is already empty (pending-but-skipped).
+        Context.OnlineVotingInfos
+            .Single(o => o.PersonGuid == submittedVoter.Person.PersonGuid)
+            .ListPool = """{"Votes":[],"Pool":[]}""";
+        await Context.SaveChangesAsync();
         var summary = await _service.GetAcceptAllSummaryAsync(election.ElectionGuid);
         Assert.Equal(1, summary!.PendingCount);
         Assert.Equal(0, summary.ProcessedCount);
@@ -150,9 +156,9 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
         var election = await SeedOpenElectionAsync();
         var (person, email) = await SeedVoterAsync(election.ElectionGuid);
         Assert.True((await SubmitPendingAsync(election.ElectionGuid, email, person.PersonGuid)).Success);
-        Assert.True((await SubmitEmptyAsync(election.ElectionGuid, email, isDraft: false)).Success);
-
-        Context.OnlineVotingInfos.Single().Status = OnlineBallotStatus.Processing;
+        var stored = Context.OnlineVotingInfos.Single();
+        stored.ListPool = """{"Votes":[],"Pool":[]}""";
+        stored.Status = OnlineBallotStatus.Processing;
         await Context.SaveChangesAsync();
 
         var accept = await _service.AcceptAllPendingAsync(election.ElectionGuid);
@@ -806,7 +812,7 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
             OnlineWhenOpen = DateTimeOffset.UtcNow.AddHours(-1),
             OnlineWhenClose = DateTimeOffset.UtcNow.AddHours(1),
             ElectionStage = ElectionStage.GatheringBallots,
-            NumberToElect = 9,
+            NumberToElect = 1,
             RowVersion = new byte[8]
         };
         Context.Elections.Add(election);
@@ -825,6 +831,7 @@ public class OnlineVotingServiceAcceptAllTests : ServiceTestBase
             LastName = "Voter",
             Email = email,
             CanVote = true,
+            CanReceiveVotes = true,
             RowVersion = new byte[8]
         };
         Context.People.Add(person);

@@ -146,7 +146,7 @@ public class MixedVotingMethodFlowTests : IntegrationTestBase
             Name = $"Mixed methods {Guid.NewGuid():N}",
             DateOfElection = DateTime.UtcNow.AddDays(1),
             ElectionType = ElectionTypeCode.LSA,
-            NumberToElect = 3,
+            NumberToElect = 2,
             UseOnlineVoting = true,
             VotingMethods = "PMDKO"
         });

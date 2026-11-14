@@ -15,11 +15,11 @@ Treat online ballot paths with the same rigor as core analysis. Prefer explicit 
 **Status:** active  
 **Evidence:** confirmed (Glen, #303 UAT; voter ballot page)
 
-While the voter fills names, the ballot page silently autosaves to `OnlineVotingInfo` as status **Draft** (payload in `ListPool`). Reload restores those votes. Draft is not Accept-all pending and does not inflate monitor Submitted counts. Clearing the last name overwrites that saved payload (empty Draft, or payload-only if already Submitted) so leave/return does not restore names the voter just removed. Empty `Votes` is allowed on submit validation for that overwrite. A first visit with no names still does not create a Draft. Monitor `TotalOnlineBallots` is Submitted + Processing + Processed — Draft is not in that total or in pending.
+While the voter fills names, the ballot page silently autosaves to `OnlineVotingInfo` as status **Draft** (payload in `ListPool`). Reload restores those votes. Draft is not Accept-all pending and does not inflate monitor Submitted counts. Clearing the last name overwrites a Draft. A non-draft submit that is short of Number to Elect is refused, so it no longer clears a Submitted ballot (see below). Empty `Votes` is still allowed on Draft validation for that overwrite. A first visit with no names still does not create a Draft. Monitor `TotalOnlineBallots` is Submitted + Processing + Processed — Draft is not in that total or in pending.
 
 The explicit **Submit Ballot** action writes the same payload as **Submitted**. Accept-all still takes only `Submitted` + `Processing`.
 
-Once a row is **Submitted**, later autosaves (reload restore, notify toggle, or a debounced save after Submit) update the payload only. They do not demote Status back to Draft. Allowed writes are Draft→Draft, Draft→Submitted, Submitted→Submitted. The client sends `isDraft: false` after Submit so it agrees with the server; the server also refuses demotion if a stale Draft flag arrives.
+Once a row is **Submitted**, later autosaves (reload restore, notify toggle, or a debounced save after Submit) update the payload only. They do not demote Status back to Draft. Allowed writes are Draft→Draft, Draft→Submitted, Submitted→Submitted. The client sends `isDraft: false` after Submit so it agrees with the server; the server also refuses demotion if a stale Draft flag arrives. A non-draft write that is no longer exactly Number to Elect is refused, so a half-edited ballot does not replace the complete one until every slot is filled again.
 
 **Rejected alternative:** autosave as `Submitted`. Incomplete ballots would appear in pending counts and could be Accept-all’d while the voter was still editing.
 
@@ -33,6 +33,27 @@ A hard reload of `/vote` must not paint “Election not found” while the voter
 
 **Rejected alternative:** trust the remembered id without checking this voter’s elections, and leave it in the tab after logout. The next email or phone voter on a shared device would open the previous person’s election.
 
+## Online submit requires exactly Number to Elect
+
+**Status:** active  
+**Evidence:** confirmed (issue #425; owner decision 2026-11-14)
+
+An online ballot that is Submitted must contain exactly the election's Number to Elect distinct valid names. The voter page disables Submit until that count is met and shows `Choose {count} names ({chosen} chosen)`. The submit API returns 400 `voting.submit.exactCount` for fewer or more, including a direct call. Draft autosave is unchanged and may be short.
+
+A valid name is a person in this election who can receive votes, counted once. The same display name does not count again. A typed name with no person id counts only when Name Selection is Random (`B`) or Both (`C`). List (`A`), and a missing code (the ballot page treats that as List), does not accept typed names: the help text already says voters cannot add names. A person id for someone who cannot receive votes does not count.
+
+When online voting is on, Name Selection is List, and fewer people can receive votes than Number to Elect, the online voting settings tab warns the owner. Otherwise those voters could never submit. Random and Both can type a name, so that warning is not shown. A brand-new election has no people yet; the warning appears on the existing election's settings once that count is known.
+
+Paper ballots entered by tellers, imported ballots, and the tally's Too Few spoiling are unchanged. A short paper ballot can still be recorded and spoiled as before.
+
+**Rejected alternative:** warn on the ballot and still accept it (the original #425 report). After Accept-all the short ballot is spoiled as Too Few and the voter cannot fix it.
+
+**Rejected alternative:** apply the same block to paper and imported ballots. Tellers still need to record a short paper ballot; the analyzer still marks it Too Few.
+
+**Rejected alternative:** count any non-empty typed text in List mode. That would let a voter invent names on a list that was supposed to be complete, and tellers would have to match ballots List mode was chosen to avoid.
+
+**Reason:** a short online ballot was accepted with no warning and later spoiled. The voter has to fill every slot before submit, and the API enforces the same rule.
+
 ## Accept-all of pending online ballots
 
 **Status:** active  
@@ -44,7 +65,9 @@ Advancing **to** Finalized is refused while that same window is currently open (
 
 A logged-in teller may Accept-all current pending online ballots while the online voting window is still open, and may do so more than once. Each run only accepts rows that are `Submitted` or already `Processing` at that moment.
 
-An empty Submitted overwrite (voter cleared every name after Submit) stays `Submitted` — never demoted to Draft. It still counts as pending on the monitor. Accept-all does not claim that payload and does not set `Processed`: there are no votes to turn into an OL ballot, and finalizing would lock the voter out with nothing counted. That row is pending-but-skipped until names are written again. A leftover `Processing` claim with an empty payload is restored to `Submitted` instead of wiped.
+> Superseded 2026-11 for new submits: a voter can no longer save a short or empty non-draft ballot. See "Online submit requires exactly Number to Elect" above.
+
+An empty Submitted row that is already stored stays `Submitted` — never demoted to Draft. It still counts as pending on the monitor. Accept-all does not claim that payload and does not set `Processed`: there are no votes to turn into an OL ballot, and finalizing would lock the voter out with nothing counted. That row is pending-but-skipped until names are written again. A leftover `Processing` claim with an empty payload is restored to `Submitted` instead of wiped.
 
 Accept-all creates a regular ballot at the Online location (computer code `OL`) as if a teller had typed from paper, then wipes the online payload (`ListPool`, `PoolLocked`, `BallotGuid`) and sets status `Processed`. After that, the voter cannot change the vote. Acceptance is not reversible: we do not keep a link from the online row to the regular ballot.
 

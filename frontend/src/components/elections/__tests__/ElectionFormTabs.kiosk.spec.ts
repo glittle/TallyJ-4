@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { mount } from "@vue/test-utils";
+import { mount, flushPromises } from "@vue/test-utils";
 import { reactive } from "vue";
 import ElementPlus from "element-plus";
 import { i18n } from "@/test/setup";
@@ -104,5 +104,70 @@ describe("ElectionFormTabs kiosk toggle", () => {
     );
     await switchEl.trigger("click");
     expect(model.guestTellersCanAddPeople).toBe(true);
+  });
+});
+
+describe("ElectionFormTabs list-mode shortfall", () => {
+  async function openOnlineTab(
+    model: UpdateElectionDto,
+    eligibleReceiverCount: number | null,
+  ) {
+    const wrapper = mount(ElectionFormTabs, {
+      props: {
+        modelValue: model,
+        availableElections: [],
+        forceBasicTab: true,
+        eligibleReceiverCount,
+      },
+      global: { plugins: [i18n, ElementPlus] },
+    });
+    const onlineTab = wrapper
+      .findAll(".el-tabs__item")
+      .find((tab) => tab.text().includes("Online Voting"));
+    expect(onlineTab).toBeTruthy();
+    await onlineTab!.trigger("click");
+    await flushPromises();
+    return wrapper;
+  }
+
+  it("warns when list mode has fewer people than Number to Elect", async () => {
+    const model = reactive<UpdateElectionDto>({
+      name: "Setup",
+      useOnlineVoting: true,
+      onlineSelectionProcess: "A",
+      numberToElect: 9,
+    });
+
+    const wrapper = await openOnlineTab(model, 8);
+    const alert = wrapper.get("[data-testid='online-list-shortfall']");
+    expect(alert.text()).toContain("Only 8 people can be voted for");
+    expect(alert.text()).toContain("elects 9");
+
+    model.onlineSelectionProcess = "B";
+    await flushPromises();
+    expect(wrapper.find("[data-testid='online-list-shortfall']").exists()).toBe(
+      false,
+    );
+  });
+
+  it("stays quiet when typed names are allowed or the list is long enough", async () => {
+    const model = reactive<UpdateElectionDto>({
+      name: "Setup",
+      useOnlineVoting: true,
+      onlineSelectionProcess: "C",
+      numberToElect: 9,
+    });
+
+    const both = await openOnlineTab(model, 1);
+    expect(both.find("[data-testid='online-list-shortfall']").exists()).toBe(
+      false,
+    );
+
+    model.onlineSelectionProcess = "A";
+    model.numberToElect = 1;
+    const enough = await openOnlineTab(model, 1);
+    expect(enough.find("[data-testid='online-list-shortfall']").exists()).toBe(
+      false,
+    );
   });
 });

@@ -21,6 +21,7 @@
           :paid-channel-block-reason="election.paidChannelBlockReason"
           :paid-sends-used="election.paidSendsUsed"
           :paid-send-allowance="election.paidSendAllowance"
+          :eligible-receiver-count="eligibleReceiverCount"
         />
 
         <el-form-item style="margin-top: 20px">
@@ -49,6 +50,7 @@ import { useI18n } from "vue-i18n";
 import { useRoute, useRouter } from "vue-router";
 import ElectionAdminsSection from "../../components/elections/ElectionAdminsSection.vue";
 import ElectionFormTabs from "../../components/elections/ElectionFormTabs.vue";
+import { onlineVotingService } from "../../services/onlineVotingService";
 import { useElectionStatsStore } from "../../stores/electionStatsStore";
 import { useElectionStore } from "../../stores/electionStore";
 import type { LinkedElectionOption, UpdateElectionDto } from "../../types";
@@ -78,6 +80,8 @@ const ballotCount = computed(
   () => electionStatsStore.getCached(electionGuid)?.ballotCount,
 );
 const availableElections = ref<LinkedElectionOption[]>([]);
+/** Null until the eligible-receiver count has loaded. */
+const eligibleReceiverCount = ref<number | null>(null);
 
 // `let` is required here so the Vue compiler does not emit
 // "`v-model` cannot update a `const` reactive binding" for <ElectionFormTabs v-model="form">
@@ -168,6 +172,7 @@ onMounted(async () => {
       electionStore.fetchElectionById(electionGuid),
       electionStatsStore.fetchStats(electionGuid),
       electionStore.fetchElections(),
+      loadEligibleReceiverCount(),
     ]);
     availableElections.value =
       electionStore.elections?.filter((e) => e.electionGuid !== electionGuid) ||
@@ -212,6 +217,15 @@ onMounted(async () => {
     handleApiError(error);
   }
 });
+
+async function loadEligibleReceiverCount() {
+  try {
+    const people = await onlineVotingService.getVotablePeople(electionGuid);
+    eligibleReceiverCount.value = people.length;
+  } catch {
+    eligibleReceiverCount.value = null;
+  }
+}
 
 async function submitForm() {
   if (!formRef.value) {

@@ -157,7 +157,7 @@ public class Issue191ConcurrentTellerHttpTests : IntegrationTestBase
             Name = $"Concurrent tellers {Guid.NewGuid():N}",
             DateOfElection = DateTime.UtcNow.AddDays(1),
             ElectionType = ElectionTypeCode.LSA,
-            NumberToElect = 3,
+            NumberToElect = 1,
             UseOnlineVoting = true,
             VotingMethods = "PMDKO"
         });
