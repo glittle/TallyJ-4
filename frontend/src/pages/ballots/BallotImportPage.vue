@@ -211,6 +211,10 @@ const showProgressDialog = ref(false);
 
 const targetFields = IMPORT_TARGET_FIELDS;
 
+/**
+ * Step 0 needs any file text, including whitespace. Step 1 needs
+ * BallotCode and Votes mappings. Later steps are always allowed.
+ */
 const canProceedToNext = computed(() => {
   if (currentStep.value === 0) {
     return fileContent.value !== "";

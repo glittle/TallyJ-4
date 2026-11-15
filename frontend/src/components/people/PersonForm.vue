@@ -82,7 +82,11 @@ const form = reactive({
   ineligibleReasonCode: props.requireEligibility ? "" : ELIGIBLE_REASON_VALUE,
 });
 
-const electionHasUnits = computed(() => {
+/**
+ * Shown when this person has a unit name, or any person in the loaded
+ * list does. There is no election setting for it.
+ */
+const showUnitName = computed(() => {
   if (personDetails.value?.unitName?.trim()) {
     return true;
   }
@@ -95,6 +99,12 @@ const electionHasKiosk = computed(() =>
 
 const isEditMode = computed(() => props.isEdit === true);
 
+/**
+ * Edit only, and only when the election lists kiosk. Hidden once a
+ * voting method is recorded, the kiosk code is consumed,
+ * hasAcceptedBallot is true, or the online status is Processed.
+ * Pending and Draft still show it.
+ */
 const showKioskCode = computed(
   () =>
     electionHasKiosk.value &&
@@ -133,6 +143,7 @@ const kioskExpiry = computed(() => {
 
 const canDeletePerson = computed(() => personDetails.value?.canDelete === true);
 
+/** A recorded voting method, or the detail flag for a processed online row. */
 const personHasAcceptedBallot = computed(() =>
   hasAcceptedBallot(personDetails.value ?? {}),
 );
@@ -141,6 +152,10 @@ const hasEligibilitySelection = computed(() =>
   Boolean(form.ineligibleReasonCode),
 );
 
+/**
+ * No code yet means both rights are false. The eligible sentinel means
+ * both are true. An unknown code also means both are false.
+ */
 const selectedEligibility = computed(() => {
   if (!form.ineligibleReasonCode) {
     return { canVote: false, canReceiveVotes: false };
@@ -160,6 +175,10 @@ const currentVotingMethodLabel = computed(() =>
   getVotingMethodLabel(personDetails.value?.votingMethod, t),
 );
 
+/**
+ * Submitted and Processing are pending. Processed is accepted. Draft is
+ * draft. Any other status, including empty, has no label.
+ */
 const onlineBallotStatusLabel = computed(() => {
   const status = personDetails.value?.onlineBallotStatus;
   if (isPendingOnlineBallotStatus(status)) {
@@ -812,7 +831,7 @@ defineExpose({
         </div>
       </el-form-item>
 
-      <el-form-item v-if="electionHasUnits" :label="$t('people.unitName')">
+      <el-form-item v-if="showUnitName" :label="$t('people.unitName')">
         <el-input :model-value="personDetails?.unitName || ''" disabled />
       </el-form-item>
     </el-form>

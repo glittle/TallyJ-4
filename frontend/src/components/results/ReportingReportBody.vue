@@ -10,6 +10,7 @@ const props = defineProps<{
   reportData: unknown;
 }>();
 
+/** Ballot report codes use the ballot body. Every other code, including an unknown one, uses the voter body. */
 const showBallotReports = computed(() =>
   isBallotReportCode(props.selectedReport),
 );

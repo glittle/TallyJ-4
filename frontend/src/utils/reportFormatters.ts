@@ -12,6 +12,7 @@ export function formatReportDateTime(d?: string) {
   return new Date(d).toLocaleString();
 }
 
+/** v is already a percent number (50 shows as 50%). Percent style expects a fraction, so this divides by 100 first. */
 export function formatReportPercent(v: number) {
   return (v / 100).toLocaleString(undefined, {
     style: "percent",

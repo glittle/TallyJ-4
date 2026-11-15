@@ -80,6 +80,7 @@ const { height: tableHeight } = useViewportTableHeight(tableWrapperRef, {
 });
 
 const loading = computed(() => peopleStore.loading);
+/** Unpaged list for this election. filteredPeople applies search and the two filters. */
 const allPeople = computed(() => peopleStore.peopleList);
 const selectedGuids = ref<string[]>([]);
 const checkingWhatsApp = ref(false);
@@ -92,6 +93,7 @@ const showNotifyWhatsAppResults = ref(false);
 let notifyWhatsAppToken: string | null = null;
 let notifyPollTimer: number | null = null;
 const announcing = ref(false);
+/** Email and SMS only. WhatsApp uses the separate notify run. */
 const announcementChannel = ref<"email" | "sms" | null>(null);
 const announcementResults = ref<AnnouncementStatusDto | null>(null);
 const showAnnouncementResults = ref(false);
