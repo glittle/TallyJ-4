@@ -60,7 +60,11 @@ public class ElectionAccessHandler : AuthorizationHandler<ElectionAccessRequirem
             electionGuid,
             ElectionAccessPolicies.ElectionAccess);
 
-        // Missing election: let the action return 404 instead of 403.
+        // The route value was supposed to be an election guid and no row has
+        // it. Succeed so the action returns 404. Do not use this policy on a
+        // route whose guid is a person or a ballot; that guid is usually not
+        // an election id, so this branch would succeed without checking the
+        // real election. Those actions use RequireElectionAccess.
         if (outcome.Allowed || !outcome.ElectionExists)
         {
             context.Succeed(requirement);

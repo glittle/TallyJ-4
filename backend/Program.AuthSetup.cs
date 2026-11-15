@@ -146,16 +146,16 @@ public static class ProgramAuthSetup
                 .RequireAssertion(context => !Backend.Authorization.ElectionAccessEvaluator.IsOnlineVoter(context.User))
                 .Build();
 
-            options.AddPolicy("ElectionAccess", policy =>
+            options.AddPolicy(Backend.Authorization.ElectionAccessPolicies.ElectionAccess, policy =>
                 policy.Requirements.Add(new Backend.Authorization.ElectionAccessRequirement()));
 
-            options.AddPolicy("TellerAccess", policy =>
-                policy.Requirements.Add(new Backend.Authorization.TellerAccessRequirement()));
+            options.AddPolicy(Backend.Authorization.ElectionAccessPolicies.TellerNamesMemberAccess, policy =>
+                policy.Requirements.Add(new Backend.Authorization.TellerNamesMemberAccessRequirement()));
 
-            options.AddPolicy("HeadTellerAccess", policy =>
-                policy.Requirements.Add(new Backend.Authorization.HeadTellerAccessRequirement()));
+            options.AddPolicy(Backend.Authorization.ElectionAccessPolicies.ElectionMemberAccess, policy =>
+                policy.Requirements.Add(new Backend.Authorization.ElectionMemberAccessRequirement()));
 
-            options.AddPolicy("FullTellerAccess", policy =>
+            options.AddPolicy(Backend.Authorization.ElectionAccessPolicies.FullTellerAccess, policy =>
                 policy.Requirements.Add(new Backend.Authorization.FullTellerAccessRequirement()));
 
             options.AddPolicy("SuperAdmin", policy =>
@@ -169,8 +169,8 @@ public static class ProgramAuthSetup
 
         services.AddScoped<Backend.Authorization.IElectionAccessEvaluator, Backend.Authorization.ElectionAccessEvaluator>();
         services.AddScoped<IAuthorizationHandler, Backend.Authorization.ElectionAccessHandler>();
-        services.AddScoped<IAuthorizationHandler, Backend.Authorization.TellerAccessHandler>();
-        services.AddScoped<IAuthorizationHandler, Backend.Authorization.HeadTellerAccessHandler>();
+        services.AddScoped<IAuthorizationHandler, Backend.Authorization.TellerNamesMemberAccessHandler>();
+        services.AddScoped<IAuthorizationHandler, Backend.Authorization.ElectionMemberAccessHandler>();
         services.AddScoped<IAuthorizationHandler, Backend.Authorization.FullTellerAccessHandler>();
         services.AddScoped<IAuthorizationHandler, Backend.Authorization.SuperAdminHandler>();
     }

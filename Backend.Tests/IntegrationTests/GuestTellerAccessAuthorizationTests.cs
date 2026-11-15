@@ -69,7 +69,7 @@ public class GuestTellerAccessAuthorizationTests : IntegrationTestBase
         using (var scope = Factory.Services.CreateScope())
         {
             var tokens = scope.ServiceProvider.GetRequiredService<IJwtTokenService>();
-            SetAuthToken(tokens.GenerateTellerToken(electionGuid));
+            SetAuthToken(tokens.GenerateGuestTellerToken(electionGuid));
         }
 
         Assert.Equal(HttpStatusCode.Forbidden, (await ToggleAsync(electionGuid, false)).StatusCode);

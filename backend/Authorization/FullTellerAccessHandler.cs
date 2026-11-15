@@ -4,8 +4,8 @@ namespace Backend.Authorization;
 
 /// <summary>
 /// Full teller: Identity Admin, super admin, or an Owner/Admin join row.
-/// Guest tellers and online voters are denied. A global admin or super admin
-/// succeeds even when the route has no election guid (existing admin bypass).
+/// Guest tellers and online voters are denied. A super admin or Identity
+/// Admin succeeds even when the route has no election guid.
 /// </summary>
 public class FullTellerAccessHandler : AuthorizationHandler<FullTellerAccessRequirement>
 {
@@ -45,8 +45,7 @@ public class FullTellerAccessHandler : AuthorizationHandler<FullTellerAccessRequ
             return;
         }
 
-        // Preserve the previous global-admin bypass for actions whose route
-        // does not carry an election guid.
+        // Super admin is not tied to one election. Allow before looking at the route.
         if (_evaluator.IsSuperAdmin(user))
         {
             context.Succeed(requirement);
@@ -57,8 +56,16 @@ public class FullTellerAccessHandler : AuthorizationHandler<FullTellerAccessRequ
         var routeData = context.Resource as RouteData ?? httpContext?.GetRouteData();
         if (!ElectionAccessEvaluator.TryGetElectionGuid(routeData, out var electionGuid))
         {
-            var bypass = await _evaluator.EvaluateAsync(user, Guid.Empty, ElectionAccessPolicies.FullTellerAccess);
-            if (bypass.Allowed)
+            // No election id on the route. EvaluateAsync(Guid.Empty) still
+            // allows an Identity Admin, because that role check ignores the
+            // guid. It does not treat a missing route value as a missing
+            // election row. An Owner/Admin join stored under Guid.Empty would
+            // pass the same way.
+            var unscopedRouteOutcome = await _evaluator.EvaluateAsync(
+                user,
+                Guid.Empty,
+                ElectionAccessPolicies.FullTellerAccess);
+            if (unscopedRouteOutcome.Allowed)
             {
                 context.Succeed(requirement);
             }
@@ -76,7 +83,8 @@ public class FullTellerAccessHandler : AuthorizationHandler<FullTellerAccessRequ
             ElectionAccessPolicies.FullTellerAccess);
 
         // Same as ElectionAccess: a missing election reaches the action so it
-        // can return 404. An existing election still requires Owner/Admin.
+        // can return 404. An existing election still requires Owner/Admin,
+        // Identity Admin, or super admin.
         if (outcome.Allowed || !outcome.ElectionExists)
         {
             context.Succeed(requirement);

@@ -3,21 +3,23 @@ using Microsoft.AspNetCore.Authorization;
 namespace Backend.Authorization;
 
 /// <summary>
-/// Guest teller for the token's election, or a member of an election that has a teller row.
-/// Online voters are denied.
+/// <see cref="ElectionMemberAccessRequirement"/> from the route or from a
+/// <see cref="Guid"/> resource. Same membership rule as
+/// <see cref="ElectionAccessHandler"/> except a guest teller always fails,
+/// and a missing election fails too (the audit-log caller turns that into 404).
 /// </summary>
-public class TellerAccessHandler : AuthorizationHandler<TellerAccessRequirement>
+public class ElectionMemberAccessHandler : AuthorizationHandler<ElectionMemberAccessRequirement>
 {
     private readonly IElectionAccessEvaluator _evaluator;
 
-    public TellerAccessHandler(IElectionAccessEvaluator evaluator)
+    public ElectionMemberAccessHandler(IElectionAccessEvaluator evaluator)
     {
         _evaluator = evaluator;
     }
 
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
-        TellerAccessRequirement requirement)
+        ElectionMemberAccessRequirement requirement)
     {
         var user = context.User;
         if (user?.Identity?.IsAuthenticated != true || _evaluator.IsOnlineVoter(user))
@@ -40,7 +42,7 @@ public class TellerAccessHandler : AuthorizationHandler<TellerAccessRequirement>
         var outcome = await _evaluator.EvaluateAsync(
             user,
             electionGuid,
-            ElectionAccessPolicies.TellerAccess);
+            ElectionAccessPolicies.ElectionMemberAccess);
         if (outcome.Allowed)
         {
             context.Succeed(requirement);

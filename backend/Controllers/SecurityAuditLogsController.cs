@@ -71,7 +71,7 @@ public class SecurityAuditLogsController : ControllerBase
             var electionAccess = await _authorization.AuthorizeAsync(
                 User,
                 electionGuid.Value,
-                ElectionAccessPolicies.HeadTellerAccess);
+                ElectionAccessPolicies.ElectionMemberAccess);
             if (!electionAccess.Succeeded)
             {
                 return NotFound(new { error = "error.notFound" });
@@ -121,7 +121,7 @@ public class SecurityAuditLogsController : ControllerBase
             var electionAccess = await _authorization.AuthorizeAsync(
                 User,
                 log.ElectionGuid.Value,
-                ElectionAccessPolicies.HeadTellerAccess);
+                ElectionAccessPolicies.ElectionMemberAccess);
             if (!electionAccess.Succeeded)
             {
                 return NotFound(ApiResponse<SecurityAuditLogDto>.ErrorResponse("Security audit log not found"));

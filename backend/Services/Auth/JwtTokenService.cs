@@ -49,7 +49,7 @@ public class JwtTokenService : IJwtTokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public string GenerateTellerToken(Guid electionGuid)
+    public string GenerateGuestTellerToken(Guid electionGuid)
     {
         var key = _configuration["Jwt:Key"] ?? throw new InvalidOperationException("JWT key not configured");
         var issuer = _configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer not configured");

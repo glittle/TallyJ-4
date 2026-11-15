@@ -65,9 +65,12 @@ public sealed class RequireElectionAccessAttribute : Attribute, IFilterFactory, 
     public string Argument { get; set; } = "";
 
     /// <summary>
-    /// When true, a guest-teller token may call this action only while the
-    /// election is <see cref="ElectionStage.ProcessingBallots"/>. Owners and
-    /// admins are not affected. Other stages return 403.
+    /// When true, a guest teller may call this action only while the election
+    /// is <see cref="ElectionStage.ProcessingBallots"/>. That is paper-ballot
+    /// entry: create, update, and delete of ballots and votes, reorder, and
+    /// CDN ballot import. Known tellers (owners, admins, and other account
+    /// members) are not stage-gated here. Any other stage is 403 with
+    /// <see cref="ElectionStageMessageKeys.GuestBallotEntryOnlyDuringProcessing"/>.
     /// </summary>
     public bool GuestPaperEntry { get; set; }
 
@@ -122,14 +125,14 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
         var electionGuid = await ResolveElectionGuidAsync(context);
         if (electionGuid == null)
         {
-            context.Result = NotFoundResult();
+            context.Result = ConcealedNotFound();
             return;
         }
 
         var allowed = await _authorization.AuthorizeAsync(context.HttpContext.User, electionGuid.Value, _policy);
         if (!allowed.Succeeded)
         {
-            context.Result = NotFoundResult();
+            context.Result = ConcealedNotFound();
             return;
         }
 
@@ -150,7 +153,8 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
 
     /// <summary>
     /// Guest tellers may write paper ballots and votes only during Processing.
-    /// A missing election is left for the action (404), not reported as the wrong stage.
+    /// A missing election returns false so the action can 404, instead of 403
+    /// for the wrong stage.
     /// </summary>
     private async Task<bool> GuestPaperEntryBlockedAsync(ActionExecutingContext context, Guid electionGuid)
     {
@@ -173,7 +177,7 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
         {
             case ElectionResourceKind.PersonGuid:
             {
-                if (!TryReadGuid(context, FirstName("guid"), out var personGuid))
+                if (!TryReadGuid(context, ArgumentName("guid"), out var personGuid))
                 {
                     return null;
                 }
@@ -185,11 +189,12 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
             }
             case ElectionResourceKind.BallotGuid:
             {
-                if (!TryReadGuid(context, FirstName("guid"), out var ballotGuid))
+                if (!TryReadGuid(context, ArgumentName("guid"), out var ballotGuid))
                 {
                     return null;
                 }
 
+                // A ballot has no ElectionGuid. The election is its location.
                 return await BallotElectionAsync(ballotGuid);
             }
             case ElectionResourceKind.BodyBallotGuid:
@@ -203,11 +208,12 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
             }
             case ElectionResourceKind.VoteId:
             {
-                if (!TryReadInt(context, FirstName("id"), out var voteId))
+                if (!TryReadInt(context, ArgumentName("id"), out var voteId))
                 {
                     return null;
                 }
 
+                // A vote has no ElectionGuid. Vote row id → ballot → location → election.
                 return await (
                     from vote in _db.Votes.AsNoTracking()
                     join ballot in _db.Ballots.AsNoTracking() on vote.BallotGuid equals ballot.BallotGuid
@@ -217,7 +223,7 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
             }
             case ElectionResourceKind.LocationGuid:
             {
-                if (!TryReadGuid(context, FirstName("locationGuid"), out var locationGuid)
+                if (!TryReadGuid(context, ArgumentName("locationGuid"), out var locationGuid)
                     && !TryReadPropertyGuid(context, "LocationGuid", out locationGuid))
                 {
                     return null;
@@ -230,7 +236,7 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
             }
             case ElectionResourceKind.TellerId:
             {
-                if (!TryReadInt(context, FirstName("rowId"), out var rowId))
+                if (!TryReadInt(context, ArgumentName("rowId"), out var rowId))
                 {
                     return null;
                 }
@@ -242,10 +248,12 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
             }
             case ElectionResourceKind.BodyElectionGuid:
             {
-                if (TryReadGuid(context, string.IsNullOrEmpty(_argument) ? "electionGuid" : _argument, out var direct)
+                // An action parameter that is itself a Guid is the election id.
+                // A complex body is not a Guid; its ElectionGuid property is read below.
+                if (TryReadGuid(context, string.IsNullOrEmpty(_argument) ? "electionGuid" : _argument, out var argumentElectionGuid)
                     && context.ActionArguments.Values.Any(v => v is Guid))
                 {
-                    return direct;
+                    return argumentElectionGuid;
                 }
 
                 if (!TryReadPropertyGuid(context, "ElectionGuid", out var fromBody))
@@ -260,6 +268,7 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
         }
     }
 
+    // Ballot → location → election. Ballots are not stored with an election id.
     private async Task<Guid?> BallotElectionAsync(Guid ballotGuid)
     {
         return await (
@@ -269,7 +278,7 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
             select (Guid?)location.ElectionGuid).FirstOrDefaultAsync();
     }
 
-    private string FirstName(string fallback) =>
+    private string ArgumentName(string fallback) =>
         string.IsNullOrEmpty(_argument) ? fallback : _argument;
 
     private static bool TryReadGuid(ActionExecutingContext context, string name, out Guid guid)
@@ -317,6 +326,8 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
         return false;
     }
 
-    private static NotFoundObjectResult NotFoundResult() =>
+    // 404 with the same body as a missing row. A guessed guid must not
+    // confirm that the person, ballot, vote, location, or teller exists.
+    private static NotFoundObjectResult ConcealedNotFound() =>
         new(new { error = "error.notFound" });
 }

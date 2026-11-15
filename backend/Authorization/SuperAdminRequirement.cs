@@ -3,12 +3,8 @@
 namespace Backend.Authorization;
 
 /// <summary>
-/// Authorization requirement that checks if the authenticated user is a super admin
-/// based on the configured email list in appsettings.
+/// Caller email is in <c>SuperAdmin:Emails</c>. Site-wide; not an election role.
 /// </summary>
 public class SuperAdminRequirement : IAuthorizationRequirement
 {
 }
-
-
-

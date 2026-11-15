@@ -37,7 +37,7 @@ public class GuestTellerProcessingBallotsAccessTests : IntegrationTestBase
         using (var scope = Factory.Services.CreateScope())
         {
             var tokens = scope.ServiceProvider.GetRequiredService<IJwtTokenService>();
-            SetAuthToken(tokens.GenerateTellerToken(electionGuid));
+            SetAuthToken(tokens.GenerateGuestTellerToken(electionGuid));
         }
 
         var voters = await GetAsync($"/api/{electionGuid}/frontdesk/eligibleVoters");
@@ -202,7 +202,7 @@ public class GuestTellerProcessingBallotsAccessTests : IntegrationTestBase
     {
         using var scope = Factory.Services.CreateScope();
         var tokens = scope.ServiceProvider.GetRequiredService<IJwtTokenService>();
-        SetAuthToken(tokens.GenerateTellerToken(electionGuid));
+        SetAuthToken(tokens.GenerateGuestTellerToken(electionGuid));
     }
 
     private async Task<BallotDto> CreateBallotAsync(Guid electionGuid, Guid locationGuid)

@@ -335,7 +335,7 @@ public partial class AuthController
 
         await _tellerLoginLockoutService.ResetAsync(election.ElectionGuid);
 
-        var token = _jwtTokenService.GenerateTellerToken(election.ElectionGuid);
+        var token = _jwtTokenService.GenerateGuestTellerToken(election.ElectionGuid);
 
         SecureCookieMiddleware.SetAuthCookies(
             HttpContext,

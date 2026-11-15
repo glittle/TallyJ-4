@@ -98,7 +98,7 @@ public class CrossElectionAuthorizationTests : IntegrationTestBase
         var seeded = await CreateTwoOwnedElectionsAsync();
         using var scope = Factory.Services.CreateScope();
         var tokens = scope.ServiceProvider.GetRequiredService<IJwtTokenService>();
-        SetAuthToken(tokens.GenerateTellerToken(seeded.ElectionA));
+        SetAuthToken(tokens.GenerateGuestTellerToken(seeded.ElectionA));
 
         Assert.Equal(HttpStatusCode.OK, (await GetAsync($"/api/People/{seeded.ElectionA}/getPeople")).StatusCode);
         Assert.Equal(HttpStatusCode.OK, (await GetAsync($"/api/Ballots/{seeded.ElectionA}/ballots")).StatusCode);
