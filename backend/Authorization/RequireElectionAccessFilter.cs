@@ -1,4 +1,6 @@
 using Backend.Context;
+using Backend.Enumerations;
+using Backend.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -62,6 +64,13 @@ public sealed class RequireElectionAccessAttribute : Attribute, IFilterFactory, 
     /// </summary>
     public string Argument { get; set; } = "";
 
+    /// <summary>
+    /// When true, a guest-teller token may call this action only while the
+    /// election is <see cref="ElectionStage.ProcessingBallots"/>. Owners and
+    /// admins are not affected. Other stages return 403.
+    /// </summary>
+    public bool GuestPaperEntry { get; set; }
+
     public bool IsReusable => false;
 
     public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
@@ -71,7 +80,8 @@ public sealed class RequireElectionAccessAttribute : Attribute, IFilterFactory, 
             serviceProvider.GetRequiredService<MainDbContext>(),
             Kind,
             Policy,
-            Argument);
+            Argument,
+            GuestPaperEntry);
     }
 }
 
@@ -86,19 +96,22 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
     private readonly ElectionResourceKind _kind;
     private readonly string _policy;
     private readonly string _argument;
+    private readonly bool _guestPaperEntry;
 
     public RequireElectionAccessFilter(
         IAuthorizationService authorization,
         MainDbContext db,
         ElectionResourceKind kind,
         string policy,
-        string argument)
+        string argument,
+        bool guestPaperEntry = false)
     {
         _authorization = authorization;
         _db = db;
         _kind = kind;
         _policy = policy;
         _argument = argument;
+        _guestPaperEntry = guestPaperEntry;
         Order = -2500;
     }
 
@@ -120,7 +133,38 @@ public sealed class RequireElectionAccessFilter : IAsyncActionFilter, IOrderedFi
             return;
         }
 
+        if (await GuestPaperEntryBlockedAsync(context, electionGuid.Value))
+        {
+            context.Result = new ObjectResult(new
+            {
+                error = ElectionStageMessageKeys.GuestBallotEntryOnlyDuringProcessing
+            })
+            {
+                StatusCode = StatusCodes.Status403Forbidden
+            };
+            return;
+        }
+
         await next();
+    }
+
+    /// <summary>
+    /// Guest tellers may write paper ballots and votes only during Processing.
+    /// A missing election is left for the action (404), not reported as the wrong stage.
+    /// </summary>
+    private async Task<bool> GuestPaperEntryBlockedAsync(ActionExecutingContext context, Guid electionGuid)
+    {
+        if (!_guestPaperEntry || !GuestTellerClaims.IsGuestTeller(context.HttpContext.User))
+        {
+            return false;
+        }
+
+        var stage = await _db.Elections.AsNoTracking()
+            .Where(e => e.ElectionGuid == electionGuid)
+            .Select(e => (ElectionStage?)e.ElectionStage)
+            .FirstOrDefaultAsync();
+
+        return stage != null && stage != ElectionStage.ProcessingBallots;
     }
 
     private async Task<Guid?> ResolveElectionGuidAsync(ActionExecutingContext context)

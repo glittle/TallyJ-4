@@ -45,7 +45,7 @@ There is no separate `Locked` flag. After analysis is complete and counts reconc
 
 Changing stage is the move. `ChangeElectionStageAsync` persists the stage and broadcasts `statusChanged` on MainHub. Remote `electionStore` clients update `currentStage`.
 
-- **GuestTellers** auto-redirect to that stage’s primary work page (`useGuestTellerStageRedirect`).
+- **GuestTellers** who are on a page the new stage does not allow are sent to that stage’s primary work page (`useGuestTellerStageRedirect`). A page the stage allows, including Front Desk during Processing, is left alone.
 - **FullTellers** stay on their current page and get a toast. The toast includes a **Go there** action that opens the same work page guests land on. They are not auto-navigated: a FullTeller may be mid-ballot or mid-edit.
 
 Work pages (`getStageWorkPagePath`): GatheringBallots → Front Desk; ProcessingBallots → Enter Ballots; SettingUp / Finalized → election landing.
@@ -61,19 +61,37 @@ There is no separate “Move all tellers to this state” button or endpoint.
 ## GuestTeller page on stage change
 
 **Status:** active  
-**Evidence:** confirmed (issue #242)
+**Evidence:** confirmed (issue #242; Processing Front Desk confirmed by issue #429)
 
-When election stage changes, GuestTellers are redirected to the stage’s primary work page (same idea as “move all tellers to this state” for navigation):
+When election stage changes, a GuestTeller who is on a page that stage does not allow is sent to that stage’s primary work page. A page the stage does allow is left alone.
 
-| Stage | GuestTeller destination |
-|-------|-------------------------|
-| GatheringBallots | Front Desk |
-| ProcessingBallots | Enter Ballots (`/ballots`) |
-| SettingUp / Finalized | election landing (and results links when Finalized) |
+| Stage | GuestTeller pages | Primary destination |
+|-------|-------------------|---------------------|
+| GatheringBallots | Front Desk only | Front Desk |
+| ProcessingBallots | Enter Ballots (`/ballots`, including the open-ballot and entry routes) and Front Desk (`/frontdesk`) | Enter Ballots |
+| SettingUp / Finalized | election landing (and results links when Finalized) | election landing |
+
+A guest already on Front Desk stays there when the stage becomes Processing. Gathering still sends a guest who is on Enter Ballots back to Front Desk. FullTellers are unchanged: Front Desk stays in the Gathering group and is not added to the Processing group.
+
+> Superseded 2026-11: ProcessingBallots guests saw only Enter Ballots, and `/frontdesk` redirected to `/ballots`.
 
 **Rejected alternative:** keep ProcessingBallots GuestTellers on election landing only, with ballot entry only via per-ballot deep links (phase-2 restriction). That left guests stuck on Front Desk after a stage advance (or with no stage work page), while Gathering already auto-moved them to Front Desk.
 
-**Reason:** symmetric stage landing for guests; Enter Ballots is the Processing counterpart to Front Desk. Tally/monitor/results stay FullTeller-only (`adminOnly`). Per-ballot `/ballots/:id/entry` routes remain allowed.
+**Rejected alternative:** add Front Desk to `STAGE_PAGES.ProcessingBallots`. That would show it in the owner/admin Processing group. Owners already open Front Desk from the Gathering group at any stage; the change is guest access during Processing only.
+
+**Rejected alternative:** make Front Desk the Processing primary landing. Enter Ballots stays the page a guest is sent to when they are on a page Processing does not allow.
+
+Front Desk list, check-in, stats, and roll call, and ballot and vote reads, stay on `ElectionAccess` with no stage gate. A guest teller can use those in Gathering and in Processing.
+
+Guest paper-entry writes are different. A guest-teller token may create, update, delete, or reorder a ballot or vote only while the election is Processing Ballots. That includes CDN ballot import. Any other stage returns 403 `{ error: "elections.guestBallotEntryOnlyDuringProcessing" }`. Owners and admins are not subject to the check. The check is `RequireElectionAccessAttribute.GuestPaperEntry` in `RequireElectionAccessFilter`, the same filter that already resolves the election.
+
+**Rejected alternative:** leave paper entry to the guest menu. The page redirects away from `/ballots` during Gathering, but the guest token could still call createBallot and createVote.
+
+**Rejected alternative:** a stage policy on Front Desk. List and check-in stay available in Gathering and in Processing.
+
+> Superseded 2026-11: an earlier note rejected any second backend stage policy. That rejection still holds for Front Desk and for reads. It does not hold for guest paper-entry writes.
+
+**Reason:** during Processing, guest tellers check people in and enter paper ballots. During Gathering, no paper entry is done. Enter Ballots remains the Processing counterpart to Front Desk. Tally/monitor/results stay FullTeller-only (`adminOnly`). Per-ballot `/ballots/:id/entry` routes remain allowed for guests during Processing. Gathering stays Front Desk only in the menu.
 
 Implementation:
 - Rules: `guestTellerAccess.ts`

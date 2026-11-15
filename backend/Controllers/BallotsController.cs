@@ -76,7 +76,7 @@ public class BallotsController : ControllerBase
     /// </summary>
     /// <param name="createDto">The ballot creation data.</param>
     /// <returns>The created ballot information.</returns>
-    [RequireElectionAccess(ElectionResourceKind.BodyElectionGuid)]
+    [RequireElectionAccess(ElectionResourceKind.BodyElectionGuid, GuestPaperEntry = true)]
     [HttpPost("createBallot")]
     public async Task<ActionResult<ApiResponse<BallotDto>>> CreateBallot(CreateBallotDto createDto)
     {
@@ -101,7 +101,7 @@ public class BallotsController : ControllerBase
     /// <param name="guid">The GUID of the ballot to update.</param>
     /// <param name="updateDto">The updated ballot data.</param>
     /// <returns>The updated ballot information.</returns>
-    [RequireElectionAccess(ElectionResourceKind.BallotGuid)]
+    [RequireElectionAccess(ElectionResourceKind.BallotGuid, GuestPaperEntry = true)]
     [HttpPut("{guid}/updateBallot")]
     public async Task<ActionResult<ApiResponse<BallotDto>>> UpdateBallot(Guid guid, UpdateBallotDto updateDto)
     {
@@ -127,7 +127,7 @@ public class BallotsController : ControllerBase
     /// </summary>
     /// <param name="guid">The GUID of the ballot to delete.</param>
     /// <returns>No content if successful, or not found if the ballot doesn't exist.</returns>
-    [RequireElectionAccess(ElectionResourceKind.BallotGuid)]
+    [RequireElectionAccess(ElectionResourceKind.BallotGuid, GuestPaperEntry = true)]
     [HttpDelete("{guid}/deleteBallot")]
     public async Task<IActionResult> DeleteBallot(Guid guid)
     {

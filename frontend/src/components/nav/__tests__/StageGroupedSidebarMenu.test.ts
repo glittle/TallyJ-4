@@ -200,17 +200,16 @@ describe("StageGroupedSidebarMenu", () => {
       expect(pages).toHaveLength(expectedPages.length);
     });
 
-    it("renders Enter Ballots during ProcessingBallots", () => {
+    it("renders Enter Ballots and Front Desk during ProcessingBallots", () => {
       const wrapper = mountMenu({
         isGuestTeller: true,
         currentStage: "ProcessingBallots",
       });
       const pages = wrapper.findAll(".stage-group__page");
-      const expectedPages = STAGE_PAGES["ProcessingBallots"].filter(
-        (p) => !p.adminOnly,
-      );
-      expect(pages).toHaveLength(expectedPages.length);
-      expect(expectedPages.map((p) => p.key)).toEqual(["ballots"]);
+      expect(pages.map((p) => p.text())).toEqual([
+        "ballots.management",
+        "nav.frontDesk",
+      ]);
     });
 
     it("renders landing and final results during Finalized", () => {
@@ -233,6 +232,7 @@ describe("StageGroupedSidebarMenu", () => {
       });
       const text = wrapper.text();
       expect(text).toContain("ballots.management");
+      expect(text).toContain("nav.frontDesk");
       expect(text).not.toContain("results.monitor");
       expect(text).not.toContain("results.calculateTally");
       expect(text).not.toContain("results.title");
@@ -280,7 +280,7 @@ describe("StageGroupedSidebarMenu", () => {
       );
     });
 
-    it("redirects teller from Front Desk to Enter Ballots when stage is ProcessingBallots", () => {
+    it("does not redirect a teller away from Front Desk during ProcessingBallots", () => {
       mockRoutePath.mockReturnValue("/elections/test-id/frontdesk");
 
       mountMenu({
@@ -289,10 +289,24 @@ describe("StageGroupedSidebarMenu", () => {
         electionGuid: "test-id",
       });
 
+      expect(mockRouterPush).not.toHaveBeenCalled();
+    });
+
+    it("redirects a teller from Enter Ballots to Front Desk during GatheringBallots", () => {
+      mockRoutePath.mockReturnValue("/elections/test-id/ballots");
+
+      mountMenu({
+        isGuestTeller: true,
+        currentStage: "GatheringBallots",
+        electionGuid: "test-id",
+      });
+
       expect(mockRouterPush).toHaveBeenCalledWith(
-        getGuestTellerRedirectPath("test-id", "ProcessingBallots"),
+        getGuestTellerRedirectPath("test-id", "GatheringBallots"),
       );
-      expect(mockRouterPush).toHaveBeenCalledWith("/elections/test-id/ballots");
+      expect(mockRouterPush).toHaveBeenCalledWith(
+        "/elections/test-id/frontdesk",
+      );
     });
 
     it("does not redirect teller when already on a valid stage page", () => {

@@ -56,10 +56,11 @@ describe("guestTellerAccess", () => {
       expect(pages[0]!.key).toBe("frontdesk");
     });
 
-    it("returns Enter Ballots during ProcessingBallots", () => {
+    it("returns Enter Ballots and Front Desk during ProcessingBallots", () => {
       const pages = getGuestTellerMenuPages("ProcessingBallots", GUID);
-      expect(pages).toHaveLength(1);
-      expect(pages[0]!.key).toBe("ballots");
+      expect(pages.map((p) => p.key)).toEqual(["ballots", "frontdesk"]);
+      expect(pages[0]!.routePath(GUID)).toBe(`/elections/${GUID}/ballots`);
+      expect(pages[1]!.routePath(GUID)).toBe(`/elections/${GUID}/frontdesk`);
     });
 
     it("returns landing and final results during Finalized", () => {
@@ -139,7 +140,7 @@ describe("guestTellerAccess", () => {
       {
         stage: "ProcessingBallots",
         path: `/elections/${GUID}/frontdesk`,
-        allowed: false,
+        allowed: true,
       },
       {
         stage: "ProcessingBallots",

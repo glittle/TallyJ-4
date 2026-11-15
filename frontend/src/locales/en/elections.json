@@ -1134,6 +1134,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "elections.guestBallotEntryOnlyDuringProcessing": {
+    "t": "Paper ballots can be entered only while this election is Processing Ballots.",
+    "s": "source",
+    "w": "2026-11-15T02:22:00Z"
+  },
   "elections.stageChangeError.invalidStage": {
     "t": "Invalid election stage",
     "s": "source",

@@ -91,6 +91,7 @@ public class BallotImportController : ControllerBase
     /// <returns>The import result.</returns>
     [HttpPost("importCdnBallots/{electionGuid}")]
     [Authorize(Policy = "ElectionAccess")]
+    [RequireElectionAccess(ElectionResourceKind.BodyElectionGuid, GuestPaperEntry = true)]
     public async Task<IActionResult> ImportCdnBallots(Guid electionGuid, IFormFile file)
     {
         try
