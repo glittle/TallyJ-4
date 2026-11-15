@@ -14415,7 +14415,7 @@
             "type": "integer",
             "format": "int32"
           },
-          "isSingleNameElection": {
+          "isConventionOrNsa": {
             "type": "boolean"
           },
           "rows": {
@@ -14552,7 +14552,10 @@
             "format": "date-time",
             "nullable": true
           },
-          "isSingleNameElection": {
+          "isConventionOrNsa": {
+            "type": "boolean"
+          },
+          "isSingleNameTally": {
             "type": "boolean"
           },
           "ballots": {
@@ -14577,7 +14580,7 @@
             "format": "date-time",
             "nullable": true
           },
-          "isSingleNameElection": {
+          "isConventionOrNsa": {
             "type": "boolean"
           },
           "groups": {

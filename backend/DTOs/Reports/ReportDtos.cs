@@ -118,7 +118,19 @@ public class BallotsReportDto
 {
     public string ElectionName { get; set; } = "";
     public DateTimeOffset? DateOfElection { get; set; }
-    public bool IsSingleNameElection { get; set; }
+
+    /// <summary>
+    /// True for Convention (Con) and National Spiritual Assembly (NSA).
+    /// Those ballots are ordered by name. This is not the single-name tally.
+    /// </summary>
+    public bool IsConventionOrNsa { get; set; }
+
+    /// <summary>
+    /// True for the single-name tally (election type Oth).
+    /// The ballots report shows each vote's count only when this is true.
+    /// </summary>
+    public bool IsSingleNameTally { get; set; }
+
     public List<BallotReportItemDto> Ballots { get; set; } = new();
 }
 
@@ -141,7 +153,12 @@ public class BallotAlignmentReportDto
     public string ElectionName { get; set; } = "";
     public DateTimeOffset? DateOfElection { get; set; }
     public int NumToElect { get; set; }
-    public bool IsSingleNameElection { get; set; }
+
+    /// <summary>
+    /// True for Convention (Con) and National Spiritual Assembly (NSA).
+    /// </summary>
+    public bool IsConventionOrNsa { get; set; }
+
     public List<AlignmentRowDto> Rows { get; set; } = new();
 }
 
@@ -155,7 +172,13 @@ public class BallotsSameReportDto
 {
     public string ElectionName { get; set; } = "";
     public DateTimeOffset? DateOfElection { get; set; }
-    public bool IsSingleNameElection { get; set; }
+
+    /// <summary>
+    /// True for Convention (Con) and National Spiritual Assembly (NSA).
+    /// Duplicate groups order votes by name when this is true.
+    /// </summary>
+    public bool IsConventionOrNsa { get; set; }
+
     public List<DuplicateGroupDto> Groups { get; set; } = new();
 }
 

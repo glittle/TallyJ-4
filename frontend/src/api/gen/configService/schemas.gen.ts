@@ -5316,7 +5316,7 @@ export const Reports_BallotAlignmentReportDtoSchema = {
             type: 'integer',
             format: 'int32'
         },
-        isSingleNameElection: {
+        isConventionOrNsa: {
             type: 'boolean'
         },
         rows: {
@@ -5457,7 +5457,10 @@ export const Reports_BallotsReportDtoSchema = {
             format: 'date-time',
             nullable: true
         },
-        isSingleNameElection: {
+        isConventionOrNsa: {
+            type: 'boolean'
+        },
+        isSingleNameTally: {
             type: 'boolean'
         },
         ballots: {
@@ -5483,7 +5486,7 @@ export const Reports_BallotsSameReportDtoSchema = {
             format: 'date-time',
             nullable: true
         },
-        isSingleNameElection: {
+        isConventionOrNsa: {
             type: 'boolean'
         },
         groups: {

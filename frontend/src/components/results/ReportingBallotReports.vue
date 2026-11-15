@@ -388,7 +388,7 @@ const selectedReportName = computed(() => props.selectedReportName);
                 class="vote-entry"
                 :class="{ 'vote-spoiled': v.spoiled }"
               >
-                <template v-if="ballotsData.isSingleNameElection">
+                <template v-if="ballotsData.isSingleNameTally">
                   <span class="sne-count">{{ v.singleNameElectionCount }}</span>
                 </template>
                 {{ v.personName }}
