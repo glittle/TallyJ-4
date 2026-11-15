@@ -13,7 +13,7 @@ import { secureTokenService } from "../services/secureTokenService";
 // PublicLayout is static - needed immediately for all public/voting routes
 import PublicLayout from "../layouts/PublicLayout.vue";
 
-// MainLayout is lazy - only authenticated admin users need it
+// MainLayout is lazy. Tellers and officers use it. Public and voting routes use PublicLayout.
 const MainLayout = () => import("../layouts/MainLayout.vue");
 
 const routes = [
@@ -434,6 +434,8 @@ router.beforeEach(async (to: RouteLocationNormalized) => {
       return "/dashboard";
     }
 
+    // A guest may stay on an allowed election path. Any other path, including
+    // login, returns teller-join here, before the dashboard redirect below.
     if (isGuest) {
       const electionMatch = to.path.match(/^\/elections\/([^/]+)/);
       if (!electionMatch && !to.path.startsWith("/teller-join")) {

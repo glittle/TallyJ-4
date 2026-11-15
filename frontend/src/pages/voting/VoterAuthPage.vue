@@ -307,6 +307,7 @@ onMounted(async () => {
   if (!offered) {
     return;
   }
+  // Phone delivery starts at SMS, then voice, then WhatsApp.
   if (offered.phone) {
     if (offered.sms) {
       phoneForm.value.deliveryMethod = "sms";
@@ -316,6 +317,9 @@ onMounted(async () => {
       phoneForm.value.deliveryMethod = "whatsapp";
     }
   }
+  // Query tab=code wins when direct code is offered. Otherwise the stored
+  // tab is kept when that method is on. Otherwise the first offered
+  // method in this order.
   const order = [
     ["google", offered.google],
     ["email", offered.email],

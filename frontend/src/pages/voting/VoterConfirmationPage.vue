@@ -8,6 +8,7 @@ const router = useRouter();
 const route = useRoute();
 const onlineVotingStore = useOnlineVotingStore();
 
+/** kiosk=1 logs the voter out so the station is clear for the next person. */
 const isKioskHandoff = computed(() => route.query.kiosk === "1");
 const voteStatus = ref(onlineVotingStore.voteStatus);
 

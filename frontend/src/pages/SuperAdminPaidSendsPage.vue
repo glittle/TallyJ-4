@@ -50,10 +50,12 @@ function draftKey(kind: string, id: string) {
   return kind + ":" + id;
 }
 
+/** An untouched box shows one more than the current allowance. */
 function draftValue(kind: string, id: string, current: number) {
   return raiseDrafts.value[draftKey(kind, id)] ?? current + 1;
 }
 
+/** An empty input does not change the stored draft. */
 function setDraft(kind: string, id: string, value: number | undefined) {
   if (value === undefined) {
     return;
@@ -103,10 +105,7 @@ onMounted(load);
           :label="$t('superAdmin.paidSends.elections')"
           width="110"
         />
-        <el-table-column
-          :label="$t('superAdmin.ownerReview.open')"
-          width="280"
-        >
+        <el-table-column :label="$t('superAdmin.ownerReview.open')" width="280">
           <template #default="{ row }">
             <router-link :to="`/super-admin/owner-reviews/${row.userId}`">
               <el-button type="primary" size="small">

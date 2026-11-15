@@ -18,8 +18,8 @@ const versionDate = computed(() => getBuildDate());
 const versionDateBadi = computed(() => getBuildDateBadi());
 const textDirection = computed(() => localeTextDirection(locale.value));
 
-// Check if we're on the landing page
-const expandLanguageSelector = true; // computed(() => route.path === "/" || route.name === "landing");
+/** Always expanded. Not limited to the landing page. */
+const expandLanguageSelector = true;
 
 const logoSrc = "/assets/logo-trans.png";
 
