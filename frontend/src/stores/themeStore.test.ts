@@ -16,6 +16,31 @@ Object.defineProperty(window, "localStorage", {
   writable: true,
 });
 
+const COLOR_SCHEME_SELECTOR = 'meta[name="color-scheme"]';
+
+function ensureColorSchemeMeta(): HTMLMetaElement {
+  const existing = document.querySelector(COLOR_SCHEME_SELECTOR);
+  if (existing instanceof HTMLMetaElement) {
+    // Stale value so a missed update cannot pass as the HTML default.
+    existing.setAttribute("content", "unset");
+    return existing;
+  }
+
+  existing?.remove();
+  const meta = document.createElement("meta");
+  meta.setAttribute("name", "color-scheme");
+  meta.setAttribute("content", "unset");
+  document.head.appendChild(meta);
+  return meta;
+}
+
+function colorSchemeContent(): string | null {
+  return (
+    document.querySelector(COLOR_SCHEME_SELECTOR)?.getAttribute("content") ??
+    null
+  );
+}
+
 describe("Theme Store", () => {
   let themeStore: ReturnType<typeof useThemeStore>;
 
@@ -38,6 +63,8 @@ describe("Theme Store", () => {
       writable: true,
       configurable: true,
     });
+
+    ensureColorSchemeMeta();
   });
 
   afterEach(() => {
@@ -51,6 +78,7 @@ describe("Theme Store", () => {
 
       expect(themeStore.theme).toBe("light");
       expect(localStorageMock.getItem).toHaveBeenCalledWith("theme");
+      expect(colorSchemeContent()).toBe("light");
     });
 
     it("should initialize with dark theme when localStorage has dark", () => {
@@ -59,6 +87,7 @@ describe("Theme Store", () => {
 
       expect(themeStore.theme).toBe("dark");
       expect(localStorageMock.getItem).toHaveBeenCalledWith("theme");
+      expect(colorSchemeContent()).toBe("dark");
     });
 
     it("should initialize with light theme when localStorage has light", () => {
@@ -67,6 +96,7 @@ describe("Theme Store", () => {
 
       expect(themeStore.theme).toBe("light");
       expect(localStorageMock.getItem).toHaveBeenCalledWith("theme");
+      expect(colorSchemeContent()).toBe("light");
     });
 
     it("should apply theme classes to document on initialization", () => {
@@ -76,6 +106,7 @@ describe("Theme Store", () => {
       expect(document.documentElement.classList.add).toHaveBeenCalledWith(
         "dark",
       );
+      expect(colorSchemeContent()).toBe("dark");
     });
   });
 
@@ -91,6 +122,7 @@ describe("Theme Store", () => {
       expect(document.documentElement.classList.add).toHaveBeenCalledWith(
         "dark",
       );
+      expect(colorSchemeContent()).toBe("dark");
     });
 
     it("should set theme to light and save to localStorage", () => {
@@ -104,6 +136,7 @@ describe("Theme Store", () => {
       expect(document.documentElement.classList.remove).toHaveBeenCalledWith(
         "dark",
       );
+      expect(colorSchemeContent()).toBe("light");
     });
   });
 
@@ -116,6 +149,7 @@ describe("Theme Store", () => {
 
       expect(themeStore.theme).toBe("dark");
       expect(localStorageMock.setItem).toHaveBeenCalledWith("theme", "dark");
+      expect(colorSchemeContent()).toBe("dark");
     });
 
     it("should toggle from dark to light", () => {
@@ -126,6 +160,7 @@ describe("Theme Store", () => {
 
       expect(themeStore.theme).toBe("light");
       expect(localStorageMock.setItem).toHaveBeenCalledWith("theme", "light");
+      expect(colorSchemeContent()).toBe("light");
     });
   });
 
@@ -146,6 +181,34 @@ describe("Theme Store", () => {
       expect(document.documentElement.classList.add).toHaveBeenCalledWith(
         "dark",
       );
+      expect(colorSchemeContent()).toBe("dark");
+    });
+  });
+
+  describe("color-scheme meta", () => {
+    it("uses exactly light or dark, never light dark", () => {
+      localStorageMock.getItem.mockReturnValue(null);
+      themeStore = useThemeStore();
+
+      themeStore.setTheme("dark");
+      expect(colorSchemeContent()).toBe("dark");
+
+      themeStore.setTheme("light");
+      expect(colorSchemeContent()).toBe("light");
+    });
+
+    it("still applies the dark class when the color-scheme meta tag is absent", () => {
+      document.querySelector(COLOR_SCHEME_SELECTOR)?.remove();
+      localStorageMock.getItem.mockReturnValue("dark");
+
+      expect(() => {
+        themeStore = useThemeStore();
+      }).not.toThrow();
+
+      expect(document.documentElement.classList.add).toHaveBeenCalledWith(
+        "dark",
+      );
+      expect(document.querySelector(COLOR_SCHEME_SELECTOR)).toBeNull();
     });
   });
 });

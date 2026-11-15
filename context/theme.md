@@ -1,5 +1,20 @@
 # Theme tokens
 
+## Browser chrome follows the pinned light or dark scheme
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #443  
+**Revisit when:** the product default starts following the OS, or Element Plus tokens leave the `html.dark` class pin
+
+The splash and native browser chrome (scrollbars, form controls, canvas) need a scheme before the Vue CSS bundle loads. `index.html` declares `<meta name="color-scheme" content="light">`. The inline theme script sets that content to `dark` only when the stored theme is `dark`, and to `light` when it is `light`. `themeStore.applyTheme` writes the same value when the user toggles. The content is exactly `light` or `dark`. CSS `color-scheme` on the tokens still applies once styles load; the meta is the pre-bundle hint.
+
+Splash `@media (prefers-color-scheme: dark)` overrides were removed. `html.dark` and `html:not(.dark)` already set those backgrounds with `!important`, so the media rules could not win, and they described an OS-following splash the product does not use.
+
+**Rejected alternative:** `content="light dark"`. That lets the browser follow the OS. On a dark OS the chrome flashes dark before the inline script pins the product default, which is light.
+
+**Rejected alternative:** migrate Element Plus tokens to `light-dark()`, or default the theme to `prefers-color-scheme`. Both fight the class-pinned tokens and the light default. `light-dark()` is also newer than the meta and out of scope.
+
 ## Dark hairlines must win over later `:root` remaps
 
 **Status:** active  

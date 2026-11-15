@@ -129,15 +129,25 @@
 
     <title>TallyJ v4</title>
 
+    <!--
+      Pinned scheme for native chrome before CSS loads.
+      Exactly "light" or "dark" — never "light dark" (that would follow the OS).
+      The script below and themeStore.applyTheme keep this in sync with the stored theme.
+    -->
+    <meta name="color-scheme" content="light" />
+
     <!-- Resolve stored theme before first paint to avoid flash -->
     <script>
       (function () {
         try {
           var t = localStorage.getItem("theme");
+          var meta = document.querySelector('meta[name="color-scheme"]');
           if (t === "dark") {
             document.documentElement.classList.add("dark");
+            if (meta) meta.setAttribute("content", "dark");
           } else if (t === "light") {
             document.documentElement.classList.remove("dark");
+            if (meta) meta.setAttribute("content", "light");
           }
         } catch {
           // ignore error
@@ -149,11 +159,6 @@
     <style>
       body {
         background-color: #fdfcf4;
-      }
-      @media (prefers-color-scheme: dark) {
-        body {
-          background-color: #0c1830;
-        }
       }
       html.dark body,
       html.dark #splash {
@@ -199,11 +204,6 @@
         }
         to {
           transform: translateX(50px);
-        }
-      }
-      @media (prefers-color-scheme: dark) {
-        #splash {
-          background-color: #0c1830;
         }
       }
     </style>
