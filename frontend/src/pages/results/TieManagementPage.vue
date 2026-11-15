@@ -28,6 +28,7 @@ const originalTieDetails = ref<TieDetailsDto[]>([]);
 const loading = ref(false);
 const saving = ref(false);
 
+/** Full JSON compare, so any field change counts, not only tie-break counts. */
 const hasChanges = computed(() => {
   return (
     JSON.stringify(tieDetails.value) !==
@@ -35,6 +36,7 @@ const hasChanges = computed(() => {
   );
 });
 
+/** Any group that still has tieBreakRequired. A resolved group is not included. */
 const hasUnresolvedTie = computed(() =>
   tieDetails.value.some((tie) => tie.tieBreakRequired),
 );
@@ -105,7 +107,7 @@ async function saveTieCounts() {
 }
 
 function onTieBreakCountChange() {
-  // Validation could be added here
+  // The input writes the row directly. Missing elected counts are shown by getTieValidation.
 }
 
 function clearTieBreakCount(person: TiePersonDto) {
@@ -200,7 +202,10 @@ defineExpose({
             </template>
 
             <div class="tie-content">
-              <div v-if="tie.tieBreakRequired && tie.instructions" class="instructions">
+              <div
+                v-if="tie.tieBreakRequired && tie.instructions"
+                class="instructions"
+              >
                 <el-alert
                   :title="tie.instructions"
                   type="warning"

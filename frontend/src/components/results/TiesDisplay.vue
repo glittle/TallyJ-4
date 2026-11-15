@@ -9,6 +9,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
+/** Any group that still has tieBreakRequired. A resolved group is not included. */
 const hasRequiredTieBreaks = computed(() =>
   props.ties.some((tie) => tie.tieBreakRequired),
 );

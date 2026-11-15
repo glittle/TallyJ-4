@@ -107,6 +107,11 @@ function tabLabel(tab: string, label: string) {
     : label;
 }
 
+/**
+ * Turning kiosk on also turns on online voting and, when the selection
+ * process is empty, sets it to A (the list). Turning kiosk off does not
+ * turn online voting off.
+ */
 const kioskEnabled = computed({
   get: () => electionSupportsKiosk(model.value.votingMethods),
   set: (enabled: boolean) => {
@@ -129,6 +134,11 @@ function onUseOnlineVotingChange(enabled: string | number | boolean) {
   }
 }
 
+/**
+ * List mode is A, and a missing process is treated as A. B and C do not
+ * warn. The warning stays off until the receiver count is a number and
+ * Number to Elect is positive, and that count is smaller.
+ */
 const listModeBlocksOnlineSubmit = computed(() => {
   if (!model.value.useOnlineVoting) {
     return false;

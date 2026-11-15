@@ -31,6 +31,7 @@ const reconciliation = computed(() => resultStore.reconciliation);
 const reconciliationLoading = computed(
   () => resultStore.loading && !resultStore.reconciliation,
 );
+/** True only when the report says reconciled. A missing report is not ready. */
 const canAnalyze = computed(() => reconciliation.value?.isReconciled === true);
 const isFinalized = computed(
   () => election.value?.electionStage === "Finalized",
@@ -43,7 +44,13 @@ function customMethodName(index: number): string | undefined {
   return name || undefined;
 }
 
-const electionType = computed<"normal" | "singlename">(() =>
+/**
+ * Query value for the calculate call. "singlename" is sent only when
+ * Number to Elect is 1. Election type Oth is not this check. The server
+ * runs the single-name tally for the literal "singlename" and the
+ * normal tally for every other value.
+ */
+const tallyCalculationMode = computed<"normal" | "singlename">(() =>
   election.value?.numberToElect === 1 ? "singlename" : "normal",
 );
 
@@ -92,7 +99,7 @@ async function handleCalculate() {
   }
 
   try {
-    await resultStore.calculateTally(electionGuid, electionType.value);
+    await resultStore.calculateTally(electionGuid, tallyCalculationMode.value);
     await resultStore.fetchReconciliation(electionGuid);
     showSuccessMessage(t("tally.calculateSuccess"));
   } catch (error: any) {

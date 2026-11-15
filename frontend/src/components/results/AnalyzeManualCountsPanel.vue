@@ -56,6 +56,10 @@ const rows = computed(() => {
   return list;
 });
 
+/**
+ * Copies only the rows this panel shows. A hidden called-in or custom
+ * count stays unset. Save stores a missing value as no override.
+ */
 function copyManualIntoDraft(manual?: AnalyzeCountRowDto | null) {
   const source = manual ?? {};
   for (const row of rows.value) {
