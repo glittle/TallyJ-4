@@ -67,6 +67,10 @@ function getVotingMethodLabel(method?: string): string {
   return labelVotingMethod(method, t);
 }
 
+/**
+ * Submitted and Processing are pending. Processed is accepted. Draft is
+ * draft. Any other status, including empty, has no label.
+ */
 function onlineStatusLabel(status?: string): string | null {
   if (isPendingOnlineBallotStatus(status)) {
     return t("frontDesk.onlineStatus.pending");

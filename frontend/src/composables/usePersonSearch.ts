@@ -28,10 +28,7 @@ interface SearchCache {
 
 const CACHE_TTL = 60000; // 1 minute
 
-/**
- * Groups strategy weights into bands so that "similar ranking" is explicit.
- * Within a band, popularity (voteCount) decides order; then alphabetical.
- */
+/** Higher band sorts first. 90+ is 4, 80–89 is 3, 60–79 is 2, 40–59 is 1, below 40 is 0. */
 function getMatchBand(weight: number): number {
   if (weight >= 90) {
     return 4;
@@ -60,7 +57,8 @@ export function usePersonSearch(
   const cache = new Map<string, SearchCache>();
 
   const getPeopleHash = (people: SearchablePersonDto[]): string => {
-    // Include a cheap popularity fingerprint so voteCount updates invalidate cache order
+    // Length, the first and last personGuid, and the sum of voteCount.
+    // A middle-of-list change that keeps those three can reuse a cached order.
     let voteSum = 0;
     for (const p of people) {
       voteSum += p.voteCount ?? 0;

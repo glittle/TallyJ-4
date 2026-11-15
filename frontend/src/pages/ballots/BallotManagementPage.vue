@@ -71,6 +71,7 @@ const { flashing: locationFlashing, flash: flashLocation } =
 const { flashing: tellerFlashing, flash: flashTeller } =
   useRequiredFieldFlash();
 
+/** Teller 1 must be non-blank. Teller 2 is not required to start a ballot. */
 const hasKeyboardTeller = computed(() =>
   Boolean(activeTellers.value.teller1.trim()),
 );

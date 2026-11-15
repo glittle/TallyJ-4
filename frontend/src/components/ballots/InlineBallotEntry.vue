@@ -84,6 +84,7 @@ const searchPanelRef = ref<InstanceType<typeof BallotPersonSearchPanel> | null>(
   null,
 );
 
+/** Missing prop counts as allowed. Only an explicit false blocks adding. */
 const canAddVotes = computed(() => props.hasKeyboardTeller !== false);
 const selectedLocationType = computed(() =>
   locationTypeForGuid(
@@ -103,10 +104,16 @@ const reservedLocationBlockMessage = computed(() => {
   }
   return undefined;
 });
-const isOnlineOrImported = computed(() =>
+/**
+ * Computer codes OL, WW, IM, and IMPORT. A reserved location does not
+ * set this; starting a ballot at that location is a separate check.
+ */
+const isOnlineOrImportedComputer = computed(() =>
   isOnlineOrImportedComputerCode(props.ballot.computerCode),
 );
-const canRemoveVotes = computed(() => !isOnlineOrImported.value);
+/** False for those computer codes. Removal, reorder, and delete use this. */
+const canRemoveVotes = computed(() => !isOnlineOrImportedComputer.value);
+/** Manual Review only. TooFew and TooMany are not this flag. */
 const isNeedsReview = computed(() => props.ballot.statusCode === "Review");
 const people = computed(() => peopleStore.peopleCache);
 
@@ -156,7 +163,7 @@ const targetedVote = computed(() =>
 const showAddNameForSelectedVote = computed(() => {
   const target = targetedVote.value;
   return (
-    isOnlineOrImported.value &&
+    isOnlineOrImportedComputer.value &&
     !!target &&
     isPersistedVote(target) &&
     findShortenState.value?.voteId === target.rowId
@@ -214,7 +221,7 @@ function applyVoteToTarget(incoming: VoteDto): VoteDto | null {
   if (!target || !isPersistedVote(target)) {
     return null;
   }
-  if (!isOnlineOrImported.value && !hasDisplayableRawOn(target)) {
+  if (!isOnlineOrImportedComputer.value && !hasDisplayableRawOn(target)) {
     return null;
   }
   return {
@@ -243,6 +250,8 @@ async function finishReplace(updated: VoteDto) {
 }
 
 function buildSelectedVote(person: SearchablePersonDto): VoteDto {
+  // Spoiled only when canReceiveVotes is false. Null is not spoiled.
+  // The reason is the person's code, or the literal X01 when that code is missing.
   const isSpoiled = person.canReceiveVotes === false;
   return {
     rowId: 0,
@@ -268,7 +277,7 @@ async function handlePersonSelected(person: SearchablePersonDto) {
     await finishReplace(updated);
     return;
   }
-  if (isOnlineOrImported.value) {
+  if (isOnlineOrImportedComputer.value) {
     return;
   }
   if (!addVoteToBallot(vote)) {
@@ -298,7 +307,7 @@ async function handleFindRawName(vote: VoteDto) {
   await searchPanelRef.value?.setQuery(query);
 }
 
-async function handleNewPersonAdded(vote: VoteDto) {
+async function handleDraftVote(vote: VoteDto) {
   if (!canAddVotes.value) {
     showWarningMessage(t("ballots.keyboardTellerRequired"));
     return;
@@ -309,7 +318,7 @@ async function handleNewPersonAdded(vote: VoteDto) {
     await finishReplace(updated);
     return;
   }
-  if (isOnlineOrImported.value) {
+  if (isOnlineOrImportedComputer.value) {
     showAddPersonDrawer.value = false;
     return;
   }
@@ -387,6 +396,12 @@ async function handleNewBallot() {
   }
 }
 
+/**
+ * Both calls send statusCode Review. Clear also sends clearNeedsReview,
+ * which the server accepts only while the ballot is Review, then
+ * re-evaluates from Empty. Without the flag, Review is set only when
+ * the ballot is not already Review.
+ */
 async function toggleNeedsReview() {
   reviewToggleLoading.value = true;
   try {
@@ -495,7 +510,7 @@ onMounted(async () => {
           </el-button>
         </div>
 
-        <div v-if="!isOnlineOrImported" class="add-name-action">
+        <div v-if="!isOnlineOrImportedComputer" class="add-name-action">
           <el-button
             type="default"
             :disabled="!canAddVotes"
@@ -540,7 +555,7 @@ onMounted(async () => {
         :duplicate-person-guids="duplicatePersonGuids"
         :targeted-vote-row-id="targetedVoteRowId"
         :can-remove-votes="canRemoveVotes"
-        :can-select-any-vote="isOnlineOrImported"
+        :can-select-any-vote="isOnlineOrImportedComputer"
         :is-persisted-vote="isPersistedVote"
         @remove="handleVoteRemoved"
         @drag-start="handleDragStart"
@@ -556,7 +571,7 @@ onMounted(async () => {
     <el-drawer
       v-model="showAddPersonDrawer"
       :title="
-        isOnlineOrImported
+        isOnlineOrImportedComputer
           ? $t('ballots.setSpoiledOrNewName')
           : $t('ballots.addNameDrawerTitle')
       "
@@ -572,7 +587,7 @@ onMounted(async () => {
         :raw-vote="
           targetedVote ? parseOnlineVoteRaw(targetedVote.onlineVoteRaw) : null
         "
-        @person-added="handleNewPersonAdded"
+        @vote-drafted="handleDraftVote"
         @cancel="showAddPersonDrawer = false"
       />
     </el-drawer>

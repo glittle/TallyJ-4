@@ -39,6 +39,7 @@ function rawParts(vote: VoteDto | null) {
   return parseOnlineVoteRaw(vote?.onlineVoteRaw);
 }
 
+/** otherInfo when it has text; otherwise the first and last name. */
 function rawName(vote: VoteDto | null) {
   const raw = rawParts(vote);
   if (!raw) {
@@ -47,6 +48,7 @@ function rawName(vote: VoteDto | null) {
   return raw.otherInfo.trim() || rawVoteDisplayName(raw);
 }
 
+/** Find is offered when first or last is present, even if otherInfo is the line shown. */
 function canFindRawName(vote: VoteDto | null) {
   const raw = rawParts(vote);
   return !!(raw?.first || raw?.last);
