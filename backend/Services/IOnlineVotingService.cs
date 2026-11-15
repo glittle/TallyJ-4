@@ -54,7 +54,9 @@ public interface IOnlineVotingService
     Task<OnlineVoteStatusDto> GetVoteStatusAsync(Guid electionGuid, string voterId);
 
     /// <summary>
-    /// Authenticates a voter using Google OAuth and returns authentication token if voter is in at least one open election.
+    /// Authenticates a voter using Google. The email must belong to a person
+    /// in an election open for external sign-in (both ends set, close instant
+    /// still open). A null open or close is not that window.
     /// </summary>
     /// <param name="dto">The Google authentication request containing the credential.</param>
     /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
@@ -68,36 +70,44 @@ public interface IOnlineVotingService
     Task<List<AvailableElectionDto>> GetAvailableElectionsAsync(string voterId);
 
     /// <summary>
-    /// Authenticates a voter using Facebook OAuth and returns authentication token if voter is in at least one open election.
+    /// Authenticates a voter using Facebook. The email must belong to a person
+    /// in an election <see cref="OnlineVotingService"/> treats as open for
+    /// external sign-in (both ends set, close instant still open).
     /// </summary>
     /// <param name="dto">The Facebook authentication request containing the access token.</param>
     /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
-    Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> FacebookAuthAsync(FacebookAuthForVoterDto dto);
+    Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> AuthenticateVoterWithFacebookAsync(FacebookAuthForVoterDto dto);
 
     /// <summary>
-    /// Authenticates a voter using Kakao OAuth and returns authentication token if voter is in at least one open election.
+    /// Authenticates a voter using Kakao. Email is tried first, then phone,
+    /// against a person in an election open for external sign-in.
     /// </summary>
     /// <param name="dto">The Kakao authentication request containing the access token.</param>
     /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
-    Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> KakaoAuthAsync(KakaoAuthForVoterDto dto);
+    Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> AuthenticateVoterWithKakaoAsync(KakaoAuthForVoterDto dto);
 
     /// <summary>
-    /// Authenticates a voter using the Telegram Login Widget and returns authentication token
-    /// if the voter's Telegram ID is registered in at least one open election.
+    /// Authenticates a voter using the Telegram Login Widget. Some election
+    /// must be open for external sign-in, and an <c>OnlineVoter</c> row of
+    /// type <c>T</c> must exist for this Telegram id. That id is not matched
+    /// to a person in the open election.
     /// </summary>
     /// <param name="dto">The Telegram authentication request containing the widget callback data.</param>
     /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
-    Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> TelegramAuthAsync(TelegramAuthForVoterDto dto);
+    Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> AuthenticateVoterWithTelegramAsync(TelegramAuthForVoterDto dto);
 
     /// <summary>
-    /// Counts of pending (Submitted) vs already processed online ballots for the confirmation dialog.
+    /// Pending is Submitted plus Processing, excluding people who already
+    /// voted another way. Processed is every Processed row.
     /// </summary>
     Task<AcceptAllOnlineBallotsSummaryDto?> GetAcceptAllSummaryAsync(Guid electionGuid);
 
     /// <summary>
-    /// Accepts current pending online ballots into regular ballots. The online voting window
-    /// may stay open. Each run only accepts what is Submitted at that moment. Concurrent
-    /// runs for the same election are rejected. Already-processed rows are not accepted again.
+    /// Accepts pending online ballots into regular ballots. The window may stay open.
+    /// A run takes Submitted rows that have votes or a legacy ballot id, and every
+    /// already-Processing row. People who voted another way are not accepted.
+    /// An empty Submitted row with no ballot id stays Submitted. A second run on
+    /// this host is rejected. Processed rows are not taken again.
     /// A successful run writes one operational audit row (who / when / counts). Failed or
     /// overlapping (409) runs do not.
     /// </summary>

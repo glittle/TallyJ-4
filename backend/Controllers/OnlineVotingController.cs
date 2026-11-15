@@ -92,7 +92,7 @@ public class OnlineVotingController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<OnlineVoterAuthResponse>> FacebookAuth([FromBody] FacebookAuthForVoterDto dto)
     {
-        var (success, error, response) = await _onlineVotingService.FacebookAuthAsync(dto);
+        var (success, error, response) = await _onlineVotingService.AuthenticateVoterWithFacebookAsync(dto);
         return CompleteVoterAuth(success, error, response);
     }
 
@@ -105,7 +105,7 @@ public class OnlineVotingController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<OnlineVoterAuthResponse>> KakaoAuth([FromBody] KakaoAuthForVoterDto dto)
     {
-        var (success, error, response) = await _onlineVotingService.KakaoAuthAsync(dto);
+        var (success, error, response) = await _onlineVotingService.AuthenticateVoterWithKakaoAsync(dto);
         return CompleteVoterAuth(success, error, response);
     }
 
@@ -118,7 +118,7 @@ public class OnlineVotingController : ControllerBase
     [AllowAnonymous]
     public async Task<ActionResult<OnlineVoterAuthResponse>> TelegramAuth([FromBody] TelegramAuthForVoterDto dto)
     {
-        var (success, error, response) = await _onlineVotingService.TelegramAuthAsync(dto);
+        var (success, error, response) = await _onlineVotingService.AuthenticateVoterWithTelegramAsync(dto);
         return CompleteVoterAuth(success, error, response);
     }
 

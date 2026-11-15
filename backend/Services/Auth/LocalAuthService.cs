@@ -155,6 +155,17 @@ public class LocalAuthService : ILocalAuthService
         });
     }
 
+    /// <summary>
+    /// Local email/password login. An unknown email and a wrong password
+    /// return the same invalid-credentials error and mark the client IP.
+    /// An unconfirmed email does not. An account that is already locked, or
+    /// that this attempt locks, returns the locked error and does not mark
+    /// the IP. When two-factor is on and no code was sent, this returns
+    /// success with <see cref="AuthResponse.Requires2FA"/> and empty tokens.
+    /// That prompt does not clear the failed-password count. A wrong code
+    /// counts as a failure. Tokens are issued only after the password and,
+    /// when required, the code both match.
+    /// </summary>
     public async Task<(bool Success, string? Error, AuthResponse? Response)> LoginAsync(LoginRequest request)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);

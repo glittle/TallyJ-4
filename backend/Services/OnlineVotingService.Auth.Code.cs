@@ -20,7 +20,7 @@ public partial class OnlineVotingService
             var paidChannel = PaidDestinationPhone.IsPaidChannel(dto.DeliveryMethod);
 
             // 1. Paid channels: reject reserved/fictional/malformed destinations before any DB or provider work.
-            if (dto.VoterIdType == "P" && paidChannel)
+            if (dto.VoterIdType == OnlineVoterPhoneHelper.PhoneVoterIdType && paidChannel)
             {
                 if (!PaidDestinationPhone.TryExplain(dto.VoterId, out var reason))
                 {
@@ -33,12 +33,12 @@ public partial class OnlineVotingService
 
             // 2. Phone + paid: durable SmsStatus on an existing phone row blocks send (null = not yet checked).
             //    Load once here and reuse below — do not create a row just to store status.
-            var phonePaid = dto.VoterIdType == "P" && paidChannel;
+            var phonePaid = dto.VoterIdType == OnlineVoterPhoneHelper.PhoneVoterIdType && paidChannel;
             OnlineVoter? onlineVoter = null;
             if (phonePaid)
             {
                 onlineVoter = await _context.OnlineVoters
-                    .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId && ov.VoterIdType == "P");
+                    .FirstOrDefaultAsync(ov => ov.VoterId == dto.VoterId && ov.VoterIdType == OnlineVoterPhoneHelper.PhoneVoterIdType);
 
                 if (onlineVoter != null && !OnlineVoterSmsStatus.AllowsPaidSend(onlineVoter.SmsStatus))
                 {
@@ -61,7 +61,11 @@ public partial class OnlineVotingService
                 }
             }
 
-            // 3. Find all open elections where this voter is registered (SMS pumping prevention)
+            // Login-code clock: UseOnlineVoting, open is set and not in the future,
+            // close is unset or still ahead. The close instant is already closed.
+            // A null open is not open. Flagged elections, and elections with no
+            // approved owner or co-admin when one is rejected, are removed next.
+            // This is not OnlineVotingWindow, and not the external sign-in clock.
             var now = DateTimeOffset.UtcNow;
             var openElections = await _context.Elections
                 .Where(e => e.UseOnlineVoting &&
@@ -80,11 +84,11 @@ public partial class OnlineVotingService
             // 4. Check if voter is registered in ANY of the open elections
             var isVoterRegistered = dto.VoterIdType switch
             {
-                "E" => await _context.People.AnyAsync(p =>
+                EmailVoterIdType => await _context.People.AnyAsync(p =>
                     openElections.Contains(p.ElectionGuid) && p.Email == dto.VoterId),
-                "P" => await _context.People.AnyAsync(p =>
+                OnlineVoterPhoneHelper.PhoneVoterIdType => await _context.People.AnyAsync(p =>
                     openElections.Contains(p.ElectionGuid) && p.Phone == dto.VoterId),
-                "C" => await _context.People.AnyAsync(p =>
+                KioskCodeLifetime.VoterIdType => await _context.People.AnyAsync(p =>
                     openElections.Contains(p.ElectionGuid) && p.KioskCode == dto.VoterId),
                 _ => false
             };
@@ -210,10 +214,13 @@ public partial class OnlineVotingService
                     return (false, Backend.Configuration.SignInCapabilities.VoterDisabledKey, null);
                 }
 
-                var kioskResult = await TryAuthenticateWithDirectCodeAsync(dto.VoterId);
-                if (kioskResult.Success || kioskResult.Error == VoterVerifyError.CodeExpired)
+                // The typed letters are a kiosk code. Success and an expired
+                // window stop here. Not-found, including two live windows,
+                // continues to the one-time-code lookup below.
+                var directCodeResult = await TryAuthenticateWithDirectCodeAsync(dto.VoterId);
+                if (directCodeResult.Success || directCodeResult.Error == VoterVerifyError.CodeExpired)
                 {
-                    return kioskResult;
+                    return directCodeResult;
                 }
             }
 
@@ -225,9 +232,9 @@ public partial class OnlineVotingService
                 return (false, VoterVerifyError.VoterNotFound, null);
             }
 
-            if (onlineVoter.VoterIdType == "E" && !voters.EmailCode
-                || onlineVoter.VoterIdType == "P" && !voters.PhoneCode
-                || onlineVoter.VoterIdType == "C" && !voters.DirectCode)
+            if (onlineVoter.VoterIdType == EmailVoterIdType && !voters.EmailCode
+                || onlineVoter.VoterIdType == OnlineVoterPhoneHelper.PhoneVoterIdType && !voters.PhoneCode
+                || onlineVoter.VoterIdType == KioskCodeLifetime.VoterIdType && !voters.DirectCode)
             {
                 return (false, Backend.Configuration.SignInCapabilities.VoterDisabledKey, null);
             }
@@ -385,6 +392,9 @@ public partial class OnlineVotingService
         var normalizedCode = NormalizeVoterCode(code);
         var now = DateTimeOffset.UtcNow;
 
+        // Same clock as a login code: open must be set, a null close stays
+        // open, and the close instant is already closed. This lookup does
+        // not drop flagged elections or rejected-owner elections.
         var openElectionGuids = await _context.Elections
             .Where(e => e.UseOnlineVoting &&
                         e.OnlineWhenOpen != null && e.OnlineWhenOpen <= now &&
@@ -535,16 +545,20 @@ public partial class OnlineVotingService
         await _signalRNotificationService.SendVoterCodeDeliveryStatusAsync(channelId, status);
     }
 
+    /// <summary>
+    /// Elections in <paramref name="openElections"/> that contain this email
+    /// or phone. Kiosk type <c>C</c> returns before this method is called.
+    /// </summary>
     private async Task<List<Guid>> MatchingOpenElectionGuidsAsync(RequestCodeDto dto, List<Guid> openElections)
     {
         return dto.VoterIdType switch
         {
-            "E" => await _context.People
+            EmailVoterIdType => await _context.People
                 .Where(person => openElections.Contains(person.ElectionGuid) && person.Email == dto.VoterId)
                 .Select(person => person.ElectionGuid)
                 .Distinct()
                 .ToListAsync(),
-            "P" => await _context.People
+            OnlineVoterPhoneHelper.PhoneVoterIdType => await _context.People
                 .Where(person => openElections.Contains(person.ElectionGuid) && person.Phone == dto.VoterId)
                 .Select(person => person.ElectionGuid)
                 .Distinct()
@@ -575,12 +589,12 @@ public partial class OnlineVotingService
     }
 
     /// <summary>
-    /// True when this voter matches at least one open election and every one of those is flagged.
-    /// An email voter (<c>E</c>) matches <c>Person.Email</c>. A phone voter (<c>P</c>) matches <c>Person.Phone</c>.
-    /// Any other type, including a kiosk code, returns false. Kiosk sign-in uses
-    /// <see cref="TryAuthenticateWithDirectCodeAsync"/> and does not call this method.
-    /// An election counts as open only when online voting is on, <c>OnlineWhenOpen</c> is set and not in the future,
-    /// and <c>OnlineWhenClose</c> is unset or still ahead — the same window <c>requestCode</c> uses.
+    /// True when this voter matches at least one election on the login-code
+    /// clock and <see cref="ExceptFlaggedElectionsAsync"/> removes every one
+    /// of them. That removal is a flagged election, or an election with no
+    /// approved owner or co-admin when one is rejected. Email matches
+    /// <c>Person.Email</c>. Phone matches <c>Person.Phone</c>. Any other
+    /// type, including a kiosk code, returns false.
     /// </summary>
     private async Task<bool> VoterOpenElectionsAreAllFlaggedAsync(string voterId, string? voterIdType)
     {

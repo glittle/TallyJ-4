@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Backend.Entities;
+using Backend.Helpers;
 using Microsoft.IdentityModel.Tokens;
 
 namespace Backend.Services;
@@ -60,14 +61,20 @@ public partial class OnlineVotingService
         return input.Replace("\r", "").Replace("\n", "");
     }
 
+    /// <summary>Stored <c>OnlineVoter.VoterIdType</c> for an email id.</summary>
+    private const string EmailVoterIdType = "E";
+
+    /// <summary>Stored <c>OnlineVoter.VoterIdType</c> for a Telegram numeric id.</summary>
+    private const string TelegramVoterIdType = "T";
+
     /// <summary>
     /// Maps a request voter-id type to a closed set so logs are not user-controlled.
     /// </summary>
     private static string KnownVoterIdType(string? type) => type switch
     {
-        "E" => "E",
-        "P" => "P",
-        "C" => "C",
+        EmailVoterIdType => EmailVoterIdType,
+        OnlineVoterPhoneHelper.PhoneVoterIdType => OnlineVoterPhoneHelper.PhoneVoterIdType,
+        KioskCodeLifetime.VoterIdType => KioskCodeLifetime.VoterIdType,
         _ => "unknown"
     };
 
