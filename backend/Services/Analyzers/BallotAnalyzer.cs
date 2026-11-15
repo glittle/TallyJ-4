@@ -124,7 +124,9 @@ public class BallotAnalyzer
     /// <summary>
     /// Statuses that block analysis as "needs review".
     /// Too few, too many, duplicate, and empty are not in this set. They are
-    /// not Ok, so they count as spoiled ballots, and they do not award votes.
+    /// not Ok, so the summary counts them as spoiled ballots. The normal
+    /// tally awards nothing from them. The single-name tally still counts
+    /// an Ok vote on that row.
     /// </summary>
     public static bool BallotNeedsReview(BallotStatus status)
     {

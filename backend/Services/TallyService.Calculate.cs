@@ -243,10 +243,12 @@ public partial class TallyService
             };
         }
 
-        // Votes the analyzer awarded (Ok names on Ok ballots). TotalBallots
-        // below is BallotsReceived (Ok) + SpoiledBallots (every other status).
-        // Potential slots (TotalVotes) are still every ballot × number to elect,
-        // so subtracting only SpoiledVotes left the slots on not-Ok ballots
+        // Votes the analyzer awarded. A normal tally counts Ok names on Ok
+        // ballots. A single-name tally counts every Ok vote and ignores
+        // ballot status. TotalBallots below is BallotsReceived plus
+        // SpoiledBallots (every status other than Ok). For a normal
+        // election, TotalVotes is still every ballot × number to elect, so
+        // subtracting only SpoiledVotes left the slots on not-Ok ballots
         // inside "valid".
         var countedVotes = await _context.Results
             .Where(r => r.ElectionGuid == electionGuid)

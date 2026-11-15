@@ -22,6 +22,10 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
     /// ballot rows whose status is not Ok. A not-Ok vote adds its name-count
     /// to <c>SpoiledVotes</c> only when its ballot row is Ok.
     /// </summary>
+    /// <remarks>
+    /// Ballot status is ignored when votes are awarded, because each vote
+    /// is its own ballot. These spoiled totals still use the ballot row status.
+    /// </remarks>
     protected override void CalculateBallotStatistics()
     {
         Logger.LogInformation("Calculating single-name ballot statistics");
@@ -54,6 +58,10 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
         });
     }
 
+    /// <summary>
+    /// Awards every <see cref="VoteStatus.Ok"/> vote. Ballot status is
+    /// ignored, because each vote row is its own ballot.
+    /// </summary>
     protected override async Task CountVotesAsync()
     {
         Logger.LogInformation("Starting vote count for single-name election");

@@ -11,8 +11,11 @@ namespace Backend.Services.Analyzers;
 /// One tally pass. Clears calculated results, refreshes ballot and vote
 /// status, writes a calculated summary (<c>C</c>) and the report summary
 /// (<c>F</c>, calculated counts with a manual <c>M</c> overlay), then ranks
-/// and detects ties. Only an <see cref="BallotStatus.Ok"/> ballot awards
-/// votes. Entered ballots are Ok plus every other status.
+/// and detects ties. The normal counter awards a vote only from an
+/// <see cref="BallotStatus.Ok"/> ballot. The single-name counter awards
+/// every <see cref="VoteStatus.Ok"/> vote and ignores ballot status,
+/// because each vote row is its own ballot. Entered ballots are Ok plus
+/// every other status.
 /// </summary>
 public abstract class ElectionAnalyzerBase
 {
@@ -257,8 +260,10 @@ public abstract class ElectionAnalyzerBase
 
         ResultSummaryCalc.BallotsNeedingReview = Ballots.Count(b => BallotAnalyzer.BallotNeedsReview(b.StatusCode));
 
-        // Potential seats: every ballot × Number to Elect, including ballots
-        // that will not award a vote. CountVotesAsync counts only Ok ballots.
+        // Potential seats for a normal election: every ballot × Number to
+        // Elect, including ballots the normal counter will not award from.
+        // That counter uses only Ok ballots. The single-name counter does
+        // not use this method.
         ResultSummaryCalc.TotalVotes = Ballots.Count * TargetElection.NumberToElect!.Value;
 
         // Entered ballots = Ok + every other status. BallotsReceived is the Ok
