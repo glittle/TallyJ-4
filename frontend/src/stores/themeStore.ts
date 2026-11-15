@@ -19,11 +19,17 @@ export const useThemeStore = defineStore("theme", () => {
 
   const applyTheme = (theme: Theme) => {
     const root = document.documentElement;
-    if (theme === "dark") {
+    const isDark = theme === "dark";
+    if (isDark) {
       root.classList.add("dark");
     } else {
       root.classList.remove("dark");
     }
+
+    // Exactly "light" or "dark". "light dark" would let the browser follow the OS.
+    document
+      .querySelector('meta[name="color-scheme"]')
+      ?.setAttribute("content", isDark ? "dark" : "light");
   };
 
   // Apply theme on store initialization
