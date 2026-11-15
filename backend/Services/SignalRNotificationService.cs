@@ -92,6 +92,7 @@ public class SignalRNotificationService : ISignalRNotificationService
     {
         try
         {
+            // Same string as AnalyzeHub's private GetGroupName. That helper is not public.
             var groupName = $"Analyze{progress.ElectionGuid}";
             var eventName = progress.IsComplete ? "tallyComplete" : "tallyProgress";
             await _analyzeHubContext.Clients.Group(groupName).SendAsync(eventName, progress);
@@ -250,6 +251,7 @@ public class SignalRNotificationService : ISignalRNotificationService
                 "added" => "PersonAdded",
                 "updated" => "PersonUpdated",
                 "deleted" => "PersonDeleted",
+                // Any other action is sent as an update.
                 _ => "PersonUpdated"
             };
             await _frontDeskHubContext.Clients.Group(groupName).SendAsync(eventName, update);
@@ -299,7 +301,8 @@ public class SignalRNotificationService : ISignalRNotificationService
     }
 
     /// <summary>
-    /// Sends monitor update notifications to connected clients.
+    /// Sends <c>MonitorUpdated</c> on the Main hub base group. The monitor page
+    /// does not listen for that event. The refresh call still returns the HTTP body.
     /// </summary>
     /// <param name="monitorInfo">The monitor information data to send.</param>
     public async Task SendMonitorUpdateAsync(MonitorInfoDto monitorInfo)

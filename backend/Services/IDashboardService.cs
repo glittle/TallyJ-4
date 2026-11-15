@@ -22,9 +22,9 @@ public interface IDashboardService
     Task<List<ElectionCardDto>> GetRecentElectionsAsync(int limit = 10);
 
     /// <summary>
-    /// Retrieves all elections accessible to the current user.
+    /// At most 100 elections the user belongs to, newest date first.
     /// </summary>
-    /// <returns>A list of all accessible election card data.</returns>
+    /// <returns>Election cards, capped at 100.</returns>
     Task<List<ElectionCardDto>> GetAllAccessibleElectionsAsync();
 
     /// <summary>
@@ -50,19 +50,19 @@ public interface IDashboardService
     Task<bool> SetComputerLocationAsync(string computerCode, Guid locationGuid);
 
     /// <summary>
-    /// Assigns a GuestTeller to an election.
+    /// Inserts a Teller name when that exact name is missing. Does not open a guest session.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="tellerName">The name of the GuestTeller.</param>
-    /// <returns>True if the GuestTeller was successfully assigned, false otherwise.</returns>
+    /// <param name="tellerName">The name to store.</param>
+    /// <returns>True when the election exists.</returns>
     Task<bool> AssignGuestTellerAsync(Guid electionGuid, string tellerName);
 
     /// <summary>
-    /// Removes a GuestTeller from an election.
+    /// Deletes the Teller row with this exact name.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="tellerName">The name of the GuestTeller to remove.</param>
-    /// <returns>True if the GuestTeller was successfully removed, false otherwise.</returns>
+    /// <param name="tellerName">The stored name to delete.</param>
+    /// <returns>True if a row was deleted, false if the name is missing.</returns>
     Task<bool> RemoveGuestTellerAsync(Guid electionGuid, string tellerName);
 }
 

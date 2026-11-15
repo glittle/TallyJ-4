@@ -66,6 +66,7 @@ public partial class TallyService
             c => c.ComputerCode,
             c => FormatLocationName(c.LocationName, c.LocationTypeCode));
 
+        // Current hub connections only. A computer that entered ballots and then left is omitted.
         var computers = _computerAssignmentService.GetActiveComputers(electionGuid)
             .Select(active =>
             {
@@ -101,6 +102,7 @@ public partial class TallyService
                 BallotCount = l.Ballots.Count(),
                 VoteCount = l.Ballots.Sum(b => b.Votes.Count),
                 VoterCount = _context.People.Count(p => p.ElectionGuid == electionGuid && p.VotingLocationGuid == l.LocationGuid && p.CanVote == true),
+                // Any ballot, not the location tally status.
                 Status = l.Ballots.Any() ? "Active" : "No Ballots"
             })
             .ToListAsync();
@@ -120,6 +122,7 @@ public partial class TallyService
 
         var onlineVotingInfo = new OnlineVotingInfoDto
         {
+            // True when an open time is stored. UseOnlineVoting is not read.
             OnlineVotingEnabled = election.OnlineWhenOpen.HasValue,
             OnlineVotingStart = election.OnlineWhenOpen,
             OnlineVotingEnd = election.OnlineWhenClose,
@@ -168,13 +171,9 @@ public partial class TallyService
     /// <param name="computerCode">The code identifying the computer.</param>
     public async Task RefreshComputerContactAsync(Guid electionGuid, string computerCode)
     {
-        // In the current model, computers don't have a separate entity with last contact tracking
-        // This method is kept for API compatibility but doesn't update any database state
-        // Computer activity is inferred from ballot creation/update timestamps
+        // Logs only. Does not write Computer.LastActivity or the hub ConnectedAt.
+        // Monitor LastContact and Status use ConnectedAt from the current connection.
         _logger.LogInformation("Computer {ComputerCode} checked in for election {ElectionGuid}", computerCode, electionGuid);
-
-        // Could potentially update a cache or in-memory store here if needed
-        // For now, just log the contact
     }
 
     /// <summary>
@@ -254,6 +253,10 @@ public partial class TallyService
         return logs.Select(Backend.Helpers.AcceptAllOnlineBallotsAudit.ToRunDto).ToList();
     }
 
+    /// <summary>
+    /// Active when ConnectedAt is under five minutes old. A connection that
+    /// is still open past that is Inactive. Missing means Offline.
+    /// </summary>
     private string DetermineComputerStatus(DateTimeOffset? lastContact)
     {
         if (!lastContact.HasValue)

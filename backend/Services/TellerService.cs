@@ -183,6 +183,9 @@ public class TellerService : ITellerService
         return !await query.AnyAsync();
     }
 
+    /// <summary>
+    /// Sends tellersChanged. Dashboard assign and remove do not call this.
+    /// </summary>
     private async Task NotifyTellerChangedAsync(TellerDto teller, string action)
     {
         await _signalRNotificationService.SendTellerUpdateAsync(new TellerUpdateDto

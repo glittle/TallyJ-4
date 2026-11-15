@@ -57,11 +57,11 @@ public class ElectionService : IElectionService
     }
 
     /// <summary>
-    /// Retrieves a paginated list of elections with optional status filtering. Glen reviewed.
+    /// Retrieves a paginated list of elections the current user belongs to.
     /// </summary>
     /// <param name="pageNumber">The page number to retrieve (1-based). Default is 1.</param>
     /// <param name="pageSize">The number of elections per page. Default is 10.</param>
-    /// <param name="status">Optional status filter to apply to elections.</param>
+    /// <param name="status">Optional election stage name. Any other text returns an empty page.</param>
     /// <returns>A paginated response containing election summary DTOs.</returns>
     public async Task<PaginatedResponse<ElectionSummaryDto>> GetElectionsAsync(int pageNumber = 1, int pageSize = 10, string? status = null)
     {
@@ -85,6 +85,7 @@ public class ElectionService : IElectionService
             }
             else
             {
+                // Only ElectionStage names parse. Draft, Voting, and Tallying do not.
                 _logger.LogWarning("GetElectionsAsync: Invalid status filter '{Status}' provided", status);
                 return PaginatedResponse<ElectionSummaryDto>.Create([], pageNumber, pageSize, 0);
             }
@@ -220,6 +221,7 @@ public class ElectionService : IElectionService
             DateOfElection = election.DateOfElection,
             ElectionType = ElectionTypeEnum.ParseCode(election.ElectionType),
             ElectionStage = election.ElectionStage,
+            // True for every stage except ProcessingBallots, including SettingUp and Finalized.
             IsActive = election.ElectionStage != ElectionStage.ProcessingBallots,
             RegisteredVoters = counts.VoterCount,
             BallotsSubmitted = counts.BallotCount
@@ -710,10 +712,8 @@ public class ElectionService : IElectionService
     }
 
     /// <summary>
-    /// Retrieves a summary of a specific election.
+    /// Same payload as <see cref="GetElectionByGuidAsync"/>. Not a reduced summary.
     /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <returns>An ElectionDto containing the election summary information, or null if not found.</returns>
     public async Task<ElectionDto?> GetElectionSummaryAsync(Guid electionGuid)
     {
         return await GetElectionByGuidAsync(electionGuid);
@@ -808,11 +808,9 @@ public class ElectionService : IElectionService
     }
 
     /// <summary>
-    /// Updates whether the election appears in the guest-teller join list.
+    /// Bool wrapper around <see cref="ToggleTellerAccessAsync"/>. Both set or clear
+    /// ListedForPublicAsOf. Closing also tells joined guests to leave.
     /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="isListed">Whether guest tellers may discover and join the election.</param>
-    /// <returns>True if the listing status was updated successfully, false if the election was not found.</returns>
     public async Task<bool> UpdateElectionListingAsync(Guid electionGuid, bool isListed)
     {
         var updated = await ToggleTellerAccessAsync(electionGuid, isListed);
@@ -828,6 +826,7 @@ public class ElectionService : IElectionService
 
     private async Task<ElectionCounts> GetElectionCountsAsync(Guid electionGuid)
     {
+        // Voters are people who can vote. Ballots are every ballot row, not only Ok.
         var voterCount = await _context.People
             .CountAsync(p => p.ElectionGuid == electionGuid && p.CanVote == true);
         var locationCount = await _context.Locations

@@ -97,10 +97,10 @@ public interface IElectionService
     Task<bool> DeleteElectionAsync(Guid electionGuid);
 
     /// <summary>
-    /// Retrieves summary information for a specific election.
+    /// Same payload as <see cref="GetElectionByGuidAsync"/>. Not a reduced summary.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <returns>The election summary data, or null if not found.</returns>
+    /// <returns>The election, or null if not found.</returns>
     Task<ElectionDto?> GetElectionSummaryAsync(Guid electionGuid);
 
     /// <summary>
@@ -120,11 +120,12 @@ public interface IElectionService
     Task<ElectionDto?> UpdateOnlineVotingWindowAsync(Guid electionGuid, UpdateOnlineVotingWindowDto dto);
 
     /// <summary>
-    /// Updates whether the election appears in the guest-teller join list.
+    /// Bool wrapper around <see cref="ToggleTellerAccessAsync"/>. Both set or clear
+    /// ListedForPublicAsOf. Closing also tells joined guests to leave.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
     /// <param name="isListed">Whether guest tellers may discover and join the election.</param>
-    /// <returns>True if the listing status was successfully updated, false otherwise.</returns>
+    /// <returns>True if the election was found, false otherwise.</returns>
     Task<bool> UpdateElectionListingAsync(Guid electionGuid, bool isListed);
 }
 

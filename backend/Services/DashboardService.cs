@@ -7,8 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Backend.Services;
 
 /// <summary>
-/// Service for managing dashboard operations including election summaries, statistics, and teller management.
-/// Provides functionality to retrieve election data and manage election-related settings.
+/// Dashboard counts, election cards, computer location, and teller name rows.
+/// Guest-teller methods write the election Teller table. They do not open a guest session.
 /// </summary>
 public class DashboardService : IDashboardService
 {
@@ -56,10 +56,12 @@ public class DashboardService : IDashboardService
             .Where(e => _context.JoinElectionUsers.Any(jeu =>
                 jeu.ElectionGuid == e.ElectionGuid && jeu.UserId == userId.Value));
 
+        // Active is every stage except ProcessingBallots, including SettingUp and Finalized.
         var activeCount = await baseQuery
             .Where(e => e.ElectionStage != ElectionStage.ProcessingBallots)
             .CountAsync();
 
+        // Completed is only ProcessingBallots. Finalized is not this count.
         var completedCount = await baseQuery
             .Where(e => e.ElectionStage == ElectionStage.ProcessingBallots)
             .CountAsync();
@@ -136,10 +138,9 @@ public class DashboardService : IDashboardService
     }
 
     /// <summary>
-    /// Retrieves all elections that the current user has access to.
-    /// Filters elections based on user permissions via JoinElectionUser.
+    /// At most 100 elections the user belongs to, newest date first.
+    /// An election with no date sorts as the oldest.
     /// </summary>
-    /// <returns>A list of ElectionCardDto objects for all accessible elections.</returns>
     public async Task<List<ElectionCardDto>> GetAllAccessibleElectionsAsync()
     {
         return await GetRecentElectionsAsync(100);
@@ -173,6 +174,7 @@ public class DashboardService : IDashboardService
             dateOfElection = election.DateOfElection,
             electionStage = election.ElectionStage,
             ownerLoginId = election.OwnerLoginId,
+            // Computed from ListedForPublicAsOf. The column of this name was removed.
             listForPublic = election.ListForPublic,
             showAsTest = election.ShowAsTest,
             voterCount = election.People.Count(p => p.CanVote == true),
@@ -217,6 +219,7 @@ public class DashboardService : IDashboardService
             voterCount = election.People.Count(p => p.CanVote == true),
             locationCount = election.Locations.Count,
             lastActivity = lastLogEntry != default ? (DateTimeOffset?)lastLogEntry : null,
+            // The UseOnlineVoting flag. Open and close times are not read.
             onlineVotingActive = election.UseOnlineVoting,
             passcode = election.ElectionPasscode
         };
@@ -267,11 +270,13 @@ public class DashboardService : IDashboardService
     }
 
     /// <summary>
-    /// Assigns a GuestTeller to an election.
+    /// Inserts a Teller name when that exact name is missing. An existing name
+    /// is left as-is and still returns true. This does not open a guest session
+    /// and does not send tellersChanged.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="tellerName">The name of the GuestTeller to assign.</param>
-    /// <returns>True if the assignment was successful.</returns>
+    /// <param name="tellerName">The name to store.</param>
+    /// <returns>True when the election exists.</returns>
     /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
     public async Task<bool> AssignGuestTellerAsync(Guid electionGuid, string tellerName)
     {
@@ -304,12 +309,12 @@ public class DashboardService : IDashboardService
     }
 
     /// <summary>
-    /// Removes a GuestTeller from an election.
+    /// Deletes the Teller row with this exact name. A missing name returns false
+    /// and does not send tellersChanged.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="tellerName">The name of the GuestTeller to remove.</param>
-    /// <returns>True if the removal was successful.</returns>
-    /// <exception cref="ArgumentException">Thrown when the election is not found.</exception>
+    /// <param name="tellerName">The stored name to delete.</param>
+    /// <returns>True if a row was deleted.</returns>
     public async Task<bool> RemoveGuestTellerAsync(Guid electionGuid, string tellerName)
     {
         var teller = await _context.Tellers

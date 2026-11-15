@@ -40,20 +40,25 @@ public class SuperAdminService : ISuperAdminService
     {
         var totalCount = await _context.Elections.CountAsync();
 
+        // Open is not ProcessingBallots and has a date at or before now.
+        // Finalized with a past date is open. A null date is not.
         var openCount = await _context.Elections
             .Where(e => e.ElectionStage != ElectionStage.ProcessingBallots
                         && e.DateOfElection <= DateTimeOffset.UtcNow)
             .CountAsync();
 
+        // A future date, and not ProcessingBallots. A null date is not upcoming.
         var upcomingCount = await _context.Elections
             .Where(e => e.DateOfElection > DateTimeOffset.UtcNow
                         && e.ElectionStage != ElectionStage.ProcessingBallots)
             .CountAsync();
 
+        // Only ProcessingBallots. Finalized is not completed.
         var completedCount = await _context.Elections
             .Where(e => e.ElectionStage == ElectionStage.ProcessingBallots)
             .CountAsync();
 
+        // Always zero. There is no archived stage.
         var archivedCount = 0;
 
         _logger.LogInformation(
@@ -101,6 +106,7 @@ public class SuperAdminService : ISuperAdminService
             }
             else
             {
+                // Only ElectionStage names parse. Draft, Voting, and Tallying return an empty page.
                 _logger.LogWarning("GetElectionsAsync: Invalid status filter '{Status}' provided", filter.Status);
                 return PaginatedResponse<SuperAdminElectionDto>.Create([], filter.Page, filter.PageSize, 0);
             }
@@ -416,6 +422,7 @@ public class SuperAdminService : ISuperAdminService
             "electiontype" or "type" => isDescending
                 ? query.OrderByDescending(e => e.ElectionType)
                 : query.OrderBy(e => e.ElectionType),
+            // People who can vote, not ballots and not votes.
             "votecount" or "voters" => isDescending
                 ? query.OrderByDescending(e => e.People.Count(p => p.CanVote == true))
                 : query.OrderBy(e => e.People.Count(p => p.CanVote == true)),
