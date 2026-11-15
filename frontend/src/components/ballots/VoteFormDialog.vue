@@ -29,7 +29,7 @@ const { handleApiError } = useApiErrorHandler();
 const formRef = ref<FormInstance>();
 const submitting = ref(false);
 const searching = ref(false);
-const votablePeople = ref<PersonListDto[]>([]);
+const peopleWhoCanReceiveVotes = ref<PersonListDto[]>([]);
 
 const form = reactive({
   positionOnBallot: props.nextPosition,
@@ -52,7 +52,7 @@ const rules = reactive<FormRules>({
 onMounted(async () => {
   try {
     await peopleStore.fetchPeopleList(props.electionGuid);
-    votablePeople.value = peopleStore.votablePeople;
+    peopleWhoCanReceiveVotes.value = peopleStore.peopleWhoCanReceiveVotes;
   } catch (error) {
     handleApiError(error);
   }
@@ -60,14 +60,14 @@ onMounted(async () => {
 
 async function searchPeople(query: string) {
   if (!query) {
-    votablePeople.value = peopleStore.votablePeople;
+    peopleWhoCanReceiveVotes.value = peopleStore.peopleWhoCanReceiveVotes;
     return;
   }
 
   searching.value = true;
   try {
     const results = await peopleStore.searchPeople(props.electionGuid, query);
-    votablePeople.value = results.filter((p) => p.canReceiveVotes);
+    peopleWhoCanReceiveVotes.value = results.filter((p) => p.canReceiveVotes);
   } catch (error) {
     handleApiError(error);
   } finally {
@@ -136,7 +136,7 @@ function handleClose() {
           style="width: 100%"
         >
           <el-option
-            v-for="person in votablePeople"
+            v-for="person in peopleWhoCanReceiveVotes"
             :key="person.personGuid"
             :label="person.fullName"
             :value="person.personGuid"

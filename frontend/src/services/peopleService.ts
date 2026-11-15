@@ -40,6 +40,11 @@ type PeopleQueryFilters = {
   canReceiveVotes?: boolean;
 };
 
+/**
+ * Walks GetPeople until hasNextPage is not true.
+ * canVote and canReceiveVotes are sent as query flags. The server compares
+ * the stored columns; a null stored value matches neither true nor false.
+ */
 async function fetchAllPeoplePages(
   electionGuid: string,
   filters: PeopleQueryFilters = {},
@@ -68,11 +73,13 @@ async function fetchAllPeoplePages(
 }
 
 export const peopleService = {
-  async getAll(electionGuid: string): Promise<PersonDto[]> {
+  /** Every GetPeople page (PersonDto). Not the lighter GetAllPeople list. */
+  async getAllPersonDtos(electionGuid: string): Promise<PersonDto[]> {
     return fetchAllPeoplePages(electionGuid);
   },
 
-  async getAllPeople(electionGuid: string): Promise<PersonListDto[]> {
+  /** One GetAllPeople response (PersonListDto). Not paged. */
+  async getPersonList(electionGuid: string): Promise<PersonListDto[]> {
     const response = await getApiPeopleByElectionGuidGetAllPeople({
       path: { electionGuid },
     });
@@ -118,7 +125,10 @@ export const peopleService = {
     return (response.data?.data ?? []) as PersonDto[];
   },
 
-  async getVotablePeople(electionGuid: string): Promise<PersonDto[]> {
+  /** GetPeople pages whose stored CanReceiveVotes is true. */
+  async getPeopleWhoCanReceiveVotes(
+    electionGuid: string,
+  ): Promise<PersonDto[]> {
     return fetchAllPeoplePages(electionGuid, { canReceiveVotes: true });
   },
 

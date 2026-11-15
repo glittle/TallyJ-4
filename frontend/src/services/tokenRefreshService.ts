@@ -140,7 +140,7 @@ class TokenRefreshService {
     } catch (error) {
       console.error("[TokenRefresh] Token refresh failed:", error);
 
-      // If refresh fails with 401, user is logged out, stop auto-refresh
+      // A 401 stops later refresh attempts. Cookies and the page stay as they are.
       if (error && typeof error === "object" && "response" in error) {
         const errorWithResponse = error as { response?: { status?: number } };
         if (errorWithResponse.response?.status === 401) {

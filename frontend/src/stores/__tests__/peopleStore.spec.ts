@@ -7,15 +7,15 @@ const mockInvalidateElectionStats = vi.fn();
 
 vi.mock("@/services/peopleService", () => ({
   peopleService: {
-    getAll: vi.fn().mockResolvedValue([]),
+    getAllPersonDtos: vi.fn().mockResolvedValue([]),
     getById: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),
     search: vi.fn(),
-    getVotablePeople: vi.fn().mockResolvedValue([]),
+    getPeopleWhoCanReceiveVotes: vi.fn().mockResolvedValue([]),
     getAllForBallotEntry: vi.fn().mockResolvedValue([]),
-    getAllPeople: vi.fn().mockResolvedValue([]),
+    getPersonList: vi.fn().mockResolvedValue([]),
   },
 }));
 

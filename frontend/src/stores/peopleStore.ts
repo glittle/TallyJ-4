@@ -29,11 +29,13 @@ export const usePeopleStore = defineStore("people", () => {
   const isCacheInitialized = ref(false);
   const personUpdatedListeners = new Set<(data: PersonUpdateEvent) => void>();
 
+  /** List rows with canVote === true. This is not "has already voted". */
   const voters = computed(() =>
     peopleList.value.filter((p) => p.canVote === true),
   );
 
-  const votablePeople = computed(() =>
+  /** List rows with canReceiveVotes === true. */
+  const peopleWhoCanReceiveVotes = computed(() =>
     peopleList.value.filter((p) => p.canReceiveVotes === true),
   );
 
@@ -49,7 +51,7 @@ export const usePeopleStore = defineStore("people", () => {
     loading.value = true;
     error.value = null;
     try {
-      people.value = await peopleService.getAll(electionGuid);
+      people.value = await peopleService.getAllPersonDtos(electionGuid);
     } catch (e: any) {
       error.value = e.message || "Failed to fetch people";
       throw e;
@@ -63,7 +65,7 @@ export const usePeopleStore = defineStore("people", () => {
     loading.value = true;
     error.value = null;
     try {
-      peopleList.value = await peopleService.getAllPeople(electionGuid);
+      peopleList.value = await peopleService.getPersonList(electionGuid);
     } catch (e: any) {
       error.value = e.message || "Failed to fetch people";
       throw e;
@@ -519,7 +521,7 @@ export const usePeopleStore = defineStore("people", () => {
     loading,
     error,
     voters,
-    votablePeople,
+    peopleWhoCanReceiveVotes,
     peopleCache,
     isCacheInitialized,
     fetchPeople,

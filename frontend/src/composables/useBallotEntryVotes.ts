@@ -48,6 +48,11 @@ export function useBallotEntryVotes(options: UseBallotEntryVotesOptions) {
     return merged;
   }
 
+  /**
+   * Minimum slots is requiredVotes. A higher filled position extends the
+   * list. The cap is 50. Empty slots are shown; this does not require
+   * every slot to be filled.
+   */
   function computeSlotCount(merged: Map<number, VoteDto>): number {
     const highestFilled = merged.size > 0 ? Math.max(...merged.keys()) : 0;
     return Math.min(

@@ -37,6 +37,7 @@ function normalizeVoteResult(
     votePositions: normalizeVotePositions(result.votePositions),
   };
 
+  // A null, missing, or empty status is dropped. A present code is a string.
   if (
     result.ballotStatusCode !== null &&
     result.ballotStatusCode !== undefined &&
@@ -44,7 +45,7 @@ function normalizeVoteResult(
   ) {
     normalized.ballotStatusCode = String(result.ballotStatusCode);
   } else {
-    delete (normalized as any).ballotStatusCode;
+    delete (normalized as { ballotStatusCode?: string }).ballotStatusCode;
   }
 
   return normalized;
