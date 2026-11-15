@@ -302,7 +302,7 @@ public class SignalRNotificationService : ISignalRNotificationService
 
     /// <summary>
     /// Sends <c>MonitorUpdated</c> on the Main hub base group. The monitor page
-    /// does not listen for that event. The refresh call still returns the HTTP body.
+    /// applies that payload. The refresh call also returns the HTTP body.
     /// </summary>
     /// <param name="monitorInfo">The monitor information data to send.</param>
     public async Task SendMonitorUpdateAsync(MonitorInfoDto monitorInfo)

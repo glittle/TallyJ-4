@@ -358,4 +358,24 @@ public class ComputerAssignmentServiceTests
             Assert.Equal("A", service.AssignCode(_electionGuid, $"run{run}-fresh", "conn-fresh", true));
         }
     }
+
+    [Fact]
+    public void RecordContact_moves_ConnectedAt_for_that_code_only()
+    {
+        var service = CreateService();
+        service.AssignCode(_electionGuid, "client-a", "conn-a", isMainTeller: true);
+        service.AssignCode(_electionGuid, "client-b", "conn-b", isMainTeller: true);
+        var before = service.GetActiveComputers(_electionGuid).ToDictionary(c => c.ComputerCode);
+
+        Assert.False(service.RecordContact(_electionGuid, " "));
+        Assert.False(service.RecordContact(Guid.NewGuid(), "A"));
+
+        var started = DateTimeOffset.UtcNow.AddSeconds(-1);
+        Assert.True(service.RecordContact(_electionGuid, "a"));
+
+        var after = service.GetActiveComputers(_electionGuid).ToDictionary(c => c.ComputerCode);
+        Assert.True(after["A"].ConnectedAt >= started);
+        Assert.True(after["A"].ConnectedAt > before["A"].ConnectedAt);
+        Assert.Equal(before["B"].ConnectedAt, after["B"].ConnectedAt);
+    }
 }

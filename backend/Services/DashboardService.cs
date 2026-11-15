@@ -56,14 +56,15 @@ public class DashboardService : IDashboardService
             .Where(e => _context.JoinElectionUsers.Any(jeu =>
                 jeu.ElectionGuid == e.ElectionGuid && jeu.UserId == userId.Value));
 
-        // Active is every stage except ProcessingBallots, including SettingUp and Finalized.
+        // GatheringBallots and ProcessingBallots. SettingUp is not yet open.
         var activeCount = await baseQuery
-            .Where(e => e.ElectionStage != ElectionStage.ProcessingBallots)
+            .Where(e => e.ElectionStage == ElectionStage.GatheringBallots
+                        || e.ElectionStage == ElectionStage.ProcessingBallots)
             .CountAsync();
 
-        // Completed is only ProcessingBallots. Finalized is not this count.
+        // Finalized only.
         var completedCount = await baseQuery
-            .Where(e => e.ElectionStage == ElectionStage.ProcessingBallots)
+            .Where(e => e.ElectionStage == ElectionStage.Finalized)
             .CountAsync();
 
         var recentElections = await GetRecentElectionsAsync(5);

@@ -29,7 +29,6 @@ export interface SuperAdminSummary {
   openElections: number;
   upcomingElections: number;
   completedElections: number;
-  archivedElections: number;
 }
 
 export interface SuperAdminElection {

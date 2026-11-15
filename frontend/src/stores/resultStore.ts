@@ -139,6 +139,24 @@ export const useResultStore = defineStore("result", () => {
     }
   }
 
+  async function refreshMonitor(electionGuid: string, computerCode?: string) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const info = await resultService.refreshMonitor(
+        electionGuid,
+        computerCode,
+      );
+      monitorInfo.value = info;
+      return info;
+    } catch (e: any) {
+      error.value = e.message || "Failed to refresh monitor info";
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   // Reports
   async function fetchElectionReport(electionGuid: string) {
     loading.value = true;
@@ -382,6 +400,7 @@ export const useResultStore = defineStore("result", () => {
     fetchResults,
     fetchStatistics,
     fetchMonitorInfo,
+    refreshMonitor,
     fetchElectionReport,
     fetchReportData,
     fetchTieDetails,

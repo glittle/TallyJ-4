@@ -159,3 +159,14 @@ Accept-all vs Front Desk **same person** is still one counted vote (desk method 
 **Rejected alternative:** catch `IOException` and leave the file, as the phone-prefix and paid-send tests do. Rejected — those tests tolerate a leftover file. This test is supposed to remove its file, and a caught sharing violation still leaves the handle open.
 
 **Reason:** the SQLite finalization check has to be deletable on Windows without disturbing other tests.
+
+## Dashboard and super-admin counts follow the stage
+
+**Status:** active  
+**Evidence:** confirmed
+
+Completed is Finalized only. Active (teller dashboard) and open (super admin) are GatheringBallots and ProcessingBallots. SettingUp is not yet open: it is the super-admin upcoming count, and it is neither active nor completed on the teller dashboard. The election date does not move an election between those counts. A past date does not make SettingUp open, and a future date does not take GatheringBallots or ProcessingBallots out of the open count.
+
+There is no archived stage and no archive flag on the election. The super-admin summary does not report an archived count.
+
+**Rejected alternative:** classify open versus upcoming from `DateOfElection`. A Finalized election with a past date, and a SettingUp election with a past date, were counted as open.

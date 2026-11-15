@@ -2381,6 +2381,32 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task RefreshComputerContactAsync_RecordsLastActivityAndHubContact()
+    {
+        var election = await CreateTestElectionAsync();
+        var location = await CreateTestLocationAsync(election.ElectionGuid);
+        var stale = DateTimeOffset.UtcNow.AddHours(-3);
+        Context.Computers.Add(new Computer
+        {
+            ElectionGuid = election.ElectionGuid,
+            LocationGuid = location.LocationGuid,
+            ComputerGuid = Guid.NewGuid(),
+            ComputerCode = "A",
+            LastActivity = stale,
+        });
+        await Context.SaveChangesAsync();
+
+        var before = DateTimeOffset.UtcNow.AddSeconds(-1);
+        await _service.RefreshComputerContactAsync(election.ElectionGuid, "a");
+
+        _computerAssignmentMock.Verify(
+            s => s.RecordContact(election.ElectionGuid, "a"),
+            Times.Once);
+        var stored = await Context.Computers.SingleAsync(c => c.ComputerCode == "A");
+        Assert.True(stored.LastActivity >= before);
+    }
+
+    [Fact]
     public async Task GetMonitorInfoAsync_UsesAssignedLocationWhenComputerHasNoBallots()
     {
         var election = await CreateTestElectionAsync();

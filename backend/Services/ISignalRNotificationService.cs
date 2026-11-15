@@ -90,7 +90,7 @@ public interface ISignalRNotificationService
 
     /// <summary>
     /// Sends <c>MonitorUpdated</c> on the Main hub base group. The monitor page
-    /// does not listen for that event.
+    /// applies that payload.
     /// </summary>
     /// <param name="monitorInfo">The monitor information to broadcast.</param>
     Task SendMonitorUpdateAsync(MonitorInfoDto monitorInfo);
