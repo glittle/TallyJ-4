@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using Backend.Entities;
 using Backend.DTOs.OnlineVoting;
+using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services;
@@ -46,14 +47,9 @@ public partial class OnlineVotingService
                 return (false, "voting.auth.google.emailNotVerified", null);
             }
 
-            // 3. Find all open elections where this voter is registered
+            // Elections open for external sign-in. The email match is the next step.
             var now = DateTimeOffset.UtcNow;
-            var openElections = await _context.Elections
-                .Where(e => e.UseOnlineVoting &&
-                           e.OnlineWhenOpen != null &&
-                           e.OnlineWhenClose != null &&
-                           e.OnlineWhenOpen <= now &&
-                           e.OnlineWhenClose >= now)
+            var openElections = await ElectionsOpenForExternalSignIn(now)
                 .Select(e => e.ElectionGuid)
                 .ToListAsync();
             openElections = await ExceptFlaggedElectionsAsync(openElections);
@@ -83,7 +79,7 @@ public partial class OnlineVotingService
                 onlineVoter = new OnlineVoter
                 {
                     VoterId = email,
-                    VoterIdType = "E",
+                    VoterIdType = EmailVoterIdType,
                     WhenRegistered = DateTimeOffset.UtcNow
                 };
                 _context.OnlineVoters.Add(onlineVoter);
@@ -118,7 +114,7 @@ public partial class OnlineVotingService
     }
 
     /// <inheritdoc/>
-    public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> FacebookAuthAsync(FacebookAuthForVoterDto dto)
+    public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> AuthenticateVoterWithFacebookAsync(FacebookAuthForVoterDto dto)
     {
         if (!VoterSignIn().Facebook)
         {
@@ -151,12 +147,7 @@ public partial class OnlineVotingService
             }
 
             var now = DateTimeOffset.UtcNow;
-            var openElections = await _context.Elections
-                .Where(e => e.UseOnlineVoting &&
-                           e.OnlineWhenOpen != null &&
-                           e.OnlineWhenClose != null &&
-                           e.OnlineWhenOpen <= now &&
-                           e.OnlineWhenClose >= now)
+            var openElections = await ElectionsOpenForExternalSignIn(now)
                 .Select(e => e.ElectionGuid)
                 .ToListAsync();
             openElections = await ExceptFlaggedElectionsAsync(openElections);
@@ -181,7 +172,7 @@ public partial class OnlineVotingService
                 onlineVoter = new OnlineVoter
                 {
                     VoterId = email,
-                    VoterIdType = "E",
+                    VoterIdType = EmailVoterIdType,
                     WhenRegistered = DateTimeOffset.UtcNow
                 };
                 _context.OnlineVoters.Add(onlineVoter);
@@ -214,7 +205,7 @@ public partial class OnlineVotingService
     }
 
     /// <inheritdoc/>
-    public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> KakaoAuthAsync(KakaoAuthForVoterDto dto)
+    public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> AuthenticateVoterWithKakaoAsync(KakaoAuthForVoterDto dto)
     {
         if (!VoterSignIn().Kakao)
         {
@@ -256,12 +247,7 @@ public partial class OnlineVotingService
             }
 
             var now = DateTimeOffset.UtcNow;
-            var openElections = await _context.Elections
-                .Where(e => e.UseOnlineVoting &&
-                           e.OnlineWhenOpen != null &&
-                           e.OnlineWhenClose != null &&
-                           e.OnlineWhenOpen <= now &&
-                           e.OnlineWhenClose >= now)
+            var openElections = await ElectionsOpenForExternalSignIn(now)
                 .Select(e => e.ElectionGuid)
                 .ToListAsync();
             openElections = await ExceptFlaggedElectionsAsync(openElections);
@@ -274,16 +260,18 @@ public partial class OnlineVotingService
             string? matchedVoterId = null;
             string? matchedVoterIdType = null;
 
+            // A matching email wins. Phone is used only when the email did not
+            // match a person in those elections.
             if (!string.IsNullOrEmpty(email))
             {
                 var found = await _context.People.AnyAsync(p => openElections.Contains(p.ElectionGuid) && p.Email == email);
-                if (found) { matchedVoterId = email; matchedVoterIdType = "E"; }
+                if (found) { matchedVoterId = email; matchedVoterIdType = EmailVoterIdType; }
             }
 
             if (matchedVoterId == null && !string.IsNullOrEmpty(phone))
             {
                 var found = await _context.People.AnyAsync(p => openElections.Contains(p.ElectionGuid) && p.Phone == phone);
-                if (found) { matchedVoterId = phone; matchedVoterIdType = "P"; }
+                if (found) { matchedVoterId = phone; matchedVoterIdType = OnlineVoterPhoneHelper.PhoneVoterIdType; }
             }
 
             if (matchedVoterId == null)
@@ -330,7 +318,7 @@ public partial class OnlineVotingService
     }
 
     /// <inheritdoc/>
-    public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> TelegramAuthAsync(TelegramAuthForVoterDto dto)
+    public async Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> AuthenticateVoterWithTelegramAsync(TelegramAuthForVoterDto dto)
     {
         if (!VoterSignIn().Telegram)
         {
@@ -355,14 +343,8 @@ public partial class OnlineVotingService
 
             var telegramVoterId = dto.Id.ToString();
 
-            // Check if there is an open election where this voter is registered by Telegram ID
             var now = DateTimeOffset.UtcNow;
-            var openElections = await _context.Elections
-                .Where(e => e.UseOnlineVoting &&
-                           e.OnlineWhenOpen != null &&
-                           e.OnlineWhenClose != null &&
-                           e.OnlineWhenOpen <= now &&
-                           e.OnlineWhenClose >= now)
+            var openElections = await ElectionsOpenForExternalSignIn(now)
                 .Select(e => e.ElectionGuid)
                 .ToListAsync();
             openElections = await ExceptFlaggedElectionsAsync(openElections);
@@ -372,9 +354,10 @@ public partial class OnlineVotingService
                 return (false, "voting.auth.telegram.noOpenElections", null);
             }
 
-            // Look up existing OnlineVoter record with this Telegram ID
+            // The open-election list above is only a gate. This id is not
+            // matched to a person in those elections.
             var onlineVoter = await _context.OnlineVoters
-                .FirstOrDefaultAsync(ov => ov.VoterId == telegramVoterId && ov.VoterIdType == "T");
+                .FirstOrDefaultAsync(ov => ov.VoterId == telegramVoterId && ov.VoterIdType == TelegramVoterIdType);
 
             if (onlineVoter == null)
             {
@@ -404,6 +387,22 @@ public partial class OnlineVotingService
             return (false, "voting.auth.telegram.error", null);
         }
     }
+
+    /// <summary>
+    /// Elections external voter sign-in treats as open. Both open and close
+    /// must be set, and the close instant is still open
+    /// (<c>OnlineWhenClose &gt;= now</c>). Login-code and kiosk sign-in are a
+    /// different clock: open must be set, a null close stays open, and the
+    /// close instant is already closed. Submit uses
+    /// <see cref="OnlineVotingWindow"/>, which also treats a null open as open.
+    /// </summary>
+    private IQueryable<Election> ElectionsOpenForExternalSignIn(DateTimeOffset now) =>
+        _context.Elections.Where(e =>
+            e.UseOnlineVoting
+            && e.OnlineWhenOpen != null
+            && e.OnlineWhenClose != null
+            && e.OnlineWhenOpen <= now
+            && e.OnlineWhenClose >= now);
 
     /// <summary>
     /// Validates the HMAC-SHA256 hash from the Telegram Login Widget callback per the official spec.

@@ -29,6 +29,10 @@ public static class SignInCapabilities
 
         bool Offer(bool enabled, bool configured) => enabled && (configured || relaxed);
 
+        // Officer Telegram stays off unless a flag says otherwise. An empty
+        // SignIn:Officers:Telegram still reads the older ClientEnv:enableTelegramLogin.
+        // A set SignIn value wins, including an explicit false. Voter Telegram
+        // does not use that older flag; its SignIn default is on.
         var explicitOfficerTelegram = configuration["SignIn:Officers:Telegram"];
         var officersTelegram = string.IsNullOrWhiteSpace(explicitOfficerTelegram)
             ? Flag("ClientEnv:enableTelegramLogin", false)
@@ -63,6 +67,12 @@ public static class SignInCapabilities
         };
     }
 
+    /// <summary>
+    /// Whether this host will send or accept that voter code request.
+    /// <c>E</c> is email and must ask for email. <c>P</c> is phone and must
+    /// name sms, voice, or WhatsApp. <c>C</c> is the kiosk / direct code.
+    /// Any other type is refused.
+    /// </summary>
     public static bool AllowsVoterRequest(VoterSignInCapabilities voters, string? voterIdType, string? deliveryMethod)
     {
         if (string.Equals(voterIdType, "E", StringComparison.OrdinalIgnoreCase))

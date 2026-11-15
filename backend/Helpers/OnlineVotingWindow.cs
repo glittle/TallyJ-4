@@ -1,9 +1,14 @@
 namespace Backend.Helpers;
 
 /// <summary>
-/// Whether the online voting window is currently open for voters.
-/// Matches voter submit and available-elections: <c>UseOnlineVoting</c>
-/// plus open/close vs now. A null open or close does not close the window.
+/// Submit calls this. <c>UseOnlineVoting</c> must be on. A null open or
+/// close does not close the window, and the close instant is closed.
+/// Available-elections copies that clock and also hides flagged elections
+/// and elections with no approved owner or co-admin when one is rejected.
+/// Login-code and kiosk sign-in
+/// require open to be set. External
+/// sign-in requires both ends and still treats the close instant as open.
+/// Those three do not call this.
 /// </summary>
 public static class OnlineVotingWindow
 {
