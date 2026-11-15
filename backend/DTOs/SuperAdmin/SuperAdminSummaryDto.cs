@@ -11,24 +11,19 @@ public class SuperAdminSummaryDto
     public int TotalElections { get; set; }
 
     /// <summary>
-    /// The number of elections that are currently open for voting.
+    /// GatheringBallots and ProcessingBallots. The election date is not used.
     /// </summary>
     public int OpenElections { get; set; }
 
     /// <summary>
-    /// The number of elections that are scheduled for the future.
+    /// SettingUp. Not yet open, including when the election date is already past.
     /// </summary>
     public int UpcomingElections { get; set; }
 
     /// <summary>
-    /// The number of elections that have been completed and tallied.
+    /// Finalized elections.
     /// </summary>
     public int CompletedElections { get; set; }
-
-    /// <summary>
-    /// The number of elections that have been archived.
-    /// </summary>
-    public int ArchivedElections { get; set; }
 }
 
 

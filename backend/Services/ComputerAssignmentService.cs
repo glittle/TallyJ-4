@@ -242,6 +242,37 @@ public class ComputerAssignmentService : IComputerAssignmentService, IDisposable
             .ToList();
     }
 
+    /// <inheritdoc />
+    public bool RecordContact(Guid electionGuid, string computerCode)
+    {
+        if (string.IsNullOrWhiteSpace(computerCode))
+        {
+            return false;
+        }
+
+        if (!_elections.TryGetValue(electionGuid, out var state))
+        {
+            return false;
+        }
+
+        var normalized = computerCode.Trim();
+        var now = DateTimeOffset.UtcNow;
+        var updated = false;
+        lock (_stateLock)
+        {
+            foreach (var connection in state.Connections.Values)
+            {
+                if (string.Equals(connection.ComputerCode, normalized, StringComparison.OrdinalIgnoreCase))
+                {
+                    connection.ConnectedAt = now;
+                    updated = true;
+                }
+            }
+        }
+
+        return updated;
+    }
+
     public void Dispose()
     {
         foreach (var state in _elections.Values)
@@ -429,6 +460,6 @@ public class ComputerAssignmentService : IComputerAssignmentService, IDisposable
 
         public required Guid ElectionGuid { get; init; }
 
-        public required DateTimeOffset ConnectedAt { get; init; }
+        public required DateTimeOffset ConnectedAt { get; set; }
     }
 }

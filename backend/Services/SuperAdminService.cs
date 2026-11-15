@@ -40,38 +40,32 @@ public class SuperAdminService : ISuperAdminService
     {
         var totalCount = await _context.Elections.CountAsync();
 
-        // Open is not ProcessingBallots and has a date at or before now.
-        // Finalized with a past date is open. A null date is not.
+        // GatheringBallots and ProcessingBallots. The election date is not used.
         var openCount = await _context.Elections
-            .Where(e => e.ElectionStage != ElectionStage.ProcessingBallots
-                        && e.DateOfElection <= DateTimeOffset.UtcNow)
+            .Where(e => e.ElectionStage == ElectionStage.GatheringBallots
+                        || e.ElectionStage == ElectionStage.ProcessingBallots)
             .CountAsync();
 
-        // A future date, and not ProcessingBallots. A null date is not upcoming.
+        // SettingUp is not yet open, including when the date is already past or missing.
         var upcomingCount = await _context.Elections
-            .Where(e => e.DateOfElection > DateTimeOffset.UtcNow
-                        && e.ElectionStage != ElectionStage.ProcessingBallots)
+            .Where(e => e.ElectionStage == ElectionStage.SettingUp)
             .CountAsync();
 
-        // Only ProcessingBallots. Finalized is not completed.
+        // Finalized only.
         var completedCount = await _context.Elections
-            .Where(e => e.ElectionStage == ElectionStage.ProcessingBallots)
+            .Where(e => e.ElectionStage == ElectionStage.Finalized)
             .CountAsync();
-
-        // Always zero. There is no archived stage.
-        var archivedCount = 0;
 
         _logger.LogInformation(
-            "SuperAdmin summary: {Total} total, {Open} open, {Upcoming} upcoming, {Completed} completed, {Archived} archived",
-            totalCount, openCount, upcomingCount, completedCount, archivedCount);
+            "SuperAdmin summary: {Total} total, {Open} open, {Upcoming} upcoming, {Completed} completed",
+            totalCount, openCount, upcomingCount, completedCount);
 
         return new SuperAdminSummaryDto
         {
             TotalElections = totalCount,
             OpenElections = openCount,
             UpcomingElections = upcomingCount,
-            CompletedElections = completedCount,
-            ArchivedElections = archivedCount
+            CompletedElections = completedCount
         };
     }
 

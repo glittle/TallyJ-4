@@ -18,6 +18,10 @@ const {
   mockElection,
   mockFrontDeskOn,
   mockFrontDeskOff,
+  mockMainOn,
+  mockMainOff,
+  mockJoinElection,
+  mockRefreshMonitor,
 } = vi.hoisted(() => ({
   mockGetSummary: vi.fn(),
   mockAcceptAll: vi.fn(),
@@ -29,6 +33,10 @@ const {
   mockFetchMonitor: vi.fn(),
   mockFrontDeskOn: vi.fn(),
   mockFrontDeskOff: vi.fn(),
+  mockMainOn: vi.fn(),
+  mockMainOff: vi.fn(),
+  mockJoinElection: vi.fn(),
+  mockRefreshMonitor: vi.fn(),
   mockElection: {
     electionGuid: "election-1",
     onlineCloseIsEstimate: true,
@@ -112,6 +120,7 @@ const mockMonitor: MonitorInfoDto = {
 vi.mock("@/stores/resultStore", () => ({
   useResultStore: () => ({
     fetchMonitorInfo: (...args: unknown[]) => mockFetchMonitor(...args),
+    refreshMonitor: (...args: unknown[]) => mockRefreshMonitor(...args),
   }),
 }));
 
@@ -136,6 +145,11 @@ vi.mock("@/services/signalrService", () => ({
       off: mockFrontDeskOff,
     }),
     joinFrontDeskElection: vi.fn().mockResolvedValue(undefined),
+    connectToMainHub: vi.fn().mockResolvedValue({
+      on: mockMainOn,
+      off: mockMainOff,
+    }),
+    joinElection: (...args: unknown[]) => mockJoinElection(...args),
   },
 }));
 
@@ -188,6 +202,12 @@ describe("MonitoringDashboardPage Accept all", () => {
     mockFetchMonitor.mockResolvedValue(mockMonitor);
     mockFrontDeskOn.mockReset();
     mockFrontDeskOff.mockReset();
+    mockMainOn.mockReset();
+    mockMainOff.mockReset();
+    mockJoinElection.mockReset();
+    mockJoinElection.mockResolvedValue(null);
+    mockRefreshMonitor.mockReset();
+    mockRefreshMonitor.mockResolvedValue(copyMonitor({}, { totalBallots: 17 }));
     mockElection.onlineCloseIsEstimate = true;
     mockMonitor.onlineVotingInfo.onlineVotingEnabled = true;
     mockMonitor.onlineVotingInfo.pendingOnlineBallots = 3;
@@ -733,5 +753,41 @@ describe("MonitoringDashboardPage close countdown", () => {
     ];
     expect(options.onlineCloseIsEstimate).toBe(true);
     expect(new Date(options.onlineWhenClose).getTime()).toBeLessThan(before);
+  });
+
+  it("applies MonitorUpdated for this election", async () => {
+    const wrapper = await mountPage();
+    const registration = mockMainOn.mock.calls.find(
+      (call) => call[0] === "MonitorUpdated",
+    );
+    expect(registration).toBeTruthy();
+    expect(mockJoinElection).toHaveBeenCalledWith("election-1");
+    const handler = registration![1] as (data: MonitorInfoDto) => void;
+    handler(copyMonitor({}, { totalBallots: 42 }));
+    await flushPromises();
+    expect(wrapper.text()).toContain("42");
+  });
+
+  it("ignores MonitorUpdated for another election", async () => {
+    const wrapper = await mountPage();
+    const handler = mockMainOn.mock.calls.find(
+      (call) => call[0] === "MonitorUpdated",
+    )![1] as (data: MonitorInfoDto) => void;
+    handler(
+      copyMonitor({}, { electionGuid: "other-election", totalBallots: 99 }),
+    );
+    await flushPromises();
+    expect(wrapper.text()).toContain("10");
+    expect(wrapper.text()).not.toContain("99");
+  });
+
+  it("refresh posts the computer contact instead of only reloading", async () => {
+    const wrapper = await mountPage();
+    const loads = mockFetchMonitor.mock.calls.length;
+    await wrapper.find("button").trigger("click");
+    await flushPromises();
+    expect(mockRefreshMonitor).toHaveBeenCalledWith("election-1", undefined);
+    expect(mockFetchMonitor.mock.calls.length).toBe(loads);
+    expect(wrapper.text()).toContain("17");
   });
 });

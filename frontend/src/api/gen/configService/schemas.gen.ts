@@ -8140,10 +8140,6 @@ export const SuperAdmin_SuperAdminSummaryDtoSchema = {
         completedElections: {
             type: 'integer',
             format: 'int32'
-        },
-        archivedElections: {
-            type: 'integer',
-            format: 'int32'
         }
     },
     additionalProperties: false

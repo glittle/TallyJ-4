@@ -143,7 +143,6 @@ describe("SuperAdminDashboardPage election stages", () => {
       openElections: 1,
       upcomingElections: 0,
       completedElections: 1,
-      archivedElections: 0,
     });
     mockedService.getElections.mockResolvedValue({
       items: elections,

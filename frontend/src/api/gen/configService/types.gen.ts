@@ -2364,7 +2364,6 @@ export type SuperAdminSuperAdminSummaryDto = {
     openElections?: number;
     upcomingElections?: number;
     completedElections?: number;
-    archivedElections?: number;
 };
 
 export type SuperAdminSuperAdminUpdateUserDto = {

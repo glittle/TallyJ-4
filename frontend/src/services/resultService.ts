@@ -3,6 +3,7 @@ import {
   getApiResultsElectionByElectionGuid,
   getApiResultsElectionByElectionGuidSummary,
   getApiResultsElectionByElectionGuidMonitor,
+  postApiResultsByElectionGuidRefreshMonitor,
   getApiResultsElectionByElectionGuidReport,
   getApiResultsElectionByElectionGuidReportByReportCode,
   getApiResultsByElectionGuidByTieBreakGroupTies,
@@ -68,6 +69,17 @@ export const resultService = {
   async getMonitorInfo(electionGuid: string): Promise<MonitorInfoDto> {
     const response = await getApiResultsElectionByElectionGuidMonitor({
       path: { electionGuid },
+    });
+    return response.data as MonitorInfoDto;
+  },
+
+  async refreshMonitor(
+    electionGuid: string,
+    computerCode?: string,
+  ): Promise<MonitorInfoDto> {
+    const response = await postApiResultsByElectionGuidRefreshMonitor({
+      path: { electionGuid },
+      query: computerCode ? { computerCode } : undefined,
     });
     return response.data as MonitorInfoDto;
   },

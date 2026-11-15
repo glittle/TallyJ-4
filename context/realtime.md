@@ -276,3 +276,12 @@ ASP.NET Core SignalR **event names are case-sensitive**. SPA listeners use **cam
 `ElectionPackageImportHub` stays user-scoped and also rejects `voterType=online`. AllVoters and VoterPersonal stay `OnlineVoter`. Public and VoterCode stay anonymous.
 
 **Rejected alternative:** rely on the HTTP API check alone. A connection that already holds any teller JWT could join another election's group and receive people, ballot, and tally events.
+
+## Monitor refresh updates contact and the open monitor pages
+
+**Status:** active  
+**Evidence:** confirmed
+
+`RefreshComputerContactAsync` writes `Computer.LastActivity` and moves `ConnectedAt` on the live hub connection for that computer code. Monitor LastContact and the five-minute Active/Inactive status read `ConnectedAt`. The refresh response is also sent as `MonitorUpdated` on the Main hub base group (`Main{electionGuid}`). The monitor page joins that group and applies the payload. The 30-second poll still reloads by HTTP and does not stamp contact.
+
+**Rejected alternative:** remove `MonitorUpdated` and rely on the poll. Other open monitor pages would wait for the next poll, and a refresh would still not move LastContact.

@@ -290,6 +290,7 @@ import { useNotifications } from "@/composables/useNotifications";
 import { isFullTeller } from "@/domain/guestTellerAccess";
 import { electionService } from "@/services/electionService";
 import { useElectionStore } from "@/stores/electionStore";
+import { getComputerCode } from "@/utils/computerCodeStorage";
 import {
   extractApiErrorMessage,
   translateIfPhraseKey,
@@ -335,8 +336,12 @@ let closeCountdownTimer: ReturnType<typeof setInterval> | null = null;
 let frontDeskConnection: Awaited<
   ReturnType<typeof signalrService.connectToFrontDeskHub>
 > | null = null;
+let mainConnection: Awaited<
+  ReturnType<typeof signalrService.connectToMainHub>
+> | null = null;
 let onlineElectionHandler: ((data: unknown) => void) | null = null;
 let onlineBallotsChangedHandler: ((data: unknown) => void) | null = null;
+let monitorUpdatedHandler: ((data: unknown) => void) | null = null;
 
 const MONITOR_POLL_MS = 30_000;
 
@@ -377,12 +382,14 @@ onMounted(async () => {
   startAutoRefresh();
   startCloseCountdownTick();
   await initializeOnlineElectionListener();
+  await initializeMonitorListener();
 });
 
 onUnmounted(async () => {
   stopAutoRefresh();
   stopCloseCountdownTick();
   await teardownOnlineElectionListener();
+  teardownMonitorListener();
 });
 
 function onMonitorVisible() {
@@ -415,7 +422,19 @@ async function loadData() {
 }
 
 async function refreshData() {
-  await loadData();
+  try {
+    loading.value = true;
+    const computerCode = getComputerCode(electionGuid);
+    const data = await resultStore.refreshMonitor(
+      electionGuid,
+      computerCode || undefined,
+    );
+    monitorInfo.value = data;
+  } catch (error) {
+    handleApiError(error);
+  } finally {
+    loading.value = false;
+  }
 }
 
 function sameElection(value: unknown): boolean {
@@ -423,6 +442,37 @@ function sameElection(value: unknown): boolean {
     return false;
   }
   return String(value).toLowerCase() === electionGuid.toLowerCase();
+}
+
+/** Apply a refresh from this page or another teller on the Main hub base group. */
+async function initializeMonitorListener() {
+  try {
+    mainConnection = await signalrService.connectToMainHub();
+    monitorUpdatedHandler = (data: unknown) => {
+      const payload = data as MonitorInfoDto | null;
+      if (!payload || !sameElection(payload.electionGuid)) {
+        return;
+      }
+      monitorInfo.value = payload;
+    };
+    mainConnection.on("MonitorUpdated", monitorUpdatedHandler);
+    await signalrService.joinElection(electionGuid);
+  } catch (e) {
+    console.error("Failed to listen for monitor updates:", e);
+  }
+}
+
+function teardownMonitorListener() {
+  try {
+    if (mainConnection && monitorUpdatedHandler) {
+      mainConnection.off("MonitorUpdated", monitorUpdatedHandler);
+    }
+  } catch (e) {
+    console.error("Failed to remove monitor update handler:", e);
+  } finally {
+    monitorUpdatedHandler = null;
+    mainConnection = null;
+  }
 }
 
 /** Soft refresh when the online window changes, or a voter submits a ballot. */

@@ -23,6 +23,13 @@ public interface IComputerAssignmentService
     IReadOnlyList<ActiveComputerDto> GetActiveComputers(Guid electionGuid);
 
     /// <summary>
+    /// Sets ConnectedAt to now for live connections with this computer code.
+    /// Monitor LastContact reads that time.
+    /// </summary>
+    /// <returns>True when at least one connection was updated.</returns>
+    bool RecordContact(Guid electionGuid, string computerCode);
+
+    /// <summary>
     /// Whether at least one main (full) teller is connected to the election.
     /// </summary>
     bool HasActiveMainTeller(Guid electionGuid);

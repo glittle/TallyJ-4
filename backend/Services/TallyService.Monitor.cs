@@ -171,8 +171,27 @@ public partial class TallyService
     /// <param name="computerCode">The code identifying the computer.</param>
     public async Task RefreshComputerContactAsync(Guid electionGuid, string computerCode)
     {
-        // Logs only. Does not write Computer.LastActivity or the hub ConnectedAt.
-        // Monitor LastContact and Status use ConnectedAt from the current connection.
+        // LastContact and Status read ConnectedAt. LastActivity is the stored contact time.
+        var now = DateTimeOffset.UtcNow;
+        _computerAssignmentService.RecordContact(electionGuid, computerCode);
+
+        if (!string.IsNullOrWhiteSpace(computerCode))
+        {
+            var code = computerCode.Trim().ToUpperInvariant();
+            var computers = await _context.Computers
+                .Where(c => c.ElectionGuid == electionGuid && c.ComputerCode.ToUpper() == code)
+                .ToListAsync();
+            foreach (var computer in computers)
+            {
+                computer.LastActivity = now;
+            }
+
+            if (computers.Count > 0)
+            {
+                await _context.SaveChangesAsync();
+            }
+        }
+
         _logger.LogInformation("Computer {ComputerCode} checked in for election {ElectionGuid}", computerCode, electionGuid);
     }
 
