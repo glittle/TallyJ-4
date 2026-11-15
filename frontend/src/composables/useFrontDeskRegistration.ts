@@ -135,6 +135,8 @@ export function useFrontDeskRegistration(
       isClose: true,
     });
 
+    // Keys are 1-based positions in this list, including flags, unregister,
+    // and close. Keys on registrationTypes are not kept.
     buttons.forEach((button, index) => {
       button.key = String(index + 1);
     });

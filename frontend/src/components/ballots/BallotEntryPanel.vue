@@ -182,6 +182,11 @@ watch(
   },
 );
 
+/**
+ * A person vote sends the person and no reason code. The server sets
+ * Spoiled from that person's eligibility. A person-less vote sends the
+ * reason code and no person.
+ */
 function toCreateVoteDto(vote: VoteDto): CreateVoteDto {
   return {
     ballotGuid: vote.ballotGuid,

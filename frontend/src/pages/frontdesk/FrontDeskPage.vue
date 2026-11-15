@@ -35,6 +35,7 @@ const { showSuccessMessage, showErrorMessage } = useNotifications();
 const electionGuid = ref(route.params.id as string);
 
 const activeTellers = ref<ActiveTellers>(getActiveTellers());
+/** Teller 1 must be non-blank. Teller 2 is not required to check someone in. */
 const hasActiveTeller = computed(() =>
   Boolean(activeTellers.value.teller1.trim()),
 );
@@ -46,11 +47,18 @@ function onTellersChanged(tellers: ActiveTellers) {
   activeTellers.value = tellers;
 }
 
-/** Placeholder until election setup exposes "Enable Envelope Numbers". */
+/**
+ * Hard-coded off. The envelope column and dialog stay unused while this
+ * is false. No election setting turns it on.
+ */
 const ENABLE_ENVELOPE_NUMBERS = false;
 
 const currentElection = computed(() => electionStore.currentElection);
 
+/**
+ * A JSON array is used as stored. Any other successful JSON value is an
+ * empty list. A value that is not JSON is split on commas.
+ */
 const electionFlags = computed(() => {
   if (!currentElection.value?.flags) {
     return [] as string[];

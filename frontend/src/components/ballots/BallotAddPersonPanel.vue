@@ -24,7 +24,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  "person-added": [vote: VoteDto];
+  "vote-drafted": [vote: VoteDto];
   cancel: [];
 }>();
 
@@ -32,6 +32,7 @@ const peopleStore = usePeopleStore();
 const electionStore = useElectionStore();
 const { handleApiError } = useApiErrorHandler();
 
+/** A guest teller can add a person only when the election flag is on. Everyone else can. */
 const canAddNames = computed(() => {
   if (!isGuestTeller()) {
     return true;
@@ -40,9 +41,11 @@ const canAddNames = computed(() => {
 });
 
 const personFormRef = ref<InstanceType<typeof PersonForm>>();
+/** U02 unreadable is the initial choice. U01 is unidentifiable. */
 const voteEntryType = ref<BallotVoteEntryType>("U02");
 const submitting = ref(false);
 
+/** U01 and U02 store a spoiled vote with no person. "normal" creates a person. */
 const isPersonLessVote = computed(
   () => voteEntryType.value === "U01" || voteEntryType.value === "U02",
 );
@@ -94,7 +97,7 @@ async function handleSubmit() {
   if (isPersonLessVote.value) {
     submitting.value = true;
     try {
-      emit("person-added", buildPersonLessVote());
+      emit("vote-drafted", buildPersonLessVote());
     } finally {
       submitting.value = false;
     }
@@ -154,7 +157,7 @@ async function handleSubmit() {
           : undefined,
       };
 
-      emit("person-added", vote);
+      emit("vote-drafted", vote);
     } catch (error) {
       handleApiError(error);
     } finally {
