@@ -5,31 +5,22 @@ using Microsoft.Extensions.Options;
 namespace Backend.Authorization;
 
 /// <summary>
-/// Authorization handler that validates whether the authenticated user is a super admin
-/// by checking their email against the configured list of super admin emails.
+/// Succeeds when the caller's email claim is in <c>SuperAdmin:Emails</c>.
+/// This is the site-wide list, not the Identity <c>Admin</c> role and not an
+/// election Owner/Admin join. Email match is ordinal and case-insensitive.
+/// The claim is <c>email</c>, then <see cref="System.Security.Claims.ClaimTypes.Email"/>.
 /// </summary>
 public class SuperAdminHandler : AuthorizationHandler<SuperAdminRequirement>
 {
     private readonly SuperAdminSettings _settings;
     private readonly ILogger<SuperAdminHandler> _logger;
 
-    /// <summary>
-    /// Initializes a new instance of the SuperAdminHandler.
-    /// </summary>
-    /// <param name="settings">The super admin settings containing the list of authorized emails.</param>
-    /// <param name="logger">The logger for diagnostic output.</param>
     public SuperAdminHandler(IOptions<SuperAdminSettings> settings, ILogger<SuperAdminHandler> logger)
     {
         _settings = settings.Value;
         _logger = logger;
     }
 
-    /// <summary>
-    /// Handles the authorization requirement by checking if the user's email is in the super admin list.
-    /// </summary>
-    /// <param name="context">The authorization handler context containing user and resource information.</param>
-    /// <param name="requirement">The SuperAdminRequirement being evaluated.</param>
-    /// <returns>A task representing the asynchronous authorization check.</returns>
     protected override Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
         SuperAdminRequirement requirement)
@@ -53,7 +44,7 @@ public class SuperAdminHandler : AuthorizationHandler<SuperAdminRequirement>
         }
 
         var isSuperAdmin = _settings.Emails
-            .Any(e => string.Equals(e, email, StringComparison.OrdinalIgnoreCase));
+            .Any(configured => string.Equals(configured, email, StringComparison.OrdinalIgnoreCase));
 
         if (isSuperAdmin)
         {
@@ -69,6 +60,3 @@ public class SuperAdminHandler : AuthorizationHandler<SuperAdminRequirement>
         return Task.CompletedTask;
     }
 }
-
-
-

@@ -129,7 +129,7 @@ Communities that should start trusted still get a **one-time invite link**. Supe
 
 `/register?invite=` shows the email/password form only when peek says the token is still usable. SuperAdmin Users has “Issue email/password invite.”
 
-**Rejected alternative:** let Head Teller issue invites. `HeadTellerAccess` is election-route-scoped (user + election GUID). Creating a site-wide login account is not an election privilege, so SuperAdmin is the issuer.
+**Rejected alternative:** let Head Teller issue invites. Policy `HeadTellerAccess` (handler `ElectionMemberAccessHandler`) is election-route-scoped (user + election GUID). Creating a site-wide login account is not an election privilege, so SuperAdmin is the issuer.
 
 **Rejected alternative:** a second user table or a parallel register service. Invite redeem must go through `RegisterAsync` so password rules, unique email, and verification stay one path.
 
@@ -386,7 +386,7 @@ A signed-in principal is not enough. Teller and owner endpoints authorize the el
 - Operational reads and writes that the guest teller UI already performs stay on `ElectionAccess`. That includes people, ballots, votes, locations, result reads, reports, exports, and the teller name list plus create. `ActiveTellerSelector` lists and adds names from Front Desk and ballot entry, which guests are allowed to open. The tellers admin page (update and delete) stays `FullTellerAccess`. Guest paper-entry writes (create, update, delete, and reorder of ballots and votes, plus CDN ballot import) also require Processing Ballots; other stages are 403. See `context/election-state.md`.
 - A vote's body `BallotGuid` must belong to the same election as the vote. `PersonGuid` is loaded only from that election. A mismatch returns 404 `{ error: "error.notFound" }` and does not copy the other person's `CombinedInfo` or move the vote. Reorder only updates votes already on the authorized ballot. Create-ballot already requires the location to be in the body election.
 - Online-voter tokens (`voterType=online`) fail the default `[Authorize]` policy and every election policy. Online voting endpoints stay on `OnlineVoter`.
-- Site-wide `GET /api/security-audit-logs` (no election) is super admin only (403). An `electionGuid` filter requires membership (`HeadTellerAccess`: any join, not a guest). A log row the caller cannot see returns the same not-found body as a missing id.
+- Site-wide `GET /api/security-audit-logs` (no election) is super admin only (403). An `electionGuid` filter requires membership (policy `HeadTellerAccess`, handler `ElectionMemberAccessHandler`: any join, not a guest). A log row the caller cannot see returns the same not-found body as a missing id.
 - An existing election the caller cannot access is 403 on route policies (same as duplicate/reset). Entity and body checks return 404 `{ error: "error.notFound" }` so the guid does not confirm that the row exists. A route policy still succeeds when the election row is absent, so the action can return 404 (or 400 when validation runs first).
 - `RequireElectionAccessAttribute` implements `IOrderedFilter` at -2500. The MVC pipeline orders the attribute, not the filter instance created later, and that has to run before `ModelStateInvalidFilter` (-2000). Otherwise an invalid body returns 400 and confirms the caller reached the action.
 

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Backend.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
@@ -82,7 +83,9 @@ public class ElectionPackageImportHub : Hub
     public static string GetGroupName(Guid userId) => $"ElectionPackageImport{userId}";
 
     /// <summary>
-    /// Known (full) teller: same gate as MainHub multi-join (<c>isTeller</c> true = guest).
+    /// Known account teller. Online voters and the guest <c>isTeller</c> flag
+    /// are rejected. Same flag test as <see cref="MainHub"/> multi-join;
+    /// <c>authMethod</c> is not required.
     /// </summary>
     private static bool IsKnownTeller(ClaimsPrincipal? user)
     {
@@ -96,8 +99,7 @@ public class ElectionPackageImportHub : Hub
             return false;
         }
 
-        var isTellerClaim = user.FindFirst("isTeller")?.Value;
-        return !bool.TryParse(isTellerClaim, out var isGuestTeller) || !isGuestTeller;
+        return !GuestTellerClaims.HasGuestTellerFlag(user);
     }
 
     private static Guid? GetUserId(ClaimsPrincipal? user)

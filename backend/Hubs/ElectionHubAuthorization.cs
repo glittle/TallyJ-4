@@ -4,7 +4,10 @@ using Microsoft.AspNetCore.SignalR;
 namespace Backend.Hubs;
 
 /// <summary>
-/// Shared join gate for election-scoped SignalR groups.
+/// Join gate for election-scoped SignalR groups. Denial throws
+/// <see cref="HubException"/> with "Access denied." The decision is
+/// <see cref="IElectionAccessEvaluator.CanJoinElectionAsync"/>: guest tellers
+/// only for the election on their token, online voters never.
 /// </summary>
 internal static class ElectionHubAuthorization
 {

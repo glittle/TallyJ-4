@@ -3,21 +3,22 @@ using Microsoft.AspNetCore.Authorization;
 namespace Backend.Authorization;
 
 /// <summary>
-/// Any signed-in member of the election (JoinElectionUser). Guest tellers and
-/// online voters are denied. Despite the name, this is not a separate head-teller role.
+/// <see cref="TellerNamesMemberAccessRequirement"/> from the route or from a
+/// <see cref="Guid"/> resource. Guest tellers fail even for the election on
+/// their token; that exception exists only on <see cref="ElectionAccessHandler"/>.
 /// </summary>
-public class HeadTellerAccessHandler : AuthorizationHandler<HeadTellerAccessRequirement>
+public class TellerNamesMemberAccessHandler : AuthorizationHandler<TellerNamesMemberAccessRequirement>
 {
     private readonly IElectionAccessEvaluator _evaluator;
 
-    public HeadTellerAccessHandler(IElectionAccessEvaluator evaluator)
+    public TellerNamesMemberAccessHandler(IElectionAccessEvaluator evaluator)
     {
         _evaluator = evaluator;
     }
 
     protected override async Task HandleRequirementAsync(
         AuthorizationHandlerContext context,
-        HeadTellerAccessRequirement requirement)
+        TellerNamesMemberAccessRequirement requirement)
     {
         var user = context.User;
         if (user?.Identity?.IsAuthenticated != true || _evaluator.IsOnlineVoter(user))
@@ -40,7 +41,7 @@ public class HeadTellerAccessHandler : AuthorizationHandler<HeadTellerAccessRequ
         var outcome = await _evaluator.EvaluateAsync(
             user,
             electionGuid,
-            ElectionAccessPolicies.HeadTellerAccess);
+            ElectionAccessPolicies.TellerNamesMemberAccess);
         if (outcome.Allowed)
         {
             context.Succeed(requirement);

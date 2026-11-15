@@ -7,7 +7,14 @@ namespace Backend.Services.Auth;
 public interface IJwtTokenService
 {
     string GenerateToken(AppUser user);
-    string GenerateTellerToken(Guid electionGuid);
+
+    /// <summary>
+    /// Guest teller session for one election. Sets <c>isTeller=true</c>,
+    /// <c>authMethod=AccessCode</c>, and <c>electionGuid</c>. This is the
+    /// shared-passcode login, not an account teller.
+    /// Known tellers use <see cref="GenerateToken"/>.
+    /// </summary>
+    string GenerateGuestTellerToken(Guid electionGuid);
     string GenerateRefreshToken();
     string HashRefreshToken(string token);
     RefreshToken CreateRefreshToken(string userId, string token);

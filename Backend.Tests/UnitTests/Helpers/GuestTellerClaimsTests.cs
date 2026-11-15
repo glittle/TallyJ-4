@@ -9,7 +9,7 @@ public class GuestTellerClaimsTests
     public void IsGuestTeller_RequiresIsTellerAndAccessCode()
     {
         var guest = Principal(
-            (GuestTellerClaims.IsTellerClaimType, "true"),
+            (GuestTellerClaims.GuestTellerFlagClaimType, "true"),
             (GuestTellerClaims.AuthMethodClaimType, GuestTellerClaims.AccessCodeAuthMethod));
         Assert.True(GuestTellerClaims.IsGuestTeller(guest));
     }
@@ -18,7 +18,7 @@ public class GuestTellerClaimsTests
     public void IsGuestTeller_IsTellerWithoutAccessCode_IsFalse()
     {
         var user = Principal(
-            (GuestTellerClaims.IsTellerClaimType, "true"),
+            (GuestTellerClaims.GuestTellerFlagClaimType, "true"),
             (GuestTellerClaims.AuthMethodClaimType, "Local"));
         Assert.False(GuestTellerClaims.IsGuestTeller(user));
     }

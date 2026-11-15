@@ -169,7 +169,7 @@ public class Issue186NameNotInTheListTests : IDisposable
         var election = SeedElection(guestCanAdd: false);
         var accessor = new Mock<IHttpContextAccessor>();
         var identity = new ClaimsIdentity("Local");
-        identity.AddClaim(new Claim(GuestTellerClaims.IsTellerClaimType, "true"));
+        identity.AddClaim(new Claim(GuestTellerClaims.GuestTellerFlagClaimType, "true"));
         identity.AddClaim(new Claim(GuestTellerClaims.AuthMethodClaimType, "Local"));
         accessor.Setup(a => a.HttpContext).Returns(new DefaultHttpContext
         {
@@ -254,7 +254,7 @@ public class Issue186NameNotInTheListTests : IDisposable
         var identity = new ClaimsIdentity("AccessCode");
         if (guestTeller)
         {
-            identity.AddClaim(new Claim(GuestTellerClaims.IsTellerClaimType, "true"));
+            identity.AddClaim(new Claim(GuestTellerClaims.GuestTellerFlagClaimType, "true"));
             identity.AddClaim(new Claim(
                 GuestTellerClaims.AuthMethodClaimType,
                 GuestTellerClaims.AccessCodeAuthMethod));

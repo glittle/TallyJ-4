@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Backend.Authorization;
 using Backend.Context;
+using Backend.Helpers;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -47,8 +48,10 @@ public class MainHub : Hub
     {
         await ElectionHubAuthorization.EnsureCanJoinAsync(_electionAccess, Context.User, electionGuid);
 
-        var isMainTeller = IsMainTeller(Context.User);
-        if (!isMainTeller && !_assignmentService.CanGuestJoin(electionGuid))
+        // A known-account connection counts as a main teller for guest-join
+        // gating. The isTeller claim marks a guest; it is not "this workstation".
+        var isKnownTeller = IsKnownTeller(Context.User);
+        if (!isKnownTeller && !_assignmentService.CanGuestJoin(electionGuid))
         {
             throw new HubException("No main teller is currently connected to this election.");
         }
@@ -57,12 +60,12 @@ public class MainHub : Hub
             electionGuid,
             clientId,
             Context.ConnectionId,
-            isMainTeller);
+            isKnownTeller);
 
         var groupName = GetGroupName(electionGuid);
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
-        var roleSuffix = isMainTeller ? "Known" : "Guest";
+        var roleSuffix = isKnownTeller ? "Known" : "Guest";
         await Groups.AddToGroupAsync(Context.ConnectionId, groupName + roleSuffix);
 
         _logger.LogInformation(
@@ -85,7 +88,7 @@ public class MainHub : Hub
     /// <returns>GUIDs successfully joined (membership-verified known teller only).</returns>
     public async Task<IReadOnlyList<Guid>> JoinElections(IEnumerable<Guid> electionGuids)
     {
-        if (!IsMainTeller(Context.User))
+        if (!IsKnownTeller(Context.User))
         {
             throw new HubException("Only known tellers can join multiple elections.");
         }
@@ -200,15 +203,17 @@ public class MainHub : Hub
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName + "Guest");
     }
 
-    private static bool IsMainTeller(ClaimsPrincipal? user)
+    // Known account versus guest flag. Not which computer is the main
+    // workstation: every known-teller connection is passed to AssignCode as
+    // a main teller. authMethod is not consulted; see HasGuestTellerFlag.
+    private static bool IsKnownTeller(ClaimsPrincipal? user)
     {
         if (user == null)
         {
             return false;
         }
 
-        var isTellerClaim = user.FindFirst("isTeller")?.Value;
-        return !bool.TryParse(isTellerClaim, out var isGuestTeller) || !isGuestTeller;
+        return !GuestTellerClaims.HasGuestTellerFlag(user);
     }
 
     private static Guid? GetUserId(ClaimsPrincipal? user)
