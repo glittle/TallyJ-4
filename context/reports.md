@@ -72,3 +72,16 @@ Monitor "Ballots entered" for a location is every ballot at that location, the s
 **Rejected alternative:** count only Ok ballots as entered on the monitor. Rejected — a Too Few ballot was still entered, and the location row then disagreed with the computer row while still adding that ballot's lines into the vote total.
 
 **Rejected alternative:** count only Ok ballots on the presentation screen. Rejected — a Too Few ballot was still received, and the screen then showed 1 ballot for an election that received 3.
+
+## Ballot-report counts follow the Oth tally, not Convention/NSA
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #455  
+**Revisit when:** Convention or NSA ballots stop being ordered by name, or election type Oth stops being the single-name tally
+
+The ballots report used to expose one flag, `IsSingleNameElection`, set true for Convention (`Con`) and NSA. Those elections list many names, and the ballots and duplicate-ballot reports order vote lines by name when that is true. The single-name tally is election type `Oth`: each vote line carries `SingleNameElectionCount`. The count UI read the Convention/NSA flag, so Convention/NSA reports showed an empty count and `Oth` reports hid the count.
+
+**Chosen:** `IsSingleNameTally` is true only for `Oth` and is what the ballots report uses to show the count. `IsConventionOrNsa` is the old flag renamed, and it still selects name order for Convention and NSA. Analysis already treats `Oth` as the single-name tally; that analyzer check is unchanged.
+
+**Rejected alternative:** make `IsSingleNameElection` mean `Oth`. Rejected — that flag already selected Convention/NSA name order. Flipping it would show the counts and also sort those ballots by position.

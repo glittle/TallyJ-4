@@ -1576,7 +1576,7 @@ export type ReportsBallotAlignmentReportDto = {
     electionName?: string | null;
     dateOfElection?: Date | null;
     numToElect?: number;
-    isSingleNameElection?: boolean;
+    isConventionOrNsa?: boolean;
     rows?: Array<ReportsAlignmentRowDto> | null;
 };
 
@@ -1616,14 +1616,15 @@ export type ReportsBallotVoteDto = {
 export type ReportsBallotsReportDto = {
     electionName?: string | null;
     dateOfElection?: Date | null;
-    isSingleNameElection?: boolean;
+    isConventionOrNsa?: boolean;
+    isSingleNameTally?: boolean;
     ballots?: Array<ReportsBallotReportItemDto> | null;
 };
 
 export type ReportsBallotsSameReportDto = {
     electionName?: string | null;
     dateOfElection?: Date | null;
-    isSingleNameElection?: boolean;
+    isConventionOrNsa?: boolean;
     groups?: Array<ReportsDuplicateGroupDto> | null;
 };
 

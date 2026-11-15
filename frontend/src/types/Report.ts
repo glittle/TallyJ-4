@@ -99,7 +99,10 @@ export interface BallotVote {
 export interface BallotsReport {
   electionName: string;
   dateOfElection?: string;
-  isSingleNameElection: boolean;
+  /** Convention or NSA: vote lines are already ordered by name. */
+  isConventionOrNsa: boolean;
+  /** Single-name tally (election type Oth): show each line's count. */
+  isSingleNameTally: boolean;
   ballots: BallotReportItem[];
 }
 
@@ -119,7 +122,8 @@ export interface BallotAlignmentReport {
   electionName: string;
   dateOfElection?: string;
   numToElect: number;
-  isSingleNameElection: boolean;
+  /** Convention or NSA. */
+  isConventionOrNsa: boolean;
   rows: AlignmentRow[];
 }
 
@@ -131,7 +135,8 @@ export interface AlignmentRow {
 export interface BallotsSameReport {
   electionName: string;
   dateOfElection?: string;
-  isSingleNameElection: boolean;
+  /** Convention or NSA: duplicate groups are already ordered by name. */
+  isConventionOrNsa: boolean;
   groups: DuplicateGroup[];
 }
 

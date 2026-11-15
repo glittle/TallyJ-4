@@ -609,16 +609,46 @@ public class ReportServiceTests : ServiceTestBase, IAsyncLifetime
         Assert.True(report.Ballots[0].Votes[0].TieBreakRequired);
     }
 
-    [Fact]
-    public async Task GetBallotsReport_SingleNameElection_SetsFlag()
+    [Theory]
+    [InlineData("Oth", true, false)]
+    [InlineData("Con", false, true)]
+    [InlineData("NSA", false, true)]
+    [InlineData("LSA", false, false)]
+    [InlineData("LSA1", false, false)]
+    [InlineData("LSA2", false, false)]
+    [InlineData("Reg", false, false)]
+    public async Task GetBallotsReport_SingleNameTally_TrueOnlyForOther(
+        string electionType, bool isSingleNameTally, bool isConventionOrNsa)
     {
-        await SeedElection(electionType: "Con");
+        await SeedElection(electionType: electionType);
         var loc = await AddLocation("Hall");
         await AddBallot(loc.LocationGuid);
 
         var report = await _service.GetBallotsReportAsync(_electionGuid);
 
-        Assert.True(report.IsSingleNameElection);
+        Assert.Equal(isSingleNameTally, report.IsSingleNameTally);
+        Assert.Equal(isConventionOrNsa, report.IsConventionOrNsa);
+    }
+
+    [Theory]
+    [InlineData("Con", "Ann Aar")]
+    [InlineData("NSA", "Ann Aar")]
+    [InlineData("Oth", "Zoe Zed")]
+    [InlineData("LSA", "Zoe Zed")]
+    public async Task GetBallotsReport_VoteOrder_NameForConventionAndNsa_PositionOtherwise(
+        string electionType, string expectedFirstName)
+    {
+        await SeedElection(electionType: electionType);
+        var loc = await AddLocation("Hall");
+        var laterOnBallot = await AddPerson("Aar", "Ann");
+        var earlierOnBallot = await AddPerson("Zed", "Zoe");
+        var ballot = await AddBallot(loc.LocationGuid);
+        await AddVote(ballot.BallotGuid, earlierOnBallot.PersonGuid, position: 1);
+        await AddVote(ballot.BallotGuid, laterOnBallot.PersonGuid, position: 2);
+
+        var report = await _service.GetBallotsReportAsync(_electionGuid);
+
+        Assert.Equal(expectedFirstName, report.Ballots[0].Votes[0].PersonName);
     }
 
     [Fact]

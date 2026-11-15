@@ -54,13 +54,16 @@ public partial class ReportService : IReportService
     /// <summary>
     /// True only when <see cref="Election.ElectionType"/> is
     /// <see cref="ElectionTypeEnum.Con"/> or <see cref="ElectionTypeEnum.NSA"/>.
-    /// Ballot reports then sort votes by name instead of position, and the
-    /// JSON property stays <c>IsSingleNameElection</c>. The tally single-name
-    /// type is <see cref="ElectionTypeEnum.Oth"/> and is not this flag.
+    /// Ballot reports then sort votes by name instead of position. The JSON
+    /// property is <c>IsConventionOrNsa</c>. The tally single-name type is
+    /// <see cref="ElectionTypeEnum.Oth"/> (<see cref="IsSingleNameTally"/>).
     /// </summary>
     private static bool IsConventionOrNsa(Election election) =>
         election.ElectionType == ElectionTypeEnum.Con.Code
         || election.ElectionType == ElectionTypeEnum.NSA.Code;
+
+    private static bool IsSingleNameTally(Election election) =>
+        election.ElectionType == ElectionTypeEnum.Oth.Code;
 
     private static string? GetIneligibleDescription(string? code)
     {

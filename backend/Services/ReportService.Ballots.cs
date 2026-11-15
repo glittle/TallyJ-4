@@ -94,7 +94,8 @@ public partial class ReportService
         {
             ElectionName = election.Name,
             DateOfElection = election.DateOfElection,
-            IsSingleNameElection = orderVotesByName,
+            IsConventionOrNsa = orderVotesByName,
+            IsSingleNameTally = IsSingleNameTally(election),
             Ballots = ballotItems
         };
     }
@@ -174,7 +175,7 @@ public partial class ReportService
             ElectionName = election.Name,
             DateOfElection = election.DateOfElection,
             NumToElect = numToElect,
-            IsSingleNameElection = IsConventionOrNsa(election),
+            IsConventionOrNsa = IsConventionOrNsa(election),
             Rows = alignmentCounts
                 .OrderByDescending(kv => kv.Key)
                 .Select(kv => new AlignmentRowDto { MatchingNames = kv.Key, BallotCount = kv.Value })
@@ -247,7 +248,7 @@ public partial class ReportService
         {
             ElectionName = election.Name,
             DateOfElection = election.DateOfElection,
-            IsSingleNameElection = orderVotesByName,
+            IsConventionOrNsa = orderVotesByName,
             Groups = groups
         };
     }
