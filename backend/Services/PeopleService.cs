@@ -70,9 +70,9 @@ public class PeopleService : IPeopleService
     /// <param name="electionGuid">The unique identifier of the election.</param>
     /// <param name="pageNumber">The page number to retrieve (1-based). Default is 1.</param>
     /// <param name="pageSize">The number of people per page. Default is 50.</param>
-    /// <param name="search">Optional search string to filter people by name, email, or Bahai ID.</param>
-    /// <param name="canVote">Optional filter for people who can vote.</param>
-    /// <param name="canReceiveVotes">Optional filter for people who can receive votes.</param>
+    /// <param name="search">Optional substring. See <see cref="PersonSearchPredicate"/>.</param>
+    /// <param name="canVote">When set, keeps rows whose stored <c>CanVote</c> equals this value. A null stored value matches neither true nor false. This is not <see cref="PersonEligibilityHelper.CanVote"/>.</param>
+    /// <param name="canReceiveVotes">When set, keeps rows whose stored <c>CanReceiveVotes</c> equals this value. A null stored value matches neither true nor false. This is not <see cref="PersonEligibilityHelper.CanReceiveVotes"/>.</param>
     /// <returns>A paginated response containing person DTOs with their vote counts.</returns>
     public async Task<PaginatedResponse<PersonDto>> GetPeopleByElectionAsync(
         Guid electionGuid,
@@ -318,7 +318,7 @@ public class PeopleService : IPeopleService
     }
 
     /// <summary>
-    /// Searches for people within an election by name, email, or Bahai ID.
+    /// Searches people in one election. See <see cref="PersonSearchPredicate"/>. Returns at most 20 rows.
     /// </summary>
     /// <param name="electionGuid">The unique identifier of the election to search within.</param>
     /// <param name="query">The search query string.</param>
@@ -801,6 +801,10 @@ public class PeopleService : IPeopleService
 
     /// <summary>
     /// EF-translatable search over name parts and contact fields (not the in-memory FullName).
+    /// </summary>
+    /// <summary>
+    /// Substring match on first name, last name, other names, other last names,
+    /// other info, combined info, email, and Bahá'í ID. Phone is not compared.
     /// </summary>
     private static Expression<Func<Person, bool>> PersonSearchPredicate(string searchLower) =>
         p => (p.FirstName != null && p.FirstName.ToLower().Contains(searchLower)) ||

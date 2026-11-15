@@ -8,9 +8,12 @@ using Backend.Services;
 namespace Backend.Services.Auth;
 
 /// <summary>
-/// Single Twilio status-callback path (v3 Public/SmsStatus). Updates SmsLog when present,
-/// auto-learns a lasting SmsStatus block on selected terminal failures, and sets
-/// SmsStatus to OK when a delivered/completed callback matches an existing SID.
+/// Single Twilio status-callback path (v3 Public/SmsStatus). Updates SmsLog when a row
+/// for the SID already exists; a callback does not insert a log.
+/// A lasting SmsStatus block is learned from selected terminal failures when a type-P
+/// OnlineVoter matches To, whether or not that log row exists.
+/// SmsStatus OK is written only when the log row exists, the status is delivered or
+/// completed, and a type-P OnlineVoter matches To.
 /// </summary>
 public class TwilioSmsStatusService : ITwilioSmsStatusService
 {

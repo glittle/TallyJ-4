@@ -13,6 +13,12 @@ using System.Xml.Schema;
 
 namespace Backend.Services;
 
+/// <summary>
+/// CDN ballot XML import. Parsed voter and ballot counts must match or
+/// nothing is written. A Bahá'í ID that is not already a person is reported
+/// and the rest of the file is still saved. An unmatched vote name is stored
+/// as <see cref="VoteStatus.Raw"/> on that ballot.
+/// </summary>
 public class CdnBallotImportService : ElectionImportExportBase
 {
     public CdnBallotImportService(MainDbContext context, IElectionService electionService)
@@ -131,9 +137,11 @@ public class CdnBallotImportService : ElectionImportExportBase
     private async Task UpdateElectionVotingMethodsAsync(Guid electionGuid)
     {
         var election = await _context.Elections.FindAsync(electionGuid);
-        if (election != null && (election.VotingMethods?.Contains("I") != true))
+        // Appends the letter I unless that letter is already in the stored
+        // string. "IM" and "IP" already contain it, so they are left as they are.
+        if (election != null && (election.VotingMethods?.Contains(VotingMethodCodes.Imported) != true))
         {
-            election.VotingMethods = (election.VotingMethods ?? "") + "I";
+            election.VotingMethods = (election.VotingMethods ?? "") + VotingMethodCodes.Imported;
             _context.Elections.Update(election);
         }
     }
@@ -146,6 +154,8 @@ public class CdnBallotImportService : ElectionImportExportBase
             .ToListAsync();
 
         var peopleCache = people.ToDictionary(p => p.BahaiId!);
+        // Key is first name immediately followed by last name, both lowercased.
+        // A second person with the same key throws here. Vote matching uses the same shape.
         var peopleByName = people
             .Where(p => p.FirstName != null && p.LastName != null)
             .ToDictionary(p => $"{p.FirstName!.ToLower()}{p.LastName!.ToLower()}");
@@ -168,13 +178,14 @@ public class CdnBallotImportService : ElectionImportExportBase
         {
             var person = peopleCache[voter.bahaiid];
 
-            if (!string.IsNullOrEmpty(person.VotingMethod) && person.VotingMethod != "I")
+            // Empty and I are updated. Any other stored letter is left unchanged.
+            if (!string.IsNullOrEmpty(person.VotingMethod) && person.VotingMethod != VotingMethodCodes.Imported)
             {
                 result.Warnings.Add($"{person.FullNameFl} has already voted with method {person.VotingMethod}");
                 continue;
             }
 
-            person.VotingMethod = "I";
+            person.VotingMethod = VotingMethodCodes.Imported;
             person.VotingLocationGuid = importedLocationGuid;
             person.RegistrationTime = DateTimeOffset.UtcNow;
             person.EnvNum = null;

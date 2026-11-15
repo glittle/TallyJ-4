@@ -6,8 +6,13 @@ using Backend.Localization;
 namespace Backend.Services;
 
 /// <summary>
-/// Service for managing people import operations including file upload, parsing, mapping, and import execution.
-/// Implementation is split across partial files by concern.
+/// CSV/TSV/XLSX people import. Upload stores the file, parse returns up to
+/// three non-empty samples per column, and load reads the saved column mapping.
+/// Email, phone, and Bahá'í ID must be unique; duplicate names are kept.
+/// A validation skip that increments PeopleSkipped does not roll the
+/// transaction back. A null person that did not increment PeopleSkipped, a
+/// non-transient row exception, or a failed batch save does, including batches
+/// already saved in that transaction.
 /// </summary>
 public partial class PeopleImportService : IPeopleImportService
 {
