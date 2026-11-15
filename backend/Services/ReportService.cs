@@ -15,16 +15,16 @@ public partial class ReportService : IReportService
 
     private static readonly Dictionary<string, string> VotingMethodNames = new()
     {
-        ["P"] = "In Person",
-        ["M"] = "Mailed In",
-        ["D"] = "Dropped Off",
-        ["C"] = "Called In",
-        ["O"] = "Online",
-        ["K"] = "Kiosk",
-        ["I"] = "Imported",
-        ["1"] = "Custom 1",
-        ["2"] = "Custom 2",
-        ["3"] = "Custom 3"
+        [VotingMethodCodes.InPerson] = "In Person",
+        [VotingMethodCodes.Mailed] = "Mailed In",
+        [VotingMethodCodes.DroppedOff] = "Dropped Off",
+        [VotingMethodCodes.CalledIn] = "Called In",
+        [VotingMethodCodes.Online] = "Online",
+        [VotingMethodCodes.Kiosk] = "Kiosk",
+        [VotingMethodCodes.Imported] = "Imported",
+        [VotingMethodCodes.Custom1] = "Custom 1",
+        [VotingMethodCodes.Custom2] = "Custom 2",
+        [VotingMethodCodes.Custom3] = "Custom 3"
     };
 
     public ReportService(MainDbContext context, IStringLocalizer<ReportService> localizer)
@@ -51,10 +51,16 @@ public partial class ReportService : IReportService
         return VotingMethodNames.TryGetValue(code, out var name) ? name : code;
     }
 
-    private bool IsSingleNameElection(Election election)
-    {
-        return election.ElectionType is "Con" or "NSA";
-    }
+    /// <summary>
+    /// True only when <see cref="Election.ElectionType"/> is
+    /// <see cref="ElectionTypeEnum.Con"/> or <see cref="ElectionTypeEnum.NSA"/>.
+    /// Ballot reports then sort votes by name instead of position, and the
+    /// JSON property stays <c>IsSingleNameElection</c>. The tally single-name
+    /// type is <see cref="ElectionTypeEnum.Oth"/> and is not this flag.
+    /// </summary>
+    private static bool IsConventionOrNsa(Election election) =>
+        election.ElectionType == ElectionTypeEnum.Con.Code
+        || election.ElectionType == ElectionTypeEnum.NSA.Code;
 
     private static string? GetIneligibleDescription(string? code)
     {
@@ -75,7 +81,13 @@ public partial class ReportService : IReportService
         var election = await GetElectionAsync(electionGuid);
         var locations = await _context.Locations.Where(l => l.ElectionGuid == electionGuid).ToListAsync();
         var hasMultipleLocations = locations.Count > 1;
+        // Catalog gate only: an open timestamp is stored. This is not
+        // OnlineVotingWindow and does not read UseOnlineVoting or the close.
         var onlineEnabled = election.OnlineWhenOpen.HasValue;
+        // Ballots (Imported Only) when a comma-separated token is exactly "IM"
+        // (case-sensitive). The letter I inside a concatenated string, and
+        // imported ballot rows, do not add this report. Voters by Area uses
+        // ParseElectionVotingMethods plus any imported vote count.
         var hasImported = election.VotingMethods?.Split(',').Contains("IM") == true;
 
         const string ballotReports = "Ballot Reports";

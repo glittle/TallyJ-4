@@ -12,7 +12,7 @@ public partial class ReportService
     public async Task<BallotsReportDto> GetBallotsReportAsync(Guid electionGuid, string? filter = null)
     {
         var election = await GetElectionAsync(electionGuid);
-        var isSingleName = IsSingleNameElection(election);
+        var orderVotesByName = IsConventionOrNsa(election);
         var locations = await _context.Locations.Where(l => l.ElectionGuid == electionGuid).ToListAsync();
         var hasMultipleLocations = locations.Count > 1;
         var tiedPersonGuids = new HashSet<Guid>();
@@ -54,7 +54,7 @@ public partial class ReportService
         {
             var locName = hasMultipleLocations ? FormatLocationName(b.Location) : "";
             var votes = b.Votes
-                .OrderBy(v => isSingleName ? (v.Person?.FullNameFl ?? "") : v.PositionOnBallot.ToString("0000"))
+                .OrderBy(v => orderVotesByName ? (v.Person?.FullNameFl ?? "") : v.PositionOnBallot.ToString("0000"))
                 .Select(v => new BallotVoteDto
                 {
                     PersonName = v.Person?.FullNameFl
@@ -94,7 +94,7 @@ public partial class ReportService
         {
             ElectionName = election.Name,
             DateOfElection = election.DateOfElection,
-            IsSingleNameElection = isSingleName,
+            IsSingleNameElection = orderVotesByName,
             Ballots = ballotItems
         };
     }
@@ -174,7 +174,7 @@ public partial class ReportService
             ElectionName = election.Name,
             DateOfElection = election.DateOfElection,
             NumToElect = numToElect,
-            IsSingleNameElection = IsSingleNameElection(election),
+            IsSingleNameElection = IsConventionOrNsa(election),
             Rows = alignmentCounts
                 .OrderByDescending(kv => kv.Key)
                 .Select(kv => new AlignmentRowDto { MatchingNames = kv.Key, BallotCount = kv.Value })
@@ -185,7 +185,7 @@ public partial class ReportService
     public async Task<BallotsSameReportDto> GetBallotsSameAsync(Guid electionGuid)
     {
         var election = await GetElectionAsync(electionGuid);
-        var isSingleName = IsSingleNameElection(election);
+        var orderVotesByName = IsConventionOrNsa(election);
         var locations = await _context.Locations.Where(l => l.ElectionGuid == electionGuid).ToListAsync();
         var hasMultipleLocations = locations.Count > 1;
 
@@ -201,8 +201,10 @@ public partial class ReportService
         var grouped = ballots
             .Select(b =>
             {
+                // The sort key is part of the hash. Con and NSA sort by name;
+                // other types sort by position. Equal names keep their original order.
                 var orderedVotes = b.Votes
-                    .OrderBy(v => isSingleName ? (v.Person?.FullNameFl ?? "") : v.PositionOnBallot.ToString("0000"))
+                    .OrderBy(v => orderVotesByName ? (v.Person?.FullNameFl ?? "") : v.PositionOnBallot.ToString("0000"))
                     .ToList();
                 var hash = string.Join(",", orderedVotes.Select(v =>
                     (v.PersonGuid ?? Guid.Empty).ToString() + (v.IneligibleReasonCode ?? "")));
@@ -229,7 +231,7 @@ public partial class ReportService
                     StatusCode = b.StatusCode.ToString(),
                     Spoiled = b.StatusCode != BallotStatus.Ok,
                     Votes = b.Votes
-                        .OrderBy(v => isSingleName ? (v.Person?.FullNameFl ?? "") : v.PositionOnBallot.ToString("0000"))
+                        .OrderBy(v => orderVotesByName ? (v.Person?.FullNameFl ?? "") : v.PositionOnBallot.ToString("0000"))
                         .Select(v => new BallotVoteDto
                         {
                             PersonName = v.Person?.FullNameFl ?? "",
@@ -245,7 +247,7 @@ public partial class ReportService
         {
             ElectionName = election.Name,
             DateOfElection = election.DateOfElection,
-            IsSingleNameElection = isSingleName,
+            IsSingleNameElection = orderVotesByName,
             Groups = groups
         };
     }

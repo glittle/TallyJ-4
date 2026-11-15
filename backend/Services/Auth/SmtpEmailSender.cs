@@ -6,6 +6,11 @@ using MimeKit;
 
 namespace Backend.Services.Auth;
 
+/// <summary>
+/// SMTP send for account mail. A host that is missing or starts with
+/// '&lt;' is skipped, and that log line includes the To address.
+/// Port defaults to 587. UseSsl true (the default) uses STARTTLS.
+/// </summary>
 public class SmtpEmailSender : IEmailSender
 {
     private readonly IConfiguration _configuration;

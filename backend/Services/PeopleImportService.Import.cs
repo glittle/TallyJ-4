@@ -15,7 +15,12 @@ namespace Backend.Services;
 public partial class PeopleImportService
 {
     /// <summary>
-    /// Executes the import of people from the configured file.
+    /// Loads people from the saved file and column mapping.
+    /// A validation skip increments <see cref="ImportPeopleResult.PeopleSkipped"/>
+    /// and leaves the transaction open. <c>errorsFound</c> is set when a row
+    /// returns no person without incrementing that count, on a non-transient
+    /// row exception, or on a failed batch save. That rolls the transaction
+    /// back, including batches already saved in it.
     /// </summary>
     /// <param name="electionGuid">The GUID of the election.</param>
     /// <param name="rowId">The row ID of the import file.</param>

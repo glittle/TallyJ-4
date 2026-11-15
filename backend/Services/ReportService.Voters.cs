@@ -159,13 +159,14 @@ public partial class ReportService
     {
         var breakdown = VotingMethodCodes.Count(people.Select(p =>
             (p.VotingMethod, processedOnline.Contains(p.PersonGuid))));
-        var eligible18To21 = people.Count(IsYouth18To21);
+        var v01Count = people.Count(HasYouthReasonV01);
         return new AreaRowDto
         {
             AreaName = name,
             TotalEligible = people.Count,
+            // 18+ is every person in this list. GetVotersByAreaAsync passes CanVote rows only.
             Eligible18Plus = people.Count,
-            Eligible18To21 = eligible18To21,
+            Eligible18To21 = v01Count,
             Voted = people.Count(p =>
                 VotingMethodCodes.HasVotedForCounts(
                     p.VotingMethod,
@@ -184,9 +185,10 @@ public partial class ReportService
     }
 
     /// <summary>
-    /// V01 is the only stored signal for the 18–21 band after AgeGroup was removed.
+    /// True only when the stored reason is V01 (Youth aged 18/19/20).
+    /// The report column <c>Eligible18To21</c> is this count. No other reason is counted.
     /// </summary>
-    private static bool IsYouth18To21(Person person) =>
+    private static bool HasYouthReasonV01(Person person) =>
         string.Equals(
             person.IneligibleReasonCode,
             IneligibleReasonEnum.V01_YouthAged181920.Code,

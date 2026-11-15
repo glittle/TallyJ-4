@@ -219,6 +219,12 @@ public static class VotingMethodCodes
         return breakdown;
     }
 
+    /// <summary>
+    /// True when a non-empty method is stored, or the caller says this person
+    /// has a Processed online ballot. An empty method with
+    /// <paramref name="hasProcessedOnline"/> false is not counted. This method
+    /// does not look at a Submitted or Draft online row.
+    /// </summary>
     public static bool HasVotedForCounts(string? votingMethod, bool hasProcessedOnline) =>
         !string.IsNullOrEmpty(votingMethod) || hasProcessedOnline;
 
