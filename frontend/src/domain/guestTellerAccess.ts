@@ -75,8 +75,14 @@ export function getGuestTellerMenuPages(
     case "GatheringBallots":
       return STAGE_PAGES.GatheringBallots.filter((p) => !p.adminOnly);
     case "ProcessingBallots":
-      // Enter Ballots is Guest-visible; tally/monitor/results remain admin-only.
-      return STAGE_PAGES.ProcessingBallots.filter((p) => !p.adminOnly);
+      // Enter Ballots stays guest-visible. Front Desk is also guest-visible
+      // during Processing (#429). Tally/monitor/results remain admin-only.
+      // Front Desk is not added to STAGE_PAGES.ProcessingBallots, so the
+      // owner/admin Processing group is unchanged.
+      return [
+        ...STAGE_PAGES.ProcessingBallots.filter((p) => !p.adminOnly),
+        ...STAGE_PAGES.GatheringBallots.filter((p) => p.key === "frontdesk"),
+      ];
     case "Finalized":
       return [landingPage(), showFinalResultsPage()];
   }

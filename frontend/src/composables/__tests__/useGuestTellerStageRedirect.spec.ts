@@ -76,7 +76,7 @@ describe("useGuestTellerStageRedirect", () => {
     expect(mockRouterPush).not.toHaveBeenCalled();
   });
 
-  it("redirects GuestTeller from Front Desk to Enter Ballots when stage becomes ProcessingBallots", async () => {
+  it("keeps a GuestTeller on Front Desk when stage becomes ProcessingBallots", async () => {
     const store = useElectionStore();
     store.currentElection = {
       electionGuid: "elec-1",
@@ -92,6 +92,21 @@ describe("useGuestTellerStageRedirect", () => {
       ...store.currentElection!,
       electionStage: "ProcessingBallots",
     };
+    await nextTick();
+
+    expect(mockRouterPush).not.toHaveBeenCalled();
+  });
+
+  it("redirects a GuestTeller from a disallowed page to Enter Ballots during ProcessingBallots", async () => {
+    routePath.value = "/elections/elec-1/tally";
+    const store = useElectionStore();
+    store.currentElection = {
+      electionGuid: "elec-1",
+      name: "Test",
+      electionStage: "ProcessingBallots",
+    } as ElectionDto;
+
+    mountHarness();
     await nextTick();
 
     expect(mockRouterPush).toHaveBeenCalledWith("/elections/elec-1/ballots");

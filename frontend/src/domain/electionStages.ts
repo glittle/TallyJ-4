@@ -173,7 +173,8 @@ export const STAGE_PAGES: Record<NavElectionStage, NavPageDef[]> = {
       i18nKey: "ballots.management",
       icon: Tickets,
       routePath: (g) => `/elections/${g}/ballots`,
-      // Guest-visible: counterpart to Front Desk during GatheringBallots (#242)
+      // Guest-visible during ProcessingBallots (#242). Front Desk is also
+      // guest-visible then, via guestTellerAccess, without joining this group.
     },
     {
       key: "tally",
