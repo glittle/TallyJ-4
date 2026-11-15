@@ -408,6 +408,14 @@ export const router = createRouter({
 });
 
 router.beforeEach(async (to: RouteLocationNormalized) => {
+  // Officer login has no voter code flow. This query is the voter sign-in page.
+  const loginMode = Array.isArray(to.query.mode)
+    ? to.query.mode[0]
+    : to.query.mode;
+  if (to.path === "/login" && loginMode === "voter") {
+    return { name: "voter-auth" };
+  }
+
   // Before auth awaits, so a voter page is not painted into an active replay.
   await syncReplayToRoute(to, window.__APP_CONFIG__?.env);
 

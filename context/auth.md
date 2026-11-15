@@ -399,3 +399,16 @@ The unused `Backend.Services.Auth` election-access handler was a second requirem
 **Rejected alternative:** `FullTellerAccess` on the whole teller controller. Guest ballot entry would get 403 on the name list and could not add a teller name.
 
 **Rejected alternative:** allow `UpdateVote` to retarget `BallotGuid` and look up `PersonGuid` globally. That moves a vote onto another election and copies that person's combined info.
+
+## Officer `/login?mode=voter` is the voter sign-in page
+
+**Status:** active  
+**Evidence:** confirmed  
+**Source:** issue #463  
+**Revisit when:** voter sign-in moves off `voter-auth`
+
+The landing page and the voter shortcut already open `voter-auth`, which requests a real code. `/login?mode=voter` used to stay on the officer login page, show a one-time-code form, and toast that an email was sent without calling the server.
+
+**Chosen:** the router sends that query to `voter-auth` before the officer page loads. The officer page does not request a voter code.
+
+**Rejected alternative:** finish a second code form on the officer login page. Rejected — `voter-auth` already requests and checks the code. A second form is how the false "code sent" toast happened.

@@ -41,36 +41,47 @@ const {
   loaded: signInLoaded,
   load: loadSignIn,
 } = useSignInCapabilities();
-const { showSuccessMessage, showErrorMessage, showWarningMessage } =
-  useNotifications();
+const { showErrorMessage, showWarningMessage } = useNotifications();
 
 const loginFormRef = ref<FormInstance>();
 const loading = ref(false);
-const codeSent = ref(false);
 
 // Mode determines which UI to show
 const mode = ref((route.query.mode as string) || "officer");
+
+function leaveForVoterSignIn() {
+  void router.replace({ name: "voter-auth" });
+}
 
 // Watch for query changes to update mode
 watch(
   () => route.query.mode,
   (newMode) => {
+    if (newMode === "voter") {
+      mode.value = "voter";
+      leaveForVoterSignIn();
+      return;
+    }
     if (newMode) {
       mode.value = newMode as string;
     }
   },
 );
 
+if (route.query.mode === "voter") {
+  leaveForVoterSignIn();
+}
+
 /** Password form. Query mode officer is the default. full uses the same form. */
 const isStandardLogin = computed(
   () => mode.value === "officer" || mode.value === "full",
 );
+/** Query mode voter leaves for voter-auth. This page does not request a code. */
 const isVoterLogin = computed(() => mode.value === "voter");
 
 const loginForm = reactive({
   email: "",
   password: "",
-  code: "", // Voter OTC
   twoFactorCode: "",
 });
 
@@ -104,7 +115,7 @@ const anyOfficerMethod = computed(
 const rules = computed<FormRules>(() => {
   const baseRules: FormRules = {};
 
-  if (isStandardLogin.value || isVoterLogin.value) {
+  if (isStandardLogin.value) {
     baseRules.email = [
       {
         required: true,
@@ -138,39 +149,8 @@ const rules = computed<FormRules>(() => {
     ];
   }
 
-  if (isVoterLogin.value && codeSent.value) {
-    baseRules.code = [
-      {
-        required: true,
-        validator: (_rule: any, value: any, callback: any) => {
-          if (value) {
-            callback();
-          } else {
-            callback(new Error(t("auth.voterLogin.codeRequired")));
-          }
-        },
-        trigger: "blur",
-      },
-    ];
-  }
-
   return baseRules;
 });
-
-const requestCode = async () => {
-  if (!loginForm.email) {
-    showWarningMessage(t("auth.emailRequired"));
-    return;
-  }
-  loading.value = true;
-  try {
-    // No code is requested. The sent toast still opens the code step.
-    showSuccessMessage(t("auth.voterLogin.emailSent"));
-    codeSent.value = true;
-  } finally {
-    loading.value = false;
-  }
-};
 
 const handleLogin = async () => {
   if (!loginFormRef.value) {
@@ -193,16 +173,11 @@ const handleLogin = async () => {
           loginForm.twoFactorCode = "";
           return;
         }
-      } else if (isVoterLogin.value) {
-        // No voter sign-in call. The warning is the whole branch.
-        showWarningMessage(
-          "Voter OTC login not fully implemented in backend yet.",
-        );
-        return;
       }
 
       // A password login that did not need a second factor lands here.
-      // A mode that is neither that form nor voter also lands here, with no sign-in call.
+      // A mode that is not that form also lands here, with no sign-in call.
+      // Voter mode is sent to voter-auth and does not submit from here.
       const redirectPath = (route.query.redirect as string) || "/dashboard";
       router.push(redirectPath);
     } catch (error) {
@@ -684,7 +659,10 @@ onBeforeUnmount(() => {
         </div>
 
         <el-form
-          v-if="!isStandardLogin || officerMethods.local || awaiting2FA"
+          v-if="
+            !isVoterLogin &&
+            (!isStandardLogin || officerMethods.local || awaiting2FA)
+          "
           ref="loginFormRef"
           :model="loginForm"
           :rules="rules"
@@ -700,7 +678,7 @@ onBeforeUnmount(() => {
             <el-input
               v-model="loginForm.email"
               :placeholder="t('auth.emailPlaceholder')"
-              :disabled="(isVoterLogin && codeSent) || awaiting2FA"
+              :disabled="awaiting2FA"
               autofocus
             />
           </el-form-item>
@@ -744,34 +722,9 @@ onBeforeUnmount(() => {
             />
           </el-form-item>
 
-          <!-- System 3: One-Time Code Field -->
-          <el-form-item
-            v-if="isVoterLogin && codeSent"
-            :label="t('auth.voterLogin.codeLabel')"
-            prop="code"
-          >
-            <el-input
-              v-model="loginForm.code"
-              :placeholder="t('auth.voterLogin.codePlaceholder')"
-              maxlength="6"
-            />
-          </el-form-item>
-
           <div class="login-actions">
-            <!-- System 3: Request Code Button -->
             <el-button
-              v-if="isVoterLogin && !codeSent"
-              type="primary"
-              :loading="loading"
-              class="submit-btn"
-              @click="requestCode"
-            >
-              {{ t("auth.voterLogin.requestButton") }}
-            </el-button>
-
-            <!-- General Login Button -->
-            <el-button
-              v-else-if="awaiting2FA"
+              v-if="awaiting2FA"
               type="primary"
               :loading="loading"
               class="submit-btn"
@@ -788,20 +741,7 @@ onBeforeUnmount(() => {
               class="submit-btn"
               @click="handleLogin"
             >
-              {{
-                isVoterLogin
-                  ? t("auth.voterLogin.loginButton")
-                  : t("auth.loginButton")
-              }}
-            </el-button>
-
-            <el-button
-              v-if="isVoterLogin && codeSent"
-              link
-              class="retry-link"
-              @click="codeSent = false"
-            >
-              {{ t("common.tryAgain") }}
+              {{ t("auth.loginButton") }}
             </el-button>
 
             <el-button

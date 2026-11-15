@@ -37,7 +37,7 @@ export interface SuperAdminElection {
   name: string;
   convenor?: string;
   dateOfElection?: string;
-  tallyStatus?: string;
+  electionStage?: string;
   electionType?: string;
   voterCount: number;
   ballotCount: number;
