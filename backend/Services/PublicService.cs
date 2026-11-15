@@ -31,9 +31,9 @@ public class PublicService : IPublicService
     }
 
     /// <summary>
-    /// Retrieves general information for the public home page.
+    /// Public home info. AvailableElectionsCount is elections listed as of now.
+    /// It does not require an active main teller. The join list does.
     /// </summary>
-    /// <returns>A PublicHomeDto containing application information and available elections count.</returns>
     public async Task<PublicHomeDto> GetPublicHomeDataAsync()
     {
         var now = DateTimeOffset.UtcNow;

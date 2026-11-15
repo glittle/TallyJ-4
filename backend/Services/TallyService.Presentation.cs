@@ -77,6 +77,7 @@ public partial class TallyService
         {
             ElectionName = election.Name ?? UnknownElectionName,
             ElectionDate = election.DateOfElection,
+            // A missing number to elect is sent as 9.
             NumToElect = election.NumberToElect ?? 9,
             // v3 Presenter's "Number who Voted" is ResultSummary.NumBallotsWithManual:
             // valid ballots plus spoiled ballots (every ballot received).
@@ -86,6 +87,7 @@ public partial class TallyService
             ExtraPeople = extraPeople,
             HasTies = ties.Any(),
             Ties = ties,
+            // A saved result summary is Final. No summary is In Progress.
             Status = summary != null ? "Final" : "In Progress"
         };
     }
@@ -151,6 +153,7 @@ public partial class TallyService
                     .Where(r => r.VoteCount.HasValue)
                     .ToDictionary(r => r.Rank, r => r.VoteCount!.Value);
 
+                // Rank is the person's place, not a preference position.
                 var firstChoiceVotes = g.FirstOrDefault(r => r.Rank == 1)?.VoteCount ?? 0;
                 var lastChoiceVotes = g.OrderByDescending(r => r.Rank).FirstOrDefault()?.VoteCount ?? 0;
 
@@ -189,9 +192,9 @@ public partial class TallyService
         {
             OverallTurnout = totalRegisteredVoters > 0 ? (decimal)totalBallotsCast / totalRegisteredVoters * 100 : 0,
             TurnoutByLocation = turnoutByLocation,
-            EarlyVotingCount = 0, // Would need timestamp tracking
-            ElectionDayVotingCount = totalBallotsCast,
-            EarlyVotingPercentage = 0, // Would need timestamp tracking
+            EarlyVotingCount = 0, // Always 0. Ballot timestamps are not read here.
+            ElectionDayVotingCount = totalBallotsCast, // Every ballot cast, not election day only.
+            EarlyVotingPercentage = 0, // Always 0. Ballot timestamps are not read here.
             DemographicBreakdown = demographicBreakdown,
             TimeBasedTurnout = timeBasedTurnout,
             ParticipationRates = participationRates
@@ -227,6 +230,7 @@ public partial class TallyService
             {
                 Area = g.Key,
                 TotalVoters = g.Count(),
+                // The online-ballot flag, not an accepted vote and not other methods.
                 Voted = g.Count(p => p.HasOnlineBallot == true)
             })
             .ToListAsync();
@@ -248,6 +252,7 @@ public partial class TallyService
     {
         var timeBasedTurnout = new List<TimeBasedTurnoutDto>();
 
+        // Audit rows whose details contain "ballot", grouped by hour. None becomes one total row.
         var logEntries = await _context.SecurityAuditLogs
             .Where(l => l.ElectionGuid == election.ElectionGuid && l.Details != null && l.Details.Contains("ballot"))
             .OrderBy(l => l.Timestamp)
@@ -293,6 +298,7 @@ public partial class TallyService
         var onlineVoters = await _context.People
             .CountAsync(p => p.ElectionGuid == electionGuid && p.HasOnlineBallot == true);
 
+        // Ballot count minus the online-ballot-flag count. Those are different units.
         var inPersonVoters = totalBallotsCast - onlineVoters;
 
         return new ParticipationRateDto
@@ -319,6 +325,7 @@ public partial class TallyService
                                p.VotingLocationGuid == location.LocationGuid &&
                                p.CanVote == true);
 
+            // Cast and valid are Ok ballots. Votes include every ballot at the location.
             var locationBallots = location.Ballots.Count(b => b.StatusCode == BallotStatus.Ok);
             var locationVotes = location.Ballots.Sum(b => b.Votes.Count);
 

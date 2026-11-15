@@ -27,7 +27,8 @@ public class SetupService : ISetupService
     }
 
     /// <summary>
-    /// Creates a new election with basic information (Step 1 of setup process).
+    /// Creates an election in SettingUp with number to elect 1, type LSA, and mode N.
+    /// Those defaults already make step 2 look complete. No owner row is written.
     /// </summary>
     /// <param name="step1Dto">The data transfer object containing basic election information.</param>
     /// <returns>An ElectionDto representing the newly created election.</returns>

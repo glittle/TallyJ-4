@@ -165,7 +165,7 @@ public class LocationService : ILocationService
     /// Deletes a location by its unique identifier.
     /// </summary>
     /// <param name="locationGuid">The unique identifier of the location to delete.</param>
-    /// <returns>True if the location was successfully deleted, false if not found.</returns>
+    /// <returns>True if the location was deleted, false if not found. A reserved Online or Imported row throws instead.</returns>
     public async Task<bool> DeleteLocationAsync(Guid locationGuid)
     {
         _logger.LogInformation("Deleting location {LocationGuid}", locationGuid);
