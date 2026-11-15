@@ -22,6 +22,7 @@ const {
   mockMainOff,
   mockJoinElection,
   mockRefreshMonitor,
+  mockGetComputerCode,
 } = vi.hoisted(() => ({
   mockGetSummary: vi.fn(),
   mockAcceptAll: vi.fn(),
@@ -37,6 +38,7 @@ const {
   mockMainOff: vi.fn(),
   mockJoinElection: vi.fn(),
   mockRefreshMonitor: vi.fn(),
+  mockGetComputerCode: vi.fn(() => ""),
   mockElection: {
     electionGuid: "election-1",
     onlineCloseIsEstimate: true,
@@ -138,6 +140,10 @@ function copyMonitor(
   };
 }
 
+vi.mock("@/utils/computerCodeStorage", () => ({
+  getComputerCode: (...args: unknown[]) => mockGetComputerCode(...args),
+}));
+
 vi.mock("@/services/signalrService", () => ({
   signalrService: {
     connectToFrontDeskHub: vi.fn().mockResolvedValue({
@@ -208,6 +214,8 @@ describe("MonitoringDashboardPage Accept all", () => {
     mockJoinElection.mockResolvedValue(null);
     mockRefreshMonitor.mockReset();
     mockRefreshMonitor.mockResolvedValue(copyMonitor({}, { totalBallots: 17 }));
+    mockGetComputerCode.mockReset();
+    mockGetComputerCode.mockReturnValue("");
     mockElection.onlineCloseIsEstimate = true;
     mockMonitor.onlineVotingInfo.onlineVotingEnabled = true;
     mockMonitor.onlineVotingInfo.pendingOnlineBallots = 3;
@@ -781,12 +789,22 @@ describe("MonitoringDashboardPage close countdown", () => {
     expect(wrapper.text()).not.toContain("99");
   });
 
-  it("refresh posts the computer contact instead of only reloading", async () => {
+  it("refresh without a computer code reloads and does not post", async () => {
     const wrapper = await mountPage();
     const loads = mockFetchMonitor.mock.calls.length;
     await wrapper.find("button").trigger("click");
     await flushPromises();
-    expect(mockRefreshMonitor).toHaveBeenCalledWith("election-1", undefined);
+    expect(mockRefreshMonitor).not.toHaveBeenCalled();
+    expect(mockFetchMonitor.mock.calls.length).toBe(loads + 1);
+  });
+
+  it("refresh with a computer code posts that code", async () => {
+    mockGetComputerCode.mockReturnValue("A");
+    const wrapper = await mountPage();
+    const loads = mockFetchMonitor.mock.calls.length;
+    await wrapper.find("button").trigger("click");
+    await flushPromises();
+    expect(mockRefreshMonitor).toHaveBeenCalledWith("election-1", "A");
     expect(mockFetchMonitor.mock.calls.length).toBe(loads);
     expect(wrapper.text()).toContain("17");
   });
