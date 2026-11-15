@@ -38,7 +38,7 @@ const {
   mockMainOff: vi.fn(),
   mockJoinElection: vi.fn(),
   mockRefreshMonitor: vi.fn(),
-  mockGetComputerCode: vi.fn(() => ""),
+  mockGetComputerCode: vi.fn(),
   mockElection: {
     electionGuid: "election-1",
     onlineCloseIsEstimate: true,
