@@ -422,13 +422,14 @@ async function loadData() {
 }
 
 async function refreshData() {
+  const computerCode = getComputerCode(electionGuid);
+  if (!computerCode) {
+    await loadData();
+    return;
+  }
   try {
     loading.value = true;
-    const computerCode = getComputerCode(electionGuid);
-    const data = await resultStore.refreshMonitor(
-      electionGuid,
-      computerCode || undefined,
-    );
+    const data = await resultStore.refreshMonitor(electionGuid, computerCode);
     monitorInfo.value = data;
   } catch (error) {
     handleApiError(error);

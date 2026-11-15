@@ -6933,8 +6933,7 @@
             "name": "computerCode",
             "in": "query",
             "schema": {
-              "type": "string",
-              "default": "Unknown"
+              "type": "string"
             }
           }
         ],

@@ -282,6 +282,6 @@ ASP.NET Core SignalR **event names are case-sensitive**. SPA listeners use **cam
 **Status:** active  
 **Evidence:** confirmed
 
-`RefreshComputerContactAsync` writes `Computer.LastActivity` and moves `ConnectedAt` on the live hub connection for that computer code. Monitor LastContact and the five-minute Active/Inactive status read `ConnectedAt`. The refresh response is also sent as `MonitorUpdated` on the Main hub base group (`Main{electionGuid}`). The monitor page joins that group and applies the payload. The 30-second poll still reloads by HTTP and does not stamp contact.
+`RefreshComputerContactAsync` writes `Computer.LastActivity` and moves `ConnectedAt` on the live hub connection for that computer code. Monitor LastContact and the five-minute Active/Inactive status read `ConnectedAt`. The refresh response is also sent as `MonitorUpdated` on the Main hub base group (`Main{electionGuid}`). A missing code, or a value that is not a workstation code (including the old `Unknown` default), does not stamp; the refresh still returns the monitor info and broadcasts. The monitor page posts a refresh only when it has a computer code, and otherwise reloads with the plain GET. It joins the Main hub group and applies `MonitorUpdated`. The 30-second poll still reloads by HTTP and does not stamp contact.
 
 **Rejected alternative:** remove `MonitorUpdated` and rely on the poll. Other open monitor pages would wait for the next poll, and a refresh would still not move LastContact.

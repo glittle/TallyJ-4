@@ -1,6 +1,7 @@
 ﻿using Backend.Authorization;
 using Backend.DTOs.Results;
 using Backend.Enumerations;
+using Backend.Helpers;
 using Backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -207,16 +208,19 @@ public class ResultsController : ControllerBase
     /// Refreshes the monitor information and updates computer contact time.
     /// </summary>
     /// <param name="electionGuid">The GUID of the election being monitored.</param>
-    /// <param name="computerCode">The computer code identifier (defaults to "Unknown").</param>
+    /// <param name="computerCode">Workstation code. Omitted, blank, or not a real code skips the contact stamp. The monitor update is still broadcast.</param>
     /// <returns>The updated monitor information.</returns>
     [Authorize(Policy = ElectionAccessPolicies.FullTellerAccess)]
     [HttpPost("{electionGuid:guid}/refreshMonitor")]
-    public async Task<ActionResult<MonitorInfoDto>> RefreshMonitor(Guid electionGuid, [FromQuery] string computerCode = "Unknown")
+    public async Task<ActionResult<MonitorInfoDto>> RefreshMonitor(Guid electionGuid, [FromQuery] string? computerCode = null)
     {
         try
         {
-            // Refresh the computer's last contact time
-            await _tallyService.RefreshComputerContactAsync(electionGuid, computerCode);
+            // "Unknown" and other non-codes must not stamp LastActivity or ConnectedAt.
+            if (ComputerCodeHelper.IsValidCode(computerCode))
+            {
+                await _tallyService.RefreshComputerContactAsync(electionGuid, computerCode!);
+            }
 
             // Get updated monitoring information
             var monitorInfo = await _tallyService.GetMonitorInfoAsync(electionGuid);
