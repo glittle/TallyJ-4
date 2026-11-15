@@ -15,12 +15,13 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
     protected override bool IsSingleNameElection() => true;
 
     /// <summary>
-    /// Calculates ballot statistics specific to single-name elections, including total votes, spoiled ballots, and ballots needing review.
+    /// Single-name totals. Each vote row is its own ballot, and
+    /// <c>SingleNameElectionCount</c> is how many ballots that name got.
+    /// <c>BallotsReceived</c>, <c>NumVoters</c>, and <c>TotalVotes</c> are that
+    /// sum, not a count of ballot rows. <c>SpoiledBallots</c> is still the
+    /// ballot rows whose status is not Ok. A not-Ok vote adds its name-count
+    /// to <c>SpoiledVotes</c> only when its ballot row is Ok.
     /// </summary>
-    /// <remarks>
-    /// For single-name elections, each ballot can contribute multiple votes if the voter selected multiple people.
-    /// The ballots status is ignored, since each vote is a ballot on it own.
-    /// </remarks>
     protected override void CalculateBallotStatistics()
     {
         Logger.LogInformation("Calculating single-name ballot statistics");
@@ -30,17 +31,19 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
         ResultSummaryCalc.NumVoters = totalVotes;
         ResultSummaryCalc.TotalVotes = totalVotes;
 
-        var invalidBallotGuids = Ballots
+        var notOkBallotGuids = Ballots
             .Where(b => b.StatusCode != BallotStatus.Ok)
             .Select(b => b.BallotGuid)
             .ToHashSet();
 
-        ResultSummaryCalc.SpoiledBallots = invalidBallotGuids.Count;
+        ResultSummaryCalc.SpoiledBallots = notOkBallotGuids.Count;
 
         ResultSummaryCalc.SpoiledVotes = Votes
-            .Where(v => !invalidBallotGuids.Contains(v.BallotGuid) && v.VoteStatus != VoteStatus.Ok)
+            .Where(v => !notOkBallotGuids.Contains(v.BallotGuid) && v.VoteStatus != VoteStatus.Ok)
             .Sum(v => v.SingleNameElectionCount ?? 1);
 
+        // A vote whose stored name no longer matches the person. Not the
+        // ballot-status review set used by a normal election.
         ResultSummaryCalc.BallotsNeedingReview = Votes.Count(v =>
         {
             var person = People.FirstOrDefault(p => p.PersonGuid == v.PersonGuid);
@@ -74,7 +77,7 @@ public class ElectionAnalyzerSingleName : ElectionAnalyzerBase
                     PersonGuid = vote.PersonGuid.Value,
                     VoteCount = 0,
                     Rank = 0,
-                    Section = "O",
+                    Section = OtherSection,
                     IsTied = false,
                     TieBreakRequired = false,
                     CloseToNext = false,

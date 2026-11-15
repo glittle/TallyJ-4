@@ -5,8 +5,12 @@ namespace Backend.Authorization;
 /// <summary>
 /// <see cref="ElectionMemberAccessRequirement"/> from the route or from a
 /// <see cref="Guid"/> resource. Same membership rule as
-/// <see cref="ElectionAccessHandler"/> except a guest teller always fails,
-/// and a missing election fails too (the audit-log caller turns that into 404).
+/// <see cref="ElectionAccessHandler"/> except a guest teller always fails.
+/// Succeeds only when <see cref="ElectionAccessEvaluator.EvaluateAsync"/>
+/// returns <see cref="ElectionAccessOutcome.Allowed"/>. A missing election
+/// is not a separate failure: a normal member has no join row, so Allowed
+/// is false, but a super admin or Identity Admin is still Allowed when the
+/// row is missing. The audit-log caller turns a failure into 404.
 /// </summary>
 public class ElectionMemberAccessHandler : AuthorizationHandler<ElectionMemberAccessRequirement>
 {

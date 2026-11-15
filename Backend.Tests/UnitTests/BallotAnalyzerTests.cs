@@ -17,7 +17,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(3, false);
 
-        var changed = model.DetermineStatusFromVotes(null, voteInfos, out var newStatus, out var spoiledCount);
+        var changed = model.EvaluateBallotStatus(null, voteInfos, out var newStatus, out var spoiledCount);
 
         Assert.True(changed);
         Assert.Equal(BallotStatus.Ok, newStatus);
@@ -37,7 +37,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(3, false);
 
-        var changed = model.DetermineStatusFromVotes(null, voteInfos, out var newStatus, out var spoiledCount);
+        var changed = model.EvaluateBallotStatus(null, voteInfos, out var newStatus, out var spoiledCount);
 
         Assert.True(changed);
         Assert.Equal(BallotStatus.TooMany, newStatus);
@@ -56,7 +56,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(3, false);
 
-        var changed = model.DetermineStatusFromVotes(null, votes, out var newStatus, out var spoiledCount);
+        var changed = model.EvaluateBallotStatus(null, votes, out var newStatus, out var spoiledCount);
 
         Assert.True(changed);
         Assert.Equal(BallotStatus.Ok, newStatus);
@@ -76,7 +76,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(3, false);
 
-        var changed = model.DetermineStatusFromVotes(null, votes, out var newStatus, out var spoiledCount);
+        var changed = model.EvaluateBallotStatus(null, votes, out var newStatus, out var spoiledCount);
 
         Assert.True(changed);
         Assert.Equal(BallotStatus.TooMany, newStatus);
@@ -96,7 +96,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(3, false);
 
-        var changed = model.DetermineStatusFromVotes(null, votes, out var newStatus, out var spoiledCount);
+        var changed = model.EvaluateBallotStatus(null, votes, out var newStatus, out var spoiledCount);
 
         Assert.True(changed);
         Assert.Equal(BallotStatus.TooMany, newStatus);
@@ -114,7 +114,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(3, false);
 
-        var changed = model.DetermineStatusFromVotes(null, votes, out var newStatus, out _);
+        var changed = model.EvaluateBallotStatus(null, votes, out var newStatus, out _);
 
         Assert.True(changed);
         Assert.Equal(BallotStatus.TooFew, newStatus);
@@ -134,7 +134,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(1, true);
 
-        var changed = model.DetermineStatusFromVotes(null, votes, out var newStatus, out _);
+        var changed = model.EvaluateBallotStatus(null, votes, out var newStatus, out _);
 
         Assert.True(changed);
         Assert.Equal(BallotStatus.Ok, newStatus);
@@ -147,7 +147,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(3, false);
 
-        var changed = model.DetermineStatusFromVotes(null, votes, out var newStatus, out _);
+        var changed = model.EvaluateBallotStatus(null, votes, out var newStatus, out _);
 
         Assert.True(changed);
         Assert.Equal(BallotStatus.Empty, newStatus);
@@ -164,7 +164,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(3, false);
 
-        var changed = model.DetermineStatusFromVotes(null, votes, out var newStatus, out var spoiledCount);
+        var changed = model.EvaluateBallotStatus(null, votes, out var newStatus, out var spoiledCount);
 
         Assert.True(changed);
         Assert.Equal(BallotStatus.TooFew, newStatus);
@@ -181,7 +181,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(3, false);
 
-        var changed = model.DetermineStatusFromVotes(BallotStatus.Review, votes, out var newStatus, out _);
+        var changed = model.EvaluateBallotStatus(BallotStatus.Review, votes, out var newStatus, out _);
         Assert.False(changed);
         Assert.Equal(BallotStatus.Review, newStatus);
 
@@ -192,7 +192,7 @@ public class BallotAnalyzerTests
             new() { PersonGuid = Guid.NewGuid() },
         };
 
-        changed = model.DetermineStatusFromVotes(BallotStatus.Review, votes, out newStatus, out _);
+        changed = model.EvaluateBallotStatus(BallotStatus.Review, votes, out newStatus, out _);
         Assert.False(changed);
         Assert.Equal(BallotStatus.Review, newStatus);
     }
@@ -213,7 +213,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(5, false);
 
-        var changed = model.DetermineStatusFromVotes(BallotStatus.Ok, votes, out var newStatus, out _);
+        var changed = model.EvaluateBallotStatus(BallotStatus.Ok, votes, out var newStatus, out _);
 
         Assert.True(changed);
         Assert.Equal(BallotStatus.Dup, newStatus);
@@ -236,7 +236,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(5, false);
 
-        var changed = model.DetermineStatusFromVotes(BallotStatus.Ok, votes, out var newStatus, out _);
+        var changed = model.EvaluateBallotStatus(BallotStatus.Ok, votes, out var newStatus, out _);
 
         Assert.True(changed);
         Assert.Equal(BallotStatus.TooMany, newStatus);
@@ -254,7 +254,7 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(3, false);
 
-        var changed = model.DetermineStatusFromVotes(BallotStatus.Ok, votes, out var newStatus, out var spoiledCount);
+        var changed = model.EvaluateBallotStatus(BallotStatus.Ok, votes, out var newStatus, out var spoiledCount);
 
         Assert.False(changed);
         Assert.Equal(BallotStatus.Ok, newStatus);
@@ -271,12 +271,12 @@ public class BallotAnalyzerTests
 
         var model = new BallotAnalyzer(3, false);
 
-        var changed = model.DetermineStatusFromVotes(BallotStatus.Review, votes, out var newStatus, out var spoiledCount);
+        var changed = model.EvaluateBallotStatus(BallotStatus.Review, votes, out var newStatus, out var spoiledCount);
         Assert.False(changed);
         Assert.Equal(BallotStatus.Review, newStatus);
         Assert.Equal(0, spoiledCount);
 
-        changed = model.DetermineStatusFromVotes(BallotStatus.Ok, votes, out newStatus, out spoiledCount);
+        changed = model.EvaluateBallotStatus(BallotStatus.Ok, votes, out newStatus, out spoiledCount);
         Assert.True(changed);
         Assert.Equal(BallotStatus.TooFew, newStatus);
         Assert.Equal(0, spoiledCount);

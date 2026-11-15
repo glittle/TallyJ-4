@@ -10,17 +10,16 @@ using Microsoft.EntityFrameworkCore;
 namespace Backend.Services;
 
 /// <summary>
-/// Service for managing ballot operations including creation, retrieval, updates, and deletion.
-/// Provides functionality to handle ballots within elections and locations.
+/// Teller paper ballots. A ballot is stored on a location; the election is
+/// that location's election. The Online and Imported locations are reserved
+/// and reject a teller-created ballot. Those ballots also cannot be deleted.
+/// <see cref="BallotStatus.Review"/> stays until the teller clears it.
 /// </summary>
 public class BallotService : IBallotService
 {
     private readonly MainDbContext _context;
     private readonly ILogger<BallotService> _logger;
 
-    /// <summary>
-    /// Initializes a new instance of the BallotService.
-    /// </summary>
     public BallotService(MainDbContext context, ILogger<BallotService> logger)
     {
         _context = context;
@@ -28,12 +27,9 @@ public class BallotService : IBallotService
     }
 
     /// <summary>
-    /// Retrieves a paginated list of ballots for a specific election.
+    /// Ballots for one election, ordered by computer code then number at that computer.
+    /// Repairs legacy online codes (<c>WW</c>, number 0) before the list is read.
     /// </summary>
-    /// <param name="electionGuid">The unique identifier of the election.</param>
-    /// <param name="pageNumber">The page number to retrieve (1-based). Default is 1.</param>
-    /// <param name="pageSize">The number of ballots per page. Default is 50.</param>
-    /// <returns>A paginated response containing ballot DTOs with their associated votes and location information.</returns>
     public async Task<PaginatedResponse<BallotDto>> GetBallotsByElectionAsync(Guid electionGuid, int pageNumber = 1, int pageSize = 50)
     {
         await SpecialBallotNumbering.RepairOnlineForElectionAsync(_context, electionGuid);
@@ -60,10 +56,9 @@ public class BallotService : IBallotService
     }
 
     /// <summary>
-    /// Retrieves a specific ballot by its unique identifier.
+    /// One ballot with its votes. An online ballot still numbered 0, or still
+    /// on the legacy <c>WW</c> code, is renumbered onto <c>OL</c> first.
     /// </summary>
-    /// <param name="ballotGuid">The unique identifier of the ballot.</param>
-    /// <returns>A BallotDto containing the ballot information with votes and location details, or null if not found.</returns>
     public async Task<BallotDto?> GetBallotByGuidAsync(Guid ballotGuid)
     {
         var ballot = await _context.Ballots
@@ -78,7 +73,7 @@ public class BallotService : IBallotService
         }
 
         if (ComputerCodeHelper.IsOnlineCode(ballot.ComputerCode)
-            && (ballot.BallotNumAtComputer <= 0 || ballot.ComputerCode == "WW"))
+            && (ballot.BallotNumAtComputer <= 0 || ballot.ComputerCode == ComputerCodeHelper.LegacyOnline))
         {
             await SpecialBallotNumbering.RepairOnlineAndGetNextAsync(_context, ballot.LocationGuid);
             ballot = await _context.Ballots
@@ -92,14 +87,11 @@ public class BallotService : IBallotService
     }
 
     /// <summary>
-    /// Creates a new teller-entered ballot at the location selected in the browser.
+    /// Next paper ballot at this computer and location. The number is one past
+    /// the highest <c>BallotNumAtComputer</c> already stored for that pair.
+    /// Refused when the election is Finalized, or when the location is missing,
+    /// in another election, or the reserved Online / Imported location.
     /// </summary>
-    /// <param name="createDto">The data transfer object containing ballot creation information.</param>
-    /// <returns>A BallotDto representing the created ballot.</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when the location is missing, not in the election, or is a reserved
-    /// Online / Imported location (not for teller-created paper ballots).
-    /// </exception>
     public async Task<BallotDto> CreateBallotAsync(CreateBallotDto createDto)
     {
         await ElectionFinalizedWriteGuard.ThrowIfLockedAsync(_context, createDto.ElectionGuid);
@@ -157,11 +149,11 @@ public class BallotService : IBallotService
     }
 
     /// <summary>
-    /// Updates an existing ballot with new information.
+    /// Teller names, and status when Review is not holding the ballot.
+    /// Clearing Review reseeds <see cref="BallotStatus.Empty"/> and then
+    /// re-evaluates from the votes. A teller cannot move a ballot out of
+    /// Review by sending another status.
     /// </summary>
-    /// <param name="ballotGuid">The unique identifier of the ballot to update.</param>
-    /// <param name="updateDto">The data transfer object containing updated ballot information.</param>
-    /// <returns>A BallotDto representing the updated ballot, or null if the ballot was not found.</returns>
     public async Task<BallotDto?> UpdateBallotAsync(Guid ballotGuid, UpdateBallotDto updateDto)
     {
         var ballot = await _context.Ballots.FirstOrDefaultAsync(b => b.BallotGuid == ballotGuid);
@@ -229,10 +221,9 @@ public class BallotService : IBallotService
     }
 
     /// <summary>
-    /// Deletes a ballot by its unique identifier.
+    /// Deletes a paper ballot and its votes. Online and imported ballots are refused.
+    /// Returns false when the ballot does not exist.
     /// </summary>
-    /// <param name="ballotGuid">The unique identifier of the ballot to delete.</param>
-    /// <returns>True if the ballot was successfully deleted, false if the ballot was not found.</returns>
     public async Task<bool> DeleteBallotAsync(Guid ballotGuid)
     {
         var ballot = await _context.Ballots.FirstOrDefaultAsync(b => b.BallotGuid == ballotGuid);

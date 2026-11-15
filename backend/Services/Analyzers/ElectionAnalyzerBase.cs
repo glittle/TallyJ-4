@@ -2,13 +2,32 @@ using Backend.Context;
 using Backend.Entities;
 using Backend.Enumerations;
 using Backend.Helpers;
+using Backend.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Services.Analyzers;
 
+/// <summary>
+/// One tally pass. Clears calculated results, refreshes ballot and vote
+/// status, writes a calculated summary (<c>C</c>) and the report summary
+/// (<c>F</c>, calculated counts with a manual <c>M</c> overlay), then ranks
+/// and detects ties. Only an <see cref="BallotStatus.Ok"/> ballot awards
+/// votes. Entered ballots are Ok plus every other status.
+/// </summary>
 public abstract class ElectionAnalyzerBase
 {
+    // A gap of this many votes or fewer sets CloseToNext / CloseToPrev.
+    // A gap of 0 is also a tie.
     private const int ThresholdForCloseVote = 3;
+
+    /// <summary>Stored <c>Result.Section</c>. Not the localized display word.</summary>
+    protected const string ElectedSection = "E";
+
+    /// <summary>Stored <c>Result.Section</c> for the extra seats.</summary>
+    protected const string ExtraSection = "X";
+
+    /// <summary>Stored <c>Result.Section</c> for everyone else.</summary>
+    protected const string OtherSection = "O";
 
     protected readonly MainDbContext Context;
     protected readonly ILogger Logger;
@@ -75,6 +94,8 @@ public abstract class ElectionAnalyzerBase
             .Where(r => r.ElectionGuid == TargetElection.ElectionGuid)
             .ToListAsync();
 
+        // Taken before the rows are deleted. A re-analysis puts these back
+        // so a saved runoff, including an explicit 0, is not wiped.
         _previousTieBreakCounts = existingResults
             .Where(r => r.TieBreakCount.HasValue)
             .ToDictionary(r => r.PersonGuid, r => r.TieBreakCount!.Value);
@@ -96,7 +117,7 @@ public abstract class ElectionAnalyzerBase
         }
 
         var existingNonManualSummaries = await Context.ResultSummaries
-            .Where(rs => rs.ElectionGuid == TargetElection.ElectionGuid && rs.ResultType != "M")
+            .Where(rs => rs.ElectionGuid == TargetElection.ElectionGuid && rs.ResultType != TallyService.ResultTypeManual)
             .ToListAsync();
 
         if (existingNonManualSummaries.Any())
@@ -139,14 +160,14 @@ public abstract class ElectionAnalyzerBase
         ResultSummaryCalc = new ResultSummary
         {
             ElectionGuid = TargetElection.ElectionGuid,
-            ResultType = "C"
+            ResultType = TallyService.ResultTypeCalculated
         };
         Context.ResultSummaries.Add(ResultSummaryCalc);
 
         ResultSummaryFinal = new ResultSummary
         {
             ElectionGuid = TargetElection.ElectionGuid,
-            ResultType = "F"
+            ResultType = TallyService.ResultTypeFinal
         };
         Context.ResultSummaries.Add(ResultSummaryFinal);
 
@@ -173,7 +194,7 @@ public abstract class ElectionAnalyzerBase
         {
             var ballotVotes = votesByBallotGuid[ballot.BallotGuid].ToList();
             var voteInfos = ballotVotes.Select(v => CreateBallotVoteInfo(v)).ToList();
-            ballotAnalyzer.DetermineStatusFromVotes(ballot.StatusCode, voteInfos, out var newStatus, out _);
+            ballotAnalyzer.EvaluateBallotStatus(ballot.StatusCode, voteInfos, out var newStatus, out _);
             ballot.StatusCode = newStatus;
         }
     }
@@ -195,14 +216,21 @@ public abstract class ElectionAnalyzerBase
         };
     }
 
+    /// <summary>
+    /// Election type <c>Oth</c> ("Other") is the single-name ballot.
+    /// Each vote row is its own ballot, so <c>NumberToElect</c> is not
+    /// required on the paper. <see cref="ElectionAnalyzerSingleName"/> always
+    /// returns true, including when the stored type is not <c>Oth</c>.
+    /// </summary>
     protected virtual bool IsSingleNameElection()
     {
-        var electionType = TargetElection.ElectionType;
-        return electionType == "Oth";
+        return TargetElection.ElectionType == ElectionTypeEnum.Oth.Code;
     }
 
     protected virtual void FillResultSummaryCalc()
     {
+        // People by Front Desk method, plus a processed online row. These are
+        // not ballot rows. Ballot rows are counted in CalculateBallotStatistics.
         var breakdown = VotingMethodCodes.Count(People.Select(p =>
             (p.VotingMethod, ProcessedOnlinePersonGuids.Contains(p.PersonGuid))));
 
@@ -229,18 +257,26 @@ public abstract class ElectionAnalyzerBase
 
         ResultSummaryCalc.BallotsNeedingReview = Ballots.Count(b => BallotAnalyzer.BallotNeedsReview(b.StatusCode));
 
+        // Potential seats: every ballot × Number to Elect, including ballots
+        // that will not award a vote. CountVotesAsync counts only Ok ballots.
         ResultSummaryCalc.TotalVotes = Ballots.Count * TargetElection.NumberToElect!.Value;
 
-        var invalidBallotGuids = Ballots
+        // Entered ballots = Ok + every other status. BallotsReceived is the Ok
+        // count. SpoiledBallots is the rest (empty, too few, too many,
+        // duplicate, review, raw, verify), not only a teller "spoiled" mark.
+        // Reports add the two fields back together.
+        var notOkBallotGuids = Ballots
             .Where(b => b.StatusCode != BallotStatus.Ok)
             .Select(b => b.BallotGuid)
             .ToHashSet();
 
-        ResultSummaryCalc.SpoiledBallots = invalidBallotGuids.Count;
+        ResultSummaryCalc.SpoiledBallots = notOkBallotGuids.Count;
         ResultSummaryCalc.BallotsReceived = Ballots.Count - ResultSummaryCalc.SpoiledBallots;
 
+        // A non-Ok vote on an Ok ballot. Votes on a not-Ok ballot are not
+        // counted again here; that ballot is already in SpoiledBallots.
         ResultSummaryCalc.SpoiledVotes = Votes
-            .Count(v => !invalidBallotGuids.Contains(v.BallotGuid) && v.VoteStatus != VoteStatus.Ok);
+            .Count(v => !notOkBallotGuids.Contains(v.BallotGuid) && v.VoteStatus != VoteStatus.Ok);
 
         Logger.LogInformation("Statistics: {TotalBallots} ballots ({SpoiledBallots} spoiled), {TotalVotes} potential votes ({SpoiledVotes} spoiled)",
             Ballots.Count, ResultSummaryCalc.SpoiledBallots, ResultSummaryCalc.TotalVotes, ResultSummaryCalc.SpoiledVotes);
@@ -290,18 +326,18 @@ public abstract class ElectionAnalyzerBase
 
             if (ordinalRank <= numberToElect)
             {
-                result.Section = "E";
+                result.Section = ElectedSection;
             }
             else if (ordinalRank <= numberToElect + numberExtra)
             {
-                result.Section = "X";
+                result.Section = ExtraSection;
             }
             else
             {
-                result.Section = "O";
+                result.Section = OtherSection;
             }
 
-            if (result.Section == "X")
+            if (result.Section == ExtraSection)
             {
                 ordinalRankInExtra++;
                 result.RankInExtra = ordinalRankInExtra;
@@ -311,9 +347,11 @@ public abstract class ElectionAnalyzerBase
 
     internal void AnalyzeForTies()
     {
-        Result? aboveResult = null;
+        Result? higherRanked = null;
         var nextTieBreakGroup = 1;
-        var foundFirstOneInOther = false;
+        // Once a tie includes Other, the next lower total ends the scan.
+        // Names further down are not a reportable tie.
+        var tieReachedOtherSection = false;
 
         foreach (var result in Results.OrderBy(r => r.Rank))
         {
@@ -323,36 +361,33 @@ public abstract class ElectionAnalyzerBase
             result.IsTieResolved = null;
             result.TieBreakRequired = false;
 
-            if (aboveResult != null)
+            if (higherRanked != null)
             {
-                var numFewerVotes = (aboveResult.VoteCount ?? 0) - (result.VoteCount ?? 0);
+                var numFewerVotes = (higherRanked.VoteCount ?? 0) - (result.VoteCount ?? 0);
                 if (numFewerVotes == 0)
                 {
-                    aboveResult.IsTied = true;
+                    higherRanked.IsTied = true;
                     result.IsTied = true;
 
-                    if (!foundFirstOneInOther && result.Section == "O")
+                    if (!tieReachedOtherSection && result.Section == OtherSection)
                     {
-                        foundFirstOneInOther = true;
+                        tieReachedOtherSection = true;
                     }
 
-                    if (aboveResult.TieBreakGroup == null)
+                    if (higherRanked.TieBreakGroup == null)
                     {
-                        aboveResult.TieBreakGroup = nextTieBreakGroup;
+                        higherRanked.TieBreakGroup = nextTieBreakGroup;
                         nextTieBreakGroup++;
                     }
-                    result.TieBreakGroup = aboveResult.TieBreakGroup;
+                    result.TieBreakGroup = higherRanked.TieBreakGroup;
                 }
-                else
+                else if (tieReachedOtherSection)
                 {
-                    if (foundFirstOneInOther)
-                    {
-                        break;
-                    }
+                    break;
                 }
 
                 var isClose = numFewerVotes <= ThresholdForCloseVote;
-                aboveResult.CloseToNext = isClose;
+                higherRanked.CloseToNext = isClose;
                 result.CloseToPrev = isClose;
             }
             else
@@ -360,12 +395,12 @@ public abstract class ElectionAnalyzerBase
                 result.CloseToPrev = false;
             }
 
-            aboveResult = result;
+            higherRanked = result;
         }
 
-        if (aboveResult != null)
+        if (higherRanked != null)
         {
-            aboveResult.CloseToNext = false;
+            higherRanked.CloseToNext = false;
         }
 
         for (var groupCode = 1; groupCode < nextTieBreakGroup; groupCode++)
@@ -392,7 +427,7 @@ public abstract class ElectionAnalyzerBase
         resultTie.NumToElect = 0;
         resultTie.TieBreakRequired = false;
 
-        var groupInTop = false;
+        var inElected = false;
         var groupInExtra = false;
         var groupInOther = false;
 
@@ -400,19 +435,19 @@ public abstract class ElectionAnalyzerBase
         {
             switch (result.Section)
             {
-                case "E":
-                    groupInTop = true;
+                case ElectedSection:
+                    inElected = true;
                     break;
-                case "X":
+                case ExtraSection:
                     groupInExtra = true;
                     break;
-                case "O":
+                case OtherSection:
                     groupInOther = true;
                     break;
             }
         }
 
-        var groupOnlyInTop = groupInTop && !(groupInExtra || groupInOther);
+        var onlyInElected = inElected && !(groupInExtra || groupInOther);
         // Unset (null) and explicit 0 compare equal; all-0 and all-unset stay unresolved.
         var needsTieBreak = TieBreakResolution.NeedsTieBreak(results);
         var isResolved = !needsTieBreak || TieBreakResolution.CountsDecidePositions(results);
@@ -428,17 +463,17 @@ public abstract class ElectionAnalyzerBase
         }
         resultTie.IsResolved = isResolved;
 
-        if (groupInOther && (groupInTop || groupInExtra))
+        if (groupInOther && (inElected || groupInExtra))
         {
-            foreach (var r in results.Where(r => r.Section == "O"))
+            foreach (var r in results.Where(r => r.Section == OtherSection))
             {
                 r.ForceShowInOther = true;
             }
         }
 
-        if (groupInTop && !groupOnlyInTop)
+        if (inElected && !onlyInElected)
         {
-            resultTie.NumToElect += results.Count(r => r.Section == "E");
+            resultTie.NumToElect += results.Count(r => r.Section == ElectedSection);
             resultTie.TieBreakRequired = true;
         }
 
@@ -446,12 +481,16 @@ public abstract class ElectionAnalyzerBase
         {
             resultTie.TieBreakRequired = true;
 
-            if (!groupInTop)
+            if (!inElected)
             {
-                resultTie.NumToElect += results.Count(r => r.Section == "X");
+                resultTie.NumToElect += results.Count(r => r.Section == ExtraSection);
             }
         }
 
+        // An all-Extra tie set NumToElect to the whole group. One name does
+        // not get an extra seat, so the runoff has to identify that name.
+        // A tie that already crosses into Elected counted only the elected
+        // seats, which is already smaller than the group.
         if (resultTie.NumInTie == resultTie.NumToElect)
         {
             resultTie.NumToElect--;
@@ -481,19 +520,26 @@ public abstract class ElectionAnalyzerBase
 
         CombineCalcAndManualSummaries();
 
-        var numBallotsWithManual = (ResultSummaryFinal.BallotsReceived ?? 0) + (ResultSummaryFinal.SpoiledBallots ?? 0);
-        var sumOfEnvelopes = SumOfEnvelopesCollected(ResultSummaryFinal);
+        // Ok ballots + not-Ok ballots, after manual spoiled are included.
+        // That total has to match the Front Desk method counts (the
+        // "envelopes") before the summary is the one reports use.
+        var enteredBallots = (ResultSummaryFinal.BallotsReceived ?? 0) + (ResultSummaryFinal.SpoiledBallots ?? 0);
+        var envelopesCollected = SumOfEnvelopesCollected(ResultSummaryFinal);
 
         ResultSummaryFinal.UseOnReports =
             ResultSummaryFinal.BallotsNeedingReview == 0
             && ResultTies.All(rt => rt.IsResolved == true)
-            && numBallotsWithManual == sumOfEnvelopes;
+            && enteredBallots == envelopesCollected;
     }
 
     protected void CombineCalcAndManualSummaries()
     {
+        // Manual (M) can replace the people and method counts. It does not
+        // replace the calculated Ok / not-Ok split. A manual spoiled count is
+        // added to the calculated spoiled ballots. Online and imported stay
+        // on the calculated numbers.
         var manualSummaries = Context.ResultSummaries
-            .Where(rs => rs.ElectionGuid == TargetElection.ElectionGuid && rs.ResultType == "M")
+            .Where(rs => rs.ElectionGuid == TargetElection.ElectionGuid && rs.ResultType == TallyService.ResultTypeManual)
             .ToList();
         var manualOverride = manualSummaries.FirstOrDefault() ?? new ResultSummary();
 
@@ -547,6 +593,12 @@ public abstract class ElectionAnalyzerBase
         Logger.LogInformation("Results saved successfully");
     }
 
+    /// <summary>
+    /// Vote status for this tally pass. A missing person is spoiled.
+    /// <see cref="BallotAnalyzer.DetermineVoteStatus"/> is the entry-time
+    /// check: it also treats a null name snapshot as changed, and it does
+    /// not look up the person list. The two are not the same method.
+    /// </summary>
     protected VoteStatus DetermineVoteStatus(Vote vote)
     {
         if (!string.IsNullOrEmpty(vote.OnlineVoteRaw)
@@ -560,8 +612,7 @@ public abstract class ElectionAnalyzerBase
 
         if (person == null)
         {
-            if (!string.IsNullOrEmpty(vote.IneligibleReasonCode))
-                return VoteStatus.Spoiled;
+            // No matching person: the name is not in the list. It cannot be counted.
             return VoteStatus.Spoiled;
         }
 
