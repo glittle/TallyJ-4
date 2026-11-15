@@ -18,6 +18,7 @@ const electionGuid = route.params.id as string;
 const importing = ref(false);
 const importResult = ref<ImportResultDto | null>(null);
 
+/** Back opens the monitor page, not the ballot list. */
 function goBack() {
   router.push(`/elections/${electionGuid}/monitor`);
 }

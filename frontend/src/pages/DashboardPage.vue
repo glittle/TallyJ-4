@@ -222,6 +222,7 @@ const filteredElectionsUnpaginated = computed(() => {
   if (filters.value.dateRange && filters.value.dateRange.length === 2) {
     const [startDate, endDate] = filters.value.dateRange;
     filtered = filtered.filter((election) => {
+      // An election with no date never matches a date range.
       if (!election.dateOfElection) {
         return false;
       }
@@ -461,7 +462,9 @@ function handleSizeChange() {
   pagination.value.page = 1;
 }
 
-function handlePageChange() {}
+function handlePageChange() {
+  // The page is already on pagination.page. The visible rows are a computed slice.
+}
 
 function formatDate(date: string) {
   if (!date) {

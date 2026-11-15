@@ -45,6 +45,7 @@ const tellerOptions = computed(() =>
     .sort(),
 );
 
+/** The first page of 200. Names past that page are not in the dropdown. */
 async function loadTellers() {
   try {
     await tellerStore.fetchTellers(props.electionGuid, 1, 200);

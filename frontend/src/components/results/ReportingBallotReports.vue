@@ -40,6 +40,7 @@ function reportBallotCode(ballot: {
 const formatDate = formatReportDate;
 const formatPercent = formatReportPercent;
 
+/** Unchecked casts. The template reads a cast only for the matching report code. */
 const mainData = computed(() => props.reportData as MainReport | null);
 const votesByNumData = computed(
   () => props.reportData as VotesByNumReport | null,
@@ -60,16 +61,19 @@ const ballotsSameData = computed(
 const ballotsSummaryData = computed(
   () => props.reportData as BallotsSummaryReport | null,
 );
-const isBallotReport = computed(() =>
+/** The four ballot listings. Main and the vote tables are not these. */
+const isBallotsListing = computed(() =>
   ["Ballots", "BallotsOnline", "BallotsImported", "BallotsTied"].includes(
     props.selectedReport,
   ),
 );
+/** Main rows have no tie-break field. A slash in the display string means a count was entered. */
 const mainShowsTieBreak = computed(() =>
   (mainData.value?.elected ?? []).some((person) =>
     person.voteCountDisplay.includes(" / "),
   ),
 );
+/** Explicit 0 is an entered count. Null and undefined are not. */
 const votesByNumShowsTieBreak = computed(() =>
   (votesByNumData.value?.people ?? []).some(
     (person) => !isTieBreakCountUnset(person.tieBreakCount),
@@ -356,7 +360,7 @@ const selectedReportName = computed(() => props.selectedReportName);
     </div>
 
     <!-- Ballots (All, Online, Imported, Tied) -->
-    <div v-if="isBallotReport && ballotsData" class="report-ballots">
+    <div v-if="isBallotsListing && ballotsData" class="report-ballots">
       <h2>{{ selectedReportName }}</h2>
       <div class="report-meta">
         <div>{{ ballotsData.electionName }}</div>

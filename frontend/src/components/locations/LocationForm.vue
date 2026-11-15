@@ -40,6 +40,7 @@ const isReservedLocation = computed(() =>
 const canDelete = computed(
   () => Boolean(props.showDelete) && !isReservedLocation.value,
 );
+/** The translated location label. Online is only the fallback when the row is missing. */
 const reservedDisplayName = computed(() =>
   props.location
     ? formatLocationLabel(t, props.location)
@@ -132,6 +133,7 @@ async function handleSubmit() {
     submitting.value = true;
     try {
       if (props.isEdit && props.location) {
+        // Online and Imported keep their names. Only the sort order is saved.
         const dto: UpdateLocationDto = isReservedLocation.value
           ? { sortOrder: form.sortOrder }
           : {

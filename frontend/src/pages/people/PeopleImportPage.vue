@@ -64,6 +64,7 @@ const isMappingValid = computed(() =>
 const fileReady = computed(
   () => selectedFile.value !== null && !!parsedResult.value,
 );
+/** A mapping edit clears mappingSaved, so load stays locked until the mapping is saved again. */
 const mappingReady = computed(
   () => fileReady.value && mappingSaved.value && isMappingValid.value,
 );

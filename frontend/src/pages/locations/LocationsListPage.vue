@@ -116,7 +116,12 @@ function locationRowClassName({ row }: { row: LocationDto }): string {
   return isReservedLocation(row) ? "is-reserved-location" : "";
 }
 
-function getStatusType(status: string) {
+/**
+ * NotStarted is mapped to an empty string, and that empty string
+ * becomes info. InProgress is warning. Complete is success. Verified
+ * is not a location tally status. Anything else is info.
+ */
+function locationTallyTagType(status: string) {
   const typeMap: Record<string, any> = {
     NotStarted: "",
     InProgress: "warning",
@@ -202,7 +207,7 @@ function getStatusType(status: string) {
             <template #default="scope">
               <el-tag
                 v-if="scope.row.locationTallyStatus"
-                :type="getStatusType(scope.row.locationTallyStatus)"
+                :type="locationTallyTagType(scope.row.locationTallyStatus)"
               >
                 {{ t(`locations.status.${scope.row.locationTallyStatus}`) }}
               </el-tag>
