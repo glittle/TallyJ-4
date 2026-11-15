@@ -220,37 +220,68 @@ function formatDateTime(date: string) {
 
 /**
  * The payload status is "Final" or "In Progress" (with a space).
- * Complete, InProgress, Paused, and Error are not those values, so a
- * live status uses the default class, the clock icon, and the raw text.
+ * Final uses the complete style, the check icon, and
+ * presentation.statusComplete. In Progress uses the in-progress
+ * style and presentation.statusInProgress. Case and spaces do not
+ * matter, so Complete and InProgress still match. Paused and Error
+ * keep their own banners. Anything else stays on the default banner
+ * and shows the raw text.
  */
+type PresentationBannerStatus = "complete" | "progress" | "paused" | "error";
+
+function presentationBannerStatus(
+  status: string,
+): PresentationBannerStatus | null {
+  const normalized = String(status ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/[\s_-]+/g, "");
+  switch (normalized) {
+    case "final":
+    case "complete":
+      return "complete";
+    case "inprogress":
+      return "progress";
+    case "paused":
+      return "paused";
+    case "error":
+      return "error";
+    default:
+      return null;
+  }
+}
+
 function getStatusClass(status: string) {
-  const classMap: Record<string, string> = {
-    Complete: "status-complete",
-    InProgress: "status-progress",
-    Paused: "status-paused",
-    Error: "status-error",
+  const classMap: Record<PresentationBannerStatus, string> = {
+    complete: "status-complete",
+    progress: "status-progress",
+    paused: "status-paused",
+    error: "status-error",
   };
-  return classMap[status] || "status-default";
+  const kind = presentationBannerStatus(status);
+  return kind ? classMap[kind] : "status-default";
 }
 
 function getStatusIcon(status: string) {
-  const iconMap: Record<string, any> = {
-    Complete: Check,
-    InProgress: Clock,
-    Paused: Warning,
-    Error: Warning,
+  const iconMap: Record<PresentationBannerStatus, any> = {
+    complete: Check,
+    progress: Clock,
+    paused: Warning,
+    error: Warning,
   };
-  return iconMap[status] || Clock;
+  const kind = presentationBannerStatus(status);
+  return kind ? iconMap[kind] : Clock;
 }
 
 function getStatusText(status: string) {
-  const textMap: Record<string, string> = {
-    Complete: t("presentation.statusComplete"),
-    InProgress: t("presentation.statusInProgress"),
-    Paused: t("presentation.statusPaused"),
-    Error: t("presentation.statusError"),
+  const textMap: Record<PresentationBannerStatus, string> = {
+    complete: t("presentation.statusComplete"),
+    progress: t("presentation.statusInProgress"),
+    paused: t("presentation.statusPaused"),
+    error: t("presentation.statusError"),
   };
-  return textMap[status] || status;
+  const kind = presentationBannerStatus(status);
+  return kind ? textMap[kind] : status;
 }
 
 function getSectionLabel(section: string) {
