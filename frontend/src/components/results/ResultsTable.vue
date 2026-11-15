@@ -8,6 +8,7 @@ const props = defineProps<{
   results: PersonResultDto[];
 }>();
 
+/** Shown when any row still needs a tie-break, or any row has an entered count. Explicit 0 counts as entered. */
 const showTieBreakCount = computed(() =>
   props.results.some(
     (row) => row.tieBreakRequired || !isTieBreakCountUnset(row.tieBreakCount),

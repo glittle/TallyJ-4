@@ -218,6 +218,11 @@ function formatDateTime(date: string) {
   return new Date(date).toLocaleString();
 }
 
+/**
+ * The payload status is "Final" or "In Progress" (with a space).
+ * Complete, InProgress, Paused, and Error are not those values, so a
+ * live status uses the default class, the clock icon, and the raw text.
+ */
 function getStatusClass(status: string) {
   const classMap: Record<string, string> = {
     Complete: "status-complete",

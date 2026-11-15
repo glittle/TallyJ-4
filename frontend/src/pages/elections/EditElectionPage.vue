@@ -218,6 +218,10 @@ onMounted(async () => {
   }
 });
 
+/**
+ * The online people list is CanReceiveVotes only. A failed load stays
+ * null, so the list-mode warning stays off.
+ */
 async function loadEligibleReceiverCount() {
   try {
     const people = await onlineVotingService.getVotablePeople(electionGuid);

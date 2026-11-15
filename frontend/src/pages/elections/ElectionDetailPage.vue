@@ -32,6 +32,7 @@ const electionStats = computed(() =>
 );
 
 const isGuest = computed(() => isGuestTeller());
+/** A guest cannot reset. Everyone else can when the election is marked as a test. */
 const canResetTestElection = computed(
   () => !isGuest.value && election.value?.showAsTest === true,
 );
@@ -106,7 +107,12 @@ function formatDate(date?: string) {
   return new Date(date).toLocaleDateString();
 }
 
-function getStatusType(status?: string) {
+/**
+ * Live stages are SettingUp, GatheringBallots, ProcessingBallots, and
+ * Finalized. Only Finalized is in this map, and it is "info". Draft,
+ * Voting, and Tallying are not stages, so every live stage uses "info".
+ */
+function electionStageTagType(status?: string) {
   const typeMap: Record<string, any> = {
     Draft: "info",
     Voting: "success",
@@ -164,7 +170,7 @@ async function exportElection() {
               {{ formatDate(election.dateOfElection) }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('elections.status')">
-              <el-tag :type="getStatusType(election.electionStage)">
+              <el-tag :type="electionStageTagType(election.electionStage)">
                 {{ election.electionStage || "Draft" }}
               </el-tag>
             </el-descriptions-item>

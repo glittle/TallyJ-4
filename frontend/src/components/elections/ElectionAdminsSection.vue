@@ -19,6 +19,7 @@ const { t } = useI18n();
 const { showSuccessMessage } = useNotifications();
 const { handleApiError } = useApiErrorHandler();
 
+/** Hidden at once for a guest teller. A forbidden response also hides the section. */
 const visible = ref(!isGuestTeller());
 const loading = ref(false);
 const adding = ref(false);
@@ -47,6 +48,7 @@ async function load() {
   }
 }
 
+/** Owner has its own label. Every other role string is shown as Admin. */
 function roleLabel(role: string) {
   if (role === "Owner") {
     return t("elections.admins.roleOwner");

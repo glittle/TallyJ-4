@@ -30,10 +30,16 @@ const tallyProgress = computed(() => resultStore.tallyProgress);
 
 const hasCalculation = computed(() => Boolean(results.value?.calculatedAt));
 
+/** Explicit false only. A missing reconciliation report is not blocked. */
 const countBlocked = computed(
   () => reconciliation.value?.isReconciled === false,
 );
 
+/**
+ * The count-mismatch key is already shown by the reconciliation panel,
+ * so this alert is suppressed while countBlocked is true. Any other
+ * blocker key is still shown.
+ */
 const blockerAlert = computed(() => {
   const key = results.value?.analysisBlocker;
   if (!key) {
@@ -50,6 +56,7 @@ const blockerAlert = computed(() => {
   return translateAnalysisBlocker(key, t);
 });
 
+/** Hides the not-yet-calculated empty state while counts or analysis are blocked. */
 const tallyBlocked = computed(
   () => countBlocked.value || Boolean(results.value?.analysisBlocker),
 );
