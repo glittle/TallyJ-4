@@ -12,6 +12,11 @@ public class ElectionAnalyzerNormal : ElectionAnalyzerBase
     {
     }
 
+    /// <summary>
+    /// Awards one vote per <see cref="VoteStatus.Ok"/> name on an
+    /// <see cref="BallotStatus.Ok"/> ballot. A not-Ok ballot awards nothing.
+    /// A spoiled or changed name on an Ok ballot is skipped.
+    /// </summary>
     protected override async Task CountVotesAsync()
     {
         Logger.LogInformation("Starting vote count for normal election");
@@ -51,7 +56,7 @@ public class ElectionAnalyzerNormal : ElectionAnalyzerBase
                         PersonGuid = vote.PersonGuid.Value,
                         VoteCount = 0,
                         Rank = 0,
-                        Section = "O",
+                        Section = OtherSection,
                         IsTied = false,
                         TieBreakRequired = false,
                         CloseToNext = false,

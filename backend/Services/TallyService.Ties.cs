@@ -1,4 +1,5 @@
 using Backend.DTOs.Results;
+using Backend.Enumerations;
 using Backend.Helpers;
 using Microsoft.EntityFrameworkCore;
 
@@ -114,7 +115,8 @@ public partial class TallyService
             // Re-analyze after any persisted count (including a single member or all-0).
             // Partial counts already change rank; v3 always re-ran analysis after save.
             _logger.LogInformation("Tie-break counts updated, re-analyzing election {ElectionGuid}", electionGuid);
-            if (election.ElectionType == "Oth")
+            // Oth is the single-name tally. Every other type uses the normal counter.
+            if (election.ElectionType == ElectionTypeEnum.Oth.Code)
             {
                 await CalculateSingleNameElectionAsync(electionGuid);
             }

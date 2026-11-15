@@ -19,7 +19,7 @@ public static class SpecialBallotNumbering
     {
         var ballots = await context.Ballots
             .Where(b => b.LocationGuid == locationGuid &&
-                        (b.ComputerCode == ComputerCodeHelper.Online || b.ComputerCode == "WW"))
+                        (b.ComputerCode == ComputerCodeHelper.Online || b.ComputerCode == ComputerCodeHelper.LegacyOnline))
             .OrderBy(b => b.DateCreated)
             .ThenBy(b => b.RowId)
             .ToListAsync();
@@ -36,7 +36,7 @@ public static class SpecialBallotNumbering
     {
         var ballots = await context.Ballots
             .Where(b => b.Location.ElectionGuid == electionGuid &&
-                        (b.ComputerCode == ComputerCodeHelper.Online || b.ComputerCode == "WW"))
+                        (b.ComputerCode == ComputerCodeHelper.Online || b.ComputerCode == ComputerCodeHelper.LegacyOnline))
             .OrderBy(b => b.LocationGuid)
             .ThenBy(b => b.DateCreated)
             .ThenBy(b => b.RowId)
@@ -54,7 +54,7 @@ public static class SpecialBallotNumbering
     {
         var max = await context.Ballots
             .Where(b => b.LocationGuid == locationGuid &&
-                        (b.ComputerCode == ComputerCodeHelper.Imported || b.ComputerCode == "IMPORT"))
+                        (b.ComputerCode == ComputerCodeHelper.Imported || b.ComputerCode == ComputerCodeHelper.LegacyImported))
             .MaxAsync(b => (int?)b.BallotNumAtComputer) ?? 0;
 
         return max + 1;

@@ -10,8 +10,18 @@ public static partial class ComputerCodeHelper
     /// <summary>Reserved computer code for online ballots (v3 used OL).</summary>
     public const string Online = "OL";
 
+    /// <summary>
+    /// Older online code still found on stored ballots. New rows use <see cref="Online"/>.
+    /// </summary>
+    public const string LegacyOnline = "WW";
+
     /// <summary>Reserved computer code for imported ballots (v3 used IM).</summary>
     public const string Imported = "IM";
+
+    /// <summary>
+    /// Older imported code still found on stored ballots. New rows use <see cref="Imported"/>.
+    /// </summary>
+    public const string LegacyImported = "IMPORT";
 
     private const int SingleLetterCount = 26;
     private const int MaxIndex = SingleLetterCount + (SingleLetterCount * SingleLetterCount) - 1;
@@ -21,11 +31,11 @@ public static partial class ComputerCodeHelper
 
     public static bool IsOnlineCode(string? code) =>
         string.Equals(code, Online, StringComparison.OrdinalIgnoreCase)
-        || string.Equals(code, "WW", StringComparison.OrdinalIgnoreCase);
+        || string.Equals(code, LegacyOnline, StringComparison.OrdinalIgnoreCase);
 
     public static bool IsImportedCode(string? code) =>
         string.Equals(code, Imported, StringComparison.OrdinalIgnoreCase)
-        || string.Equals(code, "IMPORT", StringComparison.OrdinalIgnoreCase);
+        || string.Equals(code, LegacyImported, StringComparison.OrdinalIgnoreCase);
 
     public static bool IsReservedCode(string? code) =>
         IsOnlineCode(code) || IsImportedCode(code);

@@ -23,7 +23,7 @@ public static class BallotStatusRefresher
         var election = await context.Elections
             .FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
 
-        if (election?.NumberToElect is not int votesNeeded)
+        if (election?.NumberToElect is not int numberToElect)
         {
             logger?.LogWarning(
                 "Unable to refresh ballot statuses for election {ElectionGuid}: NumberToElect not configured",
@@ -38,13 +38,14 @@ public static class BallotStatusRefresher
             .Where(b => b.Location.ElectionGuid == electionGuid)
             .ToListAsync();
 
-        var isSingleName = election.ElectionType == "Oth";
-        var analyzer = new BallotAnalyzer(votesNeeded, isSingleName);
+        // Oth is the single-name election: the exact NumberToElect count is not applied.
+        var isSingleName = election.ElectionType == ElectionTypeEnum.Oth.Code;
+        var analyzer = new BallotAnalyzer(numberToElect, isSingleName);
 
         foreach (var ballot in ballots)
         {
             var voteInfos = ballot.Votes.Select(CreateBallotVoteInfo).ToList();
-            analyzer.DetermineStatusFromVotes(ballot.StatusCode, voteInfos, out var newStatus, out _);
+            analyzer.EvaluateBallotStatus(ballot.StatusCode, voteInfos, out var newStatus, out _);
             if (ballot.StatusCode != newStatus)
             {
                 ballot.StatusCode = newStatus;
@@ -75,7 +76,7 @@ public static class BallotStatusRefresher
         var election = await context.Elections
             .FirstOrDefaultAsync(e => e.ElectionGuid == electionGuid);
 
-        if (election?.NumberToElect is not int votesNeeded)
+        if (election?.NumberToElect is not int numberToElect)
         {
             logger?.LogWarning(
                 "Unable to refresh ballot status for {BallotGuid}: NumberToElect not configured",
@@ -89,10 +90,10 @@ public static class BallotStatusRefresher
             .ToListAsync();
 
         var voteInfos = votes.Select(CreateBallotVoteInfo).ToList();
-        var isSingleName = election.ElectionType == "Oth";
-        var analyzer = new BallotAnalyzer(votesNeeded, isSingleName);
+        var isSingleName = election.ElectionType == ElectionTypeEnum.Oth.Code;
+        var analyzer = new BallotAnalyzer(numberToElect, isSingleName);
 
-        analyzer.DetermineStatusFromVotes(ballot.StatusCode, voteInfos, out var newStatus, out _);
+        analyzer.EvaluateBallotStatus(ballot.StatusCode, voteInfos, out var newStatus, out _);
         ballot.StatusCode = newStatus;
     }
 
