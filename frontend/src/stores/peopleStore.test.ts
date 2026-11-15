@@ -6,14 +6,14 @@ const mockInvalidateElectionStats = vi.fn();
 
 vi.mock("../services/peopleService", () => ({
   peopleService: {
-    getAll: vi.fn(),
+    getAllPersonDtos: vi.fn(),
     getById: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
     delete: vi.fn(),
     search: vi.fn(),
 
-    getAllPeople: vi.fn(),
+    getPersonList: vi.fn(),
     getAllForBallotEntry: vi.fn(),
   },
 }));
@@ -512,10 +512,10 @@ describe("People Store - People Cache", () => {
         },
         mockPerson2,
       ];
-      vi.mocked(peopleService.getAllPeople).mockResolvedValue(
+      vi.mocked(peopleService.getPersonList).mockResolvedValue(
         refreshedList as never,
       );
-      vi.mocked(peopleService.getAll).mockResolvedValue([mockPerson]);
+      vi.mocked(peopleService.getAllPersonDtos).mockResolvedValue([mockPerson]);
       vi.mocked(peopleService.getAllForBallotEntry).mockResolvedValue(
         refreshedBallotEntry as never,
       );
@@ -531,8 +531,12 @@ describe("People Store - People Cache", () => {
       handlers.get("reloadPage")!();
 
       await vi.waitFor(() => {
-        expect(peopleService.getAllPeople).toHaveBeenCalledWith("election-123");
-        expect(peopleService.getAll).toHaveBeenCalledWith("election-123");
+        expect(peopleService.getPersonList).toHaveBeenCalledWith(
+          "election-123",
+        );
+        expect(peopleService.getAllPersonDtos).toHaveBeenCalledWith(
+          "election-123",
+        );
         expect(peopleService.getAllForBallotEntry).toHaveBeenCalledWith(
           "election-123",
         );

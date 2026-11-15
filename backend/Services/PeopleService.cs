@@ -800,11 +800,10 @@ public class PeopleService : IPeopleService
     // =====================================================================
 
     /// <summary>
-    /// EF-translatable search over name parts and contact fields (not the in-memory FullName).
-    /// </summary>
-    /// <summary>
-    /// Substring match on first name, last name, other names, other last names,
-    /// other info, combined info, email, and Bahá'í ID. Phone is not compared.
+    /// EF-translatable substring match on first name, last name, other names,
+    /// other last names, other info, combined info, email, and Bahá'í ID.
+    /// <see cref="Person.FullName"/> is not mapped and is not compared.
+    /// Phone is not compared.
     /// </summary>
     private static Expression<Func<Person, bool>> PersonSearchPredicate(string searchLower) =>
         p => (p.FirstName != null && p.FirstName.ToLower().Contains(searchLower)) ||

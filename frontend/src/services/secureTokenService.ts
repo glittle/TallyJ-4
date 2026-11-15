@@ -69,7 +69,7 @@ export const secureTokenService = {
     if (data.email && data.authMethod) {
       return true;
     }
-    // Tellers have name="Teller" and authMethod="AccessCode"
+    // Passcode GuestTeller cookies: name Teller and auth method AccessCode.
     if (data.name === "Teller" && data.authMethod === "AccessCode") {
       return true;
     }

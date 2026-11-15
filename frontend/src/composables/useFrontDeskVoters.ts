@@ -48,7 +48,7 @@ export function useFrontDeskVoters(options: UseFrontDeskVotersOptions) {
 
   const selectedMethodFilters = ref<string[]>([]);
   const selectedFlagFilters = ref<string[]>([]);
-  /** v3 #ifNoBallot: hide people whose ballot has already been received. */
+  /** When set, keep people with no voting-method letter. A processed online row with no letter stays in the list. */
   const ballotNotReceivedOnly = ref(false);
   const registrationFilter = computed({
     get(): RegistrationFilter {

@@ -64,7 +64,7 @@ export function useApiErrorHandler() {
               data?.error || data?.message || t("error.somethingWentWrong");
         }
 
-        // Handle validation errors (field-specific errors)
+        // Any status: the first non-empty field error replaces the status message above.
         if (data?.errors && typeof data.errors === "object") {
           const validationErrors = Object.values(data.errors).flat();
           if (validationErrors.length > 0) {

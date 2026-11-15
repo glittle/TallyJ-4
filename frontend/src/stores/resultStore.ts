@@ -287,18 +287,13 @@ export const useResultStore = defineStore("result", () => {
       connection.on("tallyComplete", (data: any) => {
         const completeEvent = mapTallyProgressPayload(data, true);
         handleTallyComplete(completeEvent);
-        // Optionally update results if data contains them
-        if (data && results.value) {
-          // The results might be updated via the fetchResults call in handleTallyComplete
-        }
       });
 
       connection.on(
         "statusUpdate",
         (message: string, _showProgress: boolean) => {
-          // Handle status update messages
+          // Logged only. showProgress is not stored.
           console.log("Tally status update:", message);
-          // Could update a status message in the UI
         },
       );
 

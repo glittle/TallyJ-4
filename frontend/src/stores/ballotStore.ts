@@ -34,6 +34,7 @@ function compactVotePositions(votes: VoteDto[]): VoteDto[] {
     }));
 }
 
+/** Keeps votes whose rowId is in votePositions, and copies those positions. */
 function applyVotePositions(
   votes: VoteDto[],
   votePositions: VotePositionDto[],
@@ -301,8 +302,11 @@ export const useBallotStore = defineStore("ballot", () => {
       return normalizedVotes.length;
     }
 
-    // Create/update without votePositions: backend omits positions only when
-    // unchanged (update) or when this is the ballot's first vote (create).
+    // Create omits votePositions when this vote was the first on the ballot.
+    // Update omits them when the ballot still has only one vote. A create
+    // onto a ballot that already had votes, and an update that leaves two
+    // or more votes, include positions. Only the first-vote create changes
+    // the summary count here.
     if (mutationKind === "create" && result.vote) {
       const existingSummary = ballots.value.find(
         (b) => b.ballotGuid === ballotGuid,
