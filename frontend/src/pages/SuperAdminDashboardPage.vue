@@ -46,6 +46,11 @@ const loading = computed(() => superAdminStore.loading);
 const summary = computed(() => superAdminStore.summary);
 const error = computed(() => superAdminStore.error);
 
+/**
+ * Sent as the Status query. The server keeps the page only when the value
+ * parses as an election stage. Draft, Voting, and Tallying do not parse,
+ * so those choices return an empty page. Finalized filters.
+ */
 const statusOptions = [
   { label: "All", value: "" },
   { label: "Draft", value: "Draft" },
@@ -161,7 +166,13 @@ function formatDate(date?: string) {
   return new Date(date).toLocaleDateString();
 }
 
-function getStatusType(status?: string) {
+/**
+ * The payloads expose electionStage, not tallyStatus, so this usually
+ * receives undefined and the tag text falls back to the literal Draft.
+ * Draft, Voting, and Tallying are not stages. Finalized is mapped to an
+ * empty string, and that empty string becomes info as well.
+ */
+function tallyStatusTagType(status?: string) {
   const typeMap: Record<string, string> = {
     Draft: "info",
     Voting: "success",
@@ -368,7 +379,7 @@ onMounted(() => {
               sortable="custom"
             >
               <template #default="scope">
-                <el-tag :type="getStatusType(scope.row.tallyStatus)">
+                <el-tag :type="tallyStatusTagType(scope.row.tallyStatus)">
                   {{ scope.row.tallyStatus || "Draft" }}
                 </el-tag>
               </template>
@@ -432,7 +443,7 @@ onMounted(() => {
             {{ formatDate(selectedElection.dateOfElection) }}
           </el-descriptions-item>
           <el-descriptions-item :label="$t('superAdmin.elections.status')">
-            <el-tag :type="getStatusType(selectedElection.tallyStatus)">
+            <el-tag :type="tallyStatusTagType(selectedElection.tallyStatus)">
               {{ selectedElection.tallyStatus || "Draft" }}
             </el-tag>
           </el-descriptions-item>

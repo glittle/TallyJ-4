@@ -21,9 +21,11 @@ const {
   load: loadSignIn,
 } = useSignInCapabilities();
 
+/** Shown before capabilities load, and after load unless local is explicitly false. */
 const showLocal = computed(
   () => !signInLoaded.value || officers.value?.local !== false,
 );
+/** Shown only after load, and only when google is explicitly true. */
 const showGoogle = computed(
   () => signInLoaded.value && officers.value?.google === true,
 );

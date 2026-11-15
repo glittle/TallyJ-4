@@ -61,6 +61,7 @@ watch(
   },
 );
 
+/** Password form. Query mode officer is the default. full uses the same form. */
 const isStandardLogin = computed(
   () => mode.value === "officer" || mode.value === "full",
 );
@@ -77,6 +78,7 @@ const awaiting2FA = computed(
   () => authStore.requires2FA && loginForm.password.length > 0,
 );
 
+/** Before capabilities load, only the password form is offered. */
 const officerMethods = computed<OfficerSignInCapabilities>(() => {
   if (!signInLoaded.value || !officers.value) {
     return {
@@ -162,8 +164,7 @@ const requestCode = async () => {
   }
   loading.value = true;
   try {
-    // API Call for System 3 OTC request would go here
-    // await authService.requestVoterCode(loginForm.email);
+    // No code is requested. The sent toast still opens the code step.
     showSuccessMessage(t("auth.voterLogin.emailSent"));
     codeSent.value = true;
   } finally {
@@ -193,14 +194,15 @@ const handleLogin = async () => {
           return;
         }
       } else if (isVoterLogin.value) {
-        // Handle System 3 login (OTC)
-        // await authStore.loginVoter(loginForm.email, loginForm.code);
+        // No voter sign-in call. The warning is the whole branch.
         showWarningMessage(
           "Voter OTC login not fully implemented in backend yet.",
         );
         return;
       }
 
+      // A password login that did not need a second factor lands here.
+      // A mode that is neither that form nor voter also lands here, with no sign-in call.
       const redirectPath = (route.query.redirect as string) || "/dashboard";
       router.push(redirectPath);
     } catch (error) {

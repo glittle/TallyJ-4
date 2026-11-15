@@ -60,9 +60,11 @@ const hasPersistedPayload = ref(false);
 
 const votes = ref<VoteSlot[]>([]);
 
+/** A, B, and C. A missing process is list mode (A). */
 const selectionMode = computed(
   () => onlineVotingStore.electionInfo?.onlineSelectionProcess ?? "A",
 );
+/** Missing and 0 both become 9. */
 const numberToElect = computed(
   () => onlineVotingStore.electionInfo?.numberToElect || 9,
 );
@@ -73,9 +75,14 @@ const chosenCount = computed(() =>
 const isModeList = computed(() => selectionMode.value === "A");
 const isModeRandom = computed(() => selectionMode.value === "B");
 const isModeBoth = computed(() => selectionMode.value === "C");
+/** Only an explicit false locks the ballot. A missing status still allows a change. */
 const canChangeVote = computed(
   () => onlineVotingStore.voteStatus?.canChangeVote !== false,
 );
+/**
+ * The other-way message keeps its own text. Every other message,
+ * including none, uses the already-processed text.
+ */
 const lockedVoteStatusKey = computed(() =>
   onlineVotingStore.voteStatus?.message ===
   "voting.status.alreadyVotedAnotherWay"
@@ -88,6 +95,7 @@ const lockedVoteSubmitKey = computed(() =>
     ? "voting.submit.alreadyVotedAnotherWay"
     : "voting.submit.alreadyProcessed",
 );
+/** List or both. Random-only does not show the official list. */
 const showVotablePeopleList = computed(
   () => isModeList.value || isModeBoth.value,
 );
