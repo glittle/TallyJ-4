@@ -79,7 +79,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="createDto">The vote creation data.</param>
     /// <returns>The created vote and the ballot's current status.</returns>
-    [RequireElectionAccess(ElectionResourceKind.BodyBallotGuid)]
+    [RequireElectionAccess(ElectionResourceKind.BodyBallotGuid, GuestPaperEntry = true)]
     [HttpPost("createVote")]
     public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> CreateVote(CreateVoteDto createDto)
     {
@@ -107,7 +107,7 @@ public class VotesController : ControllerBase
     /// <param name="id">The ID of the vote to update.</param>
     /// <param name="updateDto">The updated vote data.</param>
     /// <returns>The updated vote information and the ballot's current status.</returns>
-    [RequireElectionAccess(ElectionResourceKind.VoteId)]
+    [RequireElectionAccess(ElectionResourceKind.VoteId, GuestPaperEntry = true)]
     [HttpPut("{id}/updateVote")]
     public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> UpdateVote(int id, CreateVoteDto updateDto)
     {
@@ -137,7 +137,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="reorderDto">The ballot GUID and ordered vote row IDs.</param>
     /// <returns>The updated ballot votes and status.</returns>
-    [RequireElectionAccess(ElectionResourceKind.BodyBallotGuid)]
+    [RequireElectionAccess(ElectionResourceKind.BodyBallotGuid, GuestPaperEntry = true)]
     [HttpPut("reorderVotes")]
     public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> ReorderVotes(ReorderVotesDto reorderDto)
     {
@@ -164,7 +164,7 @@ public class VotesController : ControllerBase
     /// </summary>
     /// <param name="id">The ID of the vote to delete.</param>
     /// <returns>A success response if the vote was deleted, or not found if the vote doesn't exist.</returns>
-    [RequireElectionAccess(ElectionResourceKind.VoteId)]
+    [RequireElectionAccess(ElectionResourceKind.VoteId, GuestPaperEntry = true)]
     [HttpDelete("{id}/deleteVote")]
     public async Task<ActionResult<ApiResponse<VoteWithBallotStatusDto>>> DeleteVote(int id)
     {

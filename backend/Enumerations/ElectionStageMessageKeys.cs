@@ -12,6 +12,11 @@ public static class ElectionStageMessageKeys
     public const string NotFound = "elections.stageChangeError.notFound";
     public const string ConfirmLeaveFinalized = "elections.stageChangeError.confirmLeaveFinalized";
     public const string FinalizedWriteBlocked = "elections.finalizedWriteBlocked";
+
+    /// <summary>
+    /// Guest teller tried to create or change a paper ballot or vote outside Processing Ballots.
+    /// </summary>
+    public const string GuestBallotEntryOnlyDuringProcessing = "elections.guestBallotEntryOnlyDuringProcessing";
     public const string FinalizedOnlineSubmit = "voting.submit.finalized";
     public const string AnalysisNotCompleted = "elections.stageChangeError.analysisNotCompleted";
     public const string AnalysisNotReady = "elections.stageChangeError.analysisNotReady";

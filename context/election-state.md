@@ -81,9 +81,17 @@ A guest already on Front Desk stays there when the stage becomes Processing. Gat
 
 **Rejected alternative:** make Front Desk the Processing primary landing. Enter Ballots stays the page a guest is sent to when they are on a page Processing does not allow.
 
-**Rejected alternative:** a second backend policy that allows Front Desk only in some stages. List, check-in, and the other front-desk actions, and the ballot list, stay on `ElectionAccess`. That policy already admits a guest teller for the election on the token. Stage filtering is the guest menu and route rules in `guestTellerAccess.ts`.
+Front Desk list, check-in, stats, and roll call, and ballot and vote reads, stay on `ElectionAccess` with no stage gate. A guest teller can use those in Gathering and in Processing.
 
-**Reason:** during Processing, guest tellers check people in and enter paper ballots. Enter Ballots remains the Processing counterpart to Front Desk. Tally/monitor/results stay FullTeller-only (`adminOnly`). Per-ballot `/ballots/:id/entry` routes remain allowed. Gathering stays Front Desk only.
+Guest paper-entry writes are different. A guest-teller token may create, update, delete, or reorder a ballot or vote only while the election is Processing Ballots. That includes CDN ballot import. Any other stage returns 403 `{ error: "elections.guestBallotEntryOnlyDuringProcessing" }`. Owners and admins are not subject to the check. The check is `RequireElectionAccessAttribute.GuestPaperEntry` in `RequireElectionAccessFilter`, the same filter that already resolves the election.
+
+**Rejected alternative:** leave paper entry to the guest menu. The page redirects away from `/ballots` during Gathering, but the guest token could still call createBallot and createVote.
+
+**Rejected alternative:** a stage policy on Front Desk. List and check-in stay available in Gathering and in Processing.
+
+> Superseded 2026-11: an earlier note rejected any second backend stage policy. That rejection still holds for Front Desk and for reads. It does not hold for guest paper-entry writes.
+
+**Reason:** during Processing, guest tellers check people in and enter paper ballots. During Gathering, no paper entry is done. Enter Ballots remains the Processing counterpart to Front Desk. Tally/monitor/results stay FullTeller-only (`adminOnly`). Per-ballot `/ballots/:id/entry` routes remain allowed for guests during Processing. Gathering stays Front Desk only in the menu.
 
 Implementation:
 - Rules: `guestTellerAccess.ts`
