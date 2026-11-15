@@ -492,10 +492,12 @@ public abstract class ElectionAnalyzerBase
             }
         }
 
-        // An all-Extra tie set NumToElect to the whole group. One name does
-        // not get an extra seat, so the runoff has to identify that name.
-        // A tie that already crosses into Elected counted only the elected
-        // seats, which is already smaller than the group.
+        // NumInTie equals NumToElect only when every tied name is in Extra.
+        // An elected-only tie leaves NumToElect at 0. A tie that also touches
+        // Elected or Other counted only the E or X seats, already fewer than
+        // the group. Every tied name already has an Extra position. The
+        // decrement, carried from v3, asks the runoff for one fewer than the
+        // group, which forces the group to be ordered.
         if (resultTie.NumInTie == resultTie.NumToElect)
         {
             resultTie.NumToElect--;

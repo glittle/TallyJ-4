@@ -31,16 +31,18 @@ public interface IVoteService
     Task<VoteDto?> GetVoteByIdAsync(int id);
 
     /// <summary>
-    /// Creates a new vote with the provided data.
-    /// The vote status is determined server-side based on the person's eligibility.
+    /// Creates a new vote. With a person, status follows that person's
+    /// eligibility, and the person must belong to the ballot's election.
+    /// Without a person, the vote is Spoiled with the reason code the client sent.
     /// </summary>
     /// <param name="createDto">The vote creation data.</param>
     /// <returns>The created vote data along with the ballot's current status.</returns>
     Task<VoteWithBallotStatusDto> CreateVoteAsync(CreateVoteDto createDto);
 
     /// <summary>
-    /// Updates an existing vote with the provided data.
-    /// The vote status is determined server-side based on the person's eligibility.
+    /// Updates an existing vote. With a person, status follows that person's
+    /// eligibility, and the person must belong to the ballot's election.
+    /// Without a person, the vote is Spoiled with the reason code the client sent.
     /// </summary>
     /// <param name="id">The unique identifier of the vote to update.</param>
     /// <param name="updateDto">The updated vote data.</param>

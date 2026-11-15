@@ -8,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Backend.Services;
 
 /// <summary>
-/// Names on a ballot. Status is chosen here from the person, not from the client.
-/// A person who cannot receive votes is stored as <see cref="VoteStatus.Spoiled"/>
-/// with that person's ineligible-reason code. The ballot status is refreshed
-/// after each write.
+/// Names on a ballot. With a person, status is <see cref="VoteStatus.Ok"/>,
+/// or <see cref="VoteStatus.Spoiled"/> with that person's ineligible-reason
+/// code when they cannot receive votes. Without a person, the vote is always
+/// <see cref="VoteStatus.Spoiled"/> with the reason code the client sent.
+/// The ballot status is refreshed after each write.
 /// </summary>
 public class VoteService : IVoteService
 {
@@ -81,10 +82,12 @@ public class VoteService : IVoteService
     }
 
     /// <summary>
-    /// Adds a name to a ballot. Status is <see cref="VoteStatus.Ok"/>, or
-    /// <see cref="VoteStatus.Spoiled"/> when the person cannot receive votes.
-    /// The ineligible-reason code is stored beside the status; it is not the status.
-    /// The person must belong to the ballot's election.
+    /// Adds a name to a ballot. With a person, status is <see cref="VoteStatus.Ok"/>,
+    /// or <see cref="VoteStatus.Spoiled"/> with that person's ineligible-reason
+    /// code when they cannot receive votes. That person must belong to the
+    /// ballot's election. Without a <c>PersonGuid</c>, the vote is accepted
+    /// and stored as <see cref="VoteStatus.Spoiled"/> with the reason code the
+    /// client sent, and that election check does not run.
     /// </summary>
     /// <param name="createDto">The data transfer object containing vote creation information.</param>
     /// <returns>A VoteWithBallotStatusDto containing the created vote and the ballot's current status.</returns>
@@ -162,8 +165,12 @@ public class VoteService : IVoteService
     }
 
     /// <summary>
-    /// Updates an existing vote with new information.
-    /// The vote status is determined server-side based on the person's eligibility.
+    /// Updates an existing vote. With a person, status is <see cref="VoteStatus.Ok"/>,
+    /// or <see cref="VoteStatus.Spoiled"/> with that person's ineligible-reason
+    /// code when they cannot receive votes. That person must belong to the
+    /// ballot's election. Without a <c>PersonGuid</c>, the vote is stored as
+    /// <see cref="VoteStatus.Spoiled"/> with the reason code the client sent,
+    /// and that election check does not run.
     /// </summary>
     /// <param name="id">The database row identifier of the vote to update.</param>
     /// <param name="updateDto">The data transfer object containing updated vote information.</param>

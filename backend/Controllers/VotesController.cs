@@ -75,7 +75,8 @@ public class VotesController : ControllerBase
     }
 
     /// <summary>
-    /// Creates a new vote. The vote status is determined server-side based on the person's eligibility.
+    /// Creates a new vote. With a person, status follows that person's eligibility.
+    /// Without a person, the vote is Spoiled with the reason code the client sent.
     /// </summary>
     /// <param name="createDto">The vote creation data.</param>
     /// <returns>The created vote and the ballot's current status.</returns>
@@ -102,7 +103,8 @@ public class VotesController : ControllerBase
     }
 
     /// <summary>
-    /// Updates an existing vote. The vote status is determined server-side based on the person's eligibility.
+    /// Updates an existing vote. With a person, status follows that person's eligibility.
+    /// Without a person, the vote is Spoiled with the reason code the client sent.
     /// </summary>
     /// <param name="id">The ID of the vote to update.</param>
     /// <param name="updateDto">The updated vote data.</param>
