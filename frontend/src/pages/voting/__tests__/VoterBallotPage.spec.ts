@@ -160,6 +160,31 @@ describe("VoterBallotPage silent autosave isDraft", () => {
     return wrapper;
   }
 
+  it("places the title ahead of the once-only warning in the header", async () => {
+    storeState.checkVoteStatus.mockResolvedValue({
+      hasVoted: false,
+      canChangeVote: true,
+      whenSubmitted: null,
+      priorVotes: [],
+    });
+
+    const wrapper = mount(VoterBallotPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    const header = wrapper.get(".ballot-card-header");
+    expect(header.get(".header-left").text()).toContain("Open election");
+    expect(header.get(".header-right").text()).toContain("Open Now");
+    expect(header.get(".header-right").text()).toContain(
+      "You can only vote once",
+    );
+    const markup = header.element.innerHTML;
+    expect(markup.indexOf("header-left")).toBeLessThan(
+      markup.indexOf("header-right"),
+    );
+  });
+
   it("keeps isDraft false after loading a Submitted ballot", async () => {
     storeState.checkVoteStatus.mockResolvedValue(submittedStatus());
     storeState.voteStatus = submittedStatus();
