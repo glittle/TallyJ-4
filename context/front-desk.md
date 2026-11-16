@@ -14,7 +14,7 @@ v4 already had All / Not registered / Registered radios and method/flag filters.
 ## Front Desk opens on Everyone
 
 **Status:** active  
-**Evidence:** confirmed (Glen, issue #442, 2026-11-16)  
+**Evidence:** confirmed (Glen, issue #442, 2026-11-15)  
 **Revisit when:** a teller workflow needs the first view to be only people still waiting
 
 The registration radios stay All / Not registered / Registered. When this browser has no stored choice for the election, the first view is All (Everyone). A stored choice for that election still wins. Not registered remains a filter. It is not the landing list.

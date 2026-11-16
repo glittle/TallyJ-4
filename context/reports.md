@@ -76,7 +76,7 @@ Monitor "Ballots entered" for a location is every ballot at that location, the s
 ## Presentation is a projector view
 
 **Status:** active  
-**Evidence:** confirmed (Glen, issue #442, 2026-11-16)  
+**Evidence:** confirmed (Glen, issue #442, 2026-11-15)  
 **Revisit when:** tellers need to run the presentation from inside the election sidebar
 
 The presentation page is for a projector in the room. It is full screen and does not include the teller sidebar, header chips, or other teller menus. It stays the authenticated in-app page. It is not an anonymous public results URL.

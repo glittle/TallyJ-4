@@ -176,7 +176,7 @@ v3 used “Expected to close” when the close was an estimate and “Will close
 
 These shortcuts stay on the production monitor. They are not a development-only control.
 
-**Rejected alternative:** hide Schedule close in 5 minutes, Close now, and Open for 5 minutes outside Development. Rejected — Glen, issue #442, 2026-11-16.
+**Rejected alternative:** hide Schedule close in 5 minutes, Close now, and Open for 5 minutes outside Development. Rejected — Glen, issue #442, 2026-11-15.
 
 ## Monitor: connected online voters (sessions, not names)
 

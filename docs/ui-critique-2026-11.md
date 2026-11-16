@@ -19,7 +19,7 @@ Not reached as a finished flow, and called out where it matters:
 
 [#443](https://github.com/glittle/TallyJ-4/issues/443) shipped in [#447](https://github.com/glittle/TallyJ-4/pull/447) while these shots were being taken: the `color-scheme` meta tag now follows the pinned light or dark theme. These pictures are the UI after CSS has loaded. They do not re-open that meta-tag work. Earlier contrast work in #285 (dark hairlines, link color, unselected stage chips, warning banners) is also left as settled. The contrast notes below are what still fails on top of that.
 
-## Update — 16 November 2026
+## Update — 15 November 2026
 
 `main` moved after the screenshots. This pass was rebased onto that `main`. The pictures are still the 15 November build. The notes below say what those later changes already closed.
 
@@ -163,7 +163,7 @@ Locations and tellers follow the same card-and-table pattern as details. No sepa
 
 ### Front desk
 
-The 15 November build defaulted the registration filter to `notRegistered` (`useFrontDeskVoters.ts`). On this election that count is 0 and Registered is 29, so the first view is an empty table and a keyboard hint ("Use keyboard to navigate and check in") under a box that says "No data". The warning "Teller name required" is the right kind of empty-state writing. The table is not. Glen's decision (16 November) is that the first view is Everyone. A stored per-election choice can still restore Not registered. When a filter really matches nobody, the empty copy should name that filter.
+The 15 November build defaulted the registration filter to `notRegistered` (`useFrontDeskVoters.ts`). On this election that count is 0 and Registered is 29, so the first view is an empty table and a keyboard hint ("Use keyboard to navigate and check in") under a box that says "No data". The warning "Teller name required" is the right kind of empty-state writing. The table is not. Glen's decision (15 November) is that the first view is Everyone. A stored per-election choice can still restore Not registered. When a filter really matches nobody, the empty copy should name that filter.
 
 The dev branch badge (`Branch: main`, fixed to the bottom-left corner) sits on that keyboard hint at 390px. The badge is an existing dev mark. It needs a few pixels of clearance, or the hint needs to clear it.
 
@@ -182,7 +182,7 @@ The top of the monitor (four stat cards, method counts, computers) is the layout
 Online voting is below that, easy to miss. The panel itself is clear: Open, expected close, six counts, a one-line explanation that names are hidden. Two gaps:
 
 - Six zeros, then a separate **1** "Online ballots". The 1 is not in any of the six buckets, so the row and the total disagree on a quick read.
-- **Schedule close in 5 minutes** and **Close now** have the same button weight. Close now ends voting. It should be the danger button. The 5-minute shortcuts stay in production (decided 16 November). Do not change how the window opens or closes ([#453](https://github.com/glittle/TallyJ-4/issues/453), [#470](https://github.com/glittle/TallyJ-4/issues/470)).
+- **Schedule close in 5 minutes** and **Close now** have the same button weight. Close now ends voting. It should be the danger button. The 5-minute shortcuts stay in production (decided 15 November). Do not change how the window opens or closes ([#453](https://github.com/glittle/TallyJ-4/issues/453), [#470](https://github.com/glittle/TallyJ-4/issues/470)).
 
 ![Online voting panel on the monitor, desktop, light.](ui-critique-2026-11/desktop-light-monitor-online.jpg)
 
@@ -239,22 +239,22 @@ Each row is meant to be one PR. S is a component or a token. M is one screen's l
 | 1 | Voter code result: error toast when send fails, and do not say "We've sent" in that case. Stop the toast covering the flags. | S | No |
 | 2 | Voter ballot under 600px: stack the title and the once-only warning. `VoterBallotPage.vue` only. | S | No |
 | 3 | Election header: title on its own line; Online voting and Guest tellers wrap or move to a second bar. Fixes the collision on People, Front Desk, Ballot entry, and Presentation. | M | No |
-| 4 | Front Desk opens on Everyone for a fresh browser. A stored per-election filter still wins. Empty copy names the active filter when that filter matches nobody. | S | Decided 16 Nov: Everyone first. |
+| 4 | Front Desk opens on Everyone for a fresh browser. A stored per-election filter still wins. Empty copy names the active filter when that filter matches nobody. | S | Decided 15 November: Everyone first. |
 | 5 | Dashboard columns and the phone toolbar: Status must not wrap mid-word; Create Election stays on screen; filters collapse under 768px. | M | No |
 | 6 | Contrast leftovers: sidebar version and "Election mode" off `gray-500`; darken dark `--color-stage-process` so white type clears 4.5:1; darken the landing voter button; fix the voter "Open now" tag and the pale welcome alert. | S | Landing voter colour: darker coral, or navy text on a tint? |
 | 7 | Human labels on election details (`Processing ballots`, `Normal`, full type name) and real plurals on tally/results (`1 mismatch`, `2 ballots`). Widen or shorten the "Use calculated" placeholder. | S | No |
-| 8 | Presentation is full screen for a projector: hide the teller sidebar and header. Say the tally has not been run instead of `0 ballots`. Banner colour for `Final` / `In Progress` already shipped in #460 / #462. | M | Decided 16 Nov: projector, no teller menus. |
+| 8 | Presentation is full screen for a projector: hide the teller sidebar and header. Say the tally has not been run instead of `0 ballots`. Banner colour for `Final` / `In Progress` already shipped in #460 / #462. | M | Decided 15 November: projector, no teller menus. |
 | 9 | People actions: move "Delete all people" out of the send row into a separate danger menu. | S | No |
 | 10 | Ballot entry: one teller-at-keyboard control, not the toolbar pair plus the Teller 1 / Teller 2 grid. On a phone, show names already entered before the search. | S | Which teller control stays, the toolbar or the grid? |
 | 11 | Tie page: hide Save when there is nothing to save, and say that ties appear after a tally. Reports: select a default report or make the list obviously clickable. | S | No |
 | 12 | Public flags: use the compact language selector under 600px so landing, sign-in, and the ballot are not led by two rows of flags. | S | No. The full flag box can stay on the desktop landing. |
-| 13 | Monitor online panel: explain the "1 online ballots" figure against the six zeros. Make Close now a danger button. Leave the 5-minute shortcuts, and do not edit the online-voting window (#453, #470). | S | Decided 16 Nov: the shortcuts stay in production. |
+| 13 | Monitor online panel: explain the "1 online ballots" figure against the six zeros. Make Close now a danger button. Leave the 5-minute shortcuts, and do not edit the online-voting window (#453, #470). | S | Decided 15 November: the shortcuts stay in production. |
 | 14 | Sidebar: stage radios stay the switch; accordions show the current stage's pages, with other stages collapsed. | M | Confirm the radios are the stage change and the accordions are only navigation. |
 | 15 | axe roles: menu parent for stage links, names on people checkboxes, account button name matches the email, voter search `aria-controls` only when the list exists. | M | No |
 | 16 | Dark empty illustration: the open-box graphic on Front Desk and Tie management stays white on navy. Recolour or use a token-coloured empty state. | S | No |
 | 17 | Officer sign-in link styles (forgot password vs register) and a few pixels so Login is not on the phone fold. Landing: one link style on the status document, and put that string in the English catalog. | S | No |
 
-Suggested order, after the 16 November decisions and the slices already shipped:
+Suggested order, after the 15 November decisions and the slices already shipped:
 
 1. Voter code copy (slice 1). Sharpest bug. No product question left.
 2. Voter ballot under 600px (slice 2).
