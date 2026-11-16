@@ -7,7 +7,7 @@
 **Source:** issue #193; v4 `CreateElectionAsync` / `JoinElectionUser` ownership; v3 `ElectionHelper.Copy` (commented; guest tellers denied; SQL `CloneElection`)  
 **Revisit when:** copy scope needs ballots
 
-`POST /api/Elections/{guid}/duplicateElection` creates a new election from one the caller already owns. The copy gets a new `ElectionGuid`, `ShowAsTest = true`, stage `SettingUp`, and the same ownership row create uses (`JoinElectionUser` Role `Admin`). People and locations are copied with new GUIDs. Person phones go through `EnsureOnlineVotersForPhonesAsync` (same helper as person create/import). Ballots, results, computers, tellers, online votes (`OnlineVotingInfo`), SMS logs, and analysis rows are not copied. Check-in / envelope / teller-name / `HasOnlineBallot` fields on people are cleared. Teller access (`ListedForPublicAsOf`) starts closed. The online window starts closed: `OnlineWhenOpen` / `OnlineWhenClose` are cleared and `UseOnlineVoting` is false. `GetAvailableElectionsAsync` does not filter `ShowAsTest` and treats `UseOnlineVoting` plus a null window as open, so leaving those copied would list the test copy to the same phone/email/kiosk voters. A teller can turn online voting back on and set a window.
+`POST /api/Elections/{guid}/duplicateElection` creates a new election from one the caller already owns. The copy gets a new `ElectionGuid`, `ShowAsTest = true`, stage `SettingUp`, and the same ownership row create uses (`JoinElectionUser` Role `Admin`). People and locations are copied with new GUIDs. Person phones go through `EnsureOnlineVotersForPhonesAsync` (same helper as person create/import). Ballots, results, computers, tellers, online votes (`OnlineVotingInfo`), SMS logs, and analysis rows are not copied. Check-in / envelope / teller-name / `HasOnlineBallot` fields on people are cleared. Teller access (`ListedForPublicAsOf`) starts closed. The online window starts closed: `OnlineWhenOpen` / `OnlineWhenClose` are cleared and `UseOnlineVoting` is false. `GetAvailableElectionsAsync` does not filter `ShowAsTest`. An unset open time is not open, so null dates alone would not list the copy. `UseOnlineVoting` is still cleared so the test copy does not start with online voting turned on. A teller can turn online voting back on and set a window.
 
 **Rejected alternative:** map the source into `CreateElectionDto` and call `CreateElectionAsync`. That DTO does not carry every persisted setting, so it would be a second, lossy create path. Duplicate assigns settings explicitly and only reuses the create ownership join.
 
@@ -15,7 +15,7 @@
 
 **Rejected alternative:** add a new `IsTest` column. `Election.ShowAsTest` already exists (dashboard TEST badge, create/update DTOs, teller banner, test-only reset, v3 `IsTest`).
 
-**Rejected alternative:** copy `UseOnlineVoting` and only null the window dates. Availability treats a null window as already open when `UseOnlineVoting` is true, so the copy would still appear to voters.
+**Rejected alternative:** copy `UseOnlineVoting` and only null the window dates. That leaves online voting switched on for a practice election. Before 2026-11-16 a null window with the flag on was already open, so the copy would also have appeared to voters.
 
 ## Teller pages show a persistent Test Election banner
 
@@ -60,7 +60,7 @@ Deleted rows match what duplicate does not copy: votes, ballots, results, result
 
 Stage returns to `SettingUp`. A newly duplicated test copy starts there, and a reset is meant to be a fresh practice run. Leaving Finalized or ProcessingBallots with no ballots would be a half-reset. This bypasses `ChangeElectionStageAsync` (no leave-Finalized confirmation) because reset is its own high-consequence operation with an explicit confirm in the UI.
 
-The online window is closed the same way as a new test copy: `UseOnlineVoting = false` and `OnlineWhenOpen` / `OnlineWhenClose` cleared. `GetAvailableElectionsAsync` treats `UseOnlineVoting` plus a null window as open, so keeping the flag and only nulling dates would list the practice election to voters. AllVoters get `updateVoters` when the window **or** `UseOnlineVoting` changes so they re-fetch availability — flipping the flag with an already-null window is still a close. Guest teller access (`ListedForPublicAsOf`) is closed; if it was open, the public list update and guest close-out run. FrontDesk clients get `reloadPage`.
+The online window is closed the same way as a new test copy: `UseOnlineVoting = false` and `OnlineWhenOpen` / `OnlineWhenClose` cleared. An unset open time is not open. The flag is still cleared so the practice election does not keep online voting turned on. AllVoters get `updateVoters` when the window **or** `UseOnlineVoting` changes so they re-fetch availability — flipping the flag with an already-null window still notifies, because the flag itself is what turned voting off. Guest teller access (`ListedForPublicAsOf`) is closed; if it was open, the public list update and guest close-out run. FrontDesk clients get `reloadPage`.
 
 Auth matches duplicate: `FullTellerAccess` plus a service-side Owner/Admin join check. Guest tellers cannot reset. SuperAdmin / global Admin is not given a bypass they do not already have on this route (a global Admin without an Owner/Admin join is 403).
 

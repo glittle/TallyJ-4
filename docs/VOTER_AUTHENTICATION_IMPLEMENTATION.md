@@ -225,7 +225,7 @@ POST /api/online-voting/{electionGuid}/submitBallot
 
 4. **Database Validation**
    - Checks voter registration in Person table
-   - Validates election is currently open (OnlineWhenOpen <= now <= OnlineWhenClose)
+   - Validates election is currently open (online voting on, open time set and reached, close unset or still ahead; the close instant is closed)
    - Prevents duplicate voting (HasOnlineBallot flag)
 
 ### Testing

@@ -117,7 +117,7 @@ Online voters use two authenticated hubs (policy `OnlineVoter` — JWT claims `v
 
 **Producers** (via `ISignalRNotificationService` only — hubs are join/leave):
 
-- Online window/process change (`ElectionService` → `SendOnlineElectionUpdateAsync`) → FrontDesk **and** AllVoters. `ResetElectionAsync` also notifies when `UseOnlineVoting` flips (a null window plus that flag is already open).
+- Online window/process change (`ElectionService` → `SendOnlineElectionUpdateAsync`) → FrontDesk **and** AllVoters. `ResetElectionAsync` also notifies when `UseOnlineVoting` flips (an unset open time is not open; the flag flip still notifies).
 - Front desk check-in / unregister / envelope (`FrontDeskService`) → personal `updateVoter` with `updateRegistration` to email, phone, and kiosk groups when present.
 - Successful online voter auth (`OnlineVotingService`) → personal `updateVoter` with `login: true` (other browsers for that id).
 

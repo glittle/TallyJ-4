@@ -54,6 +54,15 @@ Paper ballots entered by tellers, imported ballots, and the tally's Too Few spoi
 
 **Reason:** a short online ballot was accepted with no warning and later spoiled. The voter has to fill every slot before submit, and the API enforces the same rule.
 
+## One online voting window
+
+**Status:** active  
+**Evidence:** confirmed (issue #453; Glen approved the proposed fix on 2026-11-15)
+
+Every voter path uses `OnlineVotingWindow`: Google, Facebook, Kakao, and Telegram sign-in, email and phone login-code request and verify, kiosk code verify, ballot submit, and the available-elections list. Online voting is on, the open time is set and has been reached, and the close time is unset or still ahead. The exact close instant is closed. An unset open time is not open. Telegram sign-in applies that rule to the elections that list the Telegram id (email, phone, or kiosk code), not to whichever election happens to be open. Kiosk code verify drops flagged elections and elections with no approved owner or co-admin when one is rejected, the same filter a login-code request uses.
+
+**Rejected alternative:** keep three clocks. External sign-in required both ends and treated the close instant as still open. Login-code and kiosk required a set open time and treated a missing close as open. Submit and the available-elections list treated a missing open time as open. A voter could sign in on one path and be refused on submit, or keep submitting after the open time was cleared.
+
 ## Accept-all of pending online ballots
 
 **Status:** active  
@@ -61,7 +70,9 @@ Paper ballots entered by tellers, imported ballots, and the tally's Too Few spoi
 
 A voter submit stores a pending payload on `OnlineVotingInfo` (status `Submitted`). It does not create a regular `Ballot`. Submit (create or update a pending online ballot) is refused while the election is Finalized (`voting.submit.finalized`), even if the online window is still open. Window-based open/close still applies when the election is not Finalized.
 
-Advancing **to** Finalized is refused while that same window is currently open (`elections.stageChangeError.onlineVotingStillOpen`). Close the window first; Finalize does not close it. `UseOnlineVoting` plus a null open/close is treated as open (same as submit / available-elections).
+Advancing **to** Finalized is refused while that same window is currently open (`elections.stageChangeError.onlineVotingStillOpen`). Close the window first; Finalize does not close it. The window is open only when online voting is on, the open time is set and has been reached, and the close time is unset or still ahead. The exact close instant is closed. An unset open time is not open.
+
+> Superseded 2026-11-16: a null open and close used to count as open. See "One online voting window" above.
 
 A logged-in teller may Accept-all current pending online ballots while the online voting window is still open, and may do so more than once. Each run only accepts rows that are `Submitted` or already `Processing` at that moment.
 

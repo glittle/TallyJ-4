@@ -12,12 +12,22 @@ describe("onlineVotingCloseCountdown", () => {
   const now = new Date("2026-03-10T12:00:00.000Z");
   const open = new Date("2026-03-10T10:00:00.000Z");
 
-  it("treats missing both dates as closed", () => {
+  it("treats a missing open time as closed", () => {
     expect(isOnlineVotingWindowOpen(null, null, now)).toBe(false);
+    expect(
+      isOnlineVotingWindowOpen(null, new Date("2026-03-10T14:00:00.000Z"), now),
+    ).toBe(false);
     const view = getOnlineVotingCloseCountdown(null, null, now);
     expect(view.hasCloseTime).toBe(false);
     expect(view.isWindowOpen).toBe(false);
     expect(view.isClosingSoon).toBe(false);
+  });
+
+  it("is closed at the exact close instant", () => {
+    const view = getOnlineVotingCloseCountdown(open, now, now);
+    expect(view.isWindowOpen).toBe(false);
+    expect(view.isClosed).toBe(true);
+    expect(isOnlineVotingWindowOpen(open, now, now)).toBe(false);
   });
 
   it("is open when close is in the future", () => {

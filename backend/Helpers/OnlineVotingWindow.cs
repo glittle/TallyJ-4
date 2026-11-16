@@ -1,14 +1,14 @@
+using Backend.Entities;
+using Microsoft.EntityFrameworkCore;
+
 namespace Backend.Helpers;
 
 /// <summary>
-/// Submit calls this. <c>UseOnlineVoting</c> must be on. A null open or
-/// close does not close the window, and the close instant is closed.
-/// Available-elections copies that clock and also hides flagged elections
-/// and elections with no approved owner or co-admin when one is rejected.
-/// Login-code and kiosk sign-in
-/// require open to be set. External
-/// sign-in requires both ends and still treats the close instant as open.
-/// Those three do not call this.
+/// The only online-voting window check. Online voting must be on, the open
+/// time must be set and already reached, and the close time must be unset or
+/// still ahead. The exact close instant is closed. An unset open time is not
+/// open. Sign-in, login-code request and verify, kiosk codes, ballot submit,
+/// and the available-elections list all use this.
 /// </summary>
 public static class OnlineVotingWindow
 {
@@ -18,13 +18,13 @@ public static class OnlineVotingWindow
         DateTimeOffset? onlineWhenClose,
         DateTimeOffset? now = null)
     {
-        if (!useOnlineVoting)
+        if (!useOnlineVoting || onlineWhenOpen == null)
         {
             return false;
         }
 
         var at = now ?? DateTimeOffset.UtcNow;
-        if (onlineWhenOpen != null && onlineWhenOpen > at)
+        if (onlineWhenOpen > at)
         {
             return false;
         }
@@ -35,5 +35,36 @@ public static class OnlineVotingWindow
         }
 
         return true;
+    }
+
+    /// <summary>
+    /// Election ids from <paramref name="elections"/> that
+    /// <see cref="IsCurrentlyOpen"/> accepts at <paramref name="now"/>.
+    /// The predicate is applied after the rows are loaded so every caller
+    /// uses that method and not a second copy of the clock.
+    /// </summary>
+    public static async Task<List<Guid>> SelectOpenElectionIdsAsync(
+        IQueryable<Election> elections,
+        DateTimeOffset now,
+        CancellationToken cancellationToken = default)
+    {
+        var rows = await elections
+            .Select(election => new
+            {
+                election.ElectionGuid,
+                election.UseOnlineVoting,
+                election.OnlineWhenOpen,
+                election.OnlineWhenClose
+            })
+            .ToListAsync(cancellationToken);
+
+        return rows
+            .Where(row => IsCurrentlyOpen(
+                row.UseOnlineVoting,
+                row.OnlineWhenOpen,
+                row.OnlineWhenClose,
+                now))
+            .Select(row => row.ElectionGuid)
+            .ToList();
     }
 }

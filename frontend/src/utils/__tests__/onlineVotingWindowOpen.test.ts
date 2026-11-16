@@ -17,10 +17,33 @@ describe("isOnlineVotingCurrentlyOpen", () => {
     ).toBe(false);
   });
 
-  it("treats UseOnlineVoting plus a null window as open", () => {
+  it("treats a missing open time as closed", () => {
     expect(
       isOnlineVotingCurrentlyOpen(
         { useOnlineVoting: true, onlineWhenOpen: null, onlineWhenClose: null },
+        now,
+      ),
+    ).toBe(false);
+    expect(
+      isOnlineVotingCurrentlyOpen(
+        {
+          useOnlineVoting: true,
+          onlineWhenOpen: null,
+          onlineWhenClose: "2026-09-09T13:00:00.000Z",
+        },
+        now,
+      ),
+    ).toBe(false);
+  });
+
+  it("is open when only the open time is set and has been reached", () => {
+    expect(
+      isOnlineVotingCurrentlyOpen(
+        {
+          useOnlineVoting: true,
+          onlineWhenOpen: "2026-09-09T11:00:00.000Z",
+          onlineWhenClose: null,
+        },
         now,
       ),
     ).toBe(true);

@@ -61,18 +61,11 @@ public partial class OnlineVotingService
                 }
             }
 
-            // Login-code clock: UseOnlineVoting, open is set and not in the future,
-            // close is unset or still ahead. The close instant is already closed.
-            // A null open is not open. Flagged elections, and elections with no
-            // approved owner or co-admin when one is rejected, are removed next.
-            // This is not OnlineVotingWindow, and not the external sign-in clock.
+            // Same window as submit and every sign-in path. Flagged elections,
+            // and elections with no approved owner or co-admin when one is
+            // rejected, are removed next.
             var now = DateTimeOffset.UtcNow;
-            var openElections = await _context.Elections
-                .Where(e => e.UseOnlineVoting &&
-                           e.OnlineWhenOpen != null && e.OnlineWhenOpen <= now &&
-                           (e.OnlineWhenClose == null || e.OnlineWhenClose > now))
-                .Select(e => e.ElectionGuid)
-                .ToListAsync();
+            var openElections = await OnlineVotingWindow.SelectOpenElectionIdsAsync(_context.Elections, now);
             openElections = await ExceptFlaggedElectionsAsync(openElections);
 
             if (!openElections.Any())
@@ -269,7 +262,7 @@ public partial class OnlineVotingService
                 return (false, VoterVerifyError.InvalidCodeWithAttempts(remaining), null);
             }
 
-            if (await VoterOpenElectionsAreAllFlaggedAsync(onlineVoter.VoterId, onlineVoter.VoterIdType))
+            if (await VoterHasNoOpenElectionAsync(onlineVoter.VoterId, onlineVoter.VoterIdType))
             {
                 return (false, "voting.auth.noOpenElections", null);
             }
@@ -392,15 +385,10 @@ public partial class OnlineVotingService
         var normalizedCode = NormalizeVoterCode(code);
         var now = DateTimeOffset.UtcNow;
 
-        // Same clock as a login code: open must be set, a null close stays
-        // open, and the close instant is already closed. This lookup does
-        // not drop flagged elections or rejected-owner elections.
-        var openElectionGuids = await _context.Elections
-            .Where(e => e.UseOnlineVoting &&
-                        e.OnlineWhenOpen != null && e.OnlineWhenOpen <= now &&
-                        (e.OnlineWhenClose == null || e.OnlineWhenClose > now))
-            .Select(e => e.ElectionGuid)
-            .ToListAsync();
+        // Same window as a login-code request, including the flagged and
+        // rejected-owner filter that request applies before it looks up a person.
+        var openElectionGuids = await OnlineVotingWindow.SelectOpenElectionIdsAsync(_context.Elections, now);
+        openElectionGuids = await ExceptFlaggedElectionsAsync(openElectionGuids);
 
         if (!openElectionGuids.Any())
         {
@@ -589,41 +577,37 @@ public partial class OnlineVotingService
     }
 
     /// <summary>
-    /// True when this voter matches at least one election on the login-code
-    /// clock and <see cref="ExceptFlaggedElectionsAsync"/> removes every one
-    /// of them. That removal is a flagged election, or an election with no
-    /// approved owner or co-admin when one is rejected. Email matches
-    /// <c>Person.Email</c>. Phone matches <c>Person.Phone</c>. Any other
-    /// type, including a kiosk code, returns false.
+    /// True when this email or phone is listed on at least one election and
+    /// none of those elections are currently open after
+    /// <see cref="ExceptFlaggedElectionsAsync"/>. That includes a closed
+    /// window, an unset open time, a flagged election, and an election with
+    /// no approved owner or co-admin when one is rejected. A voter id that
+    /// matches no person returns false, so this check does not invent a
+    /// not-listed result. Any other type, including a kiosk code, returns false.
     /// </summary>
-    private async Task<bool> VoterOpenElectionsAreAllFlaggedAsync(string voterId, string? voterIdType)
+    private async Task<bool> VoterHasNoOpenElectionAsync(string voterId, string? voterIdType)
     {
-        if (voterIdType is not ("E" or "P"))
+        if (voterIdType is not (EmailVoterIdType or OnlineVoterPhoneHelper.PhoneVoterIdType))
         {
             return false;
         }
 
         var now = DateTimeOffset.UtcNow;
-        var people = voterIdType == "E"
+        var people = voterIdType == EmailVoterIdType
             ? _context.People.Where(person => person.Email == voterId)
             : _context.People.Where(person => person.Phone == voterId);
-        var openIds = await people
-            .Join(
-                _context.Elections.Where(election =>
-                    election.UseOnlineVoting
-                    && election.OnlineWhenOpen != null
-                    && election.OnlineWhenOpen <= now
-                    && (election.OnlineWhenClose == null || election.OnlineWhenClose > now)),
-                person => person.ElectionGuid,
-                election => election.ElectionGuid,
-                (person, election) => election.ElectionGuid)
+        var listedIds = await people
+            .Select(person => person.ElectionGuid)
             .Distinct()
             .ToListAsync();
-        if (openIds.Count == 0)
+        if (listedIds.Count == 0)
         {
             return false;
         }
 
+        var openIds = await OnlineVotingWindow.SelectOpenElectionIdsAsync(
+            _context.Elections.Where(election => listedIds.Contains(election.ElectionGuid)),
+            now);
         var stillOpen = await ExceptFlaggedElectionsAsync(openIds);
         return stillOpen.Count == 0;
     }
