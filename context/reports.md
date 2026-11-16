@@ -73,6 +73,18 @@ Monitor "Ballots entered" for a location is every ballot at that location, the s
 
 **Rejected alternative:** count only Ok ballots on the presentation screen. Rejected — a Too Few ballot was still received, and the screen then showed 1 ballot for an election that received 3.
 
+## Presentation is a projector view
+
+**Status:** active  
+**Evidence:** confirmed (Glen, issue #442, 2026-11-16)  
+**Revisit when:** tellers need to run the presentation from inside the election sidebar
+
+The presentation page is for a projector in the room. It is full screen and does not include the teller sidebar, header chips, or other teller menus. It stays the authenticated in-app page. It is not an anonymous public results URL.
+
+The page still renders inside the teller shell until that layout slice lands. Banner colour for the server statuses `Final` and `In Progress` already shipped (#460). A pre-tally screen should not show a zero ballot count that disagrees with the monitor.
+
+**Rejected alternative:** keep the teller chrome so the operator can change pages without leaving presentation. Rejected — the audience is the room, and the menus compete with the result.
+
 ## Ballot-report counts follow the Oth tally, not Convention/NSA
 
 **Status:** active  
