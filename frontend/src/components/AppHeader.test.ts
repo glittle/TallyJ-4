@@ -53,6 +53,12 @@ describe("AppHeader", () => {
           name: "Profile",
           component: { template: "<div />" },
         },
+        {
+          path: "/elections/:id/ballots",
+          name: "Ballots",
+          component: { template: "<div />" },
+          meta: { titleKey: "ballots.management" },
+        },
       ],
     });
   });
@@ -99,6 +105,24 @@ describe("AppHeader", () => {
     });
 
     expect(wrapper.text()).toContain("Elections");
+  });
+
+  it("places status chips on a row after the title bar", async () => {
+    await router.push("/elections/abc/ballots");
+    await router.isReady();
+
+    const wrapper = mount(AppHeader, {
+      global: {
+        plugins: [pinia, router, i18n],
+      },
+    });
+
+    expect(wrapper.find(".header-bar .page-title").exists()).toBe(true);
+    expect(wrapper.find(".header-status .page-title").exists()).toBe(false);
+    const html = wrapper.html();
+    expect(html.indexOf("header-status")).toBeGreaterThan(
+      html.indexOf("header-bar"),
+    );
   });
 
   it("handles logout command correctly", async () => {

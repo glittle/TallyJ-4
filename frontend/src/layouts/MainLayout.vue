@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { useGuestTellerStageRedirect } from "@/composables/useGuestTellerStageRedirect";
 import { useResponsive } from "@/composables/useResponsive";
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, onUnmounted, ref, watch } from "vue";
+import type { ComponentPublicInstance } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 import AppHeader from "../components/AppHeader.vue";
@@ -17,6 +18,9 @@ const { t } = useI18n();
 const SIDEBAR_DOCKED_WIDTH = "300px";
 
 const mobileSidebarOpen = ref(false);
+const mainHeader = ref<ComponentPublicInstance | HTMLElement | null>(null);
+const headerOffsetPx = ref(0);
+let headerObserver: ResizeObserver | undefined;
 const route = useRoute();
 const electionStore = useElectionStore();
 const navUiStore = useNavUiStore();
@@ -64,10 +68,44 @@ watch(sidebarOverlayMode, (overlay) => {
   }
 });
 
+function readHeaderElement(): HTMLElement | null {
+  const target = mainHeader.value;
+  if (target instanceof HTMLElement) {
+    return target;
+  }
+  if (target && "$el" in target && target.$el instanceof HTMLElement) {
+    return target.$el;
+  }
+  return null;
+}
+
+function syncHeaderOffset() {
+  const el = readHeaderElement();
+  headerOffsetPx.value = el ? Math.ceil(el.getBoundingClientRect().height) : 0;
+}
+
+const headerOffsetStyle = computed(() =>
+  headerOffsetPx.value > 0
+    ? { "--app-header-offset": `${headerOffsetPx.value}px` }
+    : undefined,
+);
+
 onMounted(async () => {
+  syncHeaderOffset();
+  const el = readHeaderElement();
+  if (el && typeof ResizeObserver !== "undefined") {
+    headerObserver = new ResizeObserver(() => {
+      syncHeaderOffset();
+    });
+    headerObserver.observe(el);
+  }
   if (!route.params.id) {
     await electionStore.ensureActiveElectionHubConnection();
   }
+});
+
+onUnmounted(() => {
+  headerObserver?.disconnect();
 });
 
 function toggleMobileSidebar() {
@@ -96,6 +134,7 @@ function dockSidebar() {
       'front-desk-layout': isFrontDeskLayout,
       'sidebar-overlay-mode': sidebarOverlayMode,
     }"
+    :style="headerOffsetStyle"
   >
     <!-- Skip link for keyboard navigation -->
     <a href="#main-content" class="skip-link">{{
@@ -125,15 +164,15 @@ function dockSidebar() {
       />
     </el-aside>
     <el-container direction="vertical">
-      <el-header height="60px" role="banner">
+      <el-header ref="mainHeader" height="auto" role="banner">
         <AppHeader
           :show-menu-button="sidebarOverlayMode"
           :menu-open="mobileSidebarOpen"
           @toggle-mobile-menu="toggleMobileSidebar"
         />
       </el-header>
-      <!-- Below the fixed-height header (60px / Front Desk 48px) so the
-           strip is not clipped. Hidden unless the route election is a test. -->
+      <!-- Below the header, which grows when status chips wrap. Hidden
+           unless the route election is a test. -->
       <OwnerRestrictionBanner />
       <TestElectionBanner />
       <el-main id="main-content" role="main" tabindex="-1">
@@ -193,7 +232,9 @@ function dockSidebar() {
     -webkit-backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
-    padding: 0 20px;
+    min-height: 60px;
+    height: auto;
+    padding: 8px 20px;
   }
 
   .el-main {
@@ -208,9 +249,9 @@ function dockSidebar() {
     .sidebar {
       width: var(--sidebar-drawer-width) !important;
       position: fixed;
-      top: 60px;
+      top: var(--app-header-offset, 60px);
       left: 0;
-      height: calc(100vh - 60px);
+      height: calc(100vh - var(--app-header-offset, 60px));
       transform: translateX(-100%);
       transition: transform 0.3s ease;
       z-index: 1001;
@@ -230,7 +271,7 @@ function dockSidebar() {
 
     .el-header {
       min-height: 48px;
-      height: 48px !important;
+      height: auto;
       background: var(--color-frontdesk-toolbar-bg);
       border-bottom: 1px solid var(--color-frontdesk-toolbar-border);
     }
@@ -241,8 +282,8 @@ function dockSidebar() {
     }
 
     &.sidebar-overlay-mode .sidebar {
-      top: 48px;
-      height: calc(100vh - 48px);
+      top: var(--app-header-offset, 48px);
+      height: calc(100vh - var(--app-header-offset, 48px));
     }
   }
 }
