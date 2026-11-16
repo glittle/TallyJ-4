@@ -404,5 +404,20 @@ describe("StageGroupedSidebarMenu", () => {
         expect(wrapper.emitted("close-mobile-sidebar")).toBeTruthy();
       }
     });
+
+    it("uses links instead of menuitems", () => {
+      const wrapper = mountMenu({
+        isGuestTeller: false,
+        currentStage: "SettingUp",
+      });
+      const pages = wrapper.findAll(".stage-group__page");
+      expect(pages.length).toBeGreaterThan(0);
+      for (const page of pages) {
+        expect(page.element.tagName).toBe("A");
+        expect(page.attributes("role")).toBeUndefined();
+        expect(page.attributes("href")).toBeTruthy();
+      }
+      expect(wrapper.find("[role='menuitem']").exists()).toBe(false);
+    });
   });
 });

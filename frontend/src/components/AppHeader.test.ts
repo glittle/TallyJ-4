@@ -163,4 +163,19 @@ describe("AppHeader", () => {
 
     expect(mockRouterPush).toHaveBeenCalledWith("/profile");
   });
+
+  it("names the account button with the visible email", () => {
+    const wrapper = mount(AppHeader, {
+      global: {
+        plugins: [pinia, router, i18n],
+      },
+    });
+    const button = wrapper.get("button.user-dropdown");
+    expect(button.attributes("aria-label")).toBeUndefined();
+    expect(button.text()).toContain("test@example.com");
+    expect(button.text()).not.toContain("User account menu");
+    expect(wrapper.get("nav.header-right").attributes("aria-label")).toBe(
+      "User account menu",
+    );
+  });
 });

@@ -102,11 +102,12 @@ function toggleMobileMenu() {
         <ThemeSelector />
         <LanguageSelector />
         <el-dropdown trigger="click" @command="handleCommand">
+          <!-- The dropdown trigger owns aria-describedby, so the visible email is the name. -->
           <button
             class="user-dropdown"
+            type="button"
             aria-haspopup="menu"
             :aria-expanded="false"
-            :aria-label="t('common.userMenu')"
           >
             <span class="username">{{
               currentUser?.name || currentUser?.email || t("common.user")

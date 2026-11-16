@@ -13,6 +13,7 @@ import {
   ElInput,
   ElTag,
 } from "element-plus";
+import { syncAutocompleteAriaControls } from "@/utils/syncAutocompleteAriaControls";
 import { computed, onMounted, onUnmounted, ref, watch } from "vue";
 import { resolveUserFacingApiError } from "../../utils/errorHandler";
 import { useI18n } from "vue-i18n";
@@ -128,6 +129,30 @@ const allVotablePersonOptions = computed(() => {
   return [...official, ...pool];
 });
 
+const ballotPageRoot = ref<HTMLElement | null>(null);
+let ballotAriaObserver: MutationObserver | null = null;
+
+onMounted(() => {
+  const sync = () => {
+    if (ballotPageRoot.value) {
+      syncAutocompleteAriaControls(ballotPageRoot.value);
+    }
+  };
+  sync();
+  ballotAriaObserver = new MutationObserver(sync);
+  ballotAriaObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+  if (ballotPageRoot.value) {
+    ballotAriaObserver.observe(ballotPageRoot.value, {
+      attributes: true,
+      subtree: true,
+      attributeFilter: ["aria-controls", "aria-activedescendant"],
+    });
+  }
+});
+
 onMounted(async () => {
   pageUnmounted = false;
   loading.value = true;
@@ -226,6 +251,8 @@ async function connectBallotPresence(id: string): Promise<void> {
 }
 
 onUnmounted(async () => {
+  ballotAriaObserver?.disconnect();
+  ballotAriaObserver = null;
   pageUnmounted = true;
   runAutosave.flush();
   await ballotPresence;
@@ -462,7 +489,7 @@ function backToElections() {
 </script>
 
 <template>
-  <div class="voter-ballot-page">
+  <div ref="ballotPageRoot" class="voter-ballot-page">
     <div class="ballot-container">
       <ElCard v-if="loading">
         <div class="loading-text">{{ $t("voting.ballot.loading") }}</div>
