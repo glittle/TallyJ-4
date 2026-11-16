@@ -1,5 +1,6 @@
 <template>
   <div class="presentation-view">
+    <p class="sr-only">{{ $t("presentation.exitHint") }}</p>
     <div class="presentation-header">
       <h1 class="election-title">
         {{
@@ -16,18 +17,24 @@
               count: presentationData.numToElect,
             })
           }}
-          |
-          {{
-            $t("presentation.totalBallots", {
-              count: presentationData.totalBallots,
-            })
-          }}
-          |
-          {{
-            $t("presentation.totalVotes", {
-              count: presentationData.totalVotes,
-            })
-          }}
+          <template v-if="tallyNotRun(presentationData.status)">
+            |
+            {{ $t("presentation.tallyNotRun") }}
+          </template>
+          <template v-else>
+            |
+            {{
+              $t("presentation.totalBallots", {
+                count: presentationData.totalBallots,
+              })
+            }}
+            |
+            {{
+              $t("presentation.totalVotes", {
+                count: presentationData.totalVotes,
+              })
+            }}
+          </template>
         </span>
       </div>
     </div>
@@ -52,7 +59,13 @@
       </div>
 
       <!-- Elected -->
-      <div class="results-section">
+      <div
+        v-if="
+          presentationData.electedPeople.length > 0 ||
+          !tallyNotRun(presentationData.status)
+        "
+        class="results-section"
+      >
         <h2 class="section-title elected-title">
           {{ $t("presentation.electedPeople") }}
         </h2>
@@ -173,13 +186,14 @@
 <script setup lang="ts">
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { Check, Clock, Loading, Warning } from "@element-plus/icons-vue";
-import { onMounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useResultStore } from "../../stores/resultStore";
 import type { PresentationDto } from "../../types";
 
 const route = useRoute();
+const router = useRouter();
 const { t } = useI18n();
 const resultStore = useResultStore();
 const { handleApiError } = useApiErrorHandler();
@@ -188,8 +202,50 @@ const electionGuid = route.params.id as string;
 const presentationData = ref<PresentationDto | null>(null);
 const loading = ref(false);
 
+/**
+ * Escape leaves for the results page. The same key exits browser
+ * fullscreen, and some browsers then dispatch Escape again. Ignore
+ * that press and the duplicate that follows it.
+ */
+const FULLSCREEN_ESCAPE_SUPPRESS_MS = 100;
+let ignoreEscapeUntil = 0;
+
+function markFullscreenEscape() {
+  ignoreEscapeUntil = Date.now() + FULLSCREEN_ESCAPE_SUPPRESS_MS;
+}
+
+function onPresentationKeydown(event: KeyboardEvent) {
+  if (event.key !== "Escape" || event.repeat) {
+    return;
+  }
+  if (document.fullscreenElement) {
+    markFullscreenEscape();
+    return;
+  }
+  if (Date.now() < ignoreEscapeUntil) {
+    return;
+  }
+  void router.push(`/elections/${electionGuid}/results`);
+}
+
+function onPresentationFullscreenChange() {
+  if (!document.fullscreenElement) {
+    markFullscreenEscape();
+  }
+}
+
 onMounted(async () => {
+  window.addEventListener("keydown", onPresentationKeydown);
+  document.addEventListener("fullscreenchange", onPresentationFullscreenChange);
   await loadPresentationData();
+});
+
+onUnmounted(() => {
+  window.removeEventListener("keydown", onPresentationKeydown);
+  document.removeEventListener(
+    "fullscreenchange",
+    onPresentationFullscreenChange,
+  );
 });
 
 async function loadPresentationData() {
@@ -249,6 +305,11 @@ function presentationBannerStatus(
     default:
       return null;
   }
+}
+
+/** No result summary: the server status is In Progress, and the counts are zeros. */
+function tallyNotRun(status: string) {
+  return presentationBannerStatus(status) === "progress";
 }
 
 function getStatusClass(status: string) {

@@ -313,7 +313,7 @@ const routes = [
 
         component: () => import("../pages/results/PresentationViewPage.vue"),
 
-        meta: { titleKey: "results.presentation" },
+        meta: { titleKey: "results.presentation", projector: true },
       },
 
       {

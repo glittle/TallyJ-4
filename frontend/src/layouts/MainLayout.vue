@@ -31,6 +31,9 @@ useGuestTellerStageRedirect();
 
 const isFrontDeskLayout = computed(() => route.path.includes("/frontdesk"));
 
+/** Presentation fills the screen. The teller shell stays off that route. */
+const isProjector = computed(() => route.meta.projector === true);
+
 /** Overlay (hamburger) layout: narrow viewport or user chose to hide the docked sidebar. */
 const sidebarOverlayMode = computed(
   () => isMobile.value || navUiStore.sidebarCollapsed,
@@ -84,6 +87,28 @@ function syncHeaderOffset() {
   headerOffsetPx.value = el ? Math.ceil(el.getBoundingClientRect().height) : 0;
 }
 
+function detachHeaderObserver() {
+  headerObserver?.disconnect();
+  headerObserver = undefined;
+}
+
+/** The header is removed on the projector route and recreated on the way back. */
+function attachHeaderObserver() {
+  detachHeaderObserver();
+  const el = readHeaderElement();
+  if (!el || typeof ResizeObserver === "undefined") {
+    headerOffsetPx.value = 0;
+    return;
+  }
+  syncHeaderOffset();
+  headerObserver = new ResizeObserver(() => {
+    syncHeaderOffset();
+  });
+  headerObserver.observe(el);
+}
+
+watch(mainHeader, () => attachHeaderObserver(), { flush: "post" });
+
 const headerOffsetStyle = computed(() =>
   headerOffsetPx.value > 0
     ? { "--app-header-offset": `${headerOffsetPx.value}px` }
@@ -91,21 +116,13 @@ const headerOffsetStyle = computed(() =>
 );
 
 onMounted(async () => {
-  syncHeaderOffset();
-  const el = readHeaderElement();
-  if (el && typeof ResizeObserver !== "undefined") {
-    headerObserver = new ResizeObserver(() => {
-      syncHeaderOffset();
-    });
-    headerObserver.observe(el);
-  }
   if (!route.params.id) {
     await electionStore.ensureActiveElectionHubConnection();
   }
 });
 
 onUnmounted(() => {
-  headerObserver?.disconnect();
+  detachHeaderObserver();
 });
 
 function toggleMobileSidebar() {
@@ -132,7 +149,8 @@ function dockSidebar() {
     class="main-layout"
     :class="{
       'front-desk-layout': isFrontDeskLayout,
-      'sidebar-overlay-mode': sidebarOverlayMode,
+      'sidebar-overlay-mode': sidebarOverlayMode && !isProjector,
+      'projector-layout': isProjector,
     }"
     :style="headerOffsetStyle"
   >
@@ -143,12 +161,13 @@ function dockSidebar() {
 
     <!-- Sidebar overlay (mobile or user-collapsed desktop) -->
     <div
-      v-if="sidebarOverlayMode && mobileSidebarOpen"
+      v-if="!isProjector && sidebarOverlayMode && mobileSidebarOpen"
       class="mobile-sidebar-overlay"
       @click="closeMobileSidebar"
     ></div>
 
     <el-aside
+      v-if="!isProjector"
       :width="asideWidth"
       class="sidebar"
       role="complementary"
@@ -164,7 +183,12 @@ function dockSidebar() {
       />
     </el-aside>
     <el-container direction="vertical">
-      <el-header ref="mainHeader" height="auto" role="banner">
+      <el-header
+        v-if="!isProjector"
+        ref="mainHeader"
+        height="auto"
+        role="banner"
+      >
         <AppHeader
           :show-menu-button="sidebarOverlayMode"
           :menu-open="mobileSidebarOpen"
@@ -172,9 +196,9 @@ function dockSidebar() {
         />
       </el-header>
       <!-- Below the header, which grows when status chips wrap. Hidden
-           unless the route election is a test. -->
-      <OwnerRestrictionBanner />
-      <TestElectionBanner />
+           unless the route election is a test. The projector has neither. -->
+      <OwnerRestrictionBanner v-if="!isProjector" />
+      <TestElectionBanner v-if="!isProjector" />
       <el-main id="main-content" role="main" tabindex="-1">
         <router-view />
       </el-main>
@@ -259,6 +283,13 @@ function dockSidebar() {
 
     .sidebar.mobile-sidebar-open {
       transform: translateX(0);
+    }
+  }
+
+  &.projector-layout {
+    .el-main {
+      padding: 0;
+      background-color: var(--color-bg-primary);
     }
   }
 

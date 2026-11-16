@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
-import { RouterView } from "vue-router";
+import { RouterView, useRoute } from "vue-router";
 import ErrorBoundary from "./components/common/ErrorBoundary.vue";
 
 const { t, locale } = useI18n();
+const route = useRoute();
 const nameVisible = ref(true);
 const branchName = computed(() => {
   const name = process.env.BRANCH_NAME;
@@ -14,6 +15,9 @@ const branchName = computed(() => {
 const hideName = () => {
   nameVisible.value = false;
 };
+
+/** The projector page is the whole screen, including this dev pill. */
+const hideBranchPill = computed(() => route.meta.projector === true);
 
 // Set document title dynamically based on i18n
 const updateDocumentTitle = () => {
@@ -36,7 +40,7 @@ watch(locale, () => {
   </ErrorBoundary>
 
   <div
-    v-if="branchName"
+    v-if="branchName && !hideBranchPill"
     class="bottomCorner"
     title="Click to remove"
     @click="hideName"
