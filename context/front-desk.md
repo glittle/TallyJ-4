@@ -19,7 +19,7 @@ v4 already had All / Not registered / Registered radios and method/flag filters.
 
 The registration radios stay All / Not registered / Registered. When this browser has no stored choice for the election, the first view is All (Everyone). A stored choice for that election still wins. Not registered remains a filter. It is not the landing list.
 
-The code in `useFrontDeskVoters` still defaults to `notRegistered` until that UI slice lands. The decision is the default, not a removal of the filter.
+`useFrontDeskVoters` uses All when `tallyj.frontDesk.registrationFilters` has no choice for that election. Choosing a radio stores that choice for the election. Not registered remains a filter.
 
 **Rejected alternative:** keep Not registered as the fresh-browser default so the desk opens on people still waiting. Rejected — an empty Not registered list reads as an empty room when everyone is already registered.
 

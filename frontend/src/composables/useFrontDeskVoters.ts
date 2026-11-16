@@ -16,7 +16,7 @@ import { computed, ref, type Ref } from "vue";
 export type RegistrationFilter = "all" | "notRegistered" | "registered";
 
 const REGISTRATION_FILTER_STORAGE_KEY = "tallyj.frontDesk.registrationFilters";
-const DEFAULT_REGISTRATION_FILTER: RegistrationFilter = "notRegistered";
+const DEFAULT_REGISTRATION_FILTER: RegistrationFilter = "all";
 
 function isRegistrationFilter(value: unknown): value is RegistrationFilter {
   return value === "all" || value === "notRegistered" || value === "registered";

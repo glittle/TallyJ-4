@@ -14,6 +14,7 @@ import {
   getActiveTellers,
   type ActiveTellers,
 } from "@/utils/activeTellerStorage";
+import { frontDeskEmptyMessage } from "@/utils/frontDeskEmptyMessage";
 import { formatNumber } from "@/utils/formatNumber";
 import { formatLocationLabel } from "@/utils/locationDisplay";
 import {
@@ -277,6 +278,27 @@ registrationApi.closeRegistrationDialog = closeRegistrationDialog;
 registrationApi.pendingCheckInPersonGuid = pendingCheckInPersonGuid;
 
 const methodCounts = computed(() => methodCountsFor(registrationTypes.value));
+
+const emptyListMessage = computed(() =>
+  frontDeskEmptyMessage(
+    {
+      registrationFilter: registrationFilter.value,
+      registeredCount: registrationFilterCounts.value.registered,
+      notRegisteredCount: registrationFilterCounts.value.notRegistered,
+      searchQuery: searchQuery.value,
+      extraFilterLabels: [
+        ...(ballotNotReceivedOnly.value
+          ? [t("frontDesk.filters.ballotNotReceived")]
+          : []),
+        ...selectedMethodFilters.value.map((method) =>
+          labelVotingMethod(method, t),
+        ),
+        ...selectedFlagFilters.value,
+      ],
+    },
+    (key, params) => (params ? t(key, params) : t(key)),
+  ),
+);
 const flagCounts = computed(() => flagCountsFor(electionFlags.value));
 
 function updateSelectedVoter() {
@@ -582,12 +604,17 @@ onUnmounted(async () => {
               :election-flags="electionFlags"
               :enable-envelope-numbers="ENABLE_ENVELOPE_NUMBERS"
               :has-active-teller="hasActiveTeller"
+              :empty-text="emptyListMessage"
               :column-widths="frontDeskTableColumnWidths"
               @row-click="handleRowClick"
               @open-envelope="openEnvelopeDialog"
             />
           </div>
-          <div ref="keyboardHintRef" class="keyboard-hint">
+          <div
+            v-show="allVoters.length > 0"
+            ref="keyboardHintRef"
+            class="keyboard-hint"
+          >
             {{
               $t("frontDesk.keyboardHint", {
                 notCheckedIn: notCheckedInVoters.length,

@@ -35,6 +35,8 @@ const props = defineProps<{
   electionFlags: any[];
   enableEnvelopeNumbers: boolean;
   hasActiveTeller: boolean;
+  /** Shown when the filtered list matches nobody. */
+  emptyText?: string;
   columnWidths: {
     fullName: number;
     method: number;
@@ -354,7 +356,11 @@ defineExpose({ scrollToSelectedRow });
           :row-height="30"
           scrollbar-always-on
           fixed
-        />
+        >
+          <template #empty>
+            <el-empty v-if="!loading" :description="emptyText ?? ''" />
+          </template>
+        </el-table-v2>
       </template>
     </el-auto-resizer>
   </div>

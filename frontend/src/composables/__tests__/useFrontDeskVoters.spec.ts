@@ -107,3 +107,53 @@ describe("useFrontDeskVoters Ballot Not Received", () => {
     ]);
   });
 });
+
+describe("useFrontDeskVoters registration filter", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  function openDesk(electionGuid = "elec-1") {
+    return useFrontDeskVoters({
+      electionGuid: ref(electionGuid),
+      t: (key) => key,
+    });
+  }
+
+  it("opens on All when this election has no stored choice", () => {
+    expect(openDesk().registrationFilter.value).toBe("all");
+  });
+
+  it("restores a stored choice for this election", () => {
+    localStorage.setItem(
+      "tallyj.frontDesk.registrationFilters",
+      JSON.stringify({ "elec-1": "notRegistered", "elec-2": "registered" }),
+    );
+
+    expect(openDesk("elec-1").registrationFilter.value).toBe("notRegistered");
+    expect(openDesk("elec-2").registrationFilter.value).toBe("registered");
+  });
+
+  it("ignores a stored choice for a different election", () => {
+    localStorage.setItem(
+      "tallyj.frontDesk.registrationFilters",
+      JSON.stringify({ "elec-2": "notRegistered" }),
+    );
+
+    expect(openDesk("elec-1").registrationFilter.value).toBe("all");
+  });
+
+  it("stores the radio the teller chooses", async () => {
+    const api = openDesk();
+    api.registrationFilter.value = "registered";
+    await nextTick();
+
+    expect(
+      JSON.parse(
+        localStorage.getItem("tallyj.frontDesk.registrationFilters") ?? "{}",
+      ),
+    ).toEqual({
+      "elec-1": "registered",
+    });
+  });
+});
