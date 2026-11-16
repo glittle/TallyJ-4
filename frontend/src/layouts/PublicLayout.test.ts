@@ -120,14 +120,19 @@ describe("PublicLayout", () => {
     expect(img.attributes("src")).toBe("/assets/logo-trans.png");
   });
 
-  it("renders language selector and ThemeSelector components", () => {
+  it("renders the flag box and the compact language control", () => {
     const wrapper = mount(PublicLayout, {
       global: {
         plugins: [router, i18n],
         stubs: layoutStubs,
       },
     });
-    expect(wrapper.find(".language-flags-selector-stub").exists()).toBe(true);
+    expect(
+      wrapper.find(".language-flags.language-flags-selector-stub").exists(),
+    ).toBe(true);
+    expect(
+      wrapper.find(".language-compact.language-selector-stub").exists(),
+    ).toBe(true);
     expect(wrapper.find(".theme-selector-stub").exists()).toBe(true);
   });
 

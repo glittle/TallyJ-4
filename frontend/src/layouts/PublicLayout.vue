@@ -18,9 +18,6 @@ const versionDate = computed(() => getBuildDate());
 const versionDateBadi = computed(() => getBuildDateBadi());
 const textDirection = computed(() => localeTextDirection(locale.value));
 
-/** Always expanded. Not limited to the landing page. */
-const expandLanguageSelector = true;
-
 const logoSrc = "/assets/logo-trans.png";
 
 const handleLogoClick = () => {
@@ -47,8 +44,8 @@ const handleLogoClick = () => {
           </h2>
         </div>
         <div class="header-middle">
-          <LanguageFlagsSelector v-if="expandLanguageSelector" />
-          <LanguageSelector v-else />
+          <LanguageFlagsSelector class="language-flags" />
+          <LanguageSelector class="language-compact" />
         </div>
         <div class="header-right">
           <ThemeSelector />
@@ -109,6 +106,21 @@ const handleLogoClick = () => {
     }
   }
 
+  .language-compact {
+    display: none;
+  }
+
+  /* The header already stacks at this width, so the compact control switches with it. */
+  @media (max-width: 600px) {
+    .language-flags {
+      display: none;
+    }
+
+    .language-compact {
+      display: inline-block;
+    }
+  }
+
   .header-middle {
     display: flex;
     justify-content: center;
@@ -137,6 +149,12 @@ const handleLogoClick = () => {
 
   .public-content {
     padding: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .public-layout .public-content {
+    padding: 12px 16px;
   }
 }
 </style>
