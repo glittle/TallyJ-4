@@ -9,7 +9,19 @@
 
 v3’s **Ballot Not Received** checkbox hid everyone whose voting method was set (ballot received / recorded). Combined with a checklist/flag, that showed who was flagged (for example mailed a ballot) but still had no method.
 
-v4 already had All / Not registered / Registered radios and method/flag filters. Those cover the same workflow when the default is Not registered, but they did not name the v3 control or apply it on the All list.
+v4 already had All / Not registered / Registered radios and method/flag filters. Those cover the same workflow on any of the three lists. They did not name the v3 control or apply it on the All list.
+
+## Front Desk opens on Everyone
+
+**Status:** active  
+**Evidence:** confirmed (Glen, issue #442, 2026-11-15)  
+**Revisit when:** a teller workflow needs the first view to be only people still waiting
+
+The registration radios stay All / Not registered / Registered. When this browser has no stored choice for the election, the first view is All (Everyone). A stored choice for that election still wins. Not registered remains a filter. It is not the landing list.
+
+The code in `useFrontDeskVoters` still defaults to `notRegistered` until that UI slice lands. The decision is the default, not a removal of the filter.
+
+**Rejected alternative:** keep Not registered as the fresh-browser default so the desk opens on people still waiting. Rejected — an empty Not registered list reads as an empty room when everyone is already registered.
 
 The checkbox is an extra filter on the current list: hide rows with a voting method. Flag filters still apply. Clearing filters turns it off.
 
