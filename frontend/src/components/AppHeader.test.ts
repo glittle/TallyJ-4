@@ -6,13 +6,14 @@ import AppHeader from "./AppHeader.vue";
 import { pinia, i18n } from "../test/setup";
 
 const mockLogout = vi.fn();
+const authState = {
+  email: "test@example.com" as string | null,
+  name: null as string | null,
+  logout: mockLogout,
+};
 
 vi.mock("../stores/authStore", () => ({
-  useAuthStore: () => ({
-    email: "test@example.com",
-    name: null,
-    logout: mockLogout,
-  }),
+  useAuthStore: () => authState,
 }));
 
 vi.mock("../stores/electionStore", () => ({
@@ -33,6 +34,8 @@ describe("AppHeader", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    authState.email = "test@example.com";
+    authState.name = null;
     router = createRouter({
       history: createWebHistory(),
       routes: [
@@ -162,5 +165,53 @@ describe("AppHeader", () => {
     ).handleCommand("profile");
 
     expect(mockRouterPush).toHaveBeenCalledWith("/profile");
+  });
+
+  it("names the account button with the email when no name is set", () => {
+    const wrapper = mount(AppHeader, {
+      global: {
+        plugins: [pinia, router, i18n],
+      },
+    });
+    const button = wrapper.get("button.user-dropdown");
+    expect(button.attributes("aria-label")).toBeUndefined();
+    expect(button.get(".username").text()).toBe("test@example.com");
+    expect(button.text()).not.toContain("User account menu");
+    expect(wrapper.get("nav.header-right").attributes("aria-label")).toBe(
+      "User account menu",
+    );
+  });
+
+  it("names the account button with the person's name when one is set", () => {
+    authState.name = "Ada Lovelace";
+    const wrapper = mount(AppHeader, {
+      global: {
+        plugins: [pinia, router, i18n],
+      },
+    });
+    const button = wrapper.get("button.user-dropdown");
+    expect(button.get(".username").text()).toBe("Ada Lovelace");
+    expect(button.text()).not.toContain("test@example.com");
+  });
+
+  it("keeps the account name in the accessibility tree when the narrow layout hides it", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { dirname, resolve } = await import("node:path");
+    const { fileURLToPath } = await import("node:url");
+    const source = readFileSync(
+      resolve(dirname(fileURLToPath(import.meta.url)), "AppHeader.vue"),
+      "utf8",
+    );
+    const start = source.indexOf("@media (max-width: 768px)");
+    const end = source.indexOf("@media (max-width: 480px)", start);
+    const narrow = source.slice(start, end);
+    const usernameStart = narrow.indexOf(".username");
+    const block = narrow.slice(
+      usernameStart,
+      narrow.indexOf("}", usernameStart),
+    );
+    expect(usernameStart).toBeGreaterThan(-1);
+    expect(block).not.toMatch(/display:\s*none/);
+    expect(block).toContain("clip: rect(0, 0, 0, 0)");
   });
 });

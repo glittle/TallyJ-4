@@ -50,7 +50,21 @@ function isActivePage(page: NavPageDef): boolean {
   return route.path === page.routePath(props.electionGuid);
 }
 
-function navigateTo(page: NavPageDef) {
+function isPlainLeftClick(event: MouseEvent): boolean {
+  return (
+    event.button === 0 &&
+    !event.metaKey &&
+    !event.ctrlKey &&
+    !event.shiftKey &&
+    !event.altKey
+  );
+}
+
+function onPageClick(page: NavPageDef, event: MouseEvent) {
+  if (!isPlainLeftClick(event)) {
+    return;
+  }
+  event.preventDefault();
   router.push(page.routePath(props.electionGuid));
   emit("close-mobile-sidebar");
 }
@@ -104,19 +118,20 @@ watch(
     <!-- Guest view: no group headers, just the filtered page list for current stage -->
     <template v-if="isGuestTeller">
       <div class="stage-group__pages">
-        <div
+        <a
           v-for="page in guestTellerPages()"
           :key="page.key"
           class="stage-group__page"
           :class="{ 'is-active': isActivePage(page) }"
-          role="menuitem"
-          @click="navigateTo(page)"
+          :href="page.routePath(electionGuid)"
+          :aria-current="isActivePage(page) ? 'page' : undefined"
+          @click="onPageClick(page, $event)"
         >
           <el-icon class="stage-group__page-icon" aria-hidden="true">
             <component :is="page.icon" />
           </el-icon>
           <span>{{ t(page.i18nKey) }}</span>
-        </div>
+        </a>
       </div>
     </template>
 
@@ -158,20 +173,22 @@ watch(
             </span>
           </div>
 
+          <!-- Links, not menuitems: this block is navigation, not a menu. -->
           <div v-if="isExpanded(stage)" class="stage-group__pages">
-            <div
+            <a
               v-for="page in STAGE_PAGES[stage]"
               :key="page.key"
               class="stage-group__page"
               :class="{ 'is-active': isActivePage(page) }"
-              role="menuitem"
-              @click="navigateTo(page)"
+              :href="page.routePath(electionGuid)"
+              :aria-current="isActivePage(page) ? 'page' : undefined"
+              @click="onPageClick(page, $event)"
             >
               <el-icon class="stage-group__page-icon" aria-hidden="true">
                 <component :is="page.icon" />
               </el-icon>
               <span>{{ t(page.i18nKey) }}</span>
-            </div>
+            </a>
           </div>
         </div>
       </template>
@@ -248,6 +265,7 @@ watch(
       cursor: pointer;
       font-size: 14px;
       color: var(--color-sidebar-text);
+      text-decoration: none;
       border-radius: 6px;
       margin: 2px 10px;
       height: 44px;

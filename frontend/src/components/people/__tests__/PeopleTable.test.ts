@@ -10,7 +10,8 @@ vi.mock("vue-i18n", async (importOriginal) => {
   return {
     ...actual,
     useI18n: () => ({
-      t: (key: string) => key,
+      t: (key: string, params?: { name?: string }) =>
+        params?.name ? `${key} ${params.name}` : key,
     }),
   };
 });
@@ -285,5 +286,60 @@ describe("PeopleTable", () => {
     expect(wrapper.find(".people-table__last-send").text()).toBe(
       "failed — election-cap",
     );
+  });
+
+  it("names each row checkbox with the person and the select-all checkbox", () => {
+    const wrapper = mount(PeopleTable, {
+      props: {
+        people: [samplePerson],
+        loading: false,
+        tableHeight: 400,
+        selectedGuids: [],
+      },
+      global: {
+        components: {
+          ElButton,
+          ElCheckbox: { template: "<label class='cb'><slot /></label>" },
+        },
+        directives: { loading: () => undefined },
+        stubs: {
+          ElAutoResizer: AutoResizerStub as unknown as Component,
+          ElTableV2: {
+            ...TableStub,
+            setup(props: {
+              columns: Array<{
+                cellRenderer?: (args: { rowData: PersonListDto }) => unknown;
+                headerCellRenderer?: () => unknown;
+              }>;
+              data: PersonListDto[];
+            }) {
+              return () => {
+                const row = props.data[0]!;
+                return h("div", { class: "table-stub" }, [
+                  ...props.columns.map((col, index) =>
+                    h("div", { key: `h-${index}` }, [
+                      col.headerCellRenderer?.() as VNodeChild,
+                    ]),
+                  ),
+                  ...props.columns
+                    .filter((col) => col.cellRenderer)
+                    .map((col, index) =>
+                      h("div", { key: index }, [
+                        col.cellRenderer!({ rowData: row }) as VNodeChild,
+                      ]),
+                    ),
+                ]);
+              };
+            },
+          } as unknown as Component,
+          ElIcon: { template: "<span />" },
+        },
+      },
+    });
+
+    expect(wrapper.text()).toContain(
+      `people.selectPerson ${samplePerson.fullName}`,
+    );
+    expect(wrapper.text()).toContain("people.selectAllVisible");
   });
 });

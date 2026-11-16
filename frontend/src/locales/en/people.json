@@ -1299,6 +1299,16 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "people.selectAllVisible": {
+    "t": "Select all visible people",
+    "s": "source",
+    "w": "2026-11-16T03:00:00Z"
+  },
+  "people.selectPerson": {
+    "t": "Select {name}",
+    "s": "source",
+    "w": "2026-11-16T03:00:00Z"
+  },
   "people.selectedCount": {
     "t": "{count} selected",
     "s": "source",

@@ -404,5 +404,41 @@ describe("StageGroupedSidebarMenu", () => {
         expect(wrapper.emitted("close-mobile-sidebar")).toBeTruthy();
       }
     });
+
+    it("leaves modified and middle clicks to the browser", async () => {
+      const wrapper = mountMenu({
+        isGuestTeller: false,
+        currentStage: "SettingUp",
+        electionGuid: "test-id",
+      });
+      const page = wrapper.find(".stage-group__page");
+      for (const modifiers of [
+        { ctrlKey: true },
+        { metaKey: true },
+        { shiftKey: true },
+        { altKey: true },
+        { button: 1 },
+      ]) {
+        mockRouterPush.mockClear();
+        await page.trigger("click", modifiers);
+        expect(mockRouterPush).not.toHaveBeenCalled();
+        expect(wrapper.emitted("close-mobile-sidebar")).toBeFalsy();
+      }
+    });
+
+    it("uses links instead of menuitems", () => {
+      const wrapper = mountMenu({
+        isGuestTeller: false,
+        currentStage: "SettingUp",
+      });
+      const pages = wrapper.findAll(".stage-group__page");
+      expect(pages.length).toBeGreaterThan(0);
+      for (const page of pages) {
+        expect(page.element.tagName).toBe("A");
+        expect(page.attributes("role")).toBeUndefined();
+        expect(page.attributes("href")).toBeTruthy();
+      }
+      expect(wrapper.find("[role='menuitem']").exists()).toBe(false);
+    });
   });
 });

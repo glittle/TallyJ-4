@@ -95,20 +95,41 @@ const columns = computed<Column<any>[]>(() => [
     key: "selection",
     width: 50,
     cellRenderer: ({ rowData }: { rowData: PersonListDto }) =>
-      h(ElCheckbox, {
-        class: "people-table__select",
-        modelValue: selectedSet.value.has(rowData.personGuid),
-        onChange: (value: string | number | boolean) =>
-          toggleRow(rowData.personGuid, value === true),
-      }),
+      // The name is label text. ElCheckbox ariaLabel is on the wrapping label, not the input.
+      h(
+        ElCheckbox,
+        {
+          class: "people-table__select",
+          modelValue: selectedSet.value.has(rowData.personGuid),
+          onChange: (value: string | number | boolean) =>
+            toggleRow(rowData.personGuid, value === true),
+        },
+        {
+          default: () =>
+            h(
+              "span",
+              { class: "sr-only" },
+              t("people.selectPerson", {
+                name: rowData.fullName || "",
+              }),
+            ),
+        },
+      ),
     headerCellRenderer: () =>
-      h(ElCheckbox, {
-        class: "people-table__select-all",
-        modelValue: allVisibleSelected.value,
-        indeterminate: someVisibleSelected.value && !allVisibleSelected.value,
-        onChange: (value: string | number | boolean) =>
-          toggleVisible(value === true),
-      }),
+      h(
+        ElCheckbox,
+        {
+          class: "people-table__select-all",
+          modelValue: allVisibleSelected.value,
+          indeterminate: someVisibleSelected.value && !allVisibleSelected.value,
+          onChange: (value: string | number | boolean) =>
+            toggleVisible(value === true),
+        },
+        {
+          default: () =>
+            h("span", { class: "sr-only" }, t("people.selectAllVisible")),
+        },
+      ),
   },
   {
     key: "fullName",

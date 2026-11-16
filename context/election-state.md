@@ -170,3 +170,12 @@ Completed is Finalized only. Active (teller dashboard) and open (super admin) ar
 There is no archived stage and no archive flag on the election. The super-admin summary does not report an archived count.
 
 **Rejected alternative:** classify open versus upcoming from `DateOfElection`. A Finalized election with a past date, and a SettingUp election with a past date, were counted as open.
+
+## Sidebar stage pages are links
+
+**Status:** active  
+**Evidence:** inferred
+
+Stage pages in the election sidebar are anchors. The parent is navigation. A plain left-click still uses the existing in-app route and closes the phone sidebar. Ctrl, Cmd, Shift, Alt, and middle-click keep the browser's link behavior. Which stages are expanded is unchanged.
+
+**Rejected alternative:** give the group `role="menu"` and keep `role="menuitem"` on each page. That asks for a menu keyboard model this sidebar does not have.
