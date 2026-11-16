@@ -198,8 +198,12 @@ public partial class TallyService
     /// <summary>
     /// Status counts only from <c>OnlineVotingInfo.Status</c>. No person name,
     /// contact, row id, or WhenStatus — a named or timed list can be paired
-    /// with the OL ballots Accept-all creates. Pending excludes people who
-    /// already recorded a Front Desk method other than Online.
+    /// with the OL ballots Accept-all creates.
+    /// Live rows are people who have not recorded a Front Desk method other
+    /// than Online. Total, Submitted, Processing, and Processed (Accepted)
+    /// all use that set, so a Processed row for someone who later voted
+    /// another way is in none of them. Processed person guids for the method
+    /// breakdown still include every Processed row.
     /// </summary>
     private async Task<(
         int Total,
@@ -236,7 +240,7 @@ public partial class TallyService
             live.Count(s => !OnlineBallotStatus.IsDraft(s.Status)),
             live.Count(s => OnlineBallotStatus.IsSubmitted(s.Status)),
             live.Count(s => OnlineBallotStatus.IsProcessing(s.Status)),
-            rows.Count(s => OnlineBallotStatus.IsProcessed(s.Status)),
+            live.Count(s => OnlineBallotStatus.IsProcessed(s.Status)),
             rows.Count(s =>
                 votedAnotherWay.Contains(s.PersonGuid)
                 && (OnlineBallotStatus.IsSubmitted(s.Status)

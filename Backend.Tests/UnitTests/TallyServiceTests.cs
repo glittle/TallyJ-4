@@ -2601,6 +2601,42 @@ public class TallyServiceTests : ServiceTestBase
     }
 
     [Fact]
+    public async Task GetMonitorInfoAsync_AcceptedUsesLiveRows_SoUsedIsNotCancelledByProcessedVotedAnotherWay()
+    {
+        var election = await CreateTestElectionAsync();
+        var people = await CreateTestPeopleAsync(election.ElectionGuid, 2);
+        people[0].VotingMethod = VotingMethodCodes.InPerson;
+        Context.OnlineVotingInfos.AddRange(
+            new OnlineVotingInfo
+            {
+                ElectionGuid = election.ElectionGuid,
+                PersonGuid = people[0].PersonGuid,
+                Status = OnlineBallotStatus.Processed,
+                WhenStatus = DateTimeOffset.UtcNow
+            },
+            new OnlineVotingInfo
+            {
+                ElectionGuid = election.ElectionGuid,
+                PersonGuid = people[1].PersonGuid,
+                Status = "Used",
+                WhenStatus = DateTimeOffset.UtcNow
+            });
+        await Context.SaveChangesAsync();
+
+        var result = await _service.GetMonitorInfoAsync(election.ElectionGuid);
+        var online = result.OnlineVotingInfo;
+
+        Assert.Equal(1, online.TotalOnlineBallots);
+        Assert.Equal(0, online.SubmittedOnlineBallots);
+        Assert.Equal(0, online.ProcessingOnlineBallots);
+        Assert.Equal(0, online.ProcessedOnlineBallots);
+        Assert.Equal(0, online.PendingOnlineBallots);
+        Assert.Equal(0, online.PendingOnlineVotedAnotherWay);
+        Assert.Equal(1, result.BallotsByMethod.InPerson);
+        Assert.Equal(0, result.BallotsByMethod.Online);
+    }
+
+    [Fact]
     public async Task GetReportDataAsync_Ballots_FormatsOnlineLocationNameWithoutLoadingFullGraph()
     {
         var election = await CreateTestElectionAsync();

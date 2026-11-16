@@ -121,13 +121,15 @@ public class LocationInfoDto
 public class OnlineVotingInfoDto
 {
     /// <summary>
-    /// Online ballots that are Submitted, Processing, or Processed.
-    /// Draft autosaves are not included.
+    /// Live non-draft online rows. The person has not recorded a Front Desk
+    /// method other than Online. Includes statuses other than Submitted,
+    /// Processing, and Processed. Draft autosaves are not included.
     /// </summary>
     public int TotalOnlineBallots { get; set; }
 
     /// <summary>
-    /// Number of online ballots that have been processed.
+    /// Processed rows on the same live set as <see cref="TotalOnlineBallots"/>.
+    /// A Processed row whose person later voted another way is not included.
     /// </summary>
     public int ProcessedOnlineBallots { get; set; }
 

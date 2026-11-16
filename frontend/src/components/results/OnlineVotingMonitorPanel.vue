@@ -35,8 +35,9 @@ const votedAnotherWayCount = computed(
   () => props.info.pendingOnlineVotedAnotherWay ?? 0,
 );
 const totalCount = computed(() => props.info.totalOnlineBallots ?? 0);
-// Total is every live non-draft row. The three status figures are only
-// those statuses, so a row such as a legacy status is in the total alone.
+// Total, Still changeable, Processing, and Accepted are the same live set
+// (people who have not voted another way). A status other than those three
+// is in the total alone.
 const unexplainedCount = computed(
   () =>
     totalCount.value -

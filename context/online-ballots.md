@@ -245,11 +245,13 @@ Setup **enabled** is not the operational status. It is shown only when online vo
 **Status:** active  
 **Evidence:** inferred (count rules in `TallyService.Monitor.cs`; seeded rows use `Used` and `Sent`; critique #442 screenshot of 1 against six zeros)
 
-`TotalOnlineBallots` counts live non-draft rows. Still changeable, Processing, and Accepted count only `Submitted`, `Processing`, and `Processed`. A stored status that is none of those is in the total and in none of the three. Ballot-page sessions are connections, not rows in that total.
+`TotalOnlineBallots`, Still changeable, Processing, and Accepted all use the live set: rows whose person has not recorded a Front Desk method other than Online. Accepted is `Processed` on that set. A `Processed` row for someone who later voted another way is in neither the total nor Accepted. A stored status that is none of `Submitted`, `Processing`, or `Processed` (seeded `Used` / `Sent` are one case) is in the total and in none of the three, so the note is not cancelled by that other Processed row. Ballot-page sessions are connections, not rows in that total. The method breakdown still sees every Processed person, so a later Front Desk method stays on its own method count.
 
 The total sits under the count strip. When it is higher than those three figures, the panel says how many ballots are only in the total. Close now is the danger button. Schedule close in 5 minutes and Open for 5 minutes stay, and the window is still the same online-window API.
 
 **Rejected alternative:** recode `Used` / `Sent` into one of the three statuses, or change the total so it always equals those three. That would hide a real stored row, or change the monitor numbers, to make the strip add up.
+
+**Rejected alternative:** leave Accepted counting every Processed row, including people who later voted another way. That subtraction can hide a Used or Sent row (1 Used and 1 Processed-voted-another-way is 1 − 0 − 0 − 1).
 
 **Rejected alternative:** leave Online ballots as a seventh equal figure in the strip. That is the quick-read disagreement the critique names.
 
