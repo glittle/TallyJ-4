@@ -225,7 +225,7 @@ The Online Voting block used a header Accept-all, a bordered descriptions row (t
 The panel is now one card:
 
 1. **Status row** — Open / Closing soon / Closed, the close line, last-five-minute clock, and the existing window buttons.
-2. **Count strip** — Pending, Still changeable, Processing, Accepted, Ballot-page sessions, Pending-voted-another-way, and total Online ballots. No second descriptions table.
+2. **Count strip** — Pending, Still changeable, Processing, Accepted, Ballot-page sessions, and Pending-voted-another-way. Online ballots is under that strip; see the next section. No second descriptions table.
 3. **One counts-only note** and the Accept-all history.
 
 Setup **enabled** is not the operational status. It is shown only when online voting is disabled. Accept-all stays in the header as **Accept pending**; the confirm dialog still uses the longer irreversible wording.
@@ -239,6 +239,21 @@ Setup **enabled** is not the operational status. It is shown only when online vo
 **Rejected alternative:** restyle the whole Election Monitor page in the same pass. Out of scope for #345.
 
 **Reason:** during an election the teller needs window state and the pending/accept action first; counts and history are secondary and should not each get their own boxed section.
+
+## Online ballots total can sit outside the three statuses
+
+**Status:** active  
+**Evidence:** inferred (count rules in `TallyService.Monitor.cs`; seeded rows use `Used` and `Sent`; critique #442 screenshot of 1 against six zeros)
+
+`TotalOnlineBallots` counts live non-draft rows. Still changeable, Processing, and Accepted count only `Submitted`, `Processing`, and `Processed`. A stored status that is none of those is in the total and in none of the three. Ballot-page sessions are connections, not rows in that total.
+
+The total sits under the count strip. When it is higher than those three figures, the panel says how many ballots are only in the total. Close now is the danger button. Schedule close in 5 minutes and Open for 5 minutes stay, and the window is still the same online-window API.
+
+**Rejected alternative:** recode `Used` / `Sent` into one of the three statuses, or change the total so it always equals those three. That would hide a real stored row, or change the monitor numbers, to make the strip add up.
+
+**Rejected alternative:** leave Online ballots as a seventh equal figure in the strip. That is the quick-read disagreement the critique names.
+
+**Reason:** a teller should see why 1 online ballot can sit next to zeros in the status counts, without a new count or a second close path.
 
 ## Accept-all audit record
 
