@@ -34,6 +34,17 @@ const sessionCount = computed(
 const votedAnotherWayCount = computed(
   () => props.info.pendingOnlineVotedAnotherWay ?? 0,
 );
+const totalCount = computed(() => props.info.totalOnlineBallots ?? 0);
+// Total, Still changeable, Processing, and Accepted are the same live set
+// (people who have not voted another way). A status other than those three
+// is in the total alone.
+const unexplainedCount = computed(
+  () =>
+    totalCount.value -
+    submittedCount.value -
+    processingCount.value -
+    acceptedCount.value,
+);
 const acceptAllRuns = computed(() => props.info.acceptAllRuns ?? []);
 const statusView = onlineBallotMonitorStatus;
 
@@ -161,6 +172,7 @@ function acceptAllWho(run: AcceptAllOnlineBallotsRunDto) {
         </el-button>
         <el-button
           v-if="closeCountdown.isWindowOpen"
+          type="danger"
           data-testid="close-online-voting-now"
           :loading="updatingWindow"
           @click="emit('closeNow')"
@@ -250,15 +262,29 @@ function acceptAllWho(run: AcceptAllOnlineBallotsRunDto) {
             {{ $t("monitoring.onlineBallots.votedAnotherWay") }}
           </div>
         </div>
-        <div class="online-voting-monitor__metric is-muted">
-          <div class="online-voting-monitor__metric-value">
-            {{ info.totalOnlineBallots }}
-          </div>
-          <div class="online-voting-monitor__metric-label">
-            {{ $t("monitoring.totalOnlineBallots") }}
-          </div>
+      </div>
+      <div
+        class="online-voting-monitor__total"
+        data-testid="total-online-ballots"
+      >
+        <div class="online-voting-monitor__metric-value">
+          {{ totalCount }}
+        </div>
+        <div class="online-voting-monitor__metric-label">
+          {{ $t("monitoring.totalOnlineBallots") }}
         </div>
       </div>
+      <p
+        v-if="unexplainedCount > 0"
+        class="online-voting-monitor__note"
+        data-testid="online-ballots-unexplained"
+      >
+        {{
+          $t("monitoring.onlineBallots.unexplained", {
+            count: unexplainedCount,
+          })
+        }}
+      </p>
       <p class="online-voting-monitor__note">
         {{ $t("monitoring.onlineBallots.countsOnly") }}
       </p>
@@ -461,6 +487,12 @@ function acceptAllWho(run: AcceptAllOnlineBallotsRunDto) {
     margin-top: var(--spacing-1);
     font-size: var(--font-size-sm);
     color: var(--el-text-color-secondary);
+  }
+
+  &__total {
+    margin-top: var(--spacing-4);
+    padding-top: var(--spacing-3);
+    border-top: 1px solid var(--el-border-color-lighter);
   }
 
   &__note,

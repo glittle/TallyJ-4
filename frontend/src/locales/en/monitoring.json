@@ -244,6 +244,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "monitoring.onlineBallots.unexplained": {
+    "t": "{count} online ballot has a stored status other than Still changeable, Processing, or Accepted (for example Used or Sent), so it appears only in this total. | {count} online ballots have a stored status other than Still changeable, Processing, or Accepted (for example Used or Sent), so they appear only in this total.",
+    "s": "source",
+    "w": "2026-11-16T02:50:00Z"
+  },
   "monitoring.onlineBallots.votedAnotherWay": {
     "t": "Pending, voted another way",
     "s": "source",

@@ -10,7 +10,9 @@ const stubs = {
     template: "<div class='el-card'><slot name='header' /><slot /></div>",
   },
   ElButton: {
-    template: "<button v-bind='$attrs'><slot /></button>",
+    props: ["type"],
+    template:
+      "<button v-bind='$attrs' :data-button-type='type'><slot /></button>",
   },
   ElTag: { template: "<span><slot /></span>" },
   ElTable: {
@@ -115,6 +117,66 @@ describe("OnlineVotingMonitorPanel", () => {
     ).toBe("2");
     expect(wrapper.text()).toContain("Online ballots");
     expect(wrapper.text()).toContain("4");
+    expect(
+      wrapper.find("[data-testid='online-ballots-unexplained']").exists(),
+    ).toBe(false);
+    expect(
+      wrapper.find("[data-testid='total-online-ballots']").text(),
+    ).toContain("4");
+  });
+
+  it("explains an online-ballots total that is not one of the status counts", () => {
+    const wrapper = mountPanel({
+      totalOnlineBallots: 1,
+      processedOnlineBallots: 0,
+      pendingOnlineBallots: 0,
+      submittedOnlineBallots: 0,
+      processingOnlineBallots: 0,
+      pendingOnlineVotedAnotherWay: 0,
+      connectedOnlineVoterSessions: 0,
+    });
+
+    expect(
+      wrapper.get("[data-testid='online-ballots-unexplained']").text(),
+    ).toBe(
+      "1 online ballot has a stored status other than Still changeable, Processing, or Accepted (for example Used or Sent), so it appears only in this total.",
+    );
+  });
+
+  it("uses the plural when more than one online ballot is outside those statuses", () => {
+    const wrapper = mountPanel({
+      totalOnlineBallots: 5,
+      processedOnlineBallots: 1,
+      submittedOnlineBallots: 2,
+      processingOnlineBallots: 0,
+    });
+
+    expect(
+      wrapper.get("[data-testid='online-ballots-unexplained']").text(),
+    ).toBe(
+      "2 online ballots have a stored status other than Still changeable, Processing, or Accepted (for example Used or Sent), so they appear only in this total.",
+    );
+  });
+
+  it("makes Close now the danger button and keeps the 5-minute shortcuts", async () => {
+    const open = mountPanel();
+    const closeNow = open.get("[data-testid='close-online-voting-now']");
+    const schedule = open.get(
+      "[data-testid='schedule-close-online-5-minutes']",
+    );
+
+    expect(closeNow.attributes("data-button-type")).toBe("danger");
+    expect(schedule.attributes("data-button-type")).toBeUndefined();
+    expect(closeNow.text()).toBe("Close now");
+    expect(schedule.text()).toBe("Schedule close in 5 minutes");
+
+    const closed = mountPanel({}, { isWindowOpen: false, isClosed: true });
+    const reopen = closed.get("[data-testid='open-online-voting-5-minutes']");
+    expect(reopen.text()).toBe("Open for 5 minutes");
+    expect(reopen.attributes("data-button-type")).toBeUndefined();
+    expect(
+      closed.find("[data-testid='close-online-voting-now']").exists(),
+    ).toBe(false);
   });
 
   it("emits the same window and accept-all actions as before", async () => {
