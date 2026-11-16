@@ -868,7 +868,8 @@ function formatDate(date: string) {
   margin-bottom: var(--spacing-8);
 }
 
-@media (max-width: 768px) {
+/* Match useResponsive isMobile, which is true only below 768. */
+@media (max-width: 767px) {
   .dashboard-page {
     padding: var(--spacing-4) var(--spacing-3);
 

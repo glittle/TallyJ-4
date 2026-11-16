@@ -75,7 +75,23 @@ async function mountDetail(options: {
   return wrapper;
 }
 
-describe("ElectionDetailPage reset control", () => {
+describe("ElectionDetailPage", () => {
+  it("shows the stage, type, and mode in words", async () => {
+    isGuestTellerMock.mockReturnValue(false);
+    const wrapper = await mountDetail({
+      currentElection: testElection({
+        electionStage: "ProcessingBallots",
+        electionType: "LSA",
+        electionMode: "N",
+      }),
+    });
+
+    const text = wrapper.text();
+    expect(text).toContain("Processing Ballots");
+    expect(text).toContain("Local Spiritual Assembly");
+    expect(text).toContain("Normal Election");
+    expect(text).not.toContain("ProcessingBallots");
+  });
   it("shows the reset control when the election is a test election", async () => {
     isGuestTellerMock.mockReturnValue(false);
     const wrapper = await mountDetail({
