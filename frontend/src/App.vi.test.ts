@@ -64,6 +64,23 @@ describe("App", () => {
     expect(wrapper.find(".bottomCorner").exists()).toBe(false);
   });
 
+  it("hides the branch name on the projector presentation", async () => {
+    process.env.BRANCH_NAME = "feature/test-branch";
+    const removeRoute = router.addRoute({
+      path: "/elections/:id/presentation",
+      component: { template: "<div />" },
+      meta: { projector: true },
+    });
+    await router.push("/elections/abc/presentation");
+
+    const wrapper = mount(App, globalMountOptions);
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.find(".bottomCorner").exists()).toBe(false);
+    removeRoute();
+    await router.push("/");
+  });
+
   it("has correct title attribute on branch display", async () => {
     process.env.BRANCH_NAME = "feature/test-branch";
 

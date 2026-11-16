@@ -6,6 +6,8 @@ declare module "vue-router" {
   interface RouteMeta {
     requiresAuth?: boolean;
     requiresSuperAdmin?: boolean;
+    /** Projector page: the teller shell hides its menus. */
+    projector?: boolean;
     title?: string;
   }
 }

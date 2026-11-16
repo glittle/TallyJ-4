@@ -105,4 +105,31 @@ describe("PresentationViewPage status banner", () => {
     expect(progressBanner.classes()).toContain("status-progress");
     expect(progressBanner.get(".status-text").text()).toBe("LABEL_IN_PROGRESS");
   });
+
+  it("says the tally has not been run instead of zero ballots", async () => {
+    fetchPresentationData.mockResolvedValue({
+      ...presentation("In Progress"),
+      totalBallots: 0,
+      totalVotes: 0,
+    });
+
+    const wrapper = await mountPage();
+    const text = wrapper.text();
+
+    expect(text).toContain("The tally has not been run");
+    expect(text).not.toContain("0 ballots");
+    expect(text).not.toContain("0 votes");
+    expect(wrapper.find(".elected-title").exists()).toBe(false);
+  });
+
+  it("shows ballot and vote counts after a tally", async () => {
+    fetchPresentationData.mockResolvedValue(presentation("Final"));
+
+    const wrapper = await mountPage();
+    const text = wrapper.text();
+
+    expect(text).toContain("12 ballots");
+    expect(text).toContain("40 votes");
+    expect(text).not.toContain("The tally has not been run");
+  });
 });

@@ -40,6 +40,11 @@ async function mountLayout(path: string, showAsTest: boolean | null) {
         path: "/elections/:id/frontdesk",
         component: { template: "<div />" },
       },
+      {
+        path: "/elections/:id/presentation",
+        component: { template: "<div />" },
+        meta: { projector: true },
+      },
     ],
   });
   await router.push(path);
@@ -83,5 +88,22 @@ describe("MainLayout test-election banner", () => {
     expect(wrapper.find("[data-testid='test-election-banner']").exists()).toBe(
       false,
     );
+  });
+
+  it("hides the teller shell on the projector presentation", async () => {
+    const wrapper = await mountLayout(
+      `/elections/${TEST_GUID}/presentation`,
+      true,
+    );
+
+    expect(wrapper.find(".app-sidebar-stub").exists()).toBe(false);
+    expect(wrapper.find(".app-header-stub").exists()).toBe(false);
+    expect(wrapper.find("[data-testid='test-election-banner']").exists()).toBe(
+      false,
+    );
+    expect(
+      wrapper.find("[data-testid='owner-restriction-banner']").exists(),
+    ).toBe(false);
+    expect(wrapper.classes()).toContain("projector-layout");
   });
 });

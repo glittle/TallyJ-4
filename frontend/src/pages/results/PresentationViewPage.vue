@@ -16,18 +16,24 @@
               count: presentationData.numToElect,
             })
           }}
-          |
-          {{
-            $t("presentation.totalBallots", {
-              count: presentationData.totalBallots,
-            })
-          }}
-          |
-          {{
-            $t("presentation.totalVotes", {
-              count: presentationData.totalVotes,
-            })
-          }}
+          <template v-if="tallyNotRun(presentationData.status)">
+            |
+            {{ $t("presentation.tallyNotRun") }}
+          </template>
+          <template v-else>
+            |
+            {{
+              $t("presentation.totalBallots", {
+                count: presentationData.totalBallots,
+              })
+            }}
+            |
+            {{
+              $t("presentation.totalVotes", {
+                count: presentationData.totalVotes,
+              })
+            }}
+          </template>
         </span>
       </div>
     </div>
@@ -52,7 +58,13 @@
       </div>
 
       <!-- Elected -->
-      <div class="results-section">
+      <div
+        v-if="
+          presentationData.electedPeople.length > 0 ||
+          !tallyNotRun(presentationData.status)
+        "
+        class="results-section"
+      >
         <h2 class="section-title elected-title">
           {{ $t("presentation.electedPeople") }}
         </h2>
@@ -249,6 +261,11 @@ function presentationBannerStatus(
     default:
       return null;
   }
+}
+
+/** No result summary: the server status is In Progress, and the counts are zeros. */
+function tallyNotRun(status: string) {
+  return presentationBannerStatus(status) === "progress";
 }
 
 function getStatusClass(status: string) {
