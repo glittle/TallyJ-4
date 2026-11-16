@@ -14,17 +14,17 @@ const i18n = createI18n({
       "elections.stageChangeError.analysisNotReady":
         "Election analysis is not complete or ready for finalization",
       "elections.stageChangeError.ballotsNeedReview":
-        "{count} ballot(s) still need review",
+        "{count} ballot still needs review | {count} ballots still need review",
       "elections.stageChangeError.ballotsOutstanding":
-        "{count} ballot(s) have outstanding issues",
+        "{count} ballot has outstanding issues | {count} ballots have outstanding issues",
       "elections.stageChangeError.unresolvedTies":
         "Unresolved ties must be broken before finalizing",
       "elections.stageChangeError.countsDoNotReconcile":
-        "{count} count-reconciliation mismatch(es) must be resolved before analyzing or finalizing",
+        "{count} count-reconciliation mismatch must be resolved before analyzing or finalizing | {count} count-reconciliation mismatches must be resolved before analyzing or finalizing",
       "elections.stageChangeError.onlineVotingStillOpen":
         "Close the online voting window before finalizing this election.",
       "tally.reconciliation.blocked":
-        "{count} mismatch(es) must be resolved before Analyze or Finalize.",
+        "{count} mismatch must be resolved before Analyze or Finalize. | {count} mismatches must be resolved before Analyze or Finalize.",
     },
   },
 });
@@ -47,7 +47,7 @@ describe("translateElectionStageChangeError", () => {
         "elections.stageChangeError.ballotsNeedReview|count=3",
         t,
       ),
-    ).toBe("3 ballot(s) still need review");
+    ).toBe("3 ballots still need review");
   });
 
   it("translates ballotsOutstanding with a count parameter", () => {
@@ -56,7 +56,16 @@ describe("translateElectionStageChangeError", () => {
         "elections.stageChangeError.ballotsOutstanding|count=3",
         t,
       ),
-    ).toBe("3 ballot(s) have outstanding issues");
+    ).toBe("3 ballots have outstanding issues");
+  });
+
+  it("uses the singular when one ballot is outstanding", () => {
+    expect(
+      translateElectionStageChangeError(
+        "elections.stageChangeError.ballotsOutstanding|count=1",
+        t,
+      ),
+    ).toBe("1 ballot has outstanding issues");
   });
 
   it("translates multiple phrase keys separated by semicolons", () => {
@@ -66,7 +75,7 @@ describe("translateElectionStageChangeError", () => {
         t,
       ),
     ).toBe(
-      "3 ballot(s) still need review; Unresolved ties must be broken before finalizing",
+      "3 ballots still need review; Unresolved ties must be broken before finalizing",
     );
   });
 
@@ -77,7 +86,7 @@ describe("translateElectionStageChangeError", () => {
         t,
       ),
     ).toBe(
-      "4 count-reconciliation mismatch(es) must be resolved before analyzing or finalizing",
+      "4 count-reconciliation mismatches must be resolved before analyzing or finalizing",
     );
   });
 
@@ -106,7 +115,7 @@ describe("translateAnalysisBlocker", () => {
         "elections.stageChangeError.countsDoNotReconcile|count=1",
         t,
       ),
-    ).toBe("1 mismatch(es) must be resolved before Analyze or Finalize.");
+    ).toBe("1 mismatch must be resolved before Analyze or Finalize.");
   });
 
   it("uses the stage phrase for outstanding ballots", () => {
@@ -115,7 +124,7 @@ describe("translateAnalysisBlocker", () => {
         "elections.stageChangeError.ballotsOutstanding|count=3",
         t,
       ),
-    ).toBe("3 ballot(s) have outstanding issues");
+    ).toBe("3 ballots have outstanding issues");
   });
 
   it("returns an empty string when Analyze is not blocked", () => {

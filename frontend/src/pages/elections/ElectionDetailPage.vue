@@ -17,7 +17,7 @@ import { extractApiErrorMessage } from "../../utils/errorHandler";
 
 const router = useRouter();
 const route = useRoute();
-const { t } = useI18n();
+const { t, te } = useI18n();
 const electionStore = useElectionStore();
 const electionStatsStore = useElectionStatsStore();
 const { showSuccessMessage, showErrorMessage } = useNotifications();
@@ -32,6 +32,15 @@ const electionStats = computed(() =>
 );
 
 const isGuest = computed(() => isGuestTeller());
+
+/** Stage, type, and mode use the same words as the edit form. */
+function labeledCode(group: string, code?: string | null): string {
+  if (!code) {
+    return "-";
+  }
+  const key = `${group}.${code}`;
+  return te(key) ? t(key) : code;
+}
 /** A guest cannot reset. Everyone else can when the election is marked as a test. */
 const canResetTestElection = computed(
   () => !isGuest.value && election.value?.showAsTest === true,
@@ -164,14 +173,20 @@ async function exportElection() {
               {{ election.name }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('elections.form.type')">
-              {{ election.electionType || "-" }}
+              {{
+                labeledCode("elections.electionTypes", election.electionType)
+              }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('elections.form.date')">
               {{ formatDate(election.dateOfElection) }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('elections.status')">
               <el-tag :type="electionStageTagType(election.electionStage)">
-                {{ election.electionStage || "Draft" }}
+                {{
+                  election.electionStage
+                    ? labeledCode("elections.stage", election.electionStage)
+                    : "Draft"
+                }}
               </el-tag>
             </el-descriptions-item>
             <el-descriptions-item :label="$t('elections.form.numberToElect')">
@@ -184,7 +199,9 @@ async function exportElection() {
               {{ election.convenor || "-" }}
             </el-descriptions-item>
             <el-descriptions-item :label="$t('elections.form.electionMode')">
-              {{ election.electionMode || "-" }}
+              {{
+                labeledCode("elections.electionModes", election.electionMode)
+              }}
             </el-descriptions-item>
           </el-descriptions>
         </el-card>

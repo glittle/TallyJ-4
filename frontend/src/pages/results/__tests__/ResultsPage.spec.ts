@@ -148,7 +148,7 @@ describe("ResultsPage blocked tally", () => {
     const wrapper = await mountPage();
 
     expect(wrapper.text()).toContain(
-      "1 mismatch(es) must be resolved before Analyze or Finalize.",
+      "1 mismatch must be resolved before Analyze or Finalize.",
     );
     expect(wrapper.text()).not.toContain("Calculated at");
     expect(wrapper.text()).not.toContain("Total Ballots");
@@ -167,7 +167,7 @@ describe("ResultsPage blocked tally", () => {
     const wrapper = await mountPage();
 
     expect(wrapper.get('[data-testid="results-blocker"]').text()).toBe(
-      "2 ballot(s) have outstanding issues",
+      "2 ballots have outstanding issues",
     );
     expect(wrapper.text()).not.toContain("Calculated at");
     expect(wrapper.find(".results-table").exists()).toBe(false);
@@ -198,7 +198,7 @@ describe("ResultsPage blocked tally", () => {
     const wrapper = await mountPage();
 
     expect(wrapper.text()).toContain(
-      "1 mismatch(es) must be resolved before Analyze or Finalize.",
+      "1 mismatch must be resolved before Analyze or Finalize.",
     );
     expect(wrapper.text()).toContain("Calculated at");
     expect(wrapper.text()).toContain("Ada Lovelace");

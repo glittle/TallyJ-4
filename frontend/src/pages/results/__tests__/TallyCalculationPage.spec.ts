@@ -188,7 +188,7 @@ describe("TallyCalculationPage reconciliation gate", () => {
     await flushPromises();
 
     expect(mockShowError).toHaveBeenCalledWith(
-      "3 ballot(s) have outstanding issues",
+      "3 ballots have outstanding issues",
     );
   });
 

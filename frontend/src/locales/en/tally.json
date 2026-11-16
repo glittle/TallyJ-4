@@ -135,9 +135,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "tally.reconciliation.blocked": {
-    "t": "{count} mismatch(es) must be resolved before Analyze or Finalize.",
+    "t": "{count} mismatch must be resolved before Analyze or Finalize. | {count} mismatches must be resolved before Analyze or Finalize.",
     "s": "source",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-11-16T01:40:00Z"
   },
   "tally.reconciliation.frontDeskCount": {
     "t": "Front Desk (accounted)",
@@ -260,9 +260,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "tally.manualCounts.useCalculated": {
-    "t": "Use calculated",
+    "t": "Auto",
     "s": "source",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-11-16T01:40:00Z"
   },
   "tally.manualCounts.eligibleVoters": {
     "t": "Eligible Voters",

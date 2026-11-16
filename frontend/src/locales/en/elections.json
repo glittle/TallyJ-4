@@ -1115,14 +1115,14 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.stageChangeError.ballotsNeedReview": {
-    "t": "{count} ballot(s) still need review",
+    "t": "{count} ballot still needs review | {count} ballots still need review",
     "s": "source",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-11-16T01:40:00Z"
   },
   "elections.stageChangeError.ballotsOutstanding": {
-    "t": "{count} ballot(s) have outstanding issues",
+    "t": "{count} ballot has outstanding issues | {count} ballots have outstanding issues",
     "s": "source",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-11-16T01:40:00Z"
   },
   "elections.stageChangeError.confirmLeaveFinalized": {
     "t": "Reverting from Finalized requires confirmation",
@@ -1155,9 +1155,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "elections.stageChangeError.countsDoNotReconcile": {
-    "t": "{count} count-reconciliation mismatch(es) must be resolved before analyzing or finalizing",
+    "t": "{count} count-reconciliation mismatch must be resolved before analyzing or finalizing | {count} count-reconciliation mismatches must be resolved before analyzing or finalizing",
     "s": "source",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-11-16T01:40:00Z"
   },
   "elections.stageChangeError.onlineVotingStillOpen": {
     "t": "Close the online voting window before finalizing this election.",
