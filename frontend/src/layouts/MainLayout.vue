@@ -87,6 +87,28 @@ function syncHeaderOffset() {
   headerOffsetPx.value = el ? Math.ceil(el.getBoundingClientRect().height) : 0;
 }
 
+function detachHeaderObserver() {
+  headerObserver?.disconnect();
+  headerObserver = undefined;
+}
+
+/** The header is removed on the projector route and recreated on the way back. */
+function attachHeaderObserver() {
+  detachHeaderObserver();
+  const el = readHeaderElement();
+  if (!el || typeof ResizeObserver === "undefined") {
+    headerOffsetPx.value = 0;
+    return;
+  }
+  syncHeaderOffset();
+  headerObserver = new ResizeObserver(() => {
+    syncHeaderOffset();
+  });
+  headerObserver.observe(el);
+}
+
+watch(mainHeader, () => attachHeaderObserver(), { flush: "post" });
+
 const headerOffsetStyle = computed(() =>
   headerOffsetPx.value > 0
     ? { "--app-header-offset": `${headerOffsetPx.value}px` }
@@ -94,21 +116,13 @@ const headerOffsetStyle = computed(() =>
 );
 
 onMounted(async () => {
-  syncHeaderOffset();
-  const el = readHeaderElement();
-  if (el && typeof ResizeObserver !== "undefined") {
-    headerObserver = new ResizeObserver(() => {
-      syncHeaderOffset();
-    });
-    headerObserver.observe(el);
-  }
   if (!route.params.id) {
     await electionStore.ensureActiveElectionHubConnection();
   }
 });
 
 onUnmounted(() => {
-  headerObserver?.disconnect();
+  detachHeaderObserver();
 });
 
 function toggleMobileSidebar() {

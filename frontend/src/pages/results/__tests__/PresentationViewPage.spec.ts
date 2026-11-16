@@ -7,8 +7,11 @@ import PresentationViewPage from "../PresentationViewPage.vue";
 
 const fetchPresentationData = vi.fn();
 
+const push = vi.fn();
+
 vi.mock("vue-router", () => ({
   useRoute: () => ({ params: { id: "election-1" } }),
+  useRouter: () => ({ push }),
 }));
 
 vi.mock("@/composables/useApiErrorHandler", () => ({
@@ -39,8 +42,18 @@ function presentation(status: string): PresentationDto {
 }
 
 describe("PresentationViewPage status banner", () => {
+  let fullscreenElement: Element | null = null;
+  const mounted: Array<{ unmount: () => void }> = [];
+
   beforeEach(() => {
     fetchPresentationData.mockReset();
+    push.mockReset();
+    fullscreenElement = null;
+    vi.spyOn(Date, "now").mockReturnValue(1_000_000);
+    Object.defineProperty(document, "fullscreenElement", {
+      configurable: true,
+      get: () => fullscreenElement,
+    });
     i18n.global.mergeLocaleMessage("en", {
       presentation: {
         statusComplete: "LABEL_COMPLETE",
@@ -50,6 +63,11 @@ describe("PresentationViewPage status banner", () => {
   });
 
   afterEach(() => {
+    for (const wrapper of mounted) {
+      wrapper.unmount();
+    }
+    mounted.length = 0;
+    vi.restoreAllMocks();
     i18n.global.mergeLocaleMessage("en", {
       presentation: {
         statusComplete: "Complete",
@@ -62,6 +80,7 @@ describe("PresentationViewPage status banner", () => {
     const wrapper = mount(PresentationViewPage, {
       global: { plugins: [i18n], stubs },
     });
+    mounted.push(wrapper);
     await flushPromises();
     return wrapper;
   }
@@ -131,5 +150,41 @@ describe("PresentationViewPage status banner", () => {
     expect(text).toContain("12 ballots");
     expect(text).toContain("40 votes");
     expect(text).not.toContain("The tally has not been run");
+  });
+
+  it("leaves for the results page when Escape is pressed", async () => {
+    fetchPresentationData.mockResolvedValue(presentation("Final"));
+    const wrapper = await mountPage();
+
+    expect(wrapper.get(".sr-only").text()).toBe(
+      "Press Escape to leave the presentation",
+    );
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    expect(push).toHaveBeenCalledWith("/elections/election-1/results");
+
+    wrapper.unmount();
+    push.mockClear();
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("ignores Escape while the browser is leaving fullscreen", async () => {
+    fetchPresentationData.mockResolvedValue(presentation("Final"));
+    const wrapper = await mountPage();
+    fullscreenElement = document.body;
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    expect(push).not.toHaveBeenCalled();
+
+    fullscreenElement = null;
+    document.dispatchEvent(new Event("fullscreenchange"));
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    expect(push).not.toHaveBeenCalled();
+
+    vi.spyOn(Date, "now").mockReturnValue(1_000_000 + 101);
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+    expect(push).toHaveBeenCalledWith("/elections/election-1/results");
+    wrapper.unmount();
   });
 });

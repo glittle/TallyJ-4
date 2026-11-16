@@ -81,7 +81,7 @@ Monitor "Ballots entered" for a location is every ballot at that location, the s
 
 The presentation page is for a projector in the room. It is full screen and does not include the teller sidebar, header chips, or other teller menus. It stays the authenticated in-app page. It is not an anonymous public results URL.
 
-The presentation route hides the teller sidebar, header, test and owner banners, and the branch pill, and the page fills the screen. Banner colour for the server statuses `Final` and `In Progress` already shipped (#460). Before a result summary exists the screen says the tally has not been run instead of a zero ballot count.
+The presentation route hides the teller sidebar, header, test and owner banners, and the branch pill, and the page fills the screen. Escape leaves for that election's results. An Escape that is exiting browser fullscreen, including a second event from that same press, does not navigate. Banner colour for the server statuses `Final` and `In Progress` already shipped (#460). Before a result summary exists the screen says the tally has not been run instead of a zero ballot count.
 
 **Rejected alternative:** keep the teller chrome so the operator can change pages without leaving presentation. Rejected — the audience is the room, and the menus compete with the result.
 
