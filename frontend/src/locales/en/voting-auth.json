@@ -539,6 +539,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "voting.auth.verify.notSent": {
+    "t": "We could not send a verification code to {voterId}",
+    "s": "source",
+    "w": "2026-11-15T18:00:00Z"
+  },
   "voting.auth.verify.failed": {
     "t": "Could not verify that code. Please check it and try again.",
     "s": "source",

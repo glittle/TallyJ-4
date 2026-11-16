@@ -11,6 +11,8 @@ const verificationForm = defineModel<{
 
 defineProps<{
   loading: boolean;
+  /** False when requestCode reported that delivery failed. */
+  codeSent: boolean;
   deliveryStatus?: VoterCodeDeliveryStatusEvent | null;
 }>();
 
@@ -28,12 +30,16 @@ const emit = defineEmits<{
       </ElIcon>
       <h3>
         {{
-          $t("voting.auth.verify.message", {
-            voterId: verificationForm.voterId,
-          })
+          codeSent
+            ? $t("voting.auth.verify.message", {
+                voterId: verificationForm.voterId,
+              })
+            : $t("voting.auth.verify.notSent", {
+                voterId: verificationForm.voterId,
+              })
         }}
       </h3>
-      <p>{{ $t("voting.auth.verify.detail") }}</p>
+      <p v-if="codeSent">{{ $t("voting.auth.verify.detail") }}</p>
     </div>
     <VoterCodeDeliveryStatus :status="deliveryStatus ?? null" />
     <ElForm :model="verificationForm" @submit.prevent="emit('verify')">
