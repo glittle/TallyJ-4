@@ -129,4 +129,18 @@ html.dark {
     0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
   --el-box-shadow-lighter: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
   --el-box-shadow-dark: 0 2px 12px 0 rgba(0, 0, 0, 0.3);
+
+  /* .el-empty sets these itself, so a root override does not reach the drawing. */
+  .el-empty {
+    --el-empty-fill-color-0: var(--color-gray-800);
+    --el-empty-fill-color-1: var(--color-gray-700);
+    --el-empty-fill-color-2: var(--color-gray-700);
+    --el-empty-fill-color-3: var(--color-gray-600);
+    --el-empty-fill-color-4: var(--color-gray-600);
+    --el-empty-fill-color-5: var(--color-gray-500);
+    --el-empty-fill-color-6: var(--color-gray-500);
+    --el-empty-fill-color-7: var(--color-gray-400);
+    --el-empty-fill-color-8: var(--color-gray-400);
+    --el-empty-fill-color-9: var(--color-gray-300);
+  }
 }

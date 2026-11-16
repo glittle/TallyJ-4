@@ -82,4 +82,18 @@ describe("ReportingPage download all", () => {
 
     click.mockRestore();
   });
+
+  it("opens the first report from a button, not a plain link", async () => {
+    mockGetReport.mockResolvedValue({ electionName: "Assembly" });
+    const wrapper = mount(ReportingPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+
+    const choice = wrapper.get("button.report-choice");
+    expect(choice.text()).toBe("Eligible and Voted by Area");
+    expect(choice.element.tagName).toBe("BUTTON");
+    expect(mockGetReport).toHaveBeenCalledWith("elec-1", "VotersByArea");
+    expect(wrapper.text()).not.toContain("Please select a report...");
+  });
 });

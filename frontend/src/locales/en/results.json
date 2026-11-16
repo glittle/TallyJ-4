@@ -165,9 +165,9 @@
     "w": "2026-09-23T17:47:03Z"
   },
   "tieManagement.noTies": {
-    "t": "No ties require management",
+    "t": "No ties require management. Ties appear here after the tally runs.",
     "s": "source",
-    "w": "2026-09-23T17:47:03Z"
+    "w": "2026-11-16T02:20:00Z"
   },
   "tieManagement.person": {
     "t": "Person",
