@@ -100,7 +100,9 @@ const stubs = {
       "<button class='request-email' @click=\"$emit('request-email')\" />",
   },
   VoterAuthVerifyStep: {
-    template: "<button class='verify-code' @click=\"$emit('verify')\" />",
+    props: ["codeSent"],
+    template:
+      "<button class='verify-step verify-code' :data-code-sent='String(codeSent)' @click=\"$emit('verify')\" />",
   },
 };
 
@@ -118,12 +120,96 @@ async function mountOnVerifyStep() {
 }
 
 describe("VoterAuthPage code request", () => {
+  beforeEach(() => {
+    showSuccessMessage.mockReset();
+    showErrorMessage.mockReset();
+    requestVerificationCode.mockResolvedValue({
+      messageKey: "voting.auth.requestCode.sentIfListed",
+      channelToken: "channel-token",
+    });
+  });
+
+  it("places the result toast below the public flag header", async () => {
+    const header = document.createElement("div");
+    header.className = "public-header";
+    Object.defineProperty(header, "offsetHeight", {
+      configurable: true,
+      value: 80,
+    });
+    header.getBoundingClientRect = () =>
+      ({
+        height: 80,
+        width: 0,
+        top: 0,
+        left: 0,
+        bottom: 80,
+        right: 0,
+        x: 0,
+        y: 0,
+        toJSON: () => ({}),
+      }) as DOMRect;
+    document.body.appendChild(header);
+
+    try {
+      await mountOnVerifyStep();
+      expect(showSuccessMessage).toHaveBeenCalledWith(
+        "If you are on the voter list, a code has been sent.",
+        undefined,
+        92,
+      );
+    } finally {
+      header.remove();
+    }
+  });
+
   it("says a code was sent if the person is on the voter list", async () => {
-    await mountOnVerifyStep();
+    const wrapper = await mountOnVerifyStep();
 
     expect(showSuccessMessage).toHaveBeenCalledWith(
       "If you are on the voter list, a code has been sent.",
     );
+    expect(showErrorMessage).not.toHaveBeenCalled();
+    expect(wrapper.get(".verify-step").attributes("data-code-sent")).toBe(
+      "true",
+    );
+  });
+
+  it("uses an error toast and does not claim the code was sent when delivery fails", async () => {
+    requestVerificationCode.mockResolvedValueOnce({
+      messageKey: "voting.auth.requestCode.sendFailed",
+      channelToken: "channel-token",
+    });
+    const wrapper = await mountOnVerifyStep();
+
+    expect(showErrorMessage).toHaveBeenCalledWith(
+      "Failed to send verification code. Please try again.",
+    );
+    expect(showSuccessMessage).not.toHaveBeenCalled();
+    expect(wrapper.get(".verify-step").attributes("data-code-sent")).toBe(
+      "false",
+    );
+  });
+
+  it("stays on the request form when requestCode returns an error key", async () => {
+    requestVerificationCode.mockResolvedValueOnce({
+      messageKey: "voting.auth.requestCode.error",
+      channelToken: null,
+    });
+    const wrapper = mount(VoterAuthPage, {
+      global: {
+        plugins: [i18n],
+        stubs,
+      },
+    });
+    await flushPromises();
+    await wrapper.get(".request-email").trigger("click");
+    await flushPromises();
+
+    expect(showErrorMessage).toHaveBeenCalledWith(
+      "An error occurred while processing your request.",
+    );
+    expect(showSuccessMessage).not.toHaveBeenCalled();
+    expect(wrapper.find(".verify-step").exists()).toBe(false);
   });
 });
 

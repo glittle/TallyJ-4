@@ -38,6 +38,40 @@ const { deliveryStatus, watchChannel, stopWatching } = useVoterCodeDelivery();
 
 const activeTab = useLocalStorage("voterLoginTab", "google");
 const step = ref<"request" | "verify">("request");
+/** True only when requestCode reported a send, so the verify heading can match. */
+const codeSent = ref(false);
+
+const CODE_SENT_MESSAGE_KEYS = new Set([
+  "voting.auth.requestCode.sentIfListed",
+  "voting.auth.requestCode.sent",
+]);
+
+/** Keep the toast under the public flag strip instead of painting over it. */
+function voterToastOffset(): number | undefined {
+  const header = document.querySelector(".public-header");
+  if (!(header instanceof HTMLElement) || header.offsetHeight <= 0) {
+    return undefined;
+  }
+  return Math.ceil(header.getBoundingClientRect().height) + 12;
+}
+
+function showVoterSuccess(message: string) {
+  const offset = voterToastOffset();
+  if (offset === undefined) {
+    showSuccessMessage(message);
+    return;
+  }
+  showSuccessMessage(message, undefined, offset);
+}
+
+function showVoterError(message: string) {
+  const offset = voterToastOffset();
+  if (offset === undefined) {
+    showErrorMessage(message);
+    return;
+  }
+  showErrorMessage(message, undefined, offset);
+}
 
 const googleButtonContainer = ref<HTMLElement>();
 const requestTabsRef = ref<{ googleButtonEl?: HTMLElement } | null>(null);
@@ -150,6 +184,41 @@ const handleKeydown = (event: KeyboardEvent) => {
   }
 };
 
+/**
+ * A listed-voter send advances to the code form and says the code was sent.
+ * A failed delivery still advances, because a code was issued and the delivery
+ * alert is on that step, but the heading must not claim the code was sent.
+ * Any other requestCode key stays on the request form.
+ */
+async function finishCodeRequest(
+  voterId: string,
+  messageKey: string,
+  channelToken: string | null,
+) {
+  const sent = CODE_SENT_MESSAGE_KEYS.has(messageKey);
+  const text = t(messageKey || "voting.auth.requestCode.error");
+  if (sent) {
+    showVoterSuccess(text);
+  } else {
+    showVoterError(text);
+  }
+
+  const showVerify =
+    sent || messageKey === "voting.auth.requestCode.sendFailed";
+  codeSent.value = sent;
+  if (!showVerify) {
+    return;
+  }
+
+  verificationForm.value.voterId = voterId;
+  step.value = "verify";
+  try {
+    await watchChannel(channelToken);
+  } catch {
+    // requestCode already returned; live status is best-effort.
+  }
+}
+
 async function handleRequestEmailCode() {
   try {
     loading.value = true;
@@ -159,16 +228,9 @@ async function handleRequestEmailCode() {
         voterIdType: "E",
         deliveryMethod: "email",
       });
-    verificationForm.value.voterId = emailForm.value.email;
-    step.value = "verify";
-    showSuccessMessage(t(messageKey));
-    try {
-      await watchChannel(channelToken);
-    } catch {
-      // requestCode already succeeded; live status is best-effort.
-    }
+    await finishCodeRequest(emailForm.value.email, messageKey, channelToken);
   } catch (error) {
-    showErrorMessage(
+    showVoterError(
       resolveUserFacingApiError(error, t("voting.auth.email.sendFailed")),
     );
   } finally {
@@ -185,16 +247,9 @@ async function handleRequestPhoneCode() {
         voterIdType: "P",
         deliveryMethod: phoneForm.value.deliveryMethod,
       });
-    verificationForm.value.voterId = phoneForm.value.phone;
-    step.value = "verify";
-    showSuccessMessage(t(messageKey));
-    try {
-      await watchChannel(channelToken);
-    } catch {
-      // requestCode already succeeded; live status is best-effort.
-    }
+    await finishCodeRequest(phoneForm.value.phone, messageKey, channelToken);
   } catch (error) {
-    showErrorMessage(
+    showVoterError(
       resolveUserFacingApiError(error, t("voting.auth.phone.sendFailed")),
     );
   } finally {
@@ -211,7 +266,7 @@ async function handleDirectCodeLogin() {
     });
     await redirectAfterAuth();
   } catch (error) {
-    showErrorMessage(
+    showVoterError(
       resolveUserFacingApiError(error, t("voting.auth.code.failed")),
     );
   } finally {
@@ -225,7 +280,7 @@ async function handleVerifyCode() {
     await onlineVotingStore.verifyCode(verificationForm.value);
     await redirectAfterAuth();
   } catch (error) {
-    showErrorMessage(
+    showVoterError(
       resolveUserFacingApiError(error, t("voting.auth.verify.failed")),
     );
   } finally {
@@ -258,7 +313,7 @@ const {
   router,
   route,
   t,
-  showErrorMessage,
+  showErrorMessage: showVoterError,
   setLoading: (v) => {
     loading.value = v;
   },
@@ -272,7 +327,7 @@ const handleGoogleCredentialCallback = async (
     await onlineVotingStore.googleAuth({ credential: response.credential });
     await redirectAfterAuth();
   } catch (error) {
-    showErrorMessage(
+    showVoterError(
       resolveUserFacingApiError(error, t("voting.auth.google.error")),
     );
   } finally {
@@ -407,6 +462,7 @@ onBeforeUnmount(() => {
           v-else-if="step === 'verify'"
           v-model:verification-form="verificationForm"
           :loading="loading"
+          :code-sent="codeSent"
           :delivery-status="deliveryStatus"
           @verify="handleVerifyCode"
           @back="backToRequest"

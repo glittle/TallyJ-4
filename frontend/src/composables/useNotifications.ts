@@ -8,6 +8,8 @@ export interface NotificationOptions {
   type?: NotificationType;
   duration?: number;
   showClose?: boolean;
+  /** Pixels from the top of the viewport. Omit to keep Element Plus's default. */
+  offset?: number;
 }
 
 export function useNotifications() {
@@ -23,6 +25,7 @@ export function useNotifications() {
       message = options.message,
       duration = options.duration ?? computeDuration(message),
       showClose = options.showClose ?? true,
+      offset,
     } = options;
 
     ElMessage({
@@ -31,6 +34,7 @@ export function useNotifications() {
       duration,
       showClose,
       grouping: true, // Group messages to avoid clutter
+      ...(typeof offset === "number" ? { offset } : {}),
     });
   };
 
@@ -66,25 +70,42 @@ export function useNotifications() {
   //   }
   // };
 
-  const showSuccessMessage = (message: string, duration?: number) => {
-    showMessage({ message, type: "success", duration });
+  const showSuccessMessage = (
+    message: string,
+    duration?: number,
+    offset?: number,
+  ) => {
+    showMessage({ message, type: "success", duration, offset });
   };
 
-  const showErrorMessage = (message: string, duration?: number) => {
+  const showErrorMessage = (
+    message: string,
+    duration?: number,
+    offset?: number,
+  ) => {
     showMessage({
       message,
       type: "error",
       duration: duration ?? 0,
       showClose: true,
+      offset,
     });
   };
 
-  const showWarningMessage = (message: string, duration?: number) => {
-    showMessage({ message, type: "warning", duration });
+  const showWarningMessage = (
+    message: string,
+    duration?: number,
+    offset?: number,
+  ) => {
+    showMessage({ message, type: "warning", duration, offset });
   };
 
-  const showInfoMessage = (message: string, duration?: number) => {
-    showMessage({ message, type: "info", duration });
+  const showInfoMessage = (
+    message: string,
+    duration?: number,
+    offset?: number,
+  ) => {
+    showMessage({ message, type: "info", duration, offset });
   };
 
   return {
