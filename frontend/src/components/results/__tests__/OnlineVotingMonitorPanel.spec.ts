@@ -139,7 +139,7 @@ describe("OnlineVotingMonitorPanel", () => {
     expect(
       wrapper.get("[data-testid='online-ballots-unexplained']").text(),
     ).toBe(
-      "1 online ballot is not still changeable, processing, or accepted, so it is only in this total.",
+      "1 online ballot has a stored status other than Still changeable, Processing, or Accepted (for example Used or Sent), so it appears only in this total.",
     );
   });
 
@@ -154,7 +154,7 @@ describe("OnlineVotingMonitorPanel", () => {
     expect(
       wrapper.get("[data-testid='online-ballots-unexplained']").text(),
     ).toBe(
-      "2 online ballots are not still changeable, processing, or accepted, so they are only in this total.",
+      "2 online ballots have a stored status other than Still changeable, Processing, or Accepted (for example Used or Sent), so they appear only in this total.",
     );
   });
 
