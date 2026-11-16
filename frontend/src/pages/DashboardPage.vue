@@ -5,6 +5,7 @@
 import ElectionPackageLoadDialog from "@/components/common/ElectionPackageLoadDialog.vue";
 import { useApiErrorHandler } from "@/composables/useApiErrorHandler";
 import { useNotifications } from "@/composables/useNotifications";
+import { useResponsive } from "@/composables/useResponsive";
 import { electionService } from "@/services/electionService";
 import { signalrService } from "@/services/signalrService";
 import { useElectionStore } from "@/stores/electionStore";
@@ -28,6 +29,8 @@ import { STAGES } from "../domain/electionStages";
 
 const router = useRouter();
 const { t, te } = useI18n();
+const { isMobile } = useResponsive();
+const filtersOpen = ref(false);
 const electionStore = useElectionStore();
 const { handleApiError } = useApiErrorHandler();
 const { showSuccessMessage, showWarningMessage, showErrorMessage } =
@@ -513,22 +516,29 @@ function formatDate(date: string) {
         </template>
 
         <div class="filters-section">
-          <el-row :gutter="20" align="middle">
-            <el-col :span="6">
-              <el-input
-                v-model="filters.search"
-                :placeholder="$t('elections.searchPlaceholder')"
-                clearable
-                @input="handleSearch"
-              >
-                <template #prefix>
-                  <el-icon>
-                    <Search />
-                  </el-icon>
-                </template>
-              </el-input>
-            </el-col>
-            <el-col :span="4">
+          <div class="filters-layout">
+            <el-input
+              v-model="filters.search"
+              class="filter-search"
+              :placeholder="$t('elections.searchPlaceholder')"
+              clearable
+              @input="handleSearch"
+            >
+              <template #prefix>
+                <el-icon>
+                  <Search />
+                </el-icon>
+              </template>
+            </el-input>
+            <el-button
+              v-if="isMobile"
+              class="filters-toggle"
+              :aria-expanded="filtersOpen"
+              @click="filtersOpen = !filtersOpen"
+            >
+              {{ $t("dashboard.filters") }}
+            </el-button>
+            <div v-show="!isMobile || filtersOpen" class="filters-extra">
               <el-select
                 v-model="filters.status"
                 :placeholder="$t('elections.filterByStatus')"
@@ -542,8 +552,6 @@ function formatDate(date: string) {
                   :value="option.value"
                 />
               </el-select>
-            </el-col>
-            <el-col :span="4">
               <el-select
                 v-model="filters.type"
                 :placeholder="$t('elections.filterByType')"
@@ -579,8 +587,6 @@ function formatDate(date: string) {
                   value="Oth"
                 />
               </el-select>
-            </el-col>
-            <el-col :span="4">
               <el-date-picker
                 v-model="filters.dateRange"
                 type="daterange"
@@ -589,15 +595,11 @@ function formatDate(date: string) {
                 :end-placeholder="$t('common.endDate')"
                 @change="handleFilterChange"
               />
-            </el-col>
-            <el-col :span="6" class="text-right">
-              <el-space>
-                <el-button :disabled="!hasActiveFilters" @click="clearFilters">
-                  {{ $t("common.clearFilters") }}
-                </el-button>
-              </el-space>
-            </el-col>
-          </el-row>
+              <el-button :disabled="!hasActiveFilters" @click="clearFilters">
+                {{ $t("common.clearFilters") }}
+              </el-button>
+            </div>
+          </div>
         </div>
 
         <div class="table-container">
@@ -625,7 +627,7 @@ function formatDate(date: string) {
             <el-table-column
               prop="name"
               :label="$t('elections.name')"
-              min-width="350"
+              min-width="180"
               sortable="custom"
             >
               <template #default="scope">
@@ -648,15 +650,17 @@ function formatDate(date: string) {
             <el-table-column
               prop="electionStage"
               :label="$t('elections.status')"
-              min-width="100"
+              min-width="200"
               sortable="custom"
             >
               <template #default="scope">
-                {{
-                  scope.row.electionStage
-                    ? $t(`elections.stage.${scope.row.electionStage}`)
-                    : "-"
-                }}
+                <span class="status-label">
+                  {{
+                    scope.row.electionStage
+                      ? $t(`elections.stage.${scope.row.electionStage}`)
+                      : "-"
+                  }}
+                </span>
               </template>
             </el-table-column>
             <el-table-column
@@ -754,8 +758,9 @@ function formatDate(date: string) {
 
   .card-header {
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-end;
-    gap: 20px;
+    gap: 12px;
     align-items: center;
     margin: 0;
   }
@@ -763,7 +768,10 @@ function formatDate(date: string) {
   .election-name {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: var(--spacing-2);
+    white-space: normal;
+    overflow-wrap: anywhere;
 
     .test-badge {
       font-weight: bold;
@@ -781,6 +789,10 @@ function formatDate(date: string) {
     }
   }
 
+  .status-label {
+    white-space: nowrap;
+  }
+
   .filters-section {
     margin-bottom: var(--spacing-6);
     padding: var(--spacing-4);
@@ -788,8 +800,28 @@ function formatDate(date: string) {
     border-radius: var(--radius-lg);
   }
 
-  .text-right {
-    text-align: right;
+  .filters-layout,
+  .filters-extra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .filter-search {
+    flex: 1 1 220px;
+    min-width: 0;
+  }
+
+  .filters-extra {
+    flex: 1 1 480px;
+
+    .el-select,
+    .el-date-editor {
+      flex: 1 1 160px;
+      min-width: 140px;
+      max-width: 100%;
+    }
   }
 
   .table-container {
@@ -839,6 +871,14 @@ function formatDate(date: string) {
 @media (max-width: 768px) {
   .dashboard-page {
     padding: var(--spacing-4) var(--spacing-3);
+
+    .card-header {
+      justify-content: flex-start;
+    }
+
+    .filters-extra {
+      flex-basis: 100%;
+    }
   }
 }
 </style>

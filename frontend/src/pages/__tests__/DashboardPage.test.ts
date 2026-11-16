@@ -127,14 +127,14 @@ const globalConfig = {
     ElSpace: { template: "<div><slot /></div>" },
     ElTable: { template: "<table class='el-table'><slot /></table>" },
     ElTableColumn: {
-      props: ["label"],
+      props: ["label", "minWidth", "prop"],
       setup() {
         return {
           dummyRow: { electionGuid: "abc", name: "Test" },
         };
       },
       template:
-        "<th class='table-col'>{{ label }}<slot name='default' :row='dummyRow' /></th>",
+        "<th class='table-col' :data-prop='prop' :data-min-width='minWidth'>{{ label }}<slot name='default' :row='dummyRow' /></th>",
     },
     ElPagination: { template: "<div />" },
     ElSkeleton: { template: "<div />" },
@@ -156,8 +156,12 @@ const globalConfig = {
 };
 
 describe("DashboardPage", () => {
+  let innerWidthSpy: ReturnType<typeof vi.spyOn>;
+
   beforeEach(() => {
     setActivePinia(createPinia());
+    innerWidthSpy?.mockRestore();
+    innerWidthSpy = vi.spyOn(window, "innerWidth", "get").mockReturnValue(1280);
     mockPush.mockReset();
     mockElections.mockReturnValue([]);
     mockActiveElections.mockReturnValue([]);
@@ -190,6 +194,43 @@ describe("DashboardPage", () => {
     const wrapper = mount(DashboardPage, { global: globalConfig });
     expect(wrapper.find(".dashboard-page").exists()).toBe(true);
     expect(wrapper.find(".elections-section").exists()).toBe(true);
+    expect(wrapper.find(".filters-toggle").exists()).toBe(false);
+    expect(wrapper.find(".filters-extra").isVisible()).toBe(true);
+  });
+
+  it("keeps the status column wide enough for a stage name", () => {
+    mockElections.mockReturnValue([
+      {
+        electionGuid: "abc",
+        name: "Test Election",
+        dateOfElection: "2026-01-01",
+        voterCount: 10,
+        ballotCount: 5,
+      },
+    ]);
+    const wrapper = mount(DashboardPage, { global: globalConfig });
+    const status = wrapper.get("[data-prop='electionStage']");
+    expect(Number(status.attributes("data-min-width"))).toBeGreaterThanOrEqual(
+      180,
+    );
+    expect(status.find(".status-label").exists()).toBe(true);
+  });
+
+  it("collapses extra filters behind a disclosure on a narrow window", async () => {
+    innerWidthSpy.mockReturnValue(390);
+    const wrapper = mount(DashboardPage, { global: globalConfig });
+    await flushPromises();
+
+    const extra = wrapper.get(".filters-extra").element as HTMLElement;
+    expect(wrapper.find(".filter-search").exists()).toBe(true);
+    expect(extra.style.display).toBe("none");
+    expect(wrapper.text()).toContain("dashboard.filters");
+
+    await wrapper.get(".filters-toggle").trigger("click");
+    expect(extra.style.display).not.toBe("none");
+    expect(wrapper.get(".filters-toggle").attributes("aria-expanded")).toBe(
+      "true",
+    );
   });
 
   it("renders a duplicate control when elections exist", () => {

@@ -69,6 +69,11 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "dashboard.filters": {
+    "t": "Filters",
+    "s": "source",
+    "w": "2026-11-16T01:30:00Z"
+  },
   "dashboard.noElections": {
     "t": "No elections found",
     "s": "source",
