@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useNotifications } from "@/composables/useNotifications";
+import { isFullTeller } from "@/domain/guestTellerAccess";
 import { ArrowDown, Menu, SwitchButton, User } from "@element-plus/icons-vue";
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
@@ -53,6 +54,11 @@ const currentPageTitle = computed(() => {
 // List (/ballots), open ballot (/ballot/{guid}), and related ballot routes.
 const showComputerCode = computed(() => /\/ballot(?:s|\/|$)/.test(route.path));
 
+/** Online voting and Guest tellers (and the ballot computer code) sit on their own row when the header is narrow. */
+const showStatusRow = computed(
+  () => showComputerCode.value || (isFullTeller() && Boolean(route.params.id)),
+);
+
 async function handleCommand(command: string) {
   if (command === "logout") {
     await authStore.logout();
@@ -70,75 +76,85 @@ function toggleMobileMenu() {
 
 <template>
   <header class="app-header" role="banner">
-    <div class="header-left">
-      <button
-        v-if="props.showMenuButton"
-        class="mobile-menu-btn"
-        type="button"
-        :aria-label="t('common.toggleNavigation')"
-        :aria-expanded="props.menuOpen"
-        @click="toggleMobileMenu"
+    <div class="header-bar">
+      <div class="header-left">
+        <button
+          v-if="props.showMenuButton"
+          class="mobile-menu-btn"
+          type="button"
+          :aria-label="t('common.toggleNavigation')"
+          :aria-expanded="props.menuOpen"
+          @click="toggleMobileMenu"
+        >
+          <el-icon>
+            <Menu />
+          </el-icon>
+        </button>
+        <h2 v-if="currentPageTitle" class="page-title" aria-live="polite">
+          {{ currentPageTitle }}
+        </h2>
+      </div>
+      <nav
+        class="header-right"
+        role="navigation"
+        :aria-label="t('common.userMenu')"
       >
-        <el-icon>
-          <Menu />
-        </el-icon>
-      </button>
-      <h2 v-if="currentPageTitle" class="page-title" aria-live="polite">
-        {{ currentPageTitle }}
-      </h2>
+        <ThemeSelector />
+        <LanguageSelector />
+        <el-dropdown trigger="click" @command="handleCommand">
+          <button
+            class="user-dropdown"
+            aria-haspopup="menu"
+            :aria-expanded="false"
+            :aria-label="t('common.userMenu')"
+          >
+            <span class="username">{{
+              currentUser?.name || currentUser?.email || t("common.user")
+            }}</span>
+            <el-icon aria-hidden="true">
+              <ArrowDown />
+            </el-icon>
+          </button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="profile">
+                <el-icon>
+                  <User />
+                </el-icon>
+                {{ $t("common.profile") }}
+              </el-dropdown-item>
+              <el-dropdown-item divided command="logout">
+                <el-icon>
+                  <SwitchButton />
+                </el-icon>
+                {{ $t("auth.logout") }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </nav>
     </div>
-    <nav
-      class="header-right"
-      role="navigation"
-      :aria-label="t('common.userMenu')"
-    >
+    <div v-if="showStatusRow" class="header-status">
       <ComputerCodeBadge v-if="showComputerCode" />
       <OnlineVotingHeaderControl />
       <GuestTellerAccessToggle />
-      <ThemeSelector />
-      <LanguageSelector />
-      <el-dropdown trigger="click" @command="handleCommand">
-        <button
-          class="user-dropdown"
-          aria-haspopup="menu"
-          :aria-expanded="false"
-          :aria-label="t('common.userMenu')"
-        >
-          <span class="username">{{
-            currentUser?.name || currentUser?.email || t("common.user")
-          }}</span>
-          <el-icon aria-hidden="true">
-            <ArrowDown />
-          </el-icon>
-        </button>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item command="profile">
-              <el-icon>
-                <User />
-              </el-icon>
-              {{ $t("common.profile") }}
-            </el-dropdown-item>
-            <el-dropdown-item divided command="logout">
-              <el-icon>
-                <SwitchButton />
-              </el-icon>
-              {{ $t("auth.logout") }}
-            </el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </nav>
+    </div>
   </header>
 </template>
 
 <style lang="less">
 .app-header {
   width: 100%;
+  min-width: 0;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
+  column-gap: 12px;
+  row-gap: 8px;
   font-size: var(--el-font-size-base);
+  container-type: inline-size;
+  container-name: app-header;
 
   .versionName {
     font-size: 0.9em;
@@ -151,27 +167,59 @@ function toggleMobileMenu() {
     margin-left: 8px;
   }
 
+  .header-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
   .header-left {
     display: flex;
     align-items: center;
     gap: 16px;
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   .page-title {
     margin: 0;
+    min-width: 0;
+    max-width: 100%;
     font-size: var(--font-size-app-title);
     font-weight: var(--font-weight-app-title);
     color: var(--el-text-color-primary);
     white-space: nowrap;
     line-height: var(--line-height-tight);
-    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .header-right {
     display: flex;
     align-items: center;
     gap: 12px;
+    flex: 0 0 auto;
+  }
+
+  /* Status chips, not navigation. Under about 1100px they take the next row
+     so the title stays on one line and does not run into them. */
+  .header-status {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    margin-inline-start: auto;
+  }
+
+  @container app-header (max-width: 1100px) {
+    .header-status {
+      flex: 1 0 100%;
+      margin-inline-start: 0;
+    }
   }
 
   .user-dropdown {
@@ -254,12 +302,6 @@ function toggleMobileMenu() {
   }
 
   @media (max-width: 480px) {
-    .page-title {
-      max-width: 120px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
     .location-selector {
       .location-icon {
         display: none;

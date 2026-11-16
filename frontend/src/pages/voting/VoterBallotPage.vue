@@ -975,11 +975,16 @@ function backToElections() {
             padding-right: 0;
             padding-bottom: 16px;
           }
-        }
 
-        .ballot-note {
-          text-align: start;
-          overflow-wrap: anywhere;
+          /* Match `.ballot-body .right-panel/.full-panel .ballot-note`.
+             A shorter `.ballot-note` selector stays right-aligned. */
+          .right-panel,
+          .full-panel {
+            .ballot-note {
+              text-align: start;
+              overflow-wrap: anywhere;
+            }
+          }
         }
       }
     }
