@@ -16,7 +16,8 @@ export function isOnlineVotingCurrentlyOpen(
 
   const openMs = toTimeMs(election.onlineWhenOpen);
   const closeMs = toTimeMs(election.onlineWhenClose);
-  if (openMs !== null && nowMs < openMs) {
+  // An unset open time is not open. The exact close instant is closed.
+  if (openMs === null || nowMs < openMs) {
     return false;
   }
   if (closeMs !== null && nowMs >= closeMs) {

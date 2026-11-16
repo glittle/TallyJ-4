@@ -47,12 +47,9 @@ public partial class OnlineVotingService
                 return (false, "voting.auth.google.emailNotVerified", null);
             }
 
-            // Elections open for external sign-in. The email match is the next step.
+            // Same window as every other voter path. The email match is the next step.
             var now = DateTimeOffset.UtcNow;
-            var openElections = await ElectionsOpenForExternalSignIn(now)
-                .Select(e => e.ElectionGuid)
-                .ToListAsync();
-            openElections = await ExceptFlaggedElectionsAsync(openElections);
+            var openElections = await OpenElectionIdsAsync(now);
 
             if (!openElections.Any())
             {
@@ -147,10 +144,7 @@ public partial class OnlineVotingService
             }
 
             var now = DateTimeOffset.UtcNow;
-            var openElections = await ElectionsOpenForExternalSignIn(now)
-                .Select(e => e.ElectionGuid)
-                .ToListAsync();
-            openElections = await ExceptFlaggedElectionsAsync(openElections);
+            var openElections = await OpenElectionIdsAsync(now);
 
             if (!openElections.Any())
             {
@@ -247,10 +241,7 @@ public partial class OnlineVotingService
             }
 
             var now = DateTimeOffset.UtcNow;
-            var openElections = await ElectionsOpenForExternalSignIn(now)
-                .Select(e => e.ElectionGuid)
-                .ToListAsync();
-            openElections = await ExceptFlaggedElectionsAsync(openElections);
+            var openElections = await OpenElectionIdsAsync(now);
 
             if (!openElections.Any())
             {
@@ -343,19 +334,33 @@ public partial class OnlineVotingService
 
             var telegramVoterId = dto.Id.ToString();
 
+            // This id is listed on a person (email, phone, or kiosk code), the
+            // same match available-elections uses after sign-in. The window is
+            // that election, not some other election that happens to be open.
             var now = DateTimeOffset.UtcNow;
-            var openElections = await ElectionsOpenForExternalSignIn(now)
-                .Select(e => e.ElectionGuid)
+            var ownElectionIds = await _context.People
+                .Where(person =>
+                    person.Email == telegramVoterId
+                    || person.Phone == telegramVoterId
+                    || person.KioskCode == telegramVoterId)
+                .Select(person => person.ElectionGuid)
+                .Distinct()
                 .ToListAsync();
-            openElections = await ExceptFlaggedElectionsAsync(openElections);
+            if (ownElectionIds.Count == 0)
+            {
+                _logger.LogWarning("Telegram voter auth: Telegram ID {TelegramId} not registered as a voter", dto.Id);
+                return (false, "voting.auth.telegram.notRegistered", null);
+            }
 
-            if (!openElections.Any())
+            var openElections = await OnlineVotingWindow.SelectOpenElectionIdsAsync(
+                _context.Elections.Where(election => ownElectionIds.Contains(election.ElectionGuid)),
+                now);
+            openElections = await ExceptFlaggedElectionsAsync(openElections);
+            if (openElections.Count == 0)
             {
                 return (false, "voting.auth.telegram.noOpenElections", null);
             }
 
-            // The open-election list above is only a gate. This id is not
-            // matched to a person in those elections.
             var onlineVoter = await _context.OnlineVoters
                 .FirstOrDefaultAsync(ov => ov.VoterId == telegramVoterId && ov.VoterIdType == TelegramVoterIdType);
 
@@ -389,20 +394,15 @@ public partial class OnlineVotingService
     }
 
     /// <summary>
-    /// Elections external voter sign-in treats as open. Both open and close
-    /// must be set, and the close instant is still open
-    /// (<c>OnlineWhenClose &gt;= now</c>). Login-code and kiosk sign-in are a
-    /// different clock: open must be set, a null close stays open, and the
-    /// close instant is already closed. Submit uses
-    /// <see cref="OnlineVotingWindow"/>, which also treats a null open as open.
+    /// Elections <see cref="OnlineVotingWindow"/> currently treats as open,
+    /// excluding flagged elections and elections with no approved owner or
+    /// co-admin when one is rejected.
     /// </summary>
-    private IQueryable<Election> ElectionsOpenForExternalSignIn(DateTimeOffset now) =>
-        _context.Elections.Where(e =>
-            e.UseOnlineVoting
-            && e.OnlineWhenOpen != null
-            && e.OnlineWhenClose != null
-            && e.OnlineWhenOpen <= now
-            && e.OnlineWhenClose >= now);
+    private async Task<List<Guid>> OpenElectionIdsAsync(DateTimeOffset now)
+    {
+        var openElections = await OnlineVotingWindow.SelectOpenElectionIdsAsync(_context.Elections, now);
+        return await ExceptFlaggedElectionsAsync(openElections);
+    }
 
     /// <summary>
     /// Validates the HMAC-SHA256 hash from the Telegram Login Widget callback per the official spec.

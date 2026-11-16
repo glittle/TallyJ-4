@@ -55,8 +55,7 @@ public interface IOnlineVotingService
 
     /// <summary>
     /// Authenticates a voter using Google. The email must belong to a person
-    /// in an election open for external sign-in (both ends set, close instant
-    /// still open). A null open or close is not that window.
+    /// in an election that <see cref="Backend.Helpers.OnlineVotingWindow"/> currently treats as open.
     /// </summary>
     /// <param name="dto">The Google authentication request containing the credential.</param>
     /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
@@ -71,8 +70,7 @@ public interface IOnlineVotingService
 
     /// <summary>
     /// Authenticates a voter using Facebook. The email must belong to a person
-    /// in an election <see cref="OnlineVotingService"/> treats as open for
-    /// external sign-in (both ends set, close instant still open).
+    /// in an election that <see cref="Backend.Helpers.OnlineVotingWindow"/> currently treats as open.
     /// </summary>
     /// <param name="dto">The Facebook authentication request containing the access token.</param>
     /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
@@ -80,17 +78,18 @@ public interface IOnlineVotingService
 
     /// <summary>
     /// Authenticates a voter using Kakao. Email is tried first, then phone,
-    /// against a person in an election open for external sign-in.
+    /// against a person in an election that <see cref="Backend.Helpers.OnlineVotingWindow"/> currently treats as open.
     /// </summary>
     /// <param name="dto">The Kakao authentication request containing the access token.</param>
     /// <returns>A task containing success flag, optional error message, and authentication response.</returns>
     Task<(bool Success, string? Error, OnlineVoterAuthResponse? Response)> AuthenticateVoterWithKakaoAsync(KakaoAuthForVoterDto dto);
 
     /// <summary>
-    /// Authenticates a voter using the Telegram Login Widget. Some election
-    /// must be open for external sign-in, and an <c>OnlineVoter</c> row of
-    /// type <c>T</c> must exist for this Telegram id. That id is not matched
-    /// to a person in the open election.
+    /// Authenticates a voter using the Telegram Login Widget. The Telegram id
+    /// must be listed on a person (email, phone, or kiosk code) in an election
+    /// that <see cref="Backend.Helpers.OnlineVotingWindow"/> currently treats as open, and an
+    /// <c>OnlineVoter</c> row of type <c>T</c> must exist for that id. Another
+    /// election being open does not satisfy the window.
     /// </summary>
     /// <param name="dto">The Telegram authentication request containing the widget callback data.</param>
     /// <returns>A task containing success flag, optional error message, and authentication response.</returns>

@@ -1253,7 +1253,7 @@ public class ElectionServiceTests : ServiceTestBase
         election.OnlineWhenClose = null;
         await Context.SaveChangesAsync();
         var now = DateTimeOffset.UtcNow;
-        Assert.True(IsAvailableToOnlineVoters(election, now));
+        Assert.False(IsAvailableToOnlineVoters(election, now));
 
         var result = await _service.ResetElectionAsync(source.ElectionGuid);
 
@@ -1541,7 +1541,7 @@ public class ElectionServiceTests : ServiceTestBase
 
     /// <summary>
     /// Same open predicate as <c>OnlineVotingService.GetAvailableElectionsAsync</c>
-    /// (UseOnlineVoting plus a null window counts as open; ShowAsTest is not checked).
+    /// (an unset open time is not open; ShowAsTest is not checked).
     /// </summary>
     private static bool IsAvailableToOnlineVoters(Election election, DateTimeOffset now) =>
         OnlineVotingWindow.IsCurrentlyOpen(

@@ -17,11 +17,26 @@ public class OnlineVotingWindowTests
     }
 
     [Fact]
-    public void IsCurrentlyOpen_TrueWhenEnabledAndWindowDatesNull()
+    public void IsCurrentlyOpen_FalseWhenOpenTimeIsUnset()
+    {
+        Assert.False(OnlineVotingWindow.IsCurrentlyOpen(
+            useOnlineVoting: true,
+            onlineWhenOpen: null,
+            onlineWhenClose: null,
+            now: Now));
+        Assert.False(OnlineVotingWindow.IsCurrentlyOpen(
+            useOnlineVoting: true,
+            onlineWhenOpen: null,
+            onlineWhenClose: Now.AddHours(1),
+            now: Now));
+    }
+
+    [Fact]
+    public void IsCurrentlyOpen_TrueWhenOnlyOpenTimeHasBeenReached()
     {
         Assert.True(OnlineVotingWindow.IsCurrentlyOpen(
             useOnlineVoting: true,
-            onlineWhenOpen: null,
+            onlineWhenOpen: Now.AddHours(-1),
             onlineWhenClose: null,
             now: Now));
     }

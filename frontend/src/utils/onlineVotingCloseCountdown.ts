@@ -20,8 +20,9 @@ function toMs(value: Date | string | null | undefined): number | null {
 }
 
 /**
- * Same open/close rules as the header Online Voting control: missing both
- * dates is closed; a close in the past is closed; otherwise open.
+ * Same open/close rules as voter submit: an unset open time is closed, a
+ * close in the past or at this instant is closed, and a missing close stays
+ * open once the open time has been reached.
  */
 export function isOnlineVotingWindowOpen(
   openValue: Date | string | null | undefined,
@@ -31,13 +32,10 @@ export function isOnlineVotingWindowOpen(
   const nowMs = now.getTime();
   const openMs = toMs(openValue);
   const closeMs = toMs(closeValue);
-  if (openMs !== null && nowMs < openMs) {
+  if (openMs === null || nowMs < openMs) {
     return false;
   }
   if (closeMs !== null && nowMs >= closeMs) {
-    return false;
-  }
-  if (openMs === null && closeMs === null) {
     return false;
   }
   return true;

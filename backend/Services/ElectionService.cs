@@ -314,8 +314,8 @@ public class ElectionService : IElectionService
         copy.LastEnvNum = null;
         copy.ListedForPublicAsOf = null;
         copy.OwnerLoginId = null;
-        // GetAvailableElectionsAsync treats UseOnlineVoting + a null window as open.
-        // Clear both so the copy is not listed to the same phone/email/kiosk voters.
+        // An unset open time is not an open window. The copy still turns online
+        // voting off so it does not inherit an online-voting election.
         copy.OnlineWhenOpen = null;
         copy.OnlineWhenClose = null;
         copy.UseOnlineVoting = false;
@@ -423,7 +423,8 @@ public class ElectionService : IElectionService
 
             election.LastEnvNum = null;
             election.ListedForPublicAsOf = null;
-            // GetAvailableElectionsAsync treats UseOnlineVoting + a null window as open.
+            // An unset open time is not an open window. The flag is cleared too
+            // so the practice election does not keep online voting turned on.
             election.OnlineWhenOpen = null;
             election.OnlineWhenClose = null;
             election.UseOnlineVoting = false;
@@ -455,8 +456,8 @@ public class ElectionService : IElectionService
             UpdatedAt = DateTimeOffset.UtcNow
         });
 
-        // UseOnlineVoting + a null window is already "open" to voters.
-        // Closing only the flag must still push updateVoters so they re-fetch.
+        // Turning UseOnlineVoting off still notifies voters, including when the
+        // dates are already empty.
         var onlineSettingsChanged =
             previousUseOnlineVoting != election.UseOnlineVoting
             || previousOnlineWhenOpen != election.OnlineWhenOpen

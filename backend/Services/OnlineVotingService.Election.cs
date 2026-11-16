@@ -19,8 +19,11 @@ public partial class OnlineVotingService
         }
 
         var now = DateTimeOffset.UtcNow;
-        var isOpen = (election.OnlineWhenOpen == null || election.OnlineWhenOpen <= now) &&
-                     (election.OnlineWhenClose == null || election.OnlineWhenClose > now);
+        var isOpen = OnlineVotingWindow.IsCurrentlyOpen(
+            election.UseOnlineVoting,
+            election.OnlineWhenOpen,
+            election.OnlineWhenClose,
+            now);
 
         return new OnlineElectionInfoDto
         {
@@ -96,10 +99,12 @@ public partial class OnlineVotingService
             var result = personElections.Select(x =>
             {
                 var hasOnlineVoting = x.Election.UseOnlineVoting;
-                var isOpen = hasOnlineVoting &&
-                             !flaggedElections.Contains(x.Election.ElectionGuid) &&
-                             (x.Election.OnlineWhenOpen == null || x.Election.OnlineWhenOpen <= now) &&
-                             (x.Election.OnlineWhenClose == null || x.Election.OnlineWhenClose > now);
+                var isOpen = !flaggedElections.Contains(x.Election.ElectionGuid)
+                             && OnlineVotingWindow.IsCurrentlyOpen(
+                                 hasOnlineVoting,
+                                 x.Election.OnlineWhenOpen,
+                                 x.Election.OnlineWhenClose,
+                                 now);
 
                 var votingInfo = votingInfos
                     .Where(ovi => ovi.ElectionGuid == x.Election.ElectionGuid && ovi.PersonGuid == x.Person.PersonGuid)
