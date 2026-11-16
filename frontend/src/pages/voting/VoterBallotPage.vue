@@ -941,6 +941,47 @@ function backToElections() {
           width: 100%;
         }
       }
+
+      /* The header is a title plus a 340px warning column. Under 600px that
+         column covers the title, so the title, tag, and warning stack. */
+      @media (max-width: 600px) {
+        .ballot-card-header {
+          flex-direction: column;
+          align-items: stretch;
+
+          .header-left h2 {
+            overflow-wrap: anywhere;
+          }
+
+          .header-right {
+            flex-basis: auto;
+            width: 100%;
+            align-items: stretch;
+
+            .header-tags {
+              justify-content: flex-start;
+            }
+          }
+        }
+
+        .ballot-body {
+          flex-direction: column;
+
+          .left-panel {
+            flex: none;
+            width: 100%;
+            border-right: none;
+            border-bottom: 1px solid var(--el-border-color-lighter);
+            padding-right: 0;
+            padding-bottom: 16px;
+          }
+        }
+
+        .ballot-note {
+          text-align: start;
+          overflow-wrap: anywhere;
+        }
+      }
     }
   }
 }
