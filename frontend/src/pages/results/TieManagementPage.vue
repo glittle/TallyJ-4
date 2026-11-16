@@ -138,13 +138,13 @@ defineExpose({
 <template>
   <div class="tie-management">
     <el-card>
-      <template #header>
+      <template v-if="hasChanges" #header>
         <div class="card-header">
           <div class="header-actions">
             <el-button
               type="primary"
               :loading="saving"
-              :disabled="!hasChanges || isFinalized"
+              :disabled="isFinalized"
               @click="saveTieCounts"
             >
               {{ $t("tieManagement.saveChanges") }}

@@ -36,6 +36,12 @@ onMounted(async () => {
     availableReports.value = await reportService.getAvailableReports(
       electionGuid.value,
     );
+    const first =
+      availableReports.value.find((r) => r.category === "Ballot Reports") ??
+      availableReports.value[0];
+    if (first) {
+      await selectReport(first.code);
+    }
   } catch {
     error.value = t("reporting.error");
   } finally {
@@ -101,7 +107,13 @@ async function downloadAll() {
               :key="r.code"
               :class="{ active: selectedReport === r.code }"
             >
-              <a href="#" @click.prevent="selectReport(r.code)">{{ r.name }}</a>
+              <button
+                type="button"
+                class="report-choice"
+                @click="selectReport(r.code)"
+              >
+                {{ r.name }}
+              </button>
             </li>
           </ul>
         </div>
@@ -113,7 +125,13 @@ async function downloadAll() {
               :key="r.code"
               :class="{ active: selectedReport === r.code }"
             >
-              <a href="#" @click.prevent="selectReport(r.code)">{{ r.name }}</a>
+              <button
+                type="button"
+                class="report-choice"
+                @click="selectReport(r.code)"
+              >
+                {{ r.name }}
+              </button>
             </li>
           </ul>
         </div>
@@ -187,23 +205,32 @@ async function downloadAll() {
     }
 
     li {
-      margin: 2px 0;
-      a {
-        display: block;
-        padding: 4px 8px;
-        border-radius: 4px;
-        color: var(--el-text-color-regular);
-        text-decoration: none;
-        font-size: 13px;
-        &:hover {
-          background: var(--el-fill-color-light);
-        }
+      margin: 4px 0;
+    }
+
+    .report-choice {
+      display: block;
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--el-border-color);
+      border-radius: 6px;
+      background: var(--el-fill-color-blank);
+      color: var(--el-text-color-primary);
+      text-align: start;
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+
+      &:hover {
+        border-color: var(--el-color-primary);
       }
-      &.active a {
-        background: var(--el-color-primary-light-9);
-        color: var(--el-color-primary);
-        font-weight: 600;
-      }
+    }
+
+    li.active .report-choice {
+      border-color: var(--el-color-primary);
+      background: var(--el-color-primary-light-9);
+      color: var(--el-color-primary);
+      font-weight: 600;
     }
 
     .chooser-actions {

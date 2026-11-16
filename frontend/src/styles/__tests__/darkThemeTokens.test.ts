@@ -162,4 +162,14 @@ describe("dark theme tokens (dashboard/setup polish)", () => {
       "var(--color-gray-400)",
     );
   });
+
+  it("paints the empty-box illustration with dark grays instead of near-white", () => {
+    expect(tokenValue(dark, "--el-empty-fill-color-0")).toBe(
+      "var(--color-gray-800)",
+    );
+    expect(tokenValue(dark, "--el-empty-fill-color-9")).toBe(
+      "var(--color-gray-300)",
+    );
+    expect(dark).not.toMatch(/--el-empty-fill-color-0:\s*#fff/i);
+  });
 });

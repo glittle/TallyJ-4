@@ -231,6 +231,44 @@ describe("TieManagementPage", () => {
     expect(mockShowInfo).toHaveBeenCalled();
   });
 
+  it("hides Save until a count changes, and says ties appear after a tally", async () => {
+    mockFetchTieDetails.mockResolvedValue([]);
+    const wrapper = mount(TieManagementPage, {
+      global: {
+        plugins: [i18n],
+        stubs: {
+          ...stubs,
+          ElEmpty: {
+            props: ["description"],
+            template: "<div class='empty'>{{ description }}</div>",
+          },
+        },
+      },
+    });
+    await flushPromises();
+
+    expect(wrapper.text()).toContain(
+      "No ties require management. Ties appear here after the tally runs.",
+    );
+    expect(wrapper.text()).not.toContain("Save Changes");
+  });
+
+  it("shows Save only after a tie-break count changes", async () => {
+    const wrapper = mount(TieManagementPage, {
+      global: { plugins: [i18n], stubs },
+    });
+    await flushPromises();
+    expect(wrapper.text()).not.toContain("Save Changes");
+
+    const vm = wrapper.vm as unknown as {
+      tieDetails: TieDetailsDto[];
+    };
+    vm.tieDetails[0]!.people[1]!.tieBreakCount = 1;
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.text()).toContain("Save Changes");
+  });
+
   it("sends null after clearing a previous count via the input", async () => {
     const wrapper = mount(TieManagementPage, {
       global: { plugins: [i18n], stubs },

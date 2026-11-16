@@ -17,7 +17,7 @@ beforeAll(() => {
 });
 
 describe("PeopleManagementPage toolbar", () => {
-  it("wraps the actions so Delete All People stays in the toolbar", async () => {
+  it("keeps Delete all people in a danger menu outside the send row", async () => {
     const pinia = createTestingPinia({ stubActions: true });
     const router = createRouter({
       history: createWebHistory(),
@@ -40,8 +40,12 @@ describe("PeopleManagementPage toolbar", () => {
 
     const toolbar = wrapper.get(".people-toolbar");
     expect(toolbar.attributes("style") ?? "").toMatch(/flex-wrap:\s*wrap/);
-    const deleteButton = wrapper.get(".people-toolbar-delete");
-    expect(toolbar.element.contains(deleteButton.element)).toBe(true);
-    expect(deleteButton.text()).toContain("Delete All People");
+    const menu = wrapper.get("[data-testid='people-danger-menu']");
+    expect(toolbar.element.contains(menu.element)).toBe(false);
+    expect(menu.text()).toContain("Danger");
+
+    await menu.trigger("click");
+    await flushPromises();
+    expect(document.body.textContent).toContain("Delete All People");
   });
 });

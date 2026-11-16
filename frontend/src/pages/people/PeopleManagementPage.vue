@@ -516,6 +516,12 @@ async function handleRetryFailed() {
   }
 }
 
+function onDangerCommand(command: string) {
+  if (command === "deleteAll") {
+    void handleDeleteAllPeople();
+  }
+}
+
 async function handleDeleteAllPeople() {
   try {
     await ElMessageBox.confirm(
@@ -691,17 +697,31 @@ async function handleDeleteAllPeople() {
                   $t("people.selectedCount", { count: selectedGuids.length })
                 }}
               </span>
+            </el-space>
+            <el-dropdown
+              class="people-danger-menu"
+              trigger="click"
+              @command="onDangerCommand"
+            >
               <el-button
-                class="people-toolbar-delete"
                 type="danger"
                 plain
                 :loading="deletingAll"
-                :disabled="allPeople.length === 0"
-                @click="handleDeleteAllPeople"
+                data-testid="people-danger-menu"
               >
-                {{ $t("people.import.deleteAllPeople") }}
+                {{ $t("people.dangerMenu") }}
               </el-button>
-            </el-space>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item
+                    command="deleteAll"
+                    :disabled="allPeople.length === 0"
+                  >
+                    {{ $t("people.import.deleteAllPeople") }}
+                  </el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </div>
         </div>
       </template>
@@ -900,13 +920,14 @@ async function handleDeleteAllPeople() {
   .people-toolbar {
     display: flex;
     flex-wrap: wrap;
-    width: 100%;
+    flex: 1 1 auto;
     max-width: 100%;
     min-width: 0;
   }
 
-  .people-toolbar-delete {
+  .people-danger-menu {
     flex-shrink: 0;
+    margin-left: 12px;
   }
 
   .whatsapp-filter,
