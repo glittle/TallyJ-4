@@ -699,7 +699,7 @@ onBeforeUnmount(() => {
 
           <p v-if="isStandardLogin && !awaiting2FA" class="forgot-password-row">
             <router-link
-              class="forgot-password-link"
+              class="forgot-password-link login-text-link"
               to="/forgot-password"
               data-testid="forgot-password"
             >
@@ -760,7 +760,9 @@ onBeforeUnmount(() => {
             class="new-account-hint"
           >
             {{ t("auth.newAccountUseGoogle") }}
-            <router-link to="/register">{{ t("auth.register") }}</router-link>
+            <router-link class="login-text-link" to="/register">{{
+              t("auth.register")
+            }}</router-link>
           </p>
         </el-form>
       </el-card>
@@ -815,6 +817,11 @@ onBeforeUnmount(() => {
     gap: 10px;
   }
 
+  .login-text-link {
+    color: var(--color-text-link);
+    text-decoration: underline;
+  }
+
   .submit-btn {
     width: 100%;
   }
@@ -836,11 +843,6 @@ onBeforeUnmount(() => {
 
   .forgot-password-row {
     margin: 0 0 4px;
-  }
-
-  .forgot-password-link {
-    color: var(--color-text-primary);
-    text-decoration: underline;
   }
 
   .new-account-hint {
@@ -904,6 +906,16 @@ onBeforeUnmount(() => {
     justify-content: center;
     width: 100%;
     margin-top: 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .login-page {
+    padding-top: 4px;
+
+    .login-actions {
+      margin-top: 16px;
+    }
   }
 }
 </style>

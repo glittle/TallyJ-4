@@ -1,4 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { mount, flushPromises } from "@vue/test-utils";
 import LoginPage from "./LoginPage.vue";
 import { pinia, router, i18n } from "@/test/setup";
@@ -44,10 +47,25 @@ describe("LoginPage", () => {
     expect(wrapper.get('[data-testid="forgot-password"]').text()).toBe(
       "Forgot password?",
     );
+    expect(wrapper.get('[data-testid="forgot-password"]').classes()).toContain(
+      "login-text-link",
+    );
     expect(wrapper.text()).toContain(
       "New teller? Create an account with email and password, or sign in with Google",
     );
-    expect(wrapper.find('a[href="/register"]').exists()).toBe(true);
+    const register = wrapper.get('a[href="/register"]');
+    expect(register.text()).toBe("Register");
+    expect(register.classes()).toContain("login-text-link");
+  });
+
+  it("pulls the login card up a few pixels under 600px", () => {
+    const source = readFileSync(
+      resolve(dirname(fileURLToPath(import.meta.url)), "./LoginPage.vue"),
+      "utf8",
+    );
+    expect(source).toMatch(
+      /@media \(max-width: 600px\) \{\s*\.login-page \{\s*padding-top: 4px;[\s\S]*margin-top: 16px;/,
+    );
   });
 
   it("asks for the authenticator code and does not open the app when the password is accepted", async () => {

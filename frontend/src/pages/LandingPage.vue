@@ -261,9 +261,10 @@ onUnmounted(() => {
 
     <div class="statusDocLink">
       <a
+        class="secondary-link"
         href="https://docs.google.com/document/d/1WXrVy2Jl3Lk-Vs1k77t2QnrrdK5zjzSeHMXnOx0Deao/edit?usp=sharing"
         target="statusDoc"
-        >Status & Feedback Document V4 (English only)</a
+        >{{ t("auth.landing.statusDoc") }}</a
       >
     </div>
   </div>
@@ -358,9 +359,15 @@ onUnmounted(() => {
       display: flex;
       gap: 0.25em;
       align-items: center;
-      &:hover {
-        text-decoration: underline;
-      }
+    }
+  }
+
+  a.secondary-link {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
     }
   }
 
@@ -513,15 +520,7 @@ onUnmounted(() => {
     font-size: 1.15em;
 
     a {
-      color: var(--el-link-color);
-      font-weight: 500;
-      text-decoration: none;
-      border-bottom: 2px solid transparent;
-      transition: border-color 0.3s ease;
-
-      &:hover {
-        border-color: var(--el-link-color);
-      }
+      display: inline-flex;
     }
   }
   .testOnlyWarning {

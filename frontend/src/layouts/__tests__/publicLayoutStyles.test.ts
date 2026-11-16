@@ -20,4 +20,12 @@ describe("PublicLayout styles", () => {
     expect(source).not.toContain("splitVersionDisplay");
     expect(source).toContain('$t("common.versionDisplay")');
   });
+
+  it("switches to the compact language control when the header stacks at 600px", () => {
+    expect(source).toContain('class="language-flags"');
+    expect(source).toContain('class="language-compact"');
+    expect(source).toMatch(
+      /\.language-compact \{\s*display: none;[\s\S]*@media \(max-width: 600px\) \{\s*\.language-flags \{\s*display: none;\s*\}\s*\.language-compact \{\s*display: inline-block;/,
+    );
+  });
 });
