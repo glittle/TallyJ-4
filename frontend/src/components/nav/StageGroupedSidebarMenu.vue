@@ -50,7 +50,21 @@ function isActivePage(page: NavPageDef): boolean {
   return route.path === page.routePath(props.electionGuid);
 }
 
-function navigateTo(page: NavPageDef) {
+function isPlainLeftClick(event: MouseEvent): boolean {
+  return (
+    event.button === 0 &&
+    !event.metaKey &&
+    !event.ctrlKey &&
+    !event.shiftKey &&
+    !event.altKey
+  );
+}
+
+function onPageClick(page: NavPageDef, event: MouseEvent) {
+  if (!isPlainLeftClick(event)) {
+    return;
+  }
+  event.preventDefault();
   router.push(page.routePath(props.electionGuid));
   emit("close-mobile-sidebar");
 }
@@ -111,7 +125,7 @@ watch(
           :class="{ 'is-active': isActivePage(page) }"
           :href="page.routePath(electionGuid)"
           :aria-current="isActivePage(page) ? 'page' : undefined"
-          @click.prevent="navigateTo(page)"
+          @click="onPageClick(page, $event)"
         >
           <el-icon class="stage-group__page-icon" aria-hidden="true">
             <component :is="page.icon" />
@@ -168,7 +182,7 @@ watch(
               :class="{ 'is-active': isActivePage(page) }"
               :href="page.routePath(electionGuid)"
               :aria-current="isActivePage(page) ? 'page' : undefined"
-              @click.prevent="navigateTo(page)"
+              @click="onPageClick(page, $event)"
             >
               <el-icon class="stage-group__page-icon" aria-hidden="true">
                 <component :is="page.icon" />

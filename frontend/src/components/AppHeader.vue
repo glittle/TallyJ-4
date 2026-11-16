@@ -224,6 +224,7 @@ function toggleMobileMenu() {
   }
 
   .user-dropdown {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -297,8 +298,16 @@ function toggleMobileMenu() {
     }
 
     .username {
-      display: none;
-      /* Hide username on mobile to save space */
+      /* Visually hidden so the button's only accessible name stays in the tree. */
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
   }
 

@@ -176,6 +176,6 @@ There is no archived stage and no archive flag on the election. The super-admin 
 **Status:** active  
 **Evidence:** inferred
 
-Stage pages in the election sidebar are anchors. The parent is navigation. A click still uses the existing in-app route and closes the phone sidebar. Which stages are expanded is unchanged.
+Stage pages in the election sidebar are anchors. The parent is navigation. A plain left-click still uses the existing in-app route and closes the phone sidebar. Ctrl, Cmd, Shift, Alt, and middle-click keep the browser's link behavior. Which stages are expanded is unchanged.
 
 **Rejected alternative:** give the group `role="menu"` and keep `role="menuitem"` on each page. That asks for a menu keyboard model this sidebar does not have.

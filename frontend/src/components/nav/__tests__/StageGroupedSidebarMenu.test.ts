@@ -405,6 +405,27 @@ describe("StageGroupedSidebarMenu", () => {
       }
     });
 
+    it("leaves modified and middle clicks to the browser", async () => {
+      const wrapper = mountMenu({
+        isGuestTeller: false,
+        currentStage: "SettingUp",
+        electionGuid: "test-id",
+      });
+      const page = wrapper.find(".stage-group__page");
+      for (const modifiers of [
+        { ctrlKey: true },
+        { metaKey: true },
+        { shiftKey: true },
+        { altKey: true },
+        { button: 1 },
+      ]) {
+        mockRouterPush.mockClear();
+        await page.trigger("click", modifiers);
+        expect(mockRouterPush).not.toHaveBeenCalled();
+        expect(wrapper.emitted("close-mobile-sidebar")).toBeFalsy();
+      }
+    });
+
     it("uses links instead of menuitems", () => {
       const wrapper = mountMenu({
         isGuestTeller: false,
