@@ -44,6 +44,56 @@
     "s": "source",
     "w": "2026-09-23T17:47:03Z"
   },
+  "frontDesk.filters.nameNotRegistered": {
+    "t": "Not registered",
+    "s": "source",
+    "w": "2026-11-16T01:20:00Z"
+  },
+  "frontDesk.filters.nameRegistered": {
+    "t": "Registered",
+    "s": "source",
+    "w": "2026-11-16T01:20:00Z"
+  },
+  "frontDesk.empty.notRegistered.one": {
+    "t": "No one is waiting under Not registered. 1 person is registered.",
+    "s": "source",
+    "w": "2026-11-16T01:20:00Z"
+  },
+  "frontDesk.empty.notRegistered.other": {
+    "t": "No one is waiting under Not registered. {count} people are registered.",
+    "s": "source",
+    "w": "2026-11-16T01:20:00Z"
+  },
+  "frontDesk.empty.registered.one": {
+    "t": "No one is registered. 1 person is not registered.",
+    "s": "source",
+    "w": "2026-11-16T01:20:00Z"
+  },
+  "frontDesk.empty.registered.other": {
+    "t": "No one is registered. {count} people are not registered.",
+    "s": "source",
+    "w": "2026-11-16T01:20:00Z"
+  },
+  "frontDesk.empty.named": {
+    "t": "No one matches {filter}.",
+    "s": "source",
+    "w": "2026-11-16T01:20:00Z"
+  },
+  "frontDesk.empty.search": {
+    "t": "No one matches \"{query}\".",
+    "s": "source",
+    "w": "2026-11-16T01:20:00Z"
+  },
+  "frontDesk.empty.searchUnder": {
+    "t": "No one matches \"{query}\" under {filter}.",
+    "s": "source",
+    "w": "2026-11-16T01:20:00Z"
+  },
+  "frontDesk.empty.everyone": {
+    "t": "No eligible voters.",
+    "s": "source",
+    "w": "2026-11-16T01:20:00Z"
+  },
   "frontDesk.filters.votingMethods": {
     "t": "Voting method filters:",
     "s": "source",
